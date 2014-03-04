@@ -69,14 +69,11 @@ class behat_form_field {
      * @return void
      */
     public function set_value($value) {
-
-        // If we are not dealing with a text-based tag try to find the most appropiate
-        // behat_form_* class to deal with it.
-        if ($instance = $this->guess_type()) {
-            $instance->set_value($value);
-        } else {
-            $this->field->setValue($value);
-        }
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        return $instance->set_value($value);
     }
 
     /**
@@ -85,14 +82,28 @@ class behat_form_field {
      * @return string
      */
     public function get_value() {
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        return $instance->get_value();
+    }
 
-        // If we are not dealing with a text-based tag try to find the most appropiate
-        // behat_form_* class to deal with it.
-        if ($instance = $this->guess_type()) {
-            return $instance->get_value();
-        } else {
-            return $this->field->getValue();
-        }
+    /**
+     * Generic match implementation
+     *
+     * Will work well with text-based fields, extension required
+     * for most of the other cases.
+     *
+     * @param string $expectedvalue
+     * @return bool The provided value matches the field value?
+     */
+    public function matches($expectedvalue) {
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        return $instance->matches($expectedvalue);
     }
 
     /**
@@ -106,52 +117,17 @@ class behat_form_field {
      * moodle form elements we will need to refactor this simple HTML elements
      * guess method.
      *
-     * @return mixed False if no need for an special behat_form_*, otherwise the behat_form_*
+     * @return behat_form_field
      */
     private function guess_type() {
         global $CFG;
 
-        // Textareas are considered text based elements.
-        $tagname = strtolower($this->field->getTagName());
-        if ($tagname == 'textarea') {
-
-            if (!$this->running_javascript()) {
-                return false;
-            }
-
-            // If there is an iframe with $id + _ifr there a TinyMCE editor loaded.
-            $xpath = '//iframe[@id="' . $this->field->getAttribute('id') . '_ifr"]';
-            if (!$this->session->getPage()->find('xpath', $xpath)) {
-
-                // Generic one if it is a normal textarea.
-                return false;
-            }
-
-            $classname = 'behat_form_editor';
-
-        } else if ($tagname == 'input') {
-            $type = $this->field->getAttribute('type');
-            switch ($type) {
-                case 'text':
-                    return false;
-                case 'checkbox':
-                    $classname = 'behat_form_checkbox';
-                    break;
-                case 'radio':
-                    $classname = 'behat_form_radio';
-                    break;
-                default:
-                    return false;
-            }
-
-        } else if ($tagname == 'select') {
-            // Select tag.
-            $classname = 'behat_form_select';
-
-        } else {
-            return false;
+        // We default to the text-based field if nothing was detected.
+        if (!$type = behat_field_manager::guess_field_type($this->field, $this->session)) {
+            $type = 'text';
         }
 
+        $classname = 'behat_form_' . $type;
         $classpath = $CFG->dirroot . '/lib/behat/form_field/' . $classname . '.php';
         require_once($classpath);
         return new $classname($this->session, $this->field);
@@ -166,4 +142,33 @@ class behat_form_field {
         return get_class($this->session->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
     }
 
+    /**
+     * Gets the field internal id used by selenium wire protocol.
+     *
+     * Only available when running_javascript().
+     *
+     * @throws coding_exception
+     * @return int
+     */
+    protected function get_internal_field_id() {
+
+        if (!$this->running_javascript()) {
+            throw new coding_exception('You can only get an internal ID using the selenium driver.');
+        }
+
+        return $this->session->getDriver()->getWebDriverSession()->element('xpath', $this->field->getXPath())->getID();
+    }
+
+    /**
+     * Checks if the provided text matches the field value.
+     *
+     * @param string $expectedvalue
+     * @return bool
+     */
+    protected function text_matches($expectedvalue) {
+        if (trim($expectedvalue) != trim($this->get_value())) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -15,28 +15,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Date time form field class.
+ * Text field class.
  *
  * @package    core_form
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_date_selector.php');
+require_once(__DIR__  . '/behat_form_field.php');
 
 /**
- * Date time form field.
- *
- * This class will be refactored in case we are interested in
- * creating more complex formats to fill date-time fields.
+ * Class for test-based fields.
  *
  * @package    core_form
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_date_time_selector extends behat_form_date_selector {
+class behat_form_text extends behat_form_field {
+
+    /**
+     * Sets the value to a field.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function set_value($value) {
+        $this->field->setValue($value);
+    }
+
+    /**
+     * Returns the current value of the element.
+     *
+     * @return string
+     */
+    public function get_value() {
+        return $this->field->getValue();
+    }
+
+    /**
+     * Matches the provided value against the current field value.
+     *
+     * @param string $expectedvalue
+     * @return bool The provided value matches the field value?
+     */
+    public function matches($expectedvalue) {
+        return $this->text_matches($expectedvalue);
+    }
+
 }
