@@ -1714,12 +1714,12 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertSame($systemcontext->get_parent_contexts(), array());
         $this->assertSame($systemcontext->get_parent_contexts(true), array($systemcontext->id=>$systemcontext));
         $this->assertSame($systemcontext->get_parent_context_ids(), array());
-        $this->assertSame($systemcontext->get_parent_context_ids(true), array($systemcontext->id));
+        $this->assertEquals($systemcontext->get_parent_context_ids(true), array($systemcontext->id));
 
         $this->assertSame($frontpagecontext->get_parent_context(), $systemcontext);
         $this->assertSame($frontpagecontext->get_parent_contexts(), array($systemcontext->id=>$systemcontext));
         $this->assertSame($frontpagecontext->get_parent_contexts(true), array($frontpagecontext->id=>$frontpagecontext, $systemcontext->id=>$systemcontext));
-        $this->assertSame($frontpagecontext->get_parent_context_ids(), array($systemcontext->id));
+        $this->assertEquals($frontpagecontext->get_parent_context_ids(), array($systemcontext->id));
         $this->assertEquals($frontpagecontext->get_parent_context_ids(true), array($frontpagecontext->id, $systemcontext->id));
 
         $this->assertSame($systemcontext->get_parent_context(), false);
