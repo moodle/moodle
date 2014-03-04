@@ -70,7 +70,7 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
         }
 
         $dbdriver = $this->get_config('dbdriver');
-        if (!$dbdriver) {
+        if (empty($dbdriver)) {
             $this->extdb = false;
             return false;
         }
