@@ -113,14 +113,101 @@ class behat_navigation extends behat_base {
     }
 
     /**
+     * Click link in navigation tree that matches the text in parentnode/s (comma seperated if more then one)
+     *
+     * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" node in "(?P<parentnodes_string>(?:[^"]|\\")*)"$/
+     *
+     * @throws ExpectationException
+     * @param string $nodetext navigation node to click.
+     * @param string $parentnodes comma seperated list of parent nodes.
+     * @return void
+     */
+    public function i_navigate_to_node_in($nodetext, $parentnodes) {
+
+        // Site admin is different and needs special treatment.
+        $siteadminstr = get_string('administrationsite');
+
+        // Create array of all parentnodes.
+        $parentnodes = explode(',', $parentnodes);
+        $countparentnode = count($parentnodes);
+
+        // If JS is disabled and Site administration is not expanded we
+        // should follow it, so all the lower-level nodes are available.
+        if (!$this->running_javascript()) {
+            if ($parentnodes[0] === $siteadminstr) {
+                // We don't know if there if Site admin is already expanded so
+                // don't wait, it is non-JS and we already waited for the DOM.
+                if ($siteadminlink = $this->getSession()->getPage()->find('named', array('link', "'" . $siteadminstr . "'"))) {
+                    $siteadminlink->click();
+                }
+            }
+        }
+
+        // Expand first node, and get it.
+        $node = $this->get_top_navigation_node($parentnodes[0]);
+
+        // Expand parent, sub-parent nodes in navigation if js enabled.
+        if ($node->hasClass('collapsed') || ($node->hasAttribute('data-loaded') && $node->getAttribute('data-loaded') == 0)) {
+            $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]/span";
+            $nodetoexpand = $node->find('xpath', $xpath);
+
+            if ($this->running_javascript()) {
+                $this->ensure_node_is_visible($nodetoexpand);
+                $nodetoexpand->click();
+
+                // Site administration node needs to be expanded.
+                if ($parentnodes[0] === $siteadminstr) {
+                    $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+                }
+            }
+        }
+
+        // If sub-parent nodes then get to the last one.
+        if ($countparentnode > 1) {
+            for ($i = 1; $i < $countparentnode; $i++) {
+                $node = $this->get_navigation_node($parentnodes[$i], $node);
+
+                // Keep expanding all sub-parents if js enabled.
+                if ($this->running_javascript()) {
+                    $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
+                    if ($node->hasClass('collapsed')) {
+                        $nodetoexpand = $node->find('xpath', $xpath);
+                        if ($this->running_javascript()) {
+                            $this->ensure_node_is_visible($nodetoexpand);
+                            $nodetoexpand->click();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Finally, click on requested node under navigation.
+        $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
+        $xpath = "/ul/li/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]" .
+                "/a[normalize-space(.)=" . $nodetextliteral . "]";
+        $node = $node->find('xpath', $xpath);
+
+        // Throw exception if no node found.
+        if (!$node) {
+            throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' . $parentnodes . '"', $this->getSession());
+        }
+
+        if ($this->running_javascript()) {
+            $this->ensure_node_is_visible($node);
+        }
+
+        $node->click();
+    }
+
+    /**
      * Helper function to get top navigation node in tree.
      *
-     * @param string $nodetext name of top navigation node in tree.
-     * @param NodeElement $blocknode Block node in which to find node.
-     * @return NodeElement
      * @throws ExpectationException if note not found.
+     * @param string $nodetext name of top navigation node in tree.
+     * @return NodeElement
      */
     protected function get_top_navigation_node($nodetext) {
+
         // Avoid problems with quotes.
         $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
         $exception = new ExpectationException('Top navigation node "' . $nodetext . ' not found in "', $this->getSession());
@@ -152,12 +239,13 @@ class behat_navigation extends behat_base {
     /**
      * Helper function to get sub-navigation node.
      *
+     * @throws ExpectationException if note not found.
      * @param string $nodetext node to find.
      * @param NodeElement $parentnode parent navigation node.
      * @return NodeElement.
-     * @throws ExpectationException if note not found.
      */
     protected function get_navigation_node($nodetext, $parentnode = null) {
+
         // Avoid problems with quotes.
         $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
 
@@ -173,75 +261,8 @@ class behat_navigation extends behat_base {
         }
 
         if (!$node) {
-            throw new ExpectationException('Sub-navigation node "' . $nodetext . ' not found under "' . $parentnode->getText() .
-                    '" block', $this->getSession());
+            throw new ExpectationException('Sub-navigation node "' . $nodetext . '" not found under "' . $parentnode->getText() . '"', $this->getSession());
         }
         return $node;
-    }
-
-    /**
-     * Click link in navigation tree that matches the text in parentnode/s (comma seperated if more then one)
-     * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" node in "(?P<parentnodes_string>(?:[^"]|\\")*)"$/
-     *
-     * @throws ExpectationException
-     * @param string $nodetext navigation node to click.
-     * @param string $parentnodes comma seperated list of parent nodes.
-     * @param strin $blockname name of the block.
-     */
-    public function i_navigate_to_node_in($nodetext, $parentnodes) {
-        // Create array of all parentnodes.
-        $parentnodes = explode(',', $parentnodes);
-        $countparentnode = count($parentnodes);
-
-        // Expand first node, and get it.
-        $node = $this->get_top_navigation_node($parentnodes[0]);
-
-        // Expand parent, sub-parent nodes in navigation if js enabled.
-        if ($node->hasClass('collapsed') || ($node->hasAttribute('data-loaded') && $node->getAttribute('data-loaded') == 0)) {
-            $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]/span";
-            $nodetoexpand = $node->find('xpath', $xpath);
-
-            if ($this->running_javascript()) {
-                $this->ensure_node_is_visible($nodetoexpand);
-                $nodetoexpand->click();
-            }
-        }
-
-        // If sub-parent nodes then get to the last one.
-        if ($countparentnode > 1) {
-            for ($i = 1; $i < $countparentnode; $i++) {
-                $node = $this->get_navigation_node($parentnodes[$i], $node);
-
-                // Keep expanding all sub-parents if js enabled.
-                if ($this->running_javascript()) {
-                    $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
-                    if ($node->hasClass('collapsed')) {
-                        $nodetoexpand = $node->find('xpath', $xpath);
-                        if ($this->running_javascript()) {
-                            $this->ensure_node_is_visible($nodetoexpand);
-                            $nodetoexpand->click();
-                        }
-                    }
-                }
-            }
-        }
-
-        // Finally, click on requested node under navigation.
-        $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
-        $xpath = "/ul/li/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]" .
-                "/a[normalize-space(.)=" . $nodetextliteral . "]";
-        $node = $node->find('xpath', $xpath);
-
-        // Throw exception if no node found.
-        if (!$node) {
-            throw new ExpectationException('Navigation node "' . $nodetext . ' not found under "' . $parentnodes .
-                    '" block', $this->getSession());
-        }
-
-        if ($this->running_javascript()) {
-            $this->ensure_node_is_visible($node);
-        }
-
-        $node->click();
     }
 }

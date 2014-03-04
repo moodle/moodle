@@ -50,13 +50,10 @@ class behat_permissions extends behat_base {
      */
     public function i_set_the_following_system_permissions_of_role($rolename, $table) {
 
+        $parentnodes = get_string('administrationsite') . ',' . get_string('users', 'admin') . ',' . get_string('permissions', 'role');
         return array(
             new Given('I am on homepage'),
-            new Given('I collapse "' . get_string('frontpagesettings', 'admin') . '" node'),
-            new Given('I expand "' . get_string('administrationsite') . '" node'),
-            new Given('I expand "' . get_string('users', 'admin') . '" node'),
-            new Given('I expand "' . get_string('permissions', 'role') . '" node'),
-            new Given('I follow "' . get_string('defineroles', 'role') . '"'),
+            new Given('I navigate to "' . get_string('defineroles', 'role') . '" node in "' . $parentnodes . '"'),
             new Given('I follow "Edit ' . $this->escape($rolename) . ' role"'),
             new Given('I fill the capabilities form with the following permissions:', $table),
             new Given('I press "' . get_string('savechanges') . '"')
