@@ -37,6 +37,9 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_mod_form extends moodleform_mod {
+    /** @var array options to be used with date_time_selector fields in the quiz. */
+    public static $datefieldoptions = array('optional' => true, 'step' => 1);
+
     protected $_feedbacks;
     protected static $reviewfields = array(); // Initialised in the constructor.
 
@@ -79,11 +82,11 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Open and close dates.
         $mform->addElement('date_time_selector', 'timeopen', get_string('quizopen', 'quiz'),
-                array('optional' => true, 'step' => 1));
+                self::$datefieldoptions);
         $mform->addHelpButton('timeopen', 'quizopenclose', 'quiz');
 
         $mform->addElement('date_time_selector', 'timeclose', get_string('quizclose', 'quiz'),
-                array('optional' => true, 'step' => 1));
+                self::$datefieldoptions);
 
         // Time limit.
         $mform->addElement('duration', 'timelimit', get_string('timelimit', 'quiz'),
