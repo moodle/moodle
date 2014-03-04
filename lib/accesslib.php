@@ -5243,7 +5243,7 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param stdClass $record
      */
     protected function __construct(stdClass $record) {
-        $this->_id           = $record->id;
+        $this->_id           = (int)$record->id;
         $this->_contextlevel = (int)$record->contextlevel;
         $this->_instanceid   = $record->instanceid;
         $this->_path         = $record->path;
