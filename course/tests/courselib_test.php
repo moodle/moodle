@@ -1569,9 +1569,14 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertSame($course->idnumber, $eventdata['other']['idnumber']);
         $this->assertSame($course->fullname, $eventdata['other']['fullname']);
         $this->assertSame($course->shortname, $eventdata['other']['shortname']);
-        // The legacy data also passed the context in the course object.
-        $course->context = $coursecontext;
-        $this->assertEventLegacyData($course, $event);
+
+        // The legacy data also passed the context in the course object and substitutes timemodified with the current date.
+        $expectedlegacy = clone($course);
+        $expectedlegacy->context = $coursecontext;
+        $expectedlegacy->timemodified = $event->timecreated;
+        $this->assertEventLegacyData($expectedlegacy, $event);
+
+        // Validate legacy log data.
         $expectedlog = array(SITEID, 'course', 'delete', 'view.php?id=' . $course->id, $course->fullname . '(ID ' . $course->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
         $this->assertEventContextNotUsed($event);
