@@ -39,6 +39,7 @@ class helper {
      */
     public static function get_drivers() {
         return array(
+            ''               => get_string('choosedots'),
             'native/mysqli'  => \moodle_database::get_driver_instance('mysqli', 'native')->get_name(),
             'native/mariadb' => \moodle_database::get_driver_instance('mariadb', 'native')->get_name(),
             'native/pgsql'   => \moodle_database::get_driver_instance('pgsql', 'native')->get_name(),
