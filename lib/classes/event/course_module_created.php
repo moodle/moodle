@@ -69,7 +69,7 @@ class course_module_created extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/' . $this->other['modulename'] . '/view.php', array('id' => $this->other['instanceid']));
+        return new \moodle_url('/mod/' . $this->other['modulename'] . '/view.php', array('id' => $this->objectid));
     }
 
     /**
@@ -103,7 +103,7 @@ class course_module_created extends base {
      */
     protected function get_legacy_logdata() {
         return array ($this->courseid, "course", "add mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
-                $this->other['instanceid'], $this->other['modulename'] . " " . $this->other['instanceid']);
+                $this->objectid, $this->other['modulename'] . " " . $this->other['instanceid']);
     }
 
     /**
