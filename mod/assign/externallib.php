@@ -636,8 +636,14 @@ class mod_assign_external extends external_api {
                                 false
                             );
                             foreach ($files as $file) {
-                                $filepath = array('filepath' => $file->get_filepath().$file->get_filename());
-                                $fileareainfo['files'][] = $filepath;
+                                $filepath = $file->get_filepath().$file->get_filename();
+                                $fileurl = file_encode_url($CFG->wwwroot . '/webservice/pluginfile.php', '/' . $assign->get_context()->id .
+                                    '/' . $component. '/'. $filearea . '/' . $submissionrecord->id . $filepath);
+                                $fileinfo = array(
+                                    'filepath' => $filepath,
+                                    'fileurl' => $fileurl
+                                    );
+                                $fileareainfo['files'][] = $fileinfo;
                             }
                             $plugin['fileareas'][] = $fileareainfo;
                         }
@@ -712,7 +718,9 @@ class mod_assign_external extends external_api {
                                                     'files' => new external_multiple_structure(
                                                         new external_single_structure(
                                                             array (
-                                                                'filepath' => new external_value (PARAM_TEXT, 'file path')
+                                                                'filepath' => new external_value (PARAM_TEXT, 'file path'),
+                                                                'fileurl' => new external_value (PARAM_URL, 'file download url',
+                                                                    VALUE_OPTIONAL)
                                                             )
                                                         ), 'files', VALUE_OPTIONAL
                                                     )
