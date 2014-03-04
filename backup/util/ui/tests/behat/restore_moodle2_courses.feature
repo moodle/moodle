@@ -42,9 +42,9 @@ Feature: Restore Moodle 2 course backups
     And I should see "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
-    And the "id_format" field should match "Topics format" value
-    And the "Number of sections" field should match "15" value
-    And the "Course layout" field should match "Show one section per page" value
+    And the field "id_format" matches value "Topics format"
+    And the field "Number of sections" matches value "15"
+    And the field "Course layout" matches value "Show one section per page"
     And I press "Cancel"
 
   @javascript
@@ -87,8 +87,8 @@ Feature: Restore Moodle 2 course backups
     And I should see "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
-    And the "id_format" field should match "Topics format" value
-    And I fill the moodle form with:
+    And the field "id_format" matches value "Topics format"
+    And I set the following fields to these values:
       | id_startdate_day | 1 |
       | id_startdate_month | January |
       | id_startdate_year | 2020 |
@@ -98,14 +98,14 @@ Feature: Restore Moodle 2 course backups
     And I should see "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
-    And the "id_format" field should match "Weekly format" value
-    And I fill the moodle form with:
+    And the field "id_format" matches value "Weekly format"
+    And I set the following fields to these values:
       | id_format | Social format |
     And I press "Save changes"
     And I should see "An open forum for chatting about anything you want to"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
-    And the "id_format" field should match "Social format" value
+    And the field "id_format" matches value "Social format"
     And I press "Cancel"
 
   @javascript
@@ -122,9 +122,9 @@ Feature: Restore Moodle 2 course backups
       | Overwrite course configuration | Yes |
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
-    Then the "id_format" field should match "Topics format" value
-    And the "Number of sections" field should match "15" value
-    And the "Course layout" field should match "Show one section per page" value
+    Then the field "id_format" matches value "Topics format"
+    And the field "Number of sections" matches value "15"
+    And the field "Course layout" matches value "Show one section per page"
     And I press "Cancel"
     And section "3" should be hidden
     And section "7" should be hidden

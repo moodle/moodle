@@ -29,7 +29,7 @@ Feature: A history of each wiki page is available
       | Wiki mode | Collaborative wiki |
     And I follow "Test wiki name"
     And I press "Create page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | First edition |
     And I press "Save"
     And I log out
@@ -37,7 +37,7 @@ Feature: A history of each wiki page is available
     And I follow "Course 1"
     And I follow "Test wiki name"
     And I follow "Edit"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Second edition |
     And I press "Save"
     And I log out
@@ -45,7 +45,7 @@ Feature: A history of each wiki page is available
     And I follow "Course 1"
     And I follow "Test wiki name"
     And I follow "Edit"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Third edition |
     And I press "Save"
     And I follow "History"

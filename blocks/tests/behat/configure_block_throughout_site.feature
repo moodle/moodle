@@ -20,7 +20,7 @@ Feature: Add and configure blocks throughout the site
     And I add the "Comments" block
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
     When I follow "Course 1"
@@ -29,7 +29,7 @@ Feature: Add and configure blocks throughout the site
     And I am on homepage
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Default weight | -10 (first) |
     And I press "Save changes"
     And I follow "Course 1"

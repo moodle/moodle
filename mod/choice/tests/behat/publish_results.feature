@@ -77,7 +77,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I follow "Choice 1"
     And I follow "Edit settings"
     And I expand all fieldsets
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Restrict answering to this time period | 1 |
       | timeclose[year] | 2010 |
     And I press "Save and return to course"

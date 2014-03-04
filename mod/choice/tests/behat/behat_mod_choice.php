@@ -51,7 +51,7 @@ class behat_mod_choice extends behat_base {
         // Escaping again the strings as backslashes have been removed by the automatic transformation.
         return array(
             new Given('I follow "' . $this->escape($choiceactivity) . '"'),
-            new Given('I select "' . $this->escape($option) . '" radio button'),
+            new Given('I set the field "' . $this->escape($option) . '" to "1"'),
             new Given('I press "' . get_string('savemychoice', 'choice') . '"')
         );
     }

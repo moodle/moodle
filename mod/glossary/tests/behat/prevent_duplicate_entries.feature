@@ -27,7 +27,7 @@ Feature: A teacher can choose whether to allow duplicate entries in a glossary
       | Concept | Unique concept |
       | Definition | I'm the definition of an unique concept |
     When I press "Add a new entry"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Concept | Unique concept |
       | Definition | There is no definition restriction |
     And I press "Save changes"

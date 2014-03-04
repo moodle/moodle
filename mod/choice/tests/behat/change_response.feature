@@ -38,7 +38,7 @@ Feature: Teacher can choose whether to allow students to change their choice res
     And I follow "Course 1"
     And I follow "Choice name"
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Allow choice to be updated | Yes |
     And I press "Save and display"
     And I log out
@@ -48,7 +48,7 @@ Feature: Teacher can choose whether to allow students to change their choice res
     And I should see "Your selection: Option 1"
     And "Save my choice" "button" should exists
     And "Remove my choice" "link" should exists
-    And I select "Option 2" radio button
+    And I set the field "Option 2" to "1"
     And I press "Save my choice"
     And I should see "Your choice has been saved"
     And I should see "Your selection: Option 2"

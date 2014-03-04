@@ -89,11 +89,11 @@ Feature: Set up contextual data for tests
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Permissions"
-    And I select "Student (1)" from "Advanced role override"
-    Then the "mod/forum:editanypost" field should match "1" value
+    And I set the field "Advanced role override" to "Student (1)"
+    Then "mod/forum:editanypost" capability has "Allow" permission
     And I press "Cancel"
-    And I select "Teacher (1)" from "Advanced role override"
-    And the "mod/forum:replynews" field should match "-1" value
+    And I set the field "Advanced role override" to "Teacher (1)"
+    And "mod/forum:replynews" capability has "Prevent" permission
     And I press "Cancel"
 
   Scenario: Add course enrolments
@@ -249,7 +249,7 @@ Feature: Set up contextual data for tests
     And I follow "Groups"
     Then the "groups" select box should contain "Group 1 (1)"
     And the "groups" select box should contain "Group 2 (1)"
-    And I select "Group 1 (1)" from "groups"
+    And I set the field "groups" to "Group 1 (1)"
     And the "members" select box should contain "Student 1"
-    And I select "Group 2 (1)" from "groups"
+    And I set the field "groups" to "Group 2 (1)"
     And the "members" select box should contain "Student 2"

@@ -22,7 +22,7 @@ Feature: Toggle activities groups mode from the course page
       | Forum name | Test forum name |
       | Description | Test forum description |
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group mode | No groups |
       | Force group mode | No |
     When I press "Save changes"

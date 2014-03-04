@@ -11,7 +11,7 @@ Feature: Page contents assertions
     And I expand "Users" node
     And I follow "Groups"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | I'm the name |
       | Group description | I'm the description |
     And I press "Save changes"

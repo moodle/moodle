@@ -50,7 +50,7 @@ class behat_cohort extends behat_base {
 
         $steps = array(
             new Given('I click on "' . get_string('assign', 'cohort') . '" "link" in the "' . $this->escape($cohortidnumber) . '" "table_row"'),
-            new Given('I select "' . $this->escape($user) . '" from "' . get_string('potusers', 'cohort') . '"'),
+            new Given('I set the field "' . get_string('potusers', 'cohort') . '" to "' . $this->escape($user) . '"'),
             new Given('I press "' . get_string('add') . '"'),
             new Given('I press "' . get_string('backtocohorts', 'cohort') . '"')
         );

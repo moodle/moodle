@@ -22,7 +22,7 @@ Feature: Rename roles within a course
     And I log in as "teacher1"
     And I follow "Course 1"
     When I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
     And I press "Save changes"
@@ -34,7 +34,7 @@ Feature: Rename roles within a course
     And the "roleid" select box should contain "Learner"
     And the "roleid" select box should not contain "Student"
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
     And I press "Save changes"

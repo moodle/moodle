@@ -18,7 +18,7 @@ Feature: Test we can both create and delete a course.
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "No courses in this category" in the "#course-listing" "css_element"
     And I click on "Create new course" "link" in the ".course-listing-actions" "css_element"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course full name | Test course: create a course |
       | Course short name | TCCAC |
       | Course ID number | TC3401 |

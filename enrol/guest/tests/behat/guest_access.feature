@@ -25,7 +25,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
 
   @javascript
   Scenario: Allow guest access without password
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Allow guest access | Yes |
     And I press "Save changes"
     And I log out
@@ -36,7 +36,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
 
   @javascript
   Scenario: Allow guest access with password
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Allow guest access | Yes |
       | Password | moodle_rules |
     And I press "Save changes"
@@ -44,7 +44,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I log in as "student1"
     When I follow "Course 1"
     Then I should see "Guest access"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Password | moodle_rules |
     And I press "Submit"
     And I should see "Test forum name"

@@ -245,8 +245,8 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I select "All categories" from "menuselectsortby"
-    And I select <sortby> from "menuresortcategoriesby"
+    And I set the field "menuselectsortby" to "All categories"
+    And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
     And I should see the "Course categories" management page

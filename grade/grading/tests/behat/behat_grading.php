@@ -144,7 +144,7 @@ class behat_grading extends behat_base {
         return array(
             new Given('I go to "' . $this->escape($activityname) . '" advanced grading page'),
             new Given('I follow "' . $this->escape(get_string('manageactionclone', 'grading')) . '"'),
-            new Given('I check "' . get_string('searchownforms', 'grading') . '"'),
+            new Given('I set the field "' . get_string('searchownforms', 'grading') . '" to "1"'),
             new Given('I click on "' . get_string('search') . '" "button" in the "region-main" "region"'),
             new Given('I click on "' . $this->escape($usetemplatexpath) . '" "xpath_element" ' .
                 'in the "' . $this->escape($templatexpath) . '" "xpath_element"'),
@@ -174,7 +174,7 @@ class behat_grading extends behat_base {
      */
     public function i_complete_the_advanced_grading_form_with_these_values(TableNode $data) {
         return array(
-            new Given('I fill the moodle form with:', $data),
+            new Given('I set the following fields to these values:', $data),
             new Given('I save the advanced grading form')
         );
     }

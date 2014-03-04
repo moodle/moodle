@@ -20,7 +20,7 @@ Feature: Activities can be moved between sections
     And I follow "Delete Recent activity block"
     And I press "Yes"
     And I follow "Configure Navigation block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Visible | Yes |
     And I press "Save changes"
     And I add a "Forum" to section "1" and I fill the form with:
@@ -34,7 +34,7 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in the course home with Javascript disabled using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save changes"
     When I move "Test forum name" activity to section "2"
@@ -43,7 +43,7 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save changes"
     And I add a "Forum" to section "1" and I fill the form with:

@@ -18,7 +18,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I expand "Site administration" node
     And I expand "Security" node
     And I follow "Site policies"
-    And I select "1 minutes" from "Maximum time to edit posts"
+    And I set the field "Maximum time to edit posts" to "1 minutes"
     And I press "Save changes"
     And I am on homepage
     And I follow "Course 1"
@@ -37,7 +37,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
   Scenario: Edit forum post
     When I follow "Forum post subject"
     And I follow "Edit"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Subject | Edited post subject |
       | Message | Edited post body |
     And I press "Save changes"

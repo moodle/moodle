@@ -30,11 +30,11 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission |
     And I press "Save changes"
     And I press "Edit submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission and he/she edited me |
     And I press "Save changes"
     And I log out
@@ -58,13 +58,14 @@ Feature: Prevent or allow assignment submission changes
     And I follow "View/grade all submissions"
     And I click on "//tr[contains(., 'Student 1')]/descendant::td/descendant::img[@alt='Actions']/parent::a" "xpath_element"
     And I follow "Allow submission changes"
+    And I should not see "Submission changes not allowed"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I should not see "This assignment is not accepting submissions"
     And I press "Edit submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission edited again |
     And I press "Save changes"
     And I should see "I'm the student submission edited again"

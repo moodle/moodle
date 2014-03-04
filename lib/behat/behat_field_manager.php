@@ -80,9 +80,16 @@ class behat_field_manager {
 
         global $CFG;
 
+        // If the field is not part of a moodleform, we should still try to find out
+        // which field type are we dealing with.
+        if ($type == 'field' &&
+                $guessedtype = self::guess_field_type($fieldnode, $session)) {
+            $type = $guessedtype;
+        }
+
         $classname = 'behat_form_' . $type;
 
-        // Fallsback on the default form field if nothing specific exists.
+        // Fallsback on the type guesser if nothing specific exists.
         $classpath = $CFG->libdir . '/behat/form_field/' . $classname . '.php';
         if (!file_exists($classpath)) {
             $classname = 'behat_form_field';
@@ -92,6 +99,58 @@ class behat_field_manager {
         // Returns the instance.
         require_once($classpath);
         return new $classname($session, $fieldnode);
+    }
+
+    /**
+     * Guesses a basic field type and returns it.
+     *
+     * This method is intended to detect HTML form fields when no
+     * moodleform-specific elements have been detected.
+     *
+     * @param NodeElement $fieldnode
+     * @param Session $session
+     * @return string|bool The field type or false.
+     */
+    public static function guess_field_type(NodeElement $fieldnode, Session $session) {
+
+        // Textareas are considered text based elements.
+        $tagname = strtolower($fieldnode->getTagName());
+        if ($tagname == 'textarea') {
+
+            // If there is an iframe with $id + _ifr there a TinyMCE editor loaded.
+            $xpath = '//iframe[@id="' . $fieldnode->getAttribute('id') . '_ifr"]';
+            if ($session->getPage()->find('xpath', $xpath)) {
+                return 'editor';
+            }
+            return 'textarea';
+
+        } else if ($tagname == 'input') {
+            $type = $fieldnode->getAttribute('type');
+            switch ($type) {
+                case 'text':
+                case 'password':
+                case 'email':
+                case 'file':
+                    return 'text';
+                case 'checkbox':
+                    return 'checkbox';
+                    break;
+                case 'radio':
+                    return 'radio';
+                    break;
+                default:
+                    // Here we return false because all text-based
+                    // fields should be included in the first switch case.
+                    return false;
+            }
+
+        } else if ($tagname == 'select') {
+            // Select tag.
+            return 'select';
+        }
+
+        // We can not provide a closer field type.
+        return false;
     }
 
     /**
@@ -108,7 +167,10 @@ class behat_field_manager {
     protected static function is_moodleform_field(NodeElement $fieldnode) {
 
         // We already waited when getting the NodeElement and we don't want an exception if it's not part of a moodleform.
-        $parentformfound = $fieldnode->find('xpath', "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]/fieldset");
+        $parentformfound = $fieldnode->find('xpath',
+            "/ancestor::fieldset" .
+            "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]"
+        );
 
         return ($parentformfound != false);
     }

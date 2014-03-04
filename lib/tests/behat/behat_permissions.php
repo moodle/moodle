@@ -76,7 +76,8 @@ class behat_permissions extends behat_base {
         $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(.,"' . $this->escape($rolename) . '")]');
 
         return array(
-            new Given('I select "' . $this->escape($roleoption->getText()) . '" from "' . get_string('advancedoverride', 'role') . '"'),
+            new Given('I set the field "' . get_string('advancedoverride', 'role') .
+                '" to "' . $this->escape($roleoption->getText()) . '"'),
             new Given('I fill the capabilities form with the following permissions:', $table),
             new Given('I press "' . get_string('savechanges') . '"')
         );
@@ -139,6 +140,46 @@ class behat_permissions extends behat_base {
             // Here we wait for the element to appear and exception if it does not exists.
             $radio = $this->find('xpath', '//input[@name="' . $capability . '" and @value="' . $permissionvalue . '"]');
             $radio->click();
+        }
+    }
+
+    /**
+     * Checks if the capability has the specified permission. Works in the role definition advanced page.
+     *
+     * @Then /^"(?P<capability_string>(?:[^"]|\\")*)" capability has "(?P<permission_string>Not set|Allow|Prevent|Prohibit)" permission$/
+     * @throws ExpectationException
+     * @param string $capabilityname
+     * @param string $permission
+     * @return void
+     */
+    public function capability_has_permission($capabilityname, $permission) {
+
+        // We already know the name, so we just need the value.
+        $radioxpath = "//table[@class='rolecap']/descendant::input[@type='radio']" .
+            "[@name='" . $capabilityname . "'][@checked]";
+
+        $checkedradio = $this->find('xpath', $radioxpath);
+
+        switch ($permission) {
+            case get_string('notset', 'role'):
+                $perm = CAP_INHERIT;
+                break;
+            case get_string('allow', 'role'):
+                $perm = CAP_ALLOW;
+                break;
+            case get_string('prevent', 'role'):
+                $perm = CAP_PREVENT;
+                break;
+            case get_string('prohibit', 'role'):
+                $perm = CAP_PROHIBIT;
+                break;
+            default:
+                throw new ExpectationException('"' . $permission . '" permission does not exist', $this->getSession());
+                break;
+        }
+
+        if ($checkedradio->getAttribute('value') != $perm) {
+            throw new ExpectationException('"' . $capabilityname . '" permission is not "' . $permission . '"', $this->getSession());
         }
     }
 

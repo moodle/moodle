@@ -76,7 +76,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I click on "//div[@class='commands']//a[contains(@href, 'edit')]" "xpath_element"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Event title | Mediocre event :( |
       | Description | Wait, this event isn't that great. |
     And I press "Save changes"

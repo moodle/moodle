@@ -13,17 +13,17 @@ Feature: Block users from contacting me
     And I log in as "user1"
     And I expand "My profile" node
     And I follow "Messages"
-    And I fill in "Search people and messages" with "User Two"
+    And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
     When I click on "Block contact" "link" in the "User Two" "table_row"
     Then the "Message navigation:" select box should contain "Blocked users (1)"
-    And I select "Blocked users (1)" from "Message navigation:"
+    And I set the field "Message navigation:" to "Blocked users (1)"
     And I should see "User Two"
     And I log out
     And I log in as "user2"
     And I expand "My profile" node
     And I follow "Messages"
-    And I fill in "Search people and messages" with "User One"
+    And I set the field "Search people and messages" to "User One"
     And I press "Search people and messages"
     And I follow "Send message to User One"
     And I should see "This user has blocked you from sending messages to them"

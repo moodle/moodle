@@ -24,7 +24,7 @@ Feature: Force group mode in a course
 
   @javascript
   Scenario: Forced group mode using separate groups
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Group mode | Separate groups |
       | Force group mode | Yes |
     When I press "Save changes"
@@ -33,7 +33,7 @@ Feature: Force group mode in a course
 
   @javascript
   Scenario: Forced group mode using visible groups
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Group mode | Visible groups |
       | Force group mode | Yes |
     And I press "Save changes"
@@ -42,7 +42,7 @@ Feature: Force group mode in a course
 
   @javascript
   Scenario: Forced group mode without groups
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Group mode | No groups |
       | Force group mode | Yes |
     And I press "Save changes"

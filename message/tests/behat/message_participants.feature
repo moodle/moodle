@@ -24,15 +24,15 @@ Feature: An user can message course participants
     And I follow "Participants"
     When I click on "input[type='checkbox']" "css_element" in the "Teacher 1" "table_row"
     And I click on "input[type='checkbox']" "css_element" in the "Student 1" "table_row"
-    And I select "Send a message" from "With selected users..."
-    And I fill the moodle form with:
+    And I set the field "With selected users..." to "Send a message"
+    And I set the following fields to these values:
       | messagebody | Here it is, the message content |
     And I press "Preview"
     And I press "Send message"
     And I follow "Home"
     And I expand "My profile" node
     And I follow "Messages"
-    And I select "Recent conversations" from "Message navigation:"
+    And I set the field "Message navigation:" to "Recent conversations"
     Then I should see "Here it is, the message content"
     And I should see "Student 1"
     And I click on "this conversation" "link" in the "//div[@class='singlemessage'][contains(., 'Teacher 1')]" "xpath_element"

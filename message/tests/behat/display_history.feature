@@ -24,7 +24,7 @@ Feature: Message history displays correctly
   Scenario: View sent messages
     When I expand "My profile" node
     And I click on "Messages" "link" in the "Navigation" "block"
-    And I fill in "Search people and messages" with "User Two"
+    And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
     And I click on "Message history" "link" in the "User Two" "table_row"
     # The message history link shows all messages.

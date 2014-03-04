@@ -14,7 +14,7 @@ Feature: Comment on a blog entry
     And I expand "My profile" node
     And I expand "Blogs" node
     And I follow "Add a new entry"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Entry title | Blog post from user 1 |
       | Blog entry body | User 1 blog post content |
     And I press "Save changes"
@@ -31,10 +31,10 @@ Feature: Comment on a blog entry
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
-    When I fill in "content" with "$My own >nasty< \"string\"!"
+    When I set the field "content" to "$My own >nasty< \"string\"!"
     And I follow "Save comment"
     Then I should see "$My own >nasty< \"string\"!"
-    And I fill in "content" with "Another $Nasty <string?>"
+    And I set the field "content" to "Another $Nasty <string?>"
     And I follow "Save comment"
     And I should see "Comments (2)" in the ".comment-link" "css_element"
 
@@ -49,7 +49,7 @@ Feature: Comment on a blog entry
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
-    And I fill in "content" with "$My own >nasty< \"string\"!"
+    And I set the field "content" to "$My own >nasty< \"string\"!"
     And I follow "Save comment"
     When I click on ".comment-delete a" "css_element"
     # Waiting for the animation to finish.
@@ -69,6 +69,6 @@ Feature: Comment on a blog entry
     And I follow "Site blogs"
     And I follow "Blog post from user 1"
     When I follow "Comments (0)"
-    And I fill in "content" with "$My own >nasty< \"string\"!"
+    And I set the field "content" to "$My own >nasty< \"string\"!"
     And I follow "Save comment"
     Then I should see "$My own >nasty< \"string\"!"

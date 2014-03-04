@@ -29,7 +29,7 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
 
   @javascript
   Scenario: Filter user accounts by role and cohort
-    When I fill the moodle form with:
+    When I set the following fields to these values:
       | courserole_rl | Student |
       | courserole_ct | any category |
       | courserole | C1 |
@@ -38,7 +38,7 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     And I should see "User Two"
     And I should see "User Three"
     And I should not see "User Four"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | cohort | CH1 |
     And I press "Add filter"
     And I should not see "User One"
@@ -53,14 +53,14 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
 
   @javascript
   Scenario: Filter user accounts by confirm and authentication method
-    When I fill the moodle form with:
+    When I set the following fields to these values:
       | Confirmed | No |
     And I press "Add filter"
     Then I should see "User One"
     And I should not see "User Two"
     And I should not see "User Three"
     And I should see "User Four"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Authentication | manual |
     And I press "Add filter"
     And I should see "User One"

@@ -29,7 +29,7 @@ Feature: Sections can be moved
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save changes"
     And I add a "Forum" to section "1" and I fill the form with:
@@ -42,7 +42,7 @@ Feature: Sections can be moved
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save changes"
     And I add a "Forum" to section "2" and I fill the form with:

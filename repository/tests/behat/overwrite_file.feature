@@ -33,7 +33,7 @@ Feature: Overwrite file feature
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test folder |
       | Description | Test folder description |
     And I add "empty.txt" file from "Private files" to "Files" filemanager
