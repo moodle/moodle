@@ -384,4 +384,132 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
     }
+
+    /**
+     * Test get forum posts
+     */
+    public function test_mod_forum_get_forum_discussion_posts() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Set the CFG variable to allow track forums.
+        $CFG->forum_trackreadposts = true;
+
+        // Create a user who can track forums.
+        $record = new stdClass();
+        $record->trackforums = true;
+        $user1 = self::getDataGenerator()->create_user($record);
+        // Create a bunch of other users to post.
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
+
+        // Forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+        $forum1context = context_module::instance($forum1->cmid);
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user2->id;
+        $record->forum = $forum1->id;
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add 2 replies to the discussion 1 from different users.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $record->parent = $discussion1reply1->id;
+        $record->userid = $user3->id;
+        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // Enrol the user in the  course.
+        $enrol = enrol_get_plugin('manual');
+        // Following line enrol and assign default role id to the user.
+        // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+
+        // Create what we expect to be returned when querying the discussion.
+        $expectedposts = array(
+            'posts' => array(),
+            'warnings' => array(),
+        );
+        $expectedposts['posts'][] = array(
+            'id' => $discussion1reply2->id,
+            'discussion' => $discussion1reply2->discussion,
+            'parent' => $discussion1reply2->parent,
+            'userid' => $discussion1reply2->userid,
+            'created' => $discussion1reply2->created,
+            'modified' => $discussion1reply2->modified,
+            'mailed' => $discussion1reply2->mailed,
+            'subject' => $discussion1reply2->subject,
+            'message' => file_rewrite_pluginfile_urls($discussion1reply2->message, 'pluginfile.php',
+                    $forum1context->id, 'mod_forum', 'post', $discussion1reply2->id),
+            'messageformat' => $discussion1reply2->messageformat,
+            'messagetrust' => $discussion1reply2->messagetrust,
+            'attachment' => $discussion1reply2->attachment,
+            'totalscore' => $discussion1reply2->totalscore,
+            'mailnow' => $discussion1reply2->mailnow,
+            'children' => array(),
+            'canreply' => true,
+            'postread' => false,
+            'userfullname' => fullname($user3)
+        );
+        $expectedposts['posts'][] = array(
+            'id' => $discussion1reply1->id,
+            'discussion' => $discussion1reply1->discussion,
+            'parent' => $discussion1reply1->parent,
+            'userid' => $discussion1reply1->userid,
+            'created' => $discussion1reply1->created,
+            'modified' => $discussion1reply1->modified,
+            'mailed' => $discussion1reply1->mailed,
+            'subject' => $discussion1reply1->subject,
+            'message' => file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
+                    $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id),
+            'messageformat' => $discussion1reply1->messageformat,
+            'messagetrust' => $discussion1reply1->messagetrust,
+            'attachment' => $discussion1reply1->attachment,
+            'totalscore' => $discussion1reply1->totalscore,
+            'mailnow' => $discussion1reply1->mailnow,
+            'children' => array(),
+            'canreply' => true,
+            'postread' => false,
+            'userfullname' => fullname($user2)
+        );
+
+        // Test a discussion with two additional posts (total 3 posts).
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertEquals(3, count($posts['posts']));
+
+        // Unset the initial discussion post.
+        array_pop($posts['posts']);
+        $this->assertEquals($expectedposts, $posts);
+
+        // Test discussion without additional posts. There should be only one post (the one created by the discussion).
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion2->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        $this->assertEquals(1, count($posts['posts']));
+
+    }
 }
