@@ -716,7 +716,13 @@ class theme_config {
             $baseurl = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php');
 
             if (!empty($this->lessfile)) {
-                $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
+                if (core_useragent::is_ie() && !core_useragent::check_ie_version(10)) {
+                    // As the LESS file can get quite bit, and IE < 10 has troubles with files containing more than
+                    // 4095 selectors, we need to ask styles_debug.php to chunk the file.
+                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less', 'chunk' => 0));
+                } else {
+                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
+                }
             } else {
                 $css = $this->get_css_files(true);
                 if (!$svg) {
