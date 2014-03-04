@@ -31,6 +31,36 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Add an entry to the log table.
+ *
+ * Add an entry to the log table.  These are "action" focussed rather
+ * than web server hits, and provide a way to easily reconstruct what
+ * any particular student has been doing.
+ *
+ * @deprecated since 2.7 use new events instead
+ *
+ * @param    int     $courseid  The course id
+ * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
+ * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
+ * @param    string  $url     The file and parameters used to see the results of the action
+ * @param    string  $info    Additional description information
+ * @param    int     $cm      The course_module->id if there is one
+ * @param    int|stdClass $user If log regards $user other than $USER
+ * @return void
+ */
+function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
+    // TODO: Uncomment after all add_to_log() are removed from standard distribution - ideally before 2.7 release.
+    //debugging('ideally all add_to_log() calls should be replaced() with new events', DEBUG_DEVELOPER);
+
+    // This is a nasty hack that allows us to put all the legacy stuff into legacy storage,
+    // this way we may move all the legacy settings there too.
+    $manager = get_log_manager();
+    if (method_exists($manager, 'legacy_add_to_log')) {
+        $manager->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);
+    }
+}
+
+/**
  * Adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
  *
  * @deprecated since 2.7 - use new file picker instead
@@ -4316,19 +4346,5 @@ function badges_get_issued_badge_info($hash) {
  */
 function can_use_html_editor() {
     debugging('can_use_html_editor has been deprecated please update your code to assume it returns true.', DEBUG_DEVELOPER);
-    return true;
-}
-
-/**
- * Returns whether ajax is enabled/allowed or not.
- * This function is deprecated and always returns true.
- *
- * @param array $unused - not used any more.
- * @return bool
- * @deprecated since 2.7 MDL-33099 - please do not use this function any more.
- * @todo MDL-44088 This will be removed in Moodle 2.9.
- */
-function ajaxenabled(array $browsers = null) {
-    debugging('ajaxenabled() is deprecated - please update your code to assume it returns true.', DEBUG_DEVELOPER);
     return true;
 }

@@ -29,17 +29,6 @@ require_once(__DIR__.'/fixtures/event_fixtures.php');
 
 class core_event_testcase extends advanced_testcase {
 
-    protected function setUp() {
-        global $CFG;
-        // No need to always modify log table here.
-        $CFG->loglifetime = '-1';
-    }
-
-    protected function tearDown() {
-        global $CFG;
-        $CFG->loglifetime = '0';
-    }
-
     public function test_event_properties() {
         global $USER;
 
@@ -469,7 +458,7 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_legacy() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest(true);
 
@@ -513,22 +502,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame(array(1, 5), \core_tests\event\unittest_observer::$event[2]);
 
         $logs = $DB->get_records('log', array(), 'id ASC');
-        $this->assertCount(3, $logs);
-
-        $log = array_shift($logs);
-        $this->assertEquals(1, $log->course);
-        $this->assertSame('core_unittest', $log->module);
-        $this->assertSame('view', $log->action);
-
-        $log = array_shift($logs);
-        $this->assertEquals(2, $log->course);
-        $this->assertSame('core_unittest', $log->module);
-        $this->assertSame('view', $log->action);
-
-        $log = array_shift($logs);
-        $this->assertEquals(3, $log->course);
-        $this->assertSame('core_unittest', $log->module);
-        $this->assertSame('view', $log->action);
+        $this->assertCount(0, $logs);
     }
 
     public function test_restore_event() {
@@ -566,6 +540,8 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_trigger_problems() {
+        $this->resetAfterTest(true);
+
         $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
         $event->trigger();
         try {
@@ -597,6 +573,8 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_bad_events() {
+        $this->resetAfterTest(true);
+
         try {
             $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'other'=>array('sample'=>5, 'xx'=>10)));
             $this->fail('Exception expected when context and contextid missing');
@@ -654,7 +632,8 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_problematic_events() {
-        global $CFG;
+        $this->resetAfterTest(true);
+
         $event1 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance()));
         $this->assertDebuggingNotCalled();
         $this->assertNull($event1->xxx);
@@ -702,6 +681,8 @@ class core_event_testcase extends advanced_testcase {
 
     public function test_record_snapshots() {
         global $DB;
+
+        $this->resetAfterTest(true);
 
         $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
         $course1 = $DB->get_record('course', array('id'=>1));

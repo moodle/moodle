@@ -15,44 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A scheduled task.
+ * Log storage reader interface.
  *
  * @package    core
- * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\task;
 
-/**
- * Simple task to delete old log records.
- */
-class delete_logs_task extends scheduled_task {
+namespace core\log;
 
+defined('MOODLE_INTERNAL') || die();
+
+interface sql_select_reader extends reader {
     /**
-     * Get a descriptive name for this task (shown to admins).
+     * Fetch records using given criteria.
      *
-     * @return string
+     * @param string $selectwhere
+     * @param array $params
+     * @param string $sort
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \core\event\base[]
      */
-    public function get_name() {
-        return get_string('taskdeletelogs', 'admin');
-    }
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum);
 
     /**
-     * Do the job.
-     * Throw exceptions on errors (the job will be retried).
+     * Return number of events matching given criteria.
+     *
+     * @param string $selectwhere
+     * @param array $params
+     * @return int
      */
-    public function execute() {
-        global $CFG, $DB;
-
-        $timenow = time();
-
-        // Delete old logs to save space.
-        // Value in days.
-        if (!empty($CFG->loglifetime)) {
-            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-            $DB->delete_records_select("log", "time < ?", array($loglifetime));
-        }
-
-    }
-
+    public function get_events_select_count($selectwhere, array $params);
 }
