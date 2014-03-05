@@ -108,6 +108,7 @@ $string['criteriarequiredany'] = 'Any criteria below are required';
 $string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
 $string['datepassed'] = 'Date passed';
 $string['days'] = 'Days';
+$string['daysoftotal'] = '{$a->days} of {$a->total}';
 $string['deletecompletiondata'] = 'Delete completion data';
 $string['dependencies'] = 'Dependencies';
 $string['dependenciescompleted'] = 'Completion of other courses';
