@@ -223,6 +223,7 @@ function edit_module_post_actions($moduleinfo, $course) {
         }
     }
 
+    require_once($CFG->libdir.'/grade/grade_outcome.php');
     // Add outcomes if requested.
     if ($hasoutcomes && $outcomes = grade_outcome::fetch_all_available($course->id)) {
         $grade_items = array();
