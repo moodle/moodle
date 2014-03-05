@@ -81,7 +81,10 @@ if ($mform->is_cancelled()) {
             'objectid' => $data->id
         );
         $event = \mod_book\event\chapter_updated::create($params);
-        $event->add_record_snapshot('book_chapters', $data);
+        foreach ($data as $key => $value) {
+            $chapter->$key = $value;
+        }
+        $event->add_record_snapshot('book_chapters', $chapter);
         $event->trigger();
 
     } else {
