@@ -1170,8 +1170,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'grant extension',
             'view.php?id=' . $assign->get_course_module()->id,
             $this->students[0]->id,
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1200,8 +1199,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('locksubmissionforstudent', 'assign', array('id' => $this->students[0]->id,
                 'fullname' => fullname($this->students[0]))),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1231,8 +1229,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'reveal identities',
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('revealidentities', 'assign'),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1268,8 +1265,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('reverttodraftforstudent', 'assign', array('id' => $this->students[0]->id,
                 'fullname' => fullname($this->students[0]))),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1387,8 +1383,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('setmarkerallocationforlog', 'assign', array('id' => $this->students[0]->id,
                 'fullname' => fullname($this->students[0]), 'marker' => fullname($this->teachers[0]))),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1422,8 +1417,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $this->students[0]->id,
                 'fullname' => fullname($this->students[0]), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW)),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1459,8 +1453,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'submissioncopied',
             'view.php?id=' . $assign->get_course_module()->id,
             $assign->testable_format_submission_for_log($submission2),
-            $assign->get_course_module()->id,
-            $this->students[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1489,8 +1482,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('unlocksubmissionforstudent', 'assign', array('id' => $this->students[0]->id,
                 'fullname' => fullname($this->students[0]))),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1524,8 +1516,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'grade submission',
             'view.php?id=' . $assign->get_course_module()->id,
             $assign->format_grade_for_log($grade),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
@@ -1554,8 +1545,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
             'grade submission',
             'view.php?id=' . $assign->get_course_module()->id,
             $assign->format_grade_for_log($grade),
-            $assign->get_course_module()->id,
-            $this->editingteachers[0]->id
+            $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
