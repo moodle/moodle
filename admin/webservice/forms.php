@@ -66,6 +66,10 @@ class external_service_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
+
+        $mform->addElement('text', 'shortname', get_string('shortname'), 'maxlength="255" size="20"');
+        $mform->setType('shortname', PARAM_TEXT);
+
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
         $mform->setType('enabled', PARAM_BOOL);
         $mform->addElement('advcheckbox', 'restrictedusers',
