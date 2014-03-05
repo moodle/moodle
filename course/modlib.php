@@ -354,12 +354,22 @@ function set_moduleinfo_defaults($moduleinfo) {
     if (!isset($moduleinfo->completionview)) {
         $moduleinfo->completionview = COMPLETION_VIEW_NOT_REQUIRED;
     }
+    if (!isset($moduleinfo->completionexpected)) {
+        $moduleinfo->completionexpected = 0;
+    }
 
     // Convert the 'use grade' checkbox into a grade-item number: 0 if checked, null if not.
     if (isset($moduleinfo->completionusegrade) && $moduleinfo->completionusegrade) {
         $moduleinfo->completiongradeitemnumber = 0;
     } else {
         $moduleinfo->completiongradeitemnumber = null;
+    }
+
+    if (!isset($moduleinfo->conditiongradegroup)) {
+        $moduleinfo->conditiongradegroup = array();
+    }
+    if (!isset($moduleinfo->conditionfieldgroup)) {
+        $moduleinfo->conditionfieldgroup = array();
     }
 
     return $moduleinfo;
