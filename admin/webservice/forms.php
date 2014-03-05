@@ -69,6 +69,10 @@ class external_service_form extends moodleform {
 
         $mform->addElement('text', 'shortname', get_string('shortname'), 'maxlength="255" size="20"');
         $mform->setType('shortname', PARAM_TEXT);
+        if (!empty($service->id)) {
+            $mform->hardFreeze('shortname');
+            $mform->setConstants('shortname', $service->shortname);
+        }
 
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
         $mform->setType('enabled', PARAM_BOOL);
@@ -149,7 +153,17 @@ class external_service_form extends moodleform {
     }
 
     function validation($data, $files) {
+        global $DB;
+
         $errors = parent::validation($data, $files);
+
+        // Add field validation check for duplicate shortname.
+        if ($service = $DB->get_record('external_services', array('shortname' => $data['shortname']), '*', IGNORE_MULTIPLE)) {
+            if (empty($data['id']) || $service->id != $data['id']) {
+                $errors['shortname'] = get_string('shortnametaken', 'webservice', $service->name);
+            }
+        }
+
         return $errors;
     }
 
