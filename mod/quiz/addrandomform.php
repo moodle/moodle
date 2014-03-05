@@ -17,10 +17,9 @@
 /**
  * Defines the Moodle forum used to add random questions to the quiz.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2008 Olli Savolainen
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2008 Olli Savolainen
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

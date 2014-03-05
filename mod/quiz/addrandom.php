@@ -18,10 +18,9 @@
  * Fallback page of /mod/quiz/edit.php add random question dialog,
  * for users who do not use javascript.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2008 Olli Savolainen
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2008 Olli Savolainen
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
