@@ -1,28 +1,35 @@
 /* calendar.less */
 
-// Calendar variables.
+// Calendar colour variables defined.
 
-@calendarEventCourse:     #ffd3bd;
-@calendarEventGlobal:     #d6f8cd;
-@calendarEventGroup:      #fee7ae;
-@calendarEventUser:       #dce7ec;
+@redDarker:                              #a00; // Dark red.
 
-@calendarEventHeadings:   @gray;
+@calendarEventCourseBackgroundColor:     #ffd3bd; // Pale red.
+@calendarEventGlobalBackgroundColor:     #d6f8cd; // Pale green.
+@calendarEventGroupBackgroundColor:      #fee7ae; // Pale yellow.
+@calendarEventUserBackgroundColor:       #dce7ec; // Pale blue.
 
-@redDarker:               #a00; // Used for weekendings.
+@calendarEventCourseBorderColor:         @calendarEventCourseBackgroundColor;
+@calendarEventGlobalBorderColor:         @calendarEventGlobalBackgroundColor;
+@calendarEventGroupBorderColor:          @calendarEventGroupBackgroundColor;
+@calendarEventUserBorderColor:           @calendarEventUserBackgroundColor;
+
+@calendarEventHeadings:                  @gray;
+
+@calendarWeekendTextColor:               @redDarker;
 
 // Calendar event background colours defined.
 .calendar_event_course {
-    background-color: @calendarEventCourse;
+    background-color: @calendarEventCourseBackgroundColor;
 }
 .calendar_event_global {
-    background-color: @calendarEventGlobal;
+    background-color: @calendarEventGlobalBackgroundColor;
 }
 .calendar_event_group {
-    background-color: @calendarEventGroup;
+    background-color: @calendarEventGroupBackgroundColor;
 }
 .calendar_event_user {
-    background-color: @calendarEventUser;
+    background-color: @calendarEventUserBackgroundColor;
 }
 
 // Calendar restyling.
@@ -115,16 +122,16 @@
             border-style: solid;
         }
         .calendar_event_course {
-            border-color: @calendarEventCourse;
+            border-color: @calendarEventCourseBorderColor;
         }
         .calendar_event_global {
-            border-color: @calendarEventGlobal;
+            border-color: @calendarEventGlobalBorderColor;
         }
         .calendar_event_group {
-            border-color: @calendarEventGroup;
+            border-color: @calendarEventGroupBorderColor;
         }
         .calendar_event_user {
-            border-color: @calendarEventUser;
+            border-color: @calendarEventUserBorderColor;
         }
         .calendar-event-panel {
             background-color: @grayLighter;
@@ -307,7 +314,7 @@
         }
         td {
             &.weekend {
-                color: @redDarker;
+                color: @calendarWeekendTextColor;
             }
         }
     }
