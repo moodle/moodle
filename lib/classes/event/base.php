@@ -615,7 +615,14 @@ abstract class base implements \IteratorAggregate {
             if ($data = $this->get_legacy_logdata()) {
                 $manager = get_log_manager();
                 if (method_exists($manager, 'legacy_add_to_log')) {
-                    call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                    if (is_array($data[0])) {
+                        // Some events require several entries in 'log' table.
+                        foreach ($data as $d) {
+                            call_user_func_array(array($manager, 'legacy_add_to_log'), $d);
+                        }
+                    } else {
+                        call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                    }
                 }
             }
         }
