@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class blog_entry_deleted extends \core\event\base {
 
     /** @var  \blog_entry A reference to the active blog_entry object. */
-    protected $customobject;
+    protected $blogentry;
 
     /**
      * Set basic event properties.
@@ -64,7 +64,31 @@ class blog_entry_deleted extends \core\event\base {
      * @param \blog_entry $data A reference to the active blog_entry object.
      */
     public function set_custom_data(\blog_entry $data) {
-        $this->customobject = $data;
+        // Note, this function will be removed in 2.7.
+        $this->set_blog_entry($data);
+    }
+
+    /**
+     * Sets blog_entry object to be used by observers.
+     *
+     * @since 2.6.2
+     * @param \blog_entry $data A reference to the active blog_entry object.
+     */
+    public function set_blog_entry(\blog_entry $blogentry) {
+        $this->blogentry = $blogentry;
+    }
+
+    /**
+     * Returns deleted blog entry for event observers.
+     *
+     * @since 2.6.2
+     * @return \blog_entry
+     */
+    public function get_blog_entry() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('Function get_blog_entry() can not be used on restored events.');
+        }
+        return $this->blogentry;
     }
 
     /**
@@ -91,7 +115,7 @@ class blog_entry_deleted extends \core\event\base {
      * @return \blog_entry
      */
     protected function get_legacy_eventdata() {
-        return $this->customobject;
+        return $this->blogentry;
     }
 
     /**

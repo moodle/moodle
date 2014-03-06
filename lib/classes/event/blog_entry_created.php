@@ -37,8 +37,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class blog_entry_created extends \core\event\base {
 
-    /** @var  \blog_entry A reference to the active blog_entry object. */
-    protected $customobject;
+    /** @var \blog_entry A reference to the active blog_entry object. */
+    protected $blogentry;
 
     /**
      * Set basic properties for the event.
@@ -53,10 +53,34 @@ class blog_entry_created extends \core\event\base {
     /**
      * Set custom data of the event.
      *
-     * @param \blog_entry $data A reference to the active blog_entry object.
+     * @param \blog_entry $data
      */
     public function set_custom_data(\blog_entry $data) {
-        $this->customobject = $data;
+        // This function will be removed in 2.7.
+        $this->set_blog_entry($data);
+    }
+
+    /**
+     * Set blog_entry object to be used by observers.
+     *
+     * @since 2.6.2
+     * @param \blog_entry $data A reference to the active blog_entry object.
+     */
+    public function set_blog_entry(\blog_entry $blogentry) {
+        $this->blogentry = $blogentry;
+    }
+
+    /**
+     * Returns created blog_entry object for event observers.
+     *
+     * @since 2.6.2
+     * @return \blog_entry
+     */
+    public function get_blog_entry() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('Function get_blog_entry() can not be used on restored events.');
+        }
+        return $this->blogentry;
     }
 
     /**
@@ -100,7 +124,7 @@ class blog_entry_created extends \core\event\base {
      * @return \blog_entry
      */
     protected function get_legacy_eventdata() {
-        return $this->customobject;
+        return $this->blogentry;
     }
 
     /**
@@ -110,6 +134,6 @@ class blog_entry_created extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array (SITEID, 'blog', 'add', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
-                $this->customobject->subject);
+                $this->blogentry->subject);
     }
 }

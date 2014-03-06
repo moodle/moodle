@@ -147,8 +147,6 @@ switch ($messagetype) {
         //Fire an event if we get a web service request which we don't support directly.
         //This will allow others to extend the LTI services, which I expect to be a common
         //use case, at least until the spec matures.
-        // Please note that you will have to change $eventdata['other']['body'] into an xml
-        // element in an event observer as done above.
         $eventdata = array();
         $eventdata['other'] = array();
         $eventdata['other']['body'] = $rawbody;
@@ -169,7 +167,6 @@ switch ($messagetype) {
 
         try {
             $event = \mod_lti\event\unknown_service_api_called::create($eventdata);
-            $event->set_legacy_data($eventdata);
             $event->trigger();
         } catch (Exception $e) {
             $lti_web_service_handled = false;

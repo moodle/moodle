@@ -34,16 +34,28 @@ defined('MOODLE_INTERNAL') || die();
  */
 class unknown_service_api_called extends \core\event\base {
 
-    /** Old data to be used for the legacy event. */
-    protected $legacydata;
-
     /**
      * Set method for legacy data.
      *
      * @param stdClass $data legacy event data.
      */
     public function set_legacy_data($data) {
-        $this->legacydata = $data;
+        // This function is not used and will be removed in 2.7.
+    }
+
+    /**
+     * Returns custom data for event observers.
+     *
+     * @since 2.6.2
+     * @return \stdClass
+     */
+    public function get_message_data() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('Function get_message_data() can not be used on restored events.');
+        }
+        $data = (object)$this->eventdata['other'];
+        $data->xml = new SimpleXMLElement($data->rawbody);
+        return $data;
     }
 
     /**
@@ -89,7 +101,6 @@ class unknown_service_api_called extends \core\event\base {
      * @return mixed
      */
     protected function get_legacy_eventdata() {
-        return $this->legacydata;
+        return $this->get_message_data();
     }
-
 }
