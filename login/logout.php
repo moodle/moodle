@@ -39,6 +39,12 @@ if ($login) {
     $redirect = $CFG->wwwroot.'/';
 }
 
+if (!empty($CFG->keeplogoutlang)) {
+    // Override Moodle's default behaviour to reset the UI language on logout.
+    $redirectlang = optional_param('lang', current_language(), PARAM_LANG);
+    $redirect = new moodle_url($redirect, array('lang' => $redirectlang));
+}
+
 if (!isloggedin()) {
     // no confirmation, user has already logged out
     require_logout();
