@@ -42,7 +42,10 @@ abstract class assign_plugin {
     private $type = '';
     /** @var string $error error message */
     private $error = '';
-
+    /** @var boolean|null $enabledcache Cached lookup of the is_enabled function */
+    private $enabledcache = null;
+    /** @var boolean|null $enabledcache Cached lookup of the is_visible function */
+    private $visiblecache = null;
 
     /**
      * Constructor for the abstract plugin type class
@@ -203,6 +206,7 @@ abstract class assign_plugin {
      * @return bool
      */
     public final function enable() {
+        $this->enabledcache = true;
         return $this->set_config('enabled', 1);
     }
 
@@ -212,6 +216,7 @@ abstract class assign_plugin {
      * @return bool
      */
     public final function disable() {
+        $this->enabledcache = false;
         return $this->set_config('enabled', 0);
     }
 
@@ -221,7 +226,10 @@ abstract class assign_plugin {
      * @return bool - if false - this plugin will not accept submissions / feedback
      */
     public function is_enabled() {
-        return $this->get_config('enabled');
+        if ($this->enabledcache === null) {
+            $this->enabledcache = $this->get_config('enabled');
+        }
+        return $this->enabledcache;
     }
 
 
@@ -282,8 +290,11 @@ abstract class assign_plugin {
      * @return bool
      */
     public final function is_visible() {
-        $disabled = get_config($this->get_subtype() . '_' . $this->get_type(), 'disabled');
-        return !$disabled;
+        if ($this->visiblecache === null) {
+            $disabled = get_config($this->get_subtype() . '_' . $this->get_type(), 'disabled');
+            $this->visiblecache = !$disabled;
+        }
+        return $this->visiblecache;
     }
 
 
