@@ -84,12 +84,24 @@ class course_category_deleted extends base {
     }
 
     /**
-     * Set the legacy event data.
+     * Set custom data of the event - deleted coursecat.
      *
-     * @param coursecat $class instance of the coursecat class
+     * @param \coursecat $coursecat
      */
-    public function set_legacy_eventdata($class) {
-        $this->coursecat = $class;
+    public function set_coursecat(\coursecat $coursecat) {
+        $this->coursecat = $coursecat;
+    }
+
+    /**
+     * Returns deleted coursecat for event observers.
+     *
+     * @return \coursecat
+     */
+    public function get_coursecat() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('Function get_coursecat() can not be used on restored events.');
+        }
+        return $this->coursecat;
     }
 
     /**

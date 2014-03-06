@@ -267,7 +267,7 @@ class blog_entry implements renderable {
             'objectid'      => $this->id,
             'relateduserid' => $this->userid
         ));
-        $event->set_custom_data($this);
+        $event->set_blog_entry($this);
         $event->trigger();
     }
 
@@ -309,7 +309,7 @@ class blog_entry implements renderable {
             'objectid'      => $entry->id,
             'relateduserid' => $entry->userid
         ));
-        $event->set_custom_data($entry);
+        $event->set_blog_entry($entry);
         $event->trigger();
     }
 
@@ -334,7 +334,7 @@ class blog_entry implements renderable {
             'relateduserid' => $this->userid
             ));
         $event->add_record_snapshot("post", $record);
-        $event->set_custom_data($this);
+        $event->set_blog_entry($this);
         $event->trigger();
     }
 
