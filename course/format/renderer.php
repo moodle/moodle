@@ -585,7 +585,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $section = 1;
         while ($section <= $course->numsections) {
             $thissection = $modinfo->get_section_info($section);
-            $showsection = ($thissection->uservisible or !$course->hiddensections);
+            $showsection = $thissection->uservisible or !$course->hiddensections;
             if (($showsection) && ($section != $displaysection) && ($url = course_get_url($course, $section))) {
                 $sectionmenu[$url->out(false)] = get_section_name($course, $section);
             }
