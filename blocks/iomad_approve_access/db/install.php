@@ -31,13 +31,13 @@ function xmldb_block_iomad_approve_access_install() {
         // Add this block to the dashboard.
         // (yes, I know this isn't really what this is for!!)
         $reportblock = $DB->get_record('block_instances', array('blockname' => 'iomad_reports',
-                                                                'pagetypepattern' => 'local-dashboard-index'));
+                                                                'pagetypepattern' => 'local-iomad-dashboard-index'));
         $approveblock = $reportblock;
         $approveblock->blockname = 'iomad_approve_access';
         $approveblock->id = null;
         $DB->insert_record('block_instances', $approveblock);
         $reportblock = $DB->get_record('block_instances', array('blockname' => 'iomad_reports',
-                                                                'pagetypepattern' => 'local-dashboard-index'));
+                                                                'pagetypepattern' => 'local-iomad-dashboard-index'));
         $reportblock->defaultweight = $reportblock->defaultweight + 1;
         $DB->update_record('block_instances', $reportblock);
     }

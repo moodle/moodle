@@ -39,5 +39,5 @@ $string['name'] = "Full Name";
 $string['noonetoapprove'] = 'No users to approve';
 $string['notapproved'] = "Not Approved";
 $string['pending'] = "Approve Pending";
-$string['pluginname'] = 'Approve users enroll';
+$string['pluginname'] = 'Iomad approve users enroll';
 $string['userstoapprove'] = 'You have new approval requests';
