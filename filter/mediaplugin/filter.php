@@ -66,7 +66,7 @@ class filter_mediaplugin extends moodle_text_filter {
         }
 
         // Check SWF permissions.
-        $this->trusted = (!empty($options['noclean']) or !empty($CFG->allowobjectembed));
+        $this->trusted = !empty($options['noclean']) or !empty($CFG->allowobjectembed);
 
         // Handle all links that contain any 'embeddable' marker text (it could
         // do all links, but the embeddable markers thing should make it faster
