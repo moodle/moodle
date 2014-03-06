@@ -109,16 +109,7 @@ while (count($parts)) {
             $yuiversion = $yuipatchedversion[0];
 
             $yuimodules = array(
-                // Include everything from original SimpleYUI,
-                // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules
-                // listed in https://github.com/yui/yui3/blob/v3.12.0/build/simpleyui/simpleyui.js#L21327
                 'yui',
-                'yui-base',
-                'get',
-                'features',
-                'loader-base',
-                'loader-rollup',
-                'loader-yui3',
                 'oop',
                 'event-custom-base',
                 'dom-core',
