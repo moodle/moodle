@@ -400,20 +400,18 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
             continue;
         }
 
-        if ($viewfullnames) {
-            // remember all user names we can use later
-            if (empty($users[$activity->authorid])) {
-                $u = new stdclass();
-                $u->lastname = $activity->authorlastname;
-                $u->firstname = $activity->authorfirstname;
-                $users[$activity->authorid] = $u;
-            }
-            if ($activity->reviewerid and empty($users[$activity->reviewerid])) {
-                $u = new stdclass();
-                $u->lastname = $activity->reviewerlastname;
-                $u->firstname = $activity->reviewerfirstname;
-                $users[$activity->reviewerid] = $u;
-            }
+        // remember all user names we can use later
+        if (empty($users[$activity->authorid])) {
+            $u = new stdclass();
+            $u->lastname = $activity->authorlastname;
+            $u->firstname = $activity->authorfirstname;
+            $users[$activity->authorid] = $u;
+        }
+        if ($activity->reviewerid and empty($users[$activity->reviewerid])) {
+            $u = new stdclass();
+            $u->lastname = $activity->reviewerlastname;
+            $u->firstname = $activity->reviewerfirstname;
+            $users[$activity->reviewerid] = $u;
         }
 
         $context = context_module::instance($cm->id);
@@ -425,7 +423,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
             $s->authorid = $activity->authorid;
             $s->timemodified = $activity->submissionmodified;
             $s->cmid = $activity->cmid;
-            if (has_capability('mod/workshop:viewauthornames', $context)) {
+            if ($activity->authorid == $USER->id || has_capability('mod/workshop:viewauthornames', $context)) {
                 $s->authornamevisible = true;
             } else {
                 $s->authornamevisible = false;
@@ -478,7 +476,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
             $a->reviewerid = $activity->reviewerid;
             $a->timemodified = $activity->assessmentmodified;
             $a->cmid = $activity->cmid;
-            if (has_capability('mod/workshop:viewreviewernames', $context)) {
+            if ($activity->reviewerid == $USER->id || has_capability('mod/workshop:viewreviewernames', $context)) {
                 $a->reviewernamevisible = true;
             } else {
                 $a->reviewernamevisible = false;
@@ -533,7 +531,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
         echo $OUTPUT->heading(get_string('recentsubmissions', 'workshop'), 3);
         foreach ($submissions as $id => $submission) {
             $link = new moodle_url('/mod/workshop/submission.php', array('id'=>$id, 'cmid'=>$submission->cmid));
-            if ($viewfullnames and $submission->authornamevisible) {
+            if ($submission->authornamevisible) {
                 $author = $users[$submission->authorid];
             } else {
                 $author = null;
@@ -547,7 +545,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
         echo $OUTPUT->heading(get_string('recentassessments', 'workshop'), 3);
         foreach ($assessments as $id => $assessment) {
             $link = new moodle_url('/mod/workshop/assessment.php', array('asid' => $id));
-            if ($viewfullnames and $assessment->reviewernamevisible) {
+            if ($assessment->reviewernamevisible) {
                 $reviewer = $users[$assessment->reviewerid];
             } else {
                 $reviewer = null;
@@ -636,7 +634,6 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $co
     $context         = context_module::instance($cm->id);
     $grader          = has_capability('moodle/grade:viewall', $context);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
-    $viewfullnames   = has_capability('moodle/site:viewfullnames', $context);
     $viewauthors     = has_capability('mod/workshop:viewauthornames', $context);
     $viewreviewers   = has_capability('mod/workshop:viewreviewernames', $context);
 
@@ -646,28 +643,26 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $co
 
     foreach ($rs as $activity) {
 
-        if ($viewfullnames) {
-            // remember all user names we can use later
-            if (empty($users[$activity->authorid])) {
-                $u = new stdclass();
-                $u->id = $activity->authorid;
-                $u->lastname = $activity->authorlastname;
-                $u->firstname = $activity->authorfirstname;
-                $u->picture = $activity->authorpicture;
-                $u->imagealt = $activity->authorimagealt;
-                $u->email = $activity->authoremail;
-                $users[$activity->authorid] = $u;
-            }
-            if ($activity->reviewerid and empty($users[$activity->reviewerid])) {
-                $u = new stdclass();
-                $u->id = $activity->reviewerid;
-                $u->lastname = $activity->reviewerlastname;
-                $u->firstname = $activity->reviewerfirstname;
-                $u->picture = $activity->reviewerpicture;
-                $u->imagealt = $activity->reviewerimagealt;
-                $u->email = $activity->revieweremail;
-                $users[$activity->reviewerid] = $u;
-            }
+        // remember all user names we can use later
+        if (empty($users[$activity->authorid])) {
+            $u = new stdclass();
+            $u->id = $activity->authorid;
+            $u->lastname = $activity->authorlastname;
+            $u->firstname = $activity->authorfirstname;
+            $u->picture = $activity->authorpicture;
+            $u->imagealt = $activity->authorimagealt;
+            $u->email = $activity->authoremail;
+            $users[$activity->authorid] = $u;
+        }
+        if ($activity->reviewerid and empty($users[$activity->reviewerid])) {
+            $u = new stdclass();
+            $u->id = $activity->reviewerid;
+            $u->lastname = $activity->reviewerlastname;
+            $u->firstname = $activity->reviewerfirstname;
+            $u->picture = $activity->reviewerpicture;
+            $u->imagealt = $activity->reviewerimagealt;
+            $u->email = $activity->revieweremail;
+            $users[$activity->reviewerid] = $u;
         }
 
         if ($activity->submissionmodified > $timestart and empty($submissions[$activity->submissionid])) {
@@ -676,7 +671,7 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $co
             $s->title = $activity->submissiontitle;
             $s->authorid = $activity->authorid;
             $s->timemodified = $activity->submissionmodified;
-            if (has_capability('mod/workshop:viewauthornames', $context)) {
+            if ($activity->authorid == $USER->id || has_capability('mod/workshop:viewauthornames', $context)) {
                 $s->authornamevisible = true;
             } else {
                 $s->authornamevisible = false;
@@ -729,7 +724,7 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $co
             $a->submissiontitle = $activity->submissiontitle;
             $a->reviewerid = $activity->reviewerid;
             $a->timemodified = $activity->assessmentmodified;
-            if (has_capability('mod/workshop:viewreviewernames', $context)) {
+            if ($activity->reviewerid == $USER->id || has_capability('mod/workshop:viewreviewernames', $context)) {
                 $a->reviewernamevisible = true;
             } else {
                 $a->reviewernamevisible = false;
