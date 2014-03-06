@@ -788,7 +788,25 @@ class behat_general extends behat_base {
     /**
      * Checks the provided element and selector type exists in the current page.
      *
-     * This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     * This method has been introduced in 2.7 and replaces self::should_exists(),
+     * it has been added here to make backports easier and to help 3rd parties working on new
+     * scenarios so they don't need to update their scenarios when they upgrade to 2.7.
+     *
+     * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should exist$/
+     *
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     */
+    public function should_exist($element, $selectortype) {
+        // Forwarding it.
+        $this->should_exists($element, $selectortype);
+    }
+
+    /**
+     * Checks the provided element and selector type exists in the current page. This step will be deprecated in Moodle 2.7 in favour of '"ELEMENT_STRING" "SELECTOR_STRING" should exist'.
+     *
+     * This step is for advanced users, use it if you don't find
+     * anything else suitable for what you need.
      *
      * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should exists$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -806,6 +824,25 @@ class behat_general extends behat_base {
 
     /**
      * Checks that the provided element and selector type not exists in the current page.
+     *
+     * This step is for advanced users, use it if you don't find
+     * anything else suitable for what you need.
+     *
+     * This method has been introduced in 2.7 and replaces self::should_not_exists(),
+     * it has been added here to make backports easier and to help 3rd parties working on new
+     * scenarios so they don't need to update their scenarios when they upgrade to 2.7.
+     *
+     * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should not exist$/
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     */
+    public function should_not_exist($element, $selectortype) {
+        // Forwarding it.
+        $this->should_not_exists($element, $selectortype);
+    }
+
+    /**
+     * Checks that the provided element and selector type not exists in the current page. This step will be deprecated in Moodle 2.7 in favour of '"ELEMENT_STRING" "SELECTOR_STRING" should not exist'.
      *
      * This step is for advanced users, use it if you don't find anything else suitable for what you need.
      *
