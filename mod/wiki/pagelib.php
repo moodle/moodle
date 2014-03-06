@@ -1834,11 +1834,15 @@ class page_wiki_restoreversion extends page_wiki {
     }
 
     function print_content() {
-        global $CFG, $PAGE;
+        global $PAGE;
 
-        require_capability('mod/wiki:managewiki', $this->modcontext, NULL, true, 'nomanagewikipermission', 'wiki');
+        $wiki = $PAGE->activityrecord;
+        if (wiki_user_can_edit($this->subwiki, $wiki)) {
+            $this->print_restoreversion();
+        } else {
+            echo get_string('cannoteditpage', 'wiki');
+        }
 
-        $this->print_restoreversion();
     }
 
     function set_url() {
@@ -2152,10 +2156,10 @@ class page_wiki_confirmrestore extends page_wiki_save {
     function print_content() {
         global $CFG, $PAGE;
 
-        require_capability('mod/wiki:managewiki', $this->modcontext, NULL, true, 'nomanagewikipermission', 'wiki');
-
         $version = wiki_get_version($this->version->id);
-        if (wiki_restore_page($this->page, $version->content, $version->userid)) {
+        $wiki = $PAGE->activityrecord;
+        if (wiki_user_can_edit($this->subwiki, $wiki) &&
+                wiki_restore_page($this->page, $version->content, $version->userid)) {
             redirect($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $this->page->id, get_string('restoring', 'wiki', $version->version), 3);
         } else {
             print_error('restoreerror', 'wiki', $version->version);
