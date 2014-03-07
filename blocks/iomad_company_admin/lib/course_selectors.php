@@ -382,12 +382,12 @@ class potential_company_course_selector extends company_course_selector_base {
         $sharedsql = "";
         if ($this->shared) {  // Show the shared courses.
             $sharedsql .= " AND c.id NOT IN (SELECT mcc.courseid FROM {company_course} mcc
-                                             LEFT JOIN {iomad_coursesiteids} mic
+                                             LEFT JOIN {iomad_courses} mic
                                              ON (mcc.courseid = mic.courseid)
                                              WHERE mic.shared=0 ) ";
         } else if ($this->partialshared) {
             $sharedsql .= " AND c.id NOT IN (SELECT mcc.courseid FROM {company_course} mcc
-                                             LEFT JOIN {iomad_coursesiteids} mic
+                                             LEFT JOIN {iomad_courses} mic
                                              ON (mcc.courseid = mic.courseid)
                                              WHERE mic.shared!=2 ) ";
         } else {
