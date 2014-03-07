@@ -731,7 +731,11 @@ function forum_cron() {
 
                 $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
-                $postsubject = html_to_text("$shortname: ".format_string($post->subject, true));
+                $a = new stdClass();
+                $a->courseshortname = $shortname;
+                $a->forumname = $cleanforumname;
+                $a->subject = format_string($post->subject, true);
+                $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a));
                 $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
                 $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
 
