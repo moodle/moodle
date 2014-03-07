@@ -94,6 +94,7 @@ class upload_manager {
             $course = $SITE;
         }
 
+        $this->config = new stdClass();
         $this->config->deleteothers = $deleteothers;
         $this->config->handlecollisions = $handlecollisions;
         $this->config->recoverifmultiple = $recoverifmultiple;
