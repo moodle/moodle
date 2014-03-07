@@ -130,10 +130,10 @@ function xmldb_local_iomad_install() {
 
         'block/iomad_online_users:viewlist',
         'block/iomad_reports:view',
-        'local_report_attendance:view',
-        'local_report_completion:view',
-        'local_report_users:view',
-        'local_report_scorm_overview:view',
+        'local/report_attendance:view',
+        'local/report_completion:view',
+        'local/report_users:view',
+        'local/report_scorm_overview:view',
     );
     foreach ($clientadministratorcaps as $cap) {
         assign_capability( $cap, CAP_ALLOW, $clientadministratorid, $systemcontext->id);
@@ -153,10 +153,10 @@ function xmldb_local_iomad_install() {
         'block/iomad_company_admin:assign_department_manager',
         'block/iomad_company_admin:allocate_licenses',
         'block/iomad_reports:view',
-        'local_report_attendance:view',
-        'local_report_completion:view',
-        'local_report_users:view',
-        'local_report_scorm_overview:view',
+        'local/report_attendance:view',
+        'local/report_completion:view',
+        'local/report_users:view',
+        'local/report_scorm_overview:view',
     );
 
     foreach ($companydepartmentmanagercaps as $cap) {
@@ -187,10 +187,10 @@ function xmldb_local_iomad_install() {
         'block/iomad_company_admin:company_user_profiles',
         'block/iomad_company_admin:createcourse',
         'block/iomad_reports:view',
-        'local_report_attendance:view',
-        'local_report_completion:view',
-        'local_report_users:view',
-        'local_report_scorm_overview:view',
+        'local/report_attendance:view',
+        'local/report_completion:view',
+        'local/report_users:view',
+        'local/report_scorm_overview:view',
 
     );
 
