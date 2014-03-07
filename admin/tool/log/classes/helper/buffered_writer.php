@@ -45,6 +45,13 @@ trait buffered_writer {
     protected $count = 0;
 
     /**
+     * Should the event be ignored (== not logged)?
+     * @param \core\event\base $event
+     * @return bool
+     */
+    abstract protected function is_event_ignored(\core\event\base $event);
+
+    /**
      * Write event in the store with buffering. Method insert_events() must be
      * defined.
      *
@@ -53,7 +60,26 @@ trait buffered_writer {
      * @return void
      */
     public function write(\core\event\base $event) {
-        $this->buffer[] = $event;
+        if ($this->is_event_ignored($event)) {
+            return;
+        }
+
+        // We need to capture current info at this moment,
+        // at the same time this lowers memory use because
+        // snapshots and custom objects may be garbage collected.
+        $entry = $event->get_data();
+        $entry['other'] = serialize($entry['other']);
+        if (CLI_SCRIPT) {
+            $entry['origin'] = 'cli';
+            $entry['ip'] = null;
+        } else {
+            $entry['origin'] = 'web';
+            $entry['ip'] = getremoteaddr();
+        }
+        $entry['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
+
+
+        $this->buffer[] = $entry;
         $this->count++;
 
         if (!isset($this->buffersize)) {
@@ -75,15 +101,15 @@ trait buffered_writer {
         $events = $this->buffer;
         $this->count = 0;
         $this->buffer = array();
-        $this->insert_events($events);
+        $this->insert_event_entries($events);
     }
 
     /**
      * Bulk write a given array of events to the backend. Stores must implement this.
      *
-     * @param array $events An array of events to write.
+     * @param array $evententries raw event data
      */
-    abstract protected function insert_events($events);
+    abstract protected function insert_event_entries($evententries);
 
     /**
      * Get a config value for the store.
