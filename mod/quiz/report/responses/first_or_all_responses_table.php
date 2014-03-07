@@ -55,6 +55,9 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
 
 
     protected function load_extra_data() {
+        if (count($this->rawdata) === 0) {
+            return;
+        }
         $qubaids = $this->get_qubaids_condition();
         $dm = new question_engine_data_mapper();
         $this->questionusagesbyactivity = $dm->load_questions_usages_by_activity($qubaids);
