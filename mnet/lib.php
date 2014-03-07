@@ -447,7 +447,6 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
         // Trigger access control updated event.
         $params = array(
             'objectid' => $aclrecord->id,
-            'courseid' => SITEID,
             'context' => context_system::instance()
         );
         $event = \core\event\mnet_access_control_updated::create($params);
@@ -464,7 +463,6 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
         // Trigger access control created event.
         $params = array(
             'objectid' => $aclrecord->id,
-            'courseid' => SITEID,
             'context' => context_system::instance()
         );
         $event = \core\event\mnet_access_control_created::create($params);

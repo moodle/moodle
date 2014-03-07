@@ -229,6 +229,13 @@ abstract class base implements \IteratorAggregate {
                     debugging("Data key '$key' does not exist in \\core\\event\\base");
                 }
             }
+            $expectedcourseid = 0;
+            if ($coursecontext = $event->context->get_course_context(false)) {
+                $expectedcourseid = $coursecontext->instanceid;
+            }
+            if ($expectedcourseid != $event->data['courseid']) {
+                debugging("Inconsistent courseid - context combination detected.", DEBUG_DEVELOPER);
+            }
         }
 
         // Let developers validate their custom data (such as $this->data['other'], contextlevel, etc.).
