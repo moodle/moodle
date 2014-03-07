@@ -381,11 +381,15 @@ class potential_company_course_selector extends company_course_selector_base {
         // Deal with shared courses.  Cannot be added to a company in this manner.
         $sharedsql = "";
         if ($this->shared) {  // Show the shared courses.
-            $sharedsql .= " AND c.id NOT IN (SELECT courseid FROM {iomad_coursesiteids}
-                                             WHERE shared=0 ) ";
+            $sharedsql .= " AND c.id NOT IN (SELECT mcc.courseid FROM {company_course} mcc
+                                             LEFT JOIN {iomad_coursesiteids} mic
+                                             ON (mcc.courseid = mic.courseid)
+                                             WHERE mic.shared=0 ) ";
         } else if ($this->partialshared) {
-            $sharedsql .= " AND c.id NOT IN (SELECT courseid FROM {iomad_courses}
-                                             WHERE shared!=2 ) ";
+            $sharedsql .= " AND c.id NOT IN (SELECT mcc.courseid FROM {company_course} mcc
+                                             LEFT JOIN {iomad_coursesiteids} mic
+                                             ON (mcc.courseid = mic.courseid)
+                                             WHERE mic.shared!=2 ) ";
         } else {
             $sharedsql .= " AND NOT EXISTS ( SELECT NULL FROM {company_course} WHERE courseid = c.id ) ";
         }
