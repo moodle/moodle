@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Helper trait buffered_writer. Adds buffer support for the store.
- * \tool_log\helper\store must be included before using this trait.
  *
  * @package    tool_log
  * @copyright  2014 onwards Ankit Agarwal
