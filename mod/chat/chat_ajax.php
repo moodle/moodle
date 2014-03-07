@@ -52,6 +52,11 @@ if (!isloggedin()) {
 $PAGE->set_cm($cm, $course, $chat);
 $PAGE->set_url('/mod/chat/chat_ajax.php', array('chat_sid'=>$chat_sid));
 
+require_login($course, false, $cm);
+
+$context = context_module::instance($cm->id);
+require_capability('mod/chat:chat', $context);
+
 ob_start();
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
 header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');

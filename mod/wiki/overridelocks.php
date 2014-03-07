@@ -64,12 +64,13 @@ if (!empty($section) && !$sectioncontent = wiki_get_section_page($page, $section
 
 require_login($course, true, $cm);
 
+require_sesskey();
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 $context = context_module::instance($cm->id);
 require_capability('mod/wiki:overridelock', $context);
-
-if (!confirm_sesskey()) {
-    print_error(get_string('invalidsesskey', 'wiki'));
-}
 
 $wikipage = new page_wiki_overridelocks($wiki, $subwiki, $cm);
 $wikipage->set_page($page);

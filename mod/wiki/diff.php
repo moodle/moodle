@@ -68,6 +68,10 @@ if ($compare >= $comparewith) {
 
 require_login($course, true, $cm);
 
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
+
 $wikipage = new page_wiki_diff($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);

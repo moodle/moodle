@@ -68,8 +68,9 @@ if (!empty($section) && !$sectioncontent = wiki_get_section_page($page, $section
 
 require_login($course, false, $cm);
 
-$context = context_module::instance($cm->id);
-require_capability('mod/wiki:editpage', $context);
+if (!wiki_user_can_edit($subwiki)) {
+    print_error('cannoteditpage', 'wiki');
+}
 
 $wikipage = new page_wiki_lock($wiki, $subwiki, $cm);
 $wikipage->set_page($page);

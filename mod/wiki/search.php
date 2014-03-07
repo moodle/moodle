@@ -45,10 +45,14 @@ if (!$gid = groups_get_activity_group($cm)) {
     $gid = 0;
 }
 if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $gid)) {
-    return false;
+    print_error('incorrectsubwikiid', 'wiki');
 }
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'wiki');
+}
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewfiles', 'wiki');
 }
 
 $wikipage = new page_wiki_search($wiki, $subwiki, $cm);

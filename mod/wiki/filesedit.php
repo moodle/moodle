@@ -53,6 +53,10 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 require_capability('mod/wiki:managefiles', $context);
 
 if (empty($returnurl)) {
