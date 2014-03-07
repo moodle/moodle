@@ -566,6 +566,11 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         }
     }
 
+    protected function can_preview() {
+        return empty($this->question->beingcopied) && !empty($this->question->id) &&
+                $this->question->formoptions->canedit && $this->noofitems > 0;
+    }
+
     public function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question);

@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
-$makecopy = optional_param('makecopy', 0, PARAM_INT);
+$makecopy = optional_param('makecopy', 0, PARAM_BOOL);
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
@@ -46,7 +46,7 @@ $url = new moodle_url('/question/question.php');
 if ($id !== 0) {
     $url->param('id', $id);
 }
-if ($makecopy !== 0) {
+if ($makecopy) {
     $url->param('makecopy', $makecopy);
 }
 if ($qtype !== '') {
@@ -165,6 +165,7 @@ if ($id) {
     if ($makecopy) {
         // If we are duplicating a question, add some indication to the question name.
         $question->name = get_string('questionnamecopy', 'question', $question->name);
+        $question->beingcopied = true;
     }
 
 } else  { // creating a new question
@@ -265,9 +266,8 @@ if ($mform->is_cancelled()) {
 
     // If we are saving and continuing to edit the question.
     if (!empty($fromform->updatebutton)) {
-        if ($question->id !== 0) {
-            $url->param('id', $question->id);
-        }
+        $url->param('id', $question->id);
+        $url->remove_params('makecopy');
         redirect($url);
     }
 

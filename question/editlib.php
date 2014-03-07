@@ -728,11 +728,8 @@ class question_bank_copy_action_column extends question_bank_action_column_base 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_preview_action_column extends question_bank_action_column_base {
-    protected $strpreview;
-
     public function init() {
         parent::init();
-        $this->strpreview = get_string('preview');
     }
 
     public function get_name() {
@@ -740,16 +737,10 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     }
 
     protected function display_content($question, $rowclasses) {
-        global $OUTPUT;
+        global $PAGE;
         if (question_has_capability_on($question, 'use')) {
-            // Build the icon.
-            $image = $OUTPUT->pix_icon('t/preview', $this->strpreview, '', array('class' => 'iconsmall'));
-
-            $link = $this->qbank->preview_question_url($question);
-            $action = new popup_action('click', $link, 'questionpreview',
-                    question_preview_popup_params());
-
-            echo $OUTPUT->action_link($link, $image, $action, array('title' => $this->strpreview));
+            echo $PAGE->get_renderer('core_question')->question_preview_link(
+                    $question->id, $this->qbank->get_most_specific_context(), false);
         }
     }
 
@@ -1264,9 +1255,22 @@ class question_bank_view {
         return $this->editquestionurl->out(true, array('id' => $questionid, 'makecopy' => 1));
     }
 
-    public function preview_question_url($question) {
-        return question_preview_url($question->id, null, null, null, null,
-                $this->contexts->lowest());
+    /**
+     * Get the context we are displaying the question bank for.
+     * @return context context object.
+     */
+    public function get_most_specific_context() {
+        return $this->contexts->lowest();
+    }
+
+    /**
+     * Get the URL to preview a question.
+     * @param stdClass $questiondata the data defining the question.
+     * @return moodle_url the URL.
+     */
+    public function preview_question_url($questiondata) {
+        return question_preview_url($questiondata->id, null, null, null, null,
+                $this->get_most_specific_context());
     }
 
     /**

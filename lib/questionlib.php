@@ -660,7 +660,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  *      be picked randomly.
  * @param object $context context to run the preview in (affects things like
  *      filter settings, theme, lang, etc.) Defaults to $PAGE->context.
- * @return string the URL.
+ * @return moodle_url the URL.
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
         $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
