@@ -193,7 +193,7 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>1.10.2</version>
+    <version>1.11.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -207,7 +207,7 @@
     <location>jquery</location>
     <name>jQuery UI</name>
     <license>MIT</license>
-    <version>1.10.3</version>
+    <version>1.10.4</version>
     <licenseversion></licenseversion>
   </library>
   <library>
