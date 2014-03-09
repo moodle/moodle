@@ -10,15 +10,29 @@
 class HTMLPurifier_HTMLModule_Iframe extends HTMLPurifier_HTMLModule
 {
 
+    /**
+     * @type string
+     */
     public $name = 'Iframe';
+
+    /**
+     * @type bool
+     */
     public $safe = false;
 
-    public function setup($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     */
+    public function setup($config)
+    {
         if ($config->get('HTML.SafeIframe')) {
             $this->safe = true;
         }
         $this->addElement(
-            'iframe', 'Inline', 'Flow', 'Common',
+            'iframe',
+            'Inline',
+            'Flow',
+            'Common',
             array(
                 'src' => 'URI#embedded',
                 'width' => 'Length',
@@ -32,7 +46,6 @@ class HTMLPurifier_HTMLModule_Iframe extends HTMLPurifier_HTMLModule
             )
         );
     }
-
 }
 
 // vim: et sw=4 sts=4

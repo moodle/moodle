@@ -7,17 +7,21 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
 {
     /**
      * Lookup table of allowed elements.
-     * @public
+     * @type array
      */
     public $elements = array();
+
     /**
      * Whether or not the last passed node was all whitespace.
+     * @type bool
      */
     protected $whitespace = false;
+
     /**
-     * @param $elements List of allowed element names (lowercase).
+     * @param array|string $elements List of allowed element names (lowercase).
      */
-    public function __construct($elements) {
+    public function __construct($elements)
+    {
         if (is_string($elements)) {
             $elements = str_replace(' ', '', $elements);
             $elements = explode('|', $elements);
@@ -27,28 +31,42 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
             $elements = array_flip($elements);
             foreach ($elements as $i => $x) {
                 $elements[$i] = true;
-                if (empty($i)) unset($elements[$i]); // remove blank
+                if (empty($i)) {
+                    unset($elements[$i]);
+                } // remove blank
             }
         }
         $this->elements = $elements;
     }
+
+    /**
+     * @type bool
+     */
     public $allow_empty = false;
+
+    /**
+     * @type string
+     */
     public $type = 'required';
-    public function validateChildren($tokens_of_children, $config, $context) {
+
+    /**
+     * @param array $children
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return array
+     */
+    public function validateChildren($children, $config, $context)
+    {
         // Flag for subclasses
         $this->whitespace = false;
 
         // if there are no tokens, delete parent node
-        if (empty($tokens_of_children)) return false;
+        if (empty($children)) {
+            return false;
+        }
 
         // the new set of children
         $result = array();
-
-        // current depth into the nest
-        $nesting = 0;
-
-        // whether or not we're deleting a node
-        $is_deleting = false;
 
         // whether or not parsed character data is allowed
         // this controls whether or not we silently drop a tag
@@ -58,58 +76,41 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
         // a little sanity check to make sure it's not ALL whitespace
         $all_whitespace = true;
 
-        // some configuration
-        $escape_invalid_children = $config->get('Core.EscapeInvalidChildren');
-
-        // generator
-        $gen = new HTMLPurifier_Generator($config, $context);
-
-        foreach ($tokens_of_children as $token) {
-            if (!empty($token->is_whitespace)) {
-                $result[] = $token;
+        $stack = array_reverse($children);
+        while (!empty($stack)) {
+            $node = array_pop($stack);
+            if (!empty($node->is_whitespace)) {
+                $result[] = $node;
                 continue;
             }
             $all_whitespace = false; // phew, we're not talking about whitespace
 
-            $is_child = ($nesting == 0);
-
-            if ($token instanceof HTMLPurifier_Token_Start) {
-                $nesting++;
-            } elseif ($token instanceof HTMLPurifier_Token_End) {
-                $nesting--;
-            }
-
-            if ($is_child) {
-                $is_deleting = false;
-                if (!isset($this->elements[$token->name])) {
-                    $is_deleting = true;
-                    if ($pcdata_allowed && $token instanceof HTMLPurifier_Token_Text) {
-                        $result[] = $token;
-                    } elseif ($pcdata_allowed && $escape_invalid_children) {
-                        $result[] = new HTMLPurifier_Token_Text(
-                            $gen->generateFromToken($token)
-                        );
+            if (!isset($this->elements[$node->name])) {
+                // special case text
+                // XXX One of these ought to be redundant or something
+                if ($pcdata_allowed && $node instanceof HTMLPurifier_Node_Text) {
+                    $result[] = $node;
+                    continue;
+                }
+                // spill the child contents in
+                // ToDo: Make configurable
+                if ($node instanceof HTMLPurifier_Node_Element) {
+                    for ($i = count($node->children) - 1; $i >= 0; $i--) {
+                        $stack[] = $node->children[$i];
                     }
                     continue;
                 }
+                continue;
             }
-            if (!$is_deleting || ($pcdata_allowed && $token instanceof HTMLPurifier_Token_Text)) {
-                $result[] = $token;
-            } elseif ($pcdata_allowed && $escape_invalid_children) {
-                $result[] =
-                    new HTMLPurifier_Token_Text(
-                        $gen->generateFromToken($token)
-                    );
-            } else {
-                // drop silently
-            }
+            $result[] = $node;
         }
-        if (empty($result)) return false;
+        if (empty($result)) {
+            return false;
+        }
         if ($all_whitespace) {
             $this->whitespace = true;
             return false;
         }
-        if ($tokens_of_children == $result) return true;
         return $result;
     }
 }

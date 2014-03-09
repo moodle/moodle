@@ -8,28 +8,42 @@
  */
 class HTMLPurifier_ChildDef_Custom extends HTMLPurifier_ChildDef
 {
-    public $type = 'custom';
-    public $allow_empty = false;
     /**
-     * Allowed child pattern as defined by the DTD
+     * @type string
+     */
+    public $type = 'custom';
+
+    /**
+     * @type bool
+     */
+    public $allow_empty = false;
+
+    /**
+     * Allowed child pattern as defined by the DTD.
+     * @type string
      */
     public $dtd_regex;
+
     /**
-     * PCRE regex derived from $dtd_regex
-     * @private
+     * PCRE regex derived from $dtd_regex.
+     * @type string
      */
     private $_pcre_regex;
+
     /**
      * @param $dtd_regex Allowed child pattern from the DTD
      */
-    public function __construct($dtd_regex) {
+    public function __construct($dtd_regex)
+    {
         $this->dtd_regex = $dtd_regex;
         $this->_compileRegex();
     }
+
     /**
      * Compiles the PCRE regex from a DTD regex ($dtd_regex to $_pcre_regex)
      */
-    protected function _compileRegex() {
+    protected function _compileRegex()
+    {
         $raw = str_replace(' ', '', $this->dtd_regex);
         if ($raw{0} != '(') {
             $raw = "($raw)";
@@ -57,33 +71,31 @@ class HTMLPurifier_ChildDef_Custom extends HTMLPurifier_ChildDef
 
         $this->_pcre_regex = $reg;
     }
-    public function validateChildren($tokens_of_children, $config, $context) {
+
+    /**
+     * @param HTMLPurifier_Node[] $children
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return bool
+     */
+    public function validateChildren($children, $config, $context)
+    {
         $list_of_children = '';
         $nesting = 0; // depth into the nest
-        foreach ($tokens_of_children as $token) {
-            if (!empty($token->is_whitespace)) continue;
-
-            $is_child = ($nesting == 0); // direct
-
-            if ($token instanceof HTMLPurifier_Token_Start) {
-                $nesting++;
-            } elseif ($token instanceof HTMLPurifier_Token_End) {
-                $nesting--;
+        foreach ($children as $node) {
+            if (!empty($node->is_whitespace)) {
+                continue;
             }
-
-            if ($is_child) {
-                $list_of_children .= $token->name . ',';
-            }
+            $list_of_children .= $node->name . ',';
         }
         // add leading comma to deal with stray comma declarations
         $list_of_children = ',' . rtrim($list_of_children, ',');
         $okay =
             preg_match(
-                '/^,?'.$this->_pcre_regex.'$/',
+                '/^,?' . $this->_pcre_regex . '$/',
                 $list_of_children
             );
-
-        return (bool) $okay;
+        return (bool)$okay;
     }
 }
 
