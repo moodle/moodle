@@ -5,10 +5,16 @@
  */
 class HTMLPurifier_HTMLModule_Target extends HTMLPurifier_HTMLModule
 {
-
+    /**
+     * @type string
+     */
     public $name = 'Target';
 
-    public function setup($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     */
+    public function setup($config)
+    {
         $elements = array('a');
         foreach ($elements as $name) {
             $e = $this->addBlankElement($name);
@@ -17,7 +23,6 @@ class HTMLPurifier_HTMLModule_Target extends HTMLPurifier_HTMLModule
             );
         }
     }
-
 }
 
 // vim: et sw=4 sts=4

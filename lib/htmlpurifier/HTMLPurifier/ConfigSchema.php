@@ -3,21 +3,24 @@
 /**
  * Configuration definition, defines directives and their defaults.
  */
-class HTMLPurifier_ConfigSchema {
-
+class HTMLPurifier_ConfigSchema
+{
     /**
      * Defaults of the directives and namespaces.
+     * @type array
      * @note This shares the exact same structure as HTMLPurifier_Config::$conf
      */
     public $defaults = array();
 
     /**
      * The default property list. Do not edit this property list.
+     * @type array
      */
     public $defaultPlist;
 
     /**
-     * Definition of the directives. The structure of this is:
+     * Definition of the directives.
+     * The structure of this is:
      *
      *  array(
      *      'Namespace' => array(
@@ -44,22 +47,27 @@ class HTMLPurifier_ConfigSchema {
      * This class is friendly with HTMLPurifier_Config. If you need introspection
      * about the schema, you're better of using the ConfigSchema_Interchange,
      * which uses more memory but has much richer information.
+     * @type array
      */
     public $info = array();
 
     /**
      * Application-wide singleton
+     * @type HTMLPurifier_ConfigSchema
      */
-    static protected $singleton;
+    protected static $singleton;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->defaultPlist = new HTMLPurifier_PropertyList();
     }
 
     /**
      * Unserializes the default ConfigSchema.
+     * @return HTMLPurifier_ConfigSchema
      */
-    public static function makeFromSerial() {
+    public static function makeFromSerial()
+    {
         $contents = file_get_contents(HTMLPURIFIER_PREFIX . '/HTMLPurifier/ConfigSchema/schema.ser');
         $r = unserialize($contents);
         if (!$r) {
@@ -71,8 +79,11 @@ class HTMLPurifier_ConfigSchema {
 
     /**
      * Retrieves an instance of the application-wide configuration definition.
+     * @param HTMLPurifier_ConfigSchema $prototype
+     * @return HTMLPurifier_ConfigSchema
      */
-    public static function instance($prototype = null) {
+    public static function instance($prototype = null)
+    {
         if ($prototype !== null) {
             HTMLPurifier_ConfigSchema::$singleton = $prototype;
         } elseif (HTMLPurifier_ConfigSchema::$singleton === null || $prototype === true) {
@@ -86,17 +97,19 @@ class HTMLPurifier_ConfigSchema {
      * @warning Will fail of directive's namespace is defined.
      * @warning This method's signature is slightly different from the legacy
      *          define() static method! Beware!
-     * @param $namespace Namespace the directive is in
-     * @param $name Key of directive
-     * @param $default Default value of directive
-     * @param $type Allowed type of the directive. See
+     * @param string $key Name of directive
+     * @param mixed $default Default value of directive
+     * @param string $type Allowed type of the directive. See
      *      HTMLPurifier_DirectiveDef::$type for allowed values
-     * @param $allow_null Whether or not to allow null values
+     * @param bool $allow_null Whether or not to allow null values
      */
-    public function add($key, $default, $type, $allow_null) {
+    public function add($key, $default, $type, $allow_null)
+    {
         $obj = new stdclass();
         $obj->type = is_int($type) ? $type : HTMLPurifier_VarParser::$types[$type];
-        if ($allow_null) $obj->allow_null = true;
+        if ($allow_null) {
+            $obj->allow_null = true;
+        }
         $this->info[$key] = $obj;
         $this->defaults[$key] = $default;
         $this->defaultPlist->set($key, $default);
@@ -107,11 +120,11 @@ class HTMLPurifier_ConfigSchema {
      *
      * Directive value aliases are convenient for developers because it lets
      * them set a directive to several values and get the same result.
-     * @param $namespace Directive's namespace
-     * @param $name Name of Directive
-     * @param $aliases Hash of aliased values to the real alias
+     * @param string $key Name of Directive
+     * @param array $aliases Hash of aliased values to the real alias
      */
-    public function addValueAliases($key, $aliases) {
+    public function addValueAliases($key, $aliases)
+    {
         if (!isset($this->info[$key]->aliases)) {
             $this->info[$key]->aliases = array();
         }
@@ -124,22 +137,21 @@ class HTMLPurifier_ConfigSchema {
      * Defines a set of allowed values for a directive.
      * @warning This is slightly different from the corresponding static
      *          method definition.
-     * @param $namespace Namespace of directive
-     * @param $name Name of directive
-     * @param $allowed Lookup array of allowed values
+     * @param string $key Name of directive
+     * @param array $allowed Lookup array of allowed values
      */
-    public function addAllowedValues($key, $allowed) {
+    public function addAllowedValues($key, $allowed)
+    {
         $this->info[$key]->allowed = $allowed;
     }
 
     /**
      * Defines a directive alias for backwards compatibility
-     * @param $namespace
-     * @param $name Directive that will be aliased
-     * @param $new_namespace
-     * @param $new_name Directive that the alias will be to
+     * @param string $key Directive that will be aliased
+     * @param string $new_key Directive that the alias will be to
      */
-    public function addAlias($key, $new_key) {
+    public function addAlias($key, $new_key)
+    {
         $obj = new stdclass;
         $obj->key = $new_key;
         $obj->isAlias = true;
@@ -149,7 +161,8 @@ class HTMLPurifier_ConfigSchema {
     /**
      * Replaces any stdclass that only has the type property with type integer.
      */
-    public function postProcess() {
+    public function postProcess()
+    {
         foreach ($this->info as $key => $v) {
             if (count((array) $v) == 1) {
                 $this->info[$key] = $v->type;
@@ -158,7 +171,6 @@ class HTMLPurifier_ConfigSchema {
             }
         }
     }
-
 }
 
 // vim: et sw=4 sts=4
