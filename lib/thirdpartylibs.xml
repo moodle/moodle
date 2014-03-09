@@ -39,7 +39,7 @@
     <location>phpexcel</location>
     <name>PHPExcel</name>
     <license>LGPL</license>
-    <version>1.7.8</version>
+    <version>1.8.0</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
