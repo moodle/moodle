@@ -23,24 +23,34 @@ class HTMLPurifier_Filter
 {
 
     /**
-     * Name of the filter for identification purposes
+     * Name of the filter for identification purposes.
+     * @type string
      */
     public $name;
 
     /**
      * Pre-processor function, handles HTML before HTML Purifier
+     * @param string $html
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return string
      */
-    public function preFilter($html, $config, $context) {
+    public function preFilter($html, $config, $context)
+    {
         return $html;
     }
 
     /**
      * Post-processor function, handles HTML after HTML Purifier
+     * @param string $html
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return string
      */
-    public function postFilter($html, $config, $context) {
+    public function postFilter($html, $config, $context)
+    {
         return $html;
     }
-
 }
 
 // vim: et sw=4 sts=4

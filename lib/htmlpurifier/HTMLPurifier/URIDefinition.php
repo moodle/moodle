@@ -23,7 +23,8 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
      */
     public $defaultScheme;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->registerFilter(new HTMLPurifier_URIFilter_DisableExternal());
         $this->registerFilter(new HTMLPurifier_URIFilter_DisableExternalResources());
         $this->registerFilter(new HTMLPurifier_URIFilter_DisableResources());
@@ -33,11 +34,13 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
         $this->registerFilter(new HTMLPurifier_URIFilter_Munge());
     }
 
-    public function registerFilter($filter) {
+    public function registerFilter($filter)
+    {
         $this->registeredFilters[$filter->name] = $filter;
     }
 
-    public function addFilter($filter, $config) {
+    public function addFilter($filter, $config)
+    {
         $r = $filter->prepare($config);
         if ($r === false) return; // null is ok, for backwards compat
         if ($filter->post) {
@@ -47,12 +50,14 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
         }
     }
 
-    protected function doSetup($config) {
+    protected function doSetup($config)
+    {
         $this->setupMemberVariables($config);
         $this->setupFilters($config);
     }
 
-    protected function setupFilters($config) {
+    protected function setupFilters($config)
+    {
         foreach ($this->registeredFilters as $name => $filter) {
             if ($filter->always_load) {
                 $this->addFilter($filter, $config);
@@ -66,7 +71,8 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
         unset($this->registeredFilters);
     }
 
-    protected function setupMemberVariables($config) {
+    protected function setupMemberVariables($config)
+    {
         $this->host = $config->get('URI.Host');
         $base_uri = $config->get('URI.Base');
         if (!is_null($base_uri)) {
@@ -78,11 +84,13 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
         if (is_null($this->defaultScheme)) $this->defaultScheme = $config->get('URI.DefaultScheme');
     }
 
-    public function getDefaultScheme($config, $context) {
+    public function getDefaultScheme($config, $context)
+    {
         return HTMLPurifier_URISchemeRegistry::instance()->getScheme($this->defaultScheme, $config, $context);
     }
 
-    public function filter(&$uri, $config, $context) {
+    public function filter(&$uri, $config, $context)
+    {
         foreach ($this->filters as $name => $f) {
             $result = $f->filter($uri, $config, $context);
             if (!$result) return false;
@@ -90,7 +98,8 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
         return true;
     }
 
-    public function postFilter(&$uri, $config, $context) {
+    public function postFilter(&$uri, $config, $context)
+    {
         foreach ($this->postFilters as $name => $f) {
             $result = $f->filter($uri, $config, $context);
             if (!$result) return false;

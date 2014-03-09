@@ -6,34 +6,71 @@
 class HTMLPurifier_DefinitionCache_Null extends HTMLPurifier_DefinitionCache
 {
 
-    public function add($def, $config) {
+    /**
+     * @param HTMLPurifier_Definition $def
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function add($def, $config)
+    {
         return false;
     }
 
-    public function set($def, $config) {
+    /**
+     * @param HTMLPurifier_Definition $def
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function set($def, $config)
+    {
         return false;
     }
 
-    public function replace($def, $config) {
+    /**
+     * @param HTMLPurifier_Definition $def
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function replace($def, $config)
+    {
         return false;
     }
 
-    public function remove($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function remove($config)
+    {
         return false;
     }
 
-    public function get($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function get($config)
+    {
         return false;
     }
 
-    public function flush($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function flush($config)
+    {
         return false;
     }
 
-    public function cleanup($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     * @return bool
+     */
+    public function cleanup($config)
+    {
         return false;
     }
-
 }
 
 // vim: et sw=4 sts=4
