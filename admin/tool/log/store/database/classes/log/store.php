@@ -108,48 +108,40 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
     }
 
     /**
+     * Should the event be ignored (== not logged)?
+     * @param \core\event\base $event
+     * @return bool
+     */
+    protected function is_event_ignored(\core\event\base $event) {
+        if (in_array($event->crud, $this->excludeactions) ||
+            in_array($event->edulevel, $this->excludelevels)
+        ) {
+            // Ignore event if the store settings do not want to store it.
+            return true;
+        }
+        if ((!CLI_SCRIPT or PHPUNIT_TEST) and !$this->logguests) {
+            // Always log inside CLI scripts because we do not login there.
+            if (!isloggedin() or isguestuser()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Insert events in bulk to the database.
      *
-     * @param \core\event\base[] $events
+     * @param array $evententries raw event data
      */
-    protected function insert_events($events) {
+    protected function insert_event_entries($evententries) {
         if (!$this->init()) {
             return;
         }
         if (!$dbtable = $this->get_config('dbtable')) {
             return;
         }
-        $dataobj = array();
-
-        // Filter events.
-        foreach ($events as $event) {
-            if (in_array($event->crud, $this->excludeactions) ||
-                in_array($event->edulevel, $this->excludelevels)
-            ) {
-                // Ignore event if the store settings do not want to store it.
-                continue;
-            }
-            if ((!CLI_SCRIPT or PHPUNIT_TEST) and !$this->logguests) {
-                // Always log inside CLI scripts because we do not login there.
-                if (!isloggedin() or isguestuser()) {
-                    continue;
-                }
-            }
-
-            $data = $event->get_data();
-            $data['other'] = serialize($data['other']);
-            if (CLI_SCRIPT) {
-                $data['origin'] = 'cli';
-                $data['ip'] = null;
-            } else {
-                $data['origin'] = 'web';
-                $data['ip'] = getremoteaddr();
-            }
-            $data['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
-            $dataobj[] = $data;
-        }
         try {
-            $this->extdb->insert_records($dbtable, $dataobj);
+            $this->extdb->insert_records($dbtable, $evententries);
         } catch (\moodle_exception $e) {
             debugging('Cannot write to external database: ' . $e->getMessage(), DEBUG_DEVELOPER);
         }
