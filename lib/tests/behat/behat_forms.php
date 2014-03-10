@@ -84,7 +84,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Fills a moodle form with field/value data.
+     * Fills a moodle form with field/value data. This step will be deprecated in Moodle 2.7 in favour of 'I set the following fields to these values:'.
      *
      * @Given /^I fill the moodle form with:$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -186,7 +186,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Fills in form text field with specified id|name|label|value. It works with text-based fields.
+     * Fills in form text field with specified id|name|label|value. It works with text-based fields. This step will be deprecated in Moodle 2.7 in favour of 'I set the field "FIELD_STRING" to "VALUE_STRING"'.
      *
      * @When /^I fill in "(?P<field_string>(?:[^"]|\\")*)" with "(?P<value_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -243,7 +243,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks that the field matches the specified value. When using multi-select fields use commas to separate selected options.
+     * Checks that the field matches the specified value. When using multi-select fields use commas to separate selected options. This step will be deprecated in Moodle 2.7 in favour of 'the field "FIELD_STRING" matches value "VALUE_STRING"'.
      *
      * @Then /^the "(?P<field_string>(?:[^"]|\\")*)" field should match "(?P<value_string>(?:[^"]|\\")*)" value$/
      * @throws ExpectationException
