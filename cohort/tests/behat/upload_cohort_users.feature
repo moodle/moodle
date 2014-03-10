@@ -22,7 +22,7 @@ Feature: Upload users to a cohort
     And I follow "Course 2"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 2 |
-    When I navigate to "Upload users" node in "Site administration,Users,Accounts"
+    When I navigate to "Upload users" node in "Site administration > Users > Accounts"
     And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filemanager
     And I press "Upload users"
     And I press "Upload users"

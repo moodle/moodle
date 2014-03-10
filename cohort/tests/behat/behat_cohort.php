@@ -64,8 +64,8 @@ class behat_cohort extends behat_base {
         if (!$this->getSession()->getPage()->find('css', 'input#cohort_search_q')) {
 
             $parentnodes = get_string('administrationsite') .
-                ',' . get_string('users', 'admin') .
-                ',' . get_string('accounts', 'admin');
+                ' > ' . get_string('users', 'admin') .
+                ' > ' . get_string('accounts', 'admin');
 
             $steps = array_merge(
                 array(

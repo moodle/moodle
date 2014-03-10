@@ -9,7 +9,7 @@ Feature: An admin can update courses using a CSV file
       | fullname | shortname | category |
       | Some random name | C1 | 0 |
     And I log in as "admin"
-    And I navigate to "Upload courses" node in "Site administration,Courses"
+    And I navigate to "Upload courses" node in "Site administration > Courses"
 
   @javascript
   Scenario: Updating a course fullname

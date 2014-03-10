@@ -15,7 +15,7 @@ Feature: Block appearances
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I navigate to "Theme selector" node in "Site administration,Appearance,Themes"
+    And I navigate to "Theme selector" node in "Site administration > Appearance > Themes"
     And I click on "Change theme" "button" in the "Default" "table_row"
     And I click on "Use theme" "button" in the "Afterburner" "table_row"
     And I press "Continue"

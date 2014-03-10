@@ -7,7 +7,7 @@ Feature: Award badges
   @javascript
   Scenario: Award profile badge
     Given I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration,Badges"
+    And I navigate to "Add a new badge" node in "Site administration > Badges"
     And I fill the moodle form with:
       | Name | Profile Badge |
       | Description | Test badge description |
@@ -42,7 +42,7 @@ Feature: Award badges
       | teacher | teacher | 1 | teacher1@asd.com |
       | student | student | 1 | student1@asd.com |
     And I log in as "admin"
-    And I navigate to "Add a new badge" node in "Site administration,Badges"
+    And I navigate to "Add a new badge" node in "Site administration > Badges"
     And I fill the moodle form with:
       | Name | Site Badge |
       | Description | Site badge description |

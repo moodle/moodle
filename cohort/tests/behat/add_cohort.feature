@@ -12,7 +12,7 @@ Feature: Add cohorts of users
       | user3 | Third | User | third@user.com |
       | user4 | Forth | User | forth@user.com |
     And I log in as "admin"
-    And I navigate to "Cohorts" node in "Site administration,Users,Accounts"
+    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
     And I press "Add"
     And I fill the moodle form with:
       | Name | Test cohort name |
