@@ -192,57 +192,6 @@ function page_delete_instance($id) {
 }
 
 /**
- * Return use outline
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $page
- * @return object|null
- */
-function page_user_outline($course, $user, $mod, $page) {
-    global $DB;
-
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'page',
-                                              'action'=>'view', 'info'=>$page->id), 'time ASC')) {
-
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $result = new stdClass();
-        $result->info = get_string('numviews', '', $numviews);
-        $result->time = $lastlog->time;
-
-        return $result;
-    }
-    return NULL;
-}
-
-/**
- * Return use complete
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $page
- */
-function page_user_complete($course, $user, $mod, $page) {
-    global $CFG, $DB;
-
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'page',
-                                              'action'=>'view', 'info'=>$page->id), 'time ASC')) {
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $strmostrecently = get_string('mostrecently');
-        $strnumviews = get_string('numviews', '', $numviews);
-
-        echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
-
-    } else {
-        print_string('neverseen', 'page');
-    }
-}
-
-/**
  * Given a course_module object, this function returns any
  * "extra" information that may be needed when printing
  * this activity in a course listing.

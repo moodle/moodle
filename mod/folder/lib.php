@@ -169,57 +169,6 @@ function folder_delete_instance($id) {
 }
 
 /**
- * Return use outline
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $folder
- * @return object|null
- */
-function folder_user_outline($course, $user, $mod, $folder) {
-    global $DB;
-
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'folder',
-                                              'action'=>'view', 'info'=>$folder->id), 'time ASC')) {
-
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $result = new stdClass();
-        $result->info = get_string('numviews', '', $numviews);
-        $result->time = $lastlog->time;
-
-        return $result;
-    }
-    return NULL;
-}
-
-/**
- * Return use complete
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $folder
- */
-function folder_user_complete($course, $user, $mod, $folder) {
-    global $CFG, $DB;
-
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'folder',
-                                              'action'=>'view', 'info'=>$folder->id), 'time ASC')) {
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $strmostrecently = get_string('mostrecently');
-        $strnumviews = get_string('numviews', '', $numviews);
-
-        echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
-
-    } else {
-        print_string('neverseen', 'folder');
-    }
-}
-
-/**
  * Lists all browsable file areas
  *
  * @package  mod_folder

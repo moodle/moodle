@@ -113,47 +113,6 @@ function book_delete_instance($id) {
 }
 
 /**
- * Return use outline
- *
- * @param stdClass $course
- * @param stdClass $user
- * @param stdClass $mod
- * @param object $book
- * @return object|null
- */
-function book_user_outline($course, $user, $mod, $book) {
-    global $DB;
-
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'book',
-                                              'action'=>'view', 'info'=>$book->id), 'time ASC')) {
-
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $result = new stdClass();
-        $result->info = get_string('numviews', '', $numviews);
-        $result->time = $lastlog->time;
-
-        return $result;
-    }
-    return null;
-}
-
-/**
- * Print a detailed representation of what a  user has done with
- * a given particular instance of this module, for user activity reports.
- *
- * @param stdClass $course
- * @param stdClass $user
- * @param stdClass $mod
- * @param stdClass $book
- * @return bool
- */
-function book_user_complete($course, $user, $mod, $book) {
-    return true;
-}
-
-/**
  * Given a course and a time, this module should find recent activity
  * that has occurred in book activities and print it out.
  *

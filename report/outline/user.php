@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot.'/report/outline/locallib.php');
+require_once($CFG->dirroot.'/report/outline/lib.php');
 
 $userid   = required_param('id', PARAM_INT);
 $courseid = required_param('course', PARAM_INT);
@@ -109,29 +110,33 @@ foreach ($sections as $i => $section) {
                                 $user_outline = $mod->modname."_user_outline";
                                 if (function_exists($user_outline)) {
                                     $output = $user_outline($course, $user, $mod, $instance);
-                                    report_outline_print_row($mod, $instance, $output);
+                                } else {
+                                    $output = report_outline_user_outline($user->id, $cmid, $mod->modname, $instance->id);
                                 }
+                                report_outline_print_row($mod, $instance, $output);
                                 break;
                             case "complete":
                                 $user_complete = $mod->modname."_user_complete";
+                                $image = $OUTPUT->pix_icon('icon', $mod->modfullname, 'mod_'.$mod->modname, array('class'=>'icon'));
+                                echo "<h4>$image $mod->modfullname: ".
+                                     "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                     format_string($instance->name,true)."</a></h4>";
+
+                                ob_start();
+
+                                echo "<ul>";
                                 if (function_exists($user_complete)) {
-                                    $image = $OUTPUT->pix_icon('icon', $mod->modfullname, 'mod_'.$mod->modname, array('class'=>'icon'));
-                                    echo "<h4>$image $mod->modfullname: ".
-                                         "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                         format_string($instance->name,true)."</a></h4>";
-
-                                    ob_start();
-
-                                    echo "<ul>";
                                     $user_complete($course, $user, $mod, $instance);
-                                    echo "</ul>";
+                                } else {
+                                    echo report_outline_user_complete($user->id, $cmid, $mod->modname, $instance->id);
+                                }
+                                echo "</ul>";
 
-                                    $output = ob_get_contents();
-                                    ob_end_clean();
+                                $output = ob_get_contents();
+                                ob_end_clean();
 
-                                    if (str_replace(' ', '', $output) != '<ul></ul>') {
-                                        echo $output;
-                                    }
+                                if (str_replace(' ', '', $output) != '<ul></ul>') {
+                                    echo $output;
                                 }
                                 break;
                             }
