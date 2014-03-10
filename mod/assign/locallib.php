@@ -114,6 +114,9 @@ class assign {
     /** @var string modulenameplural prevents excessive calls to get_string */
     private static $modulenameplural = null;
 
+    /** @var array cached list of participants for this assignment. The cache key will be group, showactive and the context id */
+    private $participants = array();
+
     /**
      * Constructor for the base assign class.
      *
@@ -1243,20 +1246,25 @@ class assign {
      * @return array List of user records
      */
     public function list_participants($currentgroup, $idsonly) {
+        $key = $this->context->id . '-' . $currentgroup;
+        if (!isset($this->participants[$key])) {
+            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*');
+
+            $cm = $this->get_course_module();
+            $users = groups_filter_users_by_course_module_visible($cm, $users);
+
+            $this->participants[$key] = $users;
+        }
+
         if ($idsonly) {
-            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.id');
-        } else {
-            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup);
-        }
-
-        $cm = $this->get_course_module();
-        foreach ($users as $userid => $user) {
-            if (!groups_course_module_visible($cm, $userid)) {
-                unset($users[$userid]);
+            $idslist = array();
+            foreach ($this->participants[$key] as $id => $user) {
+                $idslist[$id] = new stdClass();
+                $idslist[$id]->id = $id;
             }
+            return $idslist;
         }
-
-        return $users;
+        return $this->participants[$key];
     }
 
     /**
