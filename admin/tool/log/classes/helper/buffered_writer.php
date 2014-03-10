@@ -51,7 +51,7 @@ trait buffered_writer {
     abstract protected function is_event_ignored(\core\event\base $event);
 
     /**
-     * Write event in the store with buffering. Method insert_events() must be
+     * Write event in the store with buffering. Method insert_event_entries() must be
      * defined.
      *
      * @param \core\event\base $event
