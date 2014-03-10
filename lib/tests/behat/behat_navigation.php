@@ -113,7 +113,7 @@ class behat_navigation extends behat_base {
     }
 
     /**
-     * Click link in navigation tree that matches the text in parentnode/s (comma seperated if more then one)
+     * Click link in navigation tree that matches the text in parentnode/s (seperated using greater-than character if more than one)
      *
      * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" node in "(?P<parentnodes_string>(?:[^"]|\\")*)"$/
      *
@@ -128,7 +128,7 @@ class behat_navigation extends behat_base {
         $siteadminstr = get_string('administrationsite');
 
         // Create array of all parentnodes.
-        $parentnodes = explode(',', $parentnodes);
+        $parentnodes = array_map('trim', explode('>', $parentnodes));
         $countparentnode = count($parentnodes);
 
         // If JS is disabled and Site administration is not expanded we

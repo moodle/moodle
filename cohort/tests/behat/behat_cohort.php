@@ -60,8 +60,8 @@ class behat_cohort extends behat_base {
 
             // With JS enabled we should expand a few tree nodes.
             if ($this->running_javascript()) {
-                $parentnodes = get_string('administrationsite') . ',' .
-                    get_string('users', 'admin') . ',' .
+                $parentnodes = get_string('administrationsite') . ' > ' .
+                    get_string('users', 'admin') . ' > ' .
                     get_string('accounts', 'admin');
                 $steps = array_merge(
                     array(

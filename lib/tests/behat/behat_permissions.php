@@ -50,8 +50,8 @@ class behat_permissions extends behat_base {
      */
     public function i_set_the_following_system_permissions_of_role($rolename, $table) {
 
-        $parentnodes = get_string('administrationsite') . ',' .
-            get_string('users', 'admin') . ',' .
+        $parentnodes = get_string('administrationsite') . ' > ' .
+            get_string('users', 'admin') . ' > ' .
             get_string('permissions', 'role');
         return array(
             new Given('I am on homepage'),

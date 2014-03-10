@@ -6,7 +6,7 @@ Feature: Block activity modules
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Manage activities" node in "Site administration,Plugins,Activity modules"
+    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
     And I click on "//a[@title=\"Show\"]" "xpath_element" in the "Feedback" "table_row"
 
   Scenario: Add activities block on the frontpage
