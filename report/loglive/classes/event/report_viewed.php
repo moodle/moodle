@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when some content in loglive report is viewed.
+ * Event for when loglive report is viewed.
  *
  * @package    report_loglive
  * @copyright  2013 Ankit Agarwal
@@ -24,20 +24,50 @@
 namespace report_loglive\event;
 
 /**
- * Event triggered, when some content in loglive report is viewed.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string content viewed content identifier.
- *      @type string url (optional) url of report page.
- * }
+ * Event triggered, when loglive report is viewed.
  *
  * @package    report_loglive
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content_viewed extends \core\event\content_viewed {
+class report_viewed extends \core\event\base {
+
+    /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+    }
+
+    /**
+     * Return localised event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventreportviewed', 'report_loglive');
+    }
+
+    /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "The user with id " . $this->userid . " viewed live log report for course with id " . $this->courseid;
+    }
+
+    /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'course', 'report live', "report/loglive/index.php?id=$this->courseid", $this->courseid);
+    }
 
     /**
      * Returns relevant URL.
@@ -45,9 +75,6 @@ class content_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        if (!empty($this->other['url'])) {
-            return new \moodle_url($this->other['url']);
-        }
         return new \moodle_url('report/loglive/index.php', array('id' => $this->courseid));
     }
 }

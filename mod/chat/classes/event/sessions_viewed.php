@@ -28,18 +28,15 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_chat sessions viewed event class.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int start start of period.
- *      @type int end end of period.
- * }
+ * @property-read array $other Extra information about the event.
+ *     -int start: start of period.
+ *     -int end: end of period.
  *
  * @package    mod_chat
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sessions_viewed extends \core\event\content_viewed {
+class sessions_viewed extends \core\event\base {
 
     /**
      * Returns description of what happened.
@@ -96,8 +93,12 @@ class sessions_viewed extends \core\event\content_viewed {
      * @return void
      */
     protected function validate_data() {
-        // The parent class requires this to be non-empty. We are setting it and ignore the parent validation.
-        $this->data['other']['content'] = '';
+        if (!isset($this->data['other']['start'])) {
+            throw new \coding_exception('The property start must be set in other.');
+        }
+        if (!isset($this->data['other']['end'])) {
+            throw new \coding_exception('The property end must be set in other.');
+        }
     }
 
 }

@@ -229,15 +229,6 @@ class noname_event extends \core\event\base {
 }
 
 /**
- * Class content_viewed.
- *
- * Wrapper for testing \core\event\content_viewed .
- */
-class content_viewed extends \core\event\content_viewed {
-}
-
-
-/**
  * Class course_module_viewed.
  *
  * Wrapper for testing \core\event\course_module_viewed.

@@ -38,10 +38,7 @@ $context = context_course::instance($course->id);
 require_capability('report/outline:view', $context);
 
 // Trigger a content view event.
-$event = \report_outline\event\content_viewed::create(array('courseid' => $course->id,
-                                                            'other'    => array('content' => 'outline')));
-$event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, 'course', 'report outline', "report/outline/index.php?id=$course->id", $course->id));
+$event = \report_outline\event\activity_viewed::create(array('context' => $context));
 $event->trigger();
 
 $showlastaccess = true;

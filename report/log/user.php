@@ -71,12 +71,9 @@ $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for
 $PAGE->set_title("$course->shortname: $stractivityreport");
 $PAGE->set_heading($course->fullname);
 
-// Trigger a content view event.
-$event = \report_log\event\content_viewed::create(array('courseid' => $course->id,
-                                                        'other'    => array('content' => 'user logs')));
-$event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, 'course', 'report log',
-        "report/log/user.php?id=$user->id&course=$course->id&mode=$mode", $course->id));
+// Trigger a user logs viewed event.
+$event = \report_log\event\user_report_viewed::create(array('context' => $coursecontext, 'relateduserid' => $userid,
+        'other' => array('mode' => $mode)));
 $event->trigger();
 
 echo $OUTPUT->header();

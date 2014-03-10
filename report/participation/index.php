@@ -83,14 +83,6 @@ $PAGE->set_title($course->shortname .': '. $strparticipation);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-// Trigger a content view event.
-$event = \report_participation\event\content_viewed::create(array('courseid' => $course->id,
-                                                               'other'    => array('content' => 'participants')));
-$event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, "course", "report participation",
-        "report/participation/index.php?id=$course->id", $course->id));
-$event->trigger();
-
 $modinfo = get_fast_modinfo($course);
 
 $modules = $DB->get_records_select('modules', "visible = 1", null, 'name ASC');
@@ -181,6 +173,13 @@ $groupmode = groups_get_course_groupmode($course);
 $currentgroup = $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid];
 
 if (!empty($instanceid) && !empty($roleid)) {
+
+    // Trigger a report viewed event.
+    $event = \report_participation\event\report_viewed::create(array('context' => $context,
+            'other' => array('instanceid' => $instanceid, 'groupid' => $currentgroup, 'roleid' => $roleid,
+            'timefrom' => $timefrom, 'action' => $action)));
+    $event->trigger();
+
     // from here assume we have at least the module we're using.
     $cm = $modinfo->cms[$instanceid];
 
