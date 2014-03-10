@@ -49,7 +49,7 @@ Feature: A teacher can put questions in categories in the question bank
     When I click on "Edit" "link" in the "my test question" "table_row"
     And I click on "Use this category" "checkbox"
     And I set the field "Save in category" to "New Category 2"
-    And I press "Save changes"
+    And I press "id_submitbutton"
     Then I should see "my test question"
     And the "category" select box should contain "New Category 2 (1)"
     And the "category" select box should not contain "New Category 1 (1)"

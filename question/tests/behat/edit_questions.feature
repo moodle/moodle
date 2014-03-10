@@ -28,7 +28,7 @@ Feature: A teacher can edit questions in the question bank
     And I set the following fields to these values:
       | Question name | Edited question name |
       | Question text | Write a lot about what you want |
-    And I press "Save changes"
+    And I press "id_submitbutton"
     Then I should see "Edited question name"
     And I should not see "Test question to be edited"
     And I should see "Admin User" in the ".categoryquestionscontainer tbody .creatorname" "css_element"

@@ -62,7 +62,7 @@ class behat_question extends behat_base {
             new Given('I click on "' . $this->escape($questiontypexpath) . '" "xpath_element"'),
             new Given('I click on "#chooseqtype_submit" "css_element"'),
             new Given('I set the following fields to these values:', $questiondata),
-            new Given('I press "' . get_string('savechanges') . '"')
+            new Given('I press "id_submitbutton"')
         );
     }
 
