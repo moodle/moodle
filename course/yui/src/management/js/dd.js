@@ -4,7 +4,7 @@
  * @namespace M.course.management
  * @class DragDrop
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 function DragDrop(config) {
     Console.superclass.constructor.apply(this, [config]);

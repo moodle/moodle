@@ -7,10 +7,10 @@
 /**
  * Constructs a new capability search manager.
  *
- * @namespace M.tool_capability.search
+ * @namespace M.tool_capability
  * @class Search
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 var SEARCH = function() {
     SEARCH.superclass.constructor.apply(this, arguments);
@@ -142,17 +142,12 @@ Y.extend(SEARCH, Y.Base, SEARCH.prototype, {
     }
 });
 
-/**
- * Core namespace.
- * @static
- * @class tool_capability
- */
 M.tool_capability = M.tool_capability || {};
 
 /**
  * Initialises capability search functionality.
  * @static
- * @method init_capability_search
+ * @method M.tool_capability.init_capability_search
  * @param {Object} options
  */
 M.tool_capability.init_capability_search = function(options) {

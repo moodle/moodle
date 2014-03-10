@@ -14,13 +14,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a users list of quick comments.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * QUICKLIST
+ * Class representing a users list of quick comments.
  *
  * @namespace M.assignfeedback_editpdf
  * @class quickcommentlist

@@ -14,11 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a highlight.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationhighlight
- * @extends annotation
+ * @extends M.assignfeedback_editpdf.annotation
  * @module moodle-assignfeedback_editpdf-editor
  */
 ANNOTATIONHIGHLIGHT = function(config) {

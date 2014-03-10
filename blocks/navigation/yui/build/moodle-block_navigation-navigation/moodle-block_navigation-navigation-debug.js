@@ -11,8 +11,7 @@ YUI.add('moodle-block_navigation-navigation', function (Y, NAME) {
 /**
  * This namespace will contain all of the contents of the navigation blocks
  * global navigation and settings.
- * @namespace M
- * @class block_navigation
+ * @class M.block_navigation
  * @static
  */
 M.block_navigation = M.block_navigation || {};
@@ -22,6 +21,7 @@ M.block_navigation = M.block_navigation || {};
  * @property expandablebranchcount
  * @protected
  * @static
+ * @type Number
  */
 M.block_navigation.expandablebranchcount = 1;
 /**
@@ -30,6 +30,7 @@ M.block_navigation.expandablebranchcount = 1;
  * @property courselimit
  * @protected
  * @static
+ * @type Number
  */
 M.block_navigation.courselimit = 20;
 /**
@@ -199,7 +200,7 @@ var NODETYPE = {
  * @namespace M.block_navigation
  * @class Tree
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 var TREE = function() {
     TREE.superclass.constructor.apply(this, arguments);
@@ -208,7 +209,7 @@ TREE.prototype = {
     /**
      * The tree's ID, normally its block instance id.
      * @property id
-     * @type Int
+     * @type Number
      * @protected
      */
     id : null,
@@ -390,7 +391,7 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
         /**
          * The nodes that get shown.
          * @attribute expansionlimit
-         * @type Integer
+         * @type Number
          */
         expansionlimit : {
             value : 0,
@@ -407,6 +408,10 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
         },
         /**
          * The navigation tree block instance.
+         *
+         * @attribute instance
+         * @default false
+         * @type Number
          */
         instance : {
             value : false,
@@ -426,7 +431,7 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
  * @namespace M.block_navigation
  * @class Branch
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 BRANCH = function() {
     BRANCH.superclass.constructor.apply(this, arguments);
@@ -814,7 +819,7 @@ Y.extend(BRANCH, Y.Base, BRANCH.prototype, {
         /**
          * The type of this branch.
          * @attribute type
-         * @type Int
+         * @type Number
          */
         type : {
             value : null,
