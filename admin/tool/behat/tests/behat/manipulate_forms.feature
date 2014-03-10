@@ -7,8 +7,7 @@ Feature: Forms manipulation
   @javascript
   Scenario: Basic forms manipulation
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     When I fill in "First name" with "Field value"
     And I select "Plain text area" from "Text editor"
     And I check "Unmask"

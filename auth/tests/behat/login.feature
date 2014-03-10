@@ -6,12 +6,12 @@ Feature: Authentication
 
   Scenario: Log in with the predefined admin user with Javascript disabled
     Given I log in as "admin"
-    Then I should see "You are logged in as Admin User"
+    Then I should see "You are logged in as Admin User" in the "page-footer" "region"
 
   @javascript
   Scenario: Log in with the predefined admin user with Javascript enabled
     Given I log in as "admin"
-    Then I should see "You are logged in as Admin User"
+    Then I should see "You are logged in as Admin User" in the "page-footer" "region"
 
   Scenario: Log in as an existing admin user filling the form
     Given the following "users" exists:
@@ -22,7 +22,7 @@ Feature: Authentication
     And I fill in "Username" with "testuser"
     And I fill in "Password" with "testuser"
     And I press "Log in"
-    Then I should see "You are logged in as"
+    Then I should see "You are logged in as" in the "page-footer" "region"
 
   Scenario: Log in as an unexisting user filling the form
     Given the following "users" exists:
@@ -38,4 +38,4 @@ Feature: Authentication
   Scenario: Log out
     Given I log in as "admin"
     When I log out
-    Then I should see "You are not logged in"
+    Then I should see "You are not logged in" in the "page-footer" "region"
