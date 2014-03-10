@@ -40,7 +40,7 @@ Feature: Page contents assertions
     And I log in as "admin"
     And I follow "Course 1"
     When I dock "Administration" block
-    Then I should not see "Question bank" in the "region-pre" "region"
+    Then I should not see "Question bank" in the ".block-region" "css_element"
     And I click on "//div[@id='dock']/descendant::h2[normalize-space(.)='Administration']" "xpath_element"
 
   @javascript
@@ -50,4 +50,4 @@ Feature: Page contents assertions
       | Course 1 | C1 | 0 |
     And I log in as "admin"
     When I dock "Administration" block
-    Then I should not see "Turn editing on" in the "region-pre" "region"
+    Then I should not see "Turn editing on" in the ".block-region" "css_element"

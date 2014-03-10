@@ -7,9 +7,7 @@ Feature: Award badges
   @javascript
   Scenario: Award profile badge
     Given I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Badges" node
-    And I follow "Add a new badge"
+    And I navigate to "Add a new badge" node in "Site administration > Badges"
     And I set the following fields to these values:
       | Name | Profile Badge |
       | Description | Test badge description |
@@ -44,9 +42,7 @@ Feature: Award badges
       | teacher | teacher | 1 | teacher1@asd.com |
       | student | student | 1 | student1@asd.com |
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Badges" node
-    And I follow "Add a new badge"
+    And I navigate to "Add a new badge" node in "Site administration > Badges"
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |

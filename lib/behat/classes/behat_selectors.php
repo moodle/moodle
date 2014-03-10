@@ -89,7 +89,7 @@ XPATH
 //div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' '))] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]/descendant::h2[normalize-space(.) = %locator%]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]
 XPATH
         , 'region' => <<<XPATH
-.//*[self::div | self::section | self::aside][./@id = %locator%]
+//*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
 XPATH
         , 'table_row' => <<<XPATH
 .//tr[contains(normalize-space(.), %locator%)]
