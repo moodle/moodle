@@ -6,14 +6,14 @@ Feature: Prevent or allow assignment submission changes
 
   @javascript
   Scenario: Preventing changes and allowing them again
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -49,7 +49,7 @@ Feature: Prevent or allow assignment submission changes
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And "Edit submission" "button" should not exists
+    And "Edit submission" "button" should not exist
     And I should see "This assignment is not accepting submissions"
     And I log out
     And I log in as "teacher1"

@@ -6,14 +6,14 @@ Feature: Teacher can choose whether to allow students to change their choice res
 
   @javascript
   Scenario: Add a choice activity and complete the activity as a student
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -32,7 +32,7 @@ Feature: Teacher can choose whether to allow students to change their choice res
     And I choose "Option 1" from "Choice name" choice activity
     Then I should see "Your selection: Option 1"
     And I should see "Your choice has been saved"
-    And "Save my choice" "button" should not exists
+    And "Save my choice" "button" should not exist
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
@@ -46,8 +46,8 @@ Feature: Teacher can choose whether to allow students to change their choice res
     And I follow "Course 1"
     And I follow "Choice name"
     And I should see "Your selection: Option 1"
-    And "Save my choice" "button" should exists
-    And "Remove my choice" "link" should exists
+    And "Save my choice" "button" should exist
+    And "Remove my choice" "link" should exist
     And I set the field "Option 2" to "1"
     And I press "Save my choice"
     And I should see "Your choice has been saved"

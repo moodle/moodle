@@ -6,7 +6,7 @@ Feature: Block users from contacting me
 
   @javascript
   Scenario: Block users from contacting me with Javascript enabled
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | User | One | one@asd.com |
       | user2 | User | Two | two@asd.com |

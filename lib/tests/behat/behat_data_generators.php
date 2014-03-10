@@ -136,14 +136,14 @@ class behat_data_generators extends behat_base {
     /**
      * Creates the specified element. More info about available elements in http://docs.moodle.org/dev/Acceptance_testing#Fixtures.
      *
-     * @Given /^the following "(?P<element_string>(?:[^"]|\\")*)" exists:$/
+     * @Given /^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/
      *
      * @throws Exception
      * @throws PendingException
      * @param string    $elementname The name of the entity to add
      * @param TableNode $data
      */
-    public function the_following_exists($elementname, TableNode $data) {
+    public function the_following_exist($elementname, TableNode $data) {
 
         // Now that we need them require the data generators.
         require_once(__DIR__ . '/../../testing/generator/lib.php');

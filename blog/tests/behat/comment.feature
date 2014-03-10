@@ -5,7 +5,7 @@ Feature: Comment on a blog entry
   I need to be able to comment on a blog entry
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | testuser | Test | User | moodle@moodlemoodle.com |
       | testuser2 | Test2 | User2 | moodle2@moodlemoodle.com |

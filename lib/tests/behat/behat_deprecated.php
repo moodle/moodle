@@ -468,6 +468,54 @@ class behat_deprecated extends behat_base {
     }
 
     /**
+     * Checks the provided element and selector type exists in the current page.
+     *
+     * This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     *
+     * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should exists$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     */
+    public function should_exists($element, $selectortype) {
+        $alternative = '"' . $this->escape($element) . '" "' . $this->escape($selectortype) . '" should exist';
+        $this->deprecated_message($alternative);
+        return new Then($alternative);
+    }
+
+    /**
+     * Checks that the provided element and selector type not exists in the current page.
+     *
+     * This step is for advanced users, use it if you don't find anything else suitable for what you need.
+     *
+     * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should not exists$/
+     * @throws ExpectationException
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     */
+    public function should_not_exists($element, $selectortype) {
+        $alternative = '"' . $this->escape($element) . '" "' . $this->escape($selectortype) . '" should not exist';
+        $this->deprecated_message($alternative);
+        return new Then($alternative);
+    }
+
+    /**
+     * Creates the specified element. More info about available elements in http://docs.moodle.org/dev/Acceptance_testing#Fixtures.
+     *
+     * @Given /^the following "(?P<element_string>(?:[^"]|\\")*)" exists:$/
+     *
+     * @throws Exception
+     * @throws PendingException
+     * @param string    $elementname The name of the entity to add
+     * @param TableNode $data
+     */
+    public function the_following_exists($elementname, TableNode $data) {
+        $alternative = 'the following "' . $this->escape($elementname) . '" exist';
+        $this->deprecated_message($alternative);
+        return new Given($alternative, $data);
+    }
+
+    /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
      *
      * @throws Exception

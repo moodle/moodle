@@ -6,7 +6,7 @@ Feature: A selected file can be cancelled
 
   @javascript @_bug_phantomjs
   Scenario: Cancel a selected recent file from being added to a folder
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"

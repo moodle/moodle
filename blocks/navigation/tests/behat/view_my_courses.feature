@@ -5,10 +5,10 @@ Feature: View my courses in navigation block
   I need my courses displayed in the navigation block
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "categories" exists:
+    And the following "categories" exist:
       | name  | category | idnumber |
       | cat1  | 0        | cat1     |
       | cat2  | 0        | cat2     |
@@ -16,7 +16,7 @@ Feature: View my courses in navigation block
       | cat31 | cat3     | cat31    |
       | cat32 | cat3     | cat32    |
       | cat33 | cat3     | cat33    |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course1  | c1        | cat1     |
       | Course2  | c2        | cat2     |
@@ -24,7 +24,7 @@ Feature: View my courses in navigation block
       | Course32 | c32       | cat32    |
       | Course331| c331      | cat33    |
       | Course332| c332      | cat33    |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user     | course | role    |
       | student1 | c1     | student |
       | student1 | c31    | student |

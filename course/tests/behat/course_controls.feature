@@ -17,13 +17,13 @@ Feature: Course activity controls works as expected
 
   @javascript @_cross_browser
   Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections |
       | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -32,12 +32,12 @@ Feature: Course activity controls works as expected
     And I press "Turn editing on"
     Then I should see "Turn editing off"
     And I press "Turn editing off"
-    And "Turn editing on" "button" should exists
+    And "Turn editing on" "button" should exist
     And I follow "Turn editing on"
-    And "Turn editing off" "button" should exists
+    And "Turn editing off" "button" should exist
     And I follow "Turn editing off"
     And I should see "Turn editing on"
-    And "Turn editing on" "button" should exists
+    And "Turn editing on" "button" should exist
     And I turn editing mode on
     And I click on "Actions" "link" in the "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
@@ -98,13 +98,13 @@ Feature: Course activity controls works as expected
       | weeks        | 1             | "Course 1"              | should                    | should not                                               |
 
   Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections |
       | Course 1 | C1 | <courseformat> | <coursedisplay> | 5 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -113,12 +113,12 @@ Feature: Course activity controls works as expected
     And I press "Turn editing on"
     Then I should see "Turn editing off"
     And I press "Turn editing off"
-    And "Turn editing on" "button" should exists
+    And "Turn editing on" "button" should exist
     And I follow "Turn editing on"
-    And "Turn editing off" "button" should exists
+    And "Turn editing off" "button" should exist
     And I follow "Turn editing off"
     And I should see "Turn editing on"
-    And "Turn editing on" "button" should exists
+    And "Turn editing on" "button" should exist
     And I turn editing mode on
     And I click on "Actions" "link" in the "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"

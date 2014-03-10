@@ -5,7 +5,7 @@ Feature: Users can search their message history
   I need to search in my messages history
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | User | One | one@asd.com |
       | user2 | User | Two | two@asd.com |

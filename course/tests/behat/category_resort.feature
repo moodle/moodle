@@ -6,7 +6,7 @@ Feature: Test we can resort categories in the management interface.
   I need to test we can manually sort categories.
 
   Scenario Outline: Test bulk sorting all categories.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | name | idnumber | sortorder |
       | 0 | Social studies | Ext003 | 1 |
       | 0 | Applied sciences | Sci001 | 2 |
@@ -29,7 +29,7 @@ Feature: Test we can resort categories in the management interface.
     | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   Scenario Outline: Test bulk sorting current category.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | name | idnumber | sortorder |
       | 0 | Test category | Tes001 | 1 |
       | Tes001 | Social studies | Ext003 | 2 |
@@ -56,7 +56,7 @@ Feature: Test we can resort categories in the management interface.
     | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   Scenario Outline: Test resorting subcategories.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | name | idnumber | sortorder |
       | 0 | Master cat  | CAT1 | 1 |
       | CAT1 | Social studies | Ext003 | 1 |
@@ -82,7 +82,7 @@ Feature: Test we can resort categories in the management interface.
 
   @javascript
   Scenario Outline: Test resorting subcategories with JS enabled.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | name | idnumber | sortorder |
       | 0 | Master cat  | CAT1 | 1 |
       | CAT1 | Social studies | Ext003 | 1 |
@@ -108,7 +108,7 @@ Feature: Test we can resort categories in the management interface.
 
   # The scenario below this is the same but with JS enabled.
   Scenario: Test moving categories up and down by one.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | idnumber | name |
       | 0 | CAT1 | Cat 1 |
       | 0 | CAT2 | Cat 2 |
@@ -168,7 +168,7 @@ Feature: Test we can resort categories in the management interface.
 
   @javascript @_cross_browser
   Scenario: Test using AJAX to move categories up and down by one.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | idnumber | name |
       | 0 | CAT1 | Cat 1 |
       | 0 | CAT2 | Cat 2 |

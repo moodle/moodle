@@ -5,13 +5,13 @@ Feature: Students can choose from 4 discussion display options and their choice 
   I need to select which display method I want to use
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"

@@ -6,7 +6,7 @@ Feature: Course paged mode
 
   @javascript @_cross_browser
   Scenario Outline: Weekly and topics course formats with Javascript enabled
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | format | coursedisplay | numsections |
       | Course 1 | C1 | 0 | <courseformat> | 1 | 3 |
     And I log in as "admin"
@@ -39,7 +39,7 @@ Feature: Course paged mode
       | weeks | "1 January - 7 January" | "8 January - 14 January" | "15 January - 21 January" | "25 December - 31 December" | "22 January - 28 January" |
 
   Scenario Outline: Weekly and topics course formats with Javascript disabled
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | format | coursedisplay | numsections |
       | Course 1 | C1 | 0 | <courseformat> | 1 | 3 |
     And I log in as "admin"

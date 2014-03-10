@@ -6,14 +6,14 @@ Feature: We can enter in grades and view reports from the gradebook
   I need to enable grade weightings and check that they are displayed correctly.
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |

@@ -6,17 +6,17 @@ Feature: Organize students into groups
 
   @javascript
   Scenario: Assign students to groups
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student0 | Student | 0 | student0@asd.com |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
       | student3 | Student | 3 | student3@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student0 | C1 | student |
@@ -59,13 +59,13 @@ Feature: Organize students into groups
 
   @javascript
   Scenario: Create groups and groupings without the 'moodle/course:changeidnumber' capability
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"

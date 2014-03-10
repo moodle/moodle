@@ -5,7 +5,7 @@ Feature: Front page displays items in different modes
   I need to set different frontpage display modes
 
   Background:
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name                   | category | idnumber |
       | Category 1             | 0        | CAT1     |
       | Category 2             | 0        | CAT2     |
@@ -13,7 +13,7 @@ Feature: Front page displays items in different modes
       | Category 2 child       | CAT2     | CAT21    |
       | Category 1 child child | CAT11    | CAT111   |
       | Category 3             | 0        | CAT3     |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname     | shortname   | category |
       | Course 1 1   | COURSE1_1   | CAT1     |
       | Course 2 1   | COURSE2_1   | CAT2     |

@@ -5,13 +5,13 @@ Feature: There is a choice of formats for editing a wiki page
   I need to choose which wiki format do I want to use
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -28,7 +28,7 @@ Feature: There is a choice of formats for editing a wiki page
     When I set the following fields to these values:
       | Creole format | 1 |
     And I press "Create page"
-    Then "div.wikieditor-toolbar" "css_element" should exists
+    Then "div.wikieditor-toolbar" "css_element" should exist
     # Click on bold, italic, interal link and H1
     And I click on "//div[@class='wikieditor-toolbar']/descendant::a[1]" "xpath_element"
     And I click on "//div[@class='wikieditor-toolbar']/descendant::a[2]" "xpath_element"
@@ -48,7 +48,7 @@ Feature: There is a choice of formats for editing a wiki page
     When I set the following fields to these values:
       | NWiki format | 1 |
     And I press "Create page"
-    Then "div.wikieditor-toolbar" "css_element" should exists
+    Then "div.wikieditor-toolbar" "css_element" should exist
     # Click on italic, interal link and H1
     And I click on "//div[@class='wikieditor-toolbar']/descendant::a[2]" "xpath_element"
     And I click on "//div[@class='wikieditor-toolbar']/descendant::a[4]" "xpath_element"
@@ -67,8 +67,8 @@ Feature: There is a choice of formats for editing a wiki page
     When I set the following fields to these values:
       | HTML format | 1 |
     And I press "Create page"
-    Then "#id_newcontent_editor_tbl" "css_element" should exists
-    And ".mce_bold" "css_element" should exists
+    Then "#id_newcontent_editor_tbl" "css_element" should exist
+    And ".mce_bold" "css_element" should exist
     And I set the following fields to these values:
       | HTML format | I'm a text |
     And I press "Save"
