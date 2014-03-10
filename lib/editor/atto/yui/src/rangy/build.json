@@ -1,0 +1,19 @@
+{
+  "name": "moodle-editor_atto-rangy",
+  "builds": {
+    "moodle-editor_atto-rangy": {
+      "prependfiles": [
+        "rangy-core.js",
+        "rangy-cssclassapplier.js",
+        "rangy-selectionsaverestore.js",
+        "rangy-serializer.js"
+      ],
+      "jsfiles": [
+        "init.js"
+      ]
+    }
+  },
+  "shifter": {
+    "lint": false
+  }
+}

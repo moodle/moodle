@@ -9,7 +9,8 @@
         "event-simulate",
         "event-custom",
         "yui-throttle",
-        "moodle-core-notification-dialogue"
+        "moodle-core-notification-dialogue",
+        "moodle-editor_atto-rangy"
       ]
   },
   "moodle-editor_atto-editor-shortcut": {
