@@ -50,7 +50,15 @@ class behat_form_editor extends behat_form_textarea {
 
         $editorid = $this->field->getAttribute('id');
         if ($this->running_javascript()) {
-            $js = 'M.editor_atto.get_editable_node("'.$editorid.'").setHTML("' . $value . '").focus();';
+            $value = addslashes($value);
+            $js = '
+var editor = M.editor_atto.get_editable_node("'.$editorid.'");
+if (editor) {
+    editor.setHTML("' . $value . '").focus();
+} else {
+    editor = Y.one(document.getElementById("'.$editorid.'"));
+    editor.set("value", "' . $value . '");
+}';
             $result = $this->session->executeScript($js);
         } else {
             parent::set_value($value);
