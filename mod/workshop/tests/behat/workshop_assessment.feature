@@ -15,7 +15,7 @@ Feature: Workshop submission and assessment
     And the following "courses" exist:
       | fullname  | shortname |
       | Course1   | c1        |
-    And the following "course enrolment" exist:
+    And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | c1     | student        |
       | student2 | c1     | student        |

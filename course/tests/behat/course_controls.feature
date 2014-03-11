@@ -42,18 +42,18 @@ Feature: Course activity controls works as expected
     And I click on "Actions" "link" in the "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 1 |
       | Description | Test forum description 1 |
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 2 |
       | Description | Test forum description 2 |
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I indent right "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I indent left "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
@@ -63,27 +63,27 @@ Feature: Course activity controls works as expected
       | Description | Just to check that I can edit the description |
       | Display description on course page | 1 |
     And I click on "Cancel" "button"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Hide" "link" in the "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I delete "Test forum name 1" activity
     And I should not see "Test forum name 1" in the "#region-main" "css_element"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I should see "Test forum name 2"
     And I should see "Edited test forum name 2"
     And I hide section "1"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And section "1" should be hidden
     And all activities in section "1" should be hidden
     And I show section "1"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And section "1" should be visible
     And I add the "Section links" block
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"
     And I click on "2" "link" in the "Section links" "block"
     And I <should_see_other_sections_following_block_sections_links> see "Test forum name 2"
@@ -123,42 +123,42 @@ Feature: Course activity controls works as expected
     And I click on "Actions" "link" in the "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 1 |
       | Description | Test forum description 1 |
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 2 |
       | Description | Test forum description 2 |
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I indent right "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I indent left "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
     And I should see "Display description on course page"
     And I press "Save and return to course"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I click on "Hide" "link" in the "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I delete "Test forum name 1" activity
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I should not see "Test forum name 1" in the "#region-main" "css_element"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I should see "Test forum name 2"
     And I should see "Edited test forum name 2"
     And I hide section "1"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And section "1" should be hidden
     And all activities in section "1" should be hidden
     And I show section "1"
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And section "1" should be visible
     And I add the "Section links" block
-    And "#section-2" "css_element" <should_see_other_sections> exists
+    And "#section-2" "css_element" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"
     And I click on "2" "link" in the "Section links" "block"
     And I <should_see_other_sections_following_block_sections_links> see "Test forum name 2"
