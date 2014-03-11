@@ -972,6 +972,7 @@ abstract class restore_dbops {
                 'timecreated' => $file->timecreated,
                 'timemodified'=> $file->timemodified,
                 'userid'      => $mappeduserid,
+                'source'      => $file->source,
                 'author'      => $file->author,
                 'license'     => $file->license,
                 'sortorder'   => $file->sortorder
