@@ -5,6 +5,10 @@ information provided here is intended especially for developers.
 
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
 
+Events and Logging:
+* Significant changes in Logging API. For upgrading existing events_trigger() and
+  add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
+
 DEPRECATIONS:
 * $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.
 * Update init methods in all event classes - "level" property was renamed to "edulevel", the level property is now deprecated.
