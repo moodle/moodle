@@ -51,12 +51,9 @@ class behat_question_base extends behat_base {
      * @return Given[] the steps.
      */
     protected function finish_adding_question($questiontypename, TableNode $questiondata) {
-        $questiontypename = $this->getSession()->getSelectorsHandler()->xpathLiteral($questiontypename);
-        $questiontypexpath = "//span[@class='qtypename'][normalize-space(.)=$questiontypename]" .
-            "/ancestor::div[@class='qtypeoption']/descendant::input";
 
         return array(
-            new Given('I click on "' . $this->escape($questiontypexpath) . '" "xpath_element"'),
+            new Given('I set the field "' . $this->escape($questiontypename) . '" to "1"'),
             new Given('I click on "#chooseqtype_submit" "css_element"'),
             new Given('I set the following fields to these values:', $questiondata),
             new Given('I press "id_submitbutton"')
