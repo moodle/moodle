@@ -74,6 +74,9 @@ if ($courseid) {
 if ($departmentid) {
     $params['departmentid'] = $departmentid;
 }
+if ($departmentid) {
+    $params['departmentid'] = $departmentid;
+}
 if ($vantage) {
     $params['vantage'] = $vantage;
 }
@@ -150,19 +153,7 @@ if (!(has_capability('block/iomad_company_admin:editusers', $context) or
     print_error('nopermissions', 'error', '', 'report on users');
 }
 
-if (!empty($idlist[0])) {
-    // Set up the search criteria for the users.
-    $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid);
-} else {
-    $searchinfo = new stdclass();
-    if ($userlevel = company::get_userlevel($USER)) {
-        $searchinfo->departmentid = $userlevel->id;
-    } else {
-        $searchinfo->departmentid = '';
-    }
-    $searchinfo->sqlsearch = " 1 = 2";
-    $searchinfo->sqlsort = "";
-}
+$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid);
 
 // Create data for form.
 $customdata = null;
@@ -251,9 +242,9 @@ if (!empty($courseid)) {
 
     // Check if there is a certificate module.
     $hascertificate = false;
-    if (empty($dodownload) && $certmodule = $DB->get_record('modules', array('name' => 'certificate'))) {
-        require_once($CFG->dirroot.'/mod/certificate/lib.php');
-        if ($certificateinfo = $DB->get_record('certificate', array('course' => $courseid))) {
+    if (empty($dodownload) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
+        require_once($CFG->dirroot.'/mod/iomadcertificate/lib.php');
+        if ($certificateinfo = $DB->get_record('iomadcertificate', array('course' => $courseid))) {
             if ($certificatemodinstance = $DB->get_record('course_modules', array('course' => $courseid,
                                                                                   'module' => $certmodule->id,
                                                                                   'instance' => $certificateinfo->id))) {
@@ -534,11 +525,11 @@ if (!empty($courseid)) {
                 // Check if user has completed the course - if so, show the certificate.
                 if (!empty($user->timecompleted) ) {
                     // Get the course module.
-                    $certtabledata = "<a href='".new moodle_url('mod/certificate/view.php',
+                    $certtabledata = "<a href='".new moodle_url('/mod/iomadcertificate/view.php',
                                                                  array('id' => $certificatemodinstance->id,
                                                                        'action' => 'get',
                                                                        'userid' => $user->id,
-                                                                       'sesskey' => sesskey())).'>"'.
+                                                                       'sesskey' => sesskey()))."'>".
                                       get_string('downloadcert', 'local_report_users')."</a>";
                 } else {
                     $certtabledata = get_string('nocerttodownload', 'local_report_users');
