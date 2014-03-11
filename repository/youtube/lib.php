@@ -89,7 +89,8 @@ class repository_youtube extends repository {
         $ret['list'] = $this->_get_collection($search_text, $start, $max, $sort);
         $ret['norefresh'] = true;
         $ret['nosearch'] = true;
-        $ret['pages'] = -1;
+        // If the number of results is smaller than $max, it means we reached the last page.
+        $ret['pages'] = (count($ret['list']) < $max) ? $ret['page'] : -1;
         return $ret;
     }
 
