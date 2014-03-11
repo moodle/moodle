@@ -1,8 +1,7 @@
 {
-  "moodle-atto_link-button": {
-    "requires": [
-        "node",
-        "escape"
-    ]
-  }
+    "moodle-atto_link-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
 }

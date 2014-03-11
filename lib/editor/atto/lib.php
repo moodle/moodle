@@ -113,7 +113,7 @@ class atto_texteditor extends texteditor {
                 $extra = component_callback('atto_' . $plugin, 'params_for_js', array($elementid, $options, $fpoptions));
 
                 if ($extra) {
-                    $jsplugin['params'] = $extra;
+                    $jsplugin = array_merge($jsplugin, $extra);
                 }
                 // We always need the plugin name.
                 $PAGE->requires->string_for_js('pluginname', 'atto_' . $plugin);
@@ -123,7 +123,7 @@ class atto_texteditor extends texteditor {
         }
 
         $PAGE->requires->yui_module($modules,
-                                    'M.editor_atto.init',
+                                    'Y.M.editor_atto.Editor.init',
                                     array($this->get_init_params($elementid, $options, $fpoptions, $jsplugins)));
 
     }

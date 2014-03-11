@@ -72,8 +72,8 @@ div.editor_atto_toolbar button::-moz-focus-inner {
 }
 
 div.editor_atto_toolbar button img.icon {
-    padding: 1px;
-    margin: 1px 0;
+    padding: 0px;
+    margin: 2px 0;
     /* The following is dedicated to the beloved IE8, clashing with Bootstrap. God bless you IE. */
     vertical-align: text-bottom;
     width: auto;
@@ -113,8 +113,6 @@ div.editor_atto_toolbar div.atto_group {
     color: black;
 }
 .atto_menuentry {
-    border-bottom: 1px solid #eee;
-    padding: 2px;
     clear: left;
 }
 
@@ -171,7 +169,7 @@ div.editor_atto_content:hover .atto_control {
     display: block;
 }
 
-.yui3-controlmenu-hidden {
+.yui3-menu-hidden {
     display: none;
 }
 .editor_atto_controlmenu li {
@@ -207,4 +205,43 @@ div.editor_atto_content:hover .atto_control {
     -moz-force-broken-image-icon:1;
     min-width:24px;
     min-height:24px;
+}
+
+.moodle-dialogue-base .editor_atto_menu .moodle-dialogue-content .moodle-dialogue-bd {
+    position: absolute;
+    text-align:left;
+    z-index: 1000;
+    display: block;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 5px 5px 20px 0 #666666;
+    -moz-box-shadow: 5px 5px 20px 0 #666666;
+    box-shadow: 5px 5px 20px 0 #666666;
+    padding: 0px;
+}
+
+.editor_atto_menu .menu {
+  margin: 0px;
+}
+
+.editor_atto_menu .menu a {
+    display: block;
+    padding: 4px 1em 4px 1em;
+    color: #333333;
+}
+
+.editor_atto_menu .menu a:hover {
+    color: #ffffff;background-color: #0088cc;
+}
+.editor_atto_menu .menu a.hidden {
+    display: none;
+}
+.editor_atto_menu .menu img {
+    vertical-align: middle;
+}
+.editor_atto_menu .menu > li {
+    display: block;
 }

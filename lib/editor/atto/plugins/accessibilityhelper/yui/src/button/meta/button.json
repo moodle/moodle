@@ -1,5 +1,7 @@
 {
-  "moodle-atto_accessibilityhelper-button": {
-    "requires": ["node", "escape"]
-  }
+    "moodle-atto_accessibilityhelper-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
 }

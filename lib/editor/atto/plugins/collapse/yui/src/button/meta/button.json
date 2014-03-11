@@ -1,5 +1,7 @@
 {
-  "moodle-atto_collapse-button": {
-    "requires": ["node"]
-  }
+    "moodle-atto_collapse-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
 }

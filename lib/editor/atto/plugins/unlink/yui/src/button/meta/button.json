@@ -1,5 +1,7 @@
 {
-  "moodle-atto_unlink-button": {
-    "requires": ["node"]
-  }
+    "moodle-atto_unlink-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
 }

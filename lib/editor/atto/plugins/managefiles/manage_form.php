@@ -38,12 +38,13 @@ require_once($CFG->libdir."/formslib.php");
 class atto_managefiles_manage_form extends moodleform {
 
     function definition() {
-        global $PAGE;
+        global $PAGE, $USER;
         $mform = $this->_form;
 
         $mform->setDisableShortforms(true);
 
         $itemid = $this->_customdata['draftitemid'];
+        $elementid = $this->_customdata['elementid'];
         $options = $this->_customdata['options'];
         $files = $this->_customdata['files'];
 
@@ -63,6 +64,8 @@ class atto_managefiles_manage_form extends moodleform {
         $mform->setType('context', PARAM_INT);
         $mform->addElement('hidden', 'areamaxbytes');
         $mform->setType('areamaxbytes', PARAM_INT);
+        $mform->addElement('hidden', 'elementid');
+        $mform->setType('elementid', PARAM_TEXT);
 
         $mform->addElement('filemanager', 'files_filemanager', '', null, $options);
 
@@ -87,11 +90,17 @@ class atto_managefiles_manage_form extends moodleform {
         $mform->addElement('submit', 'delete', get_string('deleteselected', 'atto_managefiles'));
 
         $PAGE->requires->yui_module('moodle-atto_managefiles-usedfiles', 'M.atto_managefiles.usedfiles.init',
-            array(array_flip($files)));
+            array(array(
+                'files' => array_flip($files),
+                'usercontext' => context_user::instance($USER->id)->id,
+                'itemid' => $itemid,
+                'elementid' => $elementid,
+            )));
 
         $this->set_data(array(
             'files_filemanager' => $itemid,
             'itemid' => $itemid,
+            'elementid' => $elementid,
             'subdirs' => $options['subdirs'],
             'maxbytes' => $options['maxbytes'],
             'areamaxbytes' => $options['areamaxbytes'],

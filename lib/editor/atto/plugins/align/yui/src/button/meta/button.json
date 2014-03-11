@@ -1,5 +1,7 @@
 {
-  "moodle-atto_align-button": {
-    "requires": []
-  }
+    "moodle-atto_align-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
 }

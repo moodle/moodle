@@ -1,5 +1,7 @@
 {
-  "moodle-atto_italic-button": {
-    "requires": ["node", "moodle-editor_atto-editor-shortcut"]
-  }
+    "moodle-atto_italic-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
 }

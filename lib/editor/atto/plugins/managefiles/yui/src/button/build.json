@@ -1,15 +1,10 @@
 {
-  "name": "moodle-atto_managefiles-button",
-  "builds": {
-    "moodle-atto_managefiles-button": {
-      "jsfiles": [
-        "button.js"
-      ]
-    },
-    "moodle-atto_managefiles-usedfiles": {
-      "jsfiles": [
-        "usedfiles.js"
-      ]
+    "name": "moodle-atto_managefiles-button",
+    "builds": {
+        "moodle-atto_managefiles-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
     }
-  }
 }

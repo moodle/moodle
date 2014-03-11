@@ -64,10 +64,23 @@ function atto_equation_params_for_js($elementid, $options, $fpoptions) {
     }
 
     // Tex example librarys.
-    $library = array('group1' => get_config('atto_equation', 'librarygroup1'),
-                     'group2' => get_config('atto_equation', 'librarygroup2'),
-                     'group3' => get_config('atto_equation', 'librarygroup3'),
-                     'group4' => get_config('atto_equation', 'librarygroup4'));
+    $library = array(
+            'group1' => array(
+                'groupname' => 'librarygroup1',
+                'elements' => get_config('atto_equation', 'librarygroup1'),
+            ),
+            'group2' => array(
+                'groupname' => 'librarygroup2',
+                'elements' => get_config('atto_equation', 'librarygroup2'),
+            ),
+            'group3' => array(
+                'groupname' => 'librarygroup3',
+                'elements' => get_config('atto_equation', 'librarygroup3'),
+            ),
+            'group4' => array(
+                'groupname' => 'librarygroup4',
+                'elements' => get_config('atto_equation', 'librarygroup4'),
+            ));
 
     return array('texfilteractive' => $texfilteractive, 'contextid'=>$context->id, 'library'=>$library);
 }

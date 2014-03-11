@@ -1,5 +1,7 @@
 {
     "moodle-atto_subscript-button": {
-        "requires": ["node"]
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
     }
 }
