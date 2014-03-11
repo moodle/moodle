@@ -37,6 +37,7 @@ $string['calculatingallstats'] = 'Calculating statistics for quiz, questions and
 $string['cic'] = 'Coefficient of internal consistency (for {$a})';
 $string['completestatsfilename'] = 'completestats';
 $string['count'] = 'Count';
+$string['counttryno'] = 'Count Try {$a}';
 $string['coursename'] = 'Course name';
 $string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
 $string['detailedanalysisforvariant'] = 'More detailed analysis of the responses to variant {$a} of this question';
@@ -110,4 +111,5 @@ $string['statistics:view'] = 'View statistics report';
 $string['statsfor'] = 'Quiz statistics (for {$a})';
 $string['variant'] = 'Variant';
 $string['variantno'] = 'Variant {$a}';
+$string['whichtries'] = 'Analyze responses for';
 

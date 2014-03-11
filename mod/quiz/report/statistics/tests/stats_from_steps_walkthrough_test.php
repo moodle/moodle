@@ -17,6 +17,14 @@
 /**
  * Quiz attempt walk through using data from csv file.
  *
+ * The quiz stats below and the question stats found in qstats00.csv were calculated independently in a spreadsheet which is
+ * available in open document or excel format here :
+ * https://github.com/jamiepratt/moodle-quiz-tools/tree/master/statsspreadsheet
+ *
+ * Similarly the question variant's stats in qstats00.csv are calculated in stats_for_variant_1.xls and stats_for_variant_8.xls
+ * The calculations in the spreadsheets are the same as for the other question stats but applied just to the attempts where the
+ * variants appeared.
+ *
  * @package    quiz_statistics
  * @category   phpunit
  * @copyright  2013 The Open University
@@ -74,14 +82,20 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
 
         $attemptids = $this->walkthrough_attempts($csvdata['steps']);
 
-        $this->check_attempts_results($csvdata['results'], $attemptids);
+        if (isset($csvdata['results'])) {
+            $this->check_attempts_results($csvdata['results'], $attemptids);
+        }
 
         $this->report = new quiz_statistics_report();
-        $whichattempts = QUIZ_GRADEAVERAGE;
+        $whichattempts = QUIZ_GRADEAVERAGE; // All attempts.
+        $whichtries = question_attempt::ALL_TRIES;
         $groupstudents = array();
         $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
-        list($quizstats, $questionstats) =
-                        $this->report->get_all_stats_and_analysis($this->quiz, $whichattempts, $groupstudents, $questions);
+        list($quizstats, $questionstats) = $this->report->get_all_stats_and_analysis($this->quiz,
+                                                                                     $whichattempts,
+                                                                                     $whichtries,
+                                                                                     $groupstudents,
+                                                                                     $questions);
 
         $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
 
@@ -94,21 +108,203 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         $qcalc = new \core_question\statistics\questions\calculator($questions);
         $this->assertTimeCurrent($qcalc->get_last_calculated_time($qubaids));
 
-        $expectedvariantcounts = array(2 => array(1 => 6,
-                                                    4 => 4,
-                                                    5 => 3,
-                                                    6 => 4,
-                                                    7 => 2,
-                                                    8 => 5,
-                                                    10 => 1));
+        if (isset($csvdata['responsecounts'])) {
+            $this->check_response_counts($csvdata['responsecounts'], $qubaids, $questions, $whichtries);
+        }
+        if (isset($csvdata['qstats'])) {
+            $this->check_question_stats($csvdata['qstats'], $questionstats);
+        }
+        if ($quizsettings['testnumber'] === '00') {
+            $this->check_variants_count_for_quiz_00($questions, $questionstats, $whichtries, $qubaids);
+            $this->check_quiz_stats_for_quiz_00($quizstats);
+        }
+    }
+
+    /**
+     * Check actual question stats are the same as that found in csv file.
+     *
+     * @param $qstats         PHPUnit_Extensions_Database_DataSet_ITable data from csv file.
+     * @param $questionstats  \core_question\statistics\questions\all_calculated_for_qubaid_condition Calculated stats.
+     */
+    protected function check_question_stats($qstats, $questionstats) {
+        for ($rowno = 0; $rowno < $qstats->getRowCount(); $rowno++) {
+            $slotqstats = $qstats->getRow($rowno);
+            foreach ($slotqstats as $statname => $slotqstat) {
+                if (!in_array($statname, array('slot', 'subqname'))  && $slotqstat !== '') {
+                    $this->assert_stat_equals($slotqstat,
+                                              $questionstats,
+                                              $slotqstats['slot'],
+                                              $slotqstats['subqname'],
+                                              $slotqstats['variant'],
+                                              $statname);
+                }
+            }
+            // Check that sub-question boolean field is correctly set.
+            $this->assert_stat_equals(!empty($slotqstats['subqname']),
+                                      $questionstats,
+                                      $slotqstats['slot'],
+                                      $slotqstats['subqname'],
+                                      $slotqstats['variant'],
+                                      'subquestion');
+        }
+    }
+
+    /**
+     * Check that the stat is as expected within a reasonable tolerance.
+     *
+     * @param float|string|bool $expected expected value of stat.
+     * @param \core_question\statistics\questions\all_calculated_for_qubaid_condition $questionstats
+     * @param int $slot
+     * @param string $subqname if empty string then not an item stat.
+     * @param int|string $variant if empty string then not a variantstat.
+     * @param string $statname
+     */
+    protected function assert_stat_equals($expected, $questionstats, $slot, $subqname, $variant, $statname) {
+
+        if ($variant === '' && $subqname === '') {
+            $actual = $questionstats->for_slot($slot)->{$statname};
+        } else if ($subqname !== '') {
+            $actual = $questionstats->for_subq($this->randqids[$slot][$subqname])->{$statname};
+        } else {
+            $actual = $questionstats->for_slot($slot, $variant)->{$statname};
+        }
+        $message = "$statname for slot $slot";
+        if ($expected === '**NULL**') {
+            $this->assertEquals(null, $actual, $message);
+        } else if (is_bool($expected)) {
+            $this->assertEquals($expected, $actual, $message);
+        } else if (is_numeric($expected)) {
+            switch ($statname) {
+                case 'covariance' :
+                case 'discriminationindex' :
+                case 'discriminativeefficiency' :
+                case 'effectiveweight' :
+                    $precision = 1e-5;
+                    break;
+                default :
+                    $precision = 1e-6;
+            }
+            $delta = abs($expected) * $precision;
+            $this->assertEquals((float)$expected, $actual, $message, $delta);
+        } else {
+            $this->assertEquals($expected, $actual, $message);
+        }
+    }
+
+    protected function assert_response_count_equals($question, $qubaids, $expected, $whichtries) {
+        $responesstats = new \core_question\statistics\responses\analyser($question);
+        $analysis = $responesstats->load_cached($qubaids, $whichtries);
+        if (!isset($expected['subpart'])) {
+            $subpart = 1;
+        } else {
+            $subpart = $expected['subpart'];
+        }
+        list($subpartid, $responseclassid) = $this->get_response_subpart_and_class_id($question,
+                                                                                      $subpart,
+                                                                                      $expected['modelresponse']);
+
+        $subpartanalysis = $analysis->get_analysis_for_subpart($expected['variant'], $subpartid);
+        $responseclassanalysis = $subpartanalysis->get_response_class($responseclassid);
+        $actualresponsecounts = $responseclassanalysis->data_for_question_response_table('', '');
+
+        foreach ($actualresponsecounts as $actualresponsecount) {
+            if ($actualresponsecount->response == $expected['actualresponse'] ||
+                            count($actualresponsecounts) == 1) {
+                $i = 1;
+                $partofanalysis = " slot {$expected['slot']}, rand q '{$expected['randq']}', variant {$expected['variant']}, ".
+                                    "for expected model response {$expected['modelresponse']}, ".
+                                    "actual response {$expected['actualresponse']}";
+                while (isset($expected['count'.$i])) {
+                    if ($expected['count'.$i] != 0) {
+                        $this->assertTrue(isset($actualresponsecount->trycount[$i]),
+                            "There is no count at all for try $i on ".$partofanalysis);
+                        $this->assertEquals($expected['count'.$i], $actualresponsecount->trycount[$i],
+                                            "Count for try $i on ".$partofanalysis);
+                    }
+                    $i++;
+                }
+                if (isset($expected['totalcount'])) {
+                    $this->assertEquals($expected['totalcount'], $actualresponsecount->totalcount,
+                                        "Total count on ".$partofanalysis);
+                }
+                return;
+            }
+        }
+        throw new coding_exception("Expected response '{$expected['actualresponse']}' not found.");
+    }
+
+    protected function get_response_subpart_and_class_id($question, $subpart, $modelresponse) {
+        $qtypeobj = question_bank::get_qtype($question->qtype, false);
+        $possibleresponses = $qtypeobj->get_possible_responses($question);
+        $possibleresponsesubpartids = array_keys($possibleresponses);
+        if (!isset($possibleresponsesubpartids[$subpart - 1])) {
+            throw new coding_exception("Subpart '{$subpart}' not found.");
+        }
+        $subpartid = $possibleresponsesubpartids[$subpart - 1];
+
+        if ($modelresponse == '[NO RESPONSE]') {
+            return array($subpartid, null);
+
+        } else if ($modelresponse == '[NO MATCH]') {
+            return array($subpartid, 0);
+        }
+
+        $modelresponses = array();
+        foreach ($possibleresponses[$subpartid] as $responseclassid => $subpartpossibleresponse) {
+            $modelresponses[$responseclassid] = $subpartpossibleresponse->responseclass;
+        }
+        $this->assertContains($modelresponse, $modelresponses);
+        $responseclassid = array_search($modelresponse, $modelresponses);
+        return array($subpartid, $responseclassid);
+    }
+
+    /**
+     * @param $responsecounts
+     * @param $qubaids
+     * @param $questions
+     * @param $whichtries
+     */
+    protected function check_response_counts($responsecounts, $qubaids, $questions, $whichtries) {
+        for ($rowno = 0; $rowno < $responsecounts->getRowCount(); $rowno++) {
+            $expected = $responsecounts->getRow($rowno);
+            $defaultsforexpected = array('randq' => '', 'variant' => '1', 'subpart' => '1');
+            foreach ($defaultsforexpected as $key => $expecteddefault) {
+                if (!isset($expected[$key])) {
+                    $expected[$key] = $expecteddefault;
+                }
+            }
+            if ($expected['randq'] == '') {
+                $question = $questions[$expected['slot']];
+            } else {
+                $qid = $this->randqids[$expected['slot']][$expected['randq']];
+                $question = question_finder::get_instance()->load_question_data($qid);
+            }
+            $this->assert_response_count_equals($question, $qubaids, $expected, $whichtries);
+        }
+    }
+
+    /**
+     * @param $questions
+     * @param $questionstats
+     * @param $whichtries
+     * @param $qubaids
+     */
+    protected function check_variants_count_for_quiz_00($questions, $questionstats, $whichtries, $qubaids) {
+        $expectedvariantcounts = array(2 => array(1  => 6,
+                                                  4  => 4,
+                                                  5  => 3,
+                                                  6  => 4,
+                                                  7  => 2,
+                                                  8  => 5,
+                                                  10 => 1));
 
         foreach ($questions as $slot => $question) {
             if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
                 continue;
             }
             $responesstats = new \core_question\statistics\responses\analyser($question);
-            $this->assertTimeCurrent($responesstats->get_last_analysed_time($qubaids));
-            $analysis = $responesstats->load_cached($qubaids);
+            $this->assertTimeCurrent($responesstats->get_last_analysed_time($qubaids, $whichtries));
+            $analysis = $responesstats->load_cached($qubaids, $whichtries);
             $variantsnos = $analysis->get_variant_nos();
             if (isset($expectedvariantcounts[$slot])) {
                 // Compare contents, ignore ordering of array, using canonicalize parameter of assertEquals.
@@ -132,7 +328,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                         $classanalysis = $subpartanalysis->get_response_class($classid);
                         $actualresponsecounts = $classanalysis->data_for_question_response_table('', '');
                         foreach ($actualresponsecounts as $actualresponsecount) {
-                            $totalspervariantno[$subpartid][$variantno] += $actualresponsecount->count;
+                            $totalspervariantno[$subpartid][$variantno] += $actualresponsecount->totalcount;
                         }
                     }
                 }
@@ -163,89 +359,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                 }
             }
         }
-        for ($rowno = 0; $rowno < $csvdata['responsecounts']->getRowCount(); $rowno++) {
-            $responsecount = $csvdata['responsecounts']->getRow($rowno);
-            if ($responsecount['randq'] == '') {
-                $question = $questions[$responsecount['slot']];
-            } else {
-                $qid = $this->randqids[$responsecount['slot']][$responsecount['randq']];
-                $question = question_finder::get_instance()->load_question_data($qid);
-            }
-            $this->assert_response_count_equals($question, $qubaids, $responsecount);
-        }
 
-        // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheet which is
-        // available in open document or excel format here :
-        // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/statsspreadsheet
-        $quizstatsexpected = array(
-            'median' => 4.5,
-            'firstattemptsavg' => 4.617333332,
-            'allattemptsavg' => 4.617333332,
-            'firstattemptscount' => 25,
-            'allattemptscount' => 25,
-            'standarddeviation' => 0.8117265554,
-            'skewness' => -0.092502502,
-            'kurtosis' => -0.7073968557,
-            'cic' => -87.2230935542,
-            'errorratio' => 136.8294900795,
-            'standarderror' => 1.1106813066
-        );
-
-        foreach ($quizstatsexpected as $statname => $statvalue) {
-            $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1.5e-5);
-        }
-
-        for ($rowno = 0; $rowno < $csvdata['qstats']->getRowCount(); $rowno++) {
-            $slotqstats = $csvdata['qstats']->getRow($rowno);
-            foreach ($slotqstats as $statname => $slotqstat) {
-                if ($statname !== 'slot') {
-                    $this->assert_stat_equals($questionstats, $slotqstats['slot'], null, null, $statname, (float)$slotqstat);
-                }
-            }
-        }
-
-        $itemstats = array('s' => 12,
-                          'effectiveweight' => null,
-                          'discriminationindex' => 35.803933,
-                          'discriminativeefficiency' => 39.39393939,
-                          'sd' => 0.514928651,
-                          'facility' => 0.583333333,
-                          'maxmark' => 1,
-                          'positions' => '1',
-                          'slot' => null,
-                          'subquestion' => true);
-        foreach ($itemstats as $statname => $expected) {
-            $this->assert_stat_equals($questionstats, 1, null, 'numerical', $statname, $expected);
-        }
-
-        // These variant's stats are calculated in stats_for_variant_1.xls and stats_for_variant_8.xls
-        // The calculations in the spreadsheets are the same but applied just to the attempts where the variants appeared.
-
-        $statsforslot2variants = array(1 => array('s' => 6,
-                                                    'effectiveweight' => null,
-                                                    'discriminationindex' => -10.5999788,
-                                                    'discriminativeefficiency' => -14.28571429,
-                                                    'sd' => 0.5477225575,
-                                                    'facility' => 0.50,
-                                                    'maxmark' => 1,
-                                                    'variant' => 1,
-                                                    'slot' => 2,
-                                                    'subquestion' => false),
-                                      8 => array('s' => 5,
-                                                    'effectiveweight' => null,
-                                                    'discriminationindex' => -57.77466679,
-                                                    'discriminativeefficiency' => -71.05263241,
-                                                    'sd' => 0.547722558,
-                                                    'facility' => 0.40,
-                                                    'maxmark' => 1,
-                                                    'variant' => 8,
-                                                    'slot' => 2,
-                                                    'subquestion' => false));
-        foreach ($statsforslot2variants as $variant => $stats) {
-            foreach ($stats as $statname => $expected) {
-                $this->assert_stat_equals($questionstats, 2, $variant, null, $statname, $expected);
-            }
-        }
         foreach ($expectedvariantcounts as $slot => $expectedvariantcount) {
             foreach ($expectedvariantcount as $variantno => $s) {
                 $this->assertEquals($s, $questionstats->for_slot($slot, $variantno)->s);
@@ -254,94 +368,26 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     }
 
     /**
-     * Check that the stat is as expected within a reasonable tolerance.
-     *
-     * @param \core_question\statistics\questions\all_calculated_for_qubaid_condition $questionstats
-     * @param int                                              $slot
-     * @param int|null                                         $variant if null then not a variant stat.
-     * @param string|null                                      $subqname if null then not an item stat.
-     * @param string                                           $statname
-     * @param float                                            $expected
+     * @param $quizstats
      */
-    protected function assert_stat_equals($questionstats, $slot, $variant, $subqname, $statname, $expected) {
+    protected function check_quiz_stats_for_quiz_00($quizstats) {
+        $quizstatsexpected = array(
+            'median'             => 4.5,
+            'firstattemptsavg'   => 4.617333332,
+            'allattemptsavg'     => 4.617333332,
+            'firstattemptscount' => 25,
+            'allattemptscount'   => 25,
+            'standarddeviation'  => 0.8117265554,
+            'skewness'           => -0.092502502,
+            'kurtosis'           => -0.7073968557,
+            'cic'                => -87.2230935542,
+            'errorratio'         => 136.8294900795,
+            'standarderror'      => 1.1106813066
+        );
 
-        if ($variant === null && $subqname === null) {
-            $actual = $questionstats->for_slot($slot)->{$statname};
-        } else if ($subqname !== null) {
-            $actual = $questionstats->for_subq($this->randqids[$slot][$subqname])->{$statname};
-        } else {
-            $actual = $questionstats->for_slot($slot, $variant)->{$statname};
+        foreach ($quizstatsexpected as $statname => $statvalue) {
+            $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1.5e-5);
         }
-        if (is_bool($expected) || is_string($expected)) {
-            $this->assertEquals($expected, $actual, "$statname for slot $slot");
-        } else {
-            switch ($statname) {
-                case 'covariance' :
-                case 'discriminationindex' :
-                case 'discriminativeefficiency' :
-                case 'effectiveweight' :
-                    $precision = 1e-5;
-                    break;
-                default :
-                    $precision = 1e-6;
-            }
-            $delta = abs($expected) * $precision;
-            $this->assertEquals(floatval($expected), $actual, "$statname for slot $slot", $delta);
-        }
-    }
-
-    protected function assert_response_count_equals($question, $qubaids, $responsecount) {
-        $responesstats = new \core_question\statistics\responses\analyser($question);
-        $analysis = $responesstats->load_cached($qubaids);
-        if (!isset($responsecount['subpart'])) {
-            $subpart = 1;
-        } else {
-            $subpart = $responsecount['subpart'];
-        }
-        list($subpartid, $responseclassid) = $this->get_response_subpart_and_class_id($question,
-                                                                                      $subpart,
-                                                                                      $responsecount['modelresponse']);
-
-        $subpartanalysis = $analysis->get_analysis_for_subpart($responsecount['variant'], $subpartid);
-        $responseclassanalysis = $subpartanalysis->get_response_class($responseclassid);
-        $actualresponsecounts = $responseclassanalysis->data_for_question_response_table('', '');
-        if ($responsecount['modelresponse'] !== '[NO RESPONSE]') {
-            foreach ($actualresponsecounts as $actualresponsecount) {
-                if ($actualresponsecount->response == $responsecount['actualresponse']) {
-                    $this->assertEquals($responsecount['count'], $actualresponsecount->count);
-                    return;
-                }
-            }
-            throw new coding_exception("Actual response '{$responsecount['actualresponse']}' not found.");
-        } else {
-            $actualresponsecount = array_pop($actualresponsecounts);
-            $this->assertEquals($responsecount['count'], $actualresponsecount->count);
-        }
-    }
-
-    protected function get_response_subpart_and_class_id($question, $subpart, $modelresponse) {
-        $qtypeobj = question_bank::get_qtype($question->qtype, false);
-        $possibleresponses = $qtypeobj->get_possible_responses($question);
-        $possibleresponsesubpartids = array_keys($possibleresponses);
-        if (!isset($possibleresponsesubpartids[$subpart - 1])) {
-            throw new coding_exception("Subpart '{$subpart}' not found.");
-        }
-        $subpartid = $possibleresponsesubpartids[$subpart - 1];
-
-        if ($modelresponse == '[NO RESPONSE]') {
-            return array($subpartid, null);
-
-        } else if ($modelresponse == '[NO MATCH]') {
-            return array($subpartid, 0);
-        }
-
-        $modelresponses = array();
-        foreach ($possibleresponses[$subpartid] as $responseclassid => $subpartpossibleresponse) {
-            $modelresponses[$responseclassid] = $subpartpossibleresponse->responseclass;
-        }
-        $this->assertContains($modelresponse, $modelresponses);
-        $responseclassid = array_search($modelresponse, $modelresponses);
-        return array($subpartid, $responseclassid);
     }
 
 }

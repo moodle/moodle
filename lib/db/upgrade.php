@@ -3124,5 +3124,64 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014022600.00);
     }
 
+    if ($oldversion < 2014031400.01) {
+        // Delete any cached stats to force recalculation later, then we can be sure that cached records will have the correct
+        // field.
+        $DB->delete_records('question_response_analysis');
+        $DB->delete_records('question_statistics');
+        $DB->delete_records('quiz_statistics');
+
+        // Define field response to be dropped from question_response_analysis.
+        $table = new xmldb_table('question_response_analysis');
+        $field = new xmldb_field('rcount');
+
+        // Conditionally launch drop field response.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014031400.01);
+    }
+
+    if ($oldversion < 2014031400.02) {
+
+        // Define table question_response_count to be created.
+        $table = new xmldb_table('question_response_count');
+
+        // Adding fields to table question_response_count.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('analysisid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('try', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('rcount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table question_response_count.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('analysisid', XMLDB_KEY_FOREIGN, array('analysisid'), 'question_response_analysis', array('id'));
+
+        // Conditionally launch create table for question_response_count.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014031400.02);
+    }
+
+    if ($oldversion < 2014031400.03) {
+
+        // Define field whichtries to be added to question_response_analysis.
+        $table = new xmldb_table('question_response_analysis');
+        $field = new xmldb_field('whichtries', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'hashcode');
+
+        // Conditionally launch add field whichtries.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014031400.03);
+    }
+
     return true;
 }

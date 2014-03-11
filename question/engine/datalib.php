@@ -691,10 +691,11 @@ ORDER BY qa.slot
     /**
      * Load a {@link question_attempt} from the database, including all its
      * steps.
+     *
      * @param int $questionid the question to load all the attempts fors.
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
-     * @return array of question_attempts.
+     * @return question_attempt[] array of question_attempts that were loaded.
      */
     public function load_attempts_at_question($questionid, qubaid_condition $qubaids) {
         $sql = "

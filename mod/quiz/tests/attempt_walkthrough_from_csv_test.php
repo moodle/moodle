@@ -183,7 +183,9 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             $quizsettings = $quizzes->getRow($rowno);
             $dataset = array();
             foreach ($this->files as $file) {
-                $dataset[$file] = $this->load_csv_data_file($file, $quizsettings['testnumber']);
+                if (file_exists($this->get_full_path_of_csv_file($file, $quizsettings['testnumber']))) {
+                    $dataset[$file] = $this->load_csv_data_file($file, $quizsettings['testnumber']);
+                }
             }
             $datasets[] = array($quizsettings, $dataset);
         }
