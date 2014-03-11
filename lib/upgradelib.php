@@ -98,14 +98,37 @@ class plugin_defective_exception extends moodle_exception {
 }
 
 /**
+ * Misplaced plugin exception.
+ *
+ * Note: this should be used only from the upgrade/admin code.
+ *
  * @package    core
  * @subpackage upgrade
  * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_misplaced_exception extends moodle_exception {
-    function __construct($component, $expected, $current) {
+    /**
+     * Constructor.
+     * @param string $component the component from version.php
+     * @param string $expected expected directory, null means calculate
+     * @param string $current plugin directory path
+     */
+    public function __construct($component, $expected, $current) {
         global $CFG;
+        if (empty($expected)) {
+            list($type, $plugin) = normalize_component($component);
+            $plugintypes = get_plugin_types(true);
+            if (isset($plugintypes[$type])) {
+                $expected = $plugintypes[$type] . '/' . $plugin;
+            }
+        }
+        if (strpos($expected, '$CFG->dirroot') !== 0) {
+            $expected = str_replace($CFG->dirroot, '$CFG->dirroot', $expected);
+        }
+        if (strpos($current, '$CFG->dirroot') !== 0) {
+            $current = str_replace($CFG->dirroot, '$CFG->dirroot', $current);
+        }
         $a = new stdClass();
         $a->component = $component;
         $a->expected  = $expected;
@@ -410,9 +433,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         // if plugin tells us it's full name we may check the location
         if (isset($plugin->component)) {
             if ($plugin->component !== $component) {
-                $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullplug);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($plugin->component));
-                throw new plugin_misplaced_exception($component, $expected, $current);
+                throw new plugin_misplaced_exception($plugin->component, null, $fullplug);
             }
         }
 
@@ -568,9 +589,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         // if plugin tells us it's full name we may check the location
         if (isset($module->component)) {
             if ($module->component !== $component) {
-                $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullmod);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($module->component));
-                throw new plugin_misplaced_exception($component, $expected, $current);
+                throw new plugin_misplaced_exception($module->component, null, $fullmod);
             }
         }
 
@@ -748,9 +767,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         // if plugin tells us it's full name we may check the location
         if (isset($block->component)) {
             if ($block->component !== $component) {
-                $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullblock);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($block->component));
-                throw new plugin_misplaced_exception($component, $expected, $current);
+                throw new plugin_misplaced_exception($block->component, null, $fullblock);
             }
         }
 
