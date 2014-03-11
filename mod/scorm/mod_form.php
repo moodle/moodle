@@ -81,12 +81,6 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->setType('scormtype', PARAM_ALPHA);
         }
 
-        // Update packages timing.
-        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
-        $mform->setType('updatefreq', PARAM_INT);
-        $mform->setDefault('updatefreq', $cfgscorm->updatefreq);
-        $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
-
         // New local package upload.
         $filemanageroptions = array();
         $filemanageroptions['accepted_types'] = array('.zip', '.xml');
@@ -97,6 +91,12 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('filemanager', 'packagefile', get_string('package', 'scorm'), null, $filemanageroptions);
         $mform->addHelpButton('packagefile', 'package', 'scorm');
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
+
+        // Update packages timing.
+        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
+        $mform->setType('updatefreq', PARAM_INT);
+        $mform->setDefault('updatefreq', $cfgscorm->updatefreq);
+        $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
 
         // Display Settings.
         $mform->addElement('header', 'displaysettings', get_string('appearance'));
