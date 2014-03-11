@@ -75,7 +75,7 @@ class note_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        $logurl = new \moodle_url('/note/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
+        $logurl = new \moodle_url('/notes/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
         $logurl->set_anchor('note-' . $this->objectid);
         return $logurl;
     }
