@@ -121,7 +121,7 @@ abstract class question_edit_form extends question_wizard_form {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     protected function definition() {
-        global $COURSE, $CFG, $DB;
+        global $COURSE, $CFG, $DB, $PAGE;
 
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
@@ -236,21 +236,18 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->setType('makecopy', PARAM_INT);
 
         $buttonarray = array();
-        if (!empty($this->question->id)) {
-            // Editing question.
-            if ($this->question->formoptions->canedit) {
-                $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                        get_string('savechanges'));
-            }
-            $buttonarray[] = $mform->createElement('cancel');
-        } else {
-            // Adding new question.
-            $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                    get_string('savechanges'));
-            $buttonarray[] = $mform->createElement('cancel');
+        $buttonarray[] = $mform->createElement('submit', 'updatebutton',
+                             get_string('savechangesandcontinueediting', 'question'));
+        if ($this->can_preview()) {
+            $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
+                    $this->question->id, $this->context, true);
+            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
         }
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('buttonar');
+
+        $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('updatebuttonar');
+
+        $this->add_action_buttons(true, get_string('savechanges'));
 
         if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
                 $this->question->formoptions->cansaveasnew))) {
@@ -265,6 +262,15 @@ abstract class question_edit_form extends question_wizard_form {
      */
     protected function definition_inner($mform) {
         // By default, do nothing.
+    }
+
+    /**
+     * Is the question being edited in a state where it can be previewed?
+     * @return bool whether to show the preview link.
+     */
+    protected function can_preview() {
+        return empty($this->question->beingcopied) && !empty($this->question->id) &&
+                $this->question->formoptions->canedit;
     }
 
     /**

@@ -63,6 +63,10 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
     }
 
+    protected function can_preview() {
+        return false; // Generally not possible for calculated multi-choice questions on this page.
+    }
+
     public function get_per_answer_fields($mform, $label, $gradeoptions,
             &$repeatedoptions, &$answersoption) {
         $repeated = array();
