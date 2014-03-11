@@ -80,6 +80,9 @@ class analysis_for_actual_response {
     public function increment_count($try = 0) {
         $this->totalcount++;
         if ($try != 0) {
+            if ($try > analyser::MAX_TRY_COUNTED) {
+                $try = analyser::MAX_TRY_COUNTED;
+            }
             if (!isset($this->trycount[$try])) {
                 $this->trycount[$try] = 0;
             }

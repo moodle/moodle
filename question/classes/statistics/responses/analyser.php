@@ -35,6 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class analyser {
+    /**
+     * @var int When analysing responses and breaking down the count of responses per try, how many columns should we break down
+     * tries into? This is set to 5 columns, any response in a try more than try 5 will be counted in the fifth column.
+     */
+    const MAX_TRY_COUNTED = 5;
+
     /** @var int Time after which responses are automatically reanalysed. */
     const TIME_TO_CACHE = 900; // 15 minutes.
 
