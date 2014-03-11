@@ -1103,7 +1103,7 @@ class question_bank_question_name_text_column extends question_bank_question_nam
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_question_bank_view extends question_bank_view {
+class quiz_question_bank_view extends core_question\bank\view {
     protected $quizhasattempts = false;
     /** @var object the quiz settings. */
     protected $quiz = false;
@@ -1123,16 +1123,27 @@ class quiz_question_bank_view extends question_bank_view {
         $this->quiz = $quiz;
     }
 
-    protected function known_field_types() {
-        $types = parent::known_field_types();
-        $types[] = new question_bank_add_to_quiz_action_column($this);
-        $types[] = new question_bank_question_name_text_column($this);
-        return $types;
-    }
-
     protected function wanted_columns() {
-        return array('addtoquizaction', 'checkbox', 'qtype', 'questionnametext',
-                'editaction', 'copyaction', 'previewaction');
+        global $CFG;
+
+        if (empty($CFG->quizquestionbankcolumns)) {
+            $quizquestionbankcolumns = array('add_to_quiz_action_column', 'checkbox_column', 'question_type_column',
+                    'question_name_column', 'edit_action_column', 'preview_action_column');
+        } else {
+             $quizquestionbankcolumns = explode(',', $CFG->quizquestionbankcolumns);
+        }
+
+        foreach ($quizquestionbankcolumns as $fullname) {
+            if (! class_exists($fullname)) {
+                if (class_exists('question_bank_' . $fullname)) {
+                    $fullname = 'question_bank_' . $fullname;
+                } else {
+                    throw new coding_exception("No such class exists: $fullname");
+                }
+            }
+            $this->requiredcolumns[$fullname] = new $fullname($this);
+        }
+        return $this->requiredcolumns;
     }
 
     /**
@@ -1145,9 +1156,7 @@ class quiz_question_bank_view extends question_bank_view {
     }
 
     protected function default_sort() {
-        $this->requiredcolumns['qtype'] = $this->knowncolumntypes['qtype'];
-        $this->requiredcolumns['questionnametext'] = $this->knowncolumntypes['questionnametext'];
-        return array('qtype' => 1, 'questionnametext' => 1);
+        return array('question_bank_question_type_column' => 1, 'question_bank_question_name_column' => 1);
     }
 
     /**
