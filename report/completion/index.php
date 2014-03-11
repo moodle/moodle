@@ -587,18 +587,17 @@ foreach ($progress as $user) {
             $activity = $modinfo->cms[$criterion->moduleinstance];
 
             // Get progress information and state
+            if (array_key_exists($activity->id, $user->progress)) {
+                $state = $user->progress[$activity->id]->completionstate;
+            } else if ($is_complete) {
+                $state = COMPLETION_COMPLETE;
+            } else {
+                $state = COMPLETION_INCOMPLETE;
+            }
             if ($is_complete) {
                 $date = userdate($criteria_completion->timecompleted, get_string('strftimedatetimeshort', 'langconfig'));
-
-                if (array_key_exists($activity->id, $user->progress)) {
-                    $thisprogress = $user->progress[$activity->id];
-                    $state = $thisprogress->completionstate;
-                } else {
-                    $state = COMPLETION_COMPLETE;
-                }
             } else {
                 $date = '';
-                $state = COMPLETION_INCOMPLETE;
             }
 
             // Work out how it corresponds to an icon
