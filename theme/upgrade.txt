@@ -61,19 +61,19 @@ Selector changes:
 Maintenance renderer notes:
 When the maintenance layout is being used $OUTPUT will be an instance of core_renderer_maintenance.
 This renderer mimics the core_renderer except that the following functions always return an empty string.
-* core_maintenance_renderer::block
-* core_maintenance_renderer::blocks
-* core_maintenance_renderer::blocks_for_regions
-* core_maintenance_renderer::course_header
-* core_maintenance_renderer::course_footer
-* core_maintenance_renderer::course_content_header
-* core_maintenance_renderer::course_content_footer
-* core_maintenance_renderer::custom_menu
-* core_maintenance_renderer::file_picker
-* core_maintenance_renderer::htmllize_file_tree
-* core_maintenance_renderer::lang_menu
-* core_maintenance_renderer::login_info
-* core_maintenance_renderer::user_picture
+* core_renderer_maintenance::block
+* core_renderer_maintenance::blocks
+* core_renderer_maintenance::blocks_for_regions
+* core_renderer_maintenance::course_header
+* core_renderer_maintenance::course_footer
+* core_renderer_maintenance::course_content_header
+* core_renderer_maintenance::course_content_footer
+* core_renderer_maintenance::custom_menu
+* core_renderer_maintenance::file_picker
+* core_renderer_maintenance::htmllize_file_tree
+* core_renderer_maintenance::lang_menu
+* core_renderer_maintenance::login_info
+* core_renderer_maintenance::user_picture
 
 If you have overridden methods of the core_renderer in your theme and want those changes to be shown during times of maintenance you
 will also need to override the core_renderer_maintenance and copy your customisations from the core_renderer to that.
