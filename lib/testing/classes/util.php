@@ -856,18 +856,19 @@ abstract class testing_util {
         if (!file_exists($jsonfilepath)) {
 
             $listfiles = array();
-            $listfiles[] = 'filedir/.';
-            $listfiles[] = 'filedir/..';
+            $listfiles['filedir/.'] = 'filedir/.';
+            $listfiles['filedir/..'] = 'filedir/..';
 
             $filedir = self::get_dataroot() . '/filedir';
             if (file_exists($filedir)) {
                 $directory = new RecursiveDirectoryIterator($filedir);
                 foreach (new RecursiveIteratorIterator($directory) as $file) {
                     if ($file->isDir()) {
-                        $listfiles[] = substr($file->getPath(), strlen(self::get_dataroot() . '/'));
+                        $key = substr($file->getPath(), strlen(self::get_dataroot() . '/'));
                     } else {
-                        $listfiles[] = substr($file->getPathName(), strlen(self::get_dataroot() . '/'));
+                        $key = substr($file->getPathName(), strlen(self::get_dataroot() . '/'));
                     }
+                    $listfiles[$key] = $key;
                 }
             }
 
