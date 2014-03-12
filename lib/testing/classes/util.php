@@ -879,7 +879,7 @@ abstract class testing_util {
 
             // Save the file list in a JSON file.
             $fp = fopen($jsonfilepath, 'w');
-            fwrite($fp, json_encode($listfiles));
+            fwrite($fp, json_encode(array_values($listfiles)));
             fclose($fp);
         }
     }
