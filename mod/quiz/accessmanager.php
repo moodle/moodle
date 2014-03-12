@@ -131,10 +131,10 @@ class quiz_access_manager {
      * @return array $errors the updated $errors array.
      */
     public static function validate_settings_form_fields(array $errors,
-            array $data, $files, mod_quiz_mod_form $this) {
+            array $data, $files, mod_quiz_mod_form $quizform) {
 
         foreach (self::get_rule_classes() as $rule) {
-            $errors = $rule::validate_settings_form_fields($errors, $data, $files, $this);
+            $errors = $rule::validate_settings_form_fields($errors, $data, $files, $quizform);
         }
 
         return $errors;
