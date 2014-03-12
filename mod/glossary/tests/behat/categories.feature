@@ -6,18 +6,18 @@ Feature: Glossary entries can be organised in categories
 
   @javascript
   Scenario: Glossary entries can be organised in categories and categories can be autolinked
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity | name       | intro                                                           | course | idnumber  |
       | glossary | MyGlossary | Test glossary description                                       | C1     | glossary1 |
       | label    | name       | check autolinking of CategoryAutoLinks and CategoryNoLinks text | C1     | label1    |
@@ -34,7 +34,7 @@ Feature: Glossary entries can be organised in categories
     When I follow "Course 1"
     Then I should see "CategoryAutoLinks"
     And I should see "CategoryNoLinks"
-    And "a.glossary.autolink" "css_element" should not exists
+    And "a.glossary.autolink" "css_element" should not exist
 # Create, edit and delete categories
     And I follow "MyGlossary"
     And I follow "Browse by category"
@@ -100,7 +100,7 @@ Feature: Glossary entries can be organised in categories
     And I should see "CategoryAutoLinks"
     And I should see "CategoryAutoLinks" in the "a.glossary.autolink" "css_element"
     And I should see "CategoryNoLinks"
-    And "//a[contains(.,'CategoryNoLinks')]" "xpath_element" should not exists
+    And "//a[contains(.,'CategoryNoLinks')]" "xpath_element" should not exist
 # Delete a category with entries
     And I follow "Course 1"
     And I follow "MyGlossary"
