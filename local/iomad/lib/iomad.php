@@ -38,11 +38,11 @@ class iomad {
             $companyid = $SESSION->currenteditingcompany;
         } else if (self::is_company_user()) {
             $companyid = self::companyid();
-        } else if (!has_capability('block/iomad_company_admin:edit_departments', $context)) {
-            print_error('There has been a configuration error, please contact the site administrator');
-        } else {
+        } else if (has_capability('block/iomad_company_admin:edit_departments', $context)) {
             redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                                      get_string('pleaseselect', 'block_iomad_company_admin'));
+        } else {
+            $companyid = 0;
         }
         return $companyid;
     }
