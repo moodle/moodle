@@ -511,7 +511,7 @@ class behat_deprecated extends behat_base {
      * @param TableNode $data
      */
     public function the_following_exists($elementname, TableNode $data) {
-        $alternative = 'the following "' . $this->escape($elementname) . '" exist';
+        $alternative = 'the following "' . $this->escape($elementname) . '" exist:';
         $this->deprecated_message($alternative);
         return new Given($alternative, $data);
     }
