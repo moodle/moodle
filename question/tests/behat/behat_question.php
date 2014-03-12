@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/behat_question_base.php');
 
 use Behat\Behat\Context\Step\Given as Given,
     Behat\Gherkin\Node\TableNode as TableNode,
@@ -40,30 +40,22 @@ use Behat\Behat\Context\Step\Given as Given,
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_question extends behat_base {
+class behat_question extends behat_question_base {
 
     /**
      * Creates a question in the current course questions bank with the provided data. This step can only be used when creating question types composed by a single form.
      *
      * @Given /^I add a "(?P<question_type_name_string>(?:[^"]|\\")*)" question filling the form with:$/
      * @param string $questiontypename The question type name
-     * @param TableNode $questiondata The data to fill the question type form
+     * @param TableNode $questiondata The data to fill the question type form.
+     * @return Given[] the steps.
      */
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
 
-        // Using xpath literal to avoid quotes problems.
-        $questiontypename = $this->getSession()->getSelectorsHandler()->xpathLiteral($questiontypename);
-        $questiontypexpath = "//span[@class='qtypename'][normalize-space(.)=$questiontypename]" .
-            "/ancestor::div[@class='qtypeoption']/descendant::input";
-
-        return array(
+        return array_merge(array(
             new Given('I follow "' . get_string('questionbank', 'question') . '"'),
             new Given('I press "' . get_string('createnewquestion', 'question') . '"'),
-            new Given('I click on "' . $this->escape($questiontypexpath) . '" "xpath_element"'),
-            new Given('I click on "#chooseqtype_submit" "css_element"'),
-            new Given('I set the following fields to these values:', $questiondata),
-            new Given('I press "id_submitbutton"')
-        );
+                ), $this->finish_adding_question($questiontypename, $questiondata));
     }
 
     /**
@@ -91,5 +83,4 @@ class behat_question extends behat_base {
             "/descendant::div[@class='state'][contains(., $stateliteral)]";
         $this->find('xpath', $xpath, $exception);
     }
-
 }

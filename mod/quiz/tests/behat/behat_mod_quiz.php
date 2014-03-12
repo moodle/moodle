@@ -26,6 +26,7 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.php');
 
 use Behat\Behat\Context\Step\Given as Given,
     Behat\Gherkin\Node\TableNode as TableNode;
@@ -38,7 +39,7 @@ use Behat\Behat\Context\Step\Given as Given,
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_mod_quiz extends behat_base {
+class behat_mod_quiz extends behat_question_base {
     /**
      * Adds a question to the existing quiz with filling the form.
      *
@@ -47,23 +48,16 @@ class behat_mod_quiz extends behat_base {
      * @When /^I add a "(?P<question_type_string>(?:[^"]|\\")*)" question to the "(?P<quiz_name_string>(?:[^"]|\\")*)" quiz with:$/
      * @param string $questiontype
      * @param string $quizname
-     * @param TableNode $table with data for filling the add question form
+     * @param TableNode $questiondata with data for filling the add question form
      */
-    public function i_add_question_to_the_quiz_with($questiontype, $quizname, TableNode $table) {
-        $questiontype = $this->escape($questiontype);
+    public function i_add_question_to_the_quiz_with($questiontype, $quizname, TableNode $questiondata) {
         $quizname = $this->escape($quizname);
         $editquiz = $this->escape(get_string('editquiz', 'quiz'));
         $addaquestion = $this->escape(get_string('addaquestion', 'quiz'));
-        $next = $this->escape(get_string('next'));
-        $savechanges = $this->escape(get_string('savechanges'));
-        return array(
+        return array_merge(array(
             new Given("I follow \"$quizname\""),
             new Given("I follow \"$editquiz\""),
             new Given("I press \"$addaquestion\""),
-            new Given("I set the field \"$questiontype\" to \"1\""),
-            new Given("I press \"$next\""),
-            new Given("I set the following fields to these values:", $table),
-            new Given("I press \"$savechanges\"")
-        );
+                ), $this->finish_adding_question($questiontype, $questiondata));
     }
 }
