@@ -284,6 +284,7 @@ $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['pluginadministration'] = 'SCORM package administration';
 $string['pluginname'] = 'SCORM package';
 $string['popup'] = 'New window';
+$string['popuplaunched'] = 'This SCORM package has been launched in a popup window, If you have finished viewing this resource, click here to return to the course page';
 $string['popupmenu'] = 'In a drop down menu';
 $string['popupopen'] = 'Open package in a new window';
 $string['popupsblocked'] = 'It appears that popup windows are blocked, stopping this SCORM package from playing. Please check your browser settings before trying again.';

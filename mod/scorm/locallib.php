@@ -830,7 +830,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     $organization = optional_param('organization', '', PARAM_INT);
 
     if ($scorm->displaycoursestructure == 1) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter toc');
+        echo $OUTPUT->box_start('generalbox boxaligncenter toc', 'toc');
         ?>
         <div class="structurehead"><?php print_string('contents', 'scorm') ?></div>
         <?php
