@@ -987,7 +987,21 @@ class assign_grading_table extends table_sql implements renderable {
         }
         $actions[$url->out(false)] = $description;
 
-        $submissionsopen = $this->assignment->submissions_open($row->id);
+        // Everything we need is in the row.
+        $submission = $row;
+        $flags = $row;
+        if ($this->assignment->get_instance()->teamsubmission) {
+            // Use the cache for this.
+            $submission = false;
+            $group = false;
+            $this->get_group_and_submission($row->id, $group, $submission, -1);
+        }
+
+        $submissionsopen = $this->assignment->submissions_open($row->id,
+                                                               true,
+                                                               $submission,
+                                                               $flags,
+                                                               $this->gradinginfo);
         $caneditsubmission = $this->assignment->can_edit_submission($row->id, $USER->id);
 
         // Hide for offline assignments.
