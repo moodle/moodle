@@ -2013,5 +2013,12 @@ $capabilities = array(
                 'teacher'        => CAP_ALLOW,
                 'editingteacher' => CAP_ALLOW,
         )
+    ),
+
+    'moodle/site:forcelanguage' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        )
     )
 );
