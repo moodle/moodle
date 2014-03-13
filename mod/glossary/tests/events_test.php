@@ -39,7 +39,7 @@ class glossary_event_testcase extends advanced_testcase {
      * Test comment_created event.
      */
     public function test_comment_created() {
-        global $CFG, $DB;
+        global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest();
@@ -74,7 +74,7 @@ class glossary_event_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_glossary\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/glossary/view.php', array('id' => $glossary->id));
+        $url = new moodle_url('/mod/glossary/view.php', array('id' => $glossary->cmid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -83,7 +83,7 @@ class glossary_event_testcase extends advanced_testcase {
      * Test comment_deleted event.
      */
     public function test_comment_deleted() {
-        global $CFG, $DB;
+        global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
         $this->resetAfterTest();
@@ -119,7 +119,7 @@ class glossary_event_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_glossary\event\comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/glossary/view.php', array('id' => $glossary->id));
+        $url = new moodle_url('/mod/glossary/view.php', array('id' => $glossary->cmid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
