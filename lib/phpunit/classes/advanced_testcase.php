@@ -78,8 +78,11 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             $DB = phpunit_util::get_global_backup('DB');
 
             // Deal with any debugging messages.
-            phpunit_util::display_debugging_messages();
+            $debugerror = phpunit_util::display_debugging_messages();
             phpunit_util::reset_debugging();
+            if ($debugerror) {
+                trigger_error('Unenxpected debugging() call detected.', E_USER_NOTICE);
+            }
 
         } catch (Exception $e) {
             // cleanup after failed expectation
