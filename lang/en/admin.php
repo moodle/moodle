@@ -597,8 +597,6 @@ $string['iplookupinfo'] = 'By default Moodle uses the free online NetGeo (The In
 It is recommended to install local copy of free GeoLite City database from MaxMind.<br />
 IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
 $string['iplookupmaxmindnote'] = 'This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com/">http://www.maxmind.com/</a>.';
-$string['keeplogoutlang'] = 'Keep language on logout';
-$string['keeplogoutlang_desc'] = 'Enable this option to prevent the user interface language from reverting back to the site\'s default language when users log out.';
 $string['keeptagnamecase'] = 'Keep tag name casing';
 $string['lang'] = 'Default language';
 $string['langcache'] = 'Cache language menu';
