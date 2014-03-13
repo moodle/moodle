@@ -196,7 +196,7 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('event', array('modulename' => $pluginname));
 
     // Delete scheduled tasks.
-    $DB->delete_records('scheduled_task', array('component' => $pluginname));
+    $DB->delete_records('task_scheduled', array('component' => $pluginname));
 
     // delete all the logs
     $DB->delete_records('log', array('module' => $pluginname));
