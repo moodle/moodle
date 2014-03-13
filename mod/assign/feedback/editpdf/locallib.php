@@ -37,6 +37,9 @@ use \assignfeedback_editpdf\page_editor;
  */
 class assign_feedback_editpdf extends assign_feedback_plugin {
 
+    /** @var boolean|null $enabledcache Cached lookup of the is_enabled function */
+    private $enabledcache = null;
+
     /**
      * Get the name of the file feedback plugin
      * @return string
@@ -265,14 +268,15 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return bool
      */
     public function is_enabled() {
-        $testpath = assignfeedback_editpdf\pdf::test_gs_path(false);
-        if (!extension_loaded('zlib')) {
-            return false;
+        if ($this->enabledcache === null) {
+            if (!extension_loaded('zlib')) {
+                $this->enabledcache = false;
+            } else {
+                $testpath = assignfeedback_editpdf\pdf::test_gs_path(false);
+                $this->enabledcache = ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK);
+            }
         }
-        if ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK) {
-            return true;
-        }
-        return false;
+        return $this->enabledcache;
     }
     /**
      * Automatically hide the setting for the editpdf feedback plugin.

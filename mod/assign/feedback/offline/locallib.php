@@ -36,6 +36,9 @@ require_once($CFG->dirroot.'/grade/grading/lib.php');
  */
 class assign_feedback_offline extends assign_feedback_plugin {
 
+    /** @var boolean|null $activecache Cached lookup of advanced grading */
+    private $activecache = null;
+
     /**
      * Get the name of the file feedback plugin
      * @return string
@@ -373,14 +376,17 @@ class assign_feedback_offline extends assign_feedback_plugin {
      * @return bool
      */
     public function is_enabled() {
-        $gradingmanager = get_grading_manager($this->assignment->get_context(), 'mod_assign', 'submissions');
-        $controller = $gradingmanager->get_active_controller();
-        $active = !empty($controller);
-
-        if ($active) {
-            return false;
+        if ($this->activecache === null) {
+            $gradingmanager = get_grading_manager($this->assignment->get_context(), 'mod_assign', 'submissions');
+            $controller = $gradingmanager->get_active_controller();
+            $this->activecache = !empty($controller);
         }
-        return parent::is_enabled();
+
+        if ($this->activecache) {
+            return false;
+        } else {
+            return parent::is_enabled();
+        }
     }
 
     /**
