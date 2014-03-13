@@ -737,7 +737,7 @@ try {
 }
 // And the 'default' course - this will usually get reset later in require_login() etc.
 $COURSE = clone($SITE);
-/** @deprecated Id of the frontpage course, use $SITE->id instead */
+// Id of the frontpage course.
 define('SITEID', $SITE->id);
 
 // init session prevention flag - this is defined on pages that do not want session
