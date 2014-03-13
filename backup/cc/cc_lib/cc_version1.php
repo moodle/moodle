@@ -96,10 +96,8 @@ class cc_version1 extends cc_version_base {
 
           //add all namespaces
           foreach ($this->ccnamespaces as $key => $value) {
-                if ($key != 'lom' ){
-                    $dummy_attr = $key.":dummy";
-                    $doc->createAttributeNS($value,$dummy_attr);
-                }
+            $dummy_attr = $key.":dummy";
+            $doc->createAttributeNS($value,$dummy_attr);
           }
 
           // add location of schemas
@@ -237,6 +235,7 @@ class cc_version1 extends cc_version_base {
             $dnode->appendChild($nd);
         }
         $this->resources[$res->identifier]  = $res;
+        $this->resources_ind[$res->files[0]] = $res->identifier;
 
         foreach ($res->dependency as $dependency){
             $nd = $doc->createElementNS($this->ccnamespaces['imscc'],'dependency');
@@ -543,7 +542,7 @@ class cc_version1 extends cc_version_base {
      * @param object $xmlnode
      * @return DOMNode
      */
-    protected function create_metadata_educational ($met,DOMDocument  &$doc, $xmlnode){
+    public function create_metadata_educational ($met,DOMDocument  &$doc, $xmlnode){
         $nd = $doc->createElementNS($this->ccnamespaces['lom'],'educational');
         $nd2 = $doc->createElementNS($this->ccnamespaces['lom'],'intendedEndUserRole');
         $nd3 = $doc->createElementNS($this->ccnamespaces['voc'],'vocabulary');

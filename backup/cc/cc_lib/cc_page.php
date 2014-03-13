@@ -31,6 +31,7 @@ class page11_resurce_file extends general_cc_file {
     protected $intro = null;
 
     public function set_content($value) {
+        //we are not cleaning up this one on purporse.
         $this->content = $value;
     }
 

@@ -271,7 +271,7 @@ abstract class cc_helpers {
                                                  $outdir);
             $replaceprefix = $webcontent ? '' : '$IMS-CC-FILEBASE$';
             foreach ($lfiles as $lfile) {
-                if (array_key_exists($lfile, $files)) {
+                if (isset($files[$lfile])) {
                     $filename = str_replace('%2F', '/',rawurlencode($lfile));
                     $content = str_replace('@@PLUGINFILE@@'.$filename,
                                            $replaceprefix.'../'.$files[$lfile][1],
@@ -413,11 +413,7 @@ class pkg_static_resources {
     }
 
     public function get_identifier($location) {
-        $result = false;
-        if (array_key_exists($location, $this->values)) {
-            $result = $this->values[$location];
-        }
-        return $result;
+        return isset($this->values[$location]) ? $this->values[$location] : false;
     }
 
     public function reset() {

@@ -40,7 +40,6 @@ class XMLGenericDocument {
     private   $arrayPrefixNS    = array();
     private   $is_html          = false;
 
-
     /**
     * @param string $value
     * @return string

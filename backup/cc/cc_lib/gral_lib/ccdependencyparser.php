@@ -51,61 +51,24 @@ function is_url($url) {
     return $result;
 }
 
-function GetDepFiles($manifestroot, $fname,$folder,&$filenames) {
-    $extension      = pathinfo($fname, PATHINFO_EXTENSION);
-    $filenames      = array();
-    $dcx            = new XMLGenericDocument();
-    $result         = true;
-
-    switch ($extension){
-        case 'xml':
-                 $result = @$dcx->loadXMLFile($manifestroot.$folder.$fname);
-                 if (!$result) {
-                    $result = @$dcx->loadXMLFile($manifestroot.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$fname);
-                 }
-                 GetDepFilesXML($manifestroot, $fname,$filenames,$dcx, $folder);
-            break;
-        case 'html':
-        case 'htm':
-                 $result = @$dcx->loadHTMLFile($manifestroot.$folder.$fname);
-                 if (!$result) {
-                    $result = @$dcx->loadHTMLFile($manifestroot.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$fname);
-                 }
-                 GetDepFilesHTML($manifestroot, $fname,$filenames,$dcx, $folder);
-            break;
+function GetDepFiles($manifestroot, $fname, $folder, &$filenames) {
+    static $types = array('xhtml' => true, 'html' => true, 'htm' => true);
+    $extension = strtolower(trim(pathinfo($fname, PATHINFO_EXTENSION)));
+    $filenames = array();
+    if (isset($types[$extension])) {
+        $dcx = new XMLGenericDocument();
+        $filename = $manifestroot.$folder.$fname;
+        if (!file_exists($filename)) {
+            $filename = $manifestroot.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$fname;
+        }
+        if (file_exists($filename)) {
+            $res = $dcx->loadHTMLFile($filename);
+            if ($res) {
+                GetDepFilesHTML($manifestroot, $fname, $filenames, $dcx, $folder);
+            }
+        }
     }
-    return $result;
 }
-
-
-
-function GetDepFilesXML ($manifestroot, $fname,&$filenames,&$dcx, $folder){
-        $nlist = $dcx->nodeList("//img/@src | //attachments/attachment/@href  | //link/@href | //script/@src");
-        $css_obj_array = array();
-        foreach ($nlist as $nl) {
-            $item = $folder.$nl->nodeValue;
-            $path_parts = pathinfo($item);
-            $fname = $path_parts['basename'];
-            $ext   = array_key_exists('extension',$path_parts) ? $path_parts['extension'] : '';
-            if (!is_url($nl->nodeValue)) {
-              //$file =   $folder.$nl->nodeValue; // DEPENDERA SI SE QUIERE Q SEA RELATIVO O ABSOLUTO
-              $file =   $nl->nodeValue;
-              toNativePath($file);
-              $filenames[]=$file;
-            }
-        }
-        $dcx->registerNS('qti','http://www.imsglobal.org/xsd/imscc/ims_qtiasiv1p2.xsd');
-        $dcx->resetXpath();
-        $nlist = $dcx->nodeList("//qti:mattext | //text");
-        $dcx2 = new XMLGenericDocument();
-        foreach ($nlist as $nl) {
-            if ($dcx2->loadString($nl->nodeValue)){
-                GetDepFilesHTML($manifestroot,$fname,$filenames,$dcx2,$folder);
-            }
-        }
-}
-
-
 
 function GetDepFilesHTML ($manifestroot, $fname, &$filenames, &$dcx, $folder){
         $dcx->resetXpath();
@@ -121,7 +84,7 @@ function GetDepFilesHTML ($manifestroot, $fname, &$filenames, &$dcx, $folder){
               $file = fullPath($path,"/");
               toNativePath($file);
               if (file_exists($manifestroot.DIRECTORY_SEPARATOR.$file)) {
-                  $filenames[]= $file;
+                  $filenames[$file]= $file;
               }
             }
             if ($ext == 'css') {
@@ -138,10 +101,12 @@ function GetDepFilesHTML ($manifestroot, $fname, &$filenames, &$dcx, $folder){
                 $limg = $cssobj->Get($item,"list-style-image");
                 $npath = pathinfo($csskey);
                 if ((!empty($bimg))&& ($bimg != 'none')) {
-                    $filenames[] = stripUrl($bimg,$npath['dirname'].'/');
+                    $value = stripUrl($bimg,$npath['dirname'].'/');
+                    $filenames[$value] = $value;
                 } else
                 if ((!empty($limg))&& ($limg != 'none')) {
-                    $filenames[] = stripUrl($limg,$npath['dirname'].'/');
+                    $value = stripUrl($limg,$npath['dirname'].'/');
+                    $filenames[$value] = $value;
                 }
             }
         }
@@ -157,10 +122,12 @@ function GetDepFilesHTML ($manifestroot, $fname, &$filenames, &$dcx, $folder){
                     $sbl = $cssobj->Get($elem,"list-style-image");
                     $npath = pathinfo($csskey);
                     if ((!empty($sb)) && ($sb != 'none')) {
-                        $filenames[] = stripUrl($sb,$npath['dirname'].'/');
+                        $value = stripUrl($sb,$npath['dirname'].'/');
+                        $filenames[$value] = $value;
                     } else
                     if ((!empty($sbl)) && ($sbl != 'none')) {
-                        $filenames[] = stripUrl($sbl,$npath['dirname'].'/');
+                        $value = stripUrl($sbl,$npath['dirname'].'/');
+                        $filenames[$value] = $value;
                     }
                 }
             }

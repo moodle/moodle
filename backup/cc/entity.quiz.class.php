@@ -653,8 +653,9 @@ class cc_quiz extends entities {
 
         $question_cc_type = $this->get_question_type($identifier, $assessment);
         $question_cc_type = $question_cc_type['cc'];
+        $is_multiresponse = ($question_cc_type == CC_QUIZ_MULTIPLE_RESPONSE);
 
-        if ($question_cc_type == CC_QUIZ_MULTIPLE_CHOICE || $question_cc_type == CC_QUIZ_MULTIPLE_RESPONSE || $question_cc_type == CC_QUIZ_TRUE_FALSE) {
+        if ($question_cc_type == CC_QUIZ_MULTIPLE_CHOICE || $is_multiresponse || $question_cc_type == CC_QUIZ_TRUE_FALSE) {
 
             $query_answers = '//xmlns:item[@ident="' . $identifier . '"]/xmlns:presentation/xmlns:response_lid/xmlns:render_choice/xmlns:response_label';
             $query_answers_with_flow = '//xmlns:item[@ident="' . $identifier . '"]/xmlns:presentation/xmlns:flow/xmlns:response_lid/xmlns:render_choice/xmlns:response_label';
@@ -704,7 +705,19 @@ class cc_quiz extends entities {
             }
 
             if (!empty($response_items)) {
-
+                if ($is_multiresponse) {
+                    $correct_answer_score = 0;
+                    //get the correct answers count
+                    $canswers_query = "//xmlns:item[@ident='{$identifier}']//xmlns:setvar[@varname='SCORE'][.=100]/../xmlns:conditionvar//xmlns:varequal[@case='Yes'][not(parent::xmlns:not)]";
+                    $canswers = $xpath->query($canswers_query);
+                    if ($canswers->length > 0) {
+                        $correct_answer_score = round(1.0 / (float)$canswers->length, 7); //weird
+                        $correct_answers_ident = array();
+                        foreach ($canswers as $cnode) {
+                            $correct_answers_ident[$cnode->nodeValue] = true;
+                        }
+                    }
+                }
                 foreach ($response_items as $response_item) {
 
                     $last_answer_id++;
@@ -718,6 +731,10 @@ class cc_quiz extends entities {
                     $answer_feedback = $this->get_feedback($assessment, $answer_identifier, $identifier, $question_cc_type);
 
                     $answer_score = $this->get_score($assessment, $answer_identifier, $identifier);
+
+                    if ($is_multiresponse && isset($correct_answers_ident[$answer_identifier])) {
+                        $answer_score = $correct_answer_score;
+                    }
 
                     $answers[] = array('id' => $last_answer_id,
                                        'title' => $answer_title,
@@ -757,7 +774,7 @@ class cc_quiz extends entities {
             }
         }
 
-        $score = empty($score) ? 0 : $score;
+        $score = empty($score) ? 0 : sprintf("%.7F", $score);
 
         return $score;
     }

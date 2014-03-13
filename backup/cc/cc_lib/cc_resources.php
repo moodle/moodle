@@ -94,6 +94,7 @@ class cc_resource implements cc_i_resource {
     public  $isempty        = null;
     public  $manifestroot   = null;
     public  $folder         = null;
+    public  $instructoronly = false;
 
     private $throwonerror   = true;
 

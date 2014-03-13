@@ -35,6 +35,7 @@ abstract class cc_version_base {
     protected $manifestID           = null;
     protected $organizationid       = null;
     public    $resources            = null;
+    public    $resources_ind        = null;
     protected $metadata             = null;
     public    $organizations        = null;
     protected $base                 = null;

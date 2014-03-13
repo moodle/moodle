@@ -118,11 +118,9 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
                      "[@identifier='".
                      $identifier.
                      "']/imscc:file");
-       $dnode  = $this->doc->createElementNS($this->ccnamespaces['imscc'], "metadata");
-
-       $metanode->insertBefore($dnode,$metanode2);
-
-       $this->activemanifest->create_metadata_resource_node($met,$this->doc,$dnode);
+       $nspaces = $this->activemanifest->get_cc_namespaces();
+       $dnode  = $this->append_new_element_ns($metanode2, $nspaces['imscc'], 'metadata');
+       $this->activemanifest->create_metadata_resource_node($met, $this->doc, $dnode);
     }
 
 
@@ -147,7 +145,8 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
                      $filename.
                      "']");
 
-       $dnode  = $this->doc->createElementNS($this->ccnamespaces['imscc'], "metadata");
+       $nspaces = $this->activemanifest->get_cc_namespaces();
+       $dnode  = $this->doc->createElementNS($nspaces['imscc'], "metadata");
 
        $metanode->appendChild($dnode);
 
@@ -240,24 +239,15 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
              throw new Exception("Type invalid...");
         }
 
-        if (is_null($res)){
+        if ($res == null){
             throw new Exception('Invalid Resource or dont give it');
         }
-        $rst = null;
-
-        if (is_string($res)){
-            $rst = new cc_resource($this->filePath(), $res);
-            if (is_string($identifier)){
-                $rst->identifier = $identifier;
-            }
-        } else {
-            $rst = $res;
-        }
+        $rst = $res;
 
         //TODO: This has to be reviewed since it does not handle properly mutiple file
         //      dependencies
         if (is_object($identifier)) {
-            $this->activemanifest->create_resource_node($rst,$this->doc,$identifier);
+            $this->activemanifest->create_resource_node($rst, $this->doc, $identifier);
         } else {
             $nresnode   = null;
 
@@ -265,50 +255,32 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
             if (!cc_helpers::is_html($rst->filename)) {
                 $rst->href = null;
             }
-            $this->activemanifest->create_resource_node($rst,$this->doc,$nresnode);
 
-
-            for ($i = 1 ; $i < count ($rst->files); $i++){
-                $ident = $this->get_identifier_by_filename($rst->files[$i]);
-                if(empty($ident)){
-                    $newres = new cc_resource($rst->manifestroot,$rst->files[$i],false);
-                    if (!empty($newres)) {
-                        if (!cc_helpers::is_html($rst->files[$i])) {
-                             $newres->href = null;
-                        }
-                        $newres->type = 'webcontent';
-                        $this->activemanifest->create_resource_node($newres,$this->doc,$nresnode);
+            $this->activemanifest->create_resource_node($rst, $this->doc, $nresnode);
+            foreach ($rst->files as $file) {
+                $ident = $this->get_identifier_by_filename($file);
+                if($ident == null){
+                    $newres = new cc_resource($rst->manifestroot, $file);
+                    if (!cc_helpers::is_html($file)) {
+                         $newres->href = null;
                     }
-                }
-
-            }
-            foreach ($this->activemanifest->resources as $k => $v){
-                ($k);
-                $depen = $this->check_if_exist_in_other($v->files[0]);
-                if (!empty($depen)){
-                    $this->replace_file_x_dependency($depen,$v->files[0]);
-                    // coloca aca como type = webcontent porque son archivos dependientes
-                    // quizas aqui habria q ver de que type es el que vino y segun eso, ponerlo
-                    // en associatedcontent o en webcontent
-                    $v->type = 'webcontent';
+                    $newres->type = 'webcontent';
+                    $this->activemanifest->create_resource_node($newres, $this->doc, $nresnode);
                 }
             }
         }
 
-        $tmparray = array($rst->identifier,$rst->files[0]);
+        $tmparray = array($rst->identifier, $rst->files[0]);
         return $tmparray;
     }
 
 
 
-    private function check_if_exist_in_other($name){
+    private function check_if_exist_in_other($name, $identifier){
         $status = array();
-        foreach ($this->activemanifest->resources as $key => $value){
-            ($key);
-            for ($i=1; $i< count($value->files); $i++){
-                if ($name == $value->files[$i]){
-                    array_push($status,$value->identifier);
-                }
+        foreach ($this->activemanifest->resources as $value){
+            if (($value->identifier != $identifier) && isset($value->files[$name])) {
+                $status[] = $value->identifier;
             }
         }
         return $status;
@@ -332,11 +304,8 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
 
     private function get_identifier_by_filename($name){
         $result = null;
-        foreach ($this->activemanifest->resources as $key => $value) {
-                if ($name == $value->files[0]){
-                    $result = $key;
-                    break;
-                }
+        if (isset($this->activemanifest->resources_ind[$name])) {
+            $result = $this->activemanifest->resources_ind[$name];
         }
         return $result;
     }
@@ -353,6 +322,12 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
 
     }
 
+    public function update_instructoronly($identifier, $value = false) {
+        if (isset($this->activemanifest->resources[$identifier])) {
+            $resource = $this->activemanifest->resources[$identifier];
+            $resource->instructoronly = $value;
+        }
+    }
 
     /**
      * Append the resources nodes in the Manifest
@@ -365,12 +340,31 @@ class cc_manifest extends XMLGenericDocument implements cc_i_manifest {
                           "']/imscc:resources";
         $resnode    = $this->node($resnodestr);
 
-        foreach ($this->activemanifest->resources as $key => $node) {
-            ($key);
-            $resnode->appendChild($this->activemanifest->create_resource_node($node,$this->doc,null));
+        foreach ($this->activemanifest->resources as $k => $v){
+            ($k);
+            $depen = $this->check_if_exist_in_other($v->files[0], $v->identifier);
+            if (!empty($depen)){
+                $this->replace_file_x_dependency($depen,$v->files[0]);
+                // coloca aca como type = webcontent porque son archivos dependientes
+                // quizas aqui habria q ver de que type es el que vino y segun eso, ponerlo
+                // en associatedcontent o en webcontent
+                $v->type = 'webcontent';
+            }
         }
-        return $resnode;
 
+        foreach ($this->activemanifest->resources as $node) {
+            $rnode = $this->activemanifest->create_resource_node($node, $this->doc, null);
+            $resnode->appendChild($rnode);
+            if ($node->instructoronly) {
+                $metafileceduc = new cc_metadata_resouce_educational();
+                $metafileceduc->set_value(intended_user_role::INSTRUCTOR);
+                $metafile = new cc_metadata_resouce();
+                $metafile->add_metadata_resource_educational($metafileceduc);
+                $this->activemanifest->create_metadata_educational($metafile, $this->doc, $rnode);
+            }
+        }
+
+        return $resnode;
     }
 }
 

@@ -40,4 +40,5 @@ require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_resource.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_quiz.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_page.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_label.php');
+require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_folder.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_convert_moodle2.php');

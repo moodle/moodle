@@ -90,4 +90,33 @@ class cc_version11 extends cc_version1 {
         }
     }
 
+    /**
+    * Create Education Metadata (How To)
+    *
+    * @param object $met
+    * @param DOMDocument $doc
+    * @param object $xmlnode
+    * @return DOMNode
+    */
+    public function create_metadata_educational ($met, DOMDocument  &$doc, $xmlnode){
+        $metadata = $doc->createElementNS($this->ccnamespaces['imscc'] ,'metadata');
+        $xmlnode->insertBefore($metadata, $xmlnode->firstChild);
+        $lom = $doc->createElementNS($this->ccnamespaces['lom'] ,'lom');
+        $metadata->appendChild($lom);
+        $educational = $doc->createElementNS($this->ccnamespaces['lom'] ,'educational');
+        $lom->appendChild($educational);
+
+        foreach ($met->arrayeducational as $name => $value) {
+            !is_array($value)?$value =array($value):null;
+            foreach ($value as $v){
+                $userrole = $doc->createElementNS($this->ccnamespaces['lom'],'intendedEndUserRole');
+                $educational->appendChild($userrole);
+                $nd4 = $doc->createElementNS($this->ccnamespaces['lom'], 'source', 'IMSGLC_CC_Rolesv1p1');
+                $nd5 = $doc->createElementNS($this->ccnamespaces['lom'], 'value', $v[0]);
+                $userrole->appendChild($nd4);
+                $userrole->appendChild($nd5);
+            }
+        }
+        return $metadata;
+    }
 }

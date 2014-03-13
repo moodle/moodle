@@ -3,6 +3,9 @@
 require_once 'cc_converters.php';
 require_once 'cc_general.php';
 require_once 'cc_asssesment.php';
+require_once 'cc_assesment_truefalse.php';
+require_once 'cc_assesment_essay.php';
+require_once 'cc_assesment_sfib.php';
 
 class cc_converter_quiz extends cc_converter {
 
@@ -59,6 +62,11 @@ class cc_converter_quiz extends cc_converter {
                                                         $this->rootpath,
                                                         $contextid,
                                                         $outdir);
+        if ($ndeps === false) {
+            //No exportable questions in quizz or quizz has no questions
+            //so just skip it
+            return true;
+        }
         //store any additional dependencies
         $deps = array_merge($result[1], $ndeps);
 

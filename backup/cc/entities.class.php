@@ -83,9 +83,7 @@ class entities {
 
     public function update_sources ($html, $root_path = '') {
 
-        $document = new DOMDocument();
-
-        @$document->loadHTML($html);
+        $document = $this->load_html($html);
 
         $tags = array('img' => 'src' , 'a' => 'href');
 
@@ -108,7 +106,7 @@ class entities {
             }
         }
 
-        $html = $this->clear_doctype($document->saveHTML());
+        $html = $this->html_insidebody($document);
 
         return $html;
     }
@@ -159,8 +157,7 @@ class entities {
 
     public function include_titles ($html) {
 
-        $document = new DOMDocument();
-        @$document->loadHTML($html);
+        $document = $this->load_html($html);
 
         $images = $document->getElementsByTagName('img');
 
@@ -180,7 +177,7 @@ class entities {
             $image->setAttribute('title', $title);
         }
 
-        $html = $this->clear_doctype($document->saveHTML());
+        $html = $this->html_insidebody($document);
 
         return $html;
     }
@@ -289,13 +286,36 @@ class entities {
 
     }
 
-    private function clear_doctype ($html) {
+    /**
+     * @param string $html
+     * @return DOMDocument
+     */
+    private function load_html($html) {
+        // Need to make sure that the html passed has charset meta tag.
+        $metatag = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+        if (strpos($html, $metatag) === false) {
+            $html = '<html><head>'.$metatag.'</head><body>'.$html.'</body></html>';
+        }
 
-        return preg_replace('/^<!DOCTYPE.+?>/',
-                            '',
-                            str_replace(array('<html>' , '</html>' , '<body>' , '</body>'),
-                                        array('' , '' , '' , ''),
-                                        $html));
+        $document = new DOMDocument();
+        @$document->loadHTML($html);
+
+        return $document;
+    }
+
+    /**
+     * @param DOMDocument $domdocument
+     * @return string
+     */
+    private function html_insidebody($domdocument) {
+        $html = '';
+        $bodyitems = $domdocument->getElementsByTagName('body');
+        if ($bodyitems->length > 0) {
+            $body = $bodyitems->item(0);
+            $html = str_ireplace(array('<body>', '</body>'), '', $body->C14N());
+        }
+
+        return $html;
     }
 
     public function generate_random_string ($length = 6) {

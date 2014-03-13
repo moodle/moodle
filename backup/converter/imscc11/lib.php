@@ -45,7 +45,7 @@ class imscc11_converter extends base_converter {
         if (file_exists($manifest)) {
             // looks promising, lets load some information
             $handle = fopen($manifest, 'r');
-            $xml_snippet = fread($handle, 500);
+            $xml_snippet = fread($handle, 1024);
             fclose($handle);
 
             // check if it has the required strings
