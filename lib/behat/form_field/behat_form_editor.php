@@ -65,5 +65,15 @@ editor.set("value", "' . $value . '");
         }
     }
 
+    /**
+     * Matches the provided value against the current field value.
+     *
+     * @param string $expectedvalue
+     * @return bool The provided value matches the field value?
+     */
+    public function matches($expectedvalue) {
+        // A text editor may silently wrap the content in p tags (or not). Neither is an error.
+        return $this->text_matches($expectedvalue) || $this->text_matches('<p>' . $expectedvalue . '</p>');
+    }
 }
 
