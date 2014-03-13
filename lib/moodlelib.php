@@ -4052,16 +4052,31 @@ function create_user_record($username, $password, $auth = 'manual') {
  */
 function update_user_record($username) {
     global $DB, $CFG;
-    require_once($CFG->dirroot."/user/profile/lib.php");
-    require_once($CFG->dirroot.'/user/lib.php');
     // Just in case check text case.
     $username = trim(core_text::strtolower($username));
 
     $oldinfo = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id), '*', MUST_EXIST);
+    return update_user_record_by_id($oldinfo->id);
+}
+
+/**
+ * Will update a local user record from an external source (MNET users can not be updated using this method!).
+ *
+ * @param int $id user id
+ * @return stdClass A complete user object
+ */
+function update_user_record_by_id($id) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot."/user/profile/lib.php");
+    require_once($CFG->dirroot.'/user/lib.php');
+
+    $params = array('mnethostid' => $CFG->mnet_localhost_id, 'id' => $id, 'deleted' => 0);
+    $oldinfo = $DB->get_record('user', $params, '*', MUST_EXIST);
+
     $newuser = array();
     $userauth = get_auth_plugin($oldinfo->auth);
 
-    if ($newinfo = $userauth->get_userinfo($username)) {
+    if ($newinfo = $userauth->get_userinfo($oldinfo->username)) {
         $newinfo = truncate_userinfo($newinfo);
         $customfields = $userauth->get_custom_user_profile_fields();
 
@@ -4325,7 +4340,7 @@ function guest_user() {
  *
  * Note: this function works only with non-mnet accounts!
  *
- * @param string $username  User's username
+ * @param string $username  User's username (or also email if $CFG->authloginviaemail enabled)
  * @param string $password  User's password
  * @param bool $ignorelockout useful when guessing is prevented by other mechanism such as captcha or SSO
  * @param int $failurereason login failure reason, can be used in renderers (it may disclose if account exists)
@@ -4335,9 +4350,27 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     global $CFG, $DB;
     require_once("$CFG->libdir/authlib.php");
 
+    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
+        // we have found the user
+
+    } else if (!empty($CFG->authloginviaemail)) {
+        if ($email = clean_param($username, PARAM_EMAIL)) {
+            $select = "mnethostid = :mnethostid AND LOWER(email) = LOWER(:email) AND deleted = 0";
+            $params = array('mnethostid' => $CFG->mnet_localhost_id, 'email' => $email);
+            $users = $DB->get_records_select('user', $select, $params, 'id', 'id', 0, 2);
+            if (count($users) === 1) {
+                // Use email for login only if unique.
+                $user = reset($users);
+                $user = get_complete_user_data('id', $user->id);
+                $username = $user->username;
+            }
+            unset($users);
+        }
+    }
+
     $authsenabled = get_enabled_auth_plugins();
 
-    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
+    if ($user) {
         // Use manual if auth not set.
         $auth = empty($user->auth) ? 'manual' : $user->auth;
         if (!empty($user->suspended)) {
@@ -4376,7 +4409,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             return false;
         }
 
-        // Do not try to authenticate non-existent accounts when user creation is not disabled.
+        // Do not try to authenticate non-existent accounts when user creation is disabled.
         if (!empty($CFG->authpreventaccountcreation)) {
             $failurereason = AUTH_LOGIN_NOUSER;
 
@@ -4429,7 +4462,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             // User already exists in database.
             if (empty($user->auth)) {
                 // For some reason auth isn't set yet.
-                $DB->set_field('user', 'auth', $auth, array('username' => $username));
+                $DB->set_field('user', 'auth', $auth, array('id' => $user->id));
                 $user->auth = $auth;
             }
 
@@ -4439,7 +4472,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
 
             if ($authplugin->is_synchronised_with_external()) {
                 // Update user record from external DB.
-                $user = update_user_record($username);
+                $user = update_user_record_by_id($user->id);
             }
         } else {
             // Create account, we verified above that user creation is allowed.
