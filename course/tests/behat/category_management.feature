@@ -332,3 +332,17 @@ Feature: Test category management actions
     And the "movecategoriesto" "select" should be disabled
     And the "resortcategoriesby" "select" should be disabled
     And the "resortcoursesby" "select" should be disabled
+
+  Scenario: Test that is not possible to create a course category with a duplicate idnumber
+    Given the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And I log in as "admin"
+    And I expand "Site administration" node
+    And I expand "Courses" node
+    And I follow "Add a category"
+    And I set the following fields to these values:
+      | Category name | Test duplicate |
+      | Category ID number | CAT1 |
+    When I press "Create category"
+    Then I should see "ID number is already used for another category"
