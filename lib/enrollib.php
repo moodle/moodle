@@ -91,13 +91,15 @@ function enrol_get_plugins($enabled) {
     }
 
     foreach ($plugins as $plugin=>$location) {
-        if (!file_exists("$location/lib.php")) {
-            continue;
-        }
-        include_once("$location/lib.php");
         $class = "enrol_{$plugin}_plugin";
         if (!class_exists($class)) {
-            continue;
+            if (!file_exists("$location/lib.php")) {
+                continue;
+            }
+            include_once("$location/lib.php");
+            if (!class_exists($class)) {
+                continue;
+            }
         }
 
         $result[$plugin] = new $class();
