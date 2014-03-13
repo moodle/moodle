@@ -38,8 +38,16 @@ class grade_import_form extends moodleform {
         $mform->addElement('hidden', 'id', optional_param('id', 0, PARAM_INT));
         $mform->setType('id', PARAM_INT);
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
-        // file upload
-        $mform->addElement('filepicker', 'userfile', get_string('file'));
+
+        // Restrict the possible upload file types.
+        if (!empty($features['acceptedtypes'])) {
+            $acceptedtypes = $features['acceptedtypes'];
+        } else {
+            $acceptedtypes = '*';
+        }
+
+        // File upload.
+        $mform->addElement('filepicker', 'userfile', get_string('file'), null, array('accepted_types' => $acceptedtypes));
         $mform->addRule('userfile', null, 'required');
         $encodings = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
