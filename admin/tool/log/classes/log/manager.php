@@ -135,16 +135,6 @@ class manager implements \core\log\manager {
     }
 
     /**
-     * Execute cron actions.
-     */
-    public function cron() {
-        $this->init();
-        foreach ($this->stores as $store) {
-            $store->cron();
-        }
-    }
-
-    /**
      * Legacy add_to_log() redirection.
      *
      * To be used only from deprecated add_to_log() function and event trigger() method.

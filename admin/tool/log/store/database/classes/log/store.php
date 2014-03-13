@@ -209,9 +209,6 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
         return $this->extdb->count_records_select($dbtable, $selectwhere, $params);
     }
 
-    public function cron() {
-    }
-
     /**
      * Are the new events appearing in the reader?
      *

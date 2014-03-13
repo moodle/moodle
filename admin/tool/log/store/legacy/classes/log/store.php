@@ -91,17 +91,6 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         }
     }
 
-    public function cron() {
-        global $CFG, $DB;
-
-        // Delete old logs to save space (this might need a timer to slow it down...).
-        if (!empty($CFG->loglifetime)) { // Value in days.
-            $loglifetime = time(0) - ($CFG->loglifetime * 3600 * 24);
-            $DB->delete_records_select("log", "time < ?", array($loglifetime));
-            mtrace(" Deleted old log records");
-        }
-    }
-
     /**
      * Are the new events appearing in the reader?
      *
