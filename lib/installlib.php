@@ -278,10 +278,7 @@ function install_print_help_page($help) {
           <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation','install').'</title>
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-          <meta http-equiv="pragma" content="no-cache" />
-          <meta http-equiv="expires" content="0" />';
-
-    echo '</head><body>';
+          </head><body>';
     switch ($help) {
         case 'phpversionhelp':
             print_string($help, 'install', phpversion());

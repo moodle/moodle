@@ -364,10 +364,6 @@ class core_renderer extends renderer_base {
         $output = '';
         $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
         $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
-        if (!$this->page->cacheable) {
-            $output .= '<meta http-equiv="pragma" content="no-cache" />' . "\n";
-            $output .= '<meta http-equiv="expires" content="0" />' . "\n";
-        }
         // This is only set by the {@link redirect()} method
         $output .= $this->metarefreshtag;
 
