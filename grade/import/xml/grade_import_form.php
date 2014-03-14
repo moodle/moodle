@@ -27,6 +27,12 @@ class grade_import_form extends moodleform {
 
         $mform =& $this->_form;
 
+        if (isset($this->_customdata)) {
+            $features = $this->_customdata;
+        } else {
+            $features = array();
+        }
+
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id', 0, PARAM_INT));
         $mform->setType('id', PARAM_INT);
@@ -36,8 +42,15 @@ class grade_import_form extends moodleform {
         $mform->addElement('advcheckbox', 'feedback', get_string('importfeedback', 'grades'));
         $mform->setDefault('feedback', 0);
 
-        // file upload
-        $mform->addElement('filepicker', 'userfile', get_string('file'));
+        // Restrict the possible upload file types.
+        if (!empty($features['acceptedtypes'])) {
+            $acceptedtypes = $features['acceptedtypes'];
+        } else {
+            $acceptedtypes = '*';
+        }
+
+        // File upload.
+        $mform->addElement('filepicker', 'userfile', get_string('file'), null, array('accepted_types' => $acceptedtypes));
         $mform->disabledIf('userfile', 'url', 'noteq', '');
 
         $mform->addElement('text', 'url', get_string('fileurl', 'gradeimport_xml'), 'size="80"');
