@@ -375,7 +375,7 @@ function groups_is_member($groupid, $userid=null) {
  *
  * @category group
  * @staticvar array $cache
- * @param cm_info $cm course module object
+ * @param stdClass|cm_info $cm course module object
  * @param int $userid id of user, null means $USER->id
  * @return bool true if user member of at least one group used in activity
  */
@@ -625,7 +625,7 @@ function groups_allgroups_course_menu($course, $urlroot, $update = false, $activ
  * Print group menu selector for activity.
  *
  * @category group
- * @param stdClass $cm course module object
+ * @param stdClass|cm_info $cm course module object
  * @param string|moodle_url $urlroot return address that users get to if they choose an option;
  *   should include any parameters needed, e.g. "$CFG->wwwroot/mod/forum/view.php?id=34"
  * @param bool $return return as string instead of printing
@@ -770,7 +770,7 @@ function groups_get_course_group($course, $update=false, $allowedgroups=null) {
  * Returns group active in activity, changes the group by default if 'group' page param present
  *
  * @category group
- * @param stdClass $cm course module object
+ * @param stdClass|cm_info $cm course module object
  * @param bool $update change active group if group param submitted
  * @param array $allowedgroups list of groups user may access (INTERNAL, to be used only from groups_print_activity_menu())
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
@@ -823,7 +823,7 @@ function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
  * specified activity.
  *
  * @category group
- * @param stdClass $cm Course-module
+ * @param stdClass|cm_info $cm Course-module
  * @param int $userid User ID (defaults to current user)
  * @return array An array of group objects, or false if none
  */
@@ -925,7 +925,7 @@ function groups_filter_users_by_course_module_visible($cm, $users) {
  * $USER If $userid is null, use the global object.
  *
  * @category group
- * @param stdClass $cm The course module
+ * @param stdClass|cm_info $cm The course module
  * @param int $userid The user to check against the group.
  * @return bool True if the user can view the course module, false otherwise.
  */

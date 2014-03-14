@@ -695,4 +695,114 @@ class core_modinfolib_testcase extends advanced_testcase {
         $cm->obtain_dynamic_data();
         $this->assertDebuggingCalled('cm_info::obtain_dynamic_data() is deprecated and should not be used.');
     }
+
+    /**
+     * Tests for function cm_info::get_course_module_record()
+     */
+    public function test_cm_info_get_course_module_record() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        set_config('enableavailability', 1);
+        set_config('enablecompletion', 1);
+
+        $course = $this->getDataGenerator()->create_course(
+                array('format' => 'topics', 'numsections' => 3, 'enablecompletion' => 1),
+                array('createsections' => true));
+        $mods = array();
+        $mods[0] = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $mods[1] = $this->getDataGenerator()->create_module('assign',
+                array('course' => $course->id,
+                    'section' => 3,
+                    'idnumber' => '12345',
+                    'showdescription' => true
+                    ));
+        $mods[2] = $this->getDataGenerator()->create_module('book',
+                array('course' => $course->id,
+                    'indent' => 5,
+                    'showavailability' => true,
+                    'showdescription' => false,
+                    'completion' => true,
+                    'completionview' => true,
+                    'completionexpected' => time() + 5000,
+                    ));
+        $mods[3] = $this->getDataGenerator()->create_module('forum',
+                array('course' => $course->id,
+                    'visible' => 0,
+                    'availablefrom' => time() - 1000,
+                    'availableto' => time() + 1000,
+                    'groupmode' => 1,
+                    'showavailability' => false));
+        $mods[4] = $this->getDataGenerator()->create_module('forum',
+                array('course' => $course->id,
+                    'groupmembersonly' => true,
+                    'grouping' => 12));
+
+        $modinfo = get_fast_modinfo($course->id);
+
+        // Make sure that object returned by get_course_module_record(false) has exactly the same fields as DB table 'course_modules'.
+        $dbfields = array_keys($DB->get_columns('course_modules'));
+        sort($dbfields);
+        $cmrecord = $modinfo->get_cm($mods[0]->cmid)->get_course_module_record();
+        $cmrecordfields = array_keys((array)$cmrecord);
+        sort($cmrecordfields);
+        $this->assertEquals($dbfields, $cmrecordfields);
+
+        // Make sure that object returned by get_course_module_record(true) has exactly the same fields
+        // as object returned by get_coursemodule_from_id(,,,true,);
+        $cmrecordfull = $modinfo->get_cm($mods[0]->cmid)->get_course_module_record(true);
+        $cmrecordfullfields = array_keys((array)$cmrecordfull);
+        $cm = get_coursemodule_from_id(null, $mods[0]->cmid, 0, true, MUST_EXIST);
+        $cmfields = array_keys((array)$cm);
+        $this->assertEquals($cmfields, $cmrecordfullfields);
+
+        // Make sure that object returned by get_course_module_record(true) has exactly the same fields
+        // as object returned by get_coursemodule_from_instance(,,,true,);
+        $cm = get_coursemodule_from_instance('forum', $mods[0]->id, null, true, MUST_EXIST);
+        $cmfields = array_keys((array)$cm);
+        $this->assertEquals($cmfields, $cmrecordfullfields);
+
+        // Make sure the objects have the same properties.
+        $cm1 = get_coursemodule_from_id(null, $mods[0]->cmid, 0, true, MUST_EXIST);
+        $cm2 = get_coursemodule_from_instance('forum', $mods[0]->id, 0, true, MUST_EXIST);
+        $cminfo = $modinfo->get_cm($mods[0]->cmid);
+        $record = $DB->get_record('course_modules', array('id' => $mods[0]->cmid));
+        $this->assertEquals($record, $cminfo->get_course_module_record());
+        $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
+        $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
+
+        $cm1 = get_coursemodule_from_id(null, $mods[1]->cmid, 0, true, MUST_EXIST);
+        $cm2 = get_coursemodule_from_instance('assign', $mods[1]->id, 0, true, MUST_EXIST);
+        $cminfo = $modinfo->get_cm($mods[1]->cmid);
+        $record = $DB->get_record('course_modules', array('id' => $mods[1]->cmid));
+        $this->assertEquals($record, $cminfo->get_course_module_record());
+        $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
+        $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
+
+        $cm1 = get_coursemodule_from_id(null, $mods[2]->cmid, 0, true, MUST_EXIST);
+        $cm2 = get_coursemodule_from_instance('book', $mods[2]->id, 0, true, MUST_EXIST);
+        $cminfo = $modinfo->get_cm($mods[2]->cmid);
+        $record = $DB->get_record('course_modules', array('id' => $mods[2]->cmid));
+        $this->assertEquals($record, $cminfo->get_course_module_record());
+        $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
+        $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
+
+        $cm1 = get_coursemodule_from_id(null, $mods[3]->cmid, 0, true, MUST_EXIST);
+        $cm2 = get_coursemodule_from_instance('forum', $mods[3]->id, 0, true, MUST_EXIST);
+        $cminfo = $modinfo->get_cm($mods[3]->cmid);
+        $record = $DB->get_record('course_modules', array('id' => $mods[3]->cmid));
+        $this->assertEquals($record, $cminfo->get_course_module_record());
+        $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
+        $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
+
+        $cm1 = get_coursemodule_from_id(null, $mods[4]->cmid, 0, true, MUST_EXIST);
+        $cm2 = get_coursemodule_from_instance('forum', $mods[4]->id, 0, true, MUST_EXIST);
+        $cminfo = $modinfo->get_cm($mods[4]->cmid);
+        $record = $DB->get_record('course_modules', array('id' => $mods[4]->cmid));
+        $this->assertEquals($record, $cminfo->get_course_module_record());
+        $this->assertEquals($cm1, $cminfo->get_course_module_record(true));
+        $this->assertEquals($cm2, $cminfo->get_course_module_record(true));
+
+    }
 }

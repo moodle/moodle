@@ -664,9 +664,17 @@ abstract class base implements \IteratorAggregate {
             throw new \coding_exception('It is not possible to add snapshots after triggering of events');
         }
 
+        // Special case for course module, allow instance of cm_info to be passed instead of stdClass.
+        if ($tablename === 'course_modules' && $record instanceof \cm_info) {
+            $record = $record->get_course_module_record();
+        }
+        
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...
         if ($CFG->debugdeveloper) {
+            if (!($record instanceof \stdClass)) {
+                debugging('Argument $record must be an instance of stdClass.', DEBUG_DEVELOPER);
+            }
             if (!$DB->get_manager()->table_exists($tablename)) {
                 debugging("Invalid table name '$tablename' specified, database table does not exist.", DEBUG_DEVELOPER);
             } else {
