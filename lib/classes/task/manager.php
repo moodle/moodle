@@ -40,7 +40,7 @@ class manager {
      * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
      *
      * @param string $componentname - The name of the component to fetch the tasks for.
-     * @return array(core\task\scheduled_task) - List of scheduled tasks for this component.
+     * @return \core\task\scheduled_task[] - List of scheduled tasks for this component.
      */
     public static function load_default_scheduled_tasks_for_component($componentname) {
         $dir = \core_component::get_component_directory($componentname);
@@ -179,7 +179,7 @@ class manager {
      * Utility method to create a DB record from a scheduled task.
      *
      * @param \core\task\scheduled_task $task
-     * @return stdClass
+     * @return \stdClass
      */
     public static function record_from_scheduled_task($task) {
         $record = new \stdClass();
@@ -206,7 +206,7 @@ class manager {
      * Utility method to create a DB record from an adhoc task.
      *
      * @param \core\task\adhoc_task $task
-     * @return stdClass
+     * @return \stdClass
      */
     public static function record_from_adhoc_task($task) {
         $record = new \stdClass();
@@ -227,7 +227,7 @@ class manager {
     /**
      * Utility method to create an adhoc task from a DB record.
      *
-     * @param stdClass $record
+     * @param \stdClass $record
      * @return \core\task\adhoc_task
      */
     public static function adhoc_task_from_record($record) {
@@ -262,7 +262,7 @@ class manager {
     /**
      * Utility method to create a task from a DB record.
      *
-     * @param stdClass $record
+     * @param \stdClass $record
      * @return \core\task\scheduled_task
      */
     public static function scheduled_task_from_record($record) {
@@ -273,6 +273,7 @@ class manager {
         if (!class_exists($classname)) {
             return false;
         }
+        /** @var \core\task\scheduled_task $task */
         $task = new $classname;
         if (isset($record->lastruntime)) {
             $task->set_last_run_time($record->lastruntime);
@@ -313,7 +314,7 @@ class manager {
      * Given a component name, will load the list of tasks from the scheduled_tasks table for that component.
      * Do not execute tasks loaded from this function - they have not been locked.
      * @param string $componentname - The name of the component to load the tasks for.
-     * @return array(core\task\scheduled_task)
+     * @return \core\task\scheduled_task[]
      */
     public static function load_scheduled_tasks_for_component($componentname) {
         global $DB;
@@ -332,7 +333,8 @@ class manager {
     /**
      * This function load the scheduled task details for a given classname.
      *
-     * @return core\task\scheduled_task or false
+     * @param string $classname
+     * @return \core\task\scheduled_task or false
      */
     public static function get_scheduled_task($classname) {
         global $DB;
@@ -351,7 +353,8 @@ class manager {
     /**
      * This function load the default scheduled task details for a given classname.
      *
-     * @return core\task\scheduled_task or false
+     * @param string $classname
+     * @return \core\task\scheduled_task or false
      */
     public static function get_default_scheduled_task($classname) {
         $task = self::get_scheduled_task($classname);
@@ -370,7 +373,7 @@ class manager {
     /**
      * This function will return a list of all the scheduled tasks that exist in the database.
      *
-     * @return array(core\task\scheduled_task) or null
+     * @return \core\task\scheduled_task[]
      */
     public static function get_all_scheduled_tasks() {
         global $DB;
@@ -391,7 +394,8 @@ class manager {
      * with an open lock - possibly on the entire cron process. Make sure you call either
      * {@link adhoc_task_failed} or {@link adhoc_task_complete} to release the lock and reschedule the task.
      *
-     * @return core\task\adhoc_task or null
+     * @param int $timestart
+     * @return \core\task\adhoc_task or null if not found
      */
     public static function get_next_adhoc_task($timestart) {
         global $DB;
@@ -432,7 +436,7 @@ class manager {
      * {@link scheduled_task_failed} or {@link scheduled_task_complete} to release the lock and reschedule the task.
      *
      * @param int $timestart - The start of the cron process - do not repeat any tasks that have been run more recently than this.
-     * @return core\task\scheduled_task or null
+     * @return \core\task\scheduled_task or null
      */
     public static function get_next_scheduled_task($timestart) {
         global $DB;
@@ -468,9 +472,9 @@ class manager {
     }
 
     /**
-     * This function indicates that an adhoc task was not completed succesfully and should be retried.
+     * This function indicates that an adhoc task was not completed successfully and should be retried.
      *
-     * @param core\task\adhoc_task $task
+     * @param \core\task\adhoc_task $task
      */
     public static function adhoc_task_failed(adhoc_task $task) {
         global $DB;
@@ -505,9 +509,9 @@ class manager {
     }
 
     /**
-     * This function indicates that an adhoc task was completed succesfully.
+     * This function indicates that an adhoc task was completed successfully.
      *
-     * @param core\task\adhoc_task $task
+     * @param \core\task\adhoc_task $task
      */
     public static function adhoc_task_complete(adhoc_task $task) {
         global $DB;
@@ -523,9 +527,9 @@ class manager {
     }
 
     /**
-     * This function indicates that a scheduled task was not completed succesfully and should be retried.
+     * This function indicates that a scheduled task was not completed successfully and should be retried.
      *
-     * @param core\task\scheduled_task $task
+     * @param \core\task\scheduled_task $task
      */
     public static function scheduled_task_failed(scheduled_task $task) {
         global $DB;
@@ -561,9 +565,9 @@ class manager {
     }
 
     /**
-     * This function indicates that a scheduled task was completed succesfully and should be rescheduled.
+     * This function indicates that a scheduled task was completed successfully and should be rescheduled.
      *
-     * @param core\task\scheduled_task $task
+     * @param \core\task\scheduled_task $task
      */
     public static function scheduled_task_complete(scheduled_task $task) {
         global $DB;
@@ -611,11 +615,11 @@ class manager {
     /**
      * Return true if the static caches have been cleared since $starttime.
      * @param int $starttime The time this process started.
-     * @return boolean True if static caches need reseting.
+     * @return boolean True if static caches need resetting.
      */
     public static function static_caches_cleared_since($starttime) {
         global $DB;
         $record = $DB->get_record('config', array('name'=>'scheduledtaskreset'));
-        return $record && intval($record->value) > $starttime;
+        return $record && (intval($record->value) > $starttime);
     }
 }

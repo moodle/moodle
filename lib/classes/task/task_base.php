@@ -84,7 +84,7 @@ abstract class task_base {
 
     /**
      * Set the next run time for this task.
-     * @return int
+     * @param int $nextruntime
      */
     public function set_next_run_time($nextruntime) {
         $this->nextruntime = $nextruntime;

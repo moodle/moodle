@@ -58,7 +58,7 @@ abstract class adhoc_task extends task_base {
 
     /**
      * Setter for $customdata.
-     * @param object $customdata (anything that can be handled by json_encode)
+     * @param mixed $customdata (anything that can be handled by json_encode)
      */
     public function set_custom_data($customdata) {
         $this->customdata = json_encode($customdata);
@@ -66,7 +66,7 @@ abstract class adhoc_task extends task_base {
 
     /**
      * Getter for $customdata.
-     * @return object (anything that can be handled by json_decode).
+     * @return mixed (anything that can be handled by json_decode).
      */
     public function get_custom_data() {
         return json_decode($this->customdata);
