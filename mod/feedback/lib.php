@@ -385,11 +385,11 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
 
     $sqlargs = array();
 
-    //TODO: user user_picture::fields;
-    $sql = " SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture, u.email
-                                            FROM {feedback_completed} fc
-                                                JOIN {feedback} fk ON fk.id = fc.feedback
-                                                JOIN {user} u ON u.id = fc.userid ";
+    $userfields = user_picture::fields('u', null, 'userid');
+    $sql = " SELECT fk . * , fc . * , $userfields
+                FROM {feedback_completed} fc
+                    JOIN {feedback} fk ON fk.id = fc.feedback
+                    JOIN {user} u ON u.id = fc.userid ";
 
     if ($groupid) {
         $sql .= " JOIN {groups_members} gm ON  gm.userid=u.id ";
