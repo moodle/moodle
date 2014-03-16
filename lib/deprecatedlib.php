@@ -204,19 +204,6 @@ function session_kill_user($userid) {
 }
 
 /**
- * Session garbage collection
- * - verify timeout for all users
- * - kill sessions of all deleted users
- * - kill sessions of users with disabled plugins or 'nologin' plugin
- *
- * @deprecated since 2.6
- */
-function session_gc() {
-    debugging('session_gc() is deprecated, use \core\session\manager::gc() instead', DEBUG_DEVELOPER);
-    \core\session\manager::gc();
-}
-
-/**
  * Setup $USER object - called during login, loginas, etc.
  *
  * Call sync_user_enrolments() manually after log-in, or log-in-as.
