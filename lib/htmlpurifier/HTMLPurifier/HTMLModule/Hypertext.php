@@ -6,11 +6,21 @@
 class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
 {
 
+    /**
+     * @type string
+     */
     public $name = 'Hypertext';
 
-    public function setup($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     */
+    public function setup($config)
+    {
         $a = $this->addElement(
-            'a', 'Inline', 'Inline', 'Common',
+            'a',
+            'Inline',
+            'Inline',
+            'Common',
             array(
                 // 'accesskey' => 'Character',
                 // 'charset' => 'Charset',
@@ -25,7 +35,6 @@ class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
         $a->formatting = true;
         $a->excludes = array('a' => true);
     }
-
 }
 
 // vim: et sw=4 sts=4
