@@ -8,14 +8,24 @@
  */
 class HTMLPurifier_AttrTransform_Nofollow extends HTMLPurifier_AttrTransform
 {
+    /**
+     * @type HTMLPurifier_URIParser
+     */
     private $parser;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->parser = new HTMLPurifier_URIParser();
     }
 
-    public function transform($attr, $config, $context) {
-
+    /**
+     * @param array $attr
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return array
+     */
+    public function transform($attr, $config, $context)
+    {
         if (!isset($attr['href'])) {
             return $attr;
         }
@@ -35,11 +45,8 @@ class HTMLPurifier_AttrTransform_Nofollow extends HTMLPurifier_AttrTransform
                 $attr['rel'] = 'nofollow';
             }
         }
-
         return $attr;
-
     }
-
 }
 
 // vim: et sw=4 sts=4

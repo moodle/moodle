@@ -27,16 +27,26 @@
 class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
 {
 
+    /**
+     * @type HTMLPurifier_TokenFactory
+     */
     private $factory;
 
-    public function __construct() {
+    public function __construct()
+    {
         // setup the factory
         parent::__construct();
         $this->factory = new HTMLPurifier_TokenFactory();
     }
 
-    public function tokenizeHTML($html, $config, $context) {
-
+    /**
+     * @param string $html
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return HTMLPurifier_Token[]
+     */
+    public function tokenizeHTML($html, $config, $context)
+    {
         $html = $this->normalize($html, $config, $context);
 
         // attempt to armor stray angled brackets that cannot possibly
@@ -65,27 +75,28 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         $tokens = array();
         $this->tokenizeDOM(
             $doc->getElementsByTagName('html')->item(0)-> // <html>
-                  getElementsByTagName('body')->item(0)-> //   <body>
-                  getElementsByTagName('div')->item(0)    //     <div>
-            , $tokens);
+            getElementsByTagName('body')->item(0)-> //   <body>
+            getElementsByTagName('div')->item(0), //     <div>
+            $tokens
+        );
         return $tokens;
     }
 
     /**
      * Iterative function that tokenizes a node, putting it into an accumulator.
      * To iterate is human, to recurse divine - L. Peter Deutsch
-     * @param $node     DOMNode to be tokenized.
-     * @param $tokens   Array-list of already tokenized tokens.
-     * @returns Tokens of node appended to previously passed tokens.
+     * @param DOMNode $node DOMNode to be tokenized.
+     * @param HTMLPurifier_Token[] $tokens   Array-list of already tokenized tokens.
+     * @return HTMLPurifier_Token of node appended to previously passed tokens.
      */
-    protected function tokenizeDOM($node, &$tokens) {
-
+    protected function tokenizeDOM($node, &$tokens)
+    {
         $level = 0;
-        $nodes = array($level => array($node));
+        $nodes = array($level => new HTMLPurifier_Queue(array($node)));
         $closingNodes = array();
         do {
-            while (!empty($nodes[$level])) {
-                $node = array_shift($nodes[$level]); // FIFO
+            while (!$nodes[$level]->isEmpty()) {
+                $node = $nodes[$level]->shift(); // FIFO
                 $collect = $level > 0 ? true : false;
                 $needEndingTag = $this->createStartNode($node, $tokens, $collect);
                 if ($needEndingTag) {
@@ -93,15 +104,15 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
                 }
                 if ($node->childNodes && $node->childNodes->length) {
                     $level++;
-                    $nodes[$level] = array();
+                    $nodes[$level] = new HTMLPurifier_Queue();
                     foreach ($node->childNodes as $childNode) {
-                        array_push($nodes[$level], $childNode);
+                        $nodes[$level]->push($childNode);
                     }
                 }
             }
             $level--;
             if ($level && isset($closingNodes[$level])) {
-                while($node = array_pop($closingNodes[$level])) {
+                while ($node = array_pop($closingNodes[$level])) {
                     $this->createEndNode($node, $tokens);
                 }
             }
@@ -109,14 +120,16 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
     }
 
     /**
-     * @param $node  DOMNode to be tokenized.
-     * @param $tokens   Array-list of already tokenized tokens.
-     * @param $collect  Says whether or start and close are collected, set to
+     * @param DOMNode $node DOMNode to be tokenized.
+     * @param HTMLPurifier_Token[] $tokens   Array-list of already tokenized tokens.
+     * @param bool $collect  Says whether or start and close are collected, set to
      *                    false at first recursion because it's the implicit DIV
      *                    tag you're dealing with.
-     * @returns bool if the token needs an endtoken
+     * @return bool if the token needs an endtoken
+     * @todo data and tagName properties don't seem to exist in DOMNode?
      */
-    protected function createStartNode($node, &$tokens, $collect) {
+    protected function createStartNode($node, &$tokens, $collect)
+    {
         // intercept non element nodes. WE MUST catch all of them,
         // but we're not getting the character reference nodes because
         // those should have been preprocessed
@@ -147,10 +160,8 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
             // handled regularly)
             $tokens[] = $this->factory->createComment($node->data);
             return false;
-        } elseif (
+        } elseif ($node->nodeType !== XML_ELEMENT_NODE) {
             // not-well tested: there may be other nodes we have to grab
-            $node->nodeType !== XML_ELEMENT_NODE
-        ) {
             return false;
         }
 
@@ -173,7 +184,12 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         }
     }
 
-    protected function createEndNode($node, &$tokens) {
+    /**
+     * @param DOMNode $node
+     * @param HTMLPurifier_Token[] $tokens
+     */
+    protected function createEndNode($node, &$tokens)
+    {
         $tokens[] = $this->factory->createEnd($node->tagName);
     }
 
@@ -181,14 +197,17 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
     /**
      * Converts a DOMNamedNodeMap of DOMAttr objects into an assoc array.
      *
-     * @param $attribute_list DOMNamedNodeMap of DOMAttr objects.
-     * @returns Associative array of attributes.
+     * @param DOMNamedNodeMap $node_map DOMNamedNodeMap of DOMAttr objects.
+     * @return array Associative array of attributes.
      */
-    protected function transformAttrToAssoc($node_map) {
+    protected function transformAttrToAssoc($node_map)
+    {
         // NamedNodeMap is documented very well, so we're using undocumented
         // features, namely, the fact that it implements Iterator and
         // has a ->length attribute
-        if ($node_map->length === 0) return array();
+        if ($node_map->length === 0) {
+            return array();
+        }
         $array = array();
         foreach ($node_map as $attr) {
             $array[$attr->name] = $attr->value;
@@ -198,46 +217,64 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
 
     /**
      * An error handler that mutes all errors
+     * @param int $errno
+     * @param string $errstr
      */
-    public function muteErrorHandler($errno, $errstr) {}
+    public function muteErrorHandler($errno, $errstr)
+    {
+    }
 
     /**
      * Callback function for undoing escaping of stray angled brackets
      * in comments
+     * @param array $matches
+     * @return string
      */
-    public function callbackUndoCommentSubst($matches) {
-        return '<!--' . strtr($matches[1], array('&amp;'=>'&','&lt;'=>'<')) . $matches[2];
+    public function callbackUndoCommentSubst($matches)
+    {
+        return '<!--' . strtr($matches[1], array('&amp;' => '&', '&lt;' => '<')) . $matches[2];
     }
 
     /**
      * Callback function that entity-izes ampersands in comments so that
      * callbackUndoCommentSubst doesn't clobber them
+     * @param array $matches
+     * @return string
      */
-    public function callbackArmorCommentEntities($matches) {
+    public function callbackArmorCommentEntities($matches)
+    {
         return '<!--' . str_replace('&', '&amp;', $matches[1]) . $matches[2];
     }
 
     /**
      * Wraps an HTML fragment in the necessary HTML
+     * @param string $html
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return string
      */
-    protected function wrapHTML($html, $config, $context) {
+    protected function wrapHTML($html, $config, $context)
+    {
         $def = $config->getDefinition('HTML');
         $ret = '';
 
         if (!empty($def->doctype->dtdPublic) || !empty($def->doctype->dtdSystem)) {
             $ret .= '<!DOCTYPE html ';
-            if (!empty($def->doctype->dtdPublic)) $ret .= 'PUBLIC "' . $def->doctype->dtdPublic . '" ';
-            if (!empty($def->doctype->dtdSystem)) $ret .= '"' . $def->doctype->dtdSystem . '" ';
+            if (!empty($def->doctype->dtdPublic)) {
+                $ret .= 'PUBLIC "' . $def->doctype->dtdPublic . '" ';
+            }
+            if (!empty($def->doctype->dtdSystem)) {
+                $ret .= '"' . $def->doctype->dtdSystem . '" ';
+            }
             $ret .= '>';
         }
 
         $ret .= '<html><head>';
         $ret .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
         // No protection if $html contains a stray </div>!
-        $ret .= '</head><body><div>'.$html.'</div></body></html>';
+        $ret .= '</head><body><div>' . $html . '</div></body></html>';
         return $ret;
     }
-
 }
 
 // vim: et sw=4 sts=4
