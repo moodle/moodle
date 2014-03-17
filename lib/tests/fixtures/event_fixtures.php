@@ -72,17 +72,17 @@ class unittest_observer {
     }
 
     public static function observe_one(unittest_executed $event) {
-        self::$info[] = 'observe_one-'.$event->courseid;
+        self::$info[] = 'observe_one-'.$event->other['sample'];
         self::$event[] = $event;
     }
 
     public static function external_observer(unittest_executed $event) {
-        self::$info[] = 'external_observer-'.$event->courseid;
+        self::$info[] = 'external_observer-'.$event->other['sample'];
         self::$event[] = $event;
     }
 
     public static function broken_observer(unittest_executed $event) {
-        self::$info[] = 'broken_observer-'.$event->courseid;
+        self::$info[] = 'broken_observer-'.$event->other['sample'];
         self::$event[] = $event;
         throw new \Exception('someerror');
     }
@@ -95,10 +95,10 @@ class unittest_observer {
         }
         self::$event[] = $event;
         if (!empty($event->nest)) {
-            self::$info[] = 'observe_all-nesting-'.$event->courseid;
-            unittest_executed::create(array('courseid'=>3, 'context'=>\context_system::instance(), 'other'=>array('sample'=>666, 'xx'=>666)))->trigger();
+            self::$info[] = 'observe_all-nesting-'.$event->other['sample'];
+            unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>666, 'xx'=>666)))->trigger();
         } else {
-            self::$info[] = 'observe_all-'.$event->courseid;
+            self::$info[] = 'observe_all-'.$event->other['sample'];
         }
     }
 

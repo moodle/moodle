@@ -76,7 +76,7 @@ class mnet_access_control_created extends base {
         $mnetaccesscontrol = $this->get_record_snapshot('mnet_sso_access_control', $this->objectid);
         $mnethost = $this->get_record_snapshot('mnet_host', $mnetaccesscontrol->mnet_host_id);
 
-        return array($this->courseid, 'admin/mnet', 'add', 'admin/mnet/access_control.php', 'SSO ACL: ' .
+        return array(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php', 'SSO ACL: ' .
             $mnetaccesscontrol->accessctrl . ' user \'' . $mnetaccesscontrol->username . '\' from ' .
             $mnethost->name);
     }
