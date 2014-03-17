@@ -1113,7 +1113,7 @@ class core_plugin_manager {
             'theme' => array(
                 'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrapbase',
                 'boxxie', 'brick', 'canvas', 'clean', 'formal_white', 'formfactor',
-                'fusion', 'leatherbound', 'magazine', 'nimble',
+                'fusion', 'leatherbound', 'magazine', 'more', 'nimble',
                 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
                 'standard', 'standardold'
             ),

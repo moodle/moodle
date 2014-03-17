@@ -116,6 +116,9 @@ function theme_clean_set_customcss($css, $customcss) {
 /**
  * Returns an object containing HTML for the areas affected by settings.
  *
+ * Do not add Clean specific logic in here, child themes should be able to
+ * rely on that function just by declaring settings with similar names.
+ *
  * @param renderer_base $output Pass in $OUTPUT.
  * @param moodle_page $page Pass in $PAGE.
  * @return stdClass An object with the following properties:
