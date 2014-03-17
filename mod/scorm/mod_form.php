@@ -130,6 +130,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->disabledIf('winoptgrp', 'popup', 'eq', 0);
         $mform->setAdvanced('winoptgrp', $cfgscorm->winoptgrp_adv);
 
+        // Display activity name.
+        $mform->addElement('advcheckbox', 'displayactivityname', get_string('displayactivityname', 'scorm'));
+        $mform->addHelpButton('displayactivityname', 'displayactivityname', 'scorm');
+
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
         if ($COURSE->format == 'singleactivity') { // Remove option that would cause a constant redirect.
@@ -337,7 +341,6 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (!isset($defaultvalues['completionscorerequired']) || !strlen($defaultvalues['completionscorerequired'])) {
             $defaultvalues['completionscoredisabled'] = 1;
         }
-
     }
 
     public function validation($data, $files) {

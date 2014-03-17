@@ -166,7 +166,9 @@ $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => false,
 $PAGE->requires->js('/mod/scorm/request.js', true);
 $PAGE->requires->js('/lib/cookies.js', true);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($scorm->name));
+if ($scorm->displayactivityname) {
+    echo $OUTPUT->heading(format_string($scorm->name));
+}
 
 $PAGE->requires->string_for_js('navigation', 'scorm');
 $PAGE->requires->string_for_js('toc', 'scorm');
