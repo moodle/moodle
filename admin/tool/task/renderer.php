@@ -41,6 +41,7 @@ class tool_task_renderer extends plugin_renderer_base {
     public function scheduled_tasks_table($tasks) {
         $table = new html_table();
         $table->head  = array(get_string('name'),
+                              get_string('component', 'tool_task'),
                               get_string('edit'),
                               get_string('lastruntime', 'tool_task'),
                               get_string('nextruntime', 'tool_task'),
@@ -64,10 +65,25 @@ class tool_task_renderer extends plugin_renderer_base {
             $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php', array('action'=>'edit', 'task' => get_class($task)));
             $editlink = $this->action_icon($configureurl, new pix_icon('t/edit', get_string('edittaskschedule', 'tool_task', $task->get_name())));
 
-            $namecell = new html_table_cell($task->get_name());
+            $namecell = new html_table_cell($task->get_name() . "\n" . html_writer::tag('span', '\\'.get_class($task), array('class' => 'task-class')));
             $namecell->header = true;
 
-            $row = new html_table_row(array( $namecell,
+            $component = $task->get_component();
+            list($type, $plugin) = core_component::normalize_component($component);
+            if ($type === 'core') {
+                $componentcell = new html_table_cell(get_string('corecomponent', 'tool_task'));
+            } else {
+                if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
+                    $plugininfo->init_display_name();
+                    $componentcell = new html_table_cell($plugininfo->displayname);
+                } else {
+                    $componentcell = new html_table_cell($component);
+                }
+            }
+
+            $row = new html_table_row(array(
+                        $namecell,
+                        $componentcell,
                         new html_table_cell($editlink),
                         new html_table_cell($lastrun),
                         new html_table_cell($nextrun),

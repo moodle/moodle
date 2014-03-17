@@ -23,6 +23,8 @@
  */
 
 $string['blocking'] = 'Blocking';
+$string['component'] = 'Component';
+$string['corecomponent'] = 'Core';
 $string['default'] = 'Default';
 $string['edittaskschedule'] = 'Edit task schedule: {$a}';
 $string['faildelay'] = 'Fail delay';
