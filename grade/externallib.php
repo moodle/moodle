@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// NOTE: add any new core_grades_ classes to /grade/classes/ directory.
+// NOTE: add any new core_grades_ classes to /lib/classes/ directory.
 
 /**
  * core grading functions. Renamed to core_grading_external
