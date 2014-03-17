@@ -168,6 +168,11 @@ class gradingform_guide_renderer extends plugin_renderer_base {
         } else if ($mode == gradingform_guide_controller::DISPLAY_PREVIEW_GRADED ||
                    $mode == gradingform_guide_controller::DISPLAY_VIEW) {
             $title .= $description;
+            if (!empty($options['showmarkspercriterionstudents'])) {
+                $title .=  html_writer::tag('label', get_string('maxscore', 'gradingform_guide'),
+                    array('for' => '{NAME}[criteria][{CRITERION-id}][maxscore]'));
+                $title .= $maxscore;
+            }
         } else {
             $title .= $description . $descriptionmarkers;
         }
