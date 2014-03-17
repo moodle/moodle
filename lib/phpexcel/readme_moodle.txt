@@ -1,4 +1,4 @@
-Description of PHPExcel 1.7.8 import into Moodle
+Description of PHPExcel 1.8.0 import into Moodle
 
 Steps:
  * download release package from https://github.com/PHPOffice/PHPExcel
