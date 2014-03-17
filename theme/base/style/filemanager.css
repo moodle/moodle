@@ -350,7 +350,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .dndsupported .dndupload-ready .dndupload-target {display:block;}
 .dndupload-uploadinprogress {display:none;text-align:center;}
 .dndupload-uploading .dndupload-uploadinprogress {display:block;}
-.dndupload-arrow {background:url([[pix:theme|fp/dnd_arrow]]) center no-repeat;width:100%;height:80px;position:absolute;margin-left:-28px;top:5px;}
+.dndupload-arrow {background:url([[pix:theme|fp/dnd_arrow]]) center no-repeat;width:100%;height:80px;position:absolute;top:5px;}
 .fitem.disabled .filepicker-container, .fitem.disabled .fm-empty-container {display:none;}
 .dndupload-progressbars {padding:10px;display:none;}
 .dndupload-inprogress .dndupload-progressbars {display:block;}
