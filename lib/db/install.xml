@@ -1205,7 +1205,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="userfieldidx" UNIQUE="false" FIELDS="userid, fieldid"/>
+        <INDEX NAME="userfieldidx" UNIQUE="true" FIELDS="userid, fieldid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="question_categories" COMMENT="Categories are for grouping questions">
