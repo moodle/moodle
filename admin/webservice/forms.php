@@ -158,9 +158,12 @@ class external_service_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         // Add field validation check for duplicate shortname.
-        if ($service = $DB->get_record('external_services', array('shortname' => $data['shortname']), '*', IGNORE_MULTIPLE)) {
-            if (empty($data['id']) || $service->id != $data['id']) {
-                $errors['shortname'] = get_string('shortnametaken', 'webservice', $service->name);
+        // Allow duplicated "empty" shortnames.
+        if (!empty($data['shortname'])) {
+            if ($service = $DB->get_record('external_services', array('shortname' => $data['shortname']), '*', IGNORE_MULTIPLE)) {
+                if (empty($data['id']) || $service->id != $data['id']) {
+                    $errors['shortname'] = get_string('shortnametaken', 'webservice', $service->name);
+                }
             }
         }
 
