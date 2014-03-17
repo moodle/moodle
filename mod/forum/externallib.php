@@ -245,7 +245,8 @@ class mod_forum_external extends external_api {
             // The forum function returns the replies for all the discussions in a given forum.
             $replies = forum_count_discussion_replies($id);
             // Get the discussions for this forum.
-            if ($discussions = $DB->get_records('forum_discussions', array('forum' => $id), '', '*', $limitfrom, $limitnum)) {
+            $order = 'timemodified DESC';
+            if ($discussions = $DB->get_records('forum_discussions', array('forum' => $id), $order, '*', $limitfrom, $limitnum)) {
                 foreach ($discussions as $discussion) {
                     // If the forum is of type qanda and the user has not posted in the discussion
                     // we need to ensure that they have the required capability.
