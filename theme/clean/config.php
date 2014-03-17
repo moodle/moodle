@@ -40,7 +40,7 @@ $THEME->doctype = 'html5';
 $THEME->parents = array('bootstrapbase');
 $THEME->sheets = array('custom');
 $THEME->lessfile = 'moodle';
-$THEME->parents_exclude_sheets_when_lessfile = array('bootstrapbase' => array('moodle'));
+$THEME->parents_exclude_sheets = array('bootstrapbase' => array('moodle'));
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->enable_dock = true;
