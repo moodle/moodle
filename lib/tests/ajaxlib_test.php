@@ -26,6 +26,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 class core_ajaxlib_testcase extends advanced_testcase {
+    /** @var string Original error log */
+    protected $oldlog;
+
+    protected function setUp() {
+        global $CFG;
+
+        parent::setUp();
+        // Discard error logs.
+        $this->oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log");
+    }
+
+    protected function tearDown() {
+        ini_set('error_log', $this->oldlog);
+        parent::tearDown();
+    }
 
     protected function helper_test_clean_output() {
         $this->resetAfterTest();
