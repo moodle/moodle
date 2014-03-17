@@ -5207,7 +5207,7 @@ class core_dml_testcase extends database_driver_testcase {
 
         // The elapsed time is counted.
         $lastqueriestime = $DB->perf_get_queries_time();
-        $this->assertGreaterThan($previousqueriestime, $lastqueriestime);
+        $this->assertGreaterThanOrEqual($previousqueriestime, $lastqueriestime);
         $previousqueriestime = $lastqueriestime;
 
         // Only 1 now, it already fetched the table columns.
@@ -5228,7 +5228,7 @@ class core_dml_testcase extends database_driver_testcase {
 
         // The elapsed time is counted.
         $lastqueriestime = $DB->perf_get_queries_time();
-        $this->assertGreaterThan($previousqueriestime, $lastqueriestime);
+        $this->assertGreaterThanOrEqual($previousqueriestime, $lastqueriestime);
         $previousqueriestime = $lastqueriestime;
 
         $rec2 = new stdClass();
@@ -5245,7 +5245,7 @@ class core_dml_testcase extends database_driver_testcase {
 
         // The elapsed time is counted.
         $lastqueriestime = $DB->perf_get_queries_time();
-        $this->assertGreaterThan($previousqueriestime, $lastqueriestime);
+        $this->assertGreaterThanOrEqual($previousqueriestime, $lastqueriestime);
         $previousqueriestime = $lastqueriestime;
 
         // Sum of them.
