@@ -21,7 +21,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
- * Unit tests for the grading API at /grade/externallib.php
+ * Unit tests for the grading API defined in core_grading_external class.
  *
  * @package core_grading
  * @category external
@@ -29,14 +29,6 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_grading_externallib_testcase extends externallib_advanced_testcase {
-
-    /**
-     * Tests set up
-     */
-    protected function setUp() {
-        global $CFG;
-        require_once($CFG->dirroot . '/grade/externallib.php');
-    }
 
     /**
      * Test get_definitions

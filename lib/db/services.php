@@ -796,7 +796,6 @@ $functions = array(
     'core_grading_get_definitions' => array(
         'classname'   => 'core_grading_external',
         'methodname'  => 'get_definitions',
-        'classpath'   => 'grade/externallib.php',
         'description' => 'Get grading definitions',
         'type'        => 'read'
     ),
@@ -812,7 +811,6 @@ $functions = array(
     'core_grading_get_gradingform_instances' => array(
         'classname'   => 'core_grading_external',
         'methodname'  => 'get_gradingform_instances',
-        'classpath'   => 'grade/externallib.php',
         'description' => 'Get grading form instances',
         'type'        => 'read'
     ),
