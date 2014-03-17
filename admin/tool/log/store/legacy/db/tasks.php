@@ -15,23 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Log tool API.
+ * Legacy log reader cron task.
  *
- * @package    tool_log
- * @copyright  2014 Petr Skoda {@link http://skodak.org/}
+ * @package    logstore_legacy
+ * @copyright  2014 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Execute cron actions.
- */
-function tool_log_cron() {
-    // Execute cron only if this log manager used.
-    $logmanager = get_log_manager();
-    if (get_class($logmanager) === 'tool_log\log\manager') {
-        /** @var \tool_log\log\manager $logmanager */
-        $logmanager->cron();
-    }
-}
+$tasks = array(
+    array(
+        'classname' => '\logstore_legacy\task\cleanup_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '5',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+);
