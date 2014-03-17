@@ -251,6 +251,30 @@ function xmldb_scorm_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2014021700, 'scorm');
     }
+
+    if ($oldversion < 2014031700) {
+        // Define field displayactivityname to be added to scorm.
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field(
+            'displayactivityname',
+            XMLDB_TYPE_INTEGER,
+            '4',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '1',
+            'completionscorerequired'
+        );
+
+        // Conditionally launch add field displayactivityname.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2014031700, 'scorm');
+    }
+
     return true;
 }
 
