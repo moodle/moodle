@@ -3,21 +3,38 @@
 /**
  * Implements data: URI for base64 encoded images supported by GD.
  */
-class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme {
-
+class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme
+{
+    /**
+     * @type bool
+     */
     public $browsable = true;
+
+    /**
+     * @type array
+     */
     public $allowed_types = array(
         // you better write validation code for other types if you
         // decide to allow them
         'image/jpeg' => true,
         'image/gif' => true,
         'image/png' => true,
-        );
+    );
     // this is actually irrelevant since we only write out the path
     // component
+    /**
+     * @type bool
+     */
     public $may_omit_host = true;
 
-    public function doValidate(&$uri, $config, $context) {
+    /**
+     * @param HTMLPurifier_URI $uri
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return bool
+     */
+    public function doValidate(&$uri, $config, $context)
+    {
         $result = explode(',', $uri->path, 2);
         $is_base64 = false;
         $charset = null;
@@ -26,7 +43,7 @@ class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme {
             list($metadata, $data) = $result;
             // do some legwork on the metadata
             $metas = explode(';', $metadata);
-            while(!empty($metas)) {
+            while (!empty($metas)) {
                 $cur = array_shift($metas);
                 if ($cur == 'base64') {
                     $is_base64 = true;
@@ -35,10 +52,14 @@ class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme {
                 if (substr($cur, 0, 8) == 'charset=') {
                     // doesn't match if there are arbitrary spaces, but
                     // whatever dude
-                    if ($charset !== null) continue; // garbage
+                    if ($charset !== null) {
+                        continue;
+                    } // garbage
                     $charset = substr($cur, 8); // not used
                 } else {
-                    if ($content_type !== null) continue; // garbage
+                    if ($content_type !== null) {
+                        continue;
+                    } // garbage
                     $content_type = $cur;
                 }
             }
@@ -70,7 +91,9 @@ class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme {
             $info = getimagesize($file);
             restore_error_handler();
             unlink($file);
-            if ($info == false) return false;
+            if ($info == false) {
+                return false;
+            }
             $image_code = $info[2];
         } else {
             trigger_error("could not find exif_imagetype or getimagesize functions", E_USER_ERROR);
@@ -79,7 +102,9 @@ class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme {
         if ($real_content_type != $content_type) {
             // we're nice guys; if the content type is something else we
             // support, change it over
-            if (empty($this->allowed_types[$real_content_type])) return false;
+            if (empty($this->allowed_types[$real_content_type])) {
+                return false;
+            }
             $content_type = $real_content_type;
         }
         // ok, it's kosher, rewrite what we need
@@ -92,7 +117,11 @@ class HTMLPurifier_URIScheme_data extends HTMLPurifier_URIScheme {
         return true;
     }
 
-    public function muteErrorHandler($errno, $errstr) {}
-
+    /**
+     * @param int $errno
+     * @param string $errstr
+     */
+    public function muteErrorHandler($errno, $errstr)
+    {
+    }
 }
-

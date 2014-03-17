@@ -5,25 +5,45 @@
  */
 class HTMLPurifier_Injector_RemoveSpansWithoutAttributes extends HTMLPurifier_Injector
 {
+    /**
+     * @type string
+     */
     public $name = 'RemoveSpansWithoutAttributes';
+
+    /**
+     * @type array
+     */
     public $needed = array('span');
 
+    /**
+     * @type HTMLPurifier_AttrValidator
+     */
     private $attrValidator;
 
     /**
-     * Used by AttrValidator
+     * Used by AttrValidator.
+     * @type HTMLPurifier_Config
      */
     private $config;
+
+    /**
+     * @type HTMLPurifier_Context
+     */
     private $context;
 
-    public function prepare($config, $context) {
+    public function prepare($config, $context)
+    {
         $this->attrValidator = new HTMLPurifier_AttrValidator();
         $this->config = $config;
         $this->context = $context;
         return parent::prepare($config, $context);
     }
 
-    public function handleElement(&$token) {
+    /**
+     * @param HTMLPurifier_Token $token
+     */
+    public function handleElement(&$token)
+    {
         if ($token->name !== 'span' || !$token instanceof HTMLPurifier_Token_Start) {
             return;
         }
@@ -39,8 +59,8 @@ class HTMLPurifier_Injector_RemoveSpansWithoutAttributes extends HTMLPurifier_In
         }
 
         $nesting = 0;
-        $spanContentTokens = array();
-        while ($this->forwardUntilEndToken($i, $current, $nesting)) {}
+        while ($this->forwardUntilEndToken($i, $current, $nesting)) {
+        }
 
         if ($current instanceof HTMLPurifier_Token_End && $current->name === 'span') {
             // Mark closing span tag for deletion
@@ -50,7 +70,11 @@ class HTMLPurifier_Injector_RemoveSpansWithoutAttributes extends HTMLPurifier_In
         }
     }
 
-    public function handleEnd(&$token) {
+    /**
+     * @param HTMLPurifier_Token $token
+     */
+    public function handleEnd(&$token)
+    {
         if ($token->markForDeletion) {
             $token = false;
         }

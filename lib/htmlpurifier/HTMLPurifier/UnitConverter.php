@@ -37,20 +37,24 @@ class HTMLPurifier_UnitConverter
 
     /**
      * Minimum bcmath precision for output.
+     * @type int
      */
     protected $outputPrecision;
 
     /**
      * Bcmath precision for internal calculations.
+     * @type int
      */
     protected $internalPrecision;
 
     /**
-     * Whether or not BCMath is available
+     * Whether or not BCMath is available.
+     * @type bool
      */
     private $bcmath;
 
-    public function __construct($output_precision = 4, $internal_precision = 10, $force_no_bcmath = false) {
+    public function __construct($output_precision = 4, $internal_precision = 10, $force_no_bcmath = false)
+    {
         $this->outputPrecision = $output_precision;
         $this->internalPrecision = $internal_precision;
         $this->bcmath = !$force_no_bcmath && function_exists('bcmul');
@@ -63,6 +67,7 @@ class HTMLPurifier_UnitConverter
      *      it before passing it here!
      * @param string $to_unit
      *      Unit to convert to.
+     * @return HTMLPurifier_Length|bool
      * @note
      *      About precision: This conversion function pays very special
      *      attention to the incoming precision of values and attempts
@@ -74,11 +79,13 @@ class HTMLPurifier_UnitConverter
      *            and this causes some decimals to be excluded, those
      *            decimals will be added on.
      */
-    public function convert($length, $to_unit) {
+    public function convert($length, $to_unit)
+    {
+        if (!$length->isValid()) {
+            return false;
+        }
 
-        if (!$length->isValid()) return false;
-
-        $n    = $length->getN();
+        $n = $length->getN();
         $unit = $length->getUnit();
 
         if ($n === '0' || $unit === false) {
@@ -87,21 +94,29 @@ class HTMLPurifier_UnitConverter
 
         $state = $dest_state = false;
         foreach (self::$units as $k => $x) {
-            if (isset($x[$unit])) $state = $k;
-            if (isset($x[$to_unit])) $dest_state = $k;
+            if (isset($x[$unit])) {
+                $state = $k;
+            }
+            if (isset($x[$to_unit])) {
+                $dest_state = $k;
+            }
         }
-        if (!$state || !$dest_state) return false;
+        if (!$state || !$dest_state) {
+            return false;
+        }
 
         // Some calculations about the initial precision of the number;
         // this will be useful when we need to do final rounding.
         $sigfigs = $this->getSigFigs($n);
-        if ($sigfigs < $this->outputPrecision) $sigfigs = $this->outputPrecision;
+        if ($sigfigs < $this->outputPrecision) {
+            $sigfigs = $this->outputPrecision;
+        }
 
         // BCMath's internal precision deals only with decimals. Use
         // our default if the initial number has no decimals, or increase
         // it by how ever many decimals, thus, the number of guard digits
         // will always be greater than or equal to internalPrecision.
-        $log = (int) floor(log(abs($n), 10));
+        $log = (int)floor(log(abs($n), 10));
         $cp = ($log < 0) ? $this->internalPrecision - $log : $this->internalPrecision; // internal precision
 
         for ($i = 0; $i < 2; $i++) {
@@ -152,14 +167,18 @@ class HTMLPurifier_UnitConverter
         }
 
         // Post-condition: $unit == $to_unit
-        if ($unit !== $to_unit) return false;
+        if ($unit !== $to_unit) {
+            return false;
+        }
 
         // Useful for debugging:
         //echo "<pre>n";
         //echo "$n\nsigfigs = $sigfigs\nnew_log = $new_log\nlog = $log\nrp = $rp\n</pre>\n";
 
         $n = $this->round($n, $sigfigs);
-        if (strpos($n, '.') !== false) $n = rtrim($n, '0');
+        if (strpos($n, '.') !== false) {
+            $n = rtrim($n, '0');
+        }
         $n = rtrim($n, '.');
 
         return new HTMLPurifier_Length($n, $unit);
@@ -170,53 +189,84 @@ class HTMLPurifier_UnitConverter
      * @param string $n Decimal number
      * @return int number of sigfigs
      */
-    public function getSigFigs($n) {
+    public function getSigFigs($n)
+    {
         $n = ltrim($n, '0+-');
         $dp = strpos($n, '.'); // decimal position
         if ($dp === false) {
             $sigfigs = strlen(rtrim($n, '0'));
         } else {
             $sigfigs = strlen(ltrim($n, '0.')); // eliminate extra decimal character
-            if ($dp !== 0) $sigfigs--;
+            if ($dp !== 0) {
+                $sigfigs--;
+            }
         }
         return $sigfigs;
     }
 
     /**
      * Adds two numbers, using arbitrary precision when available.
+     * @param string $s1
+     * @param string $s2
+     * @param int $scale
+     * @return string
      */
-    private function add($s1, $s2, $scale) {
-        if ($this->bcmath) return bcadd($s1, $s2, $scale);
-        else return $this->scale($s1 + $s2, $scale);
+    private function add($s1, $s2, $scale)
+    {
+        if ($this->bcmath) {
+            return bcadd($s1, $s2, $scale);
+        } else {
+            return $this->scale((float)$s1 + (float)$s2, $scale);
+        }
     }
 
     /**
      * Multiples two numbers, using arbitrary precision when available.
+     * @param string $s1
+     * @param string $s2
+     * @param int $scale
+     * @return string
      */
-    private function mul($s1, $s2, $scale) {
-        if ($this->bcmath) return bcmul($s1, $s2, $scale);
-        else return $this->scale($s1 * $s2, $scale);
+    private function mul($s1, $s2, $scale)
+    {
+        if ($this->bcmath) {
+            return bcmul($s1, $s2, $scale);
+        } else {
+            return $this->scale((float)$s1 * (float)$s2, $scale);
+        }
     }
 
     /**
      * Divides two numbers, using arbitrary precision when available.
+     * @param string $s1
+     * @param string $s2
+     * @param int $scale
+     * @return string
      */
-    private function div($s1, $s2, $scale) {
-        if ($this->bcmath) return bcdiv($s1, $s2, $scale);
-        else return $this->scale($s1 / $s2, $scale);
+    private function div($s1, $s2, $scale)
+    {
+        if ($this->bcmath) {
+            return bcdiv($s1, $s2, $scale);
+        } else {
+            return $this->scale((float)$s1 / (float)$s2, $scale);
+        }
     }
 
     /**
      * Rounds a number according to the number of sigfigs it should have,
      * using arbitrary precision when available.
+     * @param float $n
+     * @param int $sigfigs
+     * @return string
      */
-    private function round($n, $sigfigs) {
-        $new_log = (int) floor(log(abs($n), 10)); // Number of digits left of decimal - 1
+    private function round($n, $sigfigs)
+    {
+        $new_log = (int)floor(log(abs($n), 10)); // Number of digits left of decimal - 1
         $rp = $sigfigs - $new_log - 1; // Number of decimal places needed
         $neg = $n < 0 ? '-' : ''; // Negative sign
         if ($this->bcmath) {
             if ($rp >= 0) {
-                $n = bcadd($n, $neg . '0.' .  str_repeat('0', $rp) . '5', $rp + 1);
+                $n = bcadd($n, $neg . '0.' . str_repeat('0', $rp) . '5', $rp + 1);
                 $n = bcdiv($n, '1', $rp);
             } else {
                 // This algorithm partially depends on the standardized
@@ -232,23 +282,26 @@ class HTMLPurifier_UnitConverter
 
     /**
      * Scales a float to $scale digits right of decimal point, like BCMath.
+     * @param float $r
+     * @param int $scale
+     * @return string
      */
-    private function scale($r, $scale) {
+    private function scale($r, $scale)
+    {
         if ($scale < 0) {
             // The f sprintf type doesn't support negative numbers, so we
             // need to cludge things manually. First get the string.
-            $r = sprintf('%.0f', (float) $r);
+            $r = sprintf('%.0f', (float)$r);
             // Due to floating point precision loss, $r will more than likely
             // look something like 4652999999999.9234. We grab one more digit
             // than we need to precise from $r and then use that to round
             // appropriately.
-            $precise = (string) round(substr($r, 0, strlen($r) + $scale), -1);
+            $precise = (string)round(substr($r, 0, strlen($r) + $scale), -1);
             // Now we return it, truncating the zero that was rounded off.
             return substr($precise, 0, -1) . str_repeat('0', -$scale + 1);
         }
-        return sprintf('%.' . $scale . 'f', (float) $r);
+        return sprintf('%.' . $scale . 'f', (float)$r);
     }
-
 }
 
 // vim: et sw=4 sts=4
