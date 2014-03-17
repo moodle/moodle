@@ -10,6 +10,11 @@ if (!empty($CFG->loginpasswordautocomplete)) {
 } else {
     $autocomplete = '';
 }
+if (empty($CFG->authloginviaemail)) {
+    $strusername = get_string('username');
+} else {
+    $strusername = get_string('usernameemail');
+}
 ?>
 <div class="loginbox clearfix <?php echo $columns ?>">
   <div class="loginpanel">
@@ -30,7 +35,7 @@ if (!empty($CFG->loginpasswordautocomplete)) {
         ?>
         <form action="<?php echo $CFG->httpswwwroot; ?>/login/index.php" method="post" id="login" <?php echo $autocomplete; ?> >
           <div class="loginform">
-            <div class="form-label"><label for="username"><?php print_string("username") ?></label></div>
+            <div class="form-label"><label for="username"><?php echo($strusername) ?></label></div>
             <div class="form-input">
               <input type="text" name="username" id="username" size="15" value="<?php p($frm->username) ?>" />
             </div>

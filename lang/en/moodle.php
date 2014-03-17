@@ -1897,6 +1897,7 @@ $string['userdetails'] = 'User details';
 $string['userfiles'] = 'User files';
 $string['userlist'] = 'User list';
 $string['username'] = 'Username';
+$string['usernameemail'] = 'Username / email';
 $string['usernameemailmatch'] = 'The username and email address do not relate to the same user';
 $string['usernameexists'] = 'This username already exists, choose another';
 $string['usernamelowercase'] = 'Only lowercase letters allowed';

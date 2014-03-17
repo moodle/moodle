@@ -72,6 +72,7 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageauths());
     $temp->add(new admin_setting_heading('manageauthscommonheading', new lang_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_special_registerauth());
+    $temp->add(new admin_setting_configcheckbox('authloginviaemail', new lang_string('authloginviaemail', 'core_auth'), new lang_string('authloginviaemail_desc', 'core_auth'), 0));
     $temp->add(new admin_setting_configcheckbox('authpreventaccountcreation', new lang_string('authpreventaccountcreation', 'admin'), new lang_string('authpreventaccountcreation_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('loginpageautofocus', new lang_string('loginpageautofocus', 'admin'), new lang_string('loginpageautofocus_help', 'admin'), 0));
     $temp->add(new admin_setting_configselect('guestloginbutton', new lang_string('guestloginbutton', 'auth'),
