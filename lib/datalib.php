@@ -2036,7 +2036,7 @@ function decompose_update_into_safe_changes(array $newvalues, $unusedvalue) {
             $next = $nontrivialmap[$current];
             unset($nontrivialmap[$current]);
             $current = $next;
-        } while ($current !== $cyclestart);
+        } while ($current != $cyclestart);
 
         // Now convert it to a sequence of safe renames by using a temp.
         $safechanges[] = array($cyclestart, $unusedvalue);

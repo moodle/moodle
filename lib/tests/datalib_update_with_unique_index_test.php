@@ -77,6 +77,14 @@ class datalib_update_with_unique_index_testcase extends advanced_testcase {
         }
     }
 
+    public function test_decompose_update_into_safe_changes_string_values() {
+        // Sometimes this happens when data has been loaded from the database.
+        $this->assertEquals(array(array(1, -1), array(2, 1),
+                    array(3, 2), array(4, 3), array(-1, 4)),
+                decompose_update_into_safe_changes(
+                    array(1 => '4', 2 => '1', 3 => '2', 4 => '3'), -1));
+    }
+
     public function test_reorder_rows() {
         global $DB;
         $dbman = $DB->get_manager();
