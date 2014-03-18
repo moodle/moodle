@@ -84,7 +84,6 @@ if ($mform->is_cancelled()) {
             'objectid' => $servicedata->id
         );
         $event = \core\event\webservice_service_created::create($params);
-        $event->add_record_snapshot('external_services', $servicedata);
         $event->trigger();
 
         //redirect to the 'add functions to service' page
@@ -99,7 +98,6 @@ if ($mform->is_cancelled()) {
             'objectid' => $servicedata->id
         );
         $event = \core\event\webservice_service_updated::create($params);
-        $event->add_record_snapshot('external_services', $servicedata);
         $event->trigger();
     }
 

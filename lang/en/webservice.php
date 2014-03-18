@@ -176,6 +176,7 @@ $string['serviceusers'] = 'Authorised users';
 $string['serviceusersettings'] = 'User settings';
 $string['serviceusersmatching'] = 'Authorised users matching';
 $string['serviceuserssettings'] = 'Change settings for the authorised users';
+$string['shortnametaken'] = 'Short name is already used for another service ({$a})';
 $string['simpleauthlog'] = 'Simple authentication login';
 $string['step'] = 'Step';
 $string['supplyinfo'] = 'More details';
