@@ -570,7 +570,67 @@ abstract class testing_util {
 
         $empties = self::guess_unmodified_empty_tables();
 
+        $borkedmysql = false;
+        if ($DB->get_dbfamily() === 'mysql') {
+            $version = $DB->get_server_info();
+            if (version_compare($version['version'], '5.6.0') == 1 and version_compare($version['version'], '5.6.16') == -1) {
+                // Everything that comes from Oracle is evil!
+                //
+                // See http://dev.mysql.com/doc/refman/5.6/en/alter-table.html
+                // You cannot reset the counter to a value less than or equal to to the value that is currently in use.
+                //
+                // From 5.6.16 release notes:
+                //   InnoDB: The ALTER TABLE INPLACE algorithm would fail to decrease the auto-increment value.
+                //           (Bug #17250787, Bug #69882)
+                $borkedmysql = true;
+
+            } else if (version_compare($version['version'], '10.0.0') == 1) {
+                // And MariaDB is no better!
+                // Let's hope they pick the patch sometime later...
+                $borkedmysql = true;
+            }
+        }
+
+        if ($borkedmysql) {
+            $mysqlsequences = array();
+            $prefix = $DB->get_prefix();
+            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // Incorrect table match caused by _ char.
+                    continue;
+                }
+                if (!is_null($info->auto_increment)) {
+                    $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                    $mysqlsequences[$table] = $info->auto_increment;
+                }
+            }
+        }
+
         foreach ($data as $table => $records) {
+            if ($borkedmysql) {
+                if (empty($records) and isset($empties[$table])) {
+                    continue;
+                }
+
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    $current = $DB->get_records($table, array(), 'id ASC');
+                    if ($current == $records) {
+                        if (isset($mysqlsequences[$table]) and $mysqlsequences[$table] == $structure[$table]['id']->auto_increment) {
+                            continue;
+                        }
+                    }
+                }
+
+                // Use TRUNCATE as a workaround and reinsert everything.
+                $DB->delete_records($table, null);
+                foreach ($records as $record) {
+                    $DB->import_record($table, $record, false, true);
+                }
+                continue;
+            }
+
             if (empty($records)) {
                 if (isset($empties[$table])) {
                     // table was not modified and is empty
