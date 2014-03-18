@@ -2390,36 +2390,43 @@ function feedback_get_group_values($item,
 
     //if the groupid is given?
     if (intval($groupid) > 0) {
+        $params = array();
         if ($ignore_empty) {
-            $ignore_empty_select = "AND fbv.value != '' AND fbv.value != '0'";
+            $value = $DB->sql_compare_text('fbv.value');
+            $ignore_empty_select = "AND $value != :emptyvalue AND $value != :zerovalue";
+            $params += array('emptyvalue' => '', 'zerovalue' => '0');
         } else {
             $ignore_empty_select = "";
         }
 
         $query = 'SELECT fbv .  *
                     FROM {feedback_value} fbv, {feedback_completed} fbc, {groups_members} gm
-                   WHERE fbv.item = ?
+                   WHERE fbv.item = :itemid
                          AND fbv.completed = fbc.id
                          AND fbc.userid = gm.userid
                          '.$ignore_empty_select.'
-                         AND gm.groupid = ?
+                         AND gm.groupid = :groupid
                 ORDER BY fbc.timemodified';
-        $values = $DB->get_records_sql($query, array($item->id, $groupid));
+        $params += array('itemid' => $item->id, 'groupid' => $groupid);
+        $values = $DB->get_records_sql($query, $params);
 
     } else {
+        $params = array();
         if ($ignore_empty) {
-            $ignore_empty_select = "AND value != '' AND value != '0'";
+            $value = $DB->sql_compare_text('value');
+            $ignore_empty_select = "AND $value != :emptyvalue AND $value != :zerovalue";
+            $params += array('emptyvalue' => '', 'zerovalue' => '0');
         } else {
             $ignore_empty_select = "";
         }
 
         if ($courseid) {
-            $select = "item = ? AND course_id = ? ".$ignore_empty_select;
-            $params = array($item->id, $courseid);
+            $select = "item = :itemid AND course_id = :courseid ".$ignore_empty_select;
+            $params += array('itemid' => $item->id, 'courseid' => $courseid);
             $values = $DB->get_records_select('feedback_value', $select, $params);
         } else {
-            $select = "item = ? ".$ignore_empty_select;
-            $params = array($item->id);
+            $select = "item = :itemid ".$ignore_empty_select;
+            $params += array('itemid' => $item->id);
             $values = $DB->get_records_select('feedback_value', $select, $params);
         }
     }
