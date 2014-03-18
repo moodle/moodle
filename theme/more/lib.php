@@ -23,6 +23,73 @@
  */
 
 /**
+ * Extra LESS code to inject.
+ *
+ * This will generate some LESS code from the settings used by the user. We cannot use
+ * the {@link theme_more_less_variables()} here because we need to create selectors or
+ * alter existing ones.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string Raw LESS code.
+ */
+function theme_more_extra_less($theme) {
+    $content = '';
+    $imageurl = $theme->setting_file_url('backgroundimage', 'backgroundimage');
+    // Sets the background image, and its settings.
+    if (!empty($imageurl)) {
+        $content .= 'body { ';
+        $content .= "background-image: url('$imageurl');";
+        if (!empty($theme->settings->backgroundfixed)) {
+            $content .= 'background-attachment: fixed;';
+        }
+        if (!empty($theme->settings->backgroundposition)) {
+            $content .= 'background-position: ' . str_replace('_', ' ', $theme->settings->backgroundposition) . ';';
+        }
+        if (!empty($theme->settings->backgroundrepeat)) {
+            $content .= 'background-repeat: ' . $theme->settings->backgroundrepeat . ';';
+        }
+        $content .= ' }';
+    }
+    // If there the user wants a background for the content, we need to make it look consistent,
+    // therefore we need to round its borders, and adapt the border colour.
+    if (!empty($theme->settings->contentbackground)) {
+        $content .= '
+            #region-main {
+                .well;
+                background-color: ' . $theme->settings->contentbackground . ';
+                border-color: darken(' . $theme->settings->contentbackground . ', 7%);
+            }';
+    }
+    return $content;
+}
+
+/**
+ * Returns variables for LESS.
+ *
+ * We will inject some LESS variables from the settings that the user has defined
+ * for the theme. No need to write some custom LESS for this.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return array of LESS variables without the @.
+ */
+function theme_more_less_variables($theme) {
+    $variables = array();
+    if (!empty($theme->settings->bodybackground)) {
+        $variables['bodyBackground'] = $theme->settings->bodybackground;
+    }
+    if (!empty($theme->settings->textcolor)) {
+        $variables['textColor'] = $theme->settings->textcolor;
+    }
+    if (!empty($theme->settings->linkcolor)) {
+        $variables['linkColor'] = $theme->settings->linkcolor;
+    }
+    if (!empty($theme->settings->secondarybackground)) {
+        $variables['wellBackground'] = $theme->settings->secondarybackground;
+    }
+    return $variables;
+}
+
+/**
  * Parses CSS before it is cached.
  *
  * This function can make alterations and replace patterns within the CSS.
@@ -80,9 +147,9 @@ function theme_more_set_logo($css, $logo) {
  * @return bool
  */
 function theme_more_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'logo') {
+    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage')) {
         $theme = theme_config::load('more');
-        return $theme->setting_file_serve('logo', $args, $forcedownload, $options);
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
     } else {
         send_file_not_found();
     }

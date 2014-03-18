@@ -35,6 +35,104 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
+    // @textColor setting.
+    $name = 'theme_more/textcolor';
+    $title = get_string('textcolor', 'theme_more');
+    $description = get_string('textcolor_desc', 'theme_more');
+    $default = '';
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // @linkColor setting.
+    $name = 'theme_more/linkcolor';
+    $title = get_string('linkcolor', 'theme_more');
+    $description = get_string('linkcolor_desc', 'theme_more');
+    $default = '';
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // @bodyBackground setting.
+    $name = 'theme_more/bodybackground';
+    $title = get_string('bodybackground', 'theme_more');
+    $description = get_string('bodybackground_desc', 'theme_more');
+    $default = '';
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Background image setting.
+    $name = 'theme_more/backgroundimage';
+    $title = get_string('backgroundimage', 'theme_more');
+    $description = get_string('backgroundimage_desc', 'theme_more');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'backgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Background repeat setting.
+    $name = 'theme_more/backgroundrepeat';
+    $title = get_string('backgroundrepeat', 'theme_more');
+    $description = get_string('backgroundrepeat_desc', 'theme_more');;
+    $default = '0';
+    $choices = array(
+        '0' => get_string('default'),
+        'repeat' => get_string('backgroundrepeatrepeat', 'theme_more'),
+        'repeat-x' => get_string('backgroundrepeatrepeatx', 'theme_more'),
+        'repeat-y' => get_string('backgroundrepeatrepeaty', 'theme_more'),
+        'no-repeat' => get_string('backgroundrepeatnorepeat', 'theme_more'),
+    );
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Background position setting.
+    $name = 'theme_more/backgroundposition';
+    $title = get_string('backgroundposition', 'theme_more');
+    $description = get_string('backgroundposition_desc', 'theme_more');
+    $default = '0';
+    $choices = array(
+        '0' => get_string('default'),
+        'left_top' => get_string('backgroundpositionlefttop', 'theme_more'),
+        'left_center' => get_string('backgroundpositionleftcenter', 'theme_more'),
+        'left_bottom' => get_string('backgroundpositionleftbottom', 'theme_more'),
+        'right_top' => get_string('backgroundpositionrighttop', 'theme_more'),
+        'right_center' => get_string('backgroundpositionrightcenter', 'theme_more'),
+        'right_bottom' => get_string('backgroundpositionrightbottom', 'theme_more'),
+        'center_top' => get_string('backgroundpositioncentertop', 'theme_more'),
+        'center_center' => get_string('backgroundpositioncentercenter', 'theme_more'),
+        'center_bottom' => get_string('backgroundpositioncenterbottom', 'theme_more'),
+    );
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Background fixed setting.
+    $name = 'theme_more/backgroundfixed';
+    $title = get_string('backgroundfixed', 'theme_more');
+    $description = get_string('backgroundfixed_desc', 'theme_more');
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Main content background color.
+    $name = 'theme_more/contentbackground';
+    $title = get_string('contentbackground', 'theme_more');
+    $description = get_string('contentbackground_desc', 'theme_more');
+    $default = '';
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Secondary background color.
+    $name = 'theme_more/secondarybackground';
+    $title = get_string('secondarybackground', 'theme_more');
+    $description = get_string('secondarybackground_desc', 'theme_more');
+    $default = '';
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
     // Invert Navbar to dark background.
     $name = 'theme_more/invert';
     $title = get_string('invert', 'theme_more');
