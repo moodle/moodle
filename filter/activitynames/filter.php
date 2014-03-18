@@ -31,22 +31,30 @@ defined('MOODLE_INTERNAL') || die();
  * Activity name filtering
  */
 class filter_activitynames extends moodle_text_filter {
-    // Trivial-cache - keyed on $cachedcourseid
+    // Trivial-cache - keyed on $cachedcourseid and $cacheduserid.
     static $activitylist = null;
     static $cachedcourseid;
+    static $cacheduserid;
 
     function filter($text, array $options = array()) {
+        global $USER; // Since 2.7 we can finally start using globals in filters.
+
         $coursectx = $this->context->get_course_context(false);
         if (!$coursectx) {
             return $text;
         }
         $courseid = $coursectx->instanceid;
 
-        // Initialise/invalidate our trivial cache if dealing with a different course
+        // Initialise/invalidate our trivial cache if dealing with a different course.
         if (!isset(self::$cachedcourseid) || self::$cachedcourseid !== (int)$courseid) {
             self::$activitylist = null;
         }
         self::$cachedcourseid = (int)$courseid;
+        // And the same for user id.
+        if (!isset(self::$cacheduserid) || self::$cacheduserid !== (int)$USER->id) {
+            self::$activitylist = null;
+        }
+        self::$cacheduserid = (int)$USER->id;
 
         /// It may be cached
 
@@ -60,8 +68,8 @@ class filter_activitynames extends moodle_text_filter {
                 // Create array of visible activities sorted by the name length (we are only interested in properties name and url).
                 $sortedactivities = array();
                 foreach ($modinfo->cms as $cm) {
-                    // Exclude labels, hidden activities and activities for group members only.
-                    if ($cm->visible and empty($cm->groupmembersonly) and $cm->has_view()) {
+                    // Use normal access control and visibility, but exclude labels and hidden activities.
+                    if ($cm->visible and $cm->has_view() and $cm->uservisible) {
                         $sortedactivities[] = (object)array(
                             'name' => $cm->name,
                             'url' => $cm->url,
