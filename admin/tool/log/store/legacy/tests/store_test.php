@@ -163,71 +163,85 @@ class logstore_legacy_store_testcase extends advanced_testcase {
     }
 
     /**
-     * Test replace_crud
+     * Test replace_sql_legacy()
      */
-    public function test_replace_crud() {
-
-        $crudregex = logstore_legacy\test\unittest_logstore_legacy::CRUD_REGEX;
-
-        $selectwhere = "edulevel = 0";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals($selectwhere, $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud = 'u'";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action LIKE '%update%'", $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud != 'u'";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud <> 'u'";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud = 'r'";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action LIKE '%view%' OR action LIKE '%report%'", $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud != 'r'";
-        $updatewhere = preg_replace_callback($crudregex,
-            'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action NOT LIKE '%view%' AND action NOT LIKE '%report%'", $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud <> 'r'";
-        $updatewhere = preg_replace_callback($crudregex,
-            'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action NOT LIKE '%view%' AND action NOT LIKE '%report%'", $updatewhere);
-
-        // The slq is incorrect, since quotes must not be present. Make sure this is not parsed.
-        $selectwhere = "edulevel = 0 and 'crud' != 'u'";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertNotEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
-
-        $selectwhere = "edulevel = 0 and crud = 'u' OR crud != 'r' or crud <> 'd'";
-        $updatewhere = preg_replace_callback($crudregex,
-                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
-        $this->assertEquals("edulevel = 0 and action LIKE '%update%' OR action NOT LIKE '%view%' AND action NOT LIKE '%report%' or action NOT LIKE '%delete%'", $updatewhere);
-
-    }
-
-    /**
-     * Test replace_sql_hacks()
-     */
-    public function test_replace_sql_hacks() {
-        $select = "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since";
+    public function test_replace_sql_legacy() {
+        $selectwhere = "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since";
         $params = array('userid' => 2, 'since' => 3, 'courseid' => 4, 'eventname' => '\core\event\course_created');
         $expectedselect = "module = 'course' AND action = 'new' AND userid = :userid AND url = :url AND time > :since";
         $expectedparams = $params + array('url' => "view.php?id=4");
 
-        list($replaceselect, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_hack($select, $params);
+        list($replaceselect, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
         $this->assertEquals($replaceselect, $expectedselect);
         $this->assertEquals($replaceparams, $expectedparams);
+
+        // Test CRUD related changes.
+        $selectwhere = "edulevel = 0";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals($selectwhere, $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud = 'u'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud != 'u'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud <> 'u'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud = 'r'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action LIKE '%view%' OR action LIKE '%report%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud != 'r'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%view%' AND action NOT LIKE '%report%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud <> 'r'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%view%' AND action NOT LIKE '%report%'", $updatewhere);
+
+        // The slq is incorrect, since quotes must not be present. Make sure this is not parsed.
+        $selectwhere = "edulevel = 0 and 'crud' != 'u'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertNotEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud = 'u' OR crud != 'r' or crud <> 'd'";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("edulevel = 0 and action LIKE '%update%' OR action NOT LIKE '%view%' AND action NOT LIKE '%report%' or action NOT LIKE '%delete%'", $updatewhere);
+
+        // Test legacy field names are mapped.
+        $selectwhere = "timecreated = :timecreated and courseid = :courseid and contextinstanceid = :contextinstanceid and origin = :origin";
+        $params = array('timecreated' => 2, 'courseid' => 3, 'contextinstanceid' => 4, 'origin' => 5 );
+        $expectedparams = array('time' => 2, 'course' => 3, 'cmid' => 4, 'ip' => 5);
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertEquals("time = :time and course = :course and cmid = :cmid and ip = :ip", $updatewhere);
+        $this->assertSame($expectedparams, $replaceparams);
+
+        // Test sorting parameters.
+        $selectwhere = "courseid = 3";
+        $params = array();
+        $sort = 'timecreated DESC';
+        list($updatewhere, $replaceparams, $sort) =
+                \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params, $sort);
+        $this->assertSame('time DESC', $sort);
+
+        $sort = 'courseid DESC';
+        list($updatewhere, $replaceparams, $sort) =
+            \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params, $sort);
+        $this->assertSame('course DESC', $sort);
+
+        $sort = 'contextinstanceid DESC';
+        list($updatewhere, $replaceparams, $sort) =
+            \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params, $sort);
+        $this->assertSame('cmid DESC', $sort);
+
+        $sort = 'origin DESC';
+        list($updatewhere, $replaceparams, $sort) =
+            \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params, $sort);
+        $this->assertSame('ip DESC', $sort);
     }
 }

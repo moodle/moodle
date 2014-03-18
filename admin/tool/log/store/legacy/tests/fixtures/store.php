@@ -31,23 +31,13 @@ class unittest_logstore_legacy extends \logstore_legacy\log\store {
     /**
      * Wrapper to make protected method accessible during testing.
      *
-     * @param array $match matched string for the passed pattern
-     *
-     * @return string The sql string to use instead of original
-     */
-    public static function replace_crud($match) {
-        return parent::replace_crud($match);
-    }
-
-    /**
-     * Wrapper to make protected method accessible during testing.
-     *
      * @param string $select sql predicate.
      * @param array $params sql params.
+     * @param string $sort sort options.
      *
-     * @return array returns array of sql predicate and params.
+     * @return array returns array of sql predicate, params and sorting criteria.
      */
-    public static function replace_sql_hack($select, array $params) {
-        return parent::replace_sql_hacks($select, $params);
+    public static function replace_sql_legacy($select, array $params, $sort = '') {
+        return parent::replace_sql_legacy($select, $params, $sort);
     }
 }

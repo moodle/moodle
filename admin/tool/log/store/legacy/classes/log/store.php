@@ -35,7 +35,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     }
 
     /** @var array list of db fields which needs to be replaced for legacy log query */
-    protected $standardtolegacyfields = array(
+    protected static $standardtolegacyfields = array(
         'timecreated'       => 'time',
         'courseid'          => 'course',
         'contextinstanceid' => 'cmid',
@@ -44,41 +44,50 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
 
     /** @var string Regex to replace the crud params */
     const CRUD_REGEX = "/(crud).*?(<>|=|!=).*?'(.*?)'/s";
+
     /**
-     * This method contains hacks required for Moodle core to make legacy store compatible with other sql_select_reader based
+     * This method contains mapping required for Moodle core to make legacy store compatible with other sql_select_reader based
      * queries.
      *
-     * @param string $select Select statment
+     * @param string $selectwhere Select statment
      * @param array $params params for the sql
+     * @param string $sort sort fields
      *
-     * @return array returns an array containing the sql predicate and an array of params.
+     * @return array returns an array containing the sql predicate, an array of params and sorting parameter.
      */
-    protected static function replace_sql_hacks($select, array $params) {
-        if ($select == "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since") {
+    protected static function replace_sql_legacy($selectwhere, array $params, $sort = '') {
+        // Following mapping is done to make can_delete_course() compatible with legacy store.
+        if ($selectwhere == "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since" and
+                empty($sort)) {
             $replace = "module = 'course' AND action = 'new' AND userid = :userid AND url = :url AND time > :since";
             $params += array('url' => "view.php?id={$params['courseid']}");
-            return array($replace, $params);
+            return array($replace, $params, $sort);
         }
 
-        return array($select, $params);
-    }
-
-    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
-        global $DB;
-
-        // Replace the query with hardcoded hacks required for core.
-        list($selectwhere, $params) = self::replace_sql_hacks($selectwhere, $params);
-
         // Replace db field names to make it compatible with legacy log.
-        foreach ($this->standardtolegacyfields as $from => $to) {
+        foreach (self::$standardtolegacyfields as $from => $to) {
             $selectwhere = str_replace($from, $to, $selectwhere);
-            $sort = str_replace($from, $to, $sort);
+            if (!empty($sort)) {
+                $sort = str_replace($from, $to, $sort);
+            }
             if (isset($params[$from])) {
                 $params[$to] = $params[$from];
                 unset($params[$from]);
             }
         }
-        $selectwhere = preg_replace_callback(self::CRUD_REGEX, 'self::replace_crud', $selectwhere);
+
+        // Replace crud fields.
+        $selectwhere = preg_replace_callback("/(crud).*?(<>|=|!=).*?'(.*?)'/s", 'self::replace_crud', $selectwhere);
+
+        return array($selectwhere, $params, $sort);
+    }
+
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+        global $DB;
+
+        // Replace the query with hardcoded mappings required for core.
+        list($selectwhere, $params, $sort) = self::replace_sql_legacy($selectwhere, $params, $sort);
+
         $events = array();
         $records = array();
 
@@ -98,18 +107,8 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     public function get_events_select_count($selectwhere, array $params) {
         global $DB;
 
-        // Replace the query with hardcoded hacks required for core.
-        list($selectwhere, $params) = self::replace_sql_hacks($selectwhere, $params);
-
-        // Replace db field names to make it compatible with legacy log.
-        foreach ($this->standardtolegacyfields as $from => $to) {
-            $selectwhere = str_replace($from, $to, $selectwhere);
-            if (isset($params[$from])) {
-                $params[$to] = $params[$from];
-                unset($params[$from]);
-            }
-        }
-        $selectwhere = preg_replace_callback(self::CRUD_REGEX, 'self::replace_crud', $selectwhere);
+        // Replace the query with hardcoded mappings required for core.
+        list($selectwhere, $params) = self::replace_sql_legacy($selectwhere, $params);
 
         try {
             return $DB->count_records_select('log', $selectwhere, $params);
