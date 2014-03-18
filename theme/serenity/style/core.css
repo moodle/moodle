@@ -74,7 +74,9 @@ a:hover {
     background: #aeb9c6 url([[pix:theme|breadcrumb]]) repeat-x 0 100%;
     padding: 5px;
 }
-
+.navbar a.dimmed_text {
+    color:#f2f2f2;
+}
 /* Blocks
 -------------------------*/
 
