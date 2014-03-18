@@ -35,7 +35,6 @@ $THEME->name = 'brick';
 // the directory in which this file resides.
 ////////////////////////////////////////////////////
 
-
 $THEME->parents = array(
     'canvas',
     'base',
@@ -50,7 +49,6 @@ $THEME->parents = array(
 // extend the theme you like and just add the
 // changes you want to your theme.
 ////////////////////////////////////////////////////
-
 
 $THEME->sheets = array(
     'pagelayout',
@@ -73,13 +71,11 @@ $THEME->parents_exclude_sheets = array(
     ),
 );
 
-
 $THEME->enable_dock = true;
 
 ////////////////////////////////////////////////////
 // Do you want to use the new navigation dock?
 ////////////////////////////////////////////////////
-
 
 // $THEME->editor_sheets
 
@@ -178,14 +174,15 @@ $THEME->layouts = array(
 // specific page.
 ///////////////////////////////////////////////////////////////
 
-//$THEME->csspostprocess = 'arialist_process_css';
+$THEME->csspostprocess = 'brick_process_css';
+
 ////////////////////////////////////////////////////
 // Allows the user to provide the name of a function
 // that all CSS should be passed to before being
 // delivered.
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts
+//$THEME->javascripts
 
 ////////////////////////////////////////////////////
 // An array containing the names of JavaScript files
@@ -193,7 +190,7 @@ $THEME->layouts = array(
 // (gets included in the head)
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts_footer
+//$THEME->javascripts_footer
 
 ////////////////////////////////////////////////////
 // As above but will be included in the page footer.
@@ -212,40 +209,36 @@ $THEME->layouts = array(
 // Overrides the right arrow image used throughout Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->layouts
+//$THEME->layouts
 
 ////////////////////////////////////////////////////
 // An array setting the layouts for the theme
 ////////////////////////////////////////////////////
 
-// $THEME->parents_exclude_javascripts
+//$THEME->parents_exclude_javascripts
 
 ////////////////////////////////////////////////////
 // An array of JavaScript files NOT to inherit from
 // the themes parents
 ////////////////////////////////////////////////////
 
-// $THEME->parents_exclude_sheets
+//$THEME->parents_exclude_sheets
 
 ////////////////////////////////////////////////////
 // An array of stylesheets not to inherit from the
 // themes parents
 ////////////////////////////////////////////////////
 
-// $THEME->plugins_exclude_sheets
+//$THEME->plugins_exclude_sheets
 
 ////////////////////////////////////////////////////
 // An array of plugin sheets to ignore and not
 // include.
 ////////////////////////////////////////////////////
 
-// $THEME->rendererfactory
+//$THEME->rendererfactory = 'theme_overridden_renderer_factory';
 
 ////////////////////////////////////////////////////
 // Sets a custom render factory to use with the
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
-
-$THEME->csspostprocess = 'brick_process_css';
- //$THEME->rendererfactory = 'theme_overridden_renderer_factory';
-
