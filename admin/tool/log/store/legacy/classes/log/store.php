@@ -35,25 +35,58 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     }
 
     /** @var array list of db fields which needs to be replaced for legacy log query */
-    protected $standardtolegacyfields = array(
+    protected static $standardtolegacyfields = array(
         'timecreated'       => 'time',
         'courseid'          => 'course',
         'contextinstanceid' => 'cmid',
         'origin'            => 'ip'
     );
 
-    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
-        global $DB;
+    /** @var string Regex to replace the crud params */
+    const CRUD_REGEX = "/(crud).*?(<>|=|!=).*?'(.*?)'/s";
+
+    /**
+     * This method contains mapping required for Moodle core to make legacy store compatible with other sql_select_reader based
+     * queries.
+     *
+     * @param string $selectwhere Select statment
+     * @param array $params params for the sql
+     * @param string $sort sort fields
+     *
+     * @return array returns an array containing the sql predicate, an array of params and sorting parameter.
+     */
+    protected static function replace_sql_legacy($selectwhere, array $params, $sort = '') {
+        // Following mapping is done to make can_delete_course() compatible with legacy store.
+        if ($selectwhere == "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since" and
+                empty($sort)) {
+            $replace = "module = 'course' AND action = 'new' AND userid = :userid AND url = :url AND time > :since";
+            $params += array('url' => "view.php?id={$params['courseid']}");
+            return array($replace, $params, $sort);
+        }
 
         // Replace db field names to make it compatible with legacy log.
-        foreach ($this->standardtolegacyfields as $from => $to) {
+        foreach (self::$standardtolegacyfields as $from => $to) {
             $selectwhere = str_replace($from, $to, $selectwhere);
-            $sort = str_replace($from, $to, $sort);
+            if (!empty($sort)) {
+                $sort = str_replace($from, $to, $sort);
+            }
             if (isset($params[$from])) {
                 $params[$to] = $params[$from];
                 unset($params[$from]);
             }
         }
+
+        // Replace crud fields.
+        $selectwhere = preg_replace_callback("/(crud).*?(<>|=|!=).*?'(.*?)'/s", 'self::replace_crud', $selectwhere);
+
+        return array($selectwhere, $params, $sort);
+    }
+
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+        global $DB;
+
+        // Replace the query with hardcoded mappings required for core.
+        list($selectwhere, $params, $sort) = self::replace_sql_legacy($selectwhere, $params, $sort);
 
         $events = array();
         $records = array();
@@ -74,14 +107,8 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     public function get_events_select_count($selectwhere, array $params) {
         global $DB;
 
-        // Replace db field names to make it compatible with legacy log.
-        foreach ($this->standardtolegacyfields as $from => $to) {
-            $selectwhere = str_replace($from, $to, $selectwhere);
-            if (isset($params[$from])) {
-                $params[$to] = $params[$from];
-                unset($params[$from]);
-            }
-        }
+        // Replace the query with hardcoded mappings required for core.
+        list($selectwhere, $params) = self::replace_sql_legacy($selectwhere, $params);
 
         try {
             return $DB->count_records_select('log', $selectwhere, $params);
@@ -197,5 +224,82 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
                 }
             }
         }
+    }
+
+    /**
+     * Generate a replace string for crud related sql conditions. This function is called as callback to preg_replace_callback()
+     * on the actual sql.
+     *
+     * @param array $match matched string for the passed pattern
+     *
+     * @return string The sql string to use instead of original
+     */
+    protected static function replace_crud($match) {
+        $return = '';
+        unset($match[0]); // The first entry is the whole string.
+        foreach ($match as $m) {
+            // We hard code LIKE here because we are not worried about case sensitivity and want this to be fast.
+            switch ($m) {
+                case 'crud' :
+                    $replace = 'action';
+                    break;
+                case 'c' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%add%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%add%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                case 'r' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%view%' OR action LIKE '%report%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%view%' AND action NOT LIKE '%report%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                case 'u' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%update%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%update%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                case 'd' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%delete%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%delete%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                default :
+                    $replace = '';
+            }
+            $return .= $replace;
+        }
+        return $return;
     }
 }
