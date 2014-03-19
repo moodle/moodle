@@ -380,7 +380,8 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
              WHERE cm.course = ?
                    AND md.name = 'workshop'
                    AND s.example = 0
-                   AND (s.timemodified > ? OR a.timemodified > ?)";
+                   AND (s.timemodified > ? OR a.timemodified > ?)
+          ORDER BY s.timemodified";
 
     $rs = $DB->get_recordset_sql($sql, array($course->id, $timestart, $timestart));
 
@@ -540,6 +541,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
     if (!empty($assessments)) {
         $shown = true;
         echo $OUTPUT->heading(get_string('recentassessments', 'workshop'), 3);
+        core_collator::asort_objects_by_property($assessments, 'timemodified');
         foreach ($assessments as $id => $assessment) {
             $link = new moodle_url('/mod/workshop/assessment.php', array('asid' => $id));
             if ($assessment->reviewernamevisible) {
