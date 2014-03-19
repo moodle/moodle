@@ -208,8 +208,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         $actualresponsecounts = $responseclassanalysis->data_for_question_response_table('', '');
 
         foreach ($actualresponsecounts as $actualresponsecount) {
-            if ($actualresponsecount->response == $expected['actualresponse'] ||
-                            count($actualresponsecounts) == 1) {
+            if ($actualresponsecount->response == $expected['actualresponse'] || count($actualresponsecounts) == 1) {
                 $i = 1;
                 $partofanalysis = " slot {$expected['slot']}, rand q '{$expected['randq']}', variant {$expected['variant']}, ".
                                     "for expected model response {$expected['modelresponse']}, ".
