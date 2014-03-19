@@ -1321,14 +1321,19 @@ class question_attempt {
     }
 
     /**
-     * Break down a student response by sub part and classification.
-     * See also {@link question_type::get_possible_responses()}
+     * Break down a student response by sub part and classification. See also {@link question::classify_response}.
      * Used for response analysis.
      *
-     * @return question_possible_response[] where keys are subpartid.
+     * @param string $whichtries         which tries to analyse for response analysis. Will be one of
+     *                                   question_attempt::FIRST_TRY, LAST_TRY or ALL_TRIES.
+     *                                   Defaults to question_attempt::LAST_TRY.
+     * @return (question_classified_response|array)[] If $whichtries is question_attempt::FIRST_TRY or LAST_TRY index is subpartid
+     *                                   and values are question_classified_response instances.
+     *                                   If $whichtries is question_attempt::ALL_TRIES then first key is submitted response no
+     *                                   and the second key is subpartid.
      */
-    public function classify_response() {
-        return $this->behaviour->classify_response();
+    public function classify_response($whichtries = self::LAST_TRY) {
+        return $this->behaviour->classify_response($whichtries);
     }
 
     /**
@@ -1686,7 +1691,7 @@ class question_attempt_steps_with_submitted_response_iterator extends question_a
     }
     /** @return bool */
     public function valid() {
-        return $this->offsetExists($this->submittedresponseno);
+        return $this->submittedresponseno >= 1 && $this->submittedresponseno <= count($this->stepswithsubmittedresponses);
     }
 
     /**

@@ -1,0 +1,83 @@
+quizattempt,firstname,lastname,finished,randqs.1,responses.1.-submit,responses.1.-tryagain,responses.1.answer,responses.2.-submit,responses.2.-tryagain,responses.2.answer,variants.2,responses.3.-submit,responses.3.-tryagain,responses.3.0,responses.3.1,responses.3.2,responses.4.-submit,responses.4.answer
+1,John,Jones,0,shortanswer,1,0,butterfly,0,0,19.4,4,0,0,,amphibian,,0,1
+1,John,Jones,0,shortanswer,0,1,butterfly,0,0,19.4,4,1,0,insect,insect,insect,0,1
+1,John,Jones,0,shortanswer,1,0,dog,0,0,19.4,4,0,1,insect,insect,insect,0,1
+1,John,Jones,0,shortanswer,0,1,dog,0,0,19.4,4,1,0,insect,insect,amphibian,0,1
+1,John,Jones,0,shortanswer,1,0,chicken,0,0,19.4,4,0,1,insect,insect,amphibian,0,1
+1,John,Jones,0,shortanswer,0,0,chicken,0,0,19.4,4,1,0,insect,mammal,amphibian,0,1
+1,John,Jones,0,shortanswer,0,0,chicken,0,0,19.4,4,0,1,insect,mammal,amphibian,0,1
+1,John,Jones,0,shortanswer,0,0,chicken,0,0,19.4,4,1,0,insect,amphibian,amphibian,0,1
+1,John,Jones,0,shortanswer,0,0,chicken,0,0,19.4,4,0,1,insect,amphibian,amphibian,0,1
+1,John,Jones,1,shortanswer,0,0,chicken,0,0,19.4,4,1,0,mammal,amphibian,amphibian,0,1
+2,Han,Solo,0,shortanswer,1,0,Tod,1,0,19.4,2,1,0,amphibian,amphibian,amphibian,1,0
+2,Han,Solo,0,shortanswer,0,1,Tod,0,1,19.4,2,0,1,amphibian,amphibian,amphibian,0,0
+2,Han,Solo,0,shortanswer,1,0,Tony,0,0,19.4,2,1,0,insect,mammal,insect,0,0
+2,Han,Solo,0,shortanswer,0,1,Tony,0,0,19.4,2,0,1,insect,mammal,insect,0,0
+2,Han,Solo,0,shortanswer,1,0,Sharon,0,0,19.4,2,1,0,amphibian,insect,mammal,0,0
+2,Han,Solo,0,shortanswer,0,0,Sharon,0,0,19.4,2,0,1,amphibian,insect,mammal,0,0
+2,Han,Solo,0,shortanswer,0,0,Sharon,0,0,19.4,2,1,0,amphibian,insect,mammal,0,0
+2,Han,Solo,1,shortanswer,0,0,Sharon,0,0,19.4,2,0,0,amphibian,insect,mammal,0,0
+3,Yoda,Wise He Is,0,shortanswer,1,0,snake,1,0,7,9,1,0,amphibian,insect,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,0,1,snake,0,0,7,9,0,1,amphibian,insect,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,1,0,snake,0,0,7,9,1,0,amphibian,insect,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,0,1,snake,0,0,7,9,0,1,amphibian,insect,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,1,0,snakes,0,0,7,9,1,0,amphibian,insect,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,0,1,snakes,0,0,7,9,0,1,amphibian,insect,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,1,0,Snakes,0,0,7,9,1,0,amphibian,mammal,amphibian,0,1
+3,Yoda,Wise He Is,0,shortanswer,0,1,Snakes,0,0,7,9,0,0,amphibian,mammal,amphibian,0,1
+3,Yoda,Wise He Is,1,shortanswer,1,0,SnakeS,0,0,7,9,0,0,amphibian,mammal,amphibian,0,1
+4,Herbert,Garrison,0,shortanswer,0,0,dog,0,0,9.4,6,1,0,amphibian,amphibian,amphibian,0,1
+4,Herbert,Garrison,0,shortanswer,0,0,dog,0,0,9.4,6,0,1,amphibian,amphibian,amphibian,0,1
+4,Herbert,Garrison,0,shortanswer,0,0,dog,0,0,9.4,6,1,0,insect,insect,insect,0,1
+4,Herbert,Garrison,0,shortanswer,0,0,dog,0,0,9.4,6,0,1,insect,insect,insect,0,1
+4,Herbert,Garrison,0,shortanswer,0,0,dog,0,0,9.4,6,1,0,insect,amphibian,amphibian,0,1
+4,Herbert,Garrison,0,shortanswer,0,0,dog,0,0,9.4,6,0,1,insect,amphibian,amphibian,0,1
+4,Herbert,Garrison,1,shortanswer,0,0,dog,0,0,9.4,6,1,0,mammal,insect,mammal,0,1
+5,Agent,Smith,0,numerical,1,0,3.1,1,0,x+y,2,0,0,amphibian,amphibian,mammal,0,1
+5,Agent,Smith,0,numerical,0,0,3.1,1,0,4.5,2,0,0,amphibian,amphibian,mammal,0,1
+5,Agent,Smith,1,numerical,0,0,3.1,0,0,4.5,2,0,0,amphibian,amphibian,mammal,0,1
+6,Agent,Smith,0,numerical,0,0,3.142,0,0,19.4,3,0,0,amphibian,insect,mammal,1,0
+6,Agent,Smith,0,numerical,1,0,3.14,1,0,19.4,3,1,0,amphibian,insect,mammal,0,0
+6,Agent,Smith,0,numerical,0,0,3.14,0,1,19.4,3,0,1,amphibian,insect,mammal,0,0
+6,Agent,Smith,1,numerical,0,0,3.14,1,0,3.3,3,1,0,insect,insect,amphibian,0,0
+7,Agent,Smith,0,numerical,1,0,3.14,1,0,19.3,4,0,0,insect,amphibian,insect,0,1
+7,Agent,Smith,1,numerical,0,0,3.14,0,0,19.3,4,0,0,insect,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,1,0,goat,1,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,0,1,goat,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,1,0,Mexican burrowing caecilian,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,0,1,Mexican burrowing caecilian,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,1,0,Mexican burrowing caecilian,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,0,1,Mexican burrowing caecilian,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,1,0,newt,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,0,shortanswer,0,1,newt,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+9,Bebe,Stevens,1,shortanswer,1,0,human,0,0,8.5,2,0,0,amphibian,amphibian,insect,0,1
+10,Luke,Skywalker,0,numerical,1,0,2,1,0,555,10,1,0,amphibian,amphibian,amphibian,1,0
+10,Luke,Skywalker,0,numerical,0,1,2,0,1,555,10,0,1,amphibian,amphibian,amphibian,0,0
+10,Luke,Skywalker,0,numerical,1,0,20,1,0,44,10,1,0,amphibian,amphibian,amphibian,0,0
+10,Luke,Skywalker,0,numerical,0,1,20,0,1,44,10,0,1,amphibian,amphibian,amphibian,0,0
+10,Luke,Skywalker,0,numerical,1,0,34,1,0,22,10,1,0,amphibian,amphibian,amphibian,0,0
+10,Luke,Skywalker,0,numerical,0,0,34,0,1,22,10,0,1,amphibian,amphibian,amphibian,0,0
+10,Luke,Skywalker,0,numerical,0,0,34,1,0,11,10,1,0,amphibian,mammal,amphibian,0,0
+10,Luke,Skywalker,0,numerical,0,0,34,0,1,11,10,0,0,amphibian,mammal,amphibian,0,0
+10,Luke,Skywalker,1,numerical,0,0,34,1,0,12,10,0,0,amphibian,mammal,amphibian,0,0
+11,Luke,Skywalker,0,shortanswer,1,0,toad,1,0,23,1,1,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,0,1,23,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,1,0,22,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,0,1,22,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,1,0,21,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,0,1,21,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,1,0,9,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,0,shortanswer,0,0,toad,0,1,9,1,0,0,insect,amphibian,amphibian,0,1
+11,Luke,Skywalker,1,shortanswer,0,0,toad,1,0,9.9,1,0,0,insect,amphibian,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,1,0,toad,1,0,8,2,1,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,0,1,toad,0,1,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,1,0,toad,1,0,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,0,1,toad,0,1,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,1,0,toad,1,0,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,0,0,toad,0,1,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,0,0,toad,1,0,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,0,shortanswer,0,0,toad,0,1,8,2,0,0,insect,insect,amphibian,0,1
+12,Luke,Skywalker,1,shortanswer,0,0,toad,1,0,8.5,2,0,0,insect,insect,amphibian,0,1
+13,Leia,The Princess,0,shortanswer,0,0,eggs,0,0,19.4,4,1,0,amphibian,amphibian,,1,1
+13,Leia,The Princess,0,shortanswer,0,0,eggs,0,0,19.4,4,1,0,amphibian,amphibian,mammal,0,1
+13,Leia,The Princess,1,shortanswer,0,0,eggs,0,0,19.4,4,0,0,amphibian,amphibian,mammal,0,1
