@@ -3183,5 +3183,50 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014031400.04);
     }
 
+    if ($oldversion < 2014032000.01) {
+
+        // Removing the themes from core.
+        $themes = array('afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white', 'formfactor',
+            'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
+            'standard', 'standardold');
+
+        foreach ($themes as $key => $theme) {
+            if (check_dir_exists($CFG->dirroot . '/theme/' . $theme, false)) {
+                // Ignore the themes that have been re-downloaded.
+                unset($themes[$key]);
+            }
+        }
+
+        list($insql, $inparams) = $DB->get_in_or_equal($themes, SQL_PARAMS_NAMED);
+
+        // Replace the theme usage.
+        $DB->set_field_select('course', 'theme', 'clean', "theme $insql", $inparams);
+        $DB->set_field_select('course_categories', 'theme', 'clean', "theme $insql", $inparams);
+        $DB->set_field_select('user', 'theme', 'clean', "theme $insql", $inparams);
+        $DB->set_field_select('mnet_host', 'theme', 'clean', "theme $insql", $inparams);
+
+        // Replace the theme configs.
+        if (in_array(get_config('core', 'theme'), $themes)) {
+            set_config('theme', 'clean');
+        }
+        if (in_array(get_config('core', 'thememobile'), $themes)) {
+            set_config('thememobile', 'clean');
+        }
+        if (in_array(get_config('core', 'themelegacy'), $themes)) {
+            set_config('themelegacy', 'clean');
+        }
+        if (in_array(get_config('core', 'themetablet'), $themes)) {
+            set_config('themetablet', 'clean');
+        }
+
+        // Hacky emulation of plugin uninstallation.
+        foreach ($themes as $theme) {
+            unset_all_config_for_plugin('theme_' . $theme);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032000.01);
+    }
+
     return true;
 }

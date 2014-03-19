@@ -15,6 +15,12 @@ information provided here is intended especially for theme designer.
     table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
     table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
 
+Removed themes:
+* afterburner, anomaly, arialist, binarius, boxxie, brick, formal_white, formfactor, fusion, leatherbound,
+  magazine, nimble, nonzero, overlay, serenity, sky_high, splash, standard and standardold have been removed.
+  During the upgrade process the themes will be uninstalled and all their settings will be deleted.
+  If you wish to keep your theme and its settings, download it from moodle.org and put it back in
+  the theme/ directory BEFORE UPGRADING.
 
 === 2.6 ===
 
