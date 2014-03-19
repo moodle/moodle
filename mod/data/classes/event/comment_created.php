@@ -39,7 +39,7 @@ class comment_created extends \core\event\comment_created {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/data/view.php', array('id' => $this->other['itemid']));
+        return new \moodle_url('/mod/data/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**
