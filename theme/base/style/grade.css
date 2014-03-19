@@ -76,3 +76,11 @@
 #page-grade-edit-outcome-course .courseoutcomes td {
     text-align:center;
 }
+
+#page-grade-report-grader-index .topscrollcontent {
+    height: 1px;
+}
+
+#page-grade-report-grader-index #user-grades {
+    margin-top: 4px;
+}
