@@ -119,7 +119,7 @@ class scheduled_task_testcase extends advanced_testcase {
         // Should be displayed in user timezone.
         // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20140314T01&p1=58
         // to verify this time.
-        $this->assertContains('11:15 AM', $userdate);
+        $this->assertContains('11:15 AM', core_text::strtoupper($userdate));
 
         $CFG->timezone = $currenttimezonecfg;
         date_default_timezone_set($currenttimezonephp);
