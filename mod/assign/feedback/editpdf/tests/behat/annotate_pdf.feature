@@ -1,4 +1,4 @@
-@mod @mod_assign @assignfeedback @assignfeedback_editpdf @_only_local
+@mod @mod_assign @assignfeedback @assignfeedback_editpdf @_file_upload
 Feature: In an assignment, teacher can annotate PDF files during grading
   In order to provide visual report on a graded PDF
   As a teacher
