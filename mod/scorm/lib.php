@@ -444,7 +444,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {
-                        $report .= '<img src="'.$OUTPUT->pix_url('spacer', 'scorm').'" alt="" />';
+                        $report .= $OUTPUT->spacer(array("height" => "12", "width" => "13"));
                     }
 
                     if ($sco->launch) {
