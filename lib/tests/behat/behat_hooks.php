@@ -383,9 +383,9 @@ class behat_hooks extends behat_base {
         $filename = $event->getStep()->getParent()->getTitle() . '_' . $event->getStep()->getText();
         $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename);
 
-        // File name limited to 256 characters. Leaving 4 chars for the file
+        // File name limited to 255 characters. Leaving 4 chars for the file
         // extension as we allow .png for images and .html for DOM contents.
-        $filename = substr($filename, 0, 251) . '.' . $filetype;
+        $filename = substr($filename, 0, 250) . '.' . $filetype;
 
         return array($dir, $filename);
     }
