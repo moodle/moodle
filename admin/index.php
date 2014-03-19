@@ -45,6 +45,13 @@ if (!function_exists('iconv')) {
     die();
 }
 
+// Make sure php5-json is available.
+if (!function_exists('json_encode') || !function_exists('json_decode')) {
+    // This also shouldn't happen.
+    echo 'Moodle requires the json PHP extension. Please install or enable the json extension.';
+    die();
+}
+
 define('NO_OUTPUT_BUFFERING', true);
 
 if ((isset($_GET['cache']) and $_GET['cache'] === '0')
