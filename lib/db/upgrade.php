@@ -3124,7 +3124,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014022600.00);
     }
 
-    if ($oldversion < 2014031400.01) {
+    if ($oldversion < 2014031400.02) {
         // Delete any cached stats to force recalculation later, then we can be sure that cached records will have the correct
         // field.
         $DB->delete_records('question_response_analysis');
@@ -3141,10 +3141,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014031400.01);
+        upgrade_main_savepoint(true, 2014031400.02);
     }
 
-    if ($oldversion < 2014031400.02) {
+    if ($oldversion < 2014031400.03) {
 
         // Define table question_response_count to be created.
         $table = new xmldb_table('question_response_count');
@@ -3165,10 +3165,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014031400.02);
+        upgrade_main_savepoint(true, 2014031400.03);
     }
 
-    if ($oldversion < 2014031400.03) {
+    if ($oldversion < 2014031400.04) {
 
         // Define field whichtries to be added to question_response_analysis.
         $table = new xmldb_table('question_response_analysis');
@@ -3180,7 +3180,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014031400.03);
+        upgrade_main_savepoint(true, 2014031400.04);
     }
 
     return true;
