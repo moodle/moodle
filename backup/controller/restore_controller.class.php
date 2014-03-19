@@ -330,6 +330,7 @@ class restore_controller extends backup implements loggable {
      * is called during restore, but not directly part of the restore system, may
      * need to behave differently during restore (e.g. do not bother resetting a
      * cache because we know it will be reset at end of operation).
+     * @since Moodle 2.5.6
      *
      * @return bool True if any restore is currently executing
      */
