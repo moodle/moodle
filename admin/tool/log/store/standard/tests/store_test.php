@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/restore_hack.php');
 
 class logstore_standard_store_testcase extends advanced_testcase {
     public function test_log_writing() {
@@ -55,6 +56,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $stores = $manager->get_readers();
         $this->assertCount(1, $stores);
         $this->assertEquals(array('logstore_standard'), array_keys($stores));
+        /** @var \logstore_standard\log\store $store */
         $store = $stores['logstore_standard'];
         $this->assertInstanceOf('logstore_standard\log\store', $store);
         $this->assertInstanceOf('tool_log\log\writer', $store);
@@ -87,9 +89,11 @@ class logstore_standard_store_testcase extends advanced_testcase {
         \core\session\manager::loginas($user1->id, context_system::instance());
         $this->assertEquals(2, $DB->count_records('logstore_standard_log'));
 
+        logstore_standard_restore::hack_executing(1);
         $event2 = \logstore_standard\event\unittest_executed::create(
             array('context' => context_module::instance($module2->cmid), 'other' => array('sample' => 6, 'xx' => 9)));
         $event2->trigger();
+        logstore_standard_restore::hack_executing(0);
 
         $_SESSION['SESSION'] = new \stdClass();
         $this->setUser(0);
@@ -100,13 +104,14 @@ class logstore_standard_store_testcase extends advanced_testcase {
         array_shift($logs);
         $log2 = array_shift($logs);
         $this->assertSame('\core\event\user_loggedinas', $log2->eventname);
+        $this->assertSame('cli', $log2->origin);
 
         $log3 = array_shift($logs);
         unset($log3->id);
         $log3->other = unserialize($log3->other);
         $log3 = (array)$log3;
         $data = $event2->get_data();
-        $data['origin'] = 'cli';
+        $data['origin'] = 'restore';
         $data['ip'] = null;
         $data['realuserid'] = 2;
         $this->assertEquals($data, $log3);

@@ -59,6 +59,8 @@ trait buffered_writer {
      * @return void
      */
     public function write(\core\event\base $event) {
+        global $PAGE;
+
         if ($this->is_event_ignored($event)) {
             return;
         }
@@ -68,15 +70,9 @@ trait buffered_writer {
         // snapshots and custom objects may be garbage collected.
         $entry = $event->get_data();
         $entry['other'] = serialize($entry['other']);
-        if (CLI_SCRIPT) {
-            $entry['origin'] = 'cli';
-            $entry['ip'] = null;
-        } else {
-            $entry['origin'] = 'web';
-            $entry['ip'] = getremoteaddr();
-        }
+        $entry['origin'] = $PAGE->requestorigin;
+        $entry['ip'] = $PAGE->requestip;
         $entry['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
-
 
         $this->buffer[] = $entry;
         $this->count++;
