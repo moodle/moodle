@@ -187,6 +187,25 @@ if ($formdata = $mform2->get_data()) {
     @set_time_limit(0);
     raise_memory_limit(MEMORY_EXTRA);
 
+    $userfields = array(
+        'userid' => array(
+            'field' => 'id',
+            'label' => 'id',
+        ),
+        'useridnumber' => array(
+            'field' => 'idnumber',
+            'label' => 'idnumber',
+        ),
+        'useremail' => array(
+            'field' => 'email',
+            'label' => 'email address',
+        ),
+        'username' => array(
+            'field' => 'username',
+            'label' => 'username',
+        ),
+    );
+
     $csvimport->init();
 
     $newgradeitems = array(); // temporary array to keep track of what new headers are processed
@@ -225,39 +244,23 @@ if ($formdata = $mform2->get_data()) {
             }
 
             switch ($t0) {
-                case 'userid': //
-                    if (!$user = $DB->get_record('user', array('id' => $value))) {
-                        // user not found, abort whole import
-                        import_cleanup($importcode);
-                        echo $OUTPUT->notification("user mapping error, could not find user with id \"$value\"");
-                        $status = false;
-                        break 3;
-                    }
-                    $studentid = $value;
-                break;
+                case 'userid':
                 case 'useridnumber':
-                    if (empty($value) || !$user = $DB->get_record('user', array('idnumber' => $value))) {
-                         // user not found, abort whole import
-                        import_cleanup($importcode);
-                        echo $OUTPUT->notification("user mapping error, could not find user with idnumber \"$value\"");
-                        $status = false;
-                        break 3;
-                    }
-                    $studentid = $user->id;
-                break;
                 case 'useremail':
-                    if (!$user = $DB->get_record('user', array('email' => $value))) {
-                        import_cleanup($importcode);
-                        echo $OUTPUT->notification("user mapping error, could not find user with email address \"$value\"");
-                        $status = false;
-                        break 3;
-                    }
-                    $studentid = $user->id;
-                break;
                 case 'username':
-                    if (!$user = $DB->get_record('user', array('username' => $value))) {
+                    // Skip invalid row with blank user field.
+                    if (empty($value)) {
+                        continue 3;
+                    }
+
+                    if (!$user = $DB->get_record('user', array($userfields[$t0]['field'] => $value))) {
+                         // User not found, abort whole import.
                         import_cleanup($importcode);
-                        echo $OUTPUT->notification("user mapping error, could not find user with username \"$value\"");
+                        $usermappingerrorobj = new stdClass();
+                        $usermappingerrorobj->field = $userfields[$t0]['label'];
+                        $usermappingerrorobj->value = $value;
+                        echo $OUTPUT->notification(get_string('usermappingerror', 'grades', $usermappingerrorobj));
+                        unset($usermappingerrorobj);
                         $status = false;
                         break 3;
                     }
@@ -383,7 +386,7 @@ if ($formdata = $mform2->get_data()) {
             // user not found, abort whole import
             $status = false;
             import_cleanup($importcode);
-            echo $OUTPUT->notification('user mapping error, could not find user!');
+            echo $OUTPUT->notification(get_string('usermappingerrorusernotfound', 'grades'));
             break;
         }
 
@@ -391,7 +394,7 @@ if ($formdata = $mform2->get_data()) {
             // not allowed to import into this group, abort
             $status = false;
             import_cleanup($importcode);
-            echo $OUTPUT->notification('user not member of current group, can not update!');
+            echo $OUTPUT->notification(get_string('usermappingerrorcurrentgroup', 'grades'));
             break;
         }
 
