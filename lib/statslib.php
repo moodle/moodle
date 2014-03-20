@@ -691,7 +691,6 @@ function stats_cron_weekly() {
             set_cron_lock('statsrunning', time() + $timeout, true);
         }
 
-        $logtimesql  = "l.time >= $timestart AND l.time < $nextstartweek";
         $stattimesql = "timeend > $timestart AND timeend <= $nextstartweek";
 
         $weekstart = time();
@@ -700,14 +699,14 @@ function stats_cron_weekly() {
     /// process login info first
         $sql = "INSERT INTO {stats_user_weekly} (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins', timeend, courseid, userid, COUNT(statsreads)
+                SELECT 'logins', timeend, courseid, userid, SUM(statsreads)
                   FROM (
-                           SELECT $nextstartweek AS timeend, ".SITEID." as courseid, l.userid, l.id AS statsreads
-                             FROM {log} l
-                            WHERE action = 'login' AND $logtimesql
+                           SELECT $nextstartweek AS timeend, courseid, statsreads
+                             FROM {stats_user_daily} sd
+                            WHERE stattype = 'logins' AND $stattimesql
                        ) inline_view
               GROUP BY timeend, courseid, userid
-                HAVING COUNT(statsreads) > 0";
+                HAVING SUM(statsreads) > 0";
 
         $DB->execute($sql);
 
@@ -834,7 +833,6 @@ function stats_cron_monthly() {
             set_cron_lock('statsrunning', time() + $timeout, true);
         }
 
-        $logtimesql  = "l.time >= $timestart AND l.time < $nextstartmonth";
         $stattimesql = "timeend > $timestart AND timeend <= $nextstartmonth";
 
         $monthstart = time();
@@ -843,13 +841,14 @@ function stats_cron_monthly() {
     /// process login info first
         $sql = "INSERT INTO {stats_user_monthly} (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins', timeend, courseid, userid, COUNT(statsreads)
+                SELECT 'logins', timeend, courseid, userid, SUM(statsreads)
                   FROM (
-                           SELECT $nextstartmonth AS timeend, ".SITEID." as courseid, l.userid, l.id AS statsreads
-                             FROM {log} l
-                            WHERE action = 'login' AND $logtimesql
+                           SELECT $nextstartmonth AS timeend, courseid, statsreads
+                             FROM {stats_user_daily} sd
+                            WHERE stattype = 'logins' AND $stattimesql
                        ) inline_view
-              GROUP BY timeend, courseid, userid";
+              GROUP BY timeend, courseid, userid
+                HAVING SUM(statsreads) > 0";
 
         $DB->execute($sql);
 
