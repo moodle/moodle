@@ -109,8 +109,8 @@ class tool_log_setting_managestores extends admin_setting {
         $strversion = get_string('version');
 
         $pluginmanager = core_plugin_manager::instance();
-
-        $available = \tool_log\log\manager::get_store_plugins();
+        $logmanager = new \tool_log\log\manager();
+        $available = $logmanager->get_store_plugins();
         $enabled = get_config('tool_log', 'enabled_stores');
         if (!$enabled) {
             $enabled = array();
@@ -132,8 +132,10 @@ class tool_log_setting_managestores extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox loggingui');
 
         $table = new html_table();
-        $table->head = array(get_string('name'), $strversion, $strenable, $strup . '/' . $strdown, $strsettings, $struninstall);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head = array(get_string('name'), get_string('reportssupported', 'tool_log'), $strversion, $strenable,
+                $strup . '/' . $strdown, $strsettings, $struninstall);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign',
+                'centeralign');
         $table->id = 'logstoreplugins';
         $table->attributes['class'] = 'admintable generaltable';
         $table->data = array();
@@ -154,6 +156,13 @@ class tool_log_setting_managestores extends admin_setting {
                 $name = get_string('pluginname', $store);
             } else {
                 $name = $store;
+            }
+
+            $reports = $logmanager->get_supported_reports($store);
+            if (!empty($reports)) {
+                $supportedreports = implode(', ', $reports);
+            } else {
+                $supportedreports = '-';
             }
 
             // Hide/show links.
@@ -220,7 +229,7 @@ class tool_log_setting_managestores extends admin_setting {
             }
 
             // Add a row to the table.
-            $table->data[] = array($icon . $displayname, $version, $hideshow, $updown, $settings, $uninstall);
+            $table->data[] = array($icon . $displayname, $supportedreports, $version, $hideshow, $updown, $settings, $uninstall);
 
             $printed[$store] = true;
         }

@@ -49,4 +49,14 @@ interface manager {
      * @return void
      */
     public function dispose();
+
+    /**
+     * For a given report, returns a list of log stores that are supported.
+     *
+     * @param string $component component.
+     *
+     * @return false|array list of logstores that support the given report. It returns false if the given $component doesn't
+     *      require logstores.
+     */
+    public function get_supported_logstores($component);
 }

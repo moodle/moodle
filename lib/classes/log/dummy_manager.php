@@ -34,4 +34,8 @@ class dummy_manager implements manager {
 
     public function dispose() {
     }
+
+    public function get_supported_logstores($component) {
+        return array();
+    }
 }
