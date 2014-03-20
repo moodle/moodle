@@ -73,7 +73,7 @@ class marker_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_marker_updated', 'mod_assign');
+        return get_string('eventmarkerupdated', 'mod_assign');
     }
 
     /**

@@ -73,7 +73,7 @@ class submission_status_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_submission_status_updated', 'mod_assign');
+        return get_string('eventsubmissionstatusupdated', 'mod_assign');
     }
 
     /**

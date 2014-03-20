@@ -67,7 +67,7 @@ class identities_revealed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_identities_revealed', 'mod_assign');
+        return get_string('eventidentitiesrevealed', 'mod_assign');
     }
 
     /**

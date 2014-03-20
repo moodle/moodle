@@ -67,7 +67,7 @@ class extension_granted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_extension_granted', 'mod_assign');
+        return get_string('eventextensiongranted', 'mod_assign');
     }
 
     /**

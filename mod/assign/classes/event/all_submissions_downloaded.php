@@ -67,7 +67,7 @@ class all_submissions_downloaded extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_all_submissions_downloaded', 'mod_assign');
+        return get_string('eventallsubmissionsdownloaded', 'mod_assign');
     }
 
     /**

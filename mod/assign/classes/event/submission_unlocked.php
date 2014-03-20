@@ -67,7 +67,7 @@ class submission_unlocked extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_submission_unlocked', 'mod_assign');
+        return get_string('eventsubmissionunlocked', 'mod_assign');
     }
 
     /**

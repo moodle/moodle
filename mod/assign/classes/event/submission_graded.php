@@ -67,7 +67,7 @@ class submission_graded extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_submission_graded', 'mod_assign');
+        return get_string('eventsubmissiongraded', 'mod_assign');
     }
 
     /**

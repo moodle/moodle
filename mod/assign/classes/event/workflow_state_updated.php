@@ -73,7 +73,7 @@ class workflow_state_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_workflow_state_updated', 'mod_assign');
+        return get_string('eventworkflowstateupdated', 'mod_assign');
     }
 
     /**

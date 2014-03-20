@@ -67,7 +67,7 @@ class statement_accepted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_statement_accepted', 'mod_assign');
+        return get_string('eventstatementaccepted', 'mod_assign');
     }
 
     /**

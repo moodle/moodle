@@ -67,7 +67,7 @@ class submission_duplicated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_submission_duplicated', 'mod_assign');
+        return get_string('eventsubmissionduplicated', 'mod_assign');
     }
 
     /**
