@@ -249,4 +249,28 @@ class logstore_legacy_store_testcase extends advanced_testcase {
             \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params, $sort);
         $this->assertSame('ip DESC', $sort);
     }
+
+    /*
+     * Test logmanager::get_supported_reports returns all reports that require this store.
+     */
+    public function test_get_supported_reports() {
+        $logmanager = get_log_manager();
+        $allreports = \core_component::get_plugin_list('report');
+
+        $supportedreports = array(
+            'log' => '/report/log',
+            'loglive' => '/report/loglive',
+            'outline' => '/report/outline',
+            'participation' => '/report/participation',
+            'stats' => '/report/stats'
+        );
+
+        // Make sure all supported reports are installed.
+        $expectedreports = array_keys(array_intersect_key($allreports, $supportedreports));
+        $reports = $logmanager->get_supported_reports('logstore_legacy');
+        $reports = array_keys($reports);
+        foreach ($expectedreports as $expectedreport) {
+            $this->assertContains($expectedreport, $reports);
+        }
+    }
 }

@@ -195,4 +195,28 @@ class logstore_standard_store_testcase extends advanced_testcase {
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
     }
+
+    /**
+     * Test logmanager::get_supported_reports returns all reports that require this store.
+     */
+    public function test_get_supported_reports() {
+        $logmanager = get_log_manager();
+        $allreports = \core_component::get_plugin_list('report');
+
+        $supportedreports = array(
+            'log' => '/report/log',
+            'loglive' => '/report/loglive',
+            'outline' => '/report/outline',
+            'participation' => '/report/participation',
+            'stats' => '/report/stats'
+        );
+
+        // Make sure all supported reports are installed.
+        $expectedreports = array_keys(array_intersect_key($allreports, $supportedreports));
+        $reports = $logmanager->get_supported_reports('logstore_standard');
+        $reports = array_keys($reports);
+        foreach ($expectedreports as $expectedreport) {
+            $this->assertContains($expectedreport, $reports);
+        }
+    }
 }
