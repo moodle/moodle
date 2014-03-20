@@ -65,13 +65,13 @@ class message_sent extends base {
      * @return string
      */
     public function get_description() {
-        // Check that we are sending from a valid user.
-        if ($this->userid > 0) {
+        // Check if we are sending from a valid user.
+        if (\core_user::is_real_user($this->userid)) {
             return 'The user with the id \'' . $this->userid . '\' sent a message to the user with the id \'' .
                 $this->relateduserid . '\'.';
-        } else {
-            return 'A message was sent by the system to the user with the id \'' . $this->relateduserid . '\'.';
         }
+
+        return 'A message was sent by the system to the user with the id \'' . $this->relateduserid . '\'.';
     }
 
     /**
@@ -82,7 +82,7 @@ class message_sent extends base {
     protected function get_legacy_logdata() {
         // The add_to_log function was only ever called when we sent a message from one user to another. We do not want
         // to return the legacy log data if we are sending a system message, so check that the userid is valid.
-        if ($this->userid > 0) {
+        if (\core_user::is_real_user($this->userid)) {
             return array(SITEID, 'message', 'write', 'index.php?user=' . $this->userid . '&id=' . $this->relateduserid .
                 '&history=1#m' . $this->other['messageid'], $this->userid);
         }
