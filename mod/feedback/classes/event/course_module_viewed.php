@@ -62,7 +62,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
         if (empty($userorid)) {
             $userorid = $USER;
         }
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
             return has_capability('mod/feedback:viewreports', $this->context, $userorid);
@@ -76,7 +76,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return null;
         } else {
             return parent::get_legacy_logdata();

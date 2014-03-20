@@ -1915,10 +1915,11 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $us
         'relateduserid' => $userid,
         'objectid' => $feedbackcompleted->id,
         'context' => context_module::instance($cm->id),
+        'anonymous' => ($feedbackcompleted->anonymous_response == FEEDBACK_ANONYMOUS_YES),
         'other' => array(
             'cmid' => $cm->id,
             'instanceid' => $feedbackcompleted->feedback,
-            'anonymous' => $feedbackcompleted->anonymous_response
+            'anonymous' => $feedbackcompleted->anonymous_response // Deprecated.
         )
     ));
 
@@ -2695,7 +2696,11 @@ function feedback_delete_completed($completedid) {
         'objectid' => $completedid,
         'courseid' => $course->id,
         'context' => context_module::instance($cm->id),
-        'other' => array('cmid' => $cm->id, 'instanceid' => $feedback->id, 'anonymous' => $completed->anonymous_response)
+        'anonymous' => ($completed->anonymous_response == FEEDBACK_ANONYMOUS_YES),
+        'other' => array(
+            'cmid' => $cm->id,
+            'instanceid' => $feedback->id,
+            'anonymous' => $completed->anonymous_response) // Deprecated.
     ));
 
     $event->add_record_snapshot('feedback_completed', $completed);

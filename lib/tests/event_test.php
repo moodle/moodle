@@ -54,6 +54,8 @@ class core_event_testcase extends advanced_testcase {
         $this->assertNull($event->relateduserid);
         $this->assertFalse(isset($event->relateduserid));
 
+        $this->assertSame(0, $event->anonymous);
+
         $this->assertSame(array('sample'=>null, 'xx'=>10), $event->other);
         $this->assertTrue(isset($event->other['xx']));
         $this->assertFalse(isset($event->other['sample']));
@@ -74,8 +76,12 @@ class core_event_testcase extends advanced_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
-        $event2 = \core_tests\event\unittest_executed::create(array('contextid'=>$system->id, 'objectid'=>5, 'other'=>array('sample'=>null, 'xx'=>10)));
+        $event2 = \core_tests\event\unittest_executed::create(array('contextid'=>$system->id, 'objectid'=>5, 'anonymous'=>1, 'other'=>array('sample'=>null, 'xx'=>10)));
         $this->assertEquals($event->get_context(), $event2->get_context());
+        $this->assertSame(1, $event2->anonymous);
+
+        $event3 = \core_tests\event\unittest_executed::create(array('contextid'=>$system->id, 'objectid'=>5, 'anonymous'=>true, 'other'=>array('sample'=>null, 'xx'=>10)));
+        $this->assertSame(1, $event3->anonymous);
     }
 
     public function test_event_properties_guessing() {
