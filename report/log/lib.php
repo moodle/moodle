@@ -41,6 +41,20 @@ function report_log_extend_navigation_course($navigation, $course, $context) {
 }
 
 /**
+ * Callback to verify if the given instance of store is supported by this report or not.
+ *
+ * @param string $instance store instance.
+ *
+ * @return bool returns true if the store is supported by the report, false otherwise.
+ */
+function report_log_supports_logstore($instance) {
+    if ($instance instanceof \core\log\sql_select_reader) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * This function extends the course navigation with the report items
  *
  * @param navigation_node $navigation The navigation node to extend
