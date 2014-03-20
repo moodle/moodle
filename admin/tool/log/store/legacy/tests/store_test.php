@@ -213,6 +213,11 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
         $this->assertEquals("edulevel = 0 and action LIKE '%update%' OR action NOT LIKE '%view%' AND action NOT LIKE '%report%' or action NOT LIKE '%delete%'", $updatewhere);
 
+        // The anonymous select returns all data.
+        $selectwhere = "anonymous = 0";
+        list($updatewhere, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_legacy($selectwhere, $params);
+        $this->assertSame("0 = 0", $updatewhere);
+
         // Test legacy field names are mapped.
         $selectwhere = "timecreated = :timecreated and courseid = :courseid and contextinstanceid = :contextinstanceid and origin = :origin";
         $params = array('timecreated' => 2, 'courseid' => 3, 'contextinstanceid' => 4, 'origin' => 5 );
