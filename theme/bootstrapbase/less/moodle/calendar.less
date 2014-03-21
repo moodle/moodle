@@ -1,35 +1,23 @@
 /* calendar.less */
 
 // Calendar colour variables defined.
-
-@redDarker:                              #a00; // Dark red.
-
-@calendarEventCourseBackgroundColor:     #ffd3bd; // Pale red.
-@calendarEventGlobalBackgroundColor:     #d6f8cd; // Pale green.
-@calendarEventGroupBackgroundColor:      #fee7ae; // Pale yellow.
-@calendarEventUserBackgroundColor:       #dce7ec; // Pale blue.
-
-@calendarEventCourseBorderColor:         @calendarEventCourseBackgroundColor;
-@calendarEventGlobalBorderColor:         @calendarEventGlobalBackgroundColor;
-@calendarEventGroupBorderColor:          @calendarEventGroupBackgroundColor;
-@calendarEventUserBorderColor:           @calendarEventUserBackgroundColor;
-
-@calendarEventHeadings:                  @gray;
-
-@calendarWeekendTextColor:               @redDarker;
+@calendarEventCourseColor: #ffd3bd; // Pale red.
+@calendarEventGlobalColor: #d6f8cd; // Pale green.
+@calendarEventGroupColor:  #fee7ae; // Pale yellow.
+@calendarEventUserColor:   #dce7ec; // Pale blue.
 
 // Calendar event background colours defined.
 .calendar_event_course {
-    background-color: @calendarEventCourseBackgroundColor;
+    background-color: @calendarEventCourseColor;
 }
 .calendar_event_global {
-    background-color: @calendarEventGlobalBackgroundColor;
+    background-color: @calendarEventGlobalColor;
 }
 .calendar_event_group {
-    background-color: @calendarEventGroupBackgroundColor;
+    background-color: @calendarEventGroupColor;
 }
 .calendar_event_user {
-    background-color: @calendarEventUserBackgroundColor;
+    background-color: @calendarEventUserColor;
 }
 
 // Calendar restyling.
@@ -122,16 +110,16 @@
             border-style: solid;
         }
         .calendar_event_course {
-            border-color: @calendarEventCourseBorderColor;
+            border-color: @calendarEventCourseColor;
         }
         .calendar_event_global {
-            border-color: @calendarEventGlobalBorderColor;
+            border-color: @calendarEventGlobalColor;
         }
         .calendar_event_group {
-            border-color: @calendarEventGroupBorderColor;
+            border-color: @calendarEventGroupColor;
         }
         .calendar_event_user {
-            border-color: @calendarEventUserBorderColor;
+            border-color: @calendarEventUserColor;
         }
         .calendar-event-panel {
             background-color: @grayLighter;
@@ -142,18 +130,13 @@
                 border: 1px solid darken(@wellBackground, 7%);
                 .border-radius(@baseBorderRadius);
                 .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .05));
-                h2 {
-                    &.eventtitle {
-                        color: @calendarEventHeadings;
-                    }
-                }
             }
         }
         .calendar-controls {
             .current {
                 font-family: @headingsFontFamily;
                 font-weight: @headingsFontWeight;
-                color: @calendarEventHeadings;
+                color: @headingsColor;
                 font-size: 25px;
                 line-height: 1.2;
             }
@@ -314,7 +297,7 @@
         }
         td {
             &.weekend {
-                color: @calendarWeekendTextColor;
+                .muted;
             }
         }
     }
@@ -329,7 +312,6 @@
             .box-shadow(inset 0 1px 1px rgba(0 ,0 ,0 , .05));
             h2 {
                 &.eventtitle {
-                    color: @calendarEventHeadings;
                     line-height: 1.2;
                     font-size: 18px;
                 }
