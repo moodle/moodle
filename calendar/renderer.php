@@ -454,7 +454,7 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $event = new calendar_event($event);
                 if (!empty($event->modulename)) {
                     $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-                    if (!groups_course_module_visible($cm)) {
+                    if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
                         unset($events[$eventid]);
                     }
                 }

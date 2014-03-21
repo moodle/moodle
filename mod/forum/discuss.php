@@ -77,11 +77,14 @@
             print_error('cannotmovetosingleforum', 'forum', $return);
         }
 
-        if (!$cmto = get_coursemodule_from_instance('forum', $forumto->id, $course->id)) {
+        // Get target forum cm and check it is visible to current user.
+        $modinfo = get_fast_modinfo($course);
+        $forums = $modinfo->get_instances_of('forum');
+        if (!array_key_exists($forumto->id, $forums)) {
             print_error('cannotmovetonotfound', 'forum', $return);
         }
-
-        if (!coursemodule_visible_for_user($cmto)) {
+        $cmto = $forums[$forumto->id];
+        if (!$cmto->uservisible) {
             print_error('cannotmovenotvisible', 'forum', $return);
         }
 

@@ -3267,7 +3267,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 
     if (!isset($cm->uservisible)) {
-        $cm->uservisible = coursemodule_visible_for_user($cm);
+        $cm->uservisible = \core_availability\info_module::is_user_visible($cm, 0, false);
     }
 
     if ($istracked && is_null($postisread)) {
@@ -5475,7 +5475,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
             return false;
         }
     } else {
-        if (!coursemodule_visible_for_user($cm, $user->id)) {
+        if (!\core_availability\info_module::is_user_visible($cm, $user->id, false)) {
             return false;
         }
     }
