@@ -197,17 +197,6 @@ if ($mform->is_cancelled()) {
         $data->feedbackformat = $old_grade_grade->feedbackformat;
     }
 
-    // Only log a grade override if they actually changed the student grade.
-    if ($data->finalgrade != $old_grade_grade->finalgrade) {
-        $url = '/report/grader/index.php?id=' . $course->id;
-
-        $user = $DB->get_record('user', array('id'=>$data->userid), '*', MUST_EXIST);
-        $fullname = fullname($user);
-
-        $info = "{$grade_item->itemname}: $fullname";
-        add_to_log($course->id, 'grade', 'update', $url, $info);
-    }
-
     // update final grade or feedback
     // when we set override grade the first time, it happens here
     $grade_item->update_final_grade($data->userid, $data->finalgrade, 'editgrade', $data->feedback, $data->feedbackformat);
@@ -221,19 +210,6 @@ if ($mform->is_cancelled()) {
             $data->overridden = 0; // checkbox unticked
         }
         $grade_grade->set_overridden($data->overridden);
-
-        if ($data->overridden == 0 && $data->overridden != $old_grade_grade->overridden) {
-            // Log removing an override.
-            // The addition of an override is logged above.
-            // One or the other will happen but never both.
-            $url = '/report/grader/index.php?id=' . $course->id;
-
-            $user = $DB->get_record('user', array('id'=>$data->userid), '*', MUST_EXIST);
-            $fullname = fullname($user);
-
-            $info = "{$grade_item->itemname}: $fullname";
-            add_to_log($course->id, 'grade', 'update', $url, $info);
-        }
     }
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
@@ -287,6 +263,14 @@ if ($mform->is_cancelled()) {
 
     } else if ($old_grade_grade->locktime != $grade_grade->locktime) {
         $grade_item->force_regrading();
+    }
+
+    $grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true);
+    if ($old_grade_grade->finalgrade != $grade_grade->finalgrade
+        or empty($old_grade_grade->overridden) != empty($grade_grade->overridden)
+    ) {
+        $grade_grade->grade_item = $grade_item;
+        \core\event\user_graded::create_from_grade($grade_grade)->trigger();
     }
 
     redirect($returnurl);

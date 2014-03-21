@@ -301,13 +301,18 @@ class grade_report_grader extends grade_report {
                         }
                     }
 
-                    $url = '/report/grader/index.php?id=' . $this->course->id;
-                    $fullname = fullname($this->users[$userid]);
-
-                    $info = "{$gradeitem->itemname}: $fullname";
-                    add_to_log($this->course->id, 'grade', 'update', $url, $info);
+                    $oldgradegrade = new grade_grade(array('userid' => $userid, 'itemid' => $gradeitem->id), true);
 
                     $gradeitem->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE);
+
+                    $gradegrade = new grade_grade(array('userid' => $userid, 'itemid' => $gradeitem->id), true);
+
+                    if ($oldgradegrade->finalgrade != $gradegrade->finalgrade
+                        or empty($oldgradegrade->overridden) != empty($gradegrade->overridden)
+                    ) {
+                        $gradegrade->grade_item = $gradeitem;
+                        \core\event\user_graded::create_from_grade($gradegrade)->trigger();
+                    }
 
                     // We can update feedback without reloading the grade item as it doesn't affect grade calculations
                     if ($datatype === 'feedback') {
