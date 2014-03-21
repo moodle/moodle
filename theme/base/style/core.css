@@ -130,7 +130,6 @@ img.uihint {cursor: help;}
 #addmembersform table {margin-left: auto;margin-right: auto;}
 .formtable tbody th,
 .generaltable th.header {vertical-align: top;}
-.flexible th {white-space: nowrap;}
 .cell {vertical-align: top;}
 img.emoticon {vertical-align: middle;width: 15px;height: 15px;}
 form.popupform,
