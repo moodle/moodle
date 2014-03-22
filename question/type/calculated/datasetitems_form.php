@@ -438,10 +438,11 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 if (!optional_param('updatedatasets', false, PARAM_BOOL) &&
                         !optional_param('updateanswers', false, PARAM_BOOL)) {
-                    $formdata["number[$j]"] = $this->qtypeobj->generate_dataset_item(
-                            $datasetdef->options);
+                    $formdata["number[$j]"] = number_format($this->qtypeobj->generate_dataset_item( 
+                            $datasetdef->options),$answer->correctanswerlength);
                 } else {
-                    $formdata["number[$j]"] = $this->_form->getElementValue("number[$j]");
+                    $formdata["number[$j]"] = number_format($this->_form->getElementValue("number[$j]"),
+                            $answer->correctanswerlength);
                 }
                 $formdata["definition[$j]"] = $defid;
                 $formdata["itemid[$j]"] = isset($datasetdef->items[$itemnumber]) ?
