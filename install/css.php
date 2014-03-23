@@ -147,12 +147,12 @@ Once IE9 is no longer supported we can include 'bootstrapbase/style/moodle.css' 
 and remove the following.
 */
 body {
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 14px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
 }
 .breadcrumb {
-	background-color: rgb(245, 245, 245);
-	padding: 8px 15px;
+  background-color: rgb(245, 245, 245);
+  padding: 8px 15px;
 }
 /*
 End of MDL-43839 IE9 specific CSS.
