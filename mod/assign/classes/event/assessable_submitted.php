@@ -40,14 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assessable_submitted extends \core\event\assessable_submitted {
-
-    /**
-     * Legacy log data.
-     *
-     * @var array
-     */
-    protected $legacylogdata;
+class assessable_submitted extends base {
 
     /**
      * Returns description of what happened.
@@ -84,15 +77,6 @@ class assessable_submitted extends \core\event\assessable_submitted {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
@@ -102,32 +86,14 @@ class assessable_submitted extends \core\event\assessable_submitted {
     }
 
     /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
-    }
-
-    /**
-     * Sets the legacy event log data.
-     *
-     * @param \stdClass $legacylogdata legacy log data.
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
-    }
-
-    /**
      * Init method.
      *
      * @return void
      */
     protected function init() {
-        parent::init();
         $this->data['objecttable'] = 'assign_submission';
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -138,8 +104,13 @@ class assessable_submitted extends \core\event\assessable_submitted {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (!isset($this->other['submission_editable'])) {
             throw new \coding_exception('Other must contain the key submission_editable.');
+        }
+
+        if ($this->contextlevel != CONTEXT_MODULE) {
+            throw new \coding_exception('Context passed must be module context.');
         }
     }
 }

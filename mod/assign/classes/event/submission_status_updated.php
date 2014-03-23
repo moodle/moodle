@@ -40,14 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submission_status_updated extends \core\event\base {
-
-    /**
-     * Legacy log data.
-     *
-     * @var array
-     */
-    protected $legacylogdata;
+class submission_status_updated extends base {
 
     /**
      * Returns description of what happened.
@@ -56,15 +49,6 @@ class submission_status_updated extends \core\event\base {
      */
     public function get_description() {
         return "User {$this->userid} has updated the status of the submission {$this->objectid} to {$this->other['newstatus']}.";
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     /**
@@ -77,15 +61,6 @@ class submission_status_updated extends \core\event\base {
     }
 
     /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
-    }
-
-    /**
      * Init method.
      *
      * @return void
@@ -94,16 +69,6 @@ class submission_status_updated extends \core\event\base {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign_submission';
-    }
-
-    /**
-     * Sets the legacy event log data.
-     *
-     * @param \stdClass $legacylogdata legacy log data.
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
     }
 
     /**

@@ -34,14 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class all_submissions_downloaded extends \core\event\base {
-
-    /**
-     * Legacy log data.
-     *
-     * @var array
-     */
-    protected $legacylogdata;
+class all_submissions_downloaded extends base {
 
     /**
      * Returns description of what happened.
@@ -50,15 +43,6 @@ class all_submissions_downloaded extends \core\event\base {
      */
     public function get_description() {
         return "User {$this->userid} has downloaded all the submissions.";
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
     }
 
     /**
@@ -71,25 +55,6 @@ class all_submissions_downloaded extends \core\event\base {
     }
 
     /**
-     * Get URL related to the action.
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
-    }
-
-    /**
-     * Sets the legacy event log data.
-     *
-     * @param \stdClass $legacylogdata legacy log data.
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
-    }
-
-    /**
      * Init method.
      *
      * @return void
@@ -99,5 +64,4 @@ class all_submissions_downloaded extends \core\event\base {
         $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign';
     }
-
 }
