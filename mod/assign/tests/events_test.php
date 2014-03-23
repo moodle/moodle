@@ -471,4 +471,46 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
     }
+
+    /**
+     * Test the submission_viewed event.
+     */
+    public function test_submission_viewed() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance();
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+
+        // We need to set the URL in order to view the submission.
+        $PAGE->set_url('/a_url');
+        // A hack - these variables are used by the view_plugin_content function to
+        // determine what we actually want to view - would usually be set in URL.
+        global $_POST;
+        $_POST['plugin'] = 'comments';
+        $_POST['sid'] = $submission->id;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->view('viewpluginassignsubmission');
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\submission_viewed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission->id, $event->objectid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'view submission',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('viewsubmissionforuser', 'assign', $this->students[0]->id),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }

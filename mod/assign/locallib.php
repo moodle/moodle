@@ -2150,8 +2150,6 @@ class assign {
      * @return string
      */
     protected function view_plugin_content($pluginsubtype) {
-        global $USER;
-
         $o = '';
 
         $submissionid = optional_param('sid', 0, PARAM_INT);
@@ -2179,8 +2177,18 @@ class assign {
                                                               $this->get_return_action(),
                                                               $this->get_return_params()));
 
-            $logmessage = get_string('viewsubmissionforuser', 'assign', $item->userid);
-            $this->add_to_log('view submission', $logmessage);
+            // Trigger event for viewing a submission.
+            $logmessage = new lang_string('viewsubmissionforuser', 'assign', $item->userid);
+            $event = \mod_assign\event\submission_viewed::create(array(
+                'objectid' => $item->id,
+                'relateduserid' => $item->userid,
+                'context' => $this->get_context(),
+                'other' => array(
+                    'assignid' => $this->get_instance()->id
+                )
+            ));
+            $event->set_legacy_logdata('view submission', $logmessage);
+            $event->trigger();
         } else {
             $plugin = $this->get_feedback_plugin_by_type($plugintype);
             if ($gradeid <= 0) {
@@ -2207,6 +2215,7 @@ class assign {
         $o .= $this->view_return_links();
 
         $o .= $this->view_footer();
+
         return $o;
     }
 
@@ -2347,7 +2356,12 @@ class assign {
      * @return string
      */
     protected function view_footer() {
-        return $this->get_renderer()->render_footer();
+        // When viewing the footer during PHPUNIT tests a set_state error is thrown.
+        if (!PHPUNIT_TEST) {
+            return $this->get_renderer()->render_footer();
+        }
+
+        return '';
     }
 
     /**

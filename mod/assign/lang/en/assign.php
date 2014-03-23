@@ -153,6 +153,7 @@ $string['eventsubmissionlocked'] = 'The submissions have been locked for a user.
 $string['eventsubmissionstatusupdated'] = 'The status of the submission has been updated.';
 $string['eventsubmissionunlocked'] = 'The submissions have been unlocked for a user.';
 $string['eventsubmissionupdated'] = 'Submission updated.';
+$string['eventsubmissionviewed'] = 'Submission viewed.';
 $string['eventworkflowstateupdated'] = 'The state of the workflow has been updated.';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
