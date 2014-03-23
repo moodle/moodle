@@ -274,7 +274,7 @@ function install_print_help_page($help) {
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     echo '<html dir="'.(right_to_left() ? 'rtl' : 'ltr').'">
           <head>
-          <link rel="shortcut icon" href="theme/standard/pix/favicon.ico" />
+          <link rel="shortcut icon" href="theme/clean/pix/favicon.ico" />
           <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation','install').'</title>
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -318,7 +318,7 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     echo '<html dir="'.(right_to_left() ? 'rtl' : 'ltr').'">
           <head>
-          <link rel="shortcut icon" href="theme/standard/pix/favicon.ico" />';
+          <link rel="shortcut icon" href="theme/clean/pix/favicon.ico" />';
 
     echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation','install').' - Moodle '.$CFG->target_release.'</title>

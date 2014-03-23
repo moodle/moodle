@@ -29,12 +29,11 @@ if (file_exists(dirname(dirname(__FILE__)).'/config.php')) {
 }
 
 // include only the necessary stuff from themes, keep this small otherwise IE will complain...
-$files = array(
-        'base/style/pagelayout.css',
-        'base/style/core.css',
-        'standard/style/core.css',
-        'standard/style/css3.css');
 
+// MDL-43839 IE9 cannot handle all of our css.
+// Once IE9 is no longer supported we can include 'bootstrapbase/style/moodle.css'
+// and remove some of the CSS in $content.
+$files = array('');
 
 $content = '';
 
@@ -44,8 +43,20 @@ foreach($files as $file) {
 
 $content .= "
 
+body {
+    padding: 4px;
+}
+
+.headermain {
+    margin: 15px;
+}
+
 h2 {
   text-align:center;
+}
+
+input, textarea, .uneditable-input {
+    width: 50%;
 }
 
 #installdiv {
@@ -129,6 +140,23 @@ fieldset {
   font-weight: bold;
   color: red;
 }
+
+/*
+MDL-43839 IE9 cannot handle all of our CSS.
+Once IE9 is no longer supported we can include 'bootstrapbase/style/moodle.css' above
+and remove the following.
+*/
+body {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 14px;
+}
+.breadcrumb {
+	background-color: rgb(245, 245, 245);
+	padding: 8px 15px;
+}
+/*
+End of MDL-43839 IE9 specific CSS.
+*/
 
 ";
 
