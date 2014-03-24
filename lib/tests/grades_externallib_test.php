@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the grade API at /grade/externallib.php
+ * Unit tests for the grade API at /lib/classes/grades_external.php
  *
  * @package    core_grades
  * @category   external
@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-require_once($CFG->dirroot . '/grade/externallib.php');
 
 /**
  * Grades functions unit tests
