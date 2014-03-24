@@ -580,6 +580,26 @@ class assign_header implements renderable {
 }
 
 /**
+ * Renderable header related to an individual subplugin
+ * @package   mod_assign
+ * @copyright 2014 Henning Bostelmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_plugin_header implements renderable {
+    /** @var assign_plugin $plugin */
+    public $plugin = null;
+
+    /**
+     * Header for a single plugin
+     *
+     * @param assign_plugin $plugin
+     */
+    public function __construct(assign_plugin $plugin) {
+        $this->plugin = $plugin;
+    }
+}
+
+/**
  * Renderable grading summary
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
