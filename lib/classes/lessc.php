@@ -36,51 +36,6 @@ Less_Autoloader::register();
 class core_lessc extends Less_Parser {
 
     /**
-     * Add a rule to import a file.
-     *
-     * This is useful when you want to import the content of a LESS files but
-     * you are not sure if it contains @imports or not. This method will
-     * import the file using @import with a relative path from your
-     * main file to compile. Less does not support absolute paths.
-     *
-     * @param string $filepath The path to the LESS file to import.
-     * @param string $relativeto The path from which the relative path should be built.
-     *                           Typically this would be the path to a file passed
-     *                           to {@link self::parseFile()}.
-     * @return void
-     */
-    public function import_file($filepath, $relativeto) {
-        global $CFG;
-
-        if (!is_readable($filepath) || !is_readable($relativeto)) {
-            throw new coding_exception('Could not read the files');
-        }
-
-        $filepath = realpath($filepath);
-        $relativeto = realpath($relativeto);
-
-        if (strtolower(substr($filepath, -5)) != '.less') {
-            throw new coding_exception('Imports only work with LESS files.');
-        } else if (strpos(realpath($filepath), $CFG->dirroot) !== 0 ||
-                strpos(realpath($relativeto), $CFG->dirroot) !== 0) {
-            throw new coding_exception('Files must be in CFG->dirroot.');
-        }
-
-        // Simplify the file path the start of dirroot.
-        $filepath = trim(substr($filepath, strlen($CFG->dirroot)), '/');
-        $relativeto = trim(substr($relativeto, strlen($CFG->dirroot)), '/');
-
-        // Split the file path and remove the file name.
-        $dirs = explode('/', $relativeto);
-        array_pop($dirs);
-
-        // Generate the relative path.
-        $relativepath = str_repeat('../', count($dirs)) . $filepath;
-
-        $this->parse('@import "' . $relativepath . '";');
-    }
-
-    /**
      * Parse the content of a file.
      *
      * The purpose of this method is to provide a way to import the
