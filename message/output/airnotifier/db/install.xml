@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="message/output/airnotifier/db" VERSION="20120706" COMMENT="XMLDB file for airnotifier Moodle tables"
+<XMLDB PATH="message/output/airnotifier/db" VERSION="20140129" COMMENT="XMLDB file for Moodle message/output/airnotifier"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="airnotifier_user_devices" COMMENT="Mobile devices associated to users">
+    <TABLE NAME="message_airnotifier_devices" COMMENT="Store information about the devices registered in Airnotifier for PUSH notifications">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="appname"/>
-        <FIELD NAME="appname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The name of the app: mymoodle, ..." PREVIOUS="id" NEXT="devicename"/>
-        <FIELD NAME="devicename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="For example Jerome's iPhone" PREVIOUS="appname" NEXT="devicetype"/>
-        <FIELD NAME="devicetype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="For example iPhone 4S, Google Nexus..." PREVIOUS="devicename" NEXT="deviceos"/>
-        <FIELD NAME="deviceos" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="For example ios, android..." PREVIOUS="devicetype" NEXT="deviceosversion"/>
-        <FIELD NAME="deviceosversion" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="5.1, 2.3.3..." PREVIOUS="deviceos" NEXT="devicebrand"/>
-        <FIELD NAME="devicebrand" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Apple, Samsung..." PREVIOUS="deviceosversion" NEXT="devicenotificationtoken"/>
-        <FIELD NAME="devicenotificationtoken" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Apple give one token per device/app to be able to send push notification to the device." PREVIOUS="devicebrand" NEXT="deviceuid"/>
-        <FIELD NAME="deviceuid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="A unique ID to identify the device. Freedom for the client to send whatever he wants and the plugin to manage them in concordance." PREVIOUS="devicenotificationtoken" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="the user owning the device" PREVIOUS="deviceuid" NEXT="enable"/>
-        <FIELD NAME="enable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="the user can disable on of his/her device." PREVIOUS="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userdeviceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user device id in the user_devices table"/>
+        <FIELD NAME="enable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The user can enable/disable his devices"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userdeviceid" TYPE="foreign-unique" FIELDS="userdeviceid" REFTABLE="user_devices" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

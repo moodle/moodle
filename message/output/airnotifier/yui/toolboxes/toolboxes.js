@@ -3,7 +3,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
         'pix':"i/loading_small",
         'component':'moodle'
     };
-    // The CSS selectors we use
+    // The CSS selectors we use.
     var CSS = {
         AIRNOTIFIERCONTENT : 'fieldset#messageprocessor_airnotifier',
         HIDEDEVICE : 'a.hidedevice',
@@ -36,14 +36,13 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
          */
         replace_button : function(toolboxtarget, selector, callback, cursor) {
             if (!cursor) {
-                // Set the default cursor type to pointer to match the
-                // anchor
+                // Set the default cursor type to pointer to match the anchor.
                 cursor = 'pointer';
             }
             var button = Y.one(toolboxtarget).all(selector)
             .setStyle('cursor', cursor);
 
-            // on isn't chainable and will return an event
+            // On isn't chainable and will return an event.
             button.on('click', callback, this);
 
             return button;
@@ -70,10 +69,9 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
                 value = 0;
             }
 
-            // Change the UI
+            // Change the UI.
             element.toggleClass(toggle_class);
-            // We need to toggle dimming on the description too
-            //            element.all(CSS.CONTENTAFTERLINK).toggleClass(CSS.DIMMEDTEXT);
+            // We need to toggle dimming on the description too element.all(CSS.CONTENTAFTERLINK).toggleClass(CSS.DIMMEDTEXT);.
             var newstring = M.util.get_string(status, 'moodle');
             hideicon.setAttrs({
                 'alt' : newstring,
@@ -81,7 +79,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
                 'src'   : M.util.image_url('t/' + status)
             });
             button.set('title', newstring);
-            button.set('className', 'editing_'+status);
+            button.set('className', 'editing_' + status);
 
             return value;
         },
@@ -98,7 +96,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
             if (!data) {
                 data = {};
             }
-            // Handle any variables which we must pass back through to
+            // Handle any variables which we must pass back through to.
             var pageparams = this.get('config').pageparams;
             for (varname in pageparams) {
                 data[varname] = pageparams[varname];
@@ -108,7 +106,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
 
             var uri = M.cfg.wwwroot + this.get('ajaxurl');
 
-            // Define the configuration to send with the request
+            // Define the configuration to send with the request.
             var responsetext = [];
             var config = {
                 method: 'POST',
@@ -138,7 +136,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
                 sync: true
             }
 
-            // Apply optional config
+            // Apply optional config.
             if (optionalconfig) {
                 for (varname in optionalconfig) {
                     config[varname] = optionalconfig[varname];
@@ -149,7 +147,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
                 statusspinner.show();
             }
 
-            // Send the request
+            // Send the request.
             Y.io(uri, config);
             return responsetext;
         },
@@ -205,31 +203,31 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
             Y.all(baseselector).each(this._setup_for_device, this);
         },
         _setup_for_device : function(toolboxtarget) {
-            // Delete
+            // Delete.
             this.replace_button(toolboxtarget, CSS.DELETEDEVICE, this.delete_device);
 
-            // Show/Hide
+            // Show/Hide.
             var showhide = this.replace_button(toolboxtarget, CSS.HIDEDEVICE, this.toggle_hide_device);
         },
         delete_device : function(e) {
-            // Prevent the default button action
+            // Prevent the default button action.
             e.preventDefault();
 
-            // Get the element we're working on
+            // Get the element we're working on.
             var element   = e.target.ancestor(CSS.DEVICELI);
 
             var confirmstring = '';
             var plugindata = {
-                name : element.one('*').getHTML() //get the label
+                name : element.one('*').getHTML() // Get the label.
             }
             confirmstring = M.util.get_string('deletecheckdevicename', 'message_airnotifier', plugindata);
 
-            // Confirm element removal
+            // Confirm element removal.
             if (!confirm(confirmstring)) {
                 return false;
             }
 
-            // Actually remove the element
+            // Actually remove the element.
             element.remove();
             var data = {
                 'class' : 'device',
@@ -239,17 +237,17 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
             this.send_request(data);
         },
         toggle_hide_device : function(e) {
-            // Prevent the default button action
+            // Prevent the default button action.
             e.preventDefault();
 
-            // Get the element we're working on
+            // Get the element we're working on.
             var element = e.target.ancestor(CSS.DEVICELI);
 
             var button = e.target.ancestor('a', true);
 
             var value = this.toggle_hide_device_ui(button);
 
-            // Send the request
+            // Send the request.
             var data = {
                 'field' : 'enable',
                 'enable' : value,

@@ -15,136 +15,163 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * external API for airnotifier web services
+ * External functions
  *
  * @package    message_airnotifier
  * @category   external
  * @copyright  2012 Jerome Mouneyrac <jerome@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.4
+ * @since Moodle 2.7
+ */
+
+
+/**
+ * External API for airnotifier web services
+ *
+ * @package    message_airnotifier
+ * @category   external
+ * @copyright  2012 Jerome Mouneyrac <jerome@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.7
  */
 class message_airnotifier_external extends external_api {
 
     /**
-     * Returns description of add_user_device() parameters
+     * Returns description of method parameters
      *
-     * @return external_function_parameters
-     * @since Moodle 2.4
+     * @since Moodle 2.7
      */
-    public static function add_user_device_parameters() {
+    public static function is_system_configured_parameters() {
         return new external_function_parameters(
-            array('device' =>  new external_single_structure(
+                array()
+        );
+    }
+
+    /**
+     * Tests whether the airnotifier settings have been configured
+     *
+     * @since Moodle 2.7
+     */
+    public static function is_system_configured() {
+
+        $manager = new message_airnotifier_manager();
+        return (int) $manager->is_system_configured();
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_single_structure
+     * @since Moodle 2.7
+     */
+    public static function is_system_configured_returns() {
+        return new external_value( PARAM_INT, '0 if the system is not configured, 1 otherwise');
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @since Moodle 2.7
+     */
+    public static function are_notification_preferences_configured_parameters() {
+        return new external_function_parameters(
                 array(
-                    'appname' => new external_value( PARAM_TEXT, 'the app name'),
-                    'devicename' => new external_value( PARAM_TEXT, 'Device name: "Jerome\'s iPhone"', VALUE_OPTIONAL),
-                    'devicetype' => new external_value( PARAM_TEXT, 'iPhone 3GS, Google Nexus S, ...', VALUE_OPTIONAL),
-                    'deviceos' => new external_value( PARAM_TEXT, 'iOS, Android, ...', VALUE_OPTIONAL),
-                    'deviceosversion' => new external_value( PARAM_TEXT, 'OS version number', VALUE_OPTIONAL),
-                    'devicebrand' => new external_value( PARAM_TEXT, 'the device brand (Apple, Samsung, ...)', VALUE_OPTIONAL),
-                    'devicenotificationtoken' => new external_value( PARAM_RAW, 'the device token used to send notification for the specified app'),
-                    'deviceuid' => new external_value( PARAM_RAW, 'the device unique device id if it exists', VALUE_OPTIONAL),
-                ), 'the device information - Important: type, os, osversion and brand will be saved in lowercase for fast searching'
-            )
-        ));
+                    'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
+                )
+        );
     }
 
     /**
-     * Add a device to the user device list
+     * Check if the users have notification preferences configured for the airnotifier plugin
      *
-     * @param array $device
-     * @return int device id
-     * @since Moodle 2.4
+     * @param array $userids Array of user ids
+     * @since Moodle 2.7
      */
-    public static function add_user_device($device) {
-        global $USER, $CFG;
+    public static function are_notification_preferences_configured($userids) {
+        global $CFG, $USER, $DB;
 
-        $params = self::validate_parameters(self::add_user_device_parameters(),
-                      array('device'=>$device));
+        require_once($CFG->dirroot . '/message/lib.php');
+        $params = self::validate_parameters(self::are_notification_preferences_configured_parameters(),
+                array('userids' => $userids));
 
-        // Ensure the current user is allowed to run this function
-        $context = context_user::instance($USER->id);
-        self::validate_context($context);
-        require_capability('message/airnotifier:managedevice', $context);
+        list($sqluserids, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $uselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+        $params['contextlevel'] = CONTEXT_USER;
+        $usersql = "SELECT u.* $uselect
+                      FROM {user} u $ujoin
+                     WHERE u.id $sqluserids";
+        $users = $DB->get_recordset_sql($usersql, $params);
 
-        $device['userid'] = $USER->id;
+        $result = array();
+        $hasuserupdatecap = has_capability('moodle/user:update', context_system::instance());
+        foreach ($users as $user) {
 
-        require_once($CFG->dirroot . "/message/output/airnotifier/lib.php");
-        $airnotifiermanager = new airnotifier_manager();
-        $device['id'] = $airnotifiermanager->add_user_device($device);
+            $currentuser = ($user->id == $USER->id);
 
-        return $device['id'];
-    }
+            if ($currentuser or $hasuserupdatecap) {
 
-    /**
-     * Returns description of add_user_device() result value
-     *
-     * @return external_single_structure
-     * @since Moodle 2.4
-     */
-    public static function add_user_device_returns() {
-        return new external_value( PARAM_INT, 'Device id in the Moodle database');
-    }
+                if (!empty($user->deleted)) {
+                    $result['warnings'][] = "User $user->id was deleted";
+                    continue;
+                }
 
-    /**
-     * Returns description of get_access_key() parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.4
-     */
-    public static function get_access_key_parameters() {
-        return new external_function_parameters(
-            array('permissions' =>  new external_multiple_structure(
-                    new external_value( PARAM_ALPHA, 'the permission'),
-                    'Allowed permissions: createtoken (not yet implemented: deletetoken, accessobjects,
-                        sendnotification, sendbroadcast)',
-                    VALUE_DEFAULT, array()
-            )
-        ));
-    }
+                $preferences = array();
+                $preferences['userid'] = $user->id;
+                $preferences['configured'] = 0;
 
-    /**
-     * Get access key with specified permissions
-     *
-     * @param array $permissions the permission that the access key should
-     * @return string access key
-     * @since Moodle 2.4
-     */
-    public static function get_access_key($permissions = array()) {
-        global $CFG;
+                // Now we get for all the providers and all the states
+                // the user preferences to check if at least one is enabled for airnotifier plugin.
+                $providers = message_get_providers_for_user($user->id);
+                foreach ($providers as $provider) {
+                    foreach (array('loggedin', 'loggedoff') as $state) {
+                        $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
+                        $linepref = get_user_preferences($prefname, '', $user->id);
+                        if ($linepref == '') {
+                            continue;
+                        }
+                        $lineprefarray = explode(',', $linepref);
 
-        $params = self::validate_parameters(self::get_access_key_parameters(),
-                      array('permissions'=>$permissions));
+                        foreach ($lineprefarray as $pref) {
+                            if ($pref == 'airnotifier') {
+                                $preferences['configured'] = 1;
+                                break 2;
+                            }
+                        }
+                    }
+                }
 
-        // Check that user can use the requested permission.
-        foreach ($params['permissions'] as $perm) {
-            switch ($perm) {
-                case 'createtoken':
-                    // Any mobile device / user should have this permission.
-                    // No need to check anything for this permission.
-
-                    break;
-
-                default:
-                    throw new moodle_exception('permissionnotimplemented');
-                    break;
+                $result['users'][] = $preferences;
+            } else if (!$hasuserupdatecap) {
+                $result['warnings'][] = "You don't have permissions for view user $user->id preferences";
             }
+
         }
+        $users->close();
 
-        // Look for access key that have exactly the same permissions.
-        // TODO: This mobile device access key should be retrieve by web service from
-        //       moodle.org or airnotifer when the admin enables mobile on Moodle.
-        $accesskey = $CFG->airnotifierdeviceaccesskey;
-
-        return $accesskey;
+        return $result;
     }
 
     /**
-     * Returns description of add_user_device() result value
+     * Returns description of method result value
      *
      * @return external_single_structure
-     * @since Moodle 2.4
+     * @since Moodle 2.7
      */
-    public static function get_access_key_returns() {
-        return new external_value( PARAM_ALPHANUMEXT, 'access key');
+    public static function are_notification_preferences_configured_returns() {
+        return new external_single_structure(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array (
+                            'userid'     => new external_value(PARAM_INT, 'userid id'),
+                            'configured' => new external_value(PARAM_INT, '1 is the user preferences have been configured and 0 if not')
+                        )
+                    ),
+                    'list of preferences by user'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
+
 }

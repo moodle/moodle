@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,50 +22,29 @@
  * @package message_airnotifier
  */
 
-if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', true);
-}
+
+define('AJAX_SCRIPT', true);
+
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->dirroot.'/message/output/airnotifier/lib.php');
 
 // Initialise ALL the incoming parameters here, up front.
-$field      = optional_param('field', '', PARAM_ALPHA);
 $id         = required_param('id', PARAM_INT);
-$pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command
+$enable     = required_param('enable', PARAM_BOOL);
+
+require_login();
+require_sesskey();
 
 $usercontext = context_user::instance($USER->id);
 
 $PAGE->set_url('/message/output/airnotifier/rest.php');
 $PAGE->set_context($usercontext);
-require_login();
-require_sesskey();
 
-echo $OUTPUT->header(); // send headers
+require_capability('message/airnotifier:managedevice', $usercontext);
 
-// OK, now let's process the parameters and do stuff
-// MDL-10221 the DELETE method is not allowed on some web servers, so we simulate it with the action URL param
-$requestmethod = $_SERVER['REQUEST_METHOD'];
-if ($pageaction == 'DELETE') {
-    $requestmethod = 'DELETE';
-}
+echo $OUTPUT->header();
 
-$device = $DB->get_record('airnotifier_user_devices', array('id' => $id), '*', MUST_EXIST);
+$device = $DB->get_record('message_airnotifier_devices', array('id' => $id), '*', MUST_EXIST);
 
-$airnotifiermanager = new airnotifier_manager();
+$device->enable = required_param('enable', PARAM_BOOL);
+$DB->update_record('message_airnotifier_devices', $device);
 
-switch($requestmethod) {
-    case 'POST':
-                switch ($field) {
-                    case 'enable':
-                        require_capability('message/airnotifier:managedevice', $usercontext);
-                        $device->enable = required_param('enable', PARAM_BOOL);
-                        $DB->update_record('airnotifier_user_devices', $device);
-                        break;
-                }
-        break;
-
-    case 'DELETE':
-                require_capability('message/airnotifier:managedevice', $usercontext);
-                $DB->delete_records('airnotifier_user_devices', array('id' => $id));
-                break;
-}

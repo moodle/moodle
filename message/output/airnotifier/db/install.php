@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,12 +26,13 @@
  * Install the Airnotifier message processor
  */
 function xmldb_message_airnotifier_install() {
-    global $DB;
+    global $CFG, $DB;
 
     $result = true;
 
     $provider = new stdClass();
     $provider->name = 'airnotifier';
     $DB->insert_record('message_processors', $provider);
+
     return $result;
 }
