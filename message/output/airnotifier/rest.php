@@ -43,8 +43,17 @@ require_capability('message/airnotifier:managedevice', $usercontext);
 
 echo $OUTPUT->header();
 
+// Response class to be converted to json string.
+$response = new stdClass();
+
 $device = $DB->get_record('message_airnotifier_devices', array('id' => $id), '*', MUST_EXIST);
+
+// Check that the device belongs to the current user.
+$userdevice = $DB->get_record('user_devices', array('id' => $device->userdeviceid, 'userid' => $USER->id), '*', MUST_EXIST);
 
 $device->enable = required_param('enable', PARAM_BOOL);
 $DB->update_record('message_airnotifier_devices', $device);
+$response->success = true;
 
+echo json_encode($response);
+die;
