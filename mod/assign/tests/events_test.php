@@ -513,4 +513,53 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the feedback_viewed event.
+     */
+    public function test_feedback_viewed() {
+        global $DB, $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance();
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+
+        // Insert a grade for this submission.
+        $grade = new stdClass();
+        $grade->assignment = 1;
+        $grade->userid = $this->students[0]->id;
+        $gradeid = $DB->insert_record('assign_grades', $grade);
+
+        // We need to set the URL in order to view the feedback.
+        $PAGE->set_url('/a_url');
+        // A hack - these variables are used by the view_plugin_content function to
+        // determine what we actually want to view - would usually be set in URL.
+        global $_POST;
+        $_POST['plugin'] = 'comments';
+        $_POST['gid'] = $gradeid;
+        $_POST['sid'] = $submission->id;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->view('viewpluginassignfeedback');
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\feedback_viewed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($gradeid, $event->objectid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'view feedback',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('viewfeedbackforuser', 'assign', $this->students[0]->id),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }

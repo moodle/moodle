@@ -2208,8 +2208,19 @@ class assign {
                                                               $this->get_course_module()->id,
                                                               $this->get_return_action(),
                                                               $this->get_return_params()));
-            $logmessage = get_string('viewfeedbackforuser', 'assign', $item->userid);
-            $this->add_to_log('view feedback', $logmessage);
+
+            // Trigger event for viewing feedback.
+            $logmessage = new lang_string('viewfeedbackforuser', 'assign', $item->userid);
+            $event = \mod_assign\event\feedback_viewed::create(array(
+                'objectid' => $item->id,
+                'relateduserid' => $item->userid,
+                'context' => $this->get_context(),
+                'other' => array(
+                    'assignid' => $this->get_instance()->id
+                )
+            ));
+            $event->set_legacy_logdata('view feedback', $logmessage);
+            $event->trigger();
         }
 
         $o .= $this->view_return_links();
