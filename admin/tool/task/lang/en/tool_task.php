@@ -22,10 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['asap'] = 'ASAP';
 $string['blocking'] = 'Blocking';
 $string['component'] = 'Component';
 $string['corecomponent'] = 'Core';
 $string['default'] = 'Default';
+$string['disabled'] = 'Disabled';
+$string['disabled_help'] = 'Disabled scheduled tasks are not executed from cron, however they can still be executed manually via the CLI tool.';
 $string['edittaskschedule'] = 'Edit task schedule: {$a}';
 $string['faildelay'] = 'Fail delay';
 $string['lastruntime'] = 'Last run';

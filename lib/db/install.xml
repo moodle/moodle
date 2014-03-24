@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20140213" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20140324" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1465,7 +1465,7 @@
         <FIELD NAME="credit" TYPE="number" LENGTH="15" NOTNULL="true" SEQUENCE="false" DECIMALS="5"/>
       </FIELDS>
       <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="question_response_count" COMMENT="Count for each responses for each try at a question.">
@@ -1476,9 +1476,9 @@
         <FIELD NAME="rcount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-          <KEY NAME="analysisid" TYPE="foreign" FIELDS="analysisid" REFTABLE="question_response_analysis" REFFIELDS="id"/>
-        </KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="analysisid" TYPE="foreign" FIELDS="analysisid" REFTABLE="question_response_analysis" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
     <TABLE NAME="mnet_application" COMMENT="Information about applications on remote hosts">
       <FIELDS>
@@ -3074,6 +3074,7 @@
         <FIELD NAME="dayofweek" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="faildelay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="customised" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used on upgrades to prevent overwriting custom schedules."/>
+        <FIELD NAME="disabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 means do not run from cron"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
