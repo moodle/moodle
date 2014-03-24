@@ -15,19 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme More version file.
+ * Theme More install.
  *
  * @package    theme_more
  * @copyright  2014 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014032400;
-$plugin->requires  = 2013110500;
-$plugin->component = 'theme_more';
-$plugin->dependencies = array(
-    'theme_bootstrapbase'  => 2013110500,
-    'theme_clean'  => 2013110500,
-);
+/**
+ * Theme_more install function.
+ *
+ * @return void
+ */
+function xmldb_theme_more_install() {
+    global $CFG;
+
+    // Set the default background.
+    $fs = get_file_storage();
+
+    $filerecord = new stdClass();
+    $filerecord->component = 'theme_more';
+    $filerecord->contextid = context_system::instance()->id;
+    $filerecord->userid    = get_admin()->id;
+    $filerecord->filearea  = 'backgroundimage';
+    $filerecord->filepath  = '/';
+    $filerecord->itemid    = 0;
+    $filerecord->filename  = 'background.jpg';
+    $fs->create_file_from_pathname($filerecord, $CFG->dirroot . '/theme/more/pix/background.jpg');
+}
