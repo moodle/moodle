@@ -62,7 +62,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Set the last run time for this scheduled task.
-     * @return int
+     * @param int $lastruntime
      */
     public function set_last_run_time($lastruntime) {
         $this->lastruntime = $lastruntime;
@@ -251,7 +251,7 @@ abstract class scheduled_task extends task_base {
      * If list is empty, this function will return 0.
      *
      * @param int $current The current value
-     * @param array(int) $list The list of valid items.
+     * @param int[] $list The list of valid items.
      * @return int $next.
      */
     private function next_in_list($current, $list) {

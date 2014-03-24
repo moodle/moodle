@@ -35,7 +35,7 @@ class tool_task_renderer extends plugin_renderer_base {
     /**
      * This function will render one beautiful table with all the scheduled tasks.
      *
-     * @param array(scheduled_task) - list of all scheduled tasks.
+     * @param \core\task\scheduled_task[] $tasks - list of all scheduled tasks.
      * @return string HTML to output.
      */
     public function scheduled_tasks_table($tasks) {
