@@ -95,7 +95,7 @@ class response_submitted extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return null;
         } else {
             return array($this->courseid, 'feedback', 'submit', 'view.php?id=' . $this->other['cmid'],
@@ -115,7 +115,7 @@ class response_submitted extends \core\event\base {
         if (empty($userorid)) {
             $userorid = $USER;
         }
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
             return has_capability('mod/feedback:viewreports', $this->context, $userorid);
@@ -137,6 +137,9 @@ class response_submitted extends \core\event\base {
         if (!isset($this->other['instanceid'])) {
             throw new \coding_exception("Field other['instanceid'] cannot be empty");
         }
+
+        // Call parent validations.
+        parent::validate_data();
     }
 }
 

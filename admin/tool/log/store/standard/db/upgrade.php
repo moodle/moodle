@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Standard log store.
+ * Standard log store upgrade.
  *
  * @package    logstore_standard
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+function xmldb_logstore_standard_upgrade($oldversion) {
+    global $CFG, $DB;
 
-$plugin->version = 2014032000; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2014031200; // Requires this Moodle version.
-$plugin->component = 'logstore_standard'; // Full name of the plugin (used for diagnostics).
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2014032000) {
+
+        // Define field anonymous to be added to logstore_standard_log.
+        $table = new xmldb_table('logstore_standard_log');
+        $field = new xmldb_field('anonymous', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'relateduserid');
+
+        // Conditionally launch add field anonymous.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Standard savepoint reached.
+        upgrade_plugin_savepoint(true, 2014032000, 'logstore', 'standard');
+    }
+
+    return true;
+}

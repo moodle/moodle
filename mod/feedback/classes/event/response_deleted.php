@@ -93,7 +93,7 @@ class response_deleted extends \core\event\base {
         if (empty($userorid)) {
             $userorid = $USER;
         }
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
             return has_capability('mod/feedback:viewreports', $this->context, $userorid);
@@ -115,6 +115,9 @@ class response_deleted extends \core\event\base {
         if (!isset($this->other['instanceid'])) {
             throw new \coding_exception("Field other['instanceid'] cannot be empty");
         }
+
+        // Call parent validations.
+        parent::validate_data();
     }
 }
 
