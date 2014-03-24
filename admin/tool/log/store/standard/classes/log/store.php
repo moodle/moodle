@@ -85,7 +85,11 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_reader {
             unset($data['realuserid']);
             unset($data['id']);
 
-            $events[$id] = \core\event\base::restore($data, $extra);
+            $event = \core\event\base::restore($data, $extra);
+            // Add event to list if it's valid.
+            if ($event) {
+                $events[$id] = $event;
+            }
         }
 
         return $events;
