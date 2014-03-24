@@ -1,4 +1,9 @@
 .atto_image_preview {
     max-width: 150px;
     max-height: 150px;
+    margin-bottom: 1em;
+}
+
+.editor_atto_content img {
+    cursor: pointer;
 }
