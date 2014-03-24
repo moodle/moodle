@@ -504,8 +504,8 @@ table#user-grades td.controls,
     text-align: left;
     vertical-align: middle;
 }
-.path-grade-report-grader .usersuspended a: link,
-.path-grade-report-grader .usersuspended a: visited {
+.path-grade-report-grader .usersuspended a:link,
+.path-grade-report-grader .usersuspended a:visited {
     color: #666;
 }
 .path-grade-report-grader table th.usersuspended img.usersuspendedicon {

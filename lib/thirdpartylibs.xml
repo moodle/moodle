@@ -36,6 +36,13 @@
     <licenseversion></licenseversion>
   </library>
   <library>
+    <location>lessphp</location>
+    <name>less.php</name>
+    <license>Apache</license>
+    <version>1.7.0.1</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
     <location>phpexcel</location>
     <name>PHPExcel</name>
     <license>LGPL</license>
