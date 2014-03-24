@@ -121,7 +121,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $CFG->svgicons = true;
 
         // Verify new install contains expected defaults.
-        $this->assertSame('standard', $CFG->theme);
+        $this->assertSame('clean', $CFG->theme);
         $this->assertEquals(1, $CFG->slasharguments);
         $this->assertEquals(1, $CFG->themerev);
         $this->assertEquals(0, $CFG->themedesignermode);
