@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $COURSE, $DB, $PAGE;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -57,6 +57,11 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $this->add_intro_editor(true, get_string('description', 'assign'));
+
+        $mform->addElement('filemanager', 'introattachments',
+                            get_string('introattachments', 'assign'),
+                            null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
+        $mform->addHelpButton('introattachments', 'introattachments', 'assign');
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
@@ -269,6 +274,12 @@ class mod_assign_mod_form extends moodleform_mod {
             $course = $DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST);
             $assignment->set_course($course);
         }
+
+        $draftitemid = file_get_submitted_draft_itemid('introattachments');
+        file_prepare_draft_area($draftitemid, $ctx->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
+                                0, array('subdirs' => 0));
+        $defaultvalues['introattachments'] = $draftitemid;
+
         $assignment->plugin_data_preprocessing($defaultvalues);
     }
 

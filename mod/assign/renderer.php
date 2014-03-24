@@ -237,6 +237,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($header->showintro) {
             $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
             $o .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+            $o .= $header->postfix;
             $o .= $this->output->box_end();
         }
 
