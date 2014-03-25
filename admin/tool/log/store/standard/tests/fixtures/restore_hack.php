@@ -14,32 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * REST web service entry point. The authentication is done via tokens.
+ * Restore controller hackery.
  *
- * @package    webservice_rest
- * @copyright  2009 Jerome Mouneyrac
+ * @package    tool_log
+ * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * NO_DEBUG_DISPLAY - disable moodle specific debug messages and any errors in output
- */
-define('NO_DEBUG_DISPLAY', true);
+defined('MOODLE_INTERNAL') || die();
 
-define('WS_SERVER', true);
+global $CFG;
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
-require('../../config.php');
-require_once("$CFG->dirroot/webservice/rest/locallib.php");
-
-if (!webservice_protocol_is_enabled('rest')) {
-    debugging('The server died because the web services or the REST protocol are not enable',
-        DEBUG_DEVELOPER);
-    die;
+class logstore_standard_restore extends restore_controller {
+    public static function hack_executing($state) {
+        self::$executing = $state;
+    }
 }
-
-$server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
-$server->run();
-die;
-
