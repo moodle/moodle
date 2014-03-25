@@ -22,8 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['editequation'] = 'Edit equation';
-$string['editequation_desc'] = 'Equations are written in <a target="_blank" href="http://en.wikibooks.org/wiki/TeX" title="Link to wikipedia">TeX.</a>';
+$string['editequation'] = 'Edit equation using <a href="{$a}" target="_blank">TeX</a>';
 $string['librarygroup1'] = 'Operators';
 $string['librarygroup1_desc'] = 'List of tex commands to list on the operators tab.';
 $string['librarygroup2'] = 'Arrows';
