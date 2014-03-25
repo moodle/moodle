@@ -731,9 +731,9 @@ class assign_grading_table extends table_sql implements renderable {
         if (!$this->is_downloading()) {
             $courseid = $this->assignment->get_course()->id;
             $link= new moodle_url('/user/view.php', array('id' =>$row->id, 'course'=>$courseid));
-            $fullname = $this->output->action_link($link, fullname($row));
+            $fullname = $this->output->action_link($link, $this->assignment->fullname($row));
         } else {
-            $fullname = fullname($row);
+            $fullname = $this->assignment->fullname($row);
         }
 
         if (!$this->assignment->is_active_user($row->id)) {
@@ -753,7 +753,7 @@ class assign_grading_table extends table_sql implements renderable {
      */
     public function col_select(stdClass $row) {
         $selectcol = '<label class="accesshide" for="selectuser_' . $row->userid . '">';
-        $selectcol .= get_string('selectuser', 'assign', fullname($row));
+        $selectcol .= get_string('selectuser', 'assign', $this->assignment->fullname($row));
         $selectcol .= '</label>';
         $selectcol .= '<input type="checkbox"
                               id="selectuser_' . $row->userid . '"
@@ -818,11 +818,7 @@ class assign_grading_table extends table_sql implements renderable {
         $gradingdisabled = $this->assignment->grading_disabled($row->id);
 
         if (!$this->is_downloading() && $this->hasgrade) {
-            $name = fullname($row);
-            if ($this->assignment->is_blind_marking()) {
-                $name = get_string('hiddenuser', 'assign') .
-                        $this->assignment->get_uniqueid_for_user($row->userid);
-            }
+            $name = $this->assignment->fullname($row);
             $icon = $this->output->pix_icon('gradefeedback',
                                             get_string('gradeuser', 'assign', $name),
                                             'mod_assign');

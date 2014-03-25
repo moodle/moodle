@@ -3231,7 +3231,7 @@ class assign {
      * @param stdClass $user The user record as required by fullname()
      * @return string The name.
      */
-    protected function fullname($user) {
+    public function fullname($user) {
         if ($this->is_blind_marking()) {
             $uniqueid = $this->get_uniqueid_for_user($userid);
             return get_string('participant', 'assign') . ' ' . $uniqueid;
