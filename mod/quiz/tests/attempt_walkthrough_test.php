@@ -186,11 +186,11 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
             $selectedquestionid = $quba->get_question_attempt(1)->get_question()->id;
             $tosubmit[1] = array('answer' => $randqanswer);
             $tosubmit[2] = array(
-                0 => 'amphibian',
-                1 => 'mammal',
-                2 => 'amphibian');
-            $tosubmit[3] = array('1', '0', '1', '0'); // First and third choice.
-            $tosubmit[4] = array('answer' => 0); // The first choice.
+                'frog' => 'amphibian',
+                'cat'  => 'mammal',
+                'newt' => 'amphibian');
+            $tosubmit[3] = array('One' => '1', 'Two' => '0', 'Three' => '1', 'Four' => '0'); // First and third choice.
+            $tosubmit[4] = array('answer' => 'One'); // The first choice.
 
             $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
 
