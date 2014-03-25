@@ -1758,8 +1758,14 @@ function quiz_question_pluginfile($course, $context, $component,
  */
 function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array(
-        'mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'),
-        'mod-quiz-edit'=>get_string('page-mod-quiz-edit', 'quiz'));
+        'mod-quiz-*'       => get_string('page-mod-quiz-x', 'quiz'),
+        'mod-quiz-view'    => get_string('page-mod-quiz-view', 'quiz'),
+        'mod-quiz-attempt' => get_string('page-mod-quiz-attempt', 'quiz'),
+        'mod-quiz-summary' => get_string('page-mod-quiz-summary', 'quiz'),
+        'mod-quiz-review'  => get_string('page-mod-quiz-review', 'quiz'),
+        'mod-quiz-edit'    => get_string('page-mod-quiz-edit', 'quiz'),
+        'mod-quiz-report'  => get_string('page-mod-quiz-report', 'quiz'),
+    );
     return $module_pagetype;
 }
 
