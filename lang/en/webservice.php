@@ -85,6 +85,7 @@ $string['erroroptionalparamarray'] = 'The web service description parameter name
 $string['event_webservice_function_called'] = 'Web service function called';
 $string['event_webservice_login_failed'] = 'Web service login failed';
 $string['event_webservice_service_created'] = 'Web service service created';
+$string['event_webservice_service_deleted'] = 'Web service service deleted';
 $string['event_webservice_service_updated'] = 'Web service service updated';
 $string['event_webservice_service_user_added'] = 'Web service service user added';
 $string['event_webservice_service_user_removed'] = 'Web service service user removed';
