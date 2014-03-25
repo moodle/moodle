@@ -144,6 +144,7 @@ $string['eventallsubmissionsdownloaded'] = 'All the submissions are being downlo
 $string['eventassessablesubmitted'] = 'A submission has been submitted.';
 $string['eventextensiongranted'] = 'An extension has been granted.';
 $string['eventfeedbackviewed'] = 'Feedback viewed';
+$string['eventgradingformviewed'] = 'Grading form viewed';
 $string['eventidentitiesrevealed'] = 'The identities have been revealed.';
 $string['eventmarkerupdated'] = 'The allocated marker has been updated.';
 $string['eventstatementaccepted'] = 'The user has accepted the statement of the submission.';

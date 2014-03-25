@@ -2949,10 +2949,18 @@ class assign {
             $o .= $this->get_renderer()->render($history);
         }
 
-        $msg = get_string('viewgradingformforstudent',
+        $msg = new lang_string('viewgradingformforstudent',
                           'assign',
                           array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('view grading form', $msg);
+        $event = \mod_assign\event\grading_form_viewed::create(array(
+            'relateduserid' => $user->id,
+            'context' => $this->get_context(),
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        ));
+        $event->set_legacy_logdata('view grading form', $msg);
+        $event->trigger();
 
         $o .= $this->view_footer();
         return $o;
