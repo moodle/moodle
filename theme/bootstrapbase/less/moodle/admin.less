@@ -161,8 +161,8 @@ img.iconsmall {
 }
 
 #page-admin-roles-define .capdefault {
-    background-color: #eee;
-    border: 1px solid #cecece;
+    background-color: @tableBackgroundHover;
+    border: 1px solid @tableBorder;
 }
 
 #page-filter-manage .backlink,
@@ -474,12 +474,12 @@ img.iconsmall {
 }
 
 #adminthemeselector .selectedtheme td.c0 {
-    border: 1px solid;
+    border: 1px solid @black;
     border-right-width: 0;
 }
 
 #adminthemeselector .selectedtheme td.c1 {
-    border: 1px solid;
+    border: 1px solid @black;
     border-left-width: 0;
 }
 
@@ -506,16 +506,16 @@ img.iconsmall {
 
 .admin_colourpicker .colourdialogue {
     float: left;
-    border: 1px solid #000;
+    border: 1px solid @black;
 }
 
 .admin_colourpicker .previewcolour {
-    border: 1px solid #000;
+    border: 1px solid @black;
     margin-left: 301px;
 }
 
 .admin_colourpicker .currentcolour {
-    border: 1px solid #000;
+    border: 1px solid @black;
     margin-left: 301px;
     border-top-width: 0;
 }
@@ -648,7 +648,7 @@ img.iconsmall {
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator,
 #plugins-check .status .pluginupdateinfo .separator,
 #page-admin-plugins .separator {
-    border-left: 1px dotted #999;
+    border-left: 1px dotted @grayLight;
 }
 
 #plugins-control-panel .msg td {
@@ -713,10 +713,6 @@ img.iconsmall {
     font-size: @fontSizeSmall;
 }
 
-#page-admin-mnet-peers .mform .certdetails {
-    background-color: white;
-}
-
 #page-admin-mnet-peers .mform .deletedhostinfo {
     background-color: @errorBackground;
     border: 2px solid @errorBorder;
@@ -736,7 +732,6 @@ img.iconsmall {
 }
 
 #core-cache-store-summaries .default-store td {
-    color: #333;
     font-style: italic;
 }
 
