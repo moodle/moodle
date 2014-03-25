@@ -9334,9 +9334,20 @@ function moodle_setlocale($locale='') {
     if ($CFG->ostype != 'WINDOWS') {
         $messages= setlocale (LC_MESSAGES, 0);
     }
-/// Set locale to all
-    setlocale (LC_ALL, $currentlocale);
-/// Set old values
+    // Set locale to all.
+    $result = setlocale (LC_ALL, $currentlocale);
+    // If setting of locale fails try the other utf8 or utf-8 variant,
+    // some operating systems support both (Debian), others just one (OSX).
+    if ($result === false) {
+        if (stripos($currentlocale, '.UTF-8') !== false) {
+            $newlocale = str_ireplace('.UTF-8', '.UTF8', $currentlocale);
+            setlocale (LC_ALL, $newlocale);
+        } else if (stripos($currentlocale, '.UTF8') !== false) {
+            $newlocale = str_ireplace('.UTF8', '.UTF-8', $currentlocale);
+            setlocale (LC_ALL, $newlocale);
+        }
+    }
+    // Set old values.
     setlocale (LC_MONETARY, $monetary);
     setlocale (LC_NUMERIC, $numeric);
     if ($CFG->ostype != 'WINDOWS') {
