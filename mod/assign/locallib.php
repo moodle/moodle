@@ -3349,7 +3349,16 @@ class assign {
         $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
 
         $o .= $this->view_footer();
-        $this->add_to_log('view submit assignment form', $title);
+
+        $event = \mod_assign\event\submission_form_viewed::create(array(
+            'relateduserid' => $userid,
+            'context' => $this->get_context(),
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        ));
+        $event->set_legacy_logdata('view submit assignment form', $title);
+        $event->trigger();
 
         return $o;
     }

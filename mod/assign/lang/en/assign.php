@@ -151,6 +151,7 @@ $string['eventmarkerupdated'] = 'The allocated marker has been updated.';
 $string['eventstatementaccepted'] = 'The user has accepted the statement of the submission.';
 $string['eventsubmissioncreated'] = 'Submission created.';
 $string['eventsubmissionduplicated'] = 'The user duplicated his submission.';
+$string['eventsubmissionformviewed'] = 'Submission form viewed.';
 $string['eventsubmissiongraded'] = 'The submission has been graded.';
 $string['eventsubmissionlocked'] = 'The submissions have been locked for a user.';
 $string['eventsubmissionstatusupdated'] = 'The status of the submission has been updated.';
