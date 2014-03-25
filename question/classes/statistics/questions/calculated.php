@@ -202,7 +202,10 @@ class calculated {
     }
 
     /**
-     * @return null|string a string that represents the pool of questions from this question draws if it random or null if not.
+     * Used to determine which random questions pull sub questions from the same pools. Where pool means category and possibly
+     * all the sub categories of that category.
+     *
+     * @return null|string represents the pool of questions from which this question draws if it is random, or null if not.
      */
     public function random_selector_string() {
         if ($this->question->qtype == 'random') {
@@ -235,6 +238,8 @@ class calculated {
     }
 
     /**
+     * Load properties of this class from db record.
+     *
      * @param object $record Given a record from 'question_statistics' copy stats from record to properties.
      */
     public function populate_from_record($record) {
@@ -244,11 +249,16 @@ class calculated {
         $this->timemodified = $record->timemodified;
     }
 
+    /**
+     * Sort the variants of this question by variant number.
+     */
     public function sort_variants() {
         ksort($this->variantstats);
     }
 
     /**
+     * Get any sub question ids for this question.
+     *
      * @return int[] array of sub-question ids or empty array if there are none.
      */
     public function get_sub_question_ids() {
@@ -260,9 +270,9 @@ class calculated {
     }
 
     /**
-     * Array of variants that have appeared in the attempt data for this question.
+     * Array of variants that have appeared in the attempt data for this question. Or an empty array if there is only one variant.
      *
-     * @return int[]
+     * @return int[] the variant nos.
      */
     public function get_variants() {
         $variants = array_keys($this->variantstats);
@@ -273,6 +283,11 @@ class calculated {
         }
     }
 
+    /**
+     * Do we break down the stats for this question by variant or not?
+     *
+     * @return bool Do we?
+     */
     public function break_down_by_variant() {
         $qtype = \question_bank::get_qtype($this->question->qtype);
         return $qtype->break_down_stats_and_response_analysis_by_variant($this->question);

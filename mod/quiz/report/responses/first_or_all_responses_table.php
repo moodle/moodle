@@ -19,6 +19,7 @@
  *
  * @package   quiz_responses
  * @copyright 2014 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,25 +28,27 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * This is a table subclass for displaying the quiz responses report, showing first or all tries.
  *
- * @copyright 2008 Jean-Michel Vedrine
+ * @package   quiz_responses
+ * @copyright 2014 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_first_or_all_responses_table extends quiz_last_responses_table {
 
     /**
-     * The full question usage object for each attempt shown in report.
+     * The full question usage object for each try shown in report.
      *
      * @var question_usage_by_activity[]
      */
     protected $questionusagesbyactivity;
 
-    protected function field_from_extra_data($attempt, $slot, $field) {
-        $questionattempt = $this->get_question_attempt($attempt->usageid, $slot);
+    protected function field_from_extra_data($tablerow, $slot, $field) {
+        $questionattempt = $this->get_question_attempt($tablerow->usageid, $slot);
         switch($field) {
             case 'questionsummary' :
                 return $questionattempt->get_question_summary();
             case 'responsesummary' :
-                return $this->get_summary_after_try($attempt, $slot);
+                return $this->get_summary_after_try($tablerow, $slot);
             case 'rightanswer' :
                 return $questionattempt->get_right_answer_summary();
             default :
@@ -71,13 +74,13 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
                 $maxtriesinanyslot = max($maxtriesinanyslot, $tries);
             }
             for ($try = 1; $try <= $maxtriesinanyslot; $try++) {
-                $newattemptrow = clone($attempt);
-                $newattemptrow->lasttryforallparts = ($try == $maxtriesinanyslot);
+                $newtablerow = clone($attempt);
+                $newtablerow->lasttryforallparts = ($try == $maxtriesinanyslot);
                 if ($try !== $maxtriesinanyslot) {
-                    $newattemptrow->state = quiz_attempt::IN_PROGRESS;
+                    $newtablerow->state = quiz_attempt::IN_PROGRESS;
                 }
-                $newattemptrow->try = $try;
-                $newrawdata[] = $newattemptrow;
+                $newtablerow->try = $try;
+                $newrawdata[] = $newtablerow;
                 if ($this->options->whichtries == question_attempt::FIRST_TRY) {
                     break;
                 }
@@ -98,18 +101,20 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     }
 
     /**
-     * @param object $attempt row data
-     * @param int $slot
-     * @return question_state
+     * Find the state for $slot given after this try.
+     *
+     * @param object $tablerow row data
+     * @param int $slot Slot number.
+     * @return question_state The question state after the attempt.
      */
-    protected function slot_state($attempt, $slot) {
-        $qa = $this->get_question_attempt($attempt->usageid, $slot);
+    protected function slot_state($tablerow, $slot) {
+        $qa = $this->get_question_attempt($tablerow->usageid, $slot);
         $submissionsteps = $qa->get_steps_with_submitted_response_iterator();
-        $step = $submissionsteps[$attempt->try];
+        $step = $submissionsteps[$tablerow->try];
         if ($step === null) {
             return null;
         }
-        if ($this->is_last_try($attempt, $slot, $attempt->try)) {
+        if ($this->is_last_try($tablerow, $slot, $tablerow->try)) {
             // If this is the last try then the step with the try data does not contain the correct state. We need to
             // use the last step's state, after the attempt has been finished.
             return $qa->get_state();
@@ -119,14 +124,16 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
 
 
     /**
-     * @param object $attempt row data
-     * @param int $slot
+     * Get the summary of the response after the try.
+     *
+     * @param object $tablerow row data
+     * @param int $slot Slot number.
      * @return string summary for the question after this try.
      */
-    public function get_summary_after_try($attempt, $slot) {
-        $qa = $this->get_question_attempt($attempt->usageid, $slot);
+    public function get_summary_after_try($tablerow, $slot) {
+        $qa = $this->get_question_attempt($tablerow->usageid, $slot);
         $submissionsteps = $qa->get_steps_with_submitted_response_iterator();
-        $step = $submissionsteps[$attempt->try];
+        $step = $submissionsteps[$tablerow->try];
         if ($step === null) {
             return null;
         }
@@ -135,27 +142,31 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     }
 
     /**
-     * @param int $questionusageid
-     * @param int $slot
-     * @return bool
+     * Has this question usage been flagged?
+     *
+     * @param int $questionusageid Question usage id.
+     * @param int $slot Slot number
+     * @return bool Has it been flagged?
      */
     protected function is_flagged($questionusageid, $slot) {
         return $this->get_question_attempt($questionusageid, $slot)->is_flagged();
     }
 
     /**
-     * @param object $attempt attempt data from db.
-     * @param int $slot
-     * @return float
+     * The grade for this slot after this try.
+     *
+     * @param object $tablerow attempt data from db.
+     * @param int $slot Slot number.
+     * @return float The fraction.
      */
-    protected function slot_fraction($attempt, $slot) {
-        $qa = $this->get_question_attempt($attempt->usageid, $slot);
+    protected function slot_fraction($tablerow, $slot) {
+        $qa = $this->get_question_attempt($tablerow->usageid, $slot);
         $submissionsteps = $qa->get_steps_with_submitted_response_iterator();
-        $step = $submissionsteps[$attempt->try];
+        $step = $submissionsteps[$tablerow->try];
         if ($step === null) {
             return null;
         }
-        if ($this->is_last_try($attempt, $slot, $attempt->try)) {
+        if ($this->is_last_try($tablerow, $slot, $tablerow->try)) {
             // If this is the last try then the step with the try data does not contain the correct fraction. We need to
             // use the last step's fraction, after the attempt has been finished.
             return $qa->get_fraction();
@@ -166,81 +177,98 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
     /**
      * Is this the last try in the question attempt?
      *
-     * @param object $attempt attempt data from db.
-     * @param int $slot
+     * @param object $tablerow attempt data from db.
+     * @param int $slot Slot number
      * @param int $tryno try no
-     * @return bool
+     * @return bool Is it the last try?
      */
-    protected function is_last_try($attempt, $slot, $tryno) {
-        return $tryno == $this->get_no_of_tries($attempt, $slot);
+    protected function is_last_try($tablerow, $slot, $tryno) {
+        return $tryno == $this->get_no_of_tries($tablerow, $slot);
     }
 
     /**
-     * @param object $attempt attempt data from db.
-     * @param int $slot
+     * How many tries were attempted at this question in this slot, during this usage?
+     *
+     * @param object $tablerow attempt data from db.
+     * @param int $slot Slot number
      * @return int the number of tries in the question attempt for slot $slot.
      */
-    public function get_no_of_tries($attempt, $slot) {
-        return count($this->get_question_attempt($attempt->usageid, $slot)->get_steps_with_submitted_response_iterator());
+    public function get_no_of_tries($tablerow, $slot) {
+        return count($this->get_question_attempt($tablerow->usageid, $slot)->get_steps_with_submitted_response_iterator());
     }
 
 
     /**
-     * @param int $questionusageid
-     * @param int $slot
-     * @param int $tryno
+     * What is the step no this try was seen in?
+     *
+     * @param int $questionusageid The question usage id.
+     * @param int $slot Slot number
+     * @param int $tryno Try no
      * @return int the step no or zero if not found
      */
     protected function step_no_for_try($questionusageid, $slot, $tryno) {
-        return $this->get_question_attempt($questionusageid, $slot)->get_steps_with_submitted_response_iterator()->step_no_for_try($tryno);
+        $qa = $this->get_question_attempt($questionusageid, $slot);
+        return $qa->get_steps_with_submitted_response_iterator()->step_no_for_try($tryno);
     }
 
-    public function col_checkbox($attempt) {
-        if ($attempt->try != 1) {
+    public function col_checkbox($tablerow) {
+        if ($tablerow->try != 1) {
             return '';
         } else {
-            return parent::col_checkbox($attempt);
+            return parent::col_checkbox($tablerow);
         }
     }
 
-    public function col_email($attempt) {
-        if ($attempt->try != 1) {
+    /**
+     * Cell value function for email column. This extracts the contents for any cell in the email column from the row data.
+     *
+     * @param object $tablerow Row data.
+     * @return string   What to put in the cell for this column, for this row data.
+     */
+    public function col_email($tablerow) {
+        if ($tablerow->try != 1) {
             return '';
         } else {
-            return $attempt->email;
+            return $tablerow->email;
         }
     }
 
-    public function col_sumgrades($attempt) {
-        if (!$attempt->lasttryforallparts) {
+    /**
+     * Cell value function for sumgrades column. This extracts the contents for any cell in the sumgrades column from the row data.
+     *
+     * @param object $tablerow Row data.
+     * @return string   What to put in the cell for this column, for this row data.
+     */
+    public function col_sumgrades($tablerow) {
+        if (!$tablerow->lasttryforallparts) {
             return '';
         } else {
-            return parent::col_sumgrades($attempt);
+            return parent::col_sumgrades($tablerow);
         }
     }
 
 
-    public function col_state($attempt) {
-        if (!$attempt->lasttryforallparts) {
+    public function col_state($tablerow) {
+        if (!$tablerow->lasttryforallparts) {
             return '';
         } else {
-            return parent::col_state($attempt);
+            return parent::col_state($tablerow);
         }
     }
 
-    public function get_row_class($attempt) {
-        if ($this->options->whichtries == question_attempt::ALL_TRIES && $attempt->lasttryforallparts) {
+    public function get_row_class($tablerow) {
+        if ($this->options->whichtries == question_attempt::ALL_TRIES && $tablerow->lasttryforallparts) {
             return 'lastrowforattempt';
         } else {
             return '';
         }
     }
 
-    public function make_review_link($data, $attempt, $slot) {
-        if ($this->slot_state($attempt, $slot) === null) {
+    public function make_review_link($data, $tablerow, $slot) {
+        if ($this->slot_state($tablerow, $slot) === null) {
             return $data;
         } else {
-            return parent::make_review_link($data, $attempt, $slot);
+            return parent::make_review_link($data, $tablerow, $slot);
         }
     }
 }
