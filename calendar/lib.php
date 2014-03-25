@@ -2165,7 +2165,7 @@ class calendar_event {
      * @return bool event updated
      */
     public function update($data, $checkcapability=true) {
-        global $CFG, $DB, $USER;
+        global $DB, $USER;
 
         foreach ($data as $key=>$value) {
             $this->properties->$key = $value;
@@ -2173,6 +2173,17 @@ class calendar_event {
 
         $this->properties->timemodified = time();
         $usingeditor = (!empty($this->properties->description) && is_array($this->properties->description));
+
+        // Prepare event data.
+        $eventargs = array(
+            'context' => $this->properties->context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'repeatid' => empty($this->properties->repeatid) ? 0 : $this->properties->repeatid,
+                'timestart' => $this->properties->timestart,
+                'name' => $this->properties->name
+            )
+        );
 
         if (empty($this->properties->id) || $this->properties->id < 1) {
 
@@ -2239,7 +2250,10 @@ class calendar_event {
             }
 
             // Log the event entry.
-            add_to_log($this->properties->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+            $eventargs['objectid'] = $this->properties->id;
+            $eventargs['context'] = $this->properties->context;
+            $event = \core\event\calendar_event_created::create($eventargs);
+            $event->trigger();
 
             $repeatedids = array();
 
@@ -2267,8 +2281,12 @@ class calendar_event {
                     }
 
                     $repeatedids[] = $eventcopyid;
-                    // Log the event entry.
-                    add_to_log($eventcopy->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventcopyid, $eventcopy->name);
+
+                    // Trigger an event.
+                    $eventargs['objectid'] = $eventcopyid;
+                    $eventargs['other']['timestart'] = $eventcopy->timestart;
+                    $event = \core\event\calendar_event_created::create($eventargs);
+                    $event->trigger();
                 }
             }
 
@@ -2322,13 +2340,22 @@ class calendar_event {
                 }
                 $DB->execute($sql, $params);
 
-                // Log the event update.
-                add_to_log($this->properties->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+                // Trigger an update event for each of the calendar event.
+                $events = $DB->get_records('event', array('repeatid' => $event->repeatid), '', 'id,timestart');
+                foreach ($events as $event) {
+                    $eventargs['objectid'] = $event->id;
+                    $eventargs['other']['timestart'] = $event->timestart;
+                    $event = \core\event\calendar_event_updated::create($eventargs);
+                    $event->trigger();
+                }
             } else {
                 $DB->update_record('event', $this->properties);
                 $event = calendar_event::load($this->properties->id);
                 $this->properties = $event->properties();
-                add_to_log($this->properties->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+
+                // Trigger an update event.
+                $event = \core\event\calendar_event_updated::create($eventargs);
+                $event->trigger();
             }
 
             // Hook for tracking event updates
@@ -2356,9 +2383,22 @@ class calendar_event {
             debugging('Attempting to delete an event before it has been loaded', DEBUG_DEVELOPER);
             return false;
         }
-
+        $calevent = $DB->get_record('event',  array('id' => $this->properties->id), '*', MUST_EXIST);
         // Delete the event
         $DB->delete_records('event', array('id'=>$this->properties->id));
+
+        // Trigger an event for the delete action.
+        $eventargs = array(
+            'context' => $this->properties->context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'repeatid' => empty($this->properties->repeatid) ? 0 : $this->properties->repeatid,
+                'timestart' => $this->properties->timestart,
+                'name' => $this->properties->name
+            ));
+        $event = \core\event\calendar_event_deleted::create($eventargs);
+        $event->add_record_snapshot('event', $calevent);
+        $event->trigger();
 
         // If we are deleting parent of a repeated event series, promote the next event in the series as parent
         if (($this->properties->id == $this->properties->repeatid) && !$deleterepeated) {
@@ -2367,8 +2407,14 @@ class calendar_event {
                 $DB->execute("UPDATE {event} SET repeatid = ? WHERE repeatid = ?", array($newparent, $this->properties->id));
                 // Get all records where the repeatid is the same as the event being removed
                 $events = $DB->get_records('event', array('repeatid' => $newparent));
-                // For each of the returned events trigger the event_update hook.
+                // For each of the returned events trigger the event_update hook and an update event.
                 foreach ($events as $event) {
+                    // Trigger an event for the update.
+                    $eventargs['objectid'] = $event->id;
+                    $eventargs['other']['timestart'] = $event->timestart;
+                    $event = \core\event\calendar_event_updated::create($eventargs);
+                    $event->trigger();
+
                     self::calendar_event_hook('update_event', array($event, false));
                 }
             }
