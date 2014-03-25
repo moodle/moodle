@@ -55,7 +55,7 @@ case 'clearaggregatedgrades':
 case 'clearassessments':
     require_capability('mod/workshop:overridegrades', $workshop->context);
     $workshop->clear_assessments();
-    $event = \mod_workshop\event\submission_assessments_reset::create($params);
+    $event = \mod_workshop\event\assessments_reset::create($params);
     $event->trigger();
     break;
 }
