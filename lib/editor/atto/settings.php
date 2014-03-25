@@ -35,7 +35,7 @@ if ($ADMIN->fulltree) {
     $default = 'collapse = collapse
 style1 = title, bold, italic
 list = unorderedlist, orderedlist
-links = link, unlink, noautolink
+links = link, noautolink
 files = image, media, managefiles
 style2 = underline, strike, subscript, superscript
 align = align

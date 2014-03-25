@@ -936,7 +936,7 @@ class core_plugin_manager {
                 'equation', 'fontcolor', 'html', 'image', 'indent', 'italic',
                 'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
                 'rtl', 'strike', 'subscript', 'superscript', 'table', 'title',
-                'underline', 'undo', 'unlink', 'unorderedlist'
+                'underline', 'undo', 'unorderedlist'
             ),
 
             'assignment' => array(
