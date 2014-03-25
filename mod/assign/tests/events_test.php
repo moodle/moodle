@@ -602,4 +602,43 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the grading_table_viewed event.
+     */
+    public function test_grading_table_viewed() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance();
+
+        // We need to set the URL in order to view the feedback.
+        $PAGE->set_url('/a_url');
+        // A hack - this variable is used by the view_single_grade_page function.
+        global $_POST;
+        $_POST['rownum'] = 1;
+        $_POST['userid'] = $this->students[0]->id;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->view('grading');
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\grading_table_viewed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'view submission grading table',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('viewsubmissiongradingtable', 'assign'),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }

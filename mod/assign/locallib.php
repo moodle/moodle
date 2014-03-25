@@ -3214,8 +3214,16 @@ class assign {
 
         $o .= $this->view_footer();
 
-        $logmessage = get_string('viewsubmissiongradingtable', 'assign');
-        $this->add_to_log('view submission grading table', $logmessage);
+        $logmessage = new lang_string('viewsubmissiongradingtable', 'assign');
+        $event = \mod_assign\event\grading_table_viewed::create(array(
+            'context' => $this->get_context(),
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        ));
+        $event->set_legacy_logdata('view submission grading table', $logmessage);
+        $event->trigger();
+
         return $o;
     }
 
