@@ -233,8 +233,8 @@ class logstore_database_store_testcase extends advanced_testcase {
         $allreports = \core_component::get_plugin_list('report');
 
         $supportedreports = array(
-            'log' => '/report/log',
-            'loglive' => '/report/loglive'
+            'report_log' => '/report/log',
+            'report_loglive' => '/report/loglive'
         );
 
         // Make sure all supported reports are installed.

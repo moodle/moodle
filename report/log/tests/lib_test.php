@@ -48,7 +48,7 @@ class report_log_lib_testcase extends advanced_testcase {
 
         // Make sure all supported stores are installed.
         $expectedstores = array_keys(array_intersect($allstores, $supportedstores));
-        $stores = $logmanager->get_supported_logstores('log');
+        $stores = $logmanager->get_supported_logstores('report_log');
         $stores = array_keys($stores);
         foreach ($expectedstores as $expectedstore) {
             $this->assertContains($expectedstore, $stores);

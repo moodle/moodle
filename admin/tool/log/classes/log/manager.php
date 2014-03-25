@@ -125,7 +125,7 @@ class manager implements \core\log\manager {
             return array();
         }
 
-        $reports = \core_component::get_plugin_list('report');
+        $reports = get_plugin_list_with_function('report', 'supports_logstore', 'lib.php');
         $enabled = $this->stores;
 
         if (empty($enabled[$logstore])) {
@@ -138,16 +138,8 @@ class manager implements \core\log\manager {
 
         $return = array();
         foreach ($reports as $report => $fulldir) {
-            $file = $fulldir . '/lib.php';
-            if (file_exists($file)) {
-                require_once($file);
-                $function = 'report_' . $report . '_supports_logstore';
-                if (function_exists($function)) {
-                    if ($function($instance)) {
-                        $return[$report] = get_string('pluginname', 'report_' . $report);
-                    }
-                }
-
+            if (component_callback($report, 'supports_logstore', array($instance), false)) {
+                $return[$report] = get_string('pluginname', $report);
             }
         }
 
@@ -167,16 +159,8 @@ class manager implements \core\log\manager {
         $allstores = self::get_store_plugins();
         $enabled = $this->stores;
 
-        $function = $component . '_supports_logstore';
-        $file = \core_component::get_component_directory($component) . '/lib.php';
-
-        if (!file_exists($file)) {
-            // The report doesn't define the callback, most probably it doesn't need log stores.
-            return false;
-        }
-
-        require_once($file);
-        if (!function_exists($function)) {
+        $function = component_callback_exists($component, 'supports_logstore');
+        if (!$function) {
             // The report doesn't define the callback, most probably it doesn't need log stores.
             return false;
         }

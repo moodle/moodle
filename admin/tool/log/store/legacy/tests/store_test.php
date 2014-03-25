@@ -258,11 +258,11 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $allreports = \core_component::get_plugin_list('report');
 
         $supportedreports = array(
-            'log' => '/report/log',
-            'loglive' => '/report/loglive',
-            'outline' => '/report/outline',
-            'participation' => '/report/participation',
-            'stats' => '/report/stats'
+            'report_log' => '/report/log',
+            'report_loglive' => '/report/loglive',
+            'report_outline' => '/report/outline',
+            'report_participation' => '/report/participation',
+            'report_stats' => '/report/stats'
         );
 
         // Make sure all supported reports are installed.

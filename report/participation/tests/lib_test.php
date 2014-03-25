@@ -47,7 +47,7 @@ class report_participation_lib_testcase extends advanced_testcase {
 
         // Make sure all supported stores are installed.
         $expectedstores = array_keys(array_intersect($allstores, $supportedstores));
-        $stores = $logmanager->get_supported_logstores('participation');
+        $stores = $logmanager->get_supported_logstores('report_participation');
         $stores = array_keys($stores);
         foreach ($expectedstores as $expectedstore) {
             $this->assertContains($expectedstore, $stores);
