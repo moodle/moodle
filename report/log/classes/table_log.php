@@ -154,7 +154,7 @@ class report_log_table_log extends table_sql {
      */
     public function col_relatedfullnameuser($event) {
         // Add affected user.
-        if (!empty($event->relateduserid)) {
+        if (!empty($event->relateduserid) && isset($this->userfullnames[$event->relateduserid])) {
             return html_writer::link(new moodle_url("/user/view.php?id=" . $event->relateduserid . "&course=" .
                     $event->courseid), $this->userfullnames[$event->relateduserid]);
         } else {
