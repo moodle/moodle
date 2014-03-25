@@ -1034,15 +1034,24 @@ class theme_config {
         // Get the LESS file path.
         $themelessfile = $files['theme'][$lessfile];
 
-        // Instantiate the compiler.
-        $compiler = new core_lessc(array(
+        // Setup compiler options.
+        $options = array(
             // We need to set the import directory to where $lessfile is.
             'import_dirs' => array(dirname($themelessfile) => '/'),
             // Always disable default caching.
             'cache_method' => false,
             // Disable the relative URLs, we have post_process() to handle that.
             'relativeUrls' => false,
-        ));
+        );
+
+        if ($themedesigner) {
+            // Add the sourceMap inline to ensure that it is atomically generated.
+            $options['sourceMap'] = true;
+            $options['sourceRoot'] = 'theme';
+        }
+
+        // Instantiate the compiler.
+        $compiler = new core_lessc($options);
 
         try {
             $compiler->parse_file_content($themelessfile);
