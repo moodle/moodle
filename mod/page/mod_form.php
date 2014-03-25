@@ -88,6 +88,8 @@ class mod_page_mod_form extends moodleform_mod {
             $mform->setDefault('popupheight', $config->popupheight);
         }
 
+        $mform->addElement('advcheckbox', 'printheading', get_string('printheading', 'page'));
+        $mform->setDefault('printheading', $config->printheading);
         $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'page'));
         $mform->setDefault('printintro', $config->printintro);
 
@@ -122,6 +124,9 @@ class mod_page_mod_form extends moodleform_mod {
             $displayoptions = unserialize($default_values['displayoptions']);
             if (isset($displayoptions['printintro'])) {
                 $default_values['printintro'] = $displayoptions['printintro'];
+            }
+            if (isset($displayoptions['printheading'])) {
+                $default_values['printheading'] = $displayoptions['printheading'];
             }
             if (!empty($displayoptions['popupwidth'])) {
                 $default_values['popupwidth'] = $displayoptions['popupwidth'];

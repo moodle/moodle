@@ -72,7 +72,7 @@ class moodle1_mod_page_handler extends moodle1_resource_successor_handler {
         $page['timemodified']       = $data['timemodified'];
 
         // populate display and displayoptions fields
-        $options = array('printintro' => 0);
+        $options = array('printheading' => 1, 'printintro' => 0);
         if ($data['popup']) {
             $page['display'] = RESOURCELIB_DISPLAY_POPUP;
             $rawoptions = explode(',', $data['popup']);
