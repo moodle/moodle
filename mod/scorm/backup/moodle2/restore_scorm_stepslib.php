@@ -65,6 +65,9 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         $data->timeclose = $this->apply_date_offset($data->timeclose);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        if(!isset($data->displayactivityname))
+            $data->displayactivityname = true;
+
         // insert the scorm record
         $newitemid = $DB->insert_record('scorm', $data);
         // immediately after inserting "activity" record, call this

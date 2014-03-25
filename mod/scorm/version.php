@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014021701;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013110500;    // Requires this Moodle version
-$plugin->component = 'mod_scorm'; // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 300;
+$module->version   = 2014032500;    // The current module version (Date: YYYYMMDDXX).
+$module->requires  = 2013110500;    // Requires this Moodle version.
+$module->component = 'mod_scorm';   // Full name of the plugin (used for diagnostics).
+$module->cron      = 300;

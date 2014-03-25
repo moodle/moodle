@@ -68,7 +68,8 @@ class mod_scorm_generator extends testing_module_generator {
             'forcenewattempt' => $cfgscorm->forcenewattempt,
             'lastattemptlock' => $cfgscorm->lastattemptlock,
             'forcecompleted' => $cfgscorm->forcecompleted,
-            'auto' => $cfgscorm->auto
+            'auto' => $cfgscorm->auto,
+            'displayactivityname' => $cfgscorm->displayactivityname
         );
 
         // The 'packagefile' value corresponds to the draft file area ID. If not specified, create from packagefilepath.
