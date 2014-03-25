@@ -3280,8 +3280,8 @@ abstract class restore_activity_structure_step extends restore_structure_step {
  */
 class restore_create_categories_and_questions extends restore_structure_step {
 
-    /** @var array $cachecategory store the categories */
-    protected $cachedcategory = array();
+    /** @var array $cachecategory store a question category */
+    protected $cachedcategory = null;
 
     protected function define_structure() {
 
