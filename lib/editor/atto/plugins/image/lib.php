@@ -43,6 +43,7 @@ function atto_image_strings_for_js() {
         'alignment_texttop',
         'alignment_top',
         'browserepositories',
+        'constrain',
         'createimage',
         'enterurl',
         'enteralt',
