@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.7 ===
 
+* PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
 
 Events and Logging:
