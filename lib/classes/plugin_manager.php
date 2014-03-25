@@ -909,7 +909,9 @@ class core_plugin_manager {
             'qformat' => array('blackboard'),
             'enrol' => array('authorize'),
             'tool' => array('bloglevelupgrade'),
-            'theme' => array('mymobile'),
+            'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
+                'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
+                'splash', 'standard', 'standardold'),
         );
 
         if (!isset($plugins[$type])) {
@@ -1111,11 +1113,7 @@ class core_plugin_manager {
             ),
 
             'theme' => array(
-                'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrapbase',
-                'boxxie', 'brick', 'canvas', 'clean', 'formal_white', 'formfactor',
-                'fusion', 'leatherbound', 'magazine', 'more', 'nimble',
-                'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
-                'standard', 'standardold'
+                'base', 'bootstrapbase', 'canvas', 'clean', 'more'
             ),
 
             'tool' => array(
