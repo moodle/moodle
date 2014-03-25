@@ -691,7 +691,6 @@ function stats_cron_weekly() {
             set_cron_lock('statsrunning', time() + $timeout, true);
         }
 
-        $logtimesql  = "l.time >= $timestart AND l.time < $nextstartweek";
         $stattimesql = "timeend > $timestart AND timeend <= $nextstartweek";
 
         $weekstart = time();
@@ -700,14 +699,14 @@ function stats_cron_weekly() {
     /// process login info first
         $sql = "INSERT INTO {stats_user_weekly} (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins', timeend, courseid, userid, COUNT(statsreads)
+                SELECT 'logins', timeend, courseid, userid, SUM(statsreads)
                   FROM (
-                           SELECT $nextstartweek AS timeend, ".SITEID." as courseid, l.userid, l.id AS statsreads
-                             FROM {log} l
-                            WHERE action = 'login' AND $logtimesql
+                           SELECT $nextstartweek AS timeend, courseid, statsreads
+                             FROM {stats_user_daily} sd
+                            WHERE stattype = 'logins' AND $stattimesql
                        ) inline_view
               GROUP BY timeend, courseid, userid
-                HAVING COUNT(statsreads) > 0";
+                HAVING SUM(statsreads) > 0";
 
         $DB->execute($sql);
 
@@ -834,7 +833,6 @@ function stats_cron_monthly() {
             set_cron_lock('statsrunning', time() + $timeout, true);
         }
 
-        $logtimesql  = "l.time >= $timestart AND l.time < $nextstartmonth";
         $stattimesql = "timeend > $timestart AND timeend <= $nextstartmonth";
 
         $monthstart = time();
@@ -843,13 +841,14 @@ function stats_cron_monthly() {
     /// process login info first
         $sql = "INSERT INTO {stats_user_monthly} (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins', timeend, courseid, userid, COUNT(statsreads)
+                SELECT 'logins', timeend, courseid, userid, SUM(statsreads)
                   FROM (
-                           SELECT $nextstartmonth AS timeend, ".SITEID." as courseid, l.userid, l.id AS statsreads
-                             FROM {log} l
-                            WHERE action = 'login' AND $logtimesql
+                           SELECT $nextstartmonth AS timeend, courseid, statsreads
+                             FROM {stats_user_daily} sd
+                            WHERE stattype = 'logins' AND $stattimesql
                        ) inline_view
-              GROUP BY timeend, courseid, userid";
+              GROUP BY timeend, courseid, userid
+                HAVING SUM(statsreads) > 0";
 
         $DB->execute($sql);
 
@@ -943,9 +942,31 @@ function stats_get_start_from($str) {
     // decide what to do based on our config setting (either all or none or a timestamp)
     switch ($CFG->statsfirstrun) {
         case 'all':
-            if ($firstlog = $DB->get_field_sql('SELECT MIN(time) FROM {log}')) {
+            $manager = get_log_manager();
+            $stores = $manager->get_readers();
+            $firstlog = false;
+            foreach ($stores as $store) {
+                if ($store instanceof \core\log\sql_internal_reader) {
+                    $logtable = $store->get_internal_log_table_name();
+                    if (!$logtable) {
+                        continue;
+                    }
+                    $first = $DB->get_field_sql("SELECT MIN(timecreated) FROM {{$logtable}}");
+                    if ($first and (!$firstlog or $firstlog > $first)) {
+                        $firstlog = $first;
+                    }
+                }
+            }
+
+            $first = $DB->get_field_sql('SELECT MIN(time) FROM {log}');
+            if ($first and (!$firstlog or $firstlog > $first)) {
+                $firstlog = $first;
+            }
+
+            if ($firstlog) {
                 return $firstlog;
             }
+
         default:
             if (is_numeric($CFG->statsfirstrun)) {
                 return time() - $CFG->statsfirstrun;
@@ -1699,9 +1720,9 @@ function stats_temp_table_drop() {
  *
  * This function is meant to be called once at the start of stats generation
  *
- * @param timestart timestamp of the start time of logs view
- * @param timeend timestamp of the end time of logs view
- * @return boolen success (true) or failure(false)
+ * @param int timestart timestamp of the start time of logs view
+ * @param int timeend timestamp of the end time of logs view
+ * @return bool success (true) or failure(false)
  */
 function stats_temp_table_setup() {
     global $DB;
@@ -1722,19 +1743,68 @@ function stats_temp_table_setup() {
  *
  * This function is meant to be called to get a new day of data
  *
- * @param timestart timestamp of the start time of logs view
- * @param timeend timestamp of the end time of logs view
- * @return boolen success (true) or failure(false)
+ * @param int timestamp of the start time of logs view
+ * @param int timestamp of the end time of logs view
+ * @return bool success (true) or failure(false)
  */
 function stats_temp_table_fill($timestart, $timeend) {
     global $DB;
 
-    $sql = 'INSERT INTO {temp_log1} (userid, course, action)
+    // First decide from where we want the data.
 
-            SELECT userid, course, action FROM {log}
-             WHERE time >= ? AND time < ?';
+    $params = array('timestart' => $timestart, 'timeend' => $timeend, 'loginevent' => '\core\event\user_loggedin');
 
-    $DB->execute($sql, array($timestart, $timeend));
+    $filled = false;
+    $manager = get_log_manager();
+    $stores = $manager->get_readers();
+    foreach ($stores as $store) {
+        if ($store instanceof \core\log\sql_internal_reader) {
+            $logtable = $store->get_internal_log_table_name();
+            if (!$logtable) {
+                continue;
+            }
+
+            $sql = "SELECT COUNT('x')
+                      FROM {{$logtable}}
+                     WHERE timecreated >= :timestart AND timecreated < :timeend";
+
+            if (!$DB->get_field_sql($sql, $params)) {
+                continue;
+            }
+
+            // Let's fake the old records using new log data.
+
+            $sql = "INSERT INTO {temp_log1} (userid, course, action)
+
+            SELECT userid,
+                   CASE
+                      WHEN courseid IS NULL THEN ".SITEID."
+                      WHEN courseid = 0 THEN ".SITEID."
+                      ELSE courseid
+                   END,
+                   CASE
+                       WHEN eventname = :loginevent THEN 'login'
+                       WHEN crud = 'r' THEN 'view'
+                       ELSE 'update'
+                   END
+              FROM {{$logtable}}
+             WHERE timecreated >= :timestart AND timecreated < :timeend";
+
+            $DB->execute($sql, $params);
+            $filled = true;
+        }
+    }
+
+    if (!$filled) {
+        // Fallback to legacy data.
+        $sql = "INSERT INTO {temp_log1} (userid, course, action)
+
+            SELECT userid, course, action
+              FROM {log}
+             WHERE time >= :timestart AND time < :timeend";
+
+        $DB->execute($sql, $params);
+    }
 
     $sql = 'INSERT INTO {temp_log2} (userid, course, action)
 
@@ -1752,7 +1822,7 @@ function stats_temp_table_fill($timestart, $timeend) {
 /**
  * Deletes summary logs table for stats calculation
  *
- * @return boolen success (true) or failure(false)
+ * @return bool success (true) or failure(false)
  */
 function stats_temp_table_clean() {
     global $DB;
