@@ -113,6 +113,7 @@ class response_submitted extends \core\event\base {
      */
     public function can_view($userorid = null) {
         global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
 
         if (empty($userorid)) {
             $userorid = $USER;

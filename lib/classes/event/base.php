@@ -306,6 +306,7 @@ abstract class base implements \IteratorAggregate {
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($user_or_id = null) {
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
         return is_siteadmin($user_or_id);
     }
 

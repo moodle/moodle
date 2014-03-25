@@ -60,6 +60,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      */
     public function can_view($userorid = null) {
         global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
 
         if (empty($userorid)) {
             $userorid = $USER;

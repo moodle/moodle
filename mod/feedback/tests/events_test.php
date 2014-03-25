@@ -135,8 +135,10 @@ class mod_feedback_events_testcase extends advanced_testcase {
         // Test can_view() .
         $this->setUser($this->eventuser);
         $this->assertFalse($event->can_view());
+        $this->assertDebuggingCalled();
         $this->setAdminUser();
         $this->assertTrue($event->can_view());
+        $this->assertDebuggingCalled();
 
         // Create a response, with anonymous set to no and test can_view().
         $response = new stdClass();
@@ -162,8 +164,10 @@ class mod_feedback_events_testcase extends advanced_testcase {
         // Test can_view() .
         $this->setUser($this->eventuser);
         $this->assertTrue($event->can_view());
+        $this->assertDebuggingCalled();
         $this->setAdminUser();
         $this->assertTrue($event->can_view());
+        $this->assertDebuggingCalled();
         $this->assertEventContextNotUsed($event);
     }
 
@@ -227,8 +231,10 @@ class mod_feedback_events_testcase extends advanced_testcase {
         $this->assertEquals(FEEDBACK_ANONYMOUS_YES, $event->other['anonymous']);
         $this->setUser($this->eventuser);
         $this->assertFalse($event->can_view());
+        $this->assertDebuggingCalled();
         $this->setAdminUser();
         $this->assertTrue($event->can_view());
+        $this->assertDebuggingCalled();
 
         // Test legacy data.
         $this->assertEventLegacyLogData(null, $event);
@@ -261,8 +267,10 @@ class mod_feedback_events_testcase extends advanced_testcase {
 
         // Test can_view().
         $this->assertTrue($event->can_view());
+        $this->assertDebuggingCalled();
         $this->setAdminUser();
         $this->assertTrue($event->can_view());
+        $this->assertDebuggingCalled();
         $this->assertEventContextNotUsed($event);
     }
 
