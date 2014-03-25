@@ -106,11 +106,14 @@ class response_submitted extends \core\event\base {
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
+     * @deprecated since 2.7
+     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($userorid = null) {
         global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
 
         if (empty($userorid)) {
             $userorid = $USER;
