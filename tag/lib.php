@@ -31,10 +31,10 @@
  *
  * BASIC INSTRUCTIONS :
  *  - to "tag a blog post" (for example):
- *        tag_set('post', $blog_post->id, $array_of_tags);
+ *        tag_set('post', $blog_post->id, $array_of_tags, 'core', $thecontext);
  *
  *  - to "remove all the tags on a blog post":
- *        tag_set('post', $blog_post->id, array());
+ *        tag_set('post', $blog_post->id, array(), 'core', $thecontext);
  *
  * Tag set will create tags that need to be created.
  *
@@ -107,17 +107,20 @@ define('TAG_RELATED_CORRELATED', 2);
  *
  * This function is meant to be fed the string coming up from the user interface, which contains all tags assigned to a record.
  *
- * @package  core_tag
+ * @package core_tag
  * @category tag
- * @access   public
- * @param    string    $record_type the type of record to tag ('post' for blogs, 'user' for users, 'tag' for tags, etc.)
- * @param    int       $record_id   the id of the record to tag
- * @param    array     $tags        the array of tags to set on the record. If given an empty array, all tags will be removed.
- * @return   bool|null
+ * @access public
+ * @param string $record_type the type of record to tag ('post' for blogs, 'user' for users, 'tag' for tags, etc.)
+ * @param int $record_id the id of the record to tag
+ * @param array $tags the array of tags to set on the record. If given an empty array, all tags will be removed.
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool|null
  */
-function tag_set($record_type, $record_id, $tags) {
+function tag_set($record_type, $record_id, $tags, $component = null, $contextid = null) {
 
     static $in_recursion_semaphore = false; // this is to prevent loops when tagging a tag
+
     if ( $record_type == 'tag' && !$in_recursion_semaphore) {
         $current_tagged_tag_name = tag_get_name($record_id);
     }
@@ -162,13 +165,13 @@ function tag_set($record_type, $record_id, $tags) {
             $tag_current_id = $new_tag[$clean_tag];
         }
 
-        tag_assign($record_type, $record_id, $tag_current_id, $ordering);
+        tag_assign($record_type, $record_id, $tag_current_id, $ordering, 0, $component, $contextid);
 
         // if we are tagging a tag (adding a manually-assigned related tag), we
         // need to create the opposite relationship as well.
         if ( $record_type == 'tag' && !$in_recursion_semaphore) {
             $in_recursion_semaphore = true;
-            tag_set_add('tag', $tag_current_id, $current_tagged_tag_name);
+            tag_set_add('tag', $tag_current_id, $current_tagged_tag_name, $component, $contextid);
             $in_recursion_semaphore = false;
         }
     }
@@ -177,14 +180,17 @@ function tag_set($record_type, $record_id, $tags) {
 /**
  * Adds a tag to a record, without overwriting the current tags.
  *
- * @package  core_tag
+ * @package core_tag
  * @category tag
- * @access   public
- * @param    string   $record_type the type of record to tag ('post' for blogs, 'user' for users, etc.)
- * @param    int      $record_id   the id of the record to tag
- * @param    string   $tag         the tag to add
+ * @access public
+ * @param string $record_type the type of record to tag ('post' for blogs, 'user' for users, etc.)
+ * @param int $record_id the id of the record to tag
+ * @param string $tag the tag to add
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool|null
  */
-function tag_set_add($record_type, $record_id, $tag) {
+function tag_set_add($record_type, $record_id, $tag, $component = null, $contextid = null) {
 
     $new_tags = array();
     foreach( tag_get_tags($record_type, $record_id) as $current_tag ) {
@@ -192,20 +198,23 @@ function tag_set_add($record_type, $record_id, $tag) {
     }
     $new_tags[] = $tag;
 
-    return tag_set($record_type, $record_id, $new_tags);
+    return tag_set($record_type, $record_id, $new_tags, $component, $contextid);
 }
 
 /**
  * Removes a tag from a record, without overwriting other current tags.
  *
- * @package  core_tag
+ * @package core_tag
  * @category tag
- * @access   public
- * @param    string   $record_type the type of record to tag ('post' for blogs, 'user' for users, etc.)
- * @param    int      $record_id   the id of the record to tag
- * @param    string   $tag         the tag to delete
+ * @access public
+ * @param string $record_type the type of record to tag ('post' for blogs, 'user' for users, etc.)
+ * @param int $record_id the id of the record to tag
+ * @param string $tag the tag to delete
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool|null
  */
-function tag_set_delete($record_type, $record_id, $tag) {
+function tag_set_delete($record_type, $record_id, $tag, $component = null, $contextid = null) {
 
     $new_tags = array();
     foreach( tag_get_tags($record_type, $record_id) as $current_tag ) {
@@ -214,7 +223,7 @@ function tag_set_delete($record_type, $record_id, $tag) {
         }
     }
 
-    return tag_set($record_type, $record_id, $new_tags);
+    return tag_set($record_type, $record_id, $new_tags, $component, $contextid);
 }
 
 /**
@@ -774,16 +783,23 @@ function tag_add($tags, $type="default") {
  * Assigns a tag to a record; if the record already exists, the time and ordering will be updated.
  *
  * @package core_tag
- * @access  private
- * @param   string   $record_type the type of the record that will be tagged
- * @param   int      $record_id   the id of the record that will be tagged
- * @param   string   $tagid       the tag id to set on the record.
- * @param   int      $ordering    the order of the instance for this record
- * @param   int      $userid      (optional) only required for course tagging
- * @return  bool     true on success, false otherwise
+ * @access private
+ * @param string $record_type the type of the record that will be tagged
+ * @param int $record_id the id of the record that will be tagged
+ * @param string $tagid the tag id to set on the record.
+ * @param int $ordering the order of the instance for this record
+ * @param int $userid (optional) only required for course tagging
+ * @param string|null $component the component that was tagged
+ * @param int|null $contextid the context id of where this tag was assigned
+ * @return bool true on success, false otherwise
  */
-function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0) {
+function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0, $component = null, $contextid = null) {
     global $DB;
+
+    if ($component === null || $contextid === null) {
+        debugging('You should specify the component and contextid of the item being tagged in your call to tag_assign.',
+            DEBUG_DEVELOPER);
+    }
 
     if ( $tag_instance_object = $DB->get_record('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id, 'tiuserid'=>$userid), 'id')) {
         $tag_instance_object->ordering     = $ordering;
@@ -792,11 +808,15 @@ function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0) {
     } else {
         $tag_instance_object = new StdClass;
         $tag_instance_object->tagid        = $tagid;
+        $tag_instance_object->component    = $component;
         $tag_instance_object->itemid       = $record_id;
         $tag_instance_object->itemtype     = $record_type;
+        $tag_instance_object->contextid    = $contextid;
         $tag_instance_object->ordering     = $ordering;
-        $tag_instance_object->timemodified = time();
+        $tag_instance_object->timecreated  = time();
+        $tag_instance_object->timemodified = $tag_instance_object->timecreated;
         $tag_instance_object->tiuserid     = $userid;
+
         return $DB->insert_record('tag_instance', $tag_instance_object);
     }
 }

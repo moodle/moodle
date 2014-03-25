@@ -4214,7 +4214,7 @@ function delete_user(stdClass $user) {
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.
-    tag_set('user', $user->id, array());
+    tag_set('user', $user->id, array(), 'core', $usercontext->id);
 
     // Unconditionally unenrol from all courses.
     enrol_user_delete($user);

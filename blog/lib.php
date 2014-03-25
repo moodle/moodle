@@ -254,7 +254,7 @@ function blog_sync_external_entries($externalblog) {
 
             // Set tags
             if ($tags = tag_get_tags_array('blog_external', $externalblog->id)) {
-                tag_set('post', $id, $tags);
+                tag_set('post', $id, $tags, 'core', context_user::instance($externalblog->userid)->id);
             }
         } else {
             $newentry->id = $postid;

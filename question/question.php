@@ -238,7 +238,10 @@ if ($mform->is_cancelled()) {
     /// whence it came. (Where we are moving to is validated by the form.)
     list($newcatid, $newcontextid) = explode(',', $fromform->category);
     if (!empty($question->id) && $newcatid != $question->category) {
+        $contextid = $newcontextid;
         question_require_capability_on($question, 'move');
+    } else {
+        $contextid = $category->contextid;
     }
 
     // Ensure we redirect back to the category the question is being saved into.
@@ -248,7 +251,7 @@ if ($mform->is_cancelled()) {
     if (!empty($question->id)) {
         question_require_capability_on($question, 'edit');
     } else {
-        require_capability('moodle/question:add', context::instance_by_id($newcontextid));
+        require_capability('moodle/question:add', context::instance_by_id($contextid));
         if (!empty($fromform->makecopy) && !$question->formoptions->cansaveasnew) {
             print_error('nopermissions', '', '', 'edit');
         }
@@ -258,7 +261,7 @@ if ($mform->is_cancelled()) {
         // A wizardpage from multipe pages questiontype like calculated may not
         // allow editing the question tags, hence the isset($fromform->tags) test.
         require_once($CFG->dirroot.'/tag/lib.php');
-        tag_set('question', $question->id, $fromform->tags);
+        tag_set('question', $question->id, $fromform->tags, 'core_question', $contextid);
     }
 
     // Purge this question from the cache.

@@ -21,6 +21,7 @@ if (!confirm_sesskey()) {
     print_error('sesskey');
 }
 
+$usercontext = context_user::instance($USER->id);
 
 switch ($action) {
     case 'addinterest':
@@ -28,7 +29,7 @@ switch ($action) {
             $tag = tag_get_name($id);
         }
 
-        tag_set_add('user', $USER->id, $tag);
+        tag_set_add('user', $USER->id, $tag, 'core', $usercontext->id);
 
         redirect($CFG->wwwroot.'/tag/index.php?tag='. rawurlencode($tag));
         break;
@@ -38,7 +39,7 @@ switch ($action) {
             $tag = tag_get_name($id);
         }
 
-        tag_set_delete('user', $USER->id, $tag);
+        tag_set_delete('user', $USER->id, $tag, 'core', $usercontext->id);
 
         redirect($CFG->wwwroot.'/tag/index.php?tag='. rawurlencode($tag));
         break;
