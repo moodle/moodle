@@ -32,7 +32,7 @@ class atto extends base {
 
     /**
      * Yes you can uninstall these plugins if you want.
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function is_uninstall_allowed() {
         return true;
@@ -40,17 +40,17 @@ class atto extends base {
 
     /**
      * Return URL used for management of plugins of this type.
-     * @return moodle_url
+     * @return \moodle_url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php', array('section'=>'editorsettingsatto'));
+        return new \moodle_url('/admin/settings.php', array('section'=>'editorsettingsatto'));
     }
 
     /**
      * Include the settings.php file from sub plugins if they provide it.
      * This is a copy of very similar implementations from various other subplugin areas.
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
