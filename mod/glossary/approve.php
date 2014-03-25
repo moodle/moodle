@@ -29,14 +29,26 @@ if (($newstate != $entry->approved) && confirm_sesskey()) {
     $newentry->timemodified = time(); // wee need this date here to speed up recent activity, TODO: use timestamp in approved field instead in 2.0
     $DB->update_record("glossary_entries", $newentry);
 
+    // Trigger event about entry approval/disapproval.
+    $params = array(
+        'context' => $context,
+        'objectid' => $entry->id
+    );
+    if ($newstate) {
+        $event = \mod_glossary\event\entry_approved::create($params);
+    } else {
+        $event = \mod_glossary\event\entry_disapproved::create($params);
+    }
+    $entry->approved = $newstate ? 1 : 0;
+    $entry->timemodified = $newentry->timemodified;
+    $event->add_record_snapshot('glossary_entries', $entry);
+    $event->trigger();
+
     // Update completion state
     $completion = new completion_info($course);
     if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $entry->userid);
     }
-
-    $logaction = $newstate ? "approve entry" : "disapprove entry";
-    add_to_log($course->id, "glossary", $logaction, "showentry.php?id=$cm->id&amp;eid=$eid", "$eid", $cm->id);
 }
 
 redirect("view.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook");
