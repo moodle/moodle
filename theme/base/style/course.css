@@ -171,6 +171,9 @@
 .dir-rtl .sitetopic .section .activity .contentafterlink,
 .dir-rtl .course-content .section .activity .availabilityinfo,
 .dir-rtl .course-content .section .activity .contentafterlink { margin-left: 0; margin-right: 30px;}
+.availabilityinfo > ul {
+    margin-top: 0;
+}
 .section .activity .contentafterlink p { margin:.5em 0; }
 .sitetopic .section .activity:hover,
 .course-content .section .activity:hover { background-color: #EEE; }

@@ -455,3 +455,157 @@ fieldset.coursesearchbox label {
         }
     }
 }
+
+/* Section and module editing forms contain special JS components for the
+   availability system (if enabled). */
+#fitem_id_availabilityconditionsjson {
+    *[aria-hidden=true] {
+        display: none;
+    }
+    select,
+    input[type=text] {
+        position:relative;
+        top: 4px;
+    }
+    label {
+        display: inline;
+    }
+    .availability-group {
+        margin-right: 8px;
+    }
+    .availability-item {
+        margin-bottom: 6px;
+    }
+    .availability-none {
+        margin-left: 20px;
+        margin-bottom: 4px;
+    }
+    .availability-plugincontrols {
+        padding: 2px 0px 0px 4px;
+        background: none repeat scroll 0% 0% @wellBackground;
+        border: 1px solid @grayLighter;
+        border-radius: 4px;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    /* Eye icon in front of an item and delete icon after it. */
+    .availability-eye,
+    .availability-delete {
+        margin-right: 8px;
+    }
+    /* Hidden eye icon still takes up space. */
+    .availability-eye[aria-hidden=true] {
+        display: inline;
+        visibility: hidden;
+    }
+    /* Eye icons in front of child lists are aligned specially. */
+    .availability-list > .availability-eye img {
+        vertical-align: top;
+        margin-top: 12px;
+    }
+    /* Add button lines up with child elements. */
+    .availability-button {
+        margin-left: 15px;
+    }
+    /* Nested section is grey. */
+    .availability-childlist > .availability-inner {
+        display: inline-block;
+        background: @wellBackground;
+        border: 1px solid @grayLighter;
+        border-radius: 4px;
+        padding: 6px;
+        margin-bottom: 6px;
+    }
+    /* Second (and more) levels of nested sections are white. */
+    .availability-childlist .availability-childlist > .availability-inner {
+        background: white;
+    }
+    /* Connecting text needs to be indented. */
+    .availability-connector {
+        margin-left: 20px;
+        margin-bottom: 6px;
+    }
+}
+.dir-rtl #fitem_id_availabilityconditionsjson {
+    .availability-group {
+        margin-right: 0;
+        margin-left: 8px;
+    }
+    .availability-none {
+        margin-right: 20px;
+        margin-left: 0;
+    }
+    .availability-plugincontrols {
+        padding-right: 4px;
+        padding-left: 0px;
+        margin-right: 0;
+        margin-left: 8px;
+    }
+    .availability-eye,
+    .availability-delete {
+        margin-left: 8px;
+        margin-right: 0;
+    }
+    .availability-button {
+        margin-right: 15px;
+        margin-left: 0;
+    }
+    .availability-connector {
+        margin-right: 20px;
+        margin-left: 0;
+    }
+}
+
+/* Default form styling colours all text red. With availability conditions
+   this looks excessive as we show 'Invalid' markers in specific places. */
+.mform .error .availability-field {
+    color: @textColor;
+}
+
+/* This dialogue is used to add an availability condition. */
+.availability-dialogue {
+    .moodle-dialogue .moodle-dialogue-bd {
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 2px;
+    }
+    ul {
+        display: block;
+        margin: 0;
+    }
+    li {
+        display: block;
+        list-style-type: none;
+        padding: 0 0 4px;
+        clear: both;
+        border-bottom: 1px solid @grayLighter;
+        margin-bottom: 4px;
+    }
+    ul button {
+        float: left;
+        margin-left: 1em;
+        min-width: 140px;
+        margin-top: 4px;
+    }
+    label {
+        margin-left: 170px;
+        margin-right: 1em;
+        margin-bottom: 0;
+    }
+    .availability-buttons button {
+        margin-left: 1em;
+        margin-right: 1em;
+        margin-top: 4px;
+    }
+}
+.dir-rtl .availability-dialogue {
+    ul button {
+        float: right;
+        margin-right: 1em;
+        margin-left: 0;
+    }
+    label {
+        margin-right: 170px;
+        margin-left: 1em;
+    }
+}

@@ -638,6 +638,163 @@ body.tag .managelink {padding: 5px;}
 .path-backup .backup_log h2 { font-size: 1em; }
 .path-backup .backup_log_contents { border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: scroll; }
 
+/*
+ * CSS for availability options on module and section. This is taken from the
+ * Bootstrap version and tweaked so it works on base.
+ */
+#fitem_id_availabilityconditionsjson .label {
+    background: #999;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #fff;
+}
+#fitem_id_availabilityconditionsjson .label-warning {
+    background: #f89406;
+    position:relative;
+    top: -1px;
+}
+#fitem_id_availabilityconditionsjson .label:empty {
+    display: none;
+}
+#fitem_id_availabilityconditionsjson *[aria-hidden=true] {
+    display: none;
+}
+x#fitem_id_availabilityconditionsjson select,
+x#fitem_id_availabilityconditionsjson input[type=text] {
+    position:relative;
+    top: 4px;
+}
+#fitem_id_availabilityconditionsjson label {
+    display: inline;
+}
+#fitem_id_availabilityconditionsjson .availability-group {
+    margin-right: 8px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-group {
+    margin-right: 0;
+    margin-left: 8px;
+}
+#fitem_id_availabilityconditionsjson .availability-item,
+#fitem_id_availabilityconditionsjson .availability-header {
+    margin-bottom: 6px;
+}
+#fitem_id_availabilityconditionsjson .availability-none {
+    margin-left: 20px;
+    margin-bottom: 4px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-none {
+    margin-right: 20px;
+    margin-left: 0;
+}
+#fitem_id_availabilityconditionsjson .availability-plugincontrols {
+    padding: 4px 0px 4px 4px;
+    background: none repeat scroll 0% 0% #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 8px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-plugincontrols {
+    padding-right: 4px;
+    padding-left: 0px;
+    margin-right: 0;
+    margin-left: 8px;
+}
+#fitem_id_availabilityconditionsjson .availability-eye,
+#fitem_id_availabilityconditionsjson .availability-delete {
+    margin-right: 8px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-eye,
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-delete {
+    margin-left: 8px;
+    margin-right: 0;
+}
+#fitem_id_availabilityconditionsjson .availability-eye[aria-hidden=true] {
+    display: inline;
+    visibility: hidden;
+}
+#fitem_id_availabilityconditionsjson .availability-list > .availability-eye img {
+    vertical-align: top;
+    margin-top: 12px;
+}
+#fitem_id_availabilityconditionsjson .availability-button {
+    margin-left: 15px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-button {
+    margin-right: 15px;
+    margin-left: 0;
+}
+#fitem_id_availabilityconditionsjson .availability-childlist > .availability-inner {
+    display: inline-block;
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+#fitem_id_availabilityconditionsjson .availability-childlist .availability-childlist > .availability-inner {
+    background: white;
+}
+#fitem_id_availabilityconditionsjson .availability-connector {
+    margin-left: 20px;
+    margin-bottom: 6px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-connector {
+    margin-right: 20px;
+    margin-left: 0;
+}
+
+.mform .error .availability-field {
+    color: black;
+}
+
+.availability-dialogue.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 2px;
+}
+.availability-dialogue ul {
+    display: block;
+    margin: 0;
+}
+.availability-dialogue li {
+    display: block;
+    list-style-type: none;
+    padding: 0 0 4px;
+    clear: both;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 4px;
+}
+.availability-dialogue ul button {
+    float: left;
+    margin-left: 1em;
+    min-width: 140px;
+    margin-top: 4px;
+}
+.dir-rtl .availability-dialogue ul button {
+    float: right;
+    margin-right: 1em;
+    margin-left: 0;
+}
+.availability-dialogue label {
+    margin-left: 170px;
+    margin-right: 1em;
+    margin-bottom: 0;
+    display: block;
+    line-height: 1.5;
+}
+.dir-rtl .availability-dialogue label {
+    margin-right: 170px;
+    margin-left: 1em;
+}
+.availability-dialogue .availability-buttons button {
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-top: 4px;
+}
+
 /**
  * Web Service
  */
