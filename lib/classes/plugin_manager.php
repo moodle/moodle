@@ -957,6 +957,10 @@ class core_plugin_manager {
                 'shibboleth', 'webservice'
             ),
 
+            'availability' => array(
+                'completion', 'date', 'grade', 'group', 'grouping', 'profile'
+            ),
+
             'block' => array(
                 'activity_modules', 'admin_bookmarks', 'badges', 'blog_menu',
                 'blog_recent', 'blog_tags', 'calendar_month',
@@ -1126,7 +1130,7 @@ class core_plugin_manager {
             ),
 
             'tool' => array(
-                'assignmentupgrade', 'behat', 'capability', 'customlang',
+                'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'customlang',
                 'dbtransfer', 'generator', 'health', 'innodb', 'installaddon',
                 'langimport', 'log', 'multilangupgrade', 'phpunit', 'profiling',
                 'qeupgradehelper', 'replace', 'spamcleaner', 'task', 'timezoneimport',
