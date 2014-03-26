@@ -52,7 +52,7 @@ class behat_form_editor extends behat_form_textarea {
         if ($this->running_javascript()) {
             $value = addslashes($value);
             $js = '
-var editor = M.editor_atto.get_editable_node("'.$editorid.'");
+var editor = Y.one(document.getElementById("'.$editorid.'editable"));
 if (editor) {
     editor.setHTML("' . $value . '").focus();
 } else {
