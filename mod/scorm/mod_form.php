@@ -133,6 +133,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         // Display activity name.
         $mform->addElement('advcheckbox', 'displayactivityname', get_string('displayactivityname', 'scorm'));
         $mform->addHelpButton('displayactivityname', 'displayactivityname', 'scorm');
+        $mform->setDefault('displayactivityname', $cfgscorm->displayactivityname);
 
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
