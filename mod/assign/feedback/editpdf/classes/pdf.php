@@ -546,13 +546,13 @@ class pdf extends \FPDI {
             return $ret;
         }
 
-        $testfile = $CFG->dirroot.'/mod/assign/feedback/editpdf/tests/fixtures/testgs.pdf';
-        if (!file_exists($testfile)) {
-            $ret->status = self::GSPATH_NOTESTFILE;
+        if (!$generateimage) {
             return $ret;
         }
 
-        if (!$generateimage) {
+        $testfile = $CFG->dirroot.'/mod/assign/feedback/editpdf/tests/fixtures/testgs.pdf';
+        if (!file_exists($testfile)) {
+            $ret->status = self::GSPATH_NOTESTFILE;
             return $ret;
         }
 
