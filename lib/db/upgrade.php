@@ -3183,103 +3183,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014031400.04);
     }
 
-    if ($oldversion < 2014032000.01) {
-        // Add new fields to the 'tag_instance' table.
-        $table = new xmldb_table('tag_instance');
-        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, false, null, null, 'tagid');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, false, null, '0', 'itemid');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'ordering');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $sql = "UPDATE {tag_instance}
-                   SET timecreated = timemodified";
-        $DB->execute($sql);
-
-        // Update all the course tags.
-        $sql = "UPDATE {tag_instance}
-                   SET component = 'core',
-                       contextid = (SELECT ctx.id
-                                      FROM {context} ctx
-                                     WHERE ctx.contextlevel = :contextlevel
-                                       AND ctx.instanceid = {tag_instance}.itemid)
-                 WHERE itemtype = 'course'";
-        $DB->execute($sql, array('contextlevel' => CONTEXT_COURSE));
-
-        // Update all the user tags.
-        $sql = "UPDATE {tag_instance}
-                   SET component = 'core',
-                       contextid = (SELECT ctx.id
-                                      FROM {context} ctx
-                                     WHERE ctx.contextlevel = :contextlevel
-                                       AND ctx.instanceid = {tag_instance}.itemid)
-                 WHERE itemtype = 'user'";
-        $DB->execute($sql, array('contextlevel' => CONTEXT_USER));
-
-        // Update all the blog post tags.
-        $sql = "UPDATE {tag_instance}
-                   SET component = 'core',
-                       contextid = (SELECT ctx.id
-                                      FROM {context} ctx
-                                      JOIN {post} p
-                                        ON p.userid = ctx.instanceid
-                                     WHERE ctx.contextlevel = :contextlevel
-                                       AND p.id = {tag_instance}.itemid)
-                 WHERE itemtype = 'post'";
-        $DB->execute($sql, array('contextlevel' => CONTEXT_USER));
-
-        // Update all the wiki page tags.
-        $sql = "UPDATE {tag_instance}
-                   SET component = 'mod_wiki',
-                       contextid = (SELECT ctx.id
-                                      FROM {context} ctx
-                                      JOIN {course_modules} cm
-                                        ON cm.id = ctx.instanceid
-                                      JOIN {modules} m
-                                        ON m.id = cm.module
-                                      JOIN {wiki} w
-                                        ON w.id = cm.instance
-                                      JOIN {wiki_subwikis} sw
-                                        ON sw.wikiid = w.id
-                                      JOIN {wiki_pages} wp
-                                        ON wp.subwikiid = sw.id
-                                     WHERE m.name = 'wiki'
-                                       AND ctx.contextlevel = :contextlevel
-                                       AND wp.id = {tag_instance}.itemid)
-                 WHERE itemtype = 'wiki_pages'";
-        $DB->execute($sql, array('contextlevel' => CONTEXT_MODULE));
-
-        // Update all the question tags.
-        $sql = "UPDATE {tag_instance}
-                   SET component = 'core_question',
-                       contextid = (SELECT qc.contextid
-                                      FROM {question} q
-                                      JOIN {question_categories} qc
-                                        ON q.category = qc.id
-                                     WHERE q.id = {tag_instance}.itemid)
-                 WHERE itemtype = 'question'";
-        $DB->execute($sql);
-
-        // Update all the tag tags.
-        $sql = "UPDATE {tag_instance}
-                   SET component = 'core',
-                       contextid = :systemcontext
-                 WHERE itemtype = 'tag'";
-        $DB->execute($sql, array('systemcontext' => context_system::instance()->id));
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014032000.01);
-    }
-
     if ($oldversion < 2014032600.00) {
         // Removing the themes from core.
         $themes = array('afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white', 'formfactor',
@@ -3324,20 +3227,108 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014032600.00);
     }
 
-    if ($oldversion < 2014032600.01) {
-        // Change the default value of the 'contextid' field to null.
+    if ($oldversion < 2014032600.02) {
+        // Add new fields to the 'tag_instance' table.
         $table = new xmldb_table('tag_instance');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, false, null, null, 'tagid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'itemid');
-
-        // Launch change of default for field 'contextid'.
-        $dbman->change_field_default($table, $field);
-
         // Define the 'contextid' foreign key to be added to the tag_instance table.
         $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_key($table, $key);
+            $DB->set_field('tag_instance', 'contextid', null, array('contextid' => 0));
+            $dbman->change_field_default($table, $field);
+        } else {
+            $dbman->add_field($table, $field);
+        }
         $dbman->add_key($table, $key);
 
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'ordering');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $sql = "UPDATE {tag_instance}
+                   SET timecreated = timemodified";
+        $DB->execute($sql);
+
+        // Update all the course tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                     WHERE ctx.contextlevel = :contextlevel
+                                       AND ctx.instanceid = {tag_instance}.itemid)
+                 WHERE itemtype = 'course' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_COURSE));
+
+        // Update all the user tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                     WHERE ctx.contextlevel = :contextlevel
+                                       AND ctx.instanceid = {tag_instance}.itemid)
+                 WHERE itemtype = 'user' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_USER));
+
+        // Update all the blog post tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                      JOIN {post} p
+                                        ON p.userid = ctx.instanceid
+                                     WHERE ctx.contextlevel = :contextlevel
+                                       AND p.id = {tag_instance}.itemid)
+                 WHERE itemtype = 'post' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_USER));
+
+        // Update all the wiki page tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'mod_wiki',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                      JOIN {course_modules} cm
+                                        ON cm.id = ctx.instanceid
+                                      JOIN {modules} m
+                                        ON m.id = cm.module
+                                      JOIN {wiki} w
+                                        ON w.id = cm.instance
+                                      JOIN {wiki_subwikis} sw
+                                        ON sw.wikiid = w.id
+                                      JOIN {wiki_pages} wp
+                                        ON wp.subwikiid = sw.id
+                                     WHERE m.name = 'wiki'
+                                       AND ctx.contextlevel = :contextlevel
+                                       AND wp.id = {tag_instance}.itemid)
+                 WHERE itemtype = 'wiki_pages' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_MODULE));
+
+        // Update all the question tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core_question',
+                       contextid = (SELECT qc.contextid
+                                      FROM {question} q
+                                      JOIN {question_categories} qc
+                                        ON q.category = qc.id
+                                     WHERE q.id = {tag_instance}.itemid)
+                 WHERE itemtype = 'question' AND contextid IS NULL";
+        $DB->execute($sql);
+
+        // Update all the tag tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = :systemcontext
+                 WHERE itemtype = 'tag' AND contextid IS NULL";
+        $DB->execute($sql, array('systemcontext' => context_system::instance()->id));
+
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014032600.01);
+        upgrade_main_savepoint(true, 2014032600.02);
     }
 
     return true;
