@@ -35,7 +35,7 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);
-require_capability('moodle/role:assign', $context);
+require_capability('moodle/course:reviewotherusers', $context);
 
 if ($course->id == SITEID) {
     redirect("$CFG->wwwroot/");

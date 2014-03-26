@@ -144,6 +144,7 @@ $string['course:movesections'] = 'Move sections';
 $string['course:publish'] = 'Publish a course into hub';
 $string['course:request'] = 'Request new courses';
 $string['course:reset'] = 'Reset course';
+$string['course:reviewotherusers'] = 'Review other users';
 $string['course:sectionvisibility'] = 'Control section visibility';
 $string['course:setcurrentsection'] = 'Set current section';
 $string['course:update'] = 'Update course settings';

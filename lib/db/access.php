@@ -813,6 +813,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:reviewotherusers' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ),
+        'clonepermissionsfrom' => 'moodle/role:assign'
+    ),
+
     'moodle/course:bulkmessaging' => array(
 
         'riskbitmask' => RISK_SPAM,
