@@ -10,6 +10,7 @@ https://github.com/twitter/bootstrap.git
 To update to the latest release of twitter bootstrap:
 * remove all files from less/bootstrap,
 * download the new less files and store them in less/bootstrap
+* Apply change in MDL-42195 (We don't want responsive images by default).
 * regenerate files using recess: recess --compile --compress moodle.less > ../style/moodle.css **
 * regenerate files using recess: recess --compile --compress editor.less > ../style/editor.css **
 * update lib/thirdpartylibs.xml
