@@ -230,7 +230,8 @@ class behat_hooks extends behat_base {
 
             self::$initprocessesfinished = true;
         }
-
+        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
+        $this->resize_window('medium');
     }
 
     /**

@@ -587,4 +587,38 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         return;
     }
 
+    /**
+     * Change browser window size.
+     *   - small: 640x480
+     *   - medium: 1024x768
+     *   - large: 2560x1600
+     *
+     * @param string $windowsize size of window.
+     * @throws ExpectationException
+     */
+    protected function resize_window($windowsize) {
+        switch ($windowsize) {
+            case "small":
+                $width = 640;
+                $height = 480;
+                break;
+            case "medium":
+                $width = 1024;
+                $height = 768;
+                break;
+            case "large":
+                $width = 2560;
+                $height = 1600;
+                break;
+            default:
+                preg_match('/^(small|medium|large|\d+x\d+)$/', $windowsize, $matches);
+                if (empty($matches) || (count($matches) != 2)) {
+                    throw new ExpectationException("Invalid screen size, can't resize", $this->getSession());
+                }
+                $size = explode('x', $windowsize);
+                $width = (int) $size[0];
+                $height = (int) $size[1];
+        }
+        $this->getSession()->getDriver()->resizeWindow($width, $height);
+    }
 }
