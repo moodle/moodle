@@ -7,7 +7,17 @@ This files describes API changes for question type plugins.
    response analysis and question stats by variant. But for some question types there might be an almost infinite quantity of
    variants for the question, in this case you can suppress break down by variant by returning false from this method. See for
    example the non-core question type varnumeric or the slightly more complex stack question type.
-
+  + We have added a pair of methods to the question_definition class 'prepare_simulated_post_data' and
+  'get_student_response_values_for_simulation'. You may want to override these methods in question.php in your question type plug
+   -in. These methods are used to convert data from a csv file of simulated step data into the simulated post data that is fed
+   to the question engine. These csv files can be used for unit testing or manual testing the use of your question type within the
+   quiz module.  You  can use the simulate quiz report for manual testing and also to easily generate csv test files. You can
+   run a number of students through a test and then download a csv file representing their interaction with the quiz. For most
+   question types the default of just passing csv data as post data, directly from the csv file will probably work fine. But for
+   certain question types where the meaning of the post data is deliberately obfuscated it might be necessary to convert from a
+   human friendly format in the csv file to response data expected by the question type using 'prepare_simulated_post_data' and
+   to convert back from a question type response array to values for download in a csv file using
+   'get_student_response_values_for_simulation'.
 === 2.6 ===
   + The changes in MDL-32750 were reverted in favour of the new pdw toggle toolbars
     plugin for TinyMCE. The get_non_collapsible_editor_options method has been deprecated.

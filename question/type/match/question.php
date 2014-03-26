@@ -190,11 +190,12 @@ class qtype_match_question extends question_graded_automatically_with_countback 
 
     public function prepare_simulated_post_data($simulatedresponse) {
         $postdata = array();
-        $stemids = array_keys($this->stems);
+        $stemtostemids = array_flip(clean_param_array($this->stems, PARAM_NOTAGS));
         $choicetochoiceno = array_flip($this->choices);
         $choicenotochoiceselectvalue = array_flip($this->choiceorder);
-        foreach ($simulatedresponse as $stemno => $choice) {
-            $stemid = $stemids[$stemno];
+        foreach ($simulatedresponse as $stem => $choice) {
+            $choice = clean_param($choice, PARAM_NOTAGS);
+            $stemid = $stemtostemids[$stem];
             $shuffledstemno = array_search($stemid, $this->stemorder);
             if (empty($choice)) {
                 $choiceselectvalue = 0;
@@ -206,6 +207,21 @@ class qtype_match_question extends question_graded_automatically_with_countback 
             $postdata[$this->field($shuffledstemno)] = $choiceselectvalue;
         }
         return $postdata;
+    }
+
+    public function get_student_response_values_for_simulation($postdata) {
+        $simulatedresponse = array();
+        foreach ($this->stemorder as $shuffledstemno => $stemid) {
+            if (!empty($postdata[$this->field($shuffledstemno)])) {
+                $choiceselectvalue = $postdata[$this->field($shuffledstemno)];
+                $choiceno = $this->choiceorder[$choiceselectvalue];
+                $choice = clean_param($this->choices[$choiceno], PARAM_NOTAGS);
+                $stem = clean_param($this->stems[$stemid], PARAM_NOTAGS);
+                $simulatedresponse[$stem] = $choice;
+            }
+        }
+        ksort($simulatedresponse);
+        return $simulatedresponse;
     }
 
     public function get_right_choice_for($stemid) {
