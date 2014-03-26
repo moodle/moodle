@@ -597,6 +597,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @throws ExpectationException
      */
     protected function resize_window($windowsize) {
+        // Non JS don't support resize window.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
         switch ($windowsize) {
             case "small":
                 $width = 640;
@@ -611,7 +616,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 $height = 1600;
                 break;
             default:
-                preg_match('/^(small|medium|large|\d+x\d+)$/', $windowsize, $matches);
+                preg_match('/^(\d+x\d+)$/', $windowsize, $matches);
                 if (empty($matches) || (count($matches) != 2)) {
                     throw new ExpectationException("Invalid screen size, can't resize", $this->getSession());
                 }
