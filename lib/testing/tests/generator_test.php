@@ -213,57 +213,10 @@ class core_test_generator_testcase extends advanced_testcase {
         // We need id of the grading item for the second module to create availability dependency in the 3rd module.
         $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
 
-        // Now prepare options to create the 4th module which availability depends on other modules.
-        // Following options available if $CFG->enableavailability is set:
+        // Now prepare option to create the 4th module with an availability condition.
         $optionsavailability = array(
-            'showavailability' => 1,
-            'availablefrom' => time() - WEEKSECS,
-            'availableuntil' => time() + WEEKSECS,
-            'conditiongradegroup' => array(
-                array(
-                    'conditiongradeitemid' => $gradingitem->id,
-                    'conditiongrademin' => 20,
-                    'conditiongrademax' => 80,
-                )
-            ),
-            'conditionfieldgroup' => array(
-                array(
-                    'conditionfield' => 'address',
-                    'conditionfieldoperator' => 'contains',
-                    'conditionfieldvalue' => 'street',
-                )
-            ),
-            'conditioncompletiongroup' => array(
-                array(
-                    'conditionsourcecmid' => $m2->cmid,
-                    'conditionrequiredcompletion' => 1
-                ),
-                array(
-                    'conditionsourcecmid' => $m3->cmid,
-                    'conditionrequiredcompletion' => 1
-                )
-            )
-        );
-        // The same data for assertion (different format).
-        $optionsavailabilityassertion = array(
-            'conditionsgrade' => array(
-                $gradingitem->id => (object)array(
-                    'min' => 20,
-                    'max' => 80,
-                    'name' => $gradingitem->itemname
-                )
-            ),
-            'conditionsfield' => array(
-                'address' => (object)array(
-                    'fieldname' => 'address',
-                    'operator' => 'contains',
-                    'value' => 'street'
-                )
-            ),
-            'conditionscompletion' => array(
-                $m2->cmid => 1,
-                $m3->cmid => 1
-            )
+            'availability' => '{"op":"&","showc":[true],"c":[' .
+                '{"type":"date","d":">=","t":' . (time() - WEEKSECS) . '}]}',
         );
 
         // Create module with conditional availability.
@@ -304,12 +257,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertEquals($featuregrade['gradecat'], $gradingitem->categoryid);
 
         $cm4 = $modinfo->cms[$m4->cmid];
-        $this->assertEquals($optionsavailability['showavailability'], $cm4->showavailability);
-        $this->assertEquals($optionsavailability['availablefrom'], $cm4->availablefrom);
-        $this->assertEquals($optionsavailability['availableuntil'], $cm4->availableuntil);
-        $this->assertEquals($optionsavailabilityassertion['conditionsgrade'], $cm4->conditionsgrade);
-        $this->assertEquals($optionsavailabilityassertion['conditionsfield'], $cm4->conditionsfield);
-        $this->assertEquals($optionsavailabilityassertion['conditionscompletion'], $cm4->conditionscompletion);
+        $this->assertEquals($optionsavailability['availability'], $cm4->availability);
     }
 
     public function test_create_block() {

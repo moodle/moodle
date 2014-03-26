@@ -5073,12 +5073,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $DB->delete_records_select('course_modules_completion',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
-    $DB->delete_records_select('course_modules_availability',
-           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
-           array($courseid));
-    $DB->delete_records_select('course_modules_avail_fields',
-           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
-           array($courseid));
 
     // Remove course-module data.
     $cms = $DB->get_records('course_modules', array('course' => $course->id));
@@ -5188,13 +5182,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     }
     $DB->update_record('course', $oldcourse);
 
-    // Delete course sections and availability options.
-    $DB->delete_records_select('course_sections_availability',
-           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
-           array($course->id));
-    $DB->delete_records_select('course_sections_avail_fields',
-           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
-           array($course->id));
+    // Delete course sections.
     $DB->delete_records('course_sections', array('course' => $course->id));
 
     // Delete legacy, section and any other course files.

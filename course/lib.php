@@ -1056,16 +1056,8 @@ function get_array_of_activities($courseid) {
                            $rawmods[$seq]->completiongradeitemnumber;
                    $mod[$seq]->completionview   = $rawmods[$seq]->completionview;
                    $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
-                   $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
-                   $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
-                   $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
                    $mod[$seq]->showdescription  = $rawmods[$seq]->showdescription;
-                   if (!empty($CFG->enableavailability)) {
-                       condition_info::fill_availability_conditions($rawmods[$seq]);
-                       $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
-                       $mod[$seq]->conditionsgrade  = $rawmods[$seq]->conditionsgrade;
-                       $mod[$seq]->conditionsfield  = $rawmods[$seq]->conditionsfield;
-                   }
+                   $mod[$seq]->availability = $rawmods[$seq]->availability;
 
                    $modname = $mod[$seq]->mod;
                    $functionname = $modname."_get_coursemodule_info";
@@ -1139,8 +1131,7 @@ function get_array_of_activities($courseid) {
                    // 'empty'. This list corresponds to code in the cm_info constructor.
                    foreach (array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
                            'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
-                           'icon', 'iconcomponent', 'customdata', 'showavailability', 'availablefrom',
-                           'availableuntil', 'conditionscompletion', 'conditionsgrade',
+                           'icon', 'iconcomponent', 'customdata', 'availability',
                            'completionview', 'completionexpected', 'score', 'showdescription')
                            as $property) {
                        if (property_exists($mod[$seq], $property) &&
@@ -1698,8 +1689,6 @@ function course_delete_module($cmid) {
     // features are not turned on, in case they were turned on previously (these will be
     // very quick on an empty table).
     $DB->delete_records('course_modules_completion', array('coursemoduleid' => $cm->id));
-    $DB->delete_records('course_modules_availability', array('coursemoduleid'=> $cm->id));
-    $DB->delete_records('course_modules_avail_fields', array('coursemoduleid' => $cm->id));
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 

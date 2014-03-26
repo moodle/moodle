@@ -44,8 +44,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             new lang_string('configcompletiondefault', 'completion'), 1, $options));
 
     $optionalsubsystems->add($checkbox = new admin_setting_configcheckbox('enableavailability',
-        new lang_string('enableavailability','condition'),
-        new lang_string('configenableavailability','condition'), 0));
+            new lang_string('enableavailability', 'availability'),
+            new lang_string('enableavailability_desc', 'availability'), 0));
     $checkbox->set_affects_modinfo(true);
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enableplagiarism', new lang_string('enableplagiarism','plagiarism'), new lang_string('configenableplagiarism','plagiarism'), 0));

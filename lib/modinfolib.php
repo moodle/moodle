@@ -99,9 +99,10 @@ class course_modinfo {
     private $instances;
 
     /**
-     * Groups that the current user belongs to. This value is usually not available (set to null)
-     * unless the course has activities set to groupmembersonly. When set, it is an array of
-     * grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'.
+     * Groups that the current user belongs to. This value is calculated on first
+     * request to the property or function.
+     * When set, it is an array of grouping id => array of group id => group id.
+     * Includes grouping id 0 for 'all groups'.
      * @var int[][]
      */
     private $groups;
@@ -562,7 +563,7 @@ class course_modinfo {
         // Get section data
         $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
                 'section, id, course, name, summary, summaryformat, sequence, visible, ' .
-                'availablefrom, availableuntil, showavailability, groupingid');
+                'availability');
         $compressedsections = array();
 
         $formatoptionsdef = course_get_format($course)->section_format_options();
@@ -658,7 +659,6 @@ class course_modinfo {
  * - {@link cm_info::get_icon_url()}
  * - {@link cm_info::$uservisible}
  * - {@link cm_info::$available}
- * - {@link cm_info::$showavailability}
  * - {@link cm_info::$availableinfo}
  * - plus any of the properties listed in Stage 3.
  *
@@ -723,12 +723,7 @@ class course_modinfo {
  * @property-read int $completionview 1 if 'on view' completion is enabled, 0 otherwise - from course_modules table
  * @property-read int $completionexpected Set to a unix time if completion of this activity is expected at a
  *    particular time, 0 if no time set - from course_modules table
- * @property-read int $availablefrom Available date for this activity (0 if not set, or set to seconds since epoch; before this
- *    date, activity does not display to students) - from course_modules table
- * @property-read int $availableuntil Available until date for this activity (0 if not set, or set to seconds since epoch; from
- *    this date, activity does not display to students) - from course_modules table
- * @property-read int $showavailability When activity is unavailable, this field controls whether it is shown to students (0 =
- *    hide completely, 1 = show greyed out with information about when it will be available) -
+ * @property-read string $availability Availability information as JSON string or null if none -
  *    from course_modules table
  * @property-read int $showdescription Controls whether the description of the activity displays on the course main page (in
  *    addition to anywhere it might display within the activity itself). 0 = do not show
@@ -912,26 +907,10 @@ class cm_info implements IteratorAggregate {
     private $completionexpected;
 
     /**
-     * Available date for this activity (0 if not set, or set to seconds since epoch; before this
-     * date, activity does not display to students) - from course_modules table
-     * @var int
+     * Availability information as JSON string or null if none - from course_modules table
+     * @var string
      */
-    private $availablefrom;
-
-    /**
-     * Available until date for this activity (0 if not set, or set to seconds since epoch; from
-     * this date, activity does not display to students) - from course_modules table
-     * @var int
-     */
-    private $availableuntil;
-
-    /**
-     * When activity is unavailable, this field controls whether it is shown to students (0 =
-     * hide completely, 1 = show greyed out with information about when it will be available) -
-     * from course_modules table
-     * @var int
-     */
-    private $showavailability;
+    private $availability;
 
     /**
      * Controls whether the description of the activity displays on the course main page (in
@@ -1095,10 +1074,11 @@ class cm_info implements IteratorAggregate {
         'modplural' => 'get_module_type_name_plural',
         'id' => false,
         'added' => false,
+        'availability' => false,
         'available' => 'get_available',
-        'availablefrom' => false,
+        'availablefrom' => 'get_deprecated_available_date',
         'availableinfo' => 'get_available_info',
-        'availableuntil' => false,
+        'availableuntil' => 'get_deprecated_available_date',
         'completion' => false,
         'completionexpected' => false,
         'completiongradeitemnumber' => false,
@@ -1528,7 +1508,7 @@ class cm_info implements IteratorAggregate {
         static $cmfields = array('id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
             'score', 'indent', 'visible', 'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
-            'availablefrom', 'availableuntil', 'showavailability', 'showdescription');
+            'showdescription', 'availability');
         foreach ($cmfields as $key) {
             $cmrecord->$key = $this->$key;
         }
@@ -1649,19 +1629,24 @@ class cm_info implements IteratorAggregate {
      *
      * When this is function is called, user-visible status is recalculated automatically.
      *
+     * The $showavailability flag does not really do anything any more, but is retained
+     * for backward compatibility. Setting this to false will cause $availableinfo to
+     * be ignored.
+     *
      * Note: May not be called from _cm_info_view (only _cm_info_dynamic).
      * @param bool $available False if this item is not 'available'
      * @param int $showavailability 0 = do not show this item at all if it's not available,
      *   1 = show this item greyed out with the following message
-     * @param string $availableinfo Information about why this is not available which displays
-     *   to those who have viewhiddenactivities, and to everyone if showavailability is set;
-     *   note that this function replaces the existing data (if any)
+     * @param string $availableinfo Information about why this is not available, or
+     *   empty string if not displaying
      * @return void
      */
     public function set_available($available, $showavailability=0, $availableinfo='') {
         $this->check_not_view_only();
         $this->available = $available;
-        $this->showavailability = $showavailability;
+        if (!$showavailability) {
+            $availableinfo = '';
+        }
         $this->availableinfo = $availableinfo;
         $this->update_user_visible();
     }
@@ -1730,9 +1715,7 @@ class cm_info implements IteratorAggregate {
                 ? $mod->completionview : 0;
         $this->completionexpected = isset($mod->completionexpected)
                 ? $mod->completionexpected : 0;
-        $this->showavailability = isset($mod->showavailability) ? $mod->showavailability : 0;
-        $this->availablefrom = isset($mod->availablefrom) ? $mod->availablefrom : 0;
-        $this->availableuntil = isset($mod->availableuntil) ? $mod->availableuntil : 0;
+        $this->availability = isset($mod->availability) ? $mod->availability : null;
         $this->conditionscompletion = isset($mod->conditionscompletion)
                 ? $mod->conditionscompletion : array();
         $this->conditionsgrade = isset($mod->conditionsgrade)
@@ -1774,8 +1757,9 @@ class cm_info implements IteratorAggregate {
 
         if (!empty($CFG->enableavailability)) {
             require_once($CFG->libdir. '/conditionlib.php');
-            // Get availability information
-            $ci = new condition_info($this);
+            // Get availability information.
+            $ci = new \core_availability\info_module($this);
+
             // Note that the modinfo currently available only includes minimal details (basic data)
             // but we know that this function does not need anything more than basic data.
             $this->available = $ci->is_available($this->availableinfo, true,
@@ -1820,12 +1804,32 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Getter method for property $showavailability, ensures that dynamic data is retrieved
+     * Getter method for property $showavailability. Works by checking the
+     * availableinfo property to see if it's empty or not.
+     *
      * @return int
+     * @deprecated Since Moodle 2.7
      */
     private function get_show_availability() {
-        $this->obtain_dynamic_data();
-        return $this->showavailability;
+        debugging('$cm->showavailability property has been deprecated. You ' .
+                'can replace it by checking if $cm->availableinfo has content.',
+                DEBUG_DEVELOPER);
+        return ($this->get_available_info() !== '') ? 1 : 0;
+    }
+
+    /**
+     * Getter method for $availablefrom and $availableuntil. Just returns zero
+     * as these are no longer supported.
+     *
+     * @return int Zero
+     * @deprecated Since Moodle 2.7
+     */
+    private function get_deprecated_available_date() {
+        debugging('$cm->availablefrom and $cm->availableuntil have been deprecated. This ' .
+                'information is no longer available as the system provides more complex ' .
+                'options (for example, there might be different dates for different users).',
+                DEBUG_DEVELOPER);
+        return 0;
     }
 
     /**
@@ -1867,7 +1871,7 @@ class cm_info implements IteratorAggregate {
 
              $this->uservisible = false;
             // Ensure activity is completely hidden from the user.
-            $this->showavailability = 0;
+            $this->availableinfo = '';
         }
     }
 
@@ -1918,12 +1922,23 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Checks whether the module's conditional access settings mean that the user cannot see the activity at all
+     * Checks whether the module's conditional access settings mean that the
+     * user cannot see the activity at all
+     *
+     * This is deprecated because it is confusing (name sounds like it's about
+     * access restriction but it is actually about display), is not used
+     * anywhere, and is not necessary. Nobody (outside conditional libraries)
+     * should care what it is that restricted something.
      *
      * @return bool True if the user cannot see the module. False if the activity is either available or should be greyed out.
+     * @deprecated since 2.7
      */
     public function is_user_access_restricted_by_conditional_access() {
         global $CFG;
+        debugging('cm_info::is_user_access_restricted_by_conditional_access() ' .
+                'is deprecated; this function is not needed (use $cm->uservisible ' .
+                'and $cm->availableinfo) to decide whether it should be available ' .
+                'or appear)', DEBUG_DEVELOPER);
 
         if (empty($CFG->enableavailability)) {
             return false;
@@ -1934,22 +1949,9 @@ class cm_info implements IteratorAggregate {
             return null;
         }
 
-        // If module will always be visible anyway (but greyed out), don't bother checking anything else
-        if ($this->get_show_availability() == CONDITION_STUDENTVIEW_SHOW) {
-            return false;
-        }
-
-        // Can the user see hidden modules?
-        if (has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
-            return false;
-        }
-
-        // Is the module hidden due to unmet conditions?
-        if (!$this->get_available()) {
-            return true;
-        }
-
-        return false;
+        // Return false if user can access the activity, or if its availability
+        // info is set (= should be displayed even though not accessible).
+        return !$this->get_user_visible() && !$this->get_available_info();
     }
 
     /**
@@ -2213,14 +2215,7 @@ class cached_cm_info {
  * @property-read int $visible Section visibility (1 = visible) - from course_sections table
  * @property-read string $summary Section summary text if specified - from course_sections table
  * @property-read int $summaryformat Section summary text format (FORMAT_xx constant) - from course_sections table
- * @property-read int $showavailability When section is unavailable, this field controls whether it is shown to students (0 =
- *    hide completely, 1 = show greyed out with information about when it will be available) -
- *    from course_sections table
- * @property-read int $availablefrom Available date for this section (0 if not set, or set to seconds since epoch;
- *    before this date, section does not display to students) - from course_sections table
- * @property-read int $availableuntil Available until date for this section  (0 if not set, or set to seconds since epoch;
- *    from this date, section does not display to students) - from course_sections table
- * @property-read int $groupingid If section is restricted to users of a particular grouping, this is its id (0 if not set) -
+ * @property-read string $availability Availability information as JSON string -
  *    from course_sections table
  * @property-read array $conditionscompletion Availability conditions for this section based on the completion of
  *    course-modules (array from course-module id to required completion state
@@ -2278,33 +2273,10 @@ class section_info implements IteratorAggregate {
     private $_summaryformat;
 
     /**
-     * When section is unavailable, this field controls whether it is shown to students (0 =
-     * hide completely, 1 = show greyed out with information about when it will be available) -
-     * from course_sections table
-     * @var int
+     * Availability information as JSON string - from course_sections table
+     * @var string
      */
-    private $_showavailability;
-
-    /**
-     * Available date for this section (0 if not set, or set to seconds since epoch; before this
-     * date, section does not display to students) - from course_sections table
-     * @var int
-     */
-    private $_availablefrom;
-
-    /**
-     * Available until date for this section  (0 if not set, or set to seconds since epoch; from
-     * this date, section does not display to students) - from course_sections table
-     * @var int
-     */
-    private $_availableuntil;
-
-    /**
-     * If section is restricted to users of a particular grouping, this is its id
-     * (0 if not set) - from course_sections table
-     * @var int
-     */
-    private $_groupingid;
+    private $_availability;
 
     /**
      * Availability conditions for this section based on the completion of
@@ -2364,10 +2336,7 @@ class section_info implements IteratorAggregate {
         'summary' => '',
         'summaryformat' => '1', // FORMAT_HTML, but must be a string
         'visible' => '1',
-        'showavailability' => '0',
-        'availablefrom' => '0',
-        'availableuntil' => '0',
-        'groupingid' => '0',
+        'availability' => null,
     );
 
     /**
@@ -2518,15 +2487,10 @@ class section_info implements IteratorAggregate {
         }
         if (!empty($CFG->enableavailability)) {
             require_once($CFG->libdir. '/conditionlib.php');
-            // Get availability information
-            $ci = new condition_info_section($this);
+            // Get availability information.
+            $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
                     $userid, $this->modinfo);
-            if ($this->_availableinfo === '' && $this->_groupingid) {
-                // Still may have some extra text in availableinfo because of groupping.
-                // Set as undefined so the next call to get_availabeinfo() calculates it.
-                $this->_availableinfo = null;
-            }
         } else {
             $this->_available = true;
             $this->_availableinfo = '';
@@ -2608,6 +2572,62 @@ class section_info implements IteratorAggregate {
     }
 
     /**
+     * Getter method for property $showavailability. Works by checking the
+     * availableinfo property to see if it's empty or not.
+     *
+     * @return int
+     * @deprecated Since Moodle 2.7
+     */
+    private function get_showavailability() {
+        debugging('$section->showavailability property has been deprecated. You ' .
+                'can replace it by checking if $section->availableinfo has content.',
+                DEBUG_DEVELOPER);
+        return ($this->get_availableinfo() !== '') ? 1 : 0;
+    }
+
+    /**
+     * Getter method for $availablefrom. Just returns zero as no longer supported.
+     *
+     * @return int Zero
+     * @deprecated Since Moodle 2.7
+     */
+    private function get_availablefrom() {
+        debugging('$section->availablefrom has been deprecated. This ' .
+                'information is no longer available as the system provides more complex ' .
+                'options (for example, there might be different dates for different users).',
+                DEBUG_DEVELOPER);
+        return 0;
+    }
+
+    /**
+     * Getter method for $availablefrom. Just returns zero as no longer supported.
+     *
+     * @return int Zero
+     * @deprecated Since Moodle 2.7
+     */
+    private function get_availableuntil() {
+        debugging('$section->availableuntil has been deprecated. This ' .
+                'information is no longer available as the system provides more complex ' .
+                'options (for example, there might be different dates for different users).',
+                DEBUG_DEVELOPER);
+        return 0;
+    }
+
+    /**
+     * Getter method for $groupingid. Just returns zero as no longer supported.
+     *
+     * @return int Zero
+     * @deprecated Since Moodle 2.7
+     */
+    private function get_groupingid() {
+        debugging('$section->groupingid has been deprecated. This ' .
+                'information is no longer available as the system provides more complex ' .
+                'options (for example, combining multiple groupings).',
+                DEBUG_DEVELOPER);
+        return 0;
+    }
+
+    /**
      * Restores the course_sections.sequence value
      *
      * @return string
@@ -2645,18 +2665,6 @@ class section_info implements IteratorAggregate {
         unset($section->section);
         // Sequence stored implicity in modinfo $sections array
         unset($section->sequence);
-
-        // Add availability data if turned on
-        if ($CFG->enableavailability) {
-            require_once($CFG->dirroot . '/lib/conditionlib.php');
-            condition_info_section::fill_availability_conditions($section);
-            if (count($section->conditionscompletion) == 0) {
-                unset($section->conditionscompletion);
-            }
-            if (count($section->conditionsgrade) == 0) {
-                unset($section->conditionsgrade);
-            }
-        }
 
         // Remove default data
         foreach (self::$sectioncachedefaults as $field => $value) {

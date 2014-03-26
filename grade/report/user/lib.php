@@ -360,16 +360,16 @@ class grade_report_user extends grade_report {
                     ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$grade_grade->is_hiddenuntil()))) {
                 $hide = true;
             } else if (!empty($grade_object->itemmodule) && !empty($grade_object->iteminstance)) {
-                // The grade object can be marked visible but still be hidden if...
-                //  1) "enablegroupmembersonly" is on and the activity is assigned to a grouping the user is not in.
-                //  2) the student cannot see the activity due to conditional access and its set to be hidden entirely.
+                // The grade object can be marked visible but still be hidden if
+                // the student cannot see the activity due to conditional access
+                // and it's set to be hidden entirely.
                 $instances = $this->gtree->modinfo->get_instances_of($grade_object->itemmodule);
                 if (!empty($instances[$grade_object->iteminstance])) {
                     $cm = $instances[$grade_object->iteminstance];
                     if (!$cm->uservisible) {
-                        // Further checks are required to determine whether the activity is entirely hidden or just greyed out.
-                        if ($cm->is_user_access_restricted_by_group() || $cm->is_user_access_restricted_by_conditional_access() ||
-                                $cm->is_user_access_restricted_by_capability()) {
+                        // If there is 'availableinfo' text then it is only greyed
+                        // out and not entirely hidden.
+                        if (!$cm->availableinfo) {
                             $hide = true;
                         }
                     }
