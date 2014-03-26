@@ -3324,5 +3324,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014032600.00);
     }
 
+    if ($oldversion < 2014032600.01) {
+        // Change the default value of the 'contextid' field to null.
+        $table = new xmldb_table('tag_instance');
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'itemid');
+
+        // Launch change of default for field 'contextid'.
+        $dbman->change_field_default($table, $field);
+
+        // Define the 'contextid' foreign key to be added to the tag_instance table.
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032600.01);
+    }
+
     return true;
 }
