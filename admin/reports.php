@@ -41,8 +41,9 @@ echo $OUTPUT->heading(get_string('reports'));
 $struninstall = get_string('uninstallplugin', 'core_admin');
 
 $table = new flexible_table('reportplugins_administration_table');
-$table->define_columns(array('name', 'version', 'uninstall'));
-$table->define_headers(array(get_string('plugin'), get_string('version'), $struninstall));
+$table->define_columns(array('name', 'logstoressupported', 'version', 'uninstall'));
+$table->define_headers(array(get_string('plugin'), get_string('logstoressupported', 'admin'), get_string('version'),
+        $struninstall));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'reportplugins');
 $table->set_attribute('class', 'admintable generaltable');
@@ -71,10 +72,21 @@ foreach ($installed as $config) {
     }
 }
 
+$logmanager = get_log_manager();
+
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';
     if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('report_'.$plugin, 'manage')) {
         $uninstall = html_writer::link($uninstallurl, $struninstall);
+    }
+
+    $stores = $logmanager->get_supported_logstores('report_' . $plugin);
+    if ($stores === false) {
+        $supportedstores = get_string('logstorenotrequired', 'admin');
+    } else if (!empty($stores)) {
+        $supportedstores = implode(', ', $stores);
+    } else {
+        $supportedstores = get_string('nosupportedlogstore', 'admin');;
     }
 
     if (!isset($versions[$plugin])) {
@@ -96,7 +108,7 @@ foreach ($plugins as $plugin => $name) {
         }
     }
 
-    $table->add_data(array($name, $version, $uninstall));
+    $table->add_data(array($name, $supportedstores, $version, $uninstall));
 }
 
 $table->print_html();
