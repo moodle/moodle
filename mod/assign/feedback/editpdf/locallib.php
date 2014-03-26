@@ -265,7 +265,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return bool
      */
     public function is_enabled() {
-        $testpath = assignfeedback_editpdf\pdf::test_gs_path();
+        $testpath = assignfeedback_editpdf\pdf::test_gs_path(false);
         if ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK) {
             return true;
         }
