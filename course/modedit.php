@@ -160,9 +160,7 @@ if (!empty($add)) {
     $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
     $data->showdescription    = $cm->showdescription;
     if (!empty($CFG->enableavailability)) {
-        $data->availablefrom      = $cm->availablefrom;
-        $data->availableuntil     = $cm->availableuntil;
-        $data->showavailability   = $cm->showavailability;
+        $data->availabilityconditionsjson = $cm->availability;
     }
 
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
