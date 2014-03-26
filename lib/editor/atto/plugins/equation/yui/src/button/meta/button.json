@@ -1,0 +1,10 @@
+{
+    "moodle-atto_equation-button": {
+        "requires": [
+            "moodle-editor_atto-plugin",
+            "io",
+            "event-valuechange",
+            "tabview"
+        ]
+    }
+}

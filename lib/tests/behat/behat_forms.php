@@ -99,9 +99,6 @@ class behat_forms extends behat_base {
      */
     protected function expand_all_fields() {
 
-        // We ensure that all the editors are loaded and we can interact with them.
-        $this->ensure_editors_are_loaded();
-
         // We already know that we waited for the DOM and the JS to be loaded, even the editor
         // so, we will use the reduced timeout as it is a common task and we should save time.
         try {

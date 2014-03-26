@@ -45,7 +45,7 @@ Feature: Publish rubrics as templates
 
   @javascript
   Scenario: Create a rubric template and reuse it as a teacher, with Javascript enabled
-    Then the field "Description" matches value "<p>Assignment 1 description</p>"
+    Then the field "Description" matches value "Assignment 1 description"
     And I should see "Criterion 1"
     And I press "Cancel"
 

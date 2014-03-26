@@ -1,0 +1,29 @@
+{
+    "name": "moodle-editor_atto-editor",
+    "builds": {
+        "moodle-editor_atto-editor": {
+            "jsfiles": [
+                "editor.js",
+                "textarea.js",
+                "clean.js",
+                "toolbar.js",
+                "toolbar-keyboardnav.js",
+                "selection.js",
+                "styling.js",
+                "filepicker.js"
+            ]
+        },
+        "moodle-editor_atto-plugin": {
+            "jsfiles": [
+                "editor-plugin.js",
+                "editor-plugin-buttons.js",
+                "editor-plugin-dialogue.js"
+            ]
+        },
+        "moodle-editor_atto-menu": {
+            "jsfiles": [
+                "menu.js"
+            ]
+        }
+    }
+}
