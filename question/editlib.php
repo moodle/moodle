@@ -441,16 +441,9 @@ class question_bank_checkbox_column extends question_bank_column_base {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
-            $PAGE->requires->js('/question/qengine.js');
-            $module = array(
-                'name'      => 'qbank',
-                'fullpath'  => '/question/qbank.js',
-                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-                'strings'   => array(),
-                'async'     => false,
-            );
-            $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-                    get_string('deselectall'), 'checkq' . $question->id), false, $module);
+            $PAGE->requires->strings_for_js(array('selectall', 'deselectall'), 'moodle');
+            $PAGE->requires->yui_module('moodle-question-qbankmanager', 'M.question.qbankmanager.init',
+                    array('checkq' . $question->id));
             $this->firstrow = false;
         }
     }
