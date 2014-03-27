@@ -4820,7 +4820,13 @@ class assign {
                 $logmessage = get_string('submissionstatementacceptedlog',
                                          'mod_assign',
                                          fullname($USER));
-                $this->add_to_log('submission statement accepted', $logmessage);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $submission->id
+                );
+                $event = \mod_assign\event\statement_accepted::create($params);
+                $event->set_legacy_logdata('submission statement accepted', $logmessage);
+                $event->trigger();
             }
             $this->notify_graders($submission);
             $this->notify_student_submission_receipt($submission);
@@ -5612,6 +5618,7 @@ class assign {
                 }
             }
         }
+
         $allempty = $this->submission_empty($submission);
         if ($pluginerror || $allempty) {
             if ($allempty) {

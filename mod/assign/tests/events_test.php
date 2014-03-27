@@ -712,4 +712,75 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the statement_accepted event.
+     */
+    public function test_statement_accepted() {
+        // We want to be a student so we can submit assignments.
+        $this->setUser($this->students[0]);
+
+        // We do not want to send any messages to the student during the PHPUNIT test.
+        set_config('submissionreceipts', false, 'assign');
+
+        $assign = $this->create_instance();
+
+        // Create the data we want to pass to the submit_for_grading function.
+        $data = new stdClass();
+        $data->submissionstatement = 'We are the Borg. You will be assimilated. Resistance is futile. - do you agree
+            to these terms?';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->submit_for_grading($data, array());
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\statement_accepted', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'submission statement accepted',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('submissionstatementacceptedlog',
+                'mod_assign',
+                fullname($this->students[0])),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+
+        // Enable the online text submission plugin.
+        $submissionplugins = $assign->get_submission_plugins();
+        foreach ($submissionplugins as $plugin) {
+            if ($plugin->get_type() === 'onlinetext') {
+                $plugin->enable();
+                break;
+            }
+        }
+
+        // Create the data we want to pass to the save_submission function.
+        $data = new stdClass();
+        $data->onlinetext_editor = array(
+            'text' => 'Online text',
+            'format' => FORMAT_HTML,
+            'itemid' => file_get_unused_draft_itemid()
+        );
+        $data->submissionstatement = 'We are the Borg. You will be assimilated. Resistance is futile. - do you agree
+            to these terms?';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->save_submission($data, $notices);
+        $events = $sink->get_events();
+        $event = $events[2];
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\statement_accepted', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }
