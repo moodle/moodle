@@ -678,6 +678,41 @@ class assign_events_testcase extends mod_assign_base_testcase {
     }
 
     /**
+     * Test the submission_form_viewed event.
+     */
+    public function test_submission_confirmation_form_viewed() {
+        global $PAGE;
+
+        $this->setUser($this->students[0]);
+
+        $assign = $this->create_instance();
+
+        // We need to set the URL in order to view the submission form.
+        $PAGE->set_url('/a_url');
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->view('submit');
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\submission_confirmation_form_viewed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'view confirm submit assignment form',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('viewownsubmissionform', 'assign'),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
      * Test the reveal_identities_confirmation_page_viewed event.
      */
     public function test_reveal_identities_confirmation_page_viewed() {

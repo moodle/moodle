@@ -3697,8 +3697,15 @@ class assign {
         $o .= $this->get_renderer()->render($submitforgradingpage);
         $o .= $this->view_footer();
 
-        $logmessage = get_string('viewownsubmissionform', 'assign');
-        $this->add_to_log('view confirm submit assignment form', $logmessage);
+        $logmessage = new lang_string('viewownsubmissionform', 'assign');
+        $event = \mod_assign\event\submission_confirmation_form_viewed::create(array(
+            'context' => $this->get_context(),
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        ));
+        $event->set_legacy_logdata('view confirm submit assignment form', $logmessage);
+        $event->trigger();
 
         return $o;
     }
