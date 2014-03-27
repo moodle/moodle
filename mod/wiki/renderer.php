@@ -482,7 +482,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         foreach ($items as $key => $item) {
             $selectoptions[$key + 1] = $item;
         }
-        $select = new single_select(new moodle_url('/mod/wiki/map.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect);
+        $select = new single_select(new moodle_url('/mod/wiki/map.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect, null);
         $select->label = get_string('mapmenu', 'wiki') . ': ';
         return $this->output->container($this->output->render($select), 'midpad');
     }
