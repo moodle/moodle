@@ -137,7 +137,7 @@ div.editor_atto_toolbar div.atto_group {
 }
 .atto_form label {
     display: block;
-    margin: 5px;
+    margin: 0 0 5px 0;
 }
 
 /* RTL Rules */
