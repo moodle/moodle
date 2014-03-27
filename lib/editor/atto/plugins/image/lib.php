@@ -48,7 +48,6 @@ function atto_image_strings_for_js() {
         'enteralt',
         'height',
         'presentation',
-        'preview',
         'presentationoraltrequired',
         'width',
     );
