@@ -54,12 +54,12 @@ class behat_form_editor extends behat_form_textarea {
             $js = '
 var editor = Y.one(document.getElementById("'.$editorid.'editable"));
 if (editor) {
-    editor.setHTML("' . $value . '").focus();
-} else {
-    editor = Y.one(document.getElementById("'.$editorid.'"));
-    editor.set("value", "' . $value . '");
-}';
-            $result = $this->session->executeScript($js);
+    editor.setHTML("' . $value . '");
+}
+editor = Y.one(document.getElementById("'.$editorid.'"));
+editor.set("value", "' . $value . '");
+';
+            $this->session->executeScript($js);
         } else {
             parent::set_value($value);
         }
