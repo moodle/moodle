@@ -20,3 +20,7 @@
     padding: 5px;
     min-width: 206px;
 }
+
+.atto_form .atto_equation_preview {
+    margin-bottom: 0px; /* Turn off the margin-bottom from the class "well" */
+}
