@@ -676,4 +676,40 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the reveal_identities_confirmation_page_viewed event.
+     */
+    public function test_reveal_identities_confirmation_page_viewed() {
+        global $PAGE;
+
+        // Set to the admin user so we have the permission to reveal identities.
+        $this->setAdminUser();
+
+        $assign = $this->create_instance();
+
+        // We need to set the URL in order to view the submission form.
+        $PAGE->set_url('/a_url');
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->view('revealidentities');
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\reveal_identities_confirmation_page_viewed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'view',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('viewrevealidentitiesconfirm', 'assign'),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }

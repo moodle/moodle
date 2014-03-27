@@ -148,6 +148,7 @@ $string['eventgradingformviewed'] = 'Grading form viewed';
 $string['eventgradingtableviewed'] = 'Grading table viewed';
 $string['eventidentitiesrevealed'] = 'The identities have been revealed.';
 $string['eventmarkerupdated'] = 'The allocated marker has been updated.';
+$string['eventrevealidentitiesconfirmationpageviewed'] = 'Reveal identities confirmation page viewed.';
 $string['eventstatementaccepted'] = 'The user has accepted the statement of the submission.';
 $string['eventsubmissioncreated'] = 'Submission created.';
 $string['eventsubmissionduplicated'] = 'The user duplicated his submission.';

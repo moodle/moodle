@@ -2972,8 +2972,6 @@ class assign {
      * @return string
      */
     protected function view_reveal_identities_confirm() {
-        global $CFG, $USER;
-
         require_capability('mod/assign:revealidentities', $this->get_context());
 
         $o = '';
@@ -2996,7 +2994,16 @@ class assign {
                                              $confirmurl,
                                              $cancelurl);
         $o .= $this->view_footer();
-        $this->add_to_log('view', get_string('viewrevealidentitiesconfirm', 'assign'));
+
+        $event = \mod_assign\event\reveal_identities_confirmation_page_viewed::create(array(
+            'context' => $this->get_context(),
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        ));
+        $event->set_legacy_logdata('view', new lang_string('viewrevealidentitiesconfirm', 'assign'));
+        $event->trigger();
+
         return $o;
     }
 
