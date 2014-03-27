@@ -756,7 +756,7 @@ class core_useragent {
         if ($useragent === false) {
             return false;
         }
-        if (strpos($useragent, 'Linux; U; Android') === false) {
+        if (strpos($useragent, 'Android') === false) {
             return false;
         }
         if (empty($version)) {
