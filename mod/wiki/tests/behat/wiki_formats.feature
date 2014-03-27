@@ -67,8 +67,7 @@ Feature: There is a choice of formats for editing a wiki page
     When I set the following fields to these values:
       | HTML format | 1 |
     And I press "Create page"
-    Then "#id_newcontent_editoreditable" "css_element" should exist
-    And ".editor_atto_content" "css_element" should exist
+    Then "#fitem_id_newcontent_editor" "css_element" should exist
     And I set the following fields to these values:
       | HTML format | I'm a text |
     And I press "Save"
