@@ -34,6 +34,7 @@ $string['customtoolbar_desc'] = 'Each line contains a list of comma separated bu
 $string['fontselectlist'] = 'Available fonts list';
 $string['pluginname'] = 'TinyMCE HTML editor';
 $string['settings'] = 'General settings';
+$string['subplugintype_tinymce'] = 'Plugin';
 $string['subplugintype_tinymce_plural'] = 'Plugins';
 
 
