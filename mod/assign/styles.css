@@ -254,3 +254,15 @@ td.submissioneditable {
 #page-mod-assign-view .mod-assign-history-panel .c0 {
     width: 150px;
 }
+
+
+#page-mod-assign-view .gradingtable .moodle-actionmenu {
+    white-space: nowrap;
+}
+#page-mod-assign-view .gradingtable .moodle-actionmenu[data-enhanced].show .menu a {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+#page-mod-assign-view .gradingtable .menu-action img {
+    display: none;
+}
