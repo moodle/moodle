@@ -44,10 +44,7 @@ insert = equation, charmap, table, clear
 undo = undo
 accessibility = accessibilitychecker, accessibilityhelper
 other = html';
-    $setting = new admin_setting_configtextarea('editor_atto/toolbar',
-                                                    $name,
-                                                    $desc,
-                                                    $default);
+    $setting = new editor_atto_toolbar_setting('editor_atto/toolbar', $name, $desc, $default);
 
     $settings->add($setting);
 }
