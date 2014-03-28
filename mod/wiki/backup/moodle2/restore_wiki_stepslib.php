@@ -91,7 +91,7 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
             $newitemid = false;
         }
 
-        $this->set_mapping('wiki_subwiki', $oldid, $newitemid);
+        $this->set_mapping('wiki_subwiki', $oldid, $newitemid, true);
     }
 
     protected function process_wiki_page($data) {
@@ -171,6 +171,6 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
     protected function after_execute() {
         // Add wiki related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_wiki', 'intro', null);
-        $this->add_related_files('mod_wiki', 'attachments', 'wiki_page');
+        $this->add_related_files('mod_wiki', 'attachments', 'wiki_subwiki');
     }
 }
