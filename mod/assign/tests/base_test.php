@@ -312,4 +312,26 @@ class testable_assign extends assign {
 
         return parent::view_batch_set_workflow_state($mform);
     }
+
+    public function testable_view_batch_markingallocation() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
+
+        // Mock submit data.
+        $data = array();
+        $data['selectedusers'] = '1';
+        mod_assign_batch_set_allocatedmarker_form::mock_submit($data);
+
+        // Set required variables in the form - not valid just allows us to continue.
+        $formparams = array();
+        $formparams['users'] = array(1);
+        $formparams['usershtml'] = 1;
+        $formparams['cm'] = $this->get_course_module()->id;
+        $formparams['context'] = $this->get_context();
+        $formparams['markers'] = 1;
+        $mform = new mod_assign_batch_set_allocatedmarker_form('', $formparams);
+
+        return parent::view_batch_markingallocation($mform);
+    }
 }

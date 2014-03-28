@@ -3603,7 +3603,7 @@ class assign {
      * @param moodleform $mform Set to a grading batch operations form
      * @return string - the page to view after processing these actions
      */
-    private function view_batch_markingallocation($mform) {
+    public function view_batch_markingallocation($mform) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
@@ -3654,7 +3654,16 @@ class assign {
         $o .= $this->get_renderer()->render(new assign_form('setworkflowstate', $mform));
         $o .= $this->view_footer();
 
-        $this->add_to_log('view batch set marker allocation', get_string('viewbatchmarkingallocation', 'assign'));
+        $logmessage = new lang_string('viewbatchmarkingallocation', 'assign');
+        $event = \mod_assign\event\batch_set_marker_allocation_viewed::create(array(
+            'context' => $this->get_context(),
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        ));
+        $event->set_legacy_logdata('view batch set marker allocation', $logmessage);
+        $event->trigger();
+
         return $o;
     }
 
