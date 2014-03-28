@@ -94,6 +94,7 @@ class sco_launched extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->other['loadedcontent'])) {
             throw new \coding_exception('The event mod_scorm\\event\\sco_launched must specify loadedcontent.');
         }

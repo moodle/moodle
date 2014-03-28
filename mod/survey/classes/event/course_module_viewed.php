@@ -54,6 +54,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->other['viewed'])) {
             throw new \coding_exception('Other must contain the key viewed.');
         }

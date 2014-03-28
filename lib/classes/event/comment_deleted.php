@@ -94,6 +94,7 @@ abstract class comment_deleted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['itemid'])) {
             throw new \coding_exception('The itemid needs to be set in $other');
         }

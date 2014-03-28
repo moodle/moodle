@@ -95,6 +95,7 @@ class page_version_restored extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['pageid'])) {
             throw new \coding_exception('The pageid needs to be set in $other');
         }

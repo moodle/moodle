@@ -87,6 +87,7 @@ class course_module_completion_updated extends base {
      * @throws \coding_exception in case of a problem.
      */
     protected function validate_data() {
+        parent::validate_data();
         // Make sure the context level is set to module.
         if ($this->contextlevel !== CONTEXT_MODULE) {
             throw new \coding_exception('Context passed must be module context.');

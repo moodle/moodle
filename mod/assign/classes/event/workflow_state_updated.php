@@ -112,6 +112,7 @@ class workflow_state_updated extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['newstate'])) {
             throw new \coding_exception('newstate must be set in $other.');
         } else if (!isset($this->relateduserid)) {

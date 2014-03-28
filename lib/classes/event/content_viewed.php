@@ -113,11 +113,10 @@ abstract class content_viewed extends base {
      * @return void
      */
     protected function validate_data() {
-        if (debugging('', DEBUG_DEVELOPER)) {
-            // Make sure this class is never used without a content identifier.
-            if (empty($this->other['content'])) {
-                throw new \coding_exception('content_viewed event must define content identifier.');
-            }
+        parent::validate_data();
+        // Make sure this class is never used without a content identifier.
+        if (empty($this->other['content'])) {
+            throw new \coding_exception('content_viewed event must define content identifier.');
         }
     }
 }

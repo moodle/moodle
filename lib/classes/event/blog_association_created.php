@@ -103,6 +103,7 @@ class blog_association_created extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->other['associatetype']) || ($this->other['associatetype'] !== 'course'
                 && $this->other['associatetype'] !== 'coursemodule')) {
             throw new \coding_exception('Invalid associatetype in event blog_association_created.');

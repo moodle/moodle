@@ -98,6 +98,7 @@ class webservice_token_created extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->relateduserid)) {
            throw new \coding_exception('The property \'relateduserid\' must be set.');
         }

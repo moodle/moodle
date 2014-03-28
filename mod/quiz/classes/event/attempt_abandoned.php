@@ -111,6 +111,7 @@ class attempt_abandoned extends \core\event\base {
      * Custom validation.
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!array_key_exists('submitterid', $this->other)) {
             throw new \coding_exception('Other must contain the key submitterid');
         } else if (!isset($this->relateduserid)) {

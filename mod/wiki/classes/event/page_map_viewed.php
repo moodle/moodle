@@ -94,6 +94,7 @@ class page_map_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['option'])) {
             throw new \coding_exception('The option need to be set in $other, even if 0.');
         }

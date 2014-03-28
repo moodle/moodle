@@ -92,6 +92,7 @@ abstract class course_module_viewed extends base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         // Make sure this class is never used without proper object details.
         if (empty($this->objectid) || empty($this->objecttable)) {
             throw new \coding_exception('course_module_viewed event must define objectid and object table.');

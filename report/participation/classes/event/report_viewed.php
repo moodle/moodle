@@ -94,6 +94,7 @@ class report_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->data['other']['instanceid'])) {
             throw new \coding_exception('The property instanceid must be set in other.');
         }

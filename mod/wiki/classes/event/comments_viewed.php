@@ -80,6 +80,7 @@ class comments_viewed extends \core\event\comments_viewed {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->objectid) || empty($this->objecttable)) {
             throw new \coding_exception('The objectid and objecttable need to be set in $other');
         }

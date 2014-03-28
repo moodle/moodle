@@ -113,6 +113,7 @@ class webservice_login_failed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['reason'])) {
            throw new \coding_exception('The key \'reason\' needs to be set in $other.');
         } else if (!isset($this->other['method'])) {

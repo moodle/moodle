@@ -120,6 +120,7 @@ class course_module_created extends base {
      * Throw \coding_exception notice in case of any problems.
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['modulename'])) {
             throw new \coding_exception("Field other['modulename'] cannot be empty");
         }
