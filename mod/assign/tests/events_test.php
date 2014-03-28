@@ -853,4 +853,31 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the batch_set_workflow_state_viewed event.
+     */
+    public function test_batch_set_workflow_state_viewed() {
+        $assign = $this->create_instance();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $assign->testable_view_batch_set_workflow_state();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_assign\event\batch_set_workflow_state_viewed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'view batch set marking workflow state',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('viewbatchsetmarkingworkflowstate', 'assign'),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }

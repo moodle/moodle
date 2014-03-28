@@ -142,6 +142,7 @@ $string['editingstatus'] = 'Editing status';
 $string['editaction'] = 'Actions...';
 $string['eventallsubmissionsdownloaded'] = 'All the submissions are being downloaded.';
 $string['eventassessablesubmitted'] = 'A submission has been submitted.';
+$string['eventbatchsetworkflowstateviewed'] = 'Batch set workflow state viewed.';
 $string['eventextensiongranted'] = 'An extension has been granted.';
 $string['eventfeedbackviewed'] = 'Feedback viewed';
 $string['eventgradingformviewed'] = 'Grading form viewed';
