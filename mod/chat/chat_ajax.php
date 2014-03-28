@@ -130,7 +130,6 @@ case 'update':
             // when somebody enter room, user list will be updated
             if (!empty($message->system)){
                 $send_user_list = true;
-                $users = chat_format_userlist(chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid), $course);
             }
             if ($html = chat_format_message_theme($message, $chatuser, $USER, $cm->groupingid, $theme)) {
                 $message->mymessage = ($USER->id == $message->userid);
@@ -144,8 +143,9 @@ case 'update':
         }
     }
 
-    if(!empty($users) && $send_user_list){
+    if($send_user_list){
         // return users when system message coming
+        $users = chat_format_userlist(chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid), $course);
         $response['users'] = $users;
     }
 
