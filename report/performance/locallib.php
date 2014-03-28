@@ -232,16 +232,19 @@ class report_performance {
      */
     public static function report_performance_check_automatic_backup() {
         global $CFG;
+        require_once($CFG->dirroot . '/backup/util/helper/backup_cron_helper.class.php');
+
         $issueresult = new report_performance_issue();
         $issueresult->issue = 'report_performance_check_automatic_backup';
         $issueresult->name = get_string('check_backup', 'report_performance');
 
-        if (!empty($CFG->backup_auto_active) && ($CFG->backup_auto_active == 1)) {
+        $automatedbackupsenabled = get_config('backup', 'backup_auto_active');
+        if ($automatedbackupsenabled == backup_cron_automated_helper::AUTO_BACKUP_ENABLED) {
             $issueresult->statusstr = get_string('autoactiveenabled', 'backup');
             $issueresult->status = self::REPORT_PERFORMANCE_WARNING;
             $issueresult->comment = get_string('check_backup_comment_enable', 'report_performance');
         } else {
-            if (empty($CFG->backup_auto_active)) {
+            if ($automatedbackupsenabled == backup_cron_automated_helper::AUTO_BACKUP_DISABLED) {
                 $issueresult->statusstr = get_string('autoactivedisabled', 'backup');
             } else {
                 $issueresult->statusstr = get_string('autoactivemanual', 'backup');
