@@ -104,7 +104,7 @@ class editor_atto_toolbar_setting extends admin_setting_configtextarea {
  * @copyright 2014 Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class atto_subplugins_settings extends admin_setting {
+class editor_atto_subplugins_setting extends admin_setting {
 
     /**
      * Constructor.

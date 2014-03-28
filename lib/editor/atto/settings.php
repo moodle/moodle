@@ -29,7 +29,7 @@ $ADMIN->add('editorsettings', new admin_category('editoratto', $editor->displayn
 $settings = new admin_settingpage('editorsettingsatto', new lang_string('settings', 'editor_atto'));
 if ($ADMIN->fulltree) {
     require_once(__DIR__ . '/adminlib.php');
-    $settings->add(new atto_subplugins_settings());
+    $settings->add(new editor_atto_subplugins_setting());
     $name = new lang_string('toolbarconfig', 'editor_atto');
     $desc = new lang_string('toolbarconfig_desc', 'editor_atto');
     $default = 'collapse = collapse
