@@ -272,6 +272,10 @@ if ($xml = glossary_read_imported_file($result)) {
             }
         }
     }
+
+    // Reset caches.
+    \mod_glossary\local\concept_cache::reset_glossary($glossary);
+
     // processed entries
     echo $OUTPUT->box_start('glossarydisplay generalbox');
     echo '<table class="glossaryimportexport">';

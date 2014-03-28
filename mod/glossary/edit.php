@@ -186,6 +186,17 @@ if ($mform->is_cancelled()){
         }
     }
 
+    // Reset caches.
+    if ($isnewentry) {
+        if ($entry->usedynalink and $entry->approved) {
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
+        }
+    } else {
+        // So many things may affect the linking, let's just purge the cache always on edit.
+        \mod_glossary\local\concept_cache::reset_glossary($glossary);
+    }
+
+
     redirect("view.php?id=$cm->id&mode=entry&hook=$entry->id");
 }
 
