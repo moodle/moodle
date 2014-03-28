@@ -4091,7 +4091,17 @@ class assign {
         }
 
         $o .= $this->view_footer();
-        $this->add_to_log('view', get_string('viewownsubmissionstatus', 'assign'));
+
+        $params = array(
+            'context' => $this->context,
+            'other' => array(
+                'assignid' => $this->get_instance()->id
+            )
+        );
+        $event = \mod_assign\event\submission_status_viewed::create($params);
+        $event->set_legacy_logdata('view', new lang_string('viewownsubmissionstatus', 'assign'));
+        $event->trigger();
+
         return $o;
     }
 

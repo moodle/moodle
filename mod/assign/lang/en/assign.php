@@ -157,6 +157,7 @@ $string['eventsubmissionformviewed'] = 'Submission form viewed.';
 $string['eventsubmissiongraded'] = 'The submission has been graded.';
 $string['eventsubmissionlocked'] = 'The submissions have been locked for a user.';
 $string['eventsubmissionstatusupdated'] = 'The status of the submission has been updated.';
+$string['eventsubmissionstatusviewed'] = 'The status of the submission has been viewed.';
 $string['eventsubmissionunlocked'] = 'The submissions have been unlocked for a user.';
 $string['eventsubmissionupdated'] = 'Submission updated.';
 $string['eventsubmissionviewed'] = 'Submission viewed.';
