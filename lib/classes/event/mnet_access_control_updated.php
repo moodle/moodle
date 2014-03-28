@@ -60,11 +60,8 @@ class mnet_access_control_updated extends base {
      * @return string
      */
     public function get_description() {
-        $mnetaccesscontrol = $this->get_record_snapshot('mnet_sso_access_control', $this->objectid);
-        $mnethost = $this->get_record_snapshot('mnet_host', $mnetaccesscontrol->mnet_host_id);
-
-        return 'Access control created for the user with the username \'' . $mnetaccesscontrol->username . '\' belonging
-            to the mnet host \'' . $mnethost->name . '\'';
+        return 'Access control created for the user with the username \'' . $this->other['username'] . '\' belonging
+            to the mnet host \'' . $this->other['hostname'] . '\'';
     }
 
     /**
@@ -73,11 +70,29 @@ class mnet_access_control_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $mnetaccesscontrol = $this->get_record_snapshot('mnet_sso_access_control', $this->objectid);
-        $mnethost = $this->get_record_snapshot('mnet_host', $mnetaccesscontrol->mnet_host_id);
+        return array(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php', 'SSO ACL: ' . $this->other['accessctrl'] .
+            ' user \'' . $this->other['username'] . '\' from ' . $this->other['hostname']);
+    }
 
-        return array(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php', 'SSO ACL: ' .
-            $mnetaccesscontrol->accessctrl . ' user \'' . $mnetaccesscontrol->username . '\' from ' .
-            $mnethost->name);
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['username'])) {
+            throw new \coding_exception('The \'username\' must be set in other.');
+        }
+
+        if (!isset($this->other['hostname'])) {
+            throw new \coding_exception('The \'hostname\' must be set in other.');
+        }
+
+        if (!isset($this->other['accessctrl'])) {
+            throw new \coding_exception('The \'accessctrl\' must be set in other.');
+        }
     }
 }

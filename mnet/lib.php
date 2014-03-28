@@ -447,7 +447,12 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
         // Trigger access control updated event.
         $params = array(
             'objectid' => $aclrecord->id,
-            'context' => context_system::instance()
+            'context' => context_system::instance(),
+            'other' => array(
+                'username' => $username,
+                'hostname' => $mnethost->name,
+                'accessctrl' => $accessctrl
+            )
         );
         $event = \core\event\mnet_access_control_updated::create($params);
         $event->add_record_snapshot('mnet_host', $mnethost);
@@ -463,7 +468,12 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
         // Trigger access control created event.
         $params = array(
             'objectid' => $aclrecord->id,
-            'context' => context_system::instance()
+            'context' => context_system::instance(),
+            'other' => array(
+                'username' => $username,
+                'hostname' => $mnethost->name,
+                'accessctrl' => $accessctrl
+            )
         );
         $event = \core\event\mnet_access_control_created::create($params);
         $event->add_record_snapshot('mnet_host', $mnethost);
