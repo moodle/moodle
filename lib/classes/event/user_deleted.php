@@ -58,7 +58,7 @@ class user_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'User profile deleted for userid ' . $this->objectid;
+        return 'User profile deleted for the user with the id ' . $this->objectid;
     }
 
     /**
@@ -76,12 +76,13 @@ class user_deleted extends base {
      * @return \stdClass user data.
      */
     protected function get_legacy_eventdata() {
-        $user = $this->get_record_snapshot('user', $this->data['objectid']);
+        $user = $this->get_record_snapshot('user', $this->objectid);
         $user->deleted = 0;
-        $user->username = $this->data['other']['username'];
-        $user->email = $this->data['other']['email'];
-        $user->idnumber = $this->data['other']['idnumber'];
-        $user->picture = $this->data['other']['picture'];
+        $user->username = $this->other['username'];
+        $user->email = $this->other['email'];
+        $user->idnumber = $this->other['idnumber'];
+        $user->picture = $this->other['picture'];
+
         return $user;
     }
 
@@ -91,8 +92,8 @@ class user_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $user = $this->get_record_snapshot('user', $this->data['objectid']);
-        return array(SITEID, 'user', 'delete', "view.php?id=".$user->id, $user->firstname.' '.$user->lastname);
+        $user = $this->get_record_snapshot('user', $this->objectid);
+        return array(SITEID, 'user', 'delete', 'view.php?id=' . $user->id, $user->firstname . ' ' . $user->lastname);
     }
 
     /**
@@ -102,29 +103,26 @@ class user_deleted extends base {
      * @return void
      */
     protected function validate_data() {
-        global $CFG;
+        parent::validate_data();
 
-        if ($CFG->debugdeveloper) {
-            parent::validate_data();
-            if (!isset($this->other['username'])) {
-                throw new \coding_exception('username must be set in $other.');
-            }
+        if (!isset($this->other['username'])) {
+            throw new \coding_exception('username must be set in $other.');
+        }
 
-            if (!isset($this->other['email'])) {
-                throw new \coding_exception('email must be set in $other.');
-            }
+        if (!isset($this->other['email'])) {
+            throw new \coding_exception('email must be set in $other.');
+        }
 
-            if (!isset($this->other['idnumber'])) {
-                throw new \coding_exception('idnumber must be set in $other.');
-            }
+        if (!isset($this->other['idnumber'])) {
+            throw new \coding_exception('idnumber must be set in $other.');
+        }
 
-            if (!isset($this->other['picture'])) {
-                throw new \coding_exception('picture must be set in $other.');
-            }
+        if (!isset($this->other['picture'])) {
+            throw new \coding_exception('picture must be set in $other.');
+        }
 
-            if (!isset($this->other['mnethostid'])) {
-                throw new \coding_exception('mnethostid must be set in $other.');
-            }
+        if (!isset($this->other['mnethostid'])) {
+            throw new \coding_exception('mnethostid must be set in $other.');
         }
     }
 }
