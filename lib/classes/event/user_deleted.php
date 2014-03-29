@@ -31,11 +31,11 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string username name of user.
- *      @type string email user email.
- *      @type string idnumber user idnumber.
- *      @type string picture user picture.
- *      @type int mnethostid mnet host id.
+ *      - string username: name of user.
+ *      - string email: user email.
+ *      - string idnumber: user idnumber.
+ *      - string picture: user picture.
+ *      - int mnethostid: mnet host id.
  * }
  *
  * @package    core
@@ -68,7 +68,7 @@ class user_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'User profile deleted for userid ' . $this->objectid;
+        return 'User profile deleted for the user with the id ' . $this->objectid;
     }
 
     /**
@@ -86,12 +86,13 @@ class user_deleted extends base {
      * @return \stdClass user data.
      */
     protected function get_legacy_eventdata() {
-        $user = $this->get_record_snapshot('user', $this->data['objectid']);
+        $user = $this->get_record_snapshot('user', $this->objectid);
         $user->deleted = 0;
-        $user->username = $this->data['other']['username'];
-        $user->email = $this->data['other']['email'];
-        $user->idnumber = $this->data['other']['idnumber'];
-        $user->picture = $this->data['other']['picture'];
+        $user->username = $this->other['username'];
+        $user->email = $this->other['email'];
+        $user->idnumber = $this->other['idnumber'];
+        $user->picture = $this->other['picture'];
+
         return $user;
     }
 
@@ -101,8 +102,8 @@ class user_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $user = $this->get_record_snapshot('user', $this->data['objectid']);
-        return array(SITEID, 'user', 'delete', "view.php?id=".$user->id, $user->firstname.' '.$user->lastname);
+        $user = $this->get_record_snapshot('user', $this->objectid);
+        return array(SITEID, 'user', 'delete', 'view.php?id=' . $user->id, $user->firstname . ' ' . $user->lastname);
     }
 
     /**
