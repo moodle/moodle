@@ -144,6 +144,10 @@ class pgsql_native_moodle_database extends moodle_database {
             $connection = "user='$this->dbuser' password='$pass' dbname='$this->dbname'";
             if (strpos($this->dboptions['dbsocket'], '/') !== false) {
                 $connection = $connection." host='".$this->dboptions['dbsocket']."'";
+                if (!empty($this->dboptions['dbport'])) {
+                    // Somehow non-standard port is important for sockets - see MDL-44862.
+                    $connection = $connection." port ='".$this->dboptions['dbport']."'";
+                }
             }
         } else {
             $this->dboptions['dbsocket'] = '';
