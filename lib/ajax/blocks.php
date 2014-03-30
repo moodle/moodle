@@ -57,17 +57,14 @@ $PAGE->set_context(context::instance_by_id($contextid));
 // Setting layout to replicate blocks configuration for the page we edit
 $PAGE->set_pagelayout($pagelayout);
 $PAGE->set_subpage($subpage);
+$PAGE->blocks->add_custom_regions_for_pagetype($pagetype);
 $pagetype = explode('-', $pagetype);
 switch ($pagetype[0]) {
     case 'my':
-        // My Home page needs to have 'content' block region set up.
         $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
-        $PAGE->blocks->add_region('content');
         break;
     case 'user':
         if ($pagelayout == 'mydashboard') {
-            // User profile pages also need the 'content' block region set up.
-            $PAGE->blocks->add_region('content');
             // If it's not the current user's profile, we need a different capability.
             if ($PAGE->context->contextlevel == CONTEXT_USER && $PAGE->context->instanceid != $USER->id) {
                 $PAGE->set_blocks_editing_capability('moodle/user:manageblocks');

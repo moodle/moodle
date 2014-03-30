@@ -43,6 +43,7 @@ class core_blocklib_testcase extends advanced_testcase {
         parent::setUp();
         $this->testpage = new moodle_page();
         $this->testpage->set_context(context_system::instance());
+        $this->testpage->set_pagetype('phpunit-block-test');
         $this->blockmanager = new testable_block_manager($this->testpage);
     }
 
@@ -69,7 +70,7 @@ class core_blocklib_testcase extends advanced_testcase {
 
     public function test_add_region() {
         // Exercise SUT.
-        $this->blockmanager->add_region('a-region-name');
+        $this->blockmanager->add_region('a-region-name', false);
         // Validate.
         $this->assertEquals(array('a-region-name'), $this->blockmanager->get_regions());
     }
@@ -78,15 +79,15 @@ class core_blocklib_testcase extends advanced_testcase {
         // Set up fixture.
         $regions = array('a-region', 'another-region');
         // Exercise SUT.
-        $this->blockmanager->add_regions($regions);
+        $this->blockmanager->add_regions($regions, false);
         // Validate.
         $this->assertEquals($regions, $this->blockmanager->get_regions(), '', 0, 10, true);
     }
 
     public function test_add_region_twice() {
         // Exercise SUT.
-        $this->blockmanager->add_region('a-region-name');
-        $this->blockmanager->add_region('another-region');
+        $this->blockmanager->add_region('a-region-name', false);
+        $this->blockmanager->add_region('another-region', false);
         // Validate.
         $this->assertEquals(array('a-region-name', 'another-region'), $this->blockmanager->get_regions(), '', 0, 10, true);
     }
@@ -98,12 +99,55 @@ class core_blocklib_testcase extends advanced_testcase {
         // Set up fixture.
         $this->blockmanager->mark_loaded();
         // Exercise SUT.
+        $this->blockmanager->add_region('too-late', false);
+    }
+
+    public function test_add_custom_region() {
+        global $SESSION;
+        // Exercise SUT.
+        $this->blockmanager->add_region('a-custom-region-name');
+        // Validate.
+        $this->assertEquals(array('a-custom-region-name'), $this->blockmanager->get_regions());
+        $this->assertTrue(isset($SESSION->custom_block_regions));
+        $this->assertArrayHasKey('phpunit-block-test', $SESSION->custom_block_regions);
+        $this->assertTrue(in_array('a-custom-region-name', $SESSION->custom_block_regions['phpunit-block-test']));
+
+    }
+
+    public function test_add_custom_regions() {
+        global $SESSION;
+        // Set up fixture.
+        $regions = array('a-region', 'another-custom-region');
+        // Exercise SUT.
+        $this->blockmanager->add_regions($regions);
+        // Validate.
+        $this->assertEquals($regions, $this->blockmanager->get_regions(), '', 0, 10, true);
+        $this->assertTrue(isset($SESSION->custom_block_regions));
+        $this->assertArrayHasKey('phpunit-block-test', $SESSION->custom_block_regions);
+        $this->assertTrue(in_array('another-custom-region', $SESSION->custom_block_regions['phpunit-block-test']));
+    }
+
+    public function test_add_custom_region_twice() {
+        // Exercise SUT.
+        $this->blockmanager->add_region('a-custom-region-name');
+        $this->blockmanager->add_region('another-custom-region');
+        // Validate.
+        $this->assertEquals(array('a-custom-region-name', 'another-custom-region'), $this->blockmanager->get_regions(), '', 0, 10, true);
+    }
+
+    /**
+     * @expectedException coding_exception
+     */
+    public function test_cannot_add_custom_region_after_loaded() {
+        // Set up fixture.
+        $this->blockmanager->mark_loaded();
+        // Exercise SUT.
         $this->blockmanager->add_region('too-late');
     }
 
     public function test_set_default_region() {
         // Set up fixture.
-        $this->blockmanager->add_region('a-region-name');
+        $this->blockmanager->add_region('a-region-name', false);
         // Exercise SUT.
         $this->blockmanager->set_default_region('a-region-name');
         // Validate.
@@ -149,7 +193,7 @@ class core_blocklib_testcase extends advanced_testcase {
         $page->set_subpage($subpage);
 
         $blockmanager = new testable_block_manager($page);
-        $blockmanager->add_regions($regions);
+        $blockmanager->add_regions($regions, false);
         $blockmanager->set_default_region($regions[0]);
 
         return array($page, $blockmanager);
