@@ -103,6 +103,9 @@ class tool_task_renderer extends plugin_renderer_base {
                         new html_table_cell($task->get_fail_delay()),
                         new html_table_cell($customised)));
 
+            if ($task->get_disabled()) {
+                $row->attributes['class'] = 'disabled';
+            }
             $data[] = $row;
         }
         $table->data = $data;
