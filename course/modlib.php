@@ -523,19 +523,8 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
         $completion->reset_all_state($cm);
     }
-
-    // Trigger event based on the action we did.
-    $event = \core\event\course_module_updated::create(array(
-        'courseid' => $course->id,
-        'context'  => $modcontext,
-        'objectid' => $moduleinfo->coursemodule,
-        'other'    => array(
-            'modulename' => $moduleinfo->modulename,
-            'name'       => $moduleinfo->name,
-            'instanceid' => $moduleinfo->instance
-        )
-    ));
-    $event->trigger();
+    $cm->name = $moduleinfo->name;
+    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
