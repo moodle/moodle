@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accessibilityhint'] = '<h3>Accessible tables recommendation</h3><p>An accessible HTML table should have :<ul><li>a caption describing the content of the table</li><li>row and/or column headers</li><li>no empty table headers</li><li>no merged table cells</li></ul>.</p>';
 $string['createtable'] = 'Create table';
 $string['pluginname'] = 'Table';
 $string['numberofcolumns'] = 'Number of columns';
