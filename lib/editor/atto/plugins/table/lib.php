@@ -31,7 +31,6 @@ function atto_table_strings_for_js() {
     global $PAGE;
 
     $PAGE->requires->strings_for_js(array('createtable',
-                                          'accessibilityhint',
                                           'headers',
                                           'caption',
                                           'columns',
