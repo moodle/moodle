@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the unittests for the css optimiser in csslib.php
+ * This file contains the unittests for scheduled tasks.
  *
  * @package   core
  * @category  phpunit
@@ -24,7 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
+require_once(__DIR__ . '/fixtures/task_fixtures.php');
 
 /**
  * Test class for scheduled task.
@@ -34,13 +34,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class scheduled_task_testcase extends advanced_testcase {
+class core_scheduled_task_testcase extends advanced_testcase {
 
     /**
      * Test the cron scheduling method
      */
     public function test_eval_cron_field() {
-        $testclass = new testable_scheduled_task();
+        $testclass = new \core\task\scheduled_test_task();
 
         $this->assertEquals(20, count($testclass->eval_cron_field('*/3', 0, 59)));
         $this->assertEquals(31, count($testclass->eval_cron_field('1,*/2', 0, 59)));
@@ -52,7 +52,7 @@ class scheduled_task_testcase extends advanced_testcase {
 
     public function test_get_next_scheduled_time() {
         // Test job run at 1 am.
-        $testclass = new testable_scheduled_task();
+        $testclass = new \core\task\scheduled_test_task();
 
         // All fields default to '*'.
         $testclass->set_hour('1');
@@ -68,8 +68,13 @@ class scheduled_task_testcase extends advanced_testcase {
 
         $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
 
+        // Disabled flag does not affect next time.
+        $testclass->set_disabled(true);
+        $nexttime = $testclass->get_next_scheduled_time();
+        $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
+
         // Now test for job run every 10 minutes.
-        $testclass = new testable_scheduled_task();
+        $testclass = new \core\task\scheduled_test_task();
 
         // All fields default to '*'.
         $testclass->set_minute('*/10');
@@ -79,6 +84,11 @@ class scheduled_task_testcase extends advanced_testcase {
         $minutes = ((intval(date('i') / 10))+1) * 10;
         $nexttenminutes = mktime(date('H'), $minutes, 0);
 
+        $this->assertEquals($nexttenminutes, $nexttime, 'Next scheduled time is in 10 minutes.');
+
+        // Disabled flag does not affect next time.
+        $testclass->set_disabled(true);
+        $nexttime = $testclass->get_next_scheduled_time();
         $this->assertEquals($nexttenminutes, $nexttime, 'Next scheduled time is in 10 minutes.');
     }
 
@@ -103,7 +113,7 @@ class scheduled_task_testcase extends advanced_testcase {
         // GMT-04:30.
         $CFG->timezone = 'America/Caracas';
 
-        $testclass = new testable_scheduled_task();
+        $testclass = new \core\task\scheduled_test_task();
 
         // Scheduled tasks should always use servertime - so this is 03:30 GMT.
         $testclass->set_hour('1');
@@ -142,23 +152,28 @@ class scheduled_task_testcase extends advanced_testcase {
         $record->day = '*';
         $record->month = '*';
         $record->component = 'test_scheduled_task';
-        $record->classname = '\\testable_scheduled_task';
+        $record->classname = '\core\task\scheduled_test_task';
 
         $DB->insert_record('task_scheduled', $record);
         // And another one to test failures.
-        $record->classname = '\\testable_scheduled_task2';
+        $record->classname = '\core\task\scheduled_test2_task';
         $DB->insert_record('task_scheduled', $record);
+        // And disabled test.
+        $record->classname = '\core\task\scheduled_test3_task';
+        $record->disabled = 1;
+        $DB->insert_record('task_scheduled', $record);
+
         $now = time();
 
         // Should get handed the first task.
         $task = \core\task\manager::get_next_scheduled_task($now);
-        $this->assertNotNull($task);
+        $this->assertInstanceOf('\core\task\scheduled_test_task', $task);
         $task->execute();
 
         \core\task\manager::scheduled_task_complete($task);
         // Should get handed the second task.
         $task = \core\task\manager::get_next_scheduled_task($now);
-        $this->assertNotNull($task);
+        $this->assertInstanceOf('\core\task\scheduled_test2_task', $task);
         $task->execute();
 
         \core\task\manager::scheduled_task_failed($task);
@@ -168,7 +183,7 @@ class scheduled_task_testcase extends advanced_testcase {
 
         // Should get the second task (retry after delay).
         $task = \core\task\manager::get_next_scheduled_task($now + 120);
-        $this->assertNotNull($task);
+        $this->assertInstanceOf('\core\task\scheduled_test2_task', $task);
         $task->execute();
 
         \core\task\manager::scheduled_task_complete($task);
@@ -178,22 +193,3 @@ class scheduled_task_testcase extends advanced_testcase {
         $this->assertNull($task);
     }
 }
-
-class testable_scheduled_task extends \core\task\scheduled_task {
-    public function get_name() {
-        return "Test task";
-    }
-
-    public function execute() {
-    }
-}
-
-class testable_scheduled_task2 extends \core\task\scheduled_task {
-    public function get_name() {
-        return "Test task 2";
-    }
-
-    public function execute() {
-    }
-}
-

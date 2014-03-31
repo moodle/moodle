@@ -70,7 +70,15 @@ if ($options['list']) {
             . $task->get_day_of_week() . ' '
             . $task->get_month() . ' '
             . $task->get_day_of_week();
-        $nextrun = $task->get_next_run_time() ? userdate($task->get_next_run_time(), $shorttime) : 'asap';
+        $nextrun = $task->get_next_run_time();
+
+        if ($task->get_disabled()) {
+            $nextrun = get_string('disabled', 'tool_task');
+        } else if ($nextrun > time()) {
+            $nextrun = userdate($nextrun);
+        } else {
+            $nextrun = get_string('asap', 'tool_task');
+        }
 
         echo str_pad($class, 50, ' ') . ' ' . str_pad($schedule, 17, ' ') . ' ' . $nextrun . "\n";
     }

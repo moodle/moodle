@@ -75,8 +75,8 @@ abstract class task_base {
     }
 
     /**
-     * Get the last run time for this task.
-     * @return int
+     * Get the next run time for this task.
+     * @return int timestamp
      */
     public function get_next_run_time() {
         return $this->nextruntime;

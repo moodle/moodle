@@ -57,11 +57,19 @@ class tool_task_renderer extends plugin_renderer_base {
         $yes = get_string('yes');
         $no = get_string('no');
         $never = get_string('never');
-        $now = get_string('now');
+        $asap = get_string('asap', 'tool_task');
+        $disabled = get_string('disabled', 'tool_task');
         foreach ($tasks as $task) {
             $customised = $task->is_customised() ? $no : $yes;
             $lastrun = $task->get_last_run_time() ? userdate($task->get_last_run_time()) : $never;
-            $nextrun = $task->get_next_run_time() ? userdate($task->get_next_run_time()) : $now;
+            $nextrun = $task->get_next_run_time();
+            if ($task->get_disabled()) {
+                $nextrun = $disabled;
+            } else if ($nextrun > time()) {
+                $nextrun = userdate($nextrun);
+            } else {
+                $nextrun = $asap;
+            }
             $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php', array('action'=>'edit', 'task' => get_class($task)));
             $editlink = $this->action_icon($configureurl, new pix_icon('t/edit', get_string('edittaskschedule', 'tool_task', $task->get_name())));
 
@@ -95,6 +103,9 @@ class tool_task_renderer extends plugin_renderer_base {
                         new html_table_cell($task->get_fail_delay()),
                         new html_table_cell($customised)));
 
+            if ($task->get_disabled()) {
+                $row->attributes['class'] = 'disabled';
+            }
             $data[] = $row;
         }
         $table->data = $data;

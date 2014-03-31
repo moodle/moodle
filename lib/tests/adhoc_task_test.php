@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the unittests for the css optimiser in csslib.php
+ * This file contains the unittests for adhock tasks.
  *
  * @package   core
  * @category  phpunit
@@ -24,6 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/fixtures/task_fixtures.php');
 
 
 /**
@@ -34,14 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class adhoc_task_testcase extends advanced_testcase {
+class core_adhoc_task_testcase extends advanced_testcase {
 
     public function test_get_next_adhoc_task() {
-        global $DB;
-
         $this->resetAfterTest(true);
         // Create an adhoc task.
-        $task = new testable_adhoc_task();
+        $task = new \core\task\adhoc_test_task();
 
         // Queue it.
         $task = \core\task\manager::queue_adhoc_task($task);
@@ -67,10 +66,5 @@ class adhoc_task_testcase extends advanced_testcase {
         // Should not get any task.
         $task = \core\task\manager::get_next_adhoc_task($now);
         $this->assertNull($task);
-    }
-}
-
-class testable_adhoc_task extends \core\task\adhoc_task {
-    public function execute() {
     }
 }

@@ -198,6 +198,7 @@ class manager {
         $record->day = $task->get_day();
         $record->dayofweek = $task->get_day_of_week();
         $record->month = $task->get_month();
+        $record->disabled = $task->get_disabled();
 
         return $record;
     }
@@ -305,6 +306,9 @@ class manager {
         }
         if (isset($record->faildelay)) {
             $task->set_fail_delay($record->faildelay);
+        }
+        if (isset($record->disabled)) {
+            $task->set_disabled($record->disabled);
         }
 
         return $task;
@@ -446,7 +450,9 @@ class manager {
             throw new \moodle_exception('locktimeout');
         }
 
-        $where = '(lastruntime IS NULL OR lastruntime < :timestart1) AND (nextruntime IS NULL OR nextruntime < :timestart2)';
+        $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
+                  AND (nextruntime IS NULL OR nextruntime < :timestart2)
+                  AND disabled = 0";
         $params = array('timestart1' => $timestart, 'timestart2' => $timestart);
         $records = $DB->get_records_select('task_scheduled', $where, $params);
 

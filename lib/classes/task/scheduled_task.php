@@ -52,6 +52,9 @@ abstract class scheduled_task extends task_base {
     /** @var boolean $customised - Has this task been changed from it's default schedule? */
     private $customised = false;
 
+    /** @var int $disabled - Is this task disabled in cron? */
+    private $disabled = false;
+
     /**
      * Get the last run time for this scheduled task.
      * @return int
@@ -162,6 +165,22 @@ abstract class scheduled_task extends task_base {
      */
     public function get_day_of_week() {
         return $this->dayofweek;
+    }
+
+    /**
+     * Setter for $disabled.
+     * @param bool $disabled
+     */
+    public function set_disabled($disabled) {
+        $this->disabled = (bool)$disabled;
+    }
+
+    /**
+     * Getter for $disabled.
+     * @return bool
+     */
+    public function get_disabled() {
+        return $this->disabled;
     }
 
     /**

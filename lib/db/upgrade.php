@@ -3085,6 +3085,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('dayofweek', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null);
         $table->add_field('faildelay', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('customised', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('disabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table task_scheduled.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -3329,6 +3330,21 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2014032600.02);
+    }
+
+    if ($oldversion < 2014032700.01) {
+
+        // Define field disabled to be added to task_scheduled.
+        $table = new xmldb_table('task_scheduled');
+        $field = new xmldb_field('disabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'customised');
+
+        // Conditionally launch add field disabled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032700.01);
     }
 
     return true;

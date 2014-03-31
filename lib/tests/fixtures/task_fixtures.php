@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,24 +15,45 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
- *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
+ * Fixtures for task tests.
  *
  * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @category   phpunit
+ * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core\task;
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2014032700.01;              // YYYYMMDD      = weekly release date of this DEV branch.
-                                        //         RR    = release increments - 00 in DEV branches.
-                                        //           .XX = incremental changes.
+class adhoc_test_task extends \core\task\adhoc_task {
+    public function execute() {
+    }
+}
 
-$release  = '2.7dev (Build: 20140327)'; // Human-friendly version name
+class scheduled_test_task extends \core\task\scheduled_task {
+    public function get_name() {
+        return "Test task";
+    }
 
-$branch   = '27';                       // This version's branch.
-$maturity = MATURITY_ALPHA;             // This version's maturity level.
+    public function execute() {
+    }
+}
+
+class scheduled_test2_task extends \core\task\scheduled_task {
+    public function get_name() {
+        return "Test task 2";
+    }
+
+    public function execute() {
+    }
+}
+
+class scheduled_test3_task extends \core\task\scheduled_task {
+    public function get_name() {
+        return "Test task 3";
+    }
+
+    public function execute() {
+    }
+}
