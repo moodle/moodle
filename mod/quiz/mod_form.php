@@ -249,7 +249,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 'neq', 'wontmatch');
 
         // -------------------------------------------------------------------------------
-        $mform->addElement('header', 'display', get_string('display', 'form'));
+        $mform->addElement('header', 'display', get_string('appearance'));
 
         // Show user picture.
         $mform->addElement('select', 'showuserpicture', get_string('showuserpicture', 'quiz'), array(
