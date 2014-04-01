@@ -34,6 +34,7 @@ $string['alignment_textbottom'] = 'Text bottom';
 $string['alignment_texttop'] = 'Text top';
 $string['alignment_top'] = 'Top';
 $string['browserepositories'] = 'Browse repositories...';
+$string['constrain'] = 'Keep ratio';
 $string['createimage'] = 'Insert image';
 $string['enteralt'] = 'Describe this image for someone who cannot see it';
 $string['enterurl'] = 'Enter URL';
