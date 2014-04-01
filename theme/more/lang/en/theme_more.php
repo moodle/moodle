@@ -45,7 +45,8 @@ $string['backgroundrepeatrepeatx'] = 'Repeat horizontally';
 $string['backgroundrepeatrepeaty'] = 'Repeat vertically';
 $string['bodybackground'] = 'Background colour';
 $string['bodybackground_desc'] = 'The main colour to use for the background.';
-$string['choosereadme'] = 'More is a theme that allows you to easily customize Moodle\'s look and feel.';
+$string['choosereadme'] = '<p>More is a theme that allows you to easily customise Moodle\'s look and feel directly from the web interface.</p>
+<p>Visit the admin settings to change colours, add an image as a background, add your logo and more.</p>';
 
 $string['configtitle'] = 'More';
 $string['contentbackground'] = 'Main content background colour';
