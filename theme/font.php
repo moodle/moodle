@@ -74,6 +74,9 @@ if (preg_match('/^[a-z0-9_-]+\.woff$/i', $font, $matches)) {
     // IE8 must die!!!
     $font = $matches[0];
     $mimetype = 'application/vnd.ms-fontobject';
+} else if (preg_match('/^[a-z0-9_-]+\.svg$/i', $font, $matches)) {
+    $font = $matches[0];
+    $mimetype = 'image/svg+xml';
 
 } else {
     font_not_found();
