@@ -179,7 +179,7 @@ $reporthtml = $report->get_grade_table($displayaverages);
 
 // print submit button
 if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading'))) {
-    echo '<form action="index.php" enctype="application/x-www-form-urlencoded" method="post">'; // Enforce compatibility with our max_input_vars hack.
+    echo '<form action="index.php" enctype="application/x-www-form-urlencoded" method="post" id="gradereport_grader">'; // Enforce compatibility with our max_input_vars hack.
     echo '<div>';
     echo '<input type="hidden" value="'.s($courseid).'" name="id" />';
     echo '<input type="hidden" value="'.sesskey().'" name="sesskey" />';
