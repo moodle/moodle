@@ -252,6 +252,8 @@ There are 3 options:
 $string['navdesc'] = 'This setting specifies whether to show or hide navigation buttons and their position.';
 $string['navpositionleft'] = 'Position of navigation buttons from left in pixels.';
 $string['navpositiontop'] = 'Position of navigation buttons from top in pixels.';
+$string['networkdropped'] = 'The SCORM player has determined that your Internet connection is unreliable or has been interrupted. If you continue in this SCORM activity, your progress may not be saved.<br />
+You should exit the activity now, and return when you have a dependable Internet connection.';
 $string['newattempt'] = 'Start a new attempt';
 $string['next'] = 'Continue';
 $string['noactivity'] = 'Nothing to report';

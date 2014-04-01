@@ -1209,6 +1209,8 @@ $string['nameforlink'] = 'What do you want to call this link?';
 $string['nameforpage'] = 'Name';
 $string['navigation'] = 'Navigation';
 $string['needed'] = 'Needed';
+$string['networkdropped'] = 'We have detected that your Internet connection is unreliable or has been interrupted.<br />
+Please be aware that changes may not be saved properly until your connection improves.';
 $string['never'] = 'Never';
 $string['neverdeletelogs'] = 'Never delete logs';
 $string['new'] = 'New';
