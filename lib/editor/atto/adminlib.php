@@ -130,44 +130,6 @@ class atto_subplugins_settings extends admin_setting {
         $table->data  = array();
         $table->attributes['class'] = 'admintable generaltable';
 
-        $corepluginicons = array(
-            'accessibilitychecker' => $OUTPUT->pix_url('e/visual_blocks', 'core'),
-            'accessibilityhelper' => $OUTPUT->pix_url('e/visual_aid'),
-            'align' => array(
-                $OUTPUT->pix_url('e/align_left', 'core'),
-                $OUTPUT->pix_url('e/align_center', 'core'), $OUTPUT->pix_url('e/align_right', 'core')
-            ),
-            'backcolor' => $OUTPUT->pix_url('e/text_highlight', 'core'),
-            'bold' => $OUTPUT->pix_url('e/bold', 'core'),
-            'charmap' => $OUTPUT->pix_url('e/special_character', 'core'),
-            'clear' => $OUTPUT->pix_url('e/clear_formatting', 'core'),
-            'emoticon' => $OUTPUT->pix_url('e/emoticons', 'core'),
-            'equation' => $OUTPUT->pix_url('e/math', 'core'),
-            'fontcolor' => $OUTPUT->pix_url('e/text_color', 'core'),
-            'html' => $OUTPUT->pix_url('e/source_code', 'core'),
-            'image' => $OUTPUT->pix_url('e/insert_edit_image', 'core'),
-            'indent' => array(
-                $OUTPUT->pix_url('e/increase_indent', 'core'),
-                $OUTPUT->pix_url('e/decrease_indent', 'core'),
-            ),
-            'italic' => $OUTPUT->pix_url('e/italic', 'core'),
-            'link' => $OUTPUT->pix_url('e/insert_edit_link', 'core'),
-            'managefiles' => $OUTPUT->pix_url('e/manage_files', 'core'),
-            'media' => $OUTPUT->pix_url('e/insert_edit_video', 'core'),
-            'orderedlist' => $OUTPUT->pix_url('e/numbered_list', 'core'),
-            'rtl' => array($OUTPUT->pix_url('e/left_to_right', 'core'),
-                $OUTPUT->pix_url('e/right_to_left', 'core')),
-            'strike' => $OUTPUT->pix_url('e/strikethrough', 'core'),
-            'subscript' => $OUTPUT->pix_url('e/subscript', 'core'),
-            'superscript' => $OUTPUT->pix_url('e/superscript', 'core'),
-            'table' => $OUTPUT->pix_url('e/table', 'core'),
-            'title' => $OUTPUT->pix_url('e/styleprops', 'core'),
-            'underline' => $OUTPUT->pix_url('e/underline', 'core'),
-            'undo' => array($OUTPUT->pix_url('e/undo', 'core'), $OUTPUT->pix_url('e/redo', 'core')),
-            'unlink' => $OUTPUT->pix_url('e/remove_link', 'core'),
-            'unorderedlist' => $OUTPUT->pix_url('e/bullet_list', 'core')
-        );
-
         // Iterate through subplugins.
         foreach ($subplugins as $name => $dir) {
             $namestr = get_string('pluginname', 'atto_' . $name);
@@ -181,30 +143,14 @@ class atto_subplugins_settings extends admin_setting {
 
             $displayname = $namestr;
 
-            // Check if there is a pix folder in the atto plugin.
+            // Check if there is an icon in the atto plugin pix/ folder.
             if ($PAGE->theme->resolve_image_location('icon', 'atto_' . $name, false)) {
                 $icon = $OUTPUT->pix_icon('icon', '', 'atto_' . $name, array('class' => 'icon pluginicon'));
             } else {
-                // Attempt to find out the icons for core atto plugins.
-                if (array_key_exists($name, $corepluginicons)) {
-                    // It's a core plugin.
-                    $icons = array();
-                    if (!is_array($corepluginicons[$name])) {
-                        $icons[] = $corepluginicons[$name];
-                    } else {
-                        $icons = $corepluginicons[$name];
-                    }
-                    $icon = '';
-                    foreach ($icons as $anicon) {
-                        $icon .= html_writer::empty_tag('img', array('src' => $anicon,
-                            "class" => "pluginicon", "alt" => $displayname));
-                    }
-                } else {
-                    // No icon found.
-                    $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'icon pluginicon noicon'));
-                }
+                // No icon found.
+                $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'icon pluginicon noicon'));
             }
-            $displayname  = $icon . ' ' . $displayname;
+            $displayname = $icon . $displayname;
 
             // Add settings link.
             if (!$version) {
