@@ -70,7 +70,7 @@ if (preg_match('/^[a-z0-9_-]+\.woff$/i', $font, $matches)) {
     $font = $matches[0];
     $mimetype = 'application/x-font-opentype';
 
-} else if (preg_match('/^[a-z0-9_-]+\.oet$/i', $font, $matches)) {
+} else if (preg_match('/^[a-z0-9_-]+\.eot$/i', $font, $matches)) {
     // IE8 must die!!!
     $font = $matches[0];
     $mimetype = 'application/vnd.ms-fontobject';
