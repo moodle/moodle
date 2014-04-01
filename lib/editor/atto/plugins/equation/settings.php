@@ -165,4 +165,5 @@ if ($ADMIN->fulltree) {
                                                     $desc,
                                                     $default);
     $settings->add($setting);
+
 }

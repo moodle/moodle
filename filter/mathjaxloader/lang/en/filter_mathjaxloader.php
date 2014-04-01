@@ -29,10 +29,18 @@
 $string['filtername'] = 'MathJax';
 $string['httpurl'] = 'HTTP MathJax URL';
 $string['httpurl_help'] = 'Full URL to MathJax library. Used when the page is loaded via http.';
-$string['httpsurl'] = 'HTTP MathJax URL';
+$string['httpsurl'] = 'HTTPS MathJax URL';
 $string['httpsurl_help'] = 'Full URL to MathJax library. Used when the page is loaded via https (secure). ';
+$string['texfiltercompatibility'] = 'Tex filter compatibility';
+$string['texfiltercompatibility_help'] = 'The MathJax filter can be used as a replacement for the Tex filter. 
+
+To support all the delimiters supported by the Tex filter MathJax will be configured to display all equations "inline" with the tex.';
 $string['localinstall'] = 'Local MathJax installation';
-$string['localinstall_help'] = 'The default MathJAX configuration uses the CDN version of MathJAX, but MathJAX can be installed locally if required. Some reasons this might be useful are to save on bandwidth - or because of local proxy restrictions. To use a local installation of MathJAX, first download the full MathJax library from http://www.mathjax.org/. Then install it on a web server. Finally update the MathJax filter settings httpurl and/or httpsurl to point to the local MathJax.js url.';
+$string['localinstall_help'] = 'The default MathJAX configuration uses the CDN version of MathJAX, but MathJAX can be installed locally if required. 
+
+Some reasons this might be useful are to save on bandwidth - or because of local proxy restrictions. 
+
+To use a local installation of MathJAX, first download the full MathJax library from http://www.mathjax.org/. Then install it on a web server. Finally update the MathJax filter settings httpurl and/or httpsurl to point to the local MathJax.js url.';
 $string['mathjaxsettings'] = 'MathJax configuration';
-$string['mathjaxsettings_desc'] = 'The default MathJAX configuration should be appropriate for most users, but MathJax is highly configurable and advanced users may want to provide a different configuration. More information on MathJax configuration options is available here: http://docs.mathjax.org/en/latest/options/index.html';
+$string['mathjaxsettings_desc'] = 'The default MathJAX configuration should be appropriate for most users, but MathJax is highly configurable and any of the standard MathJax configuration options can be added here.';
 

@@ -44,6 +44,12 @@ if ($ADMIN->fulltree) {
                                          PARAM_RAW);
     $settings->add($item);
 
+    $item = new admin_setting_configcheckbox('filter_mathjaxloader/texfiltercompatibility',
+                                         new lang_string('texfiltercompatibility', 'filter_mathjaxloader'),
+                                         new lang_string('texfiltercompatibility_help', 'filter_mathjaxloader'),
+                                         0);
+    $settings->add($item);
+
     $default = '
 MathJax.Hub.Config({
     config: ["MMLorHTML.js", "Safe.js"],
@@ -58,19 +64,6 @@ MathJax.Hub.Config({
         mpMouse: true
     },
     errorSettings: { message: ["!"] },
-    tex2jax: {
-        skipTags: ["script","noscript","style","textarea"],
-        inlineMath: [
-            ["\\\\(","\\\\)"],
-            ["$$","$$"],
-            ["\\\\[","\\\\]"]
-        ],
-        displayMath: [
-            ["[tex]","[/tex]"],
-        ],
-        balanceBraces: true,
-        preview: "TeX"
-    },
     skipStartupTypeset: true,
     messageStyle: "none"
 });

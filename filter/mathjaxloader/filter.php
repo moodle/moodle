@@ -132,14 +132,29 @@ class filter_mathjaxloader extends moodle_text_filter {
      * @param array $options The filter options.
      */
     public function filter($text, array $options = array()) {
-        // This replaces <tex> blah </tex> syntax with [tex] blah [/tex] syntax
-        // because MathJax cannot handle html tags as delimiters.
+        $legacy = get_config('filter_mathjaxloader', 'texfiltercompatibility');
+        if ($legacy) {
+            // This replaces any of the tex filter maths delimiters with the default for inline maths in MathJAX "\( blah \)".
+            // <tex.*> blah </tex>
+            $text = preg_replace('|<(/?) *tex( [^>]*)?>|u', '[\1tex]', $text);
+            // [tex.*] blah [/tex]
+            $text = str_replace('[tex]', '\\(', $text);
+            $text = str_replace('[/tex]', '\\)', $text);
+            // $$ blah $$
+            $text = preg_replace('|\$\$[\S\s]\$\$|u', '\\(\1\\)', $text);
+            // \[ blah \]
+            $text = str_replace('\\[', '\\(', $text);
+            $text = str_replace('\\]', '\\)', $text);
+        }
 
-        $text = preg_replace('|<(/?) *tex( [^>]*)?>|u', '[\1tex]', $text);
-        if (strpos($text, '$$') !== false || strpos($text, '\\[') !== false || strpos($text, '[tex]') !== false) {
+        $hasinline = strpos($text, '\\(') !== false && strpos($text, '\\)') !== false;
+        $hasdisplay = (strpos($text, '$$') !== false) ||
+                      (strpos($text, '\\[') !== false && strpos($text, '\\]') !== false);
+
+        if ($hasinline || $hasdisplay) {
             // Only call init if there is at least one equation on the page.
             $this->lazy_init();
-            return '<span class="filter_mathjaxloader_equation">' . $text . '</span>';
+            return '<span class="nolink"><span class="filter_mathjaxloader_equation">' . $text . '</span></span>';
         }
         return $text;
     }

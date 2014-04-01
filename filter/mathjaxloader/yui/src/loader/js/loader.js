@@ -36,5 +36,23 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
             MathJax.Hub.Queue(["Typeset",MathJax.Hub,node.getDOMNode()]);
         });
         MathJax.Hub.Configured();
+
+        // Listen for events triggered when new text is added to a page that needs
+        // processing by a filter.
+
+        Y.on(M.core.event.FILTER_CONTENT_UPDATED, this.contentUpdated, this);
+    },
+
+    /**
+     * Handle content updated events - typeset the new content.
+     * @method contentUpdated
+     * @param Y.Event - Custom event with "nodes" indicating the root of the updated nodes.
+     */
+    contentUpdated: function(event) {
+        event.nodes.each(function (node) {
+            node.all('.filter_mathjaxloader_equation').each(function(node) {
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub,node.getDOMNode()]);
+            });
+        });
     }
 };
