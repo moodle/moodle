@@ -49,6 +49,8 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_created', $event);
         $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
+        $url = new moodle_url('/course/management.php', array('categoryid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $expected = array(SITEID, 'category', 'add', 'editcategory.php?id=' . $category->id, $category->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
@@ -74,6 +76,8 @@ class core_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
+        $url = new moodle_url('/course/editcategory.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $expected = array(SITEID, 'category', 'update', 'editcategory.php?id=' . $category->id, $category->id);
         $this->assertEventLegacyLogData($expected, $event);
 

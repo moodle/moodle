@@ -70,7 +70,7 @@ class course_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/course/view.php', array('id' => $this->objectid));
+        return new \moodle_url('/course/edit.php', array('id' => $this->objectid));
     }
 
     /**

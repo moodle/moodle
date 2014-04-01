@@ -75,6 +75,6 @@ class activity_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('report/outline/index.php', array('course' => $this->courseid));
+        return new \moodle_url('/report/outline/index.php', array('course' => $this->courseid));
     }
 }

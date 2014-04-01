@@ -53,7 +53,7 @@ class group_member_added extends \core\event\base {
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $eventdata = new \stdClass();
@@ -88,7 +88,7 @@ class group_member_added extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/group/index.php', array('id' => $this->courseid));
+        return new \moodle_url('/group/members.php', array('group' => $this->objectid));
     }
 
     /**

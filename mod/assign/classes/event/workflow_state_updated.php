@@ -98,7 +98,7 @@ class workflow_state_updated extends \core\event\base {
     /**
      * Sets the legacy event log data.
      *
-     * @param stdClass $legacylogdata legacy log data.
+     * @param \stdClass $legacylogdata legacy log data.
      * @return void
      */
     public function set_legacy_logdata($legacylogdata) {

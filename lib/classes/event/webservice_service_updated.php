@@ -70,7 +70,7 @@ class webservice_service_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/settings.php', array('section' => 'externalservices'));
+        return new \moodle_url('/admin/webservice/service.php', array('id' => $this->objectid));
     }
 
     /**

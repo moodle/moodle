@@ -79,7 +79,7 @@ class user_report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('report/log/user.php', array('course' => $this->courseid, 'id' => $this->relateduserid,
+        return new \moodle_url('/report/log/user.php', array('course' => $this->courseid, 'id' => $this->relateduserid,
                 'mode' => $this->other['mode']));
     }
 

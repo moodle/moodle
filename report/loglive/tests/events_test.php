@@ -66,5 +66,7 @@ class report_loglive_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'course', 'report live', "report/loglive/index.php?id=$course->id", $course->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+        $url = new moodle_url('/report/loglive/index.php', array('id' => $course->id));
+        $this->assertEquals($url, $event->get_url());
     }
 }

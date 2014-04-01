@@ -416,9 +416,10 @@ class core_accesslib_testcase extends advanced_testcase {
         $event = array_pop($events);
 
         $this->assertInstanceOf('\core\event\role_capabilities_updated', $event);
-        $expectedurl = new moodle_url('admin/roles/define.php', array('action' => 'view', 'roleid' => $student->id));
+        $expectedurl = new moodle_url('/admin/roles/define.php', array('action' => 'view', 'roleid' => $student->id));
         $this->assertEquals($expectedurl, $event->get_url());
         $this->assertEventLegacyLogData($expectedlegacylog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**

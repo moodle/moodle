@@ -46,6 +46,15 @@ class course_category_created extends base {
     }
 
     /**
+     * Returns relevant URL.
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/course/management.php', array('categoryid' => $this->objectid));
+    }
+
+    /**
      * Returns non-localised description of what happened.
      *
      * @return string

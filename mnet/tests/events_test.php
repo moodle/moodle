@@ -67,6 +67,9 @@ class mnet_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
             'SSO ACL: enabled user \'username\' from ' . $this->mnethost->name);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+        $url = new \moodle_url('/admin/mnet/access_control.php');
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -94,5 +97,8 @@ class mnet_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
             'SSO ACL: enabled user \'username\' from ' . $this->mnethost->name);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+        $url = new \moodle_url('/admin/mnet/access_control.php');
+        $this->assertEquals($url, $event->get_url());
     }
 }

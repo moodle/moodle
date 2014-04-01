@@ -62,6 +62,8 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/members.php', array('group' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_member_removed_event() {
@@ -89,6 +91,8 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/members.php', array('group' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_group_created_event() {
@@ -108,6 +112,8 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertSame('groups_group_created', $event->get_legacy_eventname());
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/index.php', array('id' => $event->courseid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_grouping_created_event() {
@@ -129,6 +135,8 @@ class core_group_lib_testcase extends advanced_testcase {
 
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/groupings.php', array('id' => $event->courseid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_group_updated_event() {
@@ -158,6 +166,8 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertSame('groups_group_updated', $event->get_legacy_eventname());
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/group.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_grouping_updated_event() {
@@ -196,6 +206,8 @@ class core_group_lib_testcase extends advanced_testcase {
 
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($grouping->id, $event->objectid);
+        $url = new moodle_url('/group/grouping.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_group_deleted_event() {
@@ -215,6 +227,8 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertSame('groups_group_deleted', $event->get_legacy_eventname());
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/index.php', array('id' => $event->courseid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_grouping_deleted_event() {
@@ -234,6 +248,8 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertSame('groups_grouping_deleted', $event->get_legacy_eventname());
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/groupings.php', array('id' => $event->courseid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     public function test_groups_delete_group_members() {

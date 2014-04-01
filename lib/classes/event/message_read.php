@@ -57,7 +57,7 @@ class message_read extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('message/index.php', array('user1' => $this->relateduserid, 'user2' => $this->userid));
+        return new \moodle_url('/message/index.php', array('user1' => $this->userid, 'user2' => $this->relateduserid));
     }
 
     /**
