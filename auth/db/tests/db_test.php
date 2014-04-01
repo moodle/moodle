@@ -80,7 +80,11 @@ class auth_db_testcase extends advanced_testcase {
                 set_config('sybasequoting', '0', 'auth/db');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
-                        set_config('host', $CFG->dboptions['dbsocket'], 'auth/db');
+                        $socket = $CFG->dboptions['dbsocket'];
+                        if (!empty($CFG->dboptions['dbport'])) {
+                            $socket .= ':' . $CFG->dboptions['dbport'];
+                        }
+                        set_config('host', $socket, 'auth/db');
                     } else {
                         set_config('host', '', 'auth/db');
                     }
