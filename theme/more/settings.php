@@ -39,7 +39,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_more/textcolor';
     $title = get_string('textcolor', 'theme_more');
     $description = get_string('textcolor_desc', 'theme_more');
-    $default = '';
+    $default = '#333366';
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
@@ -48,7 +48,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_more/linkcolor';
     $title = get_string('linkcolor', 'theme_more');
     $description = get_string('linkcolor_desc', 'theme_more');
-    $default = '';
+    $default = '#FF6500';
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
@@ -74,7 +74,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_more/backgroundrepeat';
     $title = get_string('backgroundrepeat', 'theme_more');
     $description = get_string('backgroundrepeat_desc', 'theme_more');;
-    $default = '0';
+    $default = 'repeat';
     $choices = array(
         '0' => get_string('default'),
         'repeat' => get_string('backgroundrepeatrepeat', 'theme_more'),
@@ -119,7 +119,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_more/contentbackground';
     $title = get_string('contentbackground', 'theme_more');
     $description = get_string('contentbackground_desc', 'theme_more');
-    $default = '';
+    $default = '#FFFFFF';
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
@@ -128,7 +128,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_more/secondarybackground';
     $title = get_string('secondarybackground', 'theme_more');
     $description = get_string('secondarybackground_desc', 'theme_more');
-    $default = '';
+    $default = '#FFFFFF';
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
@@ -137,7 +137,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_more/invert';
     $title = get_string('invert', 'theme_more');
     $description = get_string('invertdesc', 'theme_more');
-    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 1);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
