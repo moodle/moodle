@@ -57,7 +57,7 @@ class editor_atto_toolbar_setting extends admin_setting_configtextarea {
         $plugins = array();
 
         foreach ($lines as $line) {
-            if (empty(trim($line))) {
+            if (!trim($line)) {
                 continue;
             }
 
