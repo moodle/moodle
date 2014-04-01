@@ -79,6 +79,31 @@ class core_user {
         }
     }
 
+
+    /**
+     * Return user object from db based on their username.
+     *
+     * @param string $username The username of the user searched.
+     * @param string $fields A comma separated list of user fields to be returned, support and noreply user.
+     * @param int $mnethostid The id of the remote host.
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if user not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first user, ignore multiple user records found(not recommended);
+     *                        MUST_EXIST means throw an exception if no user record or multiple records found.
+     * @return stdClass|bool user record if found, else false.
+     * @throws dml_exception if user record not found and respective $strictness is set.
+     */
+    public static function get_user_by_username($username, $fields = '*', $mnethostid = null, $strictness = IGNORE_MISSING) {
+        global $DB, $CFG;
+
+        // Because we use the username as the search criteria, we must also restrict our search based on mnet host.
+        if (empty($mnethostid)) {
+            // If empty, we restrict to local users.
+            $mnethostid = $CFG->mnet_localhost_id;
+        }
+
+        return $DB->get_record('user', array('username' => $username, 'mnethostid' => $mnethostid), $fields, $strictness);
+    }
+
     /**
      * Helper function to return dummy noreply user record.
      *
