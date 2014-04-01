@@ -10,7 +10,8 @@
 }
 
 .atto_equation_library button {
-    margin: 4px;
+    margin: 0.25%;
+    min-width: 12%;
 }
 
 #page-admin-setting-atto_equation_settings .form-defaultinfo {
