@@ -89,7 +89,11 @@ class enrol_database_testcase extends advanced_testcase {
                 set_config('dbsybasequoting', '0', 'enrol_database');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
-                      set_config('dbhost', $CFG->dboptions['dbsocket'], 'enrol_database');
+                        $socket = $CFG->dboptions['dbsocket'];
+                        if (!empty($CFG->dboptions['dbport'])) {
+                            $socket .= ':' . $CFG->dboptions['dbport'];
+                        }
+                        set_config('dbhost', $socket, 'enrol_database');
                     } else {
                       set_config('dbhost', '', 'enrol_database');
                     }
