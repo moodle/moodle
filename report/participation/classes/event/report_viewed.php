@@ -83,7 +83,7 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('report/participation/index.php', array('id' => $this->courseid,
+        return new \moodle_url('/report/participation/index.php', array('id' => $this->courseid,
             'instanceid' => $this->data['other']['instanceid'], 'roleid' => $this->data['other']['roleid']));
     }
 

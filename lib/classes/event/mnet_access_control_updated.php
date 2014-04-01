@@ -51,7 +51,7 @@ class mnet_access_control_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('admin/mnet/access_control.php');
+        return new \moodle_url('/admin/mnet/access_control.php');
     }
 
     /**

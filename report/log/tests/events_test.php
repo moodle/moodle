@@ -69,6 +69,8 @@ class report_log_events_testcase extends advanced_testcase {
         $expected = array($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+        $url = new moodle_url('/report/log/index.php', array('id' => $event->courseid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -98,5 +100,7 @@ class report_log_events_testcase extends advanced_testcase {
         $expected = array($course->id, "course", "report log", $url, $course->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+        $url = new moodle_url('/report/log/user.php', array('course' => $course->id, 'id' => $user->id, 'mode' => 'today'));
+        $this->assertEquals($url, $event->get_url());
     }
 }

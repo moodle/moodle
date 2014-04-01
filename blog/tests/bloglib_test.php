@@ -174,6 +174,8 @@ class core_bloglib_testcase extends advanced_testcase {
 
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_entry_created', $event);
+        $url = new moodle_url('/blog/index.php', array('entryid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
@@ -207,6 +209,8 @@ class core_bloglib_testcase extends advanced_testcase {
 
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_entry_updated', $event);
+        $url = new moodle_url('/blog/index.php', array('entryid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
@@ -240,6 +244,7 @@ class core_bloglib_testcase extends advanced_testcase {
 
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_entry_deleted', $event);
+        $this->assertEquals(null, $event->get_url());
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
@@ -278,6 +283,8 @@ class core_bloglib_testcase extends advanced_testcase {
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_association_created', $event);
         $this->assertEquals($sitecontext->id, $event->contextid);
+        $url = new moodle_url('/blog/index.php', array('entryid' => $event->other['blogid']));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($blog->id, $event->other['blogid']);
         $this->assertEquals($this->courseid, $event->other['associateid']);
         $this->assertEquals('course', $event->other['associatetype']);

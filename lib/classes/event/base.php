@@ -345,6 +345,7 @@ abstract class base implements \IteratorAggregate {
             return false;
         }
 
+        $event->init(); // Init method of events could be setting custom properties.
         $event->restored = true;
         $event->triggered = true;
         $event->dispatched = true;

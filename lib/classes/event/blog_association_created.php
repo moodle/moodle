@@ -78,7 +78,7 @@ class blog_association_created extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/blog/index.php', array('entryid' => $this->objectid, 'userid' => $this->userid));
+        return new \moodle_url('/blog/index.php', array('entryid' => $this->other['blogid']));
     }
 
     /**

@@ -64,6 +64,15 @@ class template_viewed extends \core\event\base {
     }
 
     /**
+     * Get URL related to the action.
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/mod/data/templates.php', array('d' => $this->other['dataid']));
+    }
+
+    /**
      * Get the legacy event log data.
      *
      * @return array

@@ -42,8 +42,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class course_module_instance_list_viewed extends base{
 
-    /** @var string private var to store mod name */
-    private $modname;
+    /** @var string protected var to store mod name */
+    protected $modname;
 
     /**
      * Init method.

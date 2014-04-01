@@ -58,6 +58,8 @@ class core_message_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'message', 'add contact', 'index.php?user1=' . $user->id .
             '&amp;user2=2', $user->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -85,6 +87,8 @@ class core_message_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'message', 'remove contact', 'index.php?user1=' . $user->id .
             '&amp;user2=2', $user->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -111,6 +115,8 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEquals(context_user::instance(2), $event->get_context());
         $expected = array(SITEID, 'message', 'block contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -137,6 +143,8 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEquals(context_user::instance(2), $event->get_context());
         $expected = array(SITEID, 'message', 'unblock contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -166,6 +174,8 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEquals(context_system::instance(), $event->get_context());
         $expected = array(SITEID, 'message', 'write', 'index.php?user=1&id=2&history=1#m3', 1);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
@@ -191,5 +201,7 @@ class core_message_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\message_read', $event);
         $this->assertEquals(context_user::instance(2), $event->get_context());
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
     }
 }

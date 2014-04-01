@@ -66,8 +66,7 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        $url = '/mod/choice/report.php';
-        return new \moodle_url($url, array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/choice/report.php', array('id' => $this->contextinstanceid));
     }
 
     /**

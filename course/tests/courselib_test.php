@@ -1496,6 +1496,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($updatedcourse->id, $event->objectid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $url = new moodle_url('/course/edit.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($updatedcourse, $event->get_record_snapshot('course', $event->objectid));
         $this->assertEquals('course_updated', $event->get_legacy_eventname());
         $this->assertEventLegacyData($updatedcourse, $event);
@@ -1666,6 +1668,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($category->id, $event->objectid);
         $this->assertEquals($categorycontext->id, $event->contextid);
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $this->assertEquals(null, $event->get_url());
         $this->assertEventLegacyData($category, $event);
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category->name . '(ID ' . $category->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
@@ -1762,6 +1765,8 @@ class core_course_courselib_testcase extends advanced_testcase {
             'operation' => $rc->get_operation(),
             'samesite' => $rc->is_samesite()
         );
+        $url = new moodle_url('/course/view.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -1813,6 +1818,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($coursecontext->id, $event->contextid);
         $expecteddesc = 'Course ' . $event->courseid . ' section ' . $event->other['sectionnum'] . ' updated by user ' . $event->userid;
         $this->assertEquals($expecteddesc, $event->get_description());
+        $url = new moodle_url('/course/editsection.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
         $id = $section->id;
         $sectionnum = $section->section;

@@ -73,7 +73,7 @@ class user_enrolment_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/enrol/users.php', array('id' => $this->courseid));
+        return new \moodle_url('/enrol/editenrolment.php', array('ue' => $this->objectid));
     }
 
     /**
