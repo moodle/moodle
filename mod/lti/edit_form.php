@@ -54,6 +54,8 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class mod_lti_edit_types_form extends moodleform{
     public function definition() {
+        global $CFG;
+
         $mform    =& $this->_form;
 
         //-------------------------------------------------------------------------------
@@ -96,6 +98,7 @@ class mod_lti_edit_types_form extends moodleform{
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'lti');
+        $launchoptions[LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW] = get_string('existing_window', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'lti');
 
         $mform->addElement('select', 'lti_launchcontainer', get_string('default_launch_container', 'lti'), $launchoptions);
@@ -137,7 +140,12 @@ class mod_lti_edit_types_form extends moodleform{
 
         $mform->addElement('checkbox', 'lti_forcessl', '&nbsp;', ' ' . get_string('force_ssl', 'lti'), $options);
         $mform->setType('lti_forcessl', PARAM_BOOL);
-        $mform->setDefault('lti_forcessl', '0');
+        if (!empty($CFG->mod_lti_forcessl)) {
+            $mform->setDefault('lti_forcessl', '1');
+            $mform->freeze('lti_forcessl');
+        } else {
+            $mform->setDefault('lti_forcessl', '0');
+        }
         $mform->addHelpButton('lti_forcessl', 'force_ssl', 'lti');
 
         if (!empty($this->_customdata->isadmin)) {

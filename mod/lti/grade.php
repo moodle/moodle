@@ -68,7 +68,10 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/lti:grade', $context);
+require_capability('mod/lti:view', $context);
+
+// Redirecting to lti view. May need to wrap this in config.
+redirect(new moodle_url('/mod/lti/view.php', array('l' => $lti->id)));
 
 $url = new moodle_url('/mod/lti/grade.php', array('id' => $cm->id));
 if ($mode !== 'all') {

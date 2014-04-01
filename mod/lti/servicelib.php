@@ -79,11 +79,12 @@ function lti_parse_grade_replace_message($xml) {
     }
 
     $parsed = new stdClass();
-    $parsed->gradeval = $grade * 100;
+    $parsed->gradeval = $grade;
 
     $parsed->instanceid = $resultjson->data->instanceid;
     $parsed->userid = $resultjson->data->userid;
     $parsed->launchid = $resultjson->data->launchid;
+    $parsed->typeid = $resultjson->data->typeid;
     $parsed->sourcedidhash = $resultjson->hash;
 
     $parsed->messageid = lti_parse_message_id($xml);
@@ -99,6 +100,7 @@ function lti_parse_grade_read_message($xml) {
     $parsed->instanceid = $resultjson->data->instanceid;
     $parsed->userid = $resultjson->data->userid;
     $parsed->launchid = $resultjson->data->launchid;
+    $parsed->typeid = $resultjson->data->typeid;
     $parsed->sourcedidhash = $resultjson->hash;
 
     $parsed->messageid = lti_parse_message_id($xml);
@@ -114,11 +116,39 @@ function lti_parse_grade_delete_message($xml) {
     $parsed->instanceid = $resultjson->data->instanceid;
     $parsed->userid = $resultjson->data->userid;
     $parsed->launchid = $resultjson->data->launchid;
+    $parsed->typeid = $resultjson->data->typeid;
     $parsed->sourcedidhash = $resultjson->hash;
 
     $parsed->messageid = lti_parse_message_id($xml);
 
     return $parsed;
+}
+
+function lti_accepts_grades($ltiinstance) {
+    $acceptsgrades = true;
+    $typeconfig = lti_get_config($ltiinstance);
+
+    $typeacceptgrades = isset($typeconfig['acceptgrades']) ? $typeconfig['acceptgrades'] : LTI_SETTING_DELEGATE;
+
+    if (!($typeacceptgrades == LTI_SETTING_ALWAYS ||
+        ($typeacceptgrades == LTI_SETTING_DELEGATE && $ltiinstance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS))) {
+        $acceptsgrades = false;
+    }
+
+    return $acceptsgrades;
+}
+
+/**
+ * Set the passed user ID to the session user.
+ *
+ * @param int $userid
+ */
+function lti_set_session_user($userid) {
+    global $DB;
+
+    if ($user = $DB->get_record('user', array('id' => $userid))) {
+        \core\session\manager::set_user($user);
+    }
 }
 
 function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval) {
@@ -127,6 +157,8 @@ function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval) {
 
     $params = array();
     $params['itemname'] = $ltiinstance->name;
+
+    $gradeval = $gradeval * floatval($ltiinstance->grade);
 
     $grade = new stdClass();
     $grade->userid   = $userid;
@@ -170,10 +202,12 @@ function lti_read_grade($ltiinstance, $userid) {
 
     $grades = grade_get_grades($ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, $userid);
 
-    if (isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
+    $ltigrade = floatval($ltiinstance->grade);
+
+    if (!empty($ltigrade) && isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
         foreach ($grades->items[0]->grades as $agrade) {
             $grade = $agrade->grade;
-            $grade = $grade / 100.0;
+            $grade = $grade / $ltigrade;
             break;
         }
     }
@@ -191,7 +225,7 @@ function lti_delete_grade($ltiinstance, $userid) {
     $grade->userid   = $userid;
     $grade->rawgrade = null;
 
-    $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade, array('deleted'=>1));
+    $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade);
 
     return $status == GRADE_UPDATE_OK;
 }
@@ -215,8 +249,16 @@ function lti_verify_message($key, $sharedsecrets, $body, $headers = null) {
     return false;
 }
 
+/**
+ * Validate source ID from external request
+ *
+ * @param object $ltiinstance
+ * @param object $parsed
+ * @throws Exception
+ */
 function lti_verify_sourcedid($ltiinstance, $parsed) {
-    $sourceid = lti_build_sourcedid($parsed->instanceid, $parsed->userid, $parsed->launchid, $ltiinstance->servicesalt);
+    $sourceid = lti_build_sourcedid($parsed->instanceid, $parsed->userid,
+        $ltiinstance->servicesalt, $parsed->typeid, $parsed->launchid);
 
     if ($sourceid->hash != $parsed->sourcedidhash) {
         throw new Exception('SourcedId hash not valid');
@@ -238,6 +280,7 @@ function lti_extend_lti_services($data) {
             if (count($plugins) > 1) {
                 throw new coding_exception('More than one ltisource plugin handler found');
             }
+            $data->xml = new SimpleXMLElement($data->body);
             $callback = current($plugins);
             call_user_func($callback, $data);
         } catch (moodle_exception $e) {

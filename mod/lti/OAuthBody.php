@@ -114,7 +114,7 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body,
 
     try {
         $server->verify_request($request);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $message = $e->getMessage();
         throw new OAuthException("OAuth signature failed: " . $message);
     }

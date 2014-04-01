@@ -150,7 +150,7 @@ function lti_view($instance) {
     $orgid = $typeconfig['organizationid'];
 
     $course = $PAGE->course;
-    $requestparams = lti_build_request($instance, $typeconfig, $course);
+    $requestparams = lti_build_request($instance, $typeconfig, $course, $typeid);
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
     $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer, 'instanceid' => $instance->id);
@@ -158,7 +158,11 @@ function lti_view($instance) {
     if ( $orgid ) {
         $requestparams["tool_consumer_instance_guid"] = $orgid;
     }
-
+    if (!empty($CFG->mod_lti_institution_name)) {
+        $requestparams['tool_consumer_instance_name'] = $CFG->mod_lti_institution_name;
+    } else {
+        $requestparams['tool_consumer_instance_name'] = get_site()->fullname;
+    }
     if (empty($key) || empty($secret)) {
         $returnurlparams['unsigned'] = '1';
     }
@@ -171,7 +175,32 @@ function lti_view($instance) {
         $returnurl = lti_ensure_url_is_https($returnurl);
     }
 
+    $target = null;
+    switch($launchcontainer) {
+        case LTI_LAUNCH_CONTAINER_EMBED:
+        case LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS:
+            $target = 'iframe';
+            break;
+        case LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW:
+            $target = 'frame';
+            break;
+        case LTI_LAUNCH_CONTAINER_WINDOW:
+            $target = 'window';
+            break;
+    }
+    if (!is_null($target)) {
+        $requestparams['launch_presentation_document_target'] = $target;
+    }
+
     $requestparams['launch_presentation_return_url'] = $returnurl;
+
+    $factory    = new \mod_lti\factory();
+    $dispatcher = $factory->build_dispatcher();
+    $event      = new \mod_lti\observer\before_launch_event($instance, $endpoint, $requestparams);
+    $dispatcher->dispatch(\mod_lti\observer\events::BEFORE_LAUNCH, $event);
+
+    // Allow params to be updated.
+    $requestparams = $event->params;
 
     if (!empty($key) && !empty($secret)) {
         $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
@@ -200,11 +229,22 @@ function lti_view($instance) {
     echo $content;
 }
 
-function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesalt) {
+/**
+ * Build source ID
+ *
+ * @param int $instanceid
+ * @param int $userid
+ * @param string $servicesalt
+ * @param null|int $typeid
+ * @param null|int $launchid
+ * @return stdClass
+ */
+function lti_build_sourcedid($instanceid, $userid, $servicesalt, $typeid = null, $launchid = null) {
     $data = new stdClass();
 
     $data->instanceid = $instanceid;
     $data->userid = $userid;
+    $data->typeid = $typeid;
     if (!empty($launchid)) {
         $data->launchid = $launchid;
     } else {
@@ -228,10 +268,11 @@ function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesal
  * @param object    $instance       Basic LTI instance object
  * @param object    $typeconfig     Basic LTI tool configuration
  * @param object    $course         Course object
+ * @param int|null  $typeid         Basic LTI tool ID
  *
  * @return array    $request        Request details
  */
-function lti_build_request($instance, $typeconfig, $course) {
+function lti_build_request($instance, $typeconfig, $course, $typeid = null) {
     global $USER, $CFG;
 
     if (empty($instance->cmid)) {
@@ -252,22 +293,30 @@ function lti_build_request($instance, $typeconfig, $course) {
         'launch_presentation_locale' => current_language()
     );
 
+    if (property_exists($instance, 'resource_link_id') and !empty($instance->resource_link_id)) {
+        $requestparams['resource_link_id'] = $instance->resource_link_id;
+    }
     $placementsecret = $instance->servicesalt;
 
     if ( isset($placementsecret) ) {
-        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, null, $placementsecret));
+        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret, $typeid));
+        $requestparams['lis_result_sourcedid'] = $sourcedid;
     }
 
     if ( isset($placementsecret) &&
          ( $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS ) ) ) {
-        $requestparams['lis_result_sourcedid'] = $sourcedid;
 
         //Add outcome service URL
         $serviceurl = new moodle_url('/mod/lti/service.php');
         $serviceurl = $serviceurl->out();
 
-        if ($typeconfig['forcessl'] == '1') {
+        $forcessl = false;
+        if (!empty($CFG->mod_lti_forcessl)) {
+            $forcessl = true;
+        }
+
+        if ($typeconfig['forcessl'] == '1' or $forcessl) {
             $serviceurl = lti_ensure_url_is_https($serviceurl);
         }
 
@@ -497,7 +546,7 @@ function lti_get_ims_role($user, $cmid, $courseid) {
     }
 
     if (is_siteadmin($user)) {
-        array_push($roles, 'urn:lti:sysrole:ims/lis/Administrator');
+        array_push($roles, 'urn:lti:sysrole:ims/lis/Administrator', 'urn:lti:instrole:ims/lis/Administrator');
     }
 
     return join(',', $roles);
@@ -638,6 +687,10 @@ function lti_get_tool_by_url_match($url, $courseid = null, $state = LTI_TOOL_STA
 }
 
 function lti_get_url_thumbprint($url) {
+    // Parse URL requires a schema otherwise everything goes into 'path'.  Fixed 5.4.7 or later.
+    if (preg_match('/https?:\/\//', $url) !== 1) {
+        $url = 'http://'.$url;
+    }
     $urlparts = parse_url(strtolower($url));
     if (!isset($urlparts['path'])) {
         $urlparts['path'] = '';
@@ -1173,3 +1226,103 @@ function lti_ensure_url_is_https($url) {
 
     return $url;
 }
+
+/**
+ * Determines if we should try to log the request
+ *
+ * @param string $rawbody
+ * @return bool
+ */
+function lti_should_log_request($rawbody) {
+    global $CFG;
+
+    if (empty($CFG->mod_lti_log_users)) {
+        return false;
+    }
+
+    $logusers = explode(',', $CFG->mod_lti_log_users);
+    if (empty($logusers)) {
+        return false;
+    }
+
+    try {
+        $xml = new SimpleXMLElement($rawbody);
+        $ns  = $xml->getNamespaces();
+        $ns  = array_shift($ns);
+        $xml->registerXPathNamespace('lti', $ns);
+        $requestuserid = '';
+        if ($node = $xml->xpath('//lti:userId')) {
+            $node = $node[0];
+            $requestuserid = clean_param((string) $node, PARAM_INT);
+        } else if ($node = $xml->xpath('//lti:sourcedId')) {
+            $node = $node[0];
+            $resultjson = json_decode((string) $node);
+            $requestuserid = clean_param($resultjson->data->userid, PARAM_INT);
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    if (empty($requestuserid) or !in_array($requestuserid, $logusers)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Logs the request to a file in temp dir
+ *
+ * @param string $rawbody
+ */
+function lti_log_request($rawbody) {
+    if ($tempdir = make_temp_directory('mod_lti', false)) {
+        if ($tempfile = tempnam($tempdir, 'mod_lti_request'.date('YmdHis'))) {
+            file_put_contents($tempfile, $rawbody);
+            chmod($tempfile, 0644);
+        }
+    }
+}
+
+/**
+ * Fetches LTI type configuration for an LTI instance
+ *
+ * @param stdClass $instance
+ * @return array Can be empty if no type is found
+ */
+function lti_get_type_config_by_instance($instance) {
+    $typeid = null;
+    if (empty($instance->typeid)) {
+        $tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course);
+        if ($tool) {
+            $typeid = $tool->id;
+        }
+    } else {
+        $typeid = $instance->typeid;
+    }
+    if (!empty($typeid)) {
+        return lti_get_type_config($typeid);
+    }
+    return array();
+}
+
+/**
+ * Enforce type config settings onto the LTI instance
+ *
+ * @param stdClass $instance
+ * @param array $typeconfig
+ */
+function lti_force_type_config_settings($instance, array $typeconfig) {
+    $forced = array(
+        'instructorchoicesendname'      => 'sendname',
+        'instructorchoicesendemailaddr' => 'sendemailaddr',
+        'instructorchoiceacceptgrades'  => 'acceptgrades',
+    );
+
+    foreach ($forced as $instanceparam => $typeconfigparam) {
+        if (array_key_exists($typeconfigparam, $typeconfig) && $typeconfig[$typeconfigparam] != LTI_SETTING_DELEGATE) {
+            $instance->$instanceparam = $typeconfig[$typeconfigparam];
+        }
+    }
+}
+

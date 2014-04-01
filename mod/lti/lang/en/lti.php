@@ -111,11 +111,11 @@ $string['debuglaunchon'] = 'Debug launch';
 $string['default'] = 'Default';
 $string['default_launch_container'] = 'Default Launch Container';
 $string['default_launch_container_help'] = 'The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
-real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
+real estate to the tool, and others provide a more integrated feel with the Moodle environment.
 
 * **Default** - Use the launch container specified by the tool configuration.
 * **Embed** - The tool is displayed within the existing Moodle window, in a manner similar to most other Activity types.
-* **Embed, without blocks** - The tool is displayed within the existing Moodle window, with just the neavigation controls
+* **Embed, without blocks** - The tool is displayed within the existing Moodle window, with just the navigation controls
         at the top of the page.
 * **New window** - The tool opens in a new window, occupying all the available space.
         Depending on the browser, it will open in a new tab or a popup window.
@@ -147,6 +147,7 @@ $string['embed_no_blocks'] = 'Embed, without blocks';
 $string['enableemailnotification'] = 'Send notification emails';
 $string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their tool submissions are graded.';
 $string['errormisconfig'] = 'Misconfigured tool. Please ask your Moodle administrator to fix the configuration of the tool.';
+$string['existing_window'] = 'Existing window';
 $string['extensions'] = 'LTI Extension Services';
 $string['external_tool_type'] = 'External tool type';
 $string['external_tool_type_help'] = 'The main purpose of a tool configuration is to set up a secure communication channel between Moodle and the tool provider.
@@ -205,11 +206,11 @@ If you have selected a specific tool type, you may not need to enter a Launch UR
 into the tool provider\'s system, and not go to a specific resource, this will likely be the case.';
 $string['launchinpopup'] = 'Launch Container';
 $string['launchinpopup_help'] = 'The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
-real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
+real estate to the tool, and others provide a more integrated feel with the Moodle environment.
 
 * **Default** - Use the launch container specified by the tool configuration.
 * **Embed** - The tool is displayed within the existing Moodle window, in a manner similar to most other Activity types.
-* **Embed, without blocks** - The tool is displayed within the existing Moodle window, with just the neavigation controls
+* **Embed, without blocks** - The tool is displayed within the existing Moodle window, with just the navigation controls
         at the top of the page.
 * **New window** - The tool opens in a new window, occupying all the available space.
         Depending on the browser, it will open in a new tab or a popup window.

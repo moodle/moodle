@@ -95,17 +95,20 @@ function lti_add_instance($lti, $mform) {
     $lti->timemodified = $lti->timecreated;
     $lti->servicesalt = uniqid('', true);
 
+    lti_force_type_config_settings($lti, lti_get_type_config_by_instance($lti));
+
     if (empty($lti->typeid) && isset($lti->urlmatchedtypeid)) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
-    if (!isset($lti->grade)) {
-        $lti->grade = 100; // TODO: Why is this harcoded here and default @ DB
+    if (!isset($lti->instructorchoiceacceptgrades) || $lti->instructorchoiceacceptgrades != LTI_SETTING_ALWAYS) {
+        // The instance does not accept grades back from the provider, so set to "No grade" value 0.
+        $lti->grade = 0;
     }
 
     $lti->id = $DB->insert_record('lti', $lti);
 
-    if ($lti->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
+    if (isset($lti->instructorchoiceacceptgrades) && $lti->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
         if (!isset($lti->cmidnumber)) {
             $lti->cmidnumber = '';
         }
@@ -139,13 +142,15 @@ function lti_update_instance($lti, $mform) {
         $lti->showdescriptionlaunch = 0;
     }
 
-    if (!isset($lti->grade)) {
-        $lti->grade = $DB->get_field('lti', 'grade', array('id' => $lti->id));
-    }
+    lti_force_type_config_settings($lti, lti_get_type_config_by_instance($lti));
 
-    if ($lti->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
+    if (isset($lti->instructorchoiceacceptgrades) && $lti->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
         lti_grade_item_update($lti);
     } else {
+        // Instance is no longer accepting grades from Provider, set grade to "No grade" value 0.
+        $lti->grade = 0;
+        $lti->instructorchoiceacceptgrades = 0;
+
         lti_grade_item_delete($lti);
     }
 
@@ -468,7 +473,7 @@ function lti_grade_item_delete($basiclti) {
 function lti_extend_settings_navigation($settings, $parentnode) {
     global $PAGE;
 
-    if (has_capability('mod/lti:grade', context_module::instance($PAGE->cm->id))) {
+    if (has_capability('mod/lti:manage', context_module::instance($PAGE->cm->id))) {
         $keys = $parentnode->get_children_key_list();
 
         $node = navigation_node::create('Submissions',
@@ -477,4 +482,22 @@ function lti_extend_settings_navigation($settings, $parentnode) {
 
         $parentnode->add_node($node, $keys[1]);
     }
+}
+
+/**
+ * Log post actions
+ *
+ * @return array
+ */
+function lti_get_post_actions() {
+    return array();
+}
+
+/**
+ * Log view actions
+ *
+ * @return array
+ */
+function lti_get_view_actions() {
+    return array('view all', 'view');
 }

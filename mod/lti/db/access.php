@@ -56,20 +56,6 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
-    // Controls access to the grade.php script, which shows all the submissions
-    // made to the external tool that have been reported back to Moodle.
-    'mod/lti:grade' => array(
-        'riskbitmask' => RISK_PERSONAL,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-
     // When the user arrives at the external tool, if they have this capability
     // in Moodle, then they given the Instructor role in the remote system,
     // otherwise they are given Learner. See the lti_get_ims_role function.
