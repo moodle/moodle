@@ -86,6 +86,7 @@ class user_report_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->data['relateduserid'])) {
             throw new \coding_exception('The property relateduserid must be set.');
         }

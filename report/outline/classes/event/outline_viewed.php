@@ -91,6 +91,7 @@ class outline_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->data['other']['mode'])) {
             throw new \coding_exception('The property mode must be set in other.');
         }

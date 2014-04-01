@@ -112,6 +112,7 @@ class submission_status_updated extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['newstatus'])) {
             throw new \coding_exception('newstatus must be set in $other.');
         }

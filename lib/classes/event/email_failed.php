@@ -69,6 +69,7 @@ class email_failed extends base {
      * @throws \coding_exception
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['subject'])) {
             throw new \coding_exception('The subject needs to be set in $other');
         }

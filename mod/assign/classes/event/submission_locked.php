@@ -92,7 +92,7 @@ class submission_locked extends \core\event\base {
     /**
      * Sets the legacy event log data.
      *
-     * @param stdClass $legacylogdata legacy log data.
+     * @param \stdClass $legacylogdata legacy log data.
      * @return void
      */
     public function set_legacy_logdata($legacylogdata) {
@@ -106,6 +106,7 @@ class submission_locked extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('relateduserid is a mandatory property.');
         }

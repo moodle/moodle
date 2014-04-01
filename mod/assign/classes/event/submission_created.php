@@ -74,6 +74,7 @@ abstract class submission_created extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['submissionid'])) {
             throw new \coding_exception('Other must contain the key submissionid.');
         }

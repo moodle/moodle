@@ -113,29 +113,26 @@ class user_deleted extends base {
      * @return void
      */
     protected function validate_data() {
-        global $CFG;
+        parent::validate_data();
 
-        if ($CFG->debugdeveloper) {
-            parent::validate_data();
-            if (!isset($this->other['username'])) {
-                throw new \coding_exception('username must be set in $other.');
-            }
+        if (!isset($this->other['username'])) {
+            throw new \coding_exception('username must be set in $other.');
+        }
 
-            if (!isset($this->other['email'])) {
-                throw new \coding_exception('email must be set in $other.');
-            }
+        if (!isset($this->other['email'])) {
+            throw new \coding_exception('email must be set in $other.');
+        }
 
-            if (!isset($this->other['idnumber'])) {
-                throw new \coding_exception('idnumber must be set in $other.');
-            }
+        if (!isset($this->other['idnumber'])) {
+            throw new \coding_exception('idnumber must be set in $other.');
+        }
 
-            if (!isset($this->other['picture'])) {
-                throw new \coding_exception('picture must be set in $other.');
-            }
+        if (!isset($this->other['picture'])) {
+            throw new \coding_exception('picture must be set in $other.');
+        }
 
-            if (!isset($this->other['mnethostid'])) {
-                throw new \coding_exception('mnethostid must be set in $other.');
-            }
+        if (!isset($this->other['mnethostid'])) {
+            throw new \coding_exception('mnethostid must be set in $other.');
         }
     }
 }

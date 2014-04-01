@@ -84,6 +84,7 @@ class course_reset_ended extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['reset_options'])) {
            throw new \coding_exception('The key reset_options must be set in $other.');
         }

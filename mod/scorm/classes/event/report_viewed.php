@@ -93,6 +93,7 @@ class report_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->other['mode'])) {
             throw new \coding_exception('The event must specify mode to define which report was viewed.');
         }

@@ -103,6 +103,7 @@ class answer_submitted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['choiceid'])) {
             throw new \coding_exception('choiceid must be set in $other.');
         }

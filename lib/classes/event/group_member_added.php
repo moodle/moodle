@@ -112,6 +112,7 @@ class group_member_added extends \core\event\base {
         if (!isset($this->other['component']) || !isset($this->other['itemid'])) {
             throw new \coding_exception('The component and itemid need to be set in $other, even if empty.');
         }
+        parent::validate_data();
     }
 
 }

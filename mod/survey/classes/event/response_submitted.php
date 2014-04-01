@@ -84,6 +84,7 @@ class response_submitted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->other['surveyid'])) {
             throw new \coding_exception('Other must contain the key surveyid.');
         }

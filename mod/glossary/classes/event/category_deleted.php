@@ -88,6 +88,7 @@ class category_deleted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         // Make sure this class is never used without proper object details.
         if (!$this->contextlevel === CONTEXT_MODULE) {
             throw new \coding_exception('Context level must be CONTEXT_MODULE.');

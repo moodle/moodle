@@ -99,6 +99,7 @@ class user_login_failed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['reason'])) {
             throw new \coding_exception("other['reason'] has to be specified.");
         } else if (!isset($this->other['username'])) {
