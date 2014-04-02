@@ -1510,6 +1510,39 @@ class cm_info implements IteratorAggregate {
         return context_module::instance($this->id);
     }
 
+    /**
+     * Returns itself in the form of stdClass.
+     *
+     * The object includes all fields that table course_modules has and additionally
+     * fields 'name', 'modname', 'sectionnum' (if requested).
+     *
+     * This can be used as a faster alternative to {@link get_coursemodule_from_id()}
+     *
+     * @param bool $additionalfields include additional fields 'name', 'modname', 'sectionnum'
+     * @return stdClass
+     */
+    public function get_course_module_record($additionalfields = false) {
+        $cmrecord = new stdClass();
+
+        // Standard fields from table course_modules.
+        static $cmfields = array('id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
+            'score', 'indent', 'visible', 'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
+            'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
+            'availablefrom', 'availableuntil', 'showavailability', 'showdescription');
+        foreach ($cmfields as $key) {
+            $cmrecord->$key = $this->$key;
+        }
+
+        // Additional fields that function get_coursemodule_from_id() adds.
+        if ($additionalfields) {
+            $cmrecord->name = $this->name;
+            $cmrecord->modname = $this->modname;
+            $cmrecord->sectionnum = $this->sectionnum;
+        }
+
+        return $cmrecord;
+    }
+
     // Set functions
     ////////////////
 
