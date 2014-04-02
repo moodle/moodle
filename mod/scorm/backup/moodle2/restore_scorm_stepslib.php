@@ -195,6 +195,16 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         $scormid = $this->get_new_parentid('scorm');
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
         $scorm->launch = $this->get_mappingid('scorm_sco', $scorm->launch, '');
+
+        if (!empty($scorm->launch)) {
+            // Check that this sco has a valid launch value.
+            $scolaunch = $DB->get_field('scorm_scoes', 'launch', array('id' => $scorm->launch));
+            if (empty($scolaunch)) {
+                // This is not a valid sco - set to empty so we can find a valid launch sco.
+                $scorm->launch = '';
+            }
+        }
+
         if (empty($scorm->launch)) {
             // This scorm has an invalid launch param - we need to calculate it and get the first launchable sco.
             $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
