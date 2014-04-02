@@ -713,6 +713,10 @@ class workshop_random_allocator implements workshop_allocator {
     public static function teammode_class() {
         return "workshop_teammode_random_allocator";
     }
+    
+    public function post_allocation_redirect() {
+        return $this->workshop->allocation_url('manual');
+    }
 }
 
 

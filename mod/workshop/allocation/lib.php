@@ -76,6 +76,15 @@ interface workshop_allocator {
     
     public static function teammode_class();
     
+    /**
+     * For some plugins, a redirect after allocation is desirable.
+     * @return moodle_url
+     */
+     
+    //PHP has no support for optional methods.
+     
+    //public function post_allocation_redirect();
+    
 }
 
 

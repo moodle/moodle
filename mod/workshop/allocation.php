@@ -82,7 +82,12 @@ if (is_null($initresult->get_status()) or $initresult->get_status() == workshop_
 } else {
     echo $output->container_start('allocator-init-results');
     echo $output->render($initresult);
-    echo $output->continue_button($workshop->allocation_url($method));
+    //TODO: always redirect to manual?
+    if (method_exists($workshop, 'post_allocation_redirect')) {
+      echo $output->continue_button($workshop->post_allocation_redirect);
+    } else {
+      echo $output->continue_button($workshop->allocation_url($method));
+    }
     echo $output->container_end();
 }
 echo $output->footer();
