@@ -705,7 +705,7 @@ function scorm_parse_scorm(&$scorm, $manifest) {
         $scorm->launch = $defaultorgid;
     } else if (!empty($defaultorgid) && isset($newscoes[$defaultorgid]) && empty($newscoes[$defaultorgid]->launch)) {
         // The launch is probably the default org so we need to find the first launchable item inside this org.
-        $sqlselect = 'scorm = ? AND sortorder > ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+        $sqlselect = 'scorm = ? AND sortorder >= ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
         // We use get_records here as we need to pass a limit in the query that works cross db.
         $scoes = $DB->get_records_select('scorm_scoes', $sqlselect, array($scorm->id, $firstinorg), 'sortorder', 'id', 0, 1);
         if (!empty($scoes)) {
