@@ -334,7 +334,7 @@ Feature: Test category management actions
     And the "resortcoursesby" "select" should be disabled
 
   Scenario: Test that is not possible to create a course category with a duplicate idnumber
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
     And I log in as "admin"
