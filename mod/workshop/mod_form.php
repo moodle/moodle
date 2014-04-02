@@ -145,9 +145,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'instructreviewerseditor', $label, null,
                             workshop::instruction_editors_options($this->context));
                             
-        $text = get_string('examplesmoderequired', 'workshop');
-        $mform->addElement('static', 'examplesmoderequired', '', $text);
-
         $label = get_string('useselfassessment', 'workshop');
         $text = get_string('useselfassessment_desc', 'workshop');
         $mform->addElement('checkbox', 'useselfassessment', $label, $text);
@@ -206,6 +203,9 @@ class mod_workshop_mod_form extends moodleform_mod {
         $text = get_string('useexamples_desc', 'workshop');
         $mform->addElement('checkbox', 'useexamples', $label, $text);
         $mform->addHelpButton('useexamples', 'useexamples', 'workshop');
+
+        $text = get_string('examplesmoderequired', 'workshop');
+        $mform->addElement('static', 'examplesmoderequired', '', $text);
 
         $label = get_string('examplesmode', 'workshop');
         $options = workshop::available_example_modes_list();
