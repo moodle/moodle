@@ -288,7 +288,7 @@ $string['toolbox'] = 'Workshop toolbox';
 $string['undersetup'] = 'The workshop is currently being set up. Please wait until it is switched to the next phase.';
 $string['useexamples'] = 'Use examples';
 $string['useexamples_desc'] = 'Example submissions are provided for practice in assessing';
-$string['useexamples_help'] = 'If enabled, users can try assessing one or more example submissions and compare their assessment with a reference assessment. The grade is not counted in the grade for assessment.';
+$string['useexamples_help'] = 'If enabled, users can try assessing one or more example submissions and compare their assessment with a reference assessment.';
 $string['usepeerassessment'] = 'Use peer assessment';
 $string['usepeerassessment_desc'] = 'Students may assess the work of others';
 $string['usepeerassessment_help'] = 'If enabled, a user may be allocated submissions from other users to assess and will receive a grade for assessment in addition to a grade for their own submission.';
@@ -402,3 +402,5 @@ $string['feedback'] = 'Feedback';
 
 
 $string['wordcount'] = 'Word count: {$a}';
+
+$string['downloadallocations'] = 'Download Allocations';
