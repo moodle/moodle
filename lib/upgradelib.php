@@ -2083,31 +2083,39 @@ function upgrade_grade_item_fix_sortorder() {
     // to do it more efficiently by doing a series of update statements rather than updating
     // every single grade item in affected courses.
 
-    $transaction = $DB->start_delegated_transaction();
-
-    $sql = "SELECT DISTINCT g1.id, g1.courseid, g1.sortorder
+    $sql = "SELECT DISTINCT g1.courseid
               FROM {grade_items} g1
               JOIN {grade_items} g2 ON g1.courseid = g2.courseid
              WHERE g1.sortorder = g2.sortorder AND g1.id != g2.id
-             ORDER BY g1.courseid ASC, g1.sortorder DESC, g1.id DESC";
+             ORDER BY g1.courseid ASC";
+    foreach ($DB->get_fieldset_sql($sql) as $courseid) {
+        $transaction = $DB->start_delegated_transaction();
+        $items = $DB->get_records('grade_items', array('courseid' => $courseid), '', 'id, sortorder, sortorder AS oldsort');
 
-    // Get all duplicates in course order, highest sort order, and higest id first so that we can make space at the
-    // bottom higher end of the sort orders and work down by id.
-    $rs = $DB->get_recordset_sql($sql);
+        // Get all duplicates in course order, highest sort order, and higest id first so that we can make space at the
+        // bottom higher end of the sort orders and work down by id.
+        $sql = "SELECT DISTINCT g1.id, g1.sortorder
+                FROM {grade_items} g1
+                JOIN {grade_items} g2 ON g1.courseid = g2.courseid
+                WHERE g1.sortorder = g2.sortorder AND g1.id != g2.id AND g1.courseid = :courseid
+                ORDER BY g1.sortorder DESC, g1.id DESC";
 
-    foreach($rs as $duplicate) {
-        $DB->execute("UPDATE {grade_items}
-                         SET sortorder = sortorder + 1
-                       WHERE courseid = :courseid AND
-                       (sortorder > :sortorder OR (sortorder = :sortorder2 AND id > :id))",
-            array('courseid' => $duplicate->courseid,
-                'sortorder' => $duplicate->sortorder,
-                'sortorder2' => $duplicate->sortorder,
-                'id' => $duplicate->id));
+        // This is the O(N*N) like the database version we're replacing, but at least the constants are a billion times smaller...
+        foreach ($DB->get_records_sql($sql, array('courseid' => $courseid)) as $duplicate) {
+            foreach ($items as $item) {
+                if ($item->sortorder > $duplicate->sortorder || ($item->sortorder == $duplicate->sortorder && $item->id > $duplicate->id)) {
+                    $item->sortorder += 1;
+                }
+            }
+        }
+        foreach ($items as $item) {
+            if ($item->sortorder != $item->oldsort) {
+                $DB->update_record('grade_items', array('id' => $item->id, 'sortorder' => $item->sortorder));
+            }
+        }
+
+        $transaction->allow_commit();
     }
-    $rs->close();
-
-    $transaction->allow_commit();
 }
 
 /**
