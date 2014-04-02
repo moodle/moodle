@@ -4,8 +4,7 @@ var SELECTORS = {
     CREATENEWQUESTION: 'div.createnewquestion',
     CREATENEWQUESTIONFORM: 'div.createnewquestion form',
     CHOOSERDIALOGUE: 'div.chooserdialogue',
-    CHOOSERHEADER: 'div.choosertitle',
-    QBANKCATEGORY: '#qbankcategory'
+    CHOOSERHEADER: 'div.choosertitle'
 };
 
 function Chooser() {
@@ -30,10 +29,17 @@ Y.extend(Chooser, M.core.chooserdialogue, {
             this.prepare_chooser();
         }
 
-        // Set the category ID in the form - this may have been updated since the dialogue
-        // was previously displayed so we must update it here.
-        this.container.one(SELECTORS.QBANKCATEGORY).set('value',
-            Y.one(SELECTORS.CREATENEWQUESTIONFORM).get('category').get('value'));
+        // Update all of the hidden fields within the questionbank form.
+        var originForm = e.target.ancestor('form', true),
+            targetForm = this.container.one('form'),
+            hiddenElements = originForm.all('input[type="hidden"]');
+
+        targetForm.all('input.customfield').remove();
+        hiddenElements.each(function(field) {
+            targetForm.appendChild(field.cloneNode())
+                .removeAttribute('id')
+                .addClass('customfield');
+        });
 
         // Display the chooser dialogue.
         this.display_chooser(e);
