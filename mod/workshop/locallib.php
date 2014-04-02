@@ -2356,7 +2356,6 @@ SQL;
             $info->gradinggrade = $this->real_grading_grade($reviewee->gradinggrade);
             $info->gradinggradeover = $this->real_grading_grade($reviewee->gradinggradeover);
             $info->weight = $reviewee->weight;
-            $info->feedback = $reviewee->feedbackauthor;
             $grades[$reviewee->reviewerid]->reviewerof[$reviewee->authorid] = $info;
         }
         unset($reviewees);
