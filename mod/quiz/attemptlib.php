@@ -793,13 +793,31 @@ class quiz_attempt {
      * If not, prints an error.
      */
     public function check_review_capability() {
-        if (!$this->has_capability('mod/quiz:viewreports')) {
-            if ($this->get_attempt_state() == mod_quiz_display_options::IMMEDIATELY_AFTER) {
-                $this->require_capability('mod/quiz:attempt');
-            } else {
-                $this->require_capability('mod/quiz:reviewmyattempts');
-            }
+        if ($this->get_attempt_state() == mod_quiz_display_options::IMMEDIATELY_AFTER) {
+            $capability = 'mod/quiz:attempt';
+        } else {
+            $capability = 'mod/quiz:reviewmyattempts';
         }
+
+        // These next tests are in a slighly funny order. The point is that the
+        // common and most performance-critical case is students attempting a quiz
+        // so we want to check that permisison first.
+
+        if ($this->has_capability($capability)) {
+            // User has the permission that lets you do the quiz as a student. Fine.
+            return;
+        }
+
+        if ($this->has_capability('mod/quiz:viewreports') ||
+                $this->has_capability('mod/quiz:preview')) {
+            // User has the permission that lets teachers review. Fine.
+            return;
+        }
+
+        // They should not be here. Trigger the standard no-permission error
+        // but using the name of the student capability.
+        // We know this will fail. We just want the stadard exception thown.
+        $this->require_capability($capability);
     }
 
     /**
