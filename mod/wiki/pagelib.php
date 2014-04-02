@@ -1427,14 +1427,11 @@ class page_wiki_map extends page_wiki {
             echo $this->wikioutput->menu_map($this->page->id, $this->view);
             $this->print_index_content();
             break;
-        case 5:
-            echo $this->wikioutput->menu_map($this->page->id, $this->view);
-            $this->print_page_list_content();
-            break;
         case 6:
             echo $this->wikioutput->menu_map($this->page->id, $this->view);
             $this->print_updated_content();
             break;
+        case 5:
         default:
             echo $this->wikioutput->menu_map($this->page->id, $this->view);
             $this->print_page_list_content();
