@@ -64,6 +64,7 @@ class behat_selectors {
         'checkbox' => 'checkbox',
         'radio' => 'radio',
         'file' => 'file',
+        'filemanager' => 'filemanager',
         'optgroup' => 'optgroup',
         'option' => 'option',
         'table' => 'table',
@@ -98,6 +99,9 @@ XPATH
 XPATH
         , 'table_row' => <<<XPATH
 .//tr[contains(normalize-space(.), %locator%)]
+XPATH
+        , 'filemanager' => <<<XPATH
+//div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]/descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
     );
 

@@ -18,7 +18,7 @@
  * Helper to initialise behat contexts from moodle code.
  *
  * @package    core
- * @category   testing
+ * @category   test
  * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ use Behat\Mink\Session as Session,
  * Helper to get behat contexts.
  *
  * @package    core
- * @category   testing
+ * @category   test
  * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -71,7 +71,7 @@ class behat_context_helper {
      * can not be executed like this.
      *
      * @throws coding_exception
-     * @param string Context identifier (the class name).
+     * @param string $classname Context identifier (the class name).
      * @return behat_base
      */
     public static function get($classname) {

@@ -160,11 +160,8 @@ class behat_repository_upload extends behat_files {
 
         // The action depends on the field type.
         foreach ($datahash as $locator => $value) {
-            // Getting the node element pointed by the label.
-            $fieldnode = $this->find_field($locator);
 
-            // Gets the field type from a parent node.
-            $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+            $field = behat_field_manager::get_form_field_from_label($locator, $this);
 
             // Delegates to the field class.
             $field->set_value($value);

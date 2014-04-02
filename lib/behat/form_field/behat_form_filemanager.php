@@ -41,7 +41,7 @@ require_once(__DIR__  . '/behat_form_field.php');
  *
  * This field manager allows you to:
  * - Get: A comma-separated list of the root directory
-     file names, including folders.
+ *   file names, including folders.
  * - Set: Add a file, in case you want to add more than
  *     one file you can always set two table rows using
  *     the same locator.
