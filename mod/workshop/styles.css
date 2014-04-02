@@ -129,8 +129,14 @@
 }
 
 .path-mod-workshop .submission-full .content,
-.path-mod-workshop .submission-full .attachments {
+.path-mod-workshop .submission-full .attachments,
+.path-mod-workshop .submission-full .wordcount {
     padding: 5px 10px;
+}
+
+.path-mod-workshop .submission-full .wordcount {
+  font-style: italic; 
+  color: #BBB;
 }
 
 .path-mod-workshop .submission-full .attachments .files img.icon {

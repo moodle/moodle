@@ -151,6 +151,8 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         $o .= $this->output->container($content, 'content');
 
+        $o .= $this->output->container($this->helper_submission_wordcount($content), 'wordcount');
+
         $o .= $this->helper_submission_attachments($submission->id, 'html');
 
         $o .= $this->output->container_end(); // end of submission-full
@@ -1111,6 +1113,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
         } else {
             return $outputfiles;
         }
+    }
+    
+    function helper_submission_wordcount($content) {
+        $content = strip_tags($content);
+        $content = html_entity_decode($content);
+        $content = preg_replace('/\s\s+/',' ',$content);
+        return get_string('wordcount','workshop',str_word_count($content));
     }
 
     /**
