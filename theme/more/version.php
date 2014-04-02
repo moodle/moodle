@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2014032400;
+$plugin->version   = 2014032401;
 $plugin->requires  = 2013110500;
 $plugin->component = 'theme_more';
 $plugin->dependencies = array(
