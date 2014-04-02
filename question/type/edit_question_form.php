@@ -577,7 +577,66 @@ abstract class question_edit_form extends question_wizard_form {
             $question->feedback[$key]['format'] = $answer->feedbackformat;
             $key++;
         }
+
+        // Now process extra answer fields.
+        $extraanswerfields = question_bank::get_qtype($question->qtype)->extra_answer_fields();
+        if (is_array($extraanswerfields)) {
+            // Omit table name.
+            array_shift($extraanswerfields);
+            $question = $this->data_preprocessing_extra_answer_fields($question, $extraanswerfields);
+        }
+
         return $question;
+    }
+
+    /**
+     * Perform the necessary preprocessing for the extra answer fields.
+     *
+     * Questions that do something not trivial when editing extra answer fields
+     * will want to override this.
+     * @param object $question the data being passed to the form.
+     * @param array $extraanswerfields extra answer fields (without table name).
+     * @return object $question the modified data.
+     */
+    protected function data_preprocessing_extra_answer_fields($question, $extraanswerfields) {
+        // Setting $question->$field[$key] won't work in PHP, so we need set an array of answer values to $question->$field.
+        // As we may have several extra fields with data for several answers in each, we use an array of arrays.
+        // Index in $extrafieldsdata is an extra answer field name, value - array of it's data for each answer.
+        $extrafieldsdata = array();
+        // First, prepare an array if empty arrays for each extra answer fields data.
+        foreach ($extraanswerfields as $field) {
+            $extrafieldsdata[$field] = array();
+        }
+
+        // Fill arrays with data from $question->options->answers.
+        $key = 0;
+        foreach ($question->options->answers as $answer) {
+            foreach ($extraanswerfields as $field) {
+                // See hack comment in {@link data_preprocessing_answers()}.
+                unset($this->_form->_defaultValues["$field[$key]"]);
+                $extrafieldsdata[$field][$key] = $this->data_preprocessing_extra_answer_field($answer, $field);
+            }
+            $key++;
+        }
+
+        // Set this data in the $question object.
+        foreach ($extraanswerfields as $field) {
+            $question->$field = $extrafieldsdata[$field];
+        }
+        return $question;
+    }
+
+    /**
+     * Perfmorm preprocessing for particular extra answer field.
+     *
+     * Questions with non-trivial DB - form element relationship will
+     * want to override this.
+     * @param object $answer an answer object to get extra field from.
+     * @param string $field extra answer field name.
+     * @return field value to be set to the form.
+     */
+    protected function data_preprocessing_extra_answer_field($answer, $field) {
+        return $answer->$field;
     }
 
     /**
