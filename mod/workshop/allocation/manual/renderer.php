@@ -94,9 +94,16 @@ class workshopallocation_manual_renderer extends mod_workshop_renderer  {
             $table->data[] = $row;
         }
         
+        $url = new moodle_url("allocation/download.php", array("id" => $this->workshop->cm->id));
+        $btn = new single_button($url, get_string('downloadallocations', 'workshop'), 'get');
+        
         $form = new workshop_allocation_manual_upload_form($CFG->httpswwwroot.'/mod/workshop/allocation/manual/upload.php');
-
-        return $this->output->container(html_writer::table($table) . $form->toHtml(), 'manual-allocator');
+        
+        $o = html_writer::table($table);
+        $o .= $this->output->render($btn);
+        $o .= $form->toHtml();
+        
+        return $this->output->container($o, 'manual-allocator');
     }
 
     ////////////////////////////////////////////////////////////////////////////
