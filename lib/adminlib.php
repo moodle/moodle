@@ -8143,6 +8143,11 @@ class admin_setting_configcolourpicker extends admin_setting {
     protected $previewconfig = null;
 
     /**
+     * Use default when empty.
+     */
+    protected $usedefaultwhenempty = true;
+
+    /**
      *
      * @param string $name
      * @param string $visiblename
@@ -8150,8 +8155,10 @@ class admin_setting_configcolourpicker extends admin_setting {
      * @param string $defaultsetting
      * @param array $previewconfig Array('selector'=>'.some .css .selector','style'=>'backgroundColor');
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, array $previewconfig=null) {
+    public function __construct($name, $visiblename, $description, $defaultsetting, array $previewconfig = null,
+            $usedefaultwhenempty = true) {
         $this->previewconfig = $previewconfig;
+        $this->usedefaultwhenempty = $usedefaultwhenempty;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
@@ -8242,7 +8249,11 @@ class admin_setting_configcolourpicker extends admin_setting {
         } else if (($data == 'transparent') || ($data == 'currentColor') || ($data == 'inherit')) {
             return $data;
         } else if (empty($data)) {
-            return $this->defaultsetting;
+            if ($this->usedefaultwhenempty){
+                return $this->defaultsetting;
+            } else {
+                return '';
+            }
         } else {
             return false;
         }
