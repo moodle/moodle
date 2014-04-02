@@ -56,5 +56,19 @@ function xmldb_theme_more_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2014032401) {
+
+        // Set the default settings as they might already be set.
+        set_config('textcolor', '#333366', 'theme_more');
+        set_config('linkcolor', '#FF6500', 'theme_more');
+        set_config('backgroundrepeat', 'repeat', 'theme_more');
+        set_config('contentbackground', '#FFFFFF', 'theme_more');
+        set_config('secondarybackground', '#FFFFFF', 'theme_more');
+        set_config('invert', 1, 'theme_more');
+        set_config('backgroundimage', '/background.jpg', 'theme_more');
+
+        upgrade_plugin_savepoint(true, 2014032401, 'theme', 'more');
+    }
+
     return true;
 }
