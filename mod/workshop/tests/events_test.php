@@ -80,22 +80,20 @@ class mod_workshop_events_testcase extends advanced_testcase {
         $this->workshop->phaseswitchassessment = 1;
         $this->workshop->submissionend = time() - 1;
 
-        $event = \mod_workshop\event\phase_switched::create(array(
-            'objectid' => $this->workshop->id,
-            'context'  => $this->context,
-            'courseid' => $this->course->id,
-            'other'    => array('workshopphase' => $this->workshop->phase)
-        ));
+        $cm = get_coursemodule_from_instance('workshop', $this->workshop->id, $this->course->id, false, MUST_EXIST);
+        $workshop = new testable_workshop($this->workshop, $cm, $this->course);
 
+        // The phase that we are switching to.
+        $newphase = 30;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $event->trigger();
+        $workshop->switch_phase($newphase);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the legacy log data is valid.
         $expected = array($this->course->id, 'workshop', 'update switch phase', 'view.php?id=' . $this->workshop->id,
-            $this->workshop->phase, $this->cm->id);
+            $newphase, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 

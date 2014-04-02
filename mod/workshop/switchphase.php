@@ -47,7 +47,6 @@ if ($confirm) {
     if (!$workshop->switch_phase($phase)) {
         print_error('errorswitchingphase', 'workshop', $workshop->view_url());
     }
-    $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);
     redirect($workshop->view_url());
 }
 

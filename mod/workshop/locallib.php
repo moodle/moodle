@@ -1505,6 +1505,7 @@ class workshop {
 
     /**
      * Workshop wrapper around {@see add_to_log()}
+     * @deprecated since 2.7 Please use the provided event classes for logging actions.
      *
      * @param string $action to be logged
      * @param moodle_url $url absolute url as returned by {@see workshop::submission_url()} and friends
@@ -1513,6 +1514,7 @@ class workshop {
      * @return void|array array of arguments for add_to_log if $return is true
      */
     public function log($action, moodle_url $url = null, $info = null, $return = false) {
+        debugging('The log method is now deprecated, please use event classes instead', DEBUG_DEVELOPER);
 
         if (is_null($url)) {
             $url = $this->view_url();
@@ -1690,6 +1692,15 @@ class workshop {
 
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
         $this->phase = $newphase;
+        $eventdata = array(
+            'objectid' => $this->id,
+            'context' => $this->context,
+            'other' => array(
+                'workshopphase' => $this->phase
+            )
+        );
+        $event = \mod_workshop\event\phase_switched::create($eventdata);
+        $event->trigger();
         return true;
     }
 
