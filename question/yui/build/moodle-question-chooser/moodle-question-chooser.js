@@ -14,7 +14,11 @@ function Chooser() {
 
 Y.extend(Chooser, M.core.chooserdialogue, {
     initializer: function() {
-        Y.one(SELECTORS.CREATENEWQUESTIONFORM).on('submit', this.displayQuestionChooser, this);
+        Y.all('form').each(function(node) {
+            if (/question\/addquestion\.php/.test(node.getAttribute('action'))) {
+                node.on('submit', this.displayQuestionChooser, this);
+            }
+        }, this);
     },
     displayQuestionChooser: function(e) {
         var dialogue = Y.one(SELECTORS.CREATENEWQUESTION + ' ' + SELECTORS.CHOOSERDIALOGUE),

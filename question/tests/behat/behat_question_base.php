@@ -54,7 +54,7 @@ class behat_question_base extends behat_base {
 
         return array(
             new Given('I set the field "' . $this->escape($questiontypename) . '" to "1"'),
-            new Given('I click on "#chooseqtype_submit" "css_element"'),
+            new Given('I click on ".submitbutton" "css_element"'),
             new Given('I set the following fields to these values:', $questiondata),
             new Given('I press "id_submitbutton"')
         );
