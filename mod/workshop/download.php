@@ -27,6 +27,9 @@ require_login($course, false, $cm);
 if (isguestuser()) {
     print_error('guestsarenotallowed');
 }
+
+require_capability('mod/workshop:viewallassessments', $PAGE->context);
+
 $workshop = new workshop($workshop, $cm, $course);
 
 $groupid = groups_get_activity_group($cm, true);
