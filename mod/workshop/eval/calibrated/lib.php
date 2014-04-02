@@ -185,7 +185,7 @@ class workshop_calibrated_evaluation extends workshop_evaluation {
 			$gradinggrade = is_null($v->gradinggradeover) ? $v->gradinggrade : $v->gradinggradeover;
 			$weighted_grade = $v->grade * $v->weight * $gradinggrade;
 			$weighted_grades[] = $weighted_grade;
-			$total_weight += $v->gradinggrade * $v->weight;
+			$total_weight += $gradinggrade * $v->weight;
 		}
 		
 		//do it for the last one
@@ -205,6 +205,7 @@ class workshop_calibrated_evaluation extends workshop_evaluation {
             $weighted_avg = null;
             $SESSION->workshop_calibration_no_competent_reviewers[$submission->submissionid] = $submission->title;
         }
+        
 			
 		$DB->set_field('workshop_submissions','grade',$weighted_avg,array("id" => $submission->submissionid));
 		
@@ -217,13 +218,11 @@ class workshop_calibrated_evaluation extends workshop_evaluation {
 
         $customdata['workshop'] = $this->workshop;
         $customdata['current'] = $this->settings;
-		$customdata['methodname'] = 'calibrated';
+        $customdata['methodname'] = 'calibrated';
         $attributes = array('class' => 'evalsettingsform calibrated');
 
         return new workshop_calibrated_evaluation_settings_form($actionurl, $customdata, 'post', '', $attributes);
 	}
-	
-
     
     public function has_messages() {
         global $SESSION;
