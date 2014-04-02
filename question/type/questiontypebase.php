@@ -586,7 +586,7 @@ class question_type {
     }
 
     /**
-     * Returns true if extra answer fields for answer with the $key is empty 
+     * Returns true if extra answer fields for answer with the $key is empty
      * in the question data and should not be saved in DB.
      *
      * Questions where extra answer fields are optional will want to overload this.
