@@ -669,7 +669,7 @@ class core_renderer extends renderer_base {
                     // Include this file only when required.
                     require_once($CFG->dirroot . '/user/lib.php');
                     if ($count = user_count_login_failures($USER)) {
-                        $loggedinas .= '&nbsp;<div class="loginfailures">';
+                        $loggedinas .= '<div class="loginfailures">';
                         $a = new stdClass();
                         $a->attempts = $count;
                         $loggedinas .= get_string('failedloginattempts', '', $a);
