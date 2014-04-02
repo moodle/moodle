@@ -684,7 +684,7 @@ abstract class base implements \IteratorAggregate {
         if ($tablename === 'course_modules' && $record instanceof \cm_info) {
             $record = $record->get_course_module_record();
         }
-        
+
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...
         if ($CFG->debugdeveloper) {
