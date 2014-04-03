@@ -25,9 +25,10 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class entities {
     /**
-     *
      * Prepares convert for inclusion into XML
+     *
      * @param string $value
+     * @return string
      */
     public static function safexml($value) {
         $result = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'),
@@ -57,7 +58,7 @@ class entities {
             $result = mb_convert_encoding($content, 'UTF-8', $encoding);
         }
 
-        // See if we can strip off body tag and anything outside of it
+        // See if we can strip off body tag and anything outside of it.
         foreach (array('body', 'html') as $tagname) {
             $regex = str_replace('##', $tagname, "/<##[^>]*>(.+)<\/##>/is");
             if (preg_match($regex, $result, $matches)) {
@@ -68,11 +69,11 @@ class entities {
         return $result;
     }
 
-    public function load_xml_resource ($path_to_file) {
+    public function load_xml_resource($path_to_file) {
 
         $resource = new DOMDocument();
 
-        cc2moodle::log_action('Load the XML resource file: ' . $path_to_file);
+        cc2moodle::log_action('Load the XML resource file: '.$path_to_file);
 
         if (!$resource->load($path_to_file)) {
             cc2moodle::log_action('Cannot load the XML resource file: ' . $path_to_file, true);
@@ -81,7 +82,7 @@ class entities {
         return $resource;
     }
 
-    public function update_sources ($html, $root_path = '') {
+    public function update_sources($html, $root_path = '') {
 
         $document = $this->load_html($html);
 
@@ -111,13 +112,12 @@ class entities {
         return $html;
     }
 
-    public function full_path ($path, $dir_sep = DIRECTORY_SEPARATOR) {
+    public function full_path($path, $dir_sep = DIRECTORY_SEPARATOR) {
 
         $token = '$IMS-CC-FILEBASE$';
         $path = str_replace($token, '', $path);
 
         if (is_string($path) && ($path != '')) {
-            $dir_sep;
             $dot_dir = '.';
             $up_dir = '..';
             $length = strlen($path);
@@ -152,7 +152,6 @@ class entities {
         }
 
         return $result;
-
     }
 
     public function include_titles ($html) {
@@ -184,11 +183,10 @@ class entities {
 
     public function get_external_xml ($identifier) {
 
-        $response = '';
-
         $xpath = cc2moodle::newx_path(cc2moodle::$manifest, cc2moodle::$namespaces);
 
-        $files = $xpath->query('/imscc:manifest/imscc:resources/imscc:resource[@identifier="' . $identifier . '"]/imscc:file/@href');
+        $files = $xpath->query('/imscc:manifest/imscc:resources/imscc:resource[@identifier="'.
+            $identifier.'"]/imscc:file/@href');
 
         if (empty($files)) {
             $response = '';
@@ -199,7 +197,7 @@ class entities {
         return $response;
     }
 
-    public function move_files ($files, $destination_folder) {
+    public function move_files($files, $destination_folder) {
         global $CFG;
 
         if (!empty($files)) {
@@ -242,7 +240,7 @@ class entities {
 
             if (!empty($files) && ($files->length > 0)) {
                 foreach ($files as $file) {
-                    //omit html files
+                    // Omit html files.
                     $ext = strtolower(pathinfo($file->nodeValue, PATHINFO_EXTENSION));
                     if (in_array($ext, array('html', 'htm', 'xhtml'))) {
                         continue;
@@ -253,7 +251,7 @@ class entities {
             unset($files);
         }
 
-        //are there any labels?
+        // Are there any labels?
         $xquery = "//imscc:item/imscc:item/imscc:item[imscc:title][not(@identifierref)]";
         $labels = $xpath->query($xquery);
         if (!empty($labels) && ($labels->length > 0)) {
@@ -265,7 +263,7 @@ class entities {
             if (!file_exists($dpath)) {
                 mkdir($dpath, $CFG->directorypermissions, true);
             }
-            //copy the folder.gif file
+            // Copy the folder.gif file.
             $folder_gif = "{$CFG->dirroot}/pix/i/files.gif";
             copy($folder_gif, $fpath);
             $all_files[] = $rfpath;
@@ -337,7 +335,7 @@ class entities {
         return $response;
     }
 
-    public function truncate_text ($text, $max, $remove_html) {
+    public function truncate_text($text, $max, $remove_html) {
 
         if ($max > 10) {
             $text = substr($text, 0, ($max - 6)) . ' [...]';

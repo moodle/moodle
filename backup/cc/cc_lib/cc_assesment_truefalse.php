@@ -21,28 +21,29 @@
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
-require_once 'cc_asssesment.php';
+require_once('cc_asssesment.php');
 
 class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
     public function __construct($quiz, $questions, $manifest, $section, $question_node, $rootpath, $contextid, $outdir) {
         parent::__construct($quiz, $questions, $manifest, $section, $question_node, $rootpath, $contextid, $outdir);
         $this->qtype = cc_qti_profiletype::true_false;
-        $this->correct_answer_node_id = $this->questions->nodeValue('plugin_qtype_truefalse_question/truefalse/trueanswer', $this->question_node);
+        $this->correct_answer_node_id = $this->questions->nodeValue(
+            'plugin_qtype_truefalse_question/truefalse/trueanswer', $this->question_node);
         $maximum_quiz_grade = (int)$this->quiz->nodeValue('/activity/quiz/grade');
         $this->total_grade_value = ($maximum_quiz_grade + 1).'.0000000';
     }
 
     public function on_generate_answers() {
-        //add responses holder
+        // Add responses holder.
         $qresponse_lid = new cc_response_lidtype();
         $this->qresponse_lid = $qresponse_lid;
         $this->qpresentation->set_response_lid($qresponse_lid);
         $qresponse_choice = new cc_assesment_render_choicetype();
         $qresponse_lid->set_render_choice($qresponse_choice);
-        //Mark that question has only one correct answer -
-        //which applies for multiple choice and yes/no questions
+        // Mark that question has only one correct answer -
+        // which applies for multiple choice and yes/no questions.
         $qresponse_lid->set_rcardinality(cc_qti_values::Single);
-        //are we to shuffle the responses?
+        // Are we to shuffle the responses?
         $shuffle_answers = (int)$this->quiz->nodeValue('/activity/quiz/shuffleanswers') > 0;
         $qresponse_choice->enable_shuffle($shuffle_answers);
         $answerlist = array();
@@ -59,7 +60,7 @@ class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
             if (empty($this->correct_answer_ident) && $id) {
                 $this->correct_answer_ident = $answer_ident;
             }
-            //add answer specific feedbacks if not empty
+            // Add answer specific feedback if not empty.
             $content = $this->questions->nodeValue('feedback', $node);
             if (!empty($content)) {
                 $result = cc_helpers::process_linked_files( $content,
@@ -87,17 +88,15 @@ class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
     public function on_generate_response_processing() {
         parent::on_generate_response_processing();
 
-        //respconditions
-        /**
-        * General unconditional feedback must be added as a first respcondition
-        * without any condition and just displayfeedback (if exists)
-        */
+        // Response conditions.
+        // General unconditional feedback must be added as a first respcondition
+        // without any condition and just displayfeedback (if exists).
         if (!empty($this->general_feedback)) {
             $qrespcondition = new cc_assesment_respconditiontype();
             $qrespcondition->set_title('General feedback');
             $this->qresprocessing->add_respcondition($qrespcondition);
             $qrespcondition->enable_continue();
-            //define the condition for success
+            // Define the condition for success.
             $qconditionvar = new cc_assignment_conditionvar();
             $qrespcondition->set_conditionvar($qconditionvar);
             $qother = new cc_assignment_conditionvar_othertype();
@@ -108,23 +107,21 @@ class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
             $qdisplayfeedback->set_linkrefid('general_fb');
         }
 
-        //success condition
-        /**
-        * For all question types outside of the Essay question, scoring is done in a
-        * single <respcondition> with a continue flag set to No. The outcome is always
-        * a variable named SCORE which value must be set to 100 in case of correct answer.
-        * Partial scores (not 0 or 100) are not supported.
-        */
+        // Success condition.
+        // For all question types outside of the Essay question, scoring is done in a
+        // single <respcondition> with a continue flag set to No. The outcome is always
+        // a variable named SCORE which value must be set to 100 in case of correct answer.
+        // Partial scores (not 0 or 100) are not supported.
         $qrespcondition = new cc_assesment_respconditiontype();
         $qrespcondition->set_title('Correct');
         $this->qresprocessing->add_respcondition($qrespcondition);
         $qrespcondition->enable_continue(false);
         $qsetvar = new cc_assignment_setvartype(100);
         $qrespcondition->add_setvar($qsetvar);
-        //define the condition for success
+        // Define the condition for success.
         $qconditionvar = new cc_assignment_conditionvar();
         $qrespcondition->set_conditionvar($qconditionvar);
-        //TODO: recheck this
+        // TODO: recheck this.
         $qvarequal = new cc_assignment_conditionvar_varequaltype($this->correct_answer_ident);
         $qconditionvar->set_varequal($qvarequal);
         $qvarequal->set_respident($this->qresponse_lid->get_ident());
@@ -143,7 +140,7 @@ class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
             $qdisplayfeedback->set_linkrefid($ident);
         }
 
-        //rest of the conditions
+        // Rest of the conditions.
         foreach ($this->answerlist as $ident => $refid) {
             if ($ident == $this->correct_answer_ident) {
                 continue;
@@ -153,7 +150,7 @@ class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
             $this->qresprocessing->add_respcondition($qrespcondition);
             $qsetvar = new cc_assignment_setvartype(0);
             $qrespcondition->add_setvar($qsetvar);
-            //define the condition for fail
+            // Define the condition for fail.
             $qconditionvar = new cc_assignment_conditionvar();
             $qrespcondition->set_conditionvar($qconditionvar);
             $qvarequal = new cc_assignment_conditionvar_varequaltype($ident);

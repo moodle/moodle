@@ -31,7 +31,7 @@ class cc_assesment_question_essay extends cc_assesment_question_proc_base {
 
     public function on_generate_metadata() {
         parent::on_generate_metadata();
-        //Mark essay for manual grading
+        // Mark essay for manual grading.
         $this->qmetadata->enable_scoringpermitted();
         $this->qmetadata->enable_computerscored(false);
     }
@@ -49,12 +49,12 @@ class cc_assesment_question_essay extends cc_assesment_question_proc_base {
     public function on_generate_response_processing() {
         parent::on_generate_response_processing();
 
-        //respconditions
+        // Response conditions.
         if (!empty($this->general_feedback)) {
             $qrespcondition = new cc_assesment_respconditiontype();
             $qrespcondition->set_title('General feedback');
             $this->qresprocessing->add_respcondition($qrespcondition);
-            //define the condition for success
+            // Define the condition for success.
             $qconditionvar = new cc_assignment_conditionvar();
             $qrespcondition->set_conditionvar($qconditionvar);
             $qother = new cc_assignment_conditionvar_othertype();

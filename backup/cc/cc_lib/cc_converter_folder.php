@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2012 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2012 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'cc_converters.php';
-require_once 'cc_general.php';
+require_once('cc_converters.php');
+require_once('cc_general.php');
 
 class cc_converter_folder extends cc_converter {
 
-    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path){
+    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path) {
         $this->defaultfile = 'folder.xml';
         parent::__construct($item, $manifest, $rootpath, $path);
     }

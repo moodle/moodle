@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'cc_interfaces.php';
+require_once('cc_interfaces.php');
 
 abstract class cc_converter {
     /**
@@ -81,7 +81,7 @@ abstract class cc_converter {
      * @param  string $path
      * @throws InvalidArgumentException
      */
-    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path){
+    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path) {
         $rpath = realpath($rootpath);
         if (empty($rpath)) {
             throw new InvalidArgumentException('Invalid path!');

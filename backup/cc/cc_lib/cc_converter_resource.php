@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'cc_converters.php';
-require_once 'cc_general.php';
+require_once('cc_converters.php');
+require_once('cc_general.php');
 
 class cc_converter_resource extends cc_converter {
 
-    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path){
+    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path) {
         $this->cc_type     = cc_version11::webcontent;
         $this->defaultfile = 'resource.xml';
         parent::__construct($item, $manifest, $rootpath, $path);
@@ -40,7 +40,7 @@ class cc_converter_resource extends cc_converter {
                                                    $outdir);
         $deps = null;
         $resvalue = null;
-        foreach ($files as $vfile => $values) {
+        foreach ($files as $values) {
             if ($values[2]) {
                 $resvalue = $values[0];
                 break;
@@ -52,7 +52,7 @@ class cc_converter_resource extends cc_converter {
         $resitem->title = $title;
         $this->item->add_child_item($resitem);
 
-        //checking the visibility
+        // Checking the visibility.
         $this->manifest->update_instructoronly($resvalue, !$this->is_visible());
 
         return true;

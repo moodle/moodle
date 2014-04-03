@@ -88,13 +88,17 @@ class cc_quiz extends entities {
 
                     if (!empty($assessment_file)) {
 
-                        $assessment = $this->load_xml_resource(cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $assessment_file);
+                        $assessment = $this->load_xml_resource(
+                            cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $assessment_file
+                        );
 
                         if (!empty($assessment)) {
 
                             $replace_values = array('unlimited' => 0);
 
-                            $questions = $this->get_questions($assessment, $last_question_id, $last_answer_id, dirname($assessment_file), $is_question_bank);
+                            $questions = $this->get_questions(
+                                $assessment, $last_question_id, $last_answer_id, dirname($assessment_file), $is_question_bank
+                            );
                             $question_count = count($questions);
 
                             if (!empty($question_count)) {
@@ -105,8 +109,10 @@ class cc_quiz extends entities {
                                 $instances[$instance['resource_indentifier']]['id'] = $last_instance_id;
                                 $instances[$instance['resource_indentifier']]['title'] = $instance['title'];
                                 $instances[$instance['resource_indentifier']]['is_question_bank'] = $is_question_bank;
-                                $instances[$instance['resource_indentifier']]['options']['timelimit'] = $this->get_global_config($assessment, 'qmd_timelimit', 0);
-                                $instances[$instance['resource_indentifier']]['options']['max_attempts'] = $this->get_global_config($assessment, 'cc_maxattempts', 0, $replace_values);
+                                $instances[$instance['resource_indentifier']]['options']['timelimit'] =
+                                    $this->get_global_config($assessment, 'qmd_timelimit', 0);
+                                $instances[$instance['resource_indentifier']]['options']['max_attempts'] =
+                                    $this->get_global_config($assessment, 'cc_maxattempts', 0, $replace_values);
                             }
                         }
                     }
@@ -148,7 +154,7 @@ class cc_quiz extends entities {
                                 $instance['options']['max_attempts'],
                                 $instance['options']['timelimit'],
                                 $node_course_modules_quiz_question_instances,
-                                $node_course_modules_quiz_feedback); //this one has tags
+                                $node_course_modules_quiz_feedback); // This one has tags.
 
         $node_question_mod = str_replace($find_tags, $replace_values, $sheet_question_mod);
 
@@ -194,10 +200,14 @@ class cc_quiz extends entities {
 
             foreach ($instance['questions'] as $question) {
                 $replace_values = array($question['id'] , $question['id']);
-                $node_course_module_mod_quiz_questions_instances .= str_replace($find_tags, $replace_values, $sheet_question_mod_instance);
+                $node_course_module_mod_quiz_questions_instances .= str_replace(
+                    $find_tags, $replace_values, $sheet_question_mod_instance
+                );
             }
 
-            $node_course_module_mod_quiz_questions_instances = str_replace($find_tags, $replace_values, $node_course_module_mod_quiz_questions_instances);
+            $node_course_module_mod_quiz_questions_instances = str_replace(
+                $find_tags, $replace_values, $node_course_module_mod_quiz_questions_instances
+            );
         }
 
         return $node_course_module_mod_quiz_questions_instances;
@@ -218,7 +228,7 @@ class cc_quiz extends entities {
         return $questions_string;
     }
 
-    private function create_node_course_question_categories ($instances) {
+    private function create_node_course_question_categories($instances) {
 
         $sheet_question_categories = cc2moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES);
 
@@ -227,7 +237,8 @@ class cc_quiz extends entities {
             $node_course_question_categories_question_category = '';
 
             foreach ($instances as $instance) {
-                $node_course_question_categories_question_category .= $this->create_node_course_question_categories_question_category($instance);
+                $node_course_question_categories_question_category .=
+                    $this->create_node_course_question_categories_question_category($instance);
             }
 
             $find_tags = array('[#node_course_question_categories_question_category#]');
@@ -250,8 +261,10 @@ class cc_quiz extends entities {
                            '[#quiz_stamp#]',
                            '[#node_course_question_categories_question_category_questions#]');
 
-        $node_course_question_categories_questions = $this->create_node_course_question_categories_question_category_question($instance);
-        $node_course_question_categories_questions = empty($node_course_question_categories_questions) ? '' : $node_course_question_categories_questions;
+        $node_course_question_categories_questions =
+            $this->create_node_course_question_categories_question_category_question($instance);
+        $node_course_question_categories_questions =
+            empty($node_course_question_categories_questions) ? '' : $node_course_question_categories_questions;
 
         $quiz_stamp = 'localhost+' . time() . '+' . $this->generate_random_string(6);
 

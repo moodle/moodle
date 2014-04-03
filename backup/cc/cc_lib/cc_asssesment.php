@@ -21,15 +21,15 @@
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
-require_once 'cc_utils.php';
-require_once 'cc_general.php';
+require_once('cc_utils.php');
+require_once('cc_general.php');
 
 abstract class cc_xml_namespace {
     const xml = 'http://www.w3.org/XML/1998/namespace';
 }
 
 abstract class cc_qti_metadata {
-    //assesment
+    // Assessment.
     const qmd_assessmenttype       = 'qmd_assessmenttype';
     const qmd_scoretype            = 'qmd_scoretype';
     const qmd_feedbackpermitted    = 'qmd_feedbackpermitted';
@@ -40,7 +40,7 @@ abstract class cc_qti_metadata {
     const cc_maxattempts           = 'cc_maxattempts';
     const cc_profile               = 'cc_profile';
 
-    //item
+    // Items.
     const cc_weighting         = 'cc_weighting';
     const qmd_scoringpermitted = 'qmd_scoringpermitted';
     const qmd_computerscored   = 'qmd_computerscored';
