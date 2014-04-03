@@ -34,12 +34,12 @@ $enable     = required_param('enable', PARAM_BOOL);
 require_login();
 require_sesskey();
 
-$usercontext = context_user::instance($USER->id);
+$systemcontext = context_system::instance();
 
 $PAGE->set_url('/message/output/airnotifier/rest.php');
-$PAGE->set_context($usercontext);
+$PAGE->set_context($systemcontext);
 
-require_capability('message/airnotifier:managedevice', $usercontext);
+require_capability('message/airnotifier:managedevice', $systemcontext);
 
 echo $OUTPUT->header();
 

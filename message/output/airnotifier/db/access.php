@@ -29,7 +29,7 @@ $capabilities = array(
 
     'message/airnotifier:managedevice' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'user' => CAP_ALLOW
         )

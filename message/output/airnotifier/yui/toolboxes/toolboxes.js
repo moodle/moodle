@@ -135,7 +135,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function(Y) {
                 },
                 context: this,
                 sync: false
-            }
+            },
 
             // Send the request.
             Y.io(uri, config);
