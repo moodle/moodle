@@ -1279,7 +1279,7 @@ function quiz_update_events($quiz, $override = null) {
  * @return array
  */
 function quiz_get_view_actions() {
-    return array('view', 'view all', 'report', 'review');
+    return array('view');
 }
 
 /**

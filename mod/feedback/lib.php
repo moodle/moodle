@@ -582,7 +582,7 @@ function feedback_scale_used_anywhere($scaleid) {
  * @return array
  */
 function feedback_get_view_actions() {
-    return array('view', 'view all');
+    return array('view');
 }
 
 /**

@@ -2658,7 +2658,7 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
  * @return array
  */
 function glossary_get_view_actions() {
-    return array('view','view all','view entry');
+    return array('view','view entry');
 }
 
 /**

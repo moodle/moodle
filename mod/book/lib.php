@@ -232,7 +232,7 @@ function book_scale_used_anywhere($scaleid) {
 function book_get_view_actions() {
     global $CFG; // necessary for includes
 
-    $return = array('view', 'view all');
+    $return = array('view');
 
     $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
@@ -262,7 +262,7 @@ function book_get_view_actions() {
 function book_get_post_actions() {
     global $CFG; // necessary for includes
 
-    $return = array('update');
+    $return = array();
 
     $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {

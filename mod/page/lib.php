@@ -73,7 +73,7 @@ function page_reset_userdata($data) {
  * @return array
  */
 function page_get_view_actions() {
-    return array('view','view all');
+    return array('view');
 }
 
 /**
@@ -87,7 +87,7 @@ function page_get_view_actions() {
  * @return array
  */
 function page_get_post_actions() {
-    return array('update', 'add');
+    return array();
 }
 
 /**
