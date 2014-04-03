@@ -63,9 +63,11 @@ class message_output_airnotifier extends message_output {
 
         // Mandatory notification data that need to be sent in the payload. They have variable length.
         // We need to take them in consideration to calculate the maximum message size.
+        // Since at this point we don't know the device, we use a 10 chars device platform.
         $notificationdata = array(
             "site" => $siteid,
             "type" => $eventdata->component . '_' . $eventdata->name,
+            "device" => "xxxxxxxxxx",
             "userfrom" => fullname($eventdata->userfrom));
 
         // Calculate the size of the message knowing Apple payload must be lower than 256 bytes.
@@ -111,6 +113,7 @@ class message_output_airnotifier extends message_output {
                 'site'      => $siteid,
                 'type'      => $eventdata->component . '_' . $eventdata->name,
                 'userfrom'  => fullname($eventdata->userfrom),
+                'device'    => $devicetoken->platform,
                 'token'     => $devicetoken->pushid);
             $resp = $curl->post($serverurl, $params);
         }
@@ -125,6 +128,11 @@ class message_output_airnotifier extends message_output {
      */
     public function config_form($preferences) {
         global $CFG, $OUTPUT, $USER, $PAGE;
+
+        $systemcontext = context_system::instance();
+        if (!has_capability('message/airnotifier:managedevice', $systemcontext)) {
+            return get_string('nopermissiontomanagedevices', 'message_airnotifier');
+        }
 
         if (!$this->is_system_configured()) {
             return get_string('notconfigured', 'message_airnotifier');

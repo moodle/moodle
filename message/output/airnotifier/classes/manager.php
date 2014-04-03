@@ -24,6 +24,7 @@
  * @since Moodle 2.7
  */
 
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Airnotifier helper manager class
@@ -47,16 +48,8 @@ class message_airnotifier_manager {
         }
 
         $config = new stdClass();
-
-        // The URL to use for resource changes.
-        if (!isset($config->resturl)) {
-            $config->resturl = '/message/output/airnotifier/rest.php';
-        }
-
-        // Any additional parameters which need to be included on page submission.
-        if (!isset($config->pageparams)) {
-            $config->pageparams = array();
-        }
+        $config->resturl = '/message/output/airnotifier/rest.php';
+        $config->pageparams = array();
 
         // Include toolboxes.
         $PAGE->requires->yui_module('moodle-message_airnotifier-toolboxes', 'M.message.init_device_toolbox', array(array(
@@ -92,28 +85,29 @@ class message_airnotifier_manager {
 
         // First, we look all the devices registered for this user in the Moodle core.
         // We are going to allow only ios devices (since these are the ones that supports PUSH notifications).
-        if ($userdevices = $DB->get_records('user_devices', $params)) {
-            foreach ($userdevices as $device) {
-                if (core_text::strtolower($device->platform) == 'ios') {
-                    // Check if the device is known by airnotifier.
-                    if (!$airnotifierdev = $DB->get_record('message_airnotifier_devices', array('userdeviceid' => $device->id))) {
-                        // We have to create the device token in airnotifier.
+        $userdevices = $DB->get_records('user_devices', $params);
+        foreach ($userdevices as $device) {
+            if (core_text::strtolower($device->platform)) {
+                // Check if the device is known by airnotifier.
+                if (!$airnotifierdev = $DB->get_record('message_airnotifier_devices',
+                        array('userdeviceid' => $device->id))) {
 
-                        if (! $this->create_token($device->pushid)) {
-                            continue;
-                        }
-
-                        $airnotifierdev = new stdClass;
-                        $airnotifierdev->userdeviceid = $device->id;
-                        $airnotifierdev->enable = 1;
-                        $airnotifierdev->id = $DB->insert_record('message_airnotifier_devices', $airnotifierdev);
+                    // We have to create the device token in airnotifier.
+                    if (! $this->create_token($device->pushid)) {
+                        continue;
                     }
-                    $device->id = $airnotifierdev->id;
-                    $device->enable = $airnotifierdev->enable;
-                    $devices[] = $device;
+
+                    $airnotifierdev = new stdClass;
+                    $airnotifierdev->userdeviceid = $device->id;
+                    $airnotifierdev->enable = 1;
+                    $airnotifierdev->id = $DB->insert_record('message_airnotifier_devices', $airnotifierdev);
                 }
+                $device->id = $airnotifierdev->id;
+                $device->enable = $airnotifierdev->enable;
+                $devices[] = $device;
             }
         }
+
         return $devices;
     }
 
@@ -195,4 +189,3 @@ class message_airnotifier_manager {
     }
 
 }
-
