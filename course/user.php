@@ -105,7 +105,14 @@ if (!in_array($mode, $modes)) {
     $mode = reset($modes);
 }
 
-add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
+$eventdata = array();
+$eventdata['courseid'] = $id;
+$eventdata['context'] = $coursecontext;
+$eventdata['userid'] = $user->id;
+$eventdata['other'] = array();
+$eventdata['other']['mode'] = $mode;
+$event = \core\event\course_user_report_viewed::create($eventdata);
+$event->trigger();
 
 $stractivityreport = get_string("activityreport");
 

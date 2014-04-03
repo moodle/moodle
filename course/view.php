@@ -94,11 +94,7 @@
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
-    $logparam = 'id='. $course->id;
-    $loglabel = 'view';
-    $infoid = $course->id;
     if ($section and $section > 0) {
-        $loglabel = 'view section';
 
         // Get section details and check it exists.
         $modinfo = get_fast_modinfo($course);
@@ -111,10 +107,7 @@
             // correct error message shown.
             require_capability('moodle/course:viewhiddensections', $context);
         }
-        $infoid = $coursesections->id;
-        $logparam .= '&sectionid='. $infoid;
     }
-    add_to_log($course->id, 'course', $loglabel, "view.php?". $logparam, $infoid);
 
     // Fix course format if it is no longer installed
     $course->format = course_get_format($course)->get_format();
@@ -287,6 +280,18 @@
     // Content wrapper end.
 
     echo html_writer::end_tag('div');
+
+    // Trigger course viewed event.
+    $eventparams = array();
+    $eventparams['context'] = $context;
+    $eventparams['courseid'] = $course->id;
+    $eventparams['userid'] = $USER->id;
+    if (!empty($section)) {
+        $eventparams['other'] = array();
+        $eventparams['other']['coursesectionid'] = $section;
+    }
+    $event = \core\event\course_viewed::create($eventparams);
+    $event->trigger();
 
     // Include course AJAX
     include_course_ajax($course, $modnamesused);
