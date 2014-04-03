@@ -670,10 +670,10 @@ class theme_config {
         $urls = array();
 
         $svg = $this->use_svg_icons();
+        $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
 
         if ($rev > -1) {
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
-            $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
             if (!empty($CFG->slasharguments)) {
                 $slashargs = '';
                 if (!$svg) {
@@ -709,6 +709,10 @@ class theme_config {
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $baseurl->param('svg', '0');
             }
+            if ($separate) {
+                // We might need to chunk long files.
+                $baseurl->param('chunk', '0');
+            }
             if (core_useragent::is_ie()) {
                 // Lalala, IE does not allow more than 31 linked CSS files from main document.
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
@@ -718,7 +722,7 @@ class theme_config {
                 }
                 if (!empty($this->lessfile)) {
                     // No need to define the type as IE here.
-                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less', 'chunk' => 0));
+                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
                 }
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
 
