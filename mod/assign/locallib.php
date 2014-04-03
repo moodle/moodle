@@ -1837,6 +1837,15 @@ class assign {
 
         if ($result) {
             $this->gradebook_item_update(null, $grade);
+
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $grade->id,
+                'relateduserid' => $grade->userid
+            );
+            $event = \mod_assign\event\submission_graded::create($params);
+            $event->set_legacy_logdata('grade submission', $this->format_grade_for_log($grade));
+            $event->trigger();
         }
         return $result;
     }
@@ -5248,15 +5257,6 @@ class assign {
                                           $data);
                 }
             }
-
-            $params = array(
-                'context' => $this->context,
-                'objectid' => $grade->id,
-                'relateduserid' => $userid
-            );
-            $event = \mod_assign\event\submission_graded::create($params);
-            $event->set_legacy_logdata('grade submission', $this->format_grade_for_log($grade));
-            $event->trigger();
         }
 
         return get_string('quickgradingchangessaved', 'assign');
@@ -6528,15 +6528,6 @@ class assign {
         if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
             $this->notify_grade_modified($grade);
         }
-
-        $params = array(
-            'context' => $this->context,
-            'objectid' => $grade->id,
-            'relateduserid' => $userid
-        );
-        $event = \mod_assign\event\submission_graded::create($params);
-        $event->set_legacy_logdata('grade submission', $this->format_grade_for_log($grade));
-        $event->trigger();
     }
 
 

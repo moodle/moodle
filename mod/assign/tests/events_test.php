@@ -291,8 +291,8 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $assign->revert_to_draft($this->students[0]->id);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $this->assertCount(2, $events);
+        $event = $events[1];
         $this->assertInstanceOf('\mod_assign\event\submission_status_updated', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($submission->id, $event->objectid);
@@ -489,6 +489,32 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEquals('60.0', $grade->grade);
 
         $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($grade->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'grade submission',
+            'view.php?id=' . $assign->get_course_module()->id,
+            $assign->format_grade_for_log($grade),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Test update_grade.
+        $sink = $this->redirectEvents();
+        $data = clone($grade);
+        $data->grade = '50.0';
+        $assign->update_grade($data);
+        $grade = $assign->get_user_grade($this->students[0]->id, false, 0);
+        $this->assertEquals('50.0', $grade->grade);
+        $events = $sink->get_events();
+
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);

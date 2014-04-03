@@ -166,7 +166,6 @@ class assign_feedback_offline extends assign_feedback_plugin {
                 $grade->grader = $USER->id;
                 if ($this->assignment->update_grade($grade)) {
                     $this->assignment->notify_grade_modified($grade);
-                    $this->assignment->add_to_log('grade submission', $this->assignment->format_grade_for_log($grade));
                     $updatecount += 1;
                 }
             }
