@@ -244,7 +244,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .fp-select .fp-reflist .mdl-right {vertical-align:top;}
 .fp-select .fp-select-buttons {float:right;}
 .fp-select .fp-info {display:block;clear:both;padding:1px 20px 0;}
-.fp-select .fp-thumbnail {float:left;min-width:110px;min-height:110px;line-height:110px;text-align:center;margin:10px 20px 0 0;background:#FFFFFF;border:1px solid #DDDDDD;-webkit-box-shadow:inset 0 0 10px 0 #CCCCCC;-moz-box-shadow:inset 0 0 10px 0 #CCCCCC;box-shadow:inset 0 0 10px 0 #CCCCCC;}
+.fp-select .fp-thumbnail {float:left;min-width:110px;min-height:110px;line-height:110px;text-align:center;margin:10px 10px 0 0;background:#FFFFFF;border:1px solid #DDDDDD;-webkit-box-shadow:inset 0 0 10px 0 #CCCCCC;-moz-box-shadow:inset 0 0 10px 0 #CCCCCC;box-shadow:inset 0 0 10px 0 #CCCCCC;}
 .fp-select .fp-thumbnail img {border:1px solid #DDDDDD;padding:3px;vertical-align:middle;margin:10px;}
 .fp-select .fp-fileinfo {display:inline-block;margin-top:10px;}
 .file-picker.fp-select .fp-fileinfo {max-width:240px;}
@@ -432,15 +432,26 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .fp-formset label {display:block;float:left;width:210px;text-align:right;margin:0 10px 0 0;}
 .fp-formset .fp-popup { text-align: center; }
 .fp-formset .fp-setlicense select {width:280px;}
+.fp-forminset { margin-bottom: 10px; }
 .fp-forminset label {display:block;float:left;width:95px;text-align:right;margin:0 10px 0 0;}
+.fp-forminset input[type="text"] { width: 258px; margin: 0; }
+.fp-forminset select { width: 272px; margin: 0; }
 .fp-forminset .controls {float:left;}
+.fp-forminset label.control-radio { float: right; text-align: left; width: 250px; }
+.fp-forminset .controls.control-radio { margin-left: 105px; }
+.fp-forminset .controls.control-radio input { margin-top: 5px; }
+.file-picker .fp-fileinfo .fp-value { display: inline-block; padding-left: 5px; }
 .dir-rtl .fp-forminset label {display:block;float:right;width:95px;text-align:right;margin:0 0 0 10px;}
 .dir-rtl .fp-forminset .controls {float:right;}
 .dir-rtl .fp-forminset .fp-select-buttons {float:left;}
-.dir-rtl .fp-forminset .fp-setlicense select, .dir-rtl .fp-forminset .fp-license select {width:248px;}
-.dir-rtl .fp-formset label {float:right;text-align:left; margin:0 0 0 10px;}
+.dir-rtl .fp-forminset .fp-setlicense select, .dir-rtl .fp-forminset .fp-license select {width:272px;}
+.dir-rtl .fp-forminset input[type="text"] { width: 258px; margin: 0; }
+.dir-rtl .fp-forminset label.control-radio { float: left; text-align: right; width: 250px; margin-left: 0; }
+.dir-rtl .fp-forminset .controls.control-radio { margin: 0 100px 0 0; }
+.dir-rtl .fp-select .fp-thumbnail { margin-right: 0;}
+.dir-rtl .file-picker .fp-fileinfo .fp-value { display: inline-block; padding: 0 5px 0 0; }
 .dir-rtl .fp-formset div {text-align:right;}
-
+.dir-rtl .fp-formset label {float:right;text-align:left; margin:0 0 0 10px;}
 /**
  * Responsive styles for the filepicker
  */
