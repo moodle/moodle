@@ -145,6 +145,7 @@ $string['eventassessablesubmitted'] = 'A submission has been submitted.';
 $string['eventbatchsetmarkerallocationviewed'] = 'Batch set marker allocation viewed';
 $string['eventbatchsetworkflowstateviewed'] = 'Batch set workflow state viewed.';
 $string['eventextensiongranted'] = 'An extension has been granted.';
+$string['eventfeedbackupdated'] = 'Feedback updated';
 $string['eventfeedbackviewed'] = 'Feedback viewed';
 $string['eventgradingformviewed'] = 'Grading form viewed';
 $string['eventgradingtableviewed'] = 'Grading table viewed';
