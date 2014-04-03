@@ -845,6 +845,13 @@ class theme_config {
                 }
             } else if ($subtype === 'theme') {
                 $cssfiles = $css['theme'];
+                foreach ($cssfiles as $key => $value) {
+                    if ($this->lessfile && $key === $this->lessfile) {
+                        // Remove the LESS file from the theme CSS files.
+                        // The LESS files use the type 'less', not 'ie'.
+                        unset($cssfiles[$key]);
+                    }
+                }
             }
 
         } else if ($type === 'plugin') {
