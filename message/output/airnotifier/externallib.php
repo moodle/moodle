@@ -103,7 +103,10 @@ class message_airnotifier_external extends external_api {
                      WHERE u.id $sqluserids";
         $users = $DB->get_recordset_sql($usersql, $params);
 
-        $result = array();
+        $result = array(
+            'users' => array(),
+            'warnings' => array()
+        );
         $hasuserupdatecap = has_capability('moodle/user:update', context_system::instance());
         foreach ($users as $user) {
 
@@ -112,7 +115,12 @@ class message_airnotifier_external extends external_api {
             if ($currentuser or $hasuserupdatecap) {
 
                 if (!empty($user->deleted)) {
-                    $result['warnings'][] = "User $user->id was deleted";
+                    $warning = array();
+                    $warning['item'] = 'user';
+                    $warning['itemid'] = $user->id;
+                    $warning['warningcode'] = '1';
+                    $warning['message'] = "User $user->id was deleted";
+                    $result['warnings'][] = $warning;
                     continue;
                 }
 
@@ -143,7 +151,12 @@ class message_airnotifier_external extends external_api {
 
                 $result['users'][] = $preferences;
             } else if (!$hasuserupdatecap) {
-                $result['warnings'][] = "You don't have permissions for view user $user->id preferences";
+                $warning = array();
+                $warning['item'] = 'user';
+                $warning['itemid'] = $user->id;
+                $warning['warningcode'] = '2';
+                $warning['message'] = "You don't have permissions for view user $user->id preferences";
+                $result['warnings'][] = $warning;
             }
 
         }

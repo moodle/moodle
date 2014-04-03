@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
@@ -37,50 +38,91 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class message_airnotifier_external_testcase extends externallib_testcase {
+class message_airnotifier_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Tests set up
      */
     protected function setUp() {
         global $CFG;
-        require_once($CFG->dirroot . '/lib/externallib.php');
-        require_once($CFG->dirroot . '/webservice/externallib.php');
+        require_once($CFG->dirroot . '/message/output/airnotifier/externallib.php');
     }
 
     /**
-     * Test add_user_device
+     * Test is_system_configured
      */
-    public function test_add_user_device() {
-
-        global $DB, $USER;
+    public function test_is_system_configured() {
 
         $this->resetAfterTest(true);
 
         $user  = self::getDataGenerator()->create_user();
         self::setUser($user);
 
-        $device = array();
-        $device['appname'] = 'mymoodle';
-        $device['devicename'] = 'Jerome\'s Android';
-        $device['devicetype'] = 'galaxy nexus';
-        $device['deviceos'] = 'android';
-        $device['deviceosversion'] = '4.0.3';
-        $device['devicebrand'] = 'samsung';
-        $device['devicenotificationtoken'] = 'jhg576576sesgy98sd7g87sdg697sfg576df';
-        $device['deviceuid'] = 'is87fs64g2vuf84g378gbh378ehg98h875';
+        // In a clean installation, it should be not configured.
+        $configured = message_airnotifier_external::is_system_configured();
+        $this->assertEquals(0, $configured);
 
-        $deviceid = message_airnotifier_external::add_user_device($device);
+        // Fake configuration.
+        set_config('airnotifieraccesskey', random_string());
+        $configured = message_airnotifier_external::is_system_configured();
+        $this->assertEquals(1, $configured);
+    }
 
-        $devicedb = $DB->get_record('user_devices', array('id' => $deviceid));
-        $this->assertEquals($devicedb->devicename, $device['devicename']);
-        $this->assertEquals($devicedb->devicetype, $device['devicetype']);
-        $this->assertEquals($devicedb->deviceos, $device['deviceos']);
-        $this->assertEquals($devicedb->deviceosversion, $device['deviceosversion']);
-        $this->assertEquals($devicedb->devicebrand, $device['devicebrand']);
-        $this->assertEquals($devicedb->devicenotificationtoken, $device['devicenotificationtoken']);
-        $this->assertEquals($devicedb->deviceuid, $device['deviceuid']);
-        $this->assertEquals($devicedb->userid, $USER->id);
+    /**
+     * Test are_notification_preferences_configured
+     */
+    public function test_are_notification_preferences_configured() {
+
+        $this->resetAfterTest(true);
+
+        $user1  = self::getDataGenerator()->create_user();
+        $user2  = self::getDataGenerator()->create_user();
+        $user3  = self::getDataGenerator()->create_user();
+
+        self::setUser($user1);
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $user1);
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'airnotifier', $user1);
+        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $user3);
+
+        $params = array($user1->id, $user2->id, $user3->id);
+
+        $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+
+        $expected = array(
+            array(
+                'userid' => $user1->id,
+                'configured' => 1
+            )
+        );
+
+        $this->assertEquals(1, count($preferences['users']));
+        $this->assertEquals($expected, $preferences['users']);
+        $this->assertEquals(2, count($preferences['warnings']));
+
+        // Now, remove one user.
+        delete_user($user2);
+        $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $this->assertEquals(1, count($preferences['users']));
+        $this->assertEquals($expected, $preferences['users']);
+        $this->assertEquals(2, count($preferences['warnings']));
+
+        // Now, remove one user1 preference (the user still has one prefernce for airnotifier).
+        unset_user_preference('message_provider_moodle_instantmessage_loggedin', $user1);
+        $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $this->assertEquals($expected, $preferences['users']);
+
+        // Delete the last user1 preference.
+        unset_user_preference('message_provider_moodle_instantmessage_loggedoff', $user1);
+        $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $expected = array(
+            array(
+                'userid' => $user1->id,
+                'configured' => 0
+            )
+        );
+        $this->assertEquals($expected, $preferences['users']);
     }
 
 }
