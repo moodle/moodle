@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $item = new admin_setting_heading('filter_mathjaxloader/localinstall',
-                                         new lang_string('localinstall', 'filter_mathjaxloader'),
-                                         new lang_string('localinstall_help', 'filter_mathjaxloader'));
+                                      new lang_string('localinstall', 'filter_mathjaxloader'),
+                                      new lang_string('localinstall_help', 'filter_mathjaxloader'));
     $settings->add($item);
 
     $item = new admin_setting_configtext('filter_mathjaxloader/httpurl',
@@ -45,9 +45,9 @@ if ($ADMIN->fulltree) {
     $settings->add($item);
 
     $item = new admin_setting_configcheckbox('filter_mathjaxloader/texfiltercompatibility',
-                                         new lang_string('texfiltercompatibility', 'filter_mathjaxloader'),
-                                         new lang_string('texfiltercompatibility_help', 'filter_mathjaxloader'),
-                                         0);
+                                             new lang_string('texfiltercompatibility', 'filter_mathjaxloader'),
+                                             new lang_string('texfiltercompatibility_help', 'filter_mathjaxloader'),
+                                             0);
     $settings->add($item);
 
     $default = '

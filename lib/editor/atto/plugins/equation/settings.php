@@ -71,9 +71,9 @@ if ($ADMIN->fulltree) {
 \neq
 ';
     $setting = new admin_setting_configtextarea('atto_equation/librarygroup1',
-                                                    $name,
-                                                    $desc,
-                                                    $default);
+                                                $name,
+                                                $desc,
+                                                $default);
     $settings->add($setting);
 
     // Group 2
@@ -96,9 +96,9 @@ if ($ADMIN->fulltree) {
 \Leftrightarrow
 ';
     $setting = new admin_setting_configtextarea('atto_equation/librarygroup2',
-                                                    $name,
-                                                    $desc,
-                                                    $default);
+                                                $name,
+                                                $desc,
+                                                $default);
     $settings->add($setting);
 
     // Group 3
@@ -141,9 +141,9 @@ if ($ADMIN->fulltree) {
 \Omega
 ';
     $setting = new admin_setting_configtextarea('atto_equation/librarygroup3',
-                                                    $name,
-                                                    $desc,
-                                                    $default);
+                                                $name,
+                                                $desc,
+                                                $default);
     $settings->add($setting);
 
     // Group 4
@@ -161,9 +161,9 @@ if ($ADMIN->fulltree) {
 \left| \begin{matrix} a_1 & a_2 \\ a_3 & a_4 \end{matrix} \right|
 ';
     $setting = new admin_setting_configtextarea('atto_equation/librarygroup4',
-                                                    $name,
-                                                    $desc,
-                                                    $default);
+                                                $name,
+                                                $desc,
+                                                $default);
     $settings->add($setting);
 
 }

@@ -35,13 +35,12 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
         MathJax.Localization.setLocale(params.lang);
 
         Y.all('.filter_mathjaxloader_equation').each(function(node) {
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub,node.getDOMNode()]);
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, node.getDOMNode()]);
         });
         MathJax.Hub.Configured();
 
         // Listen for events triggered when new text is added to a page that needs
         // processing by a filter.
-
         Y.on(M.core.event.FILTER_CONTENT_UPDATED, this.contentUpdated, this);
     },
 
@@ -53,7 +52,7 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
     contentUpdated: function(event) {
         event.nodes.each(function (node) {
             node.all('.filter_mathjaxloader_equation').each(function(node) {
-                MathJax.Hub.Queue(["Typeset",MathJax.Hub,node.getDOMNode()]);
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, node.getDOMNode()]);
             });
         });
     }

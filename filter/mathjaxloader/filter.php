@@ -135,14 +135,14 @@ class filter_mathjaxloader extends moodle_text_filter {
         $legacy = get_config('filter_mathjaxloader', 'texfiltercompatibility');
         if ($legacy) {
             // This replaces any of the tex filter maths delimiters with the default for inline maths in MathJAX "\( blah \)".
-            // <tex.*> blah </tex>
+            // E.g. "<tex.*> blah </tex>".
             $text = preg_replace('|<(/?) *tex( [^>]*)?>|u', '[\1tex]', $text);
-            // [tex.*] blah [/tex]
+            // E.g. "[tex.*] blah [/tex]".
             $text = str_replace('[tex]', '\\(', $text);
             $text = str_replace('[/tex]', '\\)', $text);
-            // $$ blah $$
+            // E.g. "$$ blah $$".
             $text = preg_replace('|\$\$[\S\s]\$\$|u', '\\(\1\\)', $text);
-            // \[ blah \]
+            // E.g. "\[ blah \]".
             $text = str_replace('\\[', '\\(', $text);
             $text = str_replace('\\]', '\\)', $text);
         }
