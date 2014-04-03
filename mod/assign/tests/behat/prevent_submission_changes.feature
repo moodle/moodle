@@ -42,7 +42,7 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Course 1"
     And I follow "Test assignment name"
     When I follow "View/grade all submissions"
-    And I click on "//tr[contains(., 'Student 1')]/descendant::td/descendant::img[@alt='Actions']/parent::a" "xpath_element"
+    And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Prevent submission changes"
     Then I should see "Submission changes not allowed"
     And I log out
@@ -56,7 +56,7 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
-    And I click on "//tr[contains(., 'Student 1')]/descendant::td/descendant::img[@alt='Actions']/parent::a" "xpath_element"
+    And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Allow submission changes"
     And I should not see "Submission changes not allowed"
     And I log out
