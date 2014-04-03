@@ -1301,23 +1301,44 @@ function tag_set_flag($tagids) {
 }
 
 /**
- * Remove the inapropriate flag on a tag
+ * Remove the inappropriate flag on a tag.
  *
- * @package core_tag
- * @access  private
- * @param   int|array $tagids a single tagid, or an array of tagids
- * @return  bool      true    if function succeeds, false otherwise
+ * @param int|array $tagids a single tagid, or an array of tagids
  */
 function tag_unset_flag($tagids) {
     global $DB;
 
-    if ( is_array($tagids) ) {
-        $tagids = implode(',', $tagids);
-    }
-    $timemodified = time();
-    return $DB->execute("UPDATE {tag} SET flag = 0, timemodified = ? WHERE id IN ($tagids)", array($timemodified));
-}
+    $tagids = (array) $tagids;
 
+    // Use the tagids to create a select statement to be used later.
+    list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids, SQL_PARAMS_NAMED);
+
+    // Update all the tags to unflagged.
+    $sql = "UPDATE {tag}
+               SET flag = 0, timemodified = :time
+             WHERE id $tagsql";
+
+    // Update all the tags.
+    $DB->execute($sql, array_merge(array('time' => time()), $tagparams));
+
+    // Get all the tags.
+    if ($tags = $DB->get_records_select('tag', 'id '. $tagsql, $tagparams, 'id ASC')) {
+        // Loop through and fire an event for each tag that it was unflagged.
+        foreach ($tags as $tag) {
+            $event = \core\event\tag_unflagged::create(array(
+                'objectid' => $tag->id,
+                'relateduserid' => $tag->userid,
+                'context' => context_system::instance(),
+                'other' => array(
+                    'name' => $tag->name,
+                    'rawname' => $tag->rawname
+                )
+            ));
+            $event->add_record_snapshot('tag', $tag);
+            $event->trigger();
+        }
+    }
+}
 
 /**
  * Return a list of page types

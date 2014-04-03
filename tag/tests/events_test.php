@@ -192,4 +192,57 @@ class core_tag_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag2->id, $tag2->id, '', '2');
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the tag unflagged event.
+     */
+    public function test_tag_unflagged() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        // Create tags we are going to unflag.
+        $tag = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+
+        // Flag it.
+        tag_set_flag($tag->id);
+
+        // Trigger and capture the event for unsetting the flag of a tag.
+        $sink = $this->redirectEvents();
+        tag_unset_flag($tag->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the flag was updated.
+        $tag = $DB->get_record('tag', array('id' => $tag->id));
+        $this->assertEquals(0, $tag->flag);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\tag_unflagged', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+
+        // Set the flag back for both.
+        tag_set_flag(array($tag->id, $tag2->id));
+
+        // Trigger and capture the event for unsetting the flag for multiple tags.
+        $sink = $this->redirectEvents();
+        tag_unset_flag(array($tag->id, $tag2->id));
+        $events = $sink->get_events();
+
+        // Check that the flags were updated.
+        $tag = $DB->get_record('tag', array('id' => $tag->id));
+        $this->assertEquals(0, $tag->flag);
+        $tag2 = $DB->get_record('tag', array('id' => $tag2->id));
+        $this->assertEquals(0, $tag2->flag);
+
+        // Confirm the events.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\tag_unflagged', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+
+        $event = $events[1];
+        $this->assertInstanceOf('\core\event\tag_unflagged', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+    }
 }

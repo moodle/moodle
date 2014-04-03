@@ -39,6 +39,7 @@ $string['errortagfrontpage'] = 'Tagging the site main page is not allowed';
 $string['errorupdatingrecord'] = 'Error updating tag record';
 $string['eventitemtagged'] = 'Item tagged';
 $string['eventtagflagged'] = 'Tag flagged';
+$string['eventtagunflagged'] = 'Tag unflagged';
 $string['eventtagupdated'] = 'Tag updated';
 $string['flag'] = 'Flag';
 $string['flagasinappropriate'] = 'Flag as inappropriate';
