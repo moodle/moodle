@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['errorcannotparseline'] = 'The line \'{$a}\' could not be parsed.';
-$string['errorgroupisusedtwice'] = 'The group \'{$a}\' is defined twice, group names must be unique.';
-$string['errornopluginsorgroupsfound'] = 'No plugins or groups found, please add some groups and plugins.';
-$string['errorpluginnotfound'] = 'The plugin \'{$a}\' cannot be used, it does not appear to be installed.';
-$string['errorpluginisusedtwice'] = 'The plugin \'{$a}\' is used twice, plugins can only be defined once.';
+$string['errorcannotparseline'] = 'The line \'{$a}\' is not in the correct format.';
+$string['errorgroupisusedtwice'] = 'The group \'{$a}\' is defined twice; group names must be unique.';
+$string['errornopluginsorgroupsfound'] = 'No plugins or groups found; please add some groups and plugins.';
+$string['errorpluginnotfound'] = 'The plugin \'{$a}\' cannot be used; it does not appear to be installed.';
+$string['errorpluginisusedtwice'] = 'The plugin \'{$a}\' is used twice; plugins can only be defined once.';
 $string['pluginname'] = 'Atto HTML editor';
 $string['subplugintype_atto'] = 'Atto plugin';
 $string['subplugintype_atto_plural'] = 'Atto plugins';
