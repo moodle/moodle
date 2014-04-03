@@ -42,7 +42,7 @@ class record_created extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'data_records';
         $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

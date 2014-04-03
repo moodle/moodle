@@ -222,6 +222,11 @@ function book_scale_used_anywhere($scaleid) {
 
 /**
  * Return read actions.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function book_get_view_actions() {
@@ -247,6 +252,11 @@ function book_get_view_actions() {
 
 /**
  * Return write actions.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function book_get_post_actions() {

@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 2.7 ===
 
 * modgrade form element has been redesigned and allows setting the maximum grade point higher than 100.
+* xxx_get_view_actions() and xxx_get_post_actions() will be ignored by new logging system for
+  participation report. view_action and post_action will be detected by event's crud and edulevel.
 
 === 2.6 ===
 
