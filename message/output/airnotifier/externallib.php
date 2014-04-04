@@ -24,6 +24,9 @@
  * @since Moodle 2.7
  */
 
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
 
 /**
  * External API for airnotifier web services
