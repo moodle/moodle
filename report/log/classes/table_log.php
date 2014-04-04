@@ -129,9 +129,14 @@ class report_log_table_log extends table_sql {
         // Add username who did the action.
         if (!empty($logextra['realuserid'])) {
             $a = new stdClass();
-            $a->realusername = html_writer::link(new moodle_url("/user/view.php?id={$event->userid}&course={$event->courseid}"),
-                    $this->userfullnames[$logextra['realuserid']]);
-            $a->asusername = html_writer::link(new moodle_url("/user/view.php?id={$event->userid}&course={$event->courseid}"),
+            $params = array('id' => $logextra['realuserid']);
+            if ($event->courseid) {
+                $params['course'] = $event->courseid;
+            }
+            $a->realusername = html_writer::link(new moodle_url("/user/view.php", $params),
+                $this->userfullnames[$logextra['realuserid']]);
+            $params['id'] = $event->userid;
+            $a->asusername = html_writer::link(new moodle_url("/user/view.php", $params),
                     $this->userfullnames[$event->userid]);
             $username = get_string('eventloggedas', 'report_log', $a);
         } else if (!empty($event->userid) && !empty($this->userfullnames[$event->userid])) {
@@ -155,8 +160,11 @@ class report_log_table_log extends table_sql {
     public function col_relatedfullnameuser($event) {
         // Add affected user.
         if (!empty($event->relateduserid) && isset($this->userfullnames[$event->relateduserid])) {
-            return html_writer::link(new moodle_url("/user/view.php?id=" . $event->relateduserid . "&course=" .
-                    $event->courseid), $this->userfullnames[$event->relateduserid]);
+            $params = array('id' => $event->relateduserid);
+            if ($event->courseid) {
+                $params['course'] = $event->courseid;
+            }
+            return html_writer::link(new moodle_url("/user/view.php", $params), $this->userfullnames[$event->relateduserid]);
         } else {
             return '-';
         }
@@ -219,9 +227,14 @@ class report_log_table_log extends table_sql {
      */
     public function col_eventname($event) {
         // Event name.
-        $eventname = $event->get_name();
+        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
+            // Hack for support of logstore_legacy.
+            $eventname = $event->eventname;
+        } else {
+            $eventname = $event->get_name();
+        }
         if ($url = $event->get_url()) {
-            $eventname = html_writer::link($url, $eventname);
+            $eventname = $this->action_link($url, $eventname, 'action');
         }
         return $eventname;
     }
@@ -261,8 +274,23 @@ class report_log_table_log extends table_sql {
         // Get extra event data for origin and realuserid.
         $logextra = $event->get_logextra();
 
-        $link = new moodle_url("/iplookup/index.php?ip={$logextra['ip']}&user=$event->userid");
-        return html_writer::link($link, $logextra['ip']);
+        $url = new moodle_url("/iplookup/index.php?ip={$logextra['ip']}&user=$event->userid");
+        return $this->action_link($url, $logextra['ip'], 'ip');
+    }
+
+    /**
+     * Method to create a link with popup action.
+     *
+     * @param moodle_url $url The url to open.
+     * @param string $text Anchor text for the link.
+     * @param string $name Name of the popup window.
+     *
+     * @return string html to use.
+     */
+    protected function action_link(moodle_url $url, $text, $name = 'popup') {
+        global $OUTPUT;
+        $link = new action_link($url, $text, new popup_action('click', $url, $name, array('height' => 440, 'width' => 700)));
+        return $OUTPUT->render($link);
     }
 
     /**
@@ -427,11 +455,22 @@ class report_log_table_log extends table_sql {
 
         // Get course shortname and put that in return list.
         if (!empty($courseids)) { // If all logs don't belog to site level then get course info.
-            list($coursesql, $courseparams) = $DB->get_in_or_equal($courseids);
-            $courses = $DB->get_records_sql("SELECT id,shortname FROM {course} WHERE id " . $coursesql, $courseparams);
+            list($coursesql, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+            $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+            $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+            $courseparams['contextlevel'] = CONTEXT_COURSE;
+            $sql = "SELECT c.id,c.shortname $ccselect FROM {course} as c
+                   $ccjoin
+                     WHERE c.id " . $coursesql;
+
+            $courses = $DB->get_records_sql($sql, $courseparams);
             foreach ($courses as $courseid => $course) {
                 $url = new moodle_url("/course/view.php", array('id' => $courseid));
-                $this->courseshortnames[$courseid] = html_writer::link($url, format_string($course->shortname));
+                context_helper::preload_from_record($course);
+                $context = context_course::instance($courseid, IGNORE_MISSING);
+                // Method format_string() takes care of missing contexts.
+                $this->courseshortnames[$courseid] = html_writer::link($url, format_string($course->shortname, true,
+                        array('context' => $context)));
             }
         }
     }

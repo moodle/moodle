@@ -148,7 +148,7 @@ $output = $PAGE->get_renderer('report_log');
 
 if (empty($readers)) {
     echo $output->header();
-    echo $output->heading(get_string('noreaderenabled'));
+    echo $output->heading(get_string('nologreaderenabled', 'report_log'));
 } else {
     if (!empty($chooselog)) {
         // Delay creation of table, till called by user with filter.

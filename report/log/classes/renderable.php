@@ -165,7 +165,7 @@ class report_log_renderable implements renderable {
      * @return array core\log\sql_select_reader object or name.
      */
     public function get_readers($nameonly = false) {
-        if (!isset($this->manager)) {
+        if (!isset($this->logmanager)) {
             $this->logmanager = get_log_manager();
         }
 
