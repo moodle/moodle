@@ -63,11 +63,11 @@ class message_output_airnotifier extends message_output {
 
         // Mandatory notification data that need to be sent in the payload. They have variable length.
         // We need to take them in consideration to calculate the maximum message size.
-        // Since at this point we don't know the device, we use a 10 chars device platform.
         $notificationdata = array(
             "site" => $siteid,
             "type" => $eventdata->component . '_' . $eventdata->name,
-            "device" => "xxxxxxxxxx",
+            "device" => "xxxxxxxxxx",   // Since at this point we don't know the device, we use a 10 chars device platform.
+            "notif" => "x",             // 1 or 0 wheter is a notification or not (it may be a private message).
             "userfrom" => fullname($eventdata->userfrom));
 
         // Calculate the size of the message knowing Apple payload must be lower than 256 bytes.
@@ -114,6 +114,7 @@ class message_output_airnotifier extends message_output {
                 'type'      => $eventdata->component . '_' . $eventdata->name,
                 'userfrom'  => fullname($eventdata->userfrom),
                 'device'    => $devicetoken->platform,
+                'notif'     => (!empty($eventdata->notification)) ? '1' : '0',
                 'token'     => $devicetoken->pushid);
             $resp = $curl->post($serverurl, $params);
         }
