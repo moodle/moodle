@@ -3033,10 +3033,16 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2014021900.01) {
         // Force uninstall of deleted tool.
-        if (!file_exists("$CFG->dirroot/$CFG->admin/tool/qeupgradehelper")) {
-            // Remove all other associated config.
-            unset_all_config_for_plugin('tool_qeupgradehelper');
-        }
+
+        // Normally, in this sort of situation, we would do a file_exists check,
+        // in case the plugin had been added back as an add-on. However, this
+        // plugin is completely useless after Moodle 2.6, so we check that the
+        // files have been removed in upgrade_stale_php_files_present, and we
+        // uninstall it unconditionally here.
+
+        // Remove all associated config.
+        unset_all_config_for_plugin('tool_qeupgradehelper');
+
         upgrade_main_savepoint(true, 2014021900.01);
     }
 
