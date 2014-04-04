@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/forum/db" VERSION="20130710" COMMENT="XMLDB file for Moodle mod/forum"
+<XMLDB PATH="mod/forum/db" VERSION="20140404" COMMENT="XMLDB file for Moodle mod/forum"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -150,7 +150,7 @@
       <INDEXES>
         <INDEX NAME="userid-forumid" UNIQUE="false" FIELDS="userid, forumid"/>
         <INDEX NAME="userid-discussionid" UNIQUE="false" FIELDS="userid, discussionid"/>
-        <INDEX NAME="userid-postid" UNIQUE="false" FIELDS="userid, postid"/>
+        <INDEX NAME="postid-userid" UNIQUE="false" FIELDS="postid, userid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="forum_track_prefs" COMMENT="Tracks each users untracked forums">
