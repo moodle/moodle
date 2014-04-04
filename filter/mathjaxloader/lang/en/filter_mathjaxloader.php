@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'filter_mathjax', language 'en'.
+ * Strings for component 'filter_mathjaxloader', language 'en'.
  *
- * Note: use filter/mathjax/cli/update_lang_files.php script to import strings from upstream JS lang files.
- *
- * @package    filter_mathjax
+ * @package    filter_mathjaxloader
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-//== Custom Moodle strings that are not part of upstream MathJax ==
 $string['filtername'] = 'MathJax';
+$string['additionaldelimiters'] = 'Additional equation delimiters';
+$string['additionaldelimiters_help'] = 'MathJax filter parses text for equations contained within delimiter characters.
+
+The list of recognised delimiter characters can be added to here (e.g. AsciiMath uses `). Delimiters can contain multiple characters and multiple delimiters can be separated with commas.';
 $string['httpurl'] = 'HTTP MathJax URL';
 $string['httpurl_help'] = 'Full URL to MathJax library. Used when the page is loaded via http.';
 $string['httpsurl'] = 'HTTPS MathJax URL';

@@ -133,6 +133,7 @@ class filter_mathjaxloader extends moodle_text_filter {
      */
     public function filter($text, array $options = array()) {
         $legacy = get_config('filter_mathjaxloader', 'texfiltercompatibility');
+        $extradelimiters = explode(',', get_config('filter_mathjaxloader', 'additionaldelimiters'));
         if ($legacy) {
             // This replaces any of the tex filter maths delimiters with the default for inline maths in MathJAX "\( blah \)".
             // E.g. "<tex.*> blah </tex>".
@@ -151,7 +152,15 @@ class filter_mathjaxloader extends moodle_text_filter {
         $hasdisplay = (strpos($text, '$$') !== false) ||
                       (strpos($text, '\\[') !== false && strpos($text, '\\]') !== false);
 
-        if ($hasinline || $hasdisplay) {
+        $hasextra = false;
+
+        foreach ($extradelimiters as $extra) {
+            if ($extra && strpos($text, $extra) !== false) {
+                $hasextra = true;
+                break;
+            }
+        }
+        if ($hasinline || $hasdisplay || $hasextra) {
             // Only call init if there is at least one equation on the page.
             $this->lazy_init();
             return '<span class="nolink"><span class="filter_mathjaxloader_equation">' . $text . '</span></span>';

@@ -76,4 +76,11 @@ MathJax.Hub.Config({
 
     $settings->add($item);
 
+    $item = new admin_setting_configtext('filter_mathjaxloader/additionaldelimiters',
+                                         new lang_string('additionaldelimiters', 'filter_mathjaxloader'),
+                                         new lang_string('additionaldelimiters_help', 'filter_mathjaxloader'),
+                                         '',
+                                         PARAM_RAW);
+    $settings->add($item);
+
 }
