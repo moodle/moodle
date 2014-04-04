@@ -48,6 +48,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $message->fullmessageformat = FORMAT_MARKDOWN;
         $message->fullmessagehtml   = '<p>message body</p>';
         $message->smallmessage      = 'small message';
+        $message->notification      = 0;
 
         // Check message is not sent.
         $sink = $this->redirectEmails();
@@ -218,6 +219,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $message->smallmessage      = 'small message';
         $message->attachment        = $file;
         $message->attachname        = 'emailtest.txt';
+        $message->notification      = 0;
 
         // Make sure we are redirecting emails.
         $sink = $this->redirectEmails();

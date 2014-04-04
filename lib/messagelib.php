@@ -68,6 +68,11 @@ function message_send($eventdata) {
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
+    // By default a message is a notification. Only personal/private messages aren't notifications.
+    if (!isset($eventdata->notification)) {
+        $eventdata->notification = 1;
+    }
+
     if (is_number($eventdata->userto)) {
         $eventdata->userto = core_user::get_user($eventdata->userto);
     }
@@ -109,12 +114,7 @@ function message_send($eventdata) {
     $savemessage->fullmessageformat = $eventdata->fullmessageformat;
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
-
-    if (!empty($eventdata->notification)) {
-        $savemessage->notification = $eventdata->notification;
-    } else {
-        $savemessage->notification = 0;
-    }
+    $savemessage->notification      = $eventdata->notification;
 
     if (!empty($eventdata->contexturl)) {
         $savemessage->contexturl = $eventdata->contexturl;
