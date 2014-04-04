@@ -15,15 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External database log store.
+ * Fixtures for database log storage testing.
  *
- * @package    logstore_standard
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @package    logstore_database
+ * @copyright  2014 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace logstore_database\test;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2014041700; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2014011000; // Requires this Moodle version.
-$plugin->component = 'logstore_database'; // Full name of the plugin (used for diagnostics).
+class store extends \logstore_database\log\store {
+    /**
+     * Public wrapper for testing.
+     *
+     * @param \core\event\base $event
+     *
+     * @return bool
+     */
+    public function is_event_ignored(\core\event\base $event) {
+        return parent::is_event_ignored($event);
+    }
+}
