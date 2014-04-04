@@ -94,8 +94,8 @@ class filter_mathjaxloader extends moodle_text_filter {
      * @param moodle_page $page The current page.
      * @param context $context The current context.
      */
-    public function lazy_init() {
-        global $CFG, $PAGE;
+    public function setup($page, $context) {
+        global $CFG;
         // This only requires execution once per request.
         static $jsinitialised = false;
 
@@ -113,13 +113,13 @@ class filter_mathjaxloader extends moodle_text_filter {
                 'fullpath' => $url
             );
 
-            $PAGE->requires->js_module($moduleconfig);
+            $page->requires->js_module($moduleconfig);
 
             $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
 
             $params = array('mathjaxconfig' => $config, 'lang' => $lang);
 
-            $PAGE->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.init', array($params));
+            $page->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.configure', array($params));
 
             $jsinitialised = true;
         }
@@ -132,6 +132,8 @@ class filter_mathjaxloader extends moodle_text_filter {
      * @param array $options The filter options.
      */
     public function filter($text, array $options = array()) {
+        global $PAGE;
+
         $legacy = get_config('filter_mathjaxloader', 'texfiltercompatibility');
         $extradelimiters = explode(',', get_config('filter_mathjaxloader', 'additionaldelimiters'));
         if ($legacy) {
@@ -161,8 +163,7 @@ class filter_mathjaxloader extends moodle_text_filter {
             }
         }
         if ($hasinline || $hasdisplay || $hasextra) {
-            // Only call init if there is at least one equation on the page.
-            $this->lazy_init();
+            $PAGE->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.typeset');
             return '<span class="nolink"><span class="filter_mathjaxloader_equation">' . $text . '</span></span>';
         }
         return $text;
