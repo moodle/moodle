@@ -114,7 +114,6 @@ h2, h3, h4 {padding:0;}
 .environmenttable .ok {background-color:lime;}
 
 /* adminsettings */
-#adminsettings .form-overridden {background-color:yellow;}
 #adminsettings .form-warning {color:red;}
 
 /* tables */

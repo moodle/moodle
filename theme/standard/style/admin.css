@@ -94,7 +94,6 @@ table.flexible .r1 {background-color: #FAFAFA;}
 #adminsettings fieldset.error {border: 1px solid red;}
 #adminsettings fieldset.error legend {color: red;}
 #adminsettings .form-shortname {color: #888;}
-#adminsettings .form-overridden {background-color: #ff6;}
 #adminsettings .form-warning {background-color: #f88;}
 #adminsettings .form-defaultinfo {color: #888;}
 #adminsettings .form-item .pathok {color: green;}
