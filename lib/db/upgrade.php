@@ -3197,31 +3197,34 @@ function xmldb_main_upgrade($oldversion) {
             }
         }
 
-        list($insql, $inparams) = $DB->get_in_or_equal($themes, SQL_PARAMS_NAMED);
+        // Check we actually have themes to remove.
+        if (count($themes) > 0) {
+            list($insql, $inparams) = $DB->get_in_or_equal($themes, SQL_PARAMS_NAMED);
 
-        // Replace the theme usage.
-        $DB->set_field_select('course', 'theme', 'clean', "theme $insql", $inparams);
-        $DB->set_field_select('course_categories', 'theme', 'clean', "theme $insql", $inparams);
-        $DB->set_field_select('user', 'theme', 'clean', "theme $insql", $inparams);
-        $DB->set_field_select('mnet_host', 'theme', 'clean', "theme $insql", $inparams);
+            // Replace the theme usage.
+            $DB->set_field_select('course', 'theme', 'clean', "theme $insql", $inparams);
+            $DB->set_field_select('course_categories', 'theme', 'clean', "theme $insql", $inparams);
+            $DB->set_field_select('user', 'theme', 'clean', "theme $insql", $inparams);
+            $DB->set_field_select('mnet_host', 'theme', 'clean', "theme $insql", $inparams);
 
-        // Replace the theme configs.
-        if (in_array(get_config('core', 'theme'), $themes)) {
-            set_config('theme', 'clean');
-        }
-        if (in_array(get_config('core', 'thememobile'), $themes)) {
-            set_config('thememobile', 'clean');
-        }
-        if (in_array(get_config('core', 'themelegacy'), $themes)) {
-            set_config('themelegacy', 'clean');
-        }
-        if (in_array(get_config('core', 'themetablet'), $themes)) {
-            set_config('themetablet', 'clean');
-        }
+            // Replace the theme configs.
+            if (in_array(get_config('core', 'theme'), $themes)) {
+                set_config('theme', 'clean');
+            }
+            if (in_array(get_config('core', 'thememobile'), $themes)) {
+                set_config('thememobile', 'clean');
+            }
+            if (in_array(get_config('core', 'themelegacy'), $themes)) {
+                set_config('themelegacy', 'clean');
+            }
+            if (in_array(get_config('core', 'themetablet'), $themes)) {
+                set_config('themetablet', 'clean');
+            }
 
-        // Hacky emulation of plugin uninstallation.
-        foreach ($themes as $theme) {
-            unset_all_config_for_plugin('theme_' . $theme);
+            // Hacky emulation of plugin uninstallation.
+            foreach ($themes as $theme) {
+                unset_all_config_for_plugin('theme_' . $theme);
+            }
         }
 
         // Main savepoint reached.
