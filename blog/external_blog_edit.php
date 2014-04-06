@@ -44,7 +44,7 @@ if ($id !== null) {
 }
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/blog/external_blogs.php');
 

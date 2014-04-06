@@ -122,7 +122,7 @@ $straddgroupstogroupings = get_string('addgroupstogroupings', 'group');
 $groupingname = format_string($grouping->name);
 
 navigation_node::override_active_url(new moodle_url('/group/index.php', array('id'=>$course->id)));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 $PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));

@@ -60,7 +60,7 @@ $PAGE->set_url($url);
 $PAGE->set_context(context_user::instance($user->id));
 $PAGE->set_title("$course->fullname: $fullname: $strportfolios");
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 echo $OUTPUT->header();
 $showroles = 1;
