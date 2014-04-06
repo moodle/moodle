@@ -25,7 +25,12 @@ define('IOMAD_SIGNUP_ROLE', 'clientadministrator');
  * to the client admin role (site)
  */
 function local_iomad_signup_user_created($user) {
-    global $DB;
+    global $CFG, $DB;
+
+    // the plugin needs to be enabled
+    if (!$CFG->local_iomad_signup_enable) {
+        return true;
+    }
 
     // If not 'email' auth then we are not interested
     if ($user->auth != 'email') {

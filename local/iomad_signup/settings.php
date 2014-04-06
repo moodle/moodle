@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['enable'] = 'Enable';
-$string['enable_help'] = 'New email authentication users will be given the Client Administrator role on creation when this is enabled';
-$string['pluginname'] = 'Iomad signup';
+defined('MOODLE_INTERNAL') || die;
+
+if ($hassiteconfig) {
+    $settings = new admin_settingpage('local_iomad_signup', get_string('pluginname', 'local_iomad_signup'));
+    $ADMIN->add('localplugins', $settings);
+
+    $settings->add(new admin_setting_configcheckbox(
+        'local_iomad_signup_enable',
+        get_string('enable', 'local_iomad_signup'),
+        get_string('enable_help', 'local_iomad_signup'),
+        1)
+    );
+}
