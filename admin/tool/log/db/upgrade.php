@@ -15,15 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Default log manager.
+ * Logging support.
  *
  * @package    tool_log
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @copyright  2014 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2014040600; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2014040300; // Requires this Moodle version.
-$plugin->component = 'tool_log'; // Full name of the plugin (used for diagnostics).
+/**
+ * Upgrade the plugin.
+ *
+ * @param int $oldversion
+ * @return bool always true
+ */
+function xmldb_tool_log_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2014040600) {
+        // Reset logging defaults in dev branches,
+        // in production upgrade the install.php is executed instead.
+        require_once(__DIR__ . '/install.php');
+        xmldb_tool_log_install();
+        upgrade_plugin_savepoint(true, 2014040600, 'tool', 'log');
+    }
+
+    return true;
+}
