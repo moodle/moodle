@@ -786,27 +786,6 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
                 $data[] = $lastaccess;
             }
 
-            if (isset($userlistextra) && isset($userlistextra[$user->id])) {
-                $ras = $userlistextra[$user->id]['ra'];
-                $rastring = '';
-                foreach ($ras as $key => $ra) {
-                    $rolename = $allrolenames[$ra['roleid']];
-                    if ($ra['ctxlevel'] == CONTEXT_COURSECAT) {
-                        $rastring .= $rolename. ' @ ' . '<a href="'.$CFG->wwwroot.'/course/index.php?categoryid='.$ra['ctxinstanceid'].'">'.s($ra['ccname']).'</a>';
-                    } else if ($ra['ctxlevel'] == CONTEXT_SYSTEM) {
-                        $rastring .= $rolename. ' - ' . get_string('globalrole', 'role');
-                    } else {
-                        $rastring .= $rolename;
-                    }
-                }
-                $data[] = $rastring;
-                if ($groupmode != 0) {
-                    // Use htmlescape with s() and implode the array.
-                    $data[] = implode(', ', array_map('s', $userlistextra[$user->id]['group']));
-                    $data[] = implode(', ', array_map('s', $userlistextra[$user->id]['gping']));
-                }
-            }
-
             $table->add_data($data);
         }
     }
