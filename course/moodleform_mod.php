@@ -461,6 +461,8 @@ abstract class moodleform_mod extends moodleform {
 
             $mform->addElement('modgrade', 'scale', get_string('scale'), false);
             $mform->disabledIf('scale', 'assessed', 'eq', 0);
+            $mform->addHelpButton('scale', 'modgrade', 'grades');
+            $mform->setDefault('scale', $CFG->gradepointdefault);
 
             $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'rating'));
             $mform->disabledIf('ratingtime', 'assessed', 'eq', 0);
@@ -786,7 +788,8 @@ abstract class moodleform_mod extends moodleform {
             //if supports grades and grades arent being handled via ratings
             if (!$this->_features->rating) {
                 $mform->addElement('modgrade', 'grade', get_string('grade'));
-                $mform->setDefault('grade', 100);
+                $mform->addHelpButton('grade', 'modgrade', 'grades');
+                $mform->setDefault('grade', $CFG->gradepointdefault);
             }
 
             if ($this->_features->advancedgrading
