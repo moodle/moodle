@@ -105,7 +105,10 @@ abstract class page_wiki {
         $PAGE->set_cm($cm);
         $PAGE->set_activity_record($wiki);
         // the search box
-        $PAGE->set_button(wiki_search_form($cm));
+        if (!empty($subwiki->id)) {
+            $search = optional_param('searchstring', null, PARAM_ALPHANUMEXT);
+            $PAGE->set_button(wiki_search_form($cm, $search, $subwiki));
+        }
     }
 
     /**
@@ -830,6 +833,17 @@ class page_wiki_search extends page_wiki {
         global $PAGE, $CFG;
         $PAGE->set_url($CFG->wwwroot . '/mod/wiki/search.php');
     }
+
+    function print_header() {
+        global $PAGE;
+
+        parent::print_header();
+
+        $wiki = $PAGE->activityrecord;
+        $page = (object)array('title' => $wiki->firstpagetitle);
+        $this->wikioutput->wiki_print_subwiki_selector($wiki, $this->subwiki, $page, 'search');
+    }
+
     function print_content() {
         global $PAGE;
 
