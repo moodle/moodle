@@ -301,6 +301,10 @@ function _quiz_move_question($quiz, $slotnumber, $shift) {
     $otherslot = $DB->get_record('quiz_slots',
             array('quizid' => $quiz->id, 'slot' => $slotnumber + $shift));
     if (!$otherslot) {
+        // Must be first or last question being moved further that way if we can.
+        if ($shift + $slot->page > 0) {
+            $DB->set_field('quiz_slots', 'page', $slot->page + $shift, array('id' => $slot->id));
+        }
         return;
     }
 
@@ -469,6 +473,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     $returnurl = $pageurl->out_as_local_url(false);
     $questiontotalcount = count($order);
 
+    $lastquestion = new stdClass();
+    $lastquestion->slot = 0; // Used to get the add page here buttons right.
     foreach ($order as $count => $qnum) { // Note: $qnum is acutally slot number, if it is not 0.
 
         $reordercheckbox = '';
@@ -499,7 +505,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                         '</span><div class="pagecontent">';
                 $pageopen = true;
             }
-            if ($qnum == 0  && $count < $questiontotalcount) {
+            if ($qnum == 0) {
                 // This is the second successive page break. Tell the user the page is empty.
                 echo '<div class="pagestatus">';
                 print_string('noquestionsonpage', 'quiz');
@@ -564,9 +570,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 if ($count != 0) {
                     if (!$hasattempts) {
                         $upbuttonclass = '';
-                        if ($count >= $lastindex - 1) {
-                            $upbuttonclass = 'upwithoutdown';
-                        }
                         echo $OUTPUT->action_icon($pageurl->out(true,
                                 array('up' => $question->slot, 'sesskey' => sesskey())),
                                 new pix_icon('t/up', $strmoveup),
@@ -576,15 +579,13 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                     }
 
                 }
-                if ($count < $questiontotalcount - 2) {
-                    if (!$hasattempts) {
-                        echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('down' => $question->slot, 'sesskey' => sesskey())),
-                                new pix_icon('t/down', $strmovedown),
-                                new component_action('click',
-                                        'M.core_scroll_manager.save_scroll_action'),
-                                array('title' => $strmovedown));
-                    }
+                if (!$hasattempts) {
+                    echo $OUTPUT->action_icon($pageurl->out(true,
+                            array('down' => $question->slot, 'sesskey' => sesskey())),
+                            new pix_icon('t/down', $strmovedown),
+                            new component_action('click',
+                                    'M.core_scroll_manager.save_scroll_action'),
+                            array('title' => $strmovedown));
                 }
                 if ($allowdelete && ($question->qtype == 'missingtype' ||
                         question_has_capability_on($question, 'use', $question->category))) {
@@ -687,11 +688,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 }
                 echo "</div></div>";
 
-                if (!$reordertool && !$quiz->shufflequestions) {
+                if (!$reordertool && !$quiz->shufflequestions && $count < $questiontotalcount - 1) {
                     echo $OUTPUT->container_start('addpage');
                     $url = new moodle_url($pageurl->out_omit_querystring(),
                             array('cmid' => $quiz->cmid, 'courseid' => $quiz->course,
-                                    'addpage' => $pagecount, 'sesskey' => sesskey()));
+                                    'addpage' => $lastquestion->slot, 'sesskey' => sesskey()));
                     echo $OUTPUT->single_button($url, get_string('addpagehere', 'quiz'), 'post',
                             array('disabled' => $hasattempts,
                             'actions' => array(new component_action('click',
@@ -701,6 +702,10 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 $pageopen = false;
                 $count++;
             }
+        }
+
+        if ($qnum != 0) {
+            $lastquestion = $question;
         }
 
     }
