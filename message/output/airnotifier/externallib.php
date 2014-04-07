@@ -56,7 +56,15 @@ class message_airnotifier_external extends external_api {
      * @since Moodle 2.7
      */
     public static function is_system_configured() {
+        global $DB;
 
+        // First, check if the plugin is disabled.
+        $processor = $DB->get_record('message_processors', array('name' => 'airnotifier'), '*', MUST_EXIST);
+        if (!$processor->enabled) {
+            return 0;
+        }
+
+        // Then, check if the plugin is completly configured.
         $manager = new message_airnotifier_manager();
         return (int) $manager->is_system_configured();
     }
@@ -97,7 +105,7 @@ class message_airnotifier_external extends external_api {
         $params = self::validate_parameters(self::are_notification_preferences_configured_parameters(),
                 array('userids' => $userids));
 
-        list($sqluserids, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        list($sqluserids, $params) = $DB->get_in_or_equal($params['userids'], SQL_PARAMS_NAMED);
         $uselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
         $params['contextlevel'] = CONTEXT_USER;
@@ -134,8 +142,18 @@ class message_airnotifier_external extends external_api {
                 // Now we get for all the providers and all the states
                 // the user preferences to check if at least one is enabled for airnotifier plugin.
                 $providers = message_get_providers_for_user($user->id);
+                $configured = false;
+
                 foreach ($providers as $provider) {
+                    if ($configured) {
+                        break;
+                    }
+
                     foreach (array('loggedin', 'loggedoff') as $state) {
+                        if ($configured) {
+                            break;
+                        }
+
                         $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
                         $linepref = get_user_preferences($prefname, '', $user->id);
                         if ($linepref == '') {
@@ -146,7 +164,8 @@ class message_airnotifier_external extends external_api {
                         foreach ($lineprefarray as $pref) {
                             if ($pref == 'airnotifier') {
                                 $preferences['configured'] = 1;
-                                break 2;
+                                $configured = true;
+                                break;
                             }
                         }
                     }

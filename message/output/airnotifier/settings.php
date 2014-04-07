@@ -41,7 +41,7 @@ if ($ADMIN->fulltree) {
                     get_string('airnotifieraccesskey', 'message_airnotifier'),
                     get_string('configairnotifieraccesskey', 'message_airnotifier'), '', PARAM_ALPHANUMEXT));
 
-    $url = new moodle_url('/message/output/airnotifier/requestaccesskey.php');
+    $url = new moodle_url('/message/output/airnotifier/requestaccesskey.php', array('sesskey' => sesskey()));
     $link = html_writer::link($url, get_string('requestaccesskey', 'message_airnotifier'));
     $settings->add(new admin_setting_heading('requestaccesskey', '', $link));
 }

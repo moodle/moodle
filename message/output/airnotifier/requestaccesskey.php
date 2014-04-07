@@ -31,6 +31,7 @@ $PAGE->set_url(new moodle_url('/message/output/airnotifier/requestaccesskey.php'
 $PAGE->set_context(context_system::instance());
 
 require_login();
+require_sesskey();
 require_capability('moodle/site:config', context_system::instance());
 
 $strheading = get_string('requestaccesskey', 'message_airnotifier');
