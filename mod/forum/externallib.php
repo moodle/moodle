@@ -161,6 +161,8 @@ class mod_forum_external extends external_api {
             array(
                 'forumids' => new external_multiple_structure(new external_value(PARAM_INT, 'forum ID',
                         '', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Forum IDs', VALUE_REQUIRED),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from', VALUE_OPTIONAL, 0),
+                'limitnum' => new external_value(PARAM_INT, 'limit number', VALUE_OPTIONAL, 0)
             )
         );
     }
@@ -170,17 +172,27 @@ class mod_forum_external extends external_api {
      * in a provided list of forums.
      *
      * @param array $forumids the forum ids
+     * @param int $limitfrom limit from SQL data
+     * @param int $limitnum limit number SQL data
+     *
      * @return array the forum discussion details
      * @since Moodle 2.5
      */
-    public static function get_forum_discussions($forumids) {
+    public static function get_forum_discussions($forumids, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $DB, $USER;
 
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         // Validate the parameter.
-        $params = self::validate_parameters(self::get_forum_discussions_parameters(), array('forumids' => $forumids));
-        $forumids = $params['forumids'];
+        $params = self::validate_parameters(self::get_forum_discussions_parameters(),
+            array(
+                'forumids'  => $forumids,
+                'limitfrom' => $limitfrom,
+                'limitnum'  => $limitnum,
+            ));
+        $forumids  = $params['forumids'];
+        $limitfrom = $params['limitfrom'];
+        $limitnum  = $params['limitnum'];
 
         // Array to store the forum discussions to return.
         $arrdiscussions = array();
@@ -233,7 +245,8 @@ class mod_forum_external extends external_api {
             // The forum function returns the replies for all the discussions in a given forum.
             $replies = forum_count_discussion_replies($id);
             // Get the discussions for this forum.
-            if ($discussions = $DB->get_records('forum_discussions', array('forum' => $id))) {
+            $order = 'timemodified DESC';
+            if ($discussions = $DB->get_records('forum_discussions', array('forum' => $id), $order, '*', $limitfrom, $limitnum)) {
                 foreach ($discussions as $discussion) {
                     // If the forum is of type qanda and the user has not posted in the discussion
                     // we need to ensure that they have the required capability.
