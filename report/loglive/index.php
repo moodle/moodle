@@ -28,8 +28,8 @@ require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
-$id      = optional_param('id', 0, PARAM_INT);
-$page    = optional_param('page', 0, PARAM_INT);
+$id = optional_param('id', 0, PARAM_INT);
+$page = optional_param('page', 0, PARAM_INT);
 $logreader = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
 
 if (empty($id)) {

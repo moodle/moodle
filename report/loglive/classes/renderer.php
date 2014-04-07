@@ -102,4 +102,3 @@ class report_loglive_renderer extends plugin_renderer_base {
         return $o;
     }
 }
-
