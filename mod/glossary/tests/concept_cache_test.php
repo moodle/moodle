@@ -73,7 +73,7 @@ class mod_glossary_concept_cache_testcase extends advanced_testcase {
 
         \mod_glossary\local\concept_cache::reset_caches();
 
-        $concepts1 = \mod_glossary\local\concept_cache::get_concepts($course1);
+        $concepts1 = \mod_glossary\local\concept_cache::get_concepts($course1->id);
         $this->assertCount(3, $concepts1[0]);
         $this->arrayHasKey($concepts1[0], $glossary1a->id);
         $this->arrayHasKey($concepts1[0], $glossary1b->id);
@@ -136,7 +136,7 @@ class mod_glossary_concept_cache_testcase extends advanced_testcase {
             }
         }
 
-        $concepts3 = \mod_glossary\local\concept_cache::get_concepts($site);
+        $concepts3 = \mod_glossary\local\concept_cache::get_concepts($site->id);
         $this->assertCount(1, $concepts3[0]);
         $this->arrayHasKey($concepts3[0], $glossary3->id);
         $this->assertCount(1, $concepts3[1]);
@@ -156,7 +156,7 @@ class mod_glossary_concept_cache_testcase extends advanced_testcase {
             }
         }
 
-        $concepts2 = \mod_glossary\local\concept_cache::get_concepts($course2);
+        $concepts2 = \mod_glossary\local\concept_cache::get_concepts($course2->id);
         $this->assertEquals($concepts3, $concepts2);
     }
 }

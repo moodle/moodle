@@ -147,33 +147,35 @@ class concept_cache {
 
     /**
      * Get all linked concepts from course.
-     * @param \stdClass $course
+     * @param int $courseid
      * @return array
      */
-    protected static function get_course_concepts($course) {
+    protected static function get_course_concepts($courseid) {
         global $DB;
 
-        if (empty($course->id)) {
+        if (empty($courseid)) {
             return array(array(), array());
         }
 
+        $courseid = (int)$courseid;
+
         $cache = \cache::make('mod_glossary', 'concepts');
-        $data = $cache->get((int)$course->id);
+        $data = $cache->get($courseid);
         if (is_array($data)) {
             list($glossaries, $allconcepts) = $data;
 
         } else {
             // Find all course glossaries.
             $sql = "SELECT g.id, g.name
-                  FROM {glossary} g
-                  JOIN {course_modules} cm ON (cm.instance = g.id)
-                  JOIN {modules} m ON (m.name = 'glossary' AND m.id = cm.module)
-                 WHERE g.usedynalink = 1 AND g.course = :course AND cm.visible = 1 AND m.visible = 1
-              ORDER BY g.globalglossary, g.id";
-            $glossaries = $DB->get_records_sql_menu($sql, array('course' => $course->id));
+                      FROM {glossary} g
+                      JOIN {course_modules} cm ON (cm.instance = g.id)
+                      JOIN {modules} m ON (m.name = 'glossary' AND m.id = cm.module)
+                     WHERE g.usedynalink = 1 AND g.course = :course AND cm.visible = 1 AND m.visible = 1
+                  ORDER BY g.globalglossary, g.id";
+            $glossaries = $DB->get_records_sql_menu($sql, array('course' => $courseid));
             if (!$glossaries) {
                 $data = array(array(), array());
-                $cache->set((int)$course->id, $data);
+                $cache->set($courseid, $data);
                 return $data;
             }
             foreach ($glossaries as $id => $name) {
@@ -187,13 +189,19 @@ class concept_cache {
                     unset($glossaries[$gid]);
                 }
             }
-            $cache->set((int)$course->id, array($glossaries, $allconcepts));
+            if (!$glossaries) {
+                // This means there are no interesting concepts in the existing glossaries.
+                $data = array(array(), array());
+                $cache->set($courseid, $data);
+                return $data;
+            }
+            $cache->set($courseid, array($glossaries, $allconcepts));
         }
 
         $concepts = $allconcepts;
 
         // Verify access control to glossary instances.
-        $modinfo = get_fast_modinfo($course);
+        $modinfo = get_fast_modinfo($courseid);
         $cminfos = $modinfo->get_instances_of('glossary');
         foreach ($concepts as $modid => $unused) {
             if (!isset($cminfos[$modid])) {
@@ -256,11 +264,11 @@ class concept_cache {
 
     /**
      * Get all concepts that should be linked in the given course.
-     * @param \stdClass $course
+     * @param int $courseid
      * @return array with two elements - array of glossaries and concepts for each glossary
      */
-    public static function get_concepts($course) {
-        list($glossaries, $concepts) = self::get_course_concepts($course);
+    public static function get_concepts($courseid) {
+        list($glossaries, $concepts) = self::get_course_concepts($courseid);
         list($globalglossaries, $globalconcepts) = self::get_global_concepts();
 
         foreach ($globalconcepts as $gid => $cs) {

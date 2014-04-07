@@ -60,14 +60,12 @@ class filter_glossary extends moodle_text_filter {
         $coursectx = $this->context->get_course_context(false);
         if (!$coursectx) {
             // Only global glossaries will be linked.
-            $course = null;
             $courseid = 0;
         } else {
-            $course = get_course($coursectx->instanceid, false);
-            $courseid = (int)$course->id;
+            $courseid = $coursectx->instanceid;
         }
 
-        if ($this->cachecourseid !== $courseid or $this->cacheuserid !== $USER->id) {
+        if ($this->cachecourseid != $courseid or $this->cacheuserid != $USER->id) {
             // Invalidate the page cache.
             $this->cacheconceptlist = null;
         }
@@ -79,7 +77,7 @@ class filter_glossary extends moodle_text_filter {
             return filter_phrases($text, $this->cacheconceptlist);
         }
 
-        list($glossaries, $allconcepts) = \mod_glossary\local\concept_cache::get_concepts($course);
+        list($glossaries, $allconcepts) = \mod_glossary\local\concept_cache::get_concepts($courseid);
 
         if (!$allconcepts) {
             $this->cacheuserid = $USER->id;
