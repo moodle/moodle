@@ -147,7 +147,7 @@ class company_edit_form extends company_moodleform {
         // Only show the Appearence section if the theme is iomad or you have abilities
         // to change that.
         if (has_capability('block/iomad_company_admin:company_add', $context) ||
-            $this->companyrecord->theme == 'iomad') {
+            $this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap') {
                 $mform->addElement('header', 'appearance',
                                     get_string('appearance', 'block_iomad_company_admin'));
 
@@ -191,7 +191,7 @@ class company_edit_form extends company_moodleform {
             if (!isset($this->companyrecord->theme)) {
                 $this->companyrecord->theme = 'iomad';
             }
-            if ($this->companyrecord->theme == 'iomad') {
+            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap') {
                 $mform->addElement('HTML', get_string('theoptionsbelow',
                                                       'block_iomad_company_admin'));
                 $mform->addElement('filemanager', 'companylogo',
@@ -205,7 +205,6 @@ class company_edit_form extends company_moodleform {
                                                                  'style' => 'background'));
                 $this->add_colour_picker('bgcolor_content', array('selector' => '.block .content',
                                                                   'style' => 'background'));
-                $mform->disabledIf('companylogo', 'theme', 'ne', 'iomad');
                 $mform->disabledIf('id_bgcolor_header', 'usedefaulttheme', 'checked');
                 $mform->disabledIf('id_bgcolor_content', 'usedefaulttheme', 'checked');
             } else {

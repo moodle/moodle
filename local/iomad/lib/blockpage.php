@@ -104,7 +104,7 @@ class blockpage {
 
         $this->page->set_url($this->get_relative_url($urlparams));
         $this->page->set_context(context_system::instance());
-        $this->page->set_pagelayout('admin');
+        $this->page->set_pagelayout('mydashboard');
 
         $blocktitle = self::get_string('blocktitle');
 
@@ -210,6 +210,6 @@ class blockpage {
     public function display_header() {
 
         echo $this->OUTPUT->header();
-        echo $this->OUTPUT->heading($this->pagetitle, 2, 'headingblock header');
+        //echo $this->OUTPUT->heading($this->pagetitle, 2, 'headingblock header');
     }
 }

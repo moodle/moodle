@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>less/bootstrap</location>
+    <name>Bootstrap</name>
+    <license>Apache</license>
+    <version>3.0.3</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
+    <location>javascript/html5shiv.js</location>
+    <name>Html5Shiv</name>
+    <license>Apache</license>
+    <version>3.7.0</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+    <library>
+    <location>javascript/respond.min.js</location>
+    <name>Respond.js</name>
+    <license>MIT</license>
+    <version>1.4.2</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>jquery/bootstrap.js</location>
+    <name>Bootstrap Javascript</name>
+    <license>Apache</license>
+    <version>3.0.3</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+</libraries>
