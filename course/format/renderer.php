@@ -551,16 +551,23 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * Generate the html for a hidden section
      *
      * @param int $sectionno The section number in the coruse which is being dsiplayed
+     * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
      * @return string HTML to output.
      */
-    protected function section_hidden($sectionno, $courseorid) {
+    protected function section_hidden($sectionno, $courseorid = null) {
+        if ($courseorid) {
+            $sectionname = get_section_name($courseorid, $sectionno);
+            $strnotavailable = get_string('notavailablecourse', '', $sectionname);
+        } else {
+            $strnotavailable = get_string('notavailable');
+        }
+
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix hidden'));
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
         $o.= html_writer::tag('div', '', array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));
-        $o .= html_writer::tag('div', get_string('notavailablecourse', '', get_section_name(
-            $courseorid, $sectionno, array('class' => 'availabilityinfo'))));
+        $o.= html_writer::tag('div', $strnotavailable);
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
         return $o;

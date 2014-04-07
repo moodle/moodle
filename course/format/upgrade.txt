@@ -4,6 +4,8 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
 === 2.7 ===
 * The ->testedbrowsers array no longer needs to be defined in supports_ajax().
+* format_section_renderer_base::section_hidden has an new second optional argument $courseorid.
+  If provided the section name is printed in the not available string when displaying the hidden section.
 
 === 2.6 ===
 
