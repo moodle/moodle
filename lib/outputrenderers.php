@@ -3247,6 +3247,28 @@ EOD;
     }
 
     /**
+     * Renders a custom block region.
+     *
+     * Use this method if you want to add an additional block region to the content of the page.
+     * Please note this should only be used in special situations.
+     * We want to leave the theme is control where ever possible!
+     *
+     * This method must use the same method that the theme uses within its layout file.
+     * As such it asks the theme what method it is using.
+     * It can be one of two values, blocks or blocks_for_region (deprecated).
+     *
+     * @param string $regionname The name of the custom region to add.
+     * @return string HTML for the block region.
+     */
+    public function custom_block_region($regionname) {
+        if ($this->page->theme->get_block_render_method() === 'blocks') {
+            return $this->blocks($regionname);
+        } else {
+            return $this->blocks_for_region($regionname);
+        }
+    }
+
+    /**
      * Returns the CSS classes to apply to the body tag.
      *
      * @since 2.5.1 2.6

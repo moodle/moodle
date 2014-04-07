@@ -381,6 +381,13 @@ class theme_config {
     public $lessvariablescallback = null;
 
     /**
+     * Sets the render method that should be used for rendering custom block regions by scripts such as my/index.php
+     * Defaults to {@link core_renderer::blocks_for_region()}
+     * @var string
+     */
+    public $blockrendermethod = null;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -448,7 +455,8 @@ class theme_config {
         $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
                               'parents_exclude_javascripts', 'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
                               'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector', 'doctype',
-                              'yuicssmodules', 'blockrtlmanipulations', 'lessfile', 'extralesscallback', 'lessvariablescallback');
+                              'yuicssmodules', 'blockrtlmanipulations', 'lessfile', 'extralesscallback', 'lessvariablescallback',
+                              'blockrendermethod');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -1844,7 +1852,7 @@ class theme_config {
     public function setup_blocks($pagelayout, $blockmanager) {
         $layoutinfo = $this->layout_info_for_page($pagelayout);
         if (!empty($layoutinfo['regions'])) {
-            $blockmanager->add_regions($layoutinfo['regions']);
+            $blockmanager->add_regions($layoutinfo['regions'], false);
             $blockmanager->set_default_region($layoutinfo['defaultregion']);
         }
     }
@@ -1898,6 +1906,32 @@ class theme_config {
      */
     public function get_theme_name() {
         return get_string('pluginname', 'theme_'.$this->name);
+    }
+
+    /**
+     * Returns the block render method.
+     *
+     * It is set by the theme via:
+     *     $THEME->blockrendermethod = '...';
+     *
+     * It can be one of two values, blocks or blocks_for_region.
+     * It should be set to the method being used by the theme layouts.
+     *
+     * @return string
+     */
+    public function get_block_render_method() {
+        if ($this->blockrendermethod) {
+            // Return the specified block render method.
+            return $this->blockrendermethod;
+        }
+        // Its not explicitly set, check the parent theme configs.
+        foreach ($this->parent_configs as $config) {
+            if (isset($config->blockrendermethod)) {
+                return $config->blockrendermethod;
+            }
+        }
+        // Default it to blocks.
+        return 'blocks';
     }
 }
 

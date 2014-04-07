@@ -166,6 +166,6 @@ if ($currentpage->userid == 0) {
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->blocks_for_region('content');
+echo $OUTPUT->custom_block_region('content');
 
 echo $OUTPUT->footer();
