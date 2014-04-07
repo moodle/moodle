@@ -12,4 +12,4 @@ correctly load MathJax into a page from the CDN. Alternatively you can download 
 library and install it locally, then use this filter to load that local version.
 
 The only changes required to this filter to handle different MathJax versions is to update
-the CDN urls in filter.php - and update the list of language mappings - also in filter.php.
+the default CDN urls in settings.php - and update the list of language mappings - in filter.php.
