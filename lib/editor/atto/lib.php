@@ -122,6 +122,11 @@ class atto_texteditor extends texteditor {
             $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
         }
 
+        $PAGE->requires->strings_for_js(array(
+                'editor_command_keycode',
+                'editor_control_keycode',
+                'plugin_title_shortcut',
+            ), 'editor_atto');
         $PAGE->requires->yui_module($modules,
                                     'Y.M.editor_atto.Editor.init',
                                     array($this->get_init_params($elementid, $options, $fpoptions, $jsplugins)));
