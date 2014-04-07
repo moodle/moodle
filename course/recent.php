@@ -119,9 +119,6 @@ if ($param->modid === 'all') {
     $sections = array($sectionnum => $sections[$sectionnum]);
 }
 
-
-$modinfo->get_groups(); // load all my groups and cache it in modinfo
-
 $activities = array();
 $index = 0;
 

@@ -289,12 +289,8 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
             continue;
         }
 
-        if (is_null($modinfo->groups)) {
-            $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
-        }
-
         // verify groups in separate mode
-        if (!$mygroupids = $modinfo->groups[$cm->groupingid]) {
+        if (!$mygroupids = $modinfo->get_groups($cm->groupingid)) {
             continue;
         }
 
