@@ -1012,7 +1012,7 @@ class core_plugin_manager {
 
             'filter' => array(
                 'activitynames', 'algebra', 'censor', 'emailprotect',
-                'emoticon', 'mediaplugin', 'multilang', 'tex', 'tidy',
+                'emoticon', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
                 'urltolink', 'data', 'glossary'
             ),
 

@@ -81,6 +81,8 @@ function atto_equation_params_for_js($elementid, $options, $fpoptions) {
                 'elements' => get_config('atto_equation', 'librarygroup4'),
             ));
 
-    return array('texfilteractive' => $texfilteractive, 'contextid' => $context->id, 'library' => $library,
-        'texdocsurl' => get_docs_url('Using_TeX_Notation'));
+    return array('texfilteractive' => $texfilteractive,
+                 'contextid' => $context->id,
+                 'library' => $library,
+                 'texdocsurl' => get_docs_url('Using_TeX_Notation'));
 }
