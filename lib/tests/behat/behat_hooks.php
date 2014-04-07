@@ -477,7 +477,11 @@ class behat_hooks extends behat_base {
             if ($errormsg = $this->getSession()->getPage()->find('xpath', $exceptionsxpath)) {
 
                 // Getting the debugging info and the backtrace.
-                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
+                // If errorinfoboxes is empty, try find notifytiny (original) class.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                }
                 $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
                     $this->get_debug_text($errorinfoboxes[1]->getHtml());
 

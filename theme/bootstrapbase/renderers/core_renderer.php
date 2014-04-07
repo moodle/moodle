@@ -35,7 +35,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         $message = clean_text($message);
         $type = '';
 
-        if ($classes == 'notifyproblem') {
+        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
             $type = 'alert alert-error';
         }
         if ($classes == 'notifysuccess') {
