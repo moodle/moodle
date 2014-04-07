@@ -147,7 +147,7 @@ class report_loglive_renderable implements renderable {
     /**
      * Setup table log.
      */
-    public function setup_table() {
+    protected function setup_table() {
         $filter = $this->setup_filters();
         $this->tablelog = new report_loglive_table_log('report_loglive', $filter);
         $this->tablelog->define_baseurl($this->url);
@@ -156,7 +156,7 @@ class report_loglive_renderable implements renderable {
     /**
      * Setup table log for ajax output.
      */
-    public function setup_table_ajax() {
+    protected function setup_table_ajax() {
         $filter = $this->setup_filters();
         $this->tablelog = new report_loglive_table_log_ajax('report_loglive', $filter);
         $this->tablelog->define_baseurl($this->url);
@@ -210,4 +210,21 @@ class report_loglive_renderable implements renderable {
         return $this->refresh;
     }
 
+    /**
+     * Setup table and return it.
+     *
+     * @param bool $ajax If set to true report_loglive_table_log_ajax is set instead of report_loglive_table_log.
+     *
+     * @return report_loglive_table_log|report_loglive_table_log_ajax table object
+     */
+    public function get_table($ajax = false) {
+        if (empty($this->tablelog)) {
+            if ($ajax) {
+                $this->setup_table_ajax();
+            } else {
+                $this->setup_table();
+            }
+        }
+        return $this->tablelog;
+    }
 }

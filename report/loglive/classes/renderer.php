@@ -34,18 +34,19 @@ defined('MOODLE_INTERNAL') || die;
 class report_loglive_renderer extends plugin_renderer_base {
 
     /**
-     * Render log report page.
+     * Return html to render the loglive page..
      *
      * @param report_loglive_renderable $reportloglive object of report_log.
+     *
+     * @return string html used to render the page;
      */
     public function render_report_loglive_renderable(report_loglive_renderable $reportloglive) {
         if (empty($reportloglive->selectedlogreader)) {
-            echo $this->output->notification(get_string('nologreaderenabled', 'report_loglive'), 'notifyproblem');
-            return;
+            return $this->output->notification(get_string('nologreaderenabled', 'report_loglive'), 'notifyproblem');
         }
 
-        $reportloglive->setup_table();
-        $reportloglive->tablelog->out($reportloglive->perpage, true);
+        $table = $reportloglive->get_table();
+        return $this->render_table($table, $reportloglive->perpage);
     }
 
     /**
@@ -59,7 +60,7 @@ class report_loglive_renderer extends plugin_renderer_base {
         $readers = $reportloglive->get_readers(true);
         if (count($readers) <= 1) {
             // One or no readers found, no need of this drop down.
-            return;
+            return '';
         }
         $select = new single_select($reportloglive->url, 'logreader', $readers, $reportloglive->selectedlogreader, null);
         $select->set_label(get_string('selectlogreader', 'report_loglive'));
@@ -80,7 +81,25 @@ class report_loglive_renderer extends plugin_renderer_base {
             $icon = new pix_icon('i/loading_small', 'loading', 'moodle', array('class' => 'spinner'));
             return $this->output->render($icon);
         }
-        return null;
+        return '';
+    }
+
+    /**
+     * Get the html for the table.
+     *
+     * @param report_loglive_table_log $table table object.
+     * @param int $perpage entries to display perpage.
+     *
+     * @return string table html
+     */
+    protected function render_table(report_loglive_table_log $table, $perpage) {
+        $o = '';
+        ob_start();
+        $table->out($perpage, true);
+        $o = ob_get_contents();
+        ob_end_clean();
+
+        return $o;
     }
 }
 

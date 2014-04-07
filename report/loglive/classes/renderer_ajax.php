@@ -42,7 +42,7 @@ class report_loglive_renderer_ajax extends plugin_renderer_base {
         if (empty($reportloglive->selectedlogreader)) {
             return null;
         }
-        $reportloglive->setup_table_ajax();
-        $reportloglive->tablelog->out($reportloglive->perpage, false);
+        $table = $reportloglive->get_table(true);
+        return $table->out($reportloglive->perpage, false);
     }
 }

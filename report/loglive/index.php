@@ -30,14 +30,14 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 $id      = optional_param('id', 0, PARAM_INT);
 $page    = optional_param('page', 0, PARAM_INT);
-$logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
+$logreader = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
 
 if (empty($id)) {
     require_login();
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
 } else {
-    $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+    $course = get_course($id);
     require_login($course);
     $context = context_course::instance($course->id);
     $coursename = format_string($course->fullname, true, array('context' => $context));

@@ -42,7 +42,7 @@ class report_loglive_table_log_ajax extends report_loglive_table_log {
      * @param bool $useinitialsbar Not used, present only for compatibility with parent.
      * @param string $downloadhelpbutton Not used, present only for compatibility with parent.
      *
-     * @return array|void
+     * @return string json encoded data containing html of new rows.
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
         $this->query_db($pagesize, false);
@@ -56,6 +56,6 @@ class report_loglive_table_log_ajax extends report_loglive_table_log {
             }
         }
         $result = array('logs' => $html, 'until' => $until);
-        echo json_encode($result);
+        return json_encode($result);
     }
 }

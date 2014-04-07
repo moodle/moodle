@@ -35,7 +35,7 @@ if (empty($id)) {
     require_login();
     $context = context_system::instance();
 } else {
-    $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+    $course = get_course($id);
     require_login($course);
     $context = context_course::instance($course->id);
 }
@@ -47,4 +47,4 @@ if (!$since) {
 }
 $renderable = new report_loglive_renderable($logreader, $id, '', $since, $page);
 $output = $PAGE->get_renderer('report_loglive');
-$output->render($renderable);
+echo $output->render($renderable);
