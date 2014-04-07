@@ -17,33 +17,35 @@
 /**
  * Table log for displaying logs.
  *
- * @package    report_log
- * @copyright  2014 Rajesh Taneja <rajesh.taneja@gmail.com>
+ * @package    report_loglive
+ * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->libdir . '/tablelib.php');
 
 /**
  * Table log class for displaying logs.
  *
- * @package    report_log
- * @copyright  2014 Rajesh Taneja <rajesh.taneja@gmail.com>
+ * @since      Moodle 2.7
+ * @package    report_loglive
+ * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_log_table_log extends table_sql {
+class report_loglive_table_log extends table_sql {
 
     /** @var array list of user fullnames shown in report */
-    private $userfullnames = array();
+    protected $userfullnames = array();
 
     /** @var array list of course short names shown in report */
-    private $courseshortnames = array();
+    protected $courseshortnames = array();
 
     /** @var array list of context name shown in report */
-    private $contextname = array();
+    protected $contextname = array();
 
     /** @var stdClass filters parameters */
-    private $filterparams;
+    protected $filterparams;
 
     /**
      * Sets up the table_log parameters.
@@ -62,7 +64,8 @@ class report_log_table_log extends table_sql {
     public function __construct($uniqueid, $filterparams = null) {
         parent::__construct($uniqueid);
 
-        $this->set_attribute('class', 'reportlog generaltable generalbox');
+        $this->set_attribute('class', 'reportloglive generaltable generalbox');
+        $this->set_attribute('aria-live', 'polite');
         $this->filterparams = $filterparams;
         // Add course column if logs are displayed for site.
         $cols = array();
@@ -77,18 +80,19 @@ class report_log_table_log extends table_sql {
         $this->define_headers(array_merge($headers, array(
                 get_string('time'),
                 get_string('fullnameuser'),
-                get_string('eventrelatedfullnameuser', 'report_log'),
-                get_string('eventcontext', 'report_log'),
-                get_string('eventcomponent', 'report_log'),
+                get_string('eventrelatedfullnameuser', 'report_loglive'),
+                get_string('eventcontext', 'report_loglive'),
+                get_string('eventcomponent', 'report_loglive'),
                 get_string('eventname'),
                 get_string('description'),
-                get_string('eventorigin', 'report_log'),
+                get_string('eventorigin', 'report_loglive'),
                 get_string('ip_address')
                 )
             ));
         $this->collapsible(false);
         $this->sortable(false);
         $this->pageable(true);
+        $this->is_downloadable(false);
     }
 
     /**
@@ -137,8 +141,8 @@ class report_log_table_log extends table_sql {
                 $this->userfullnames[$logextra['realuserid']]);
             $params['id'] = $event->userid;
             $a->asusername = html_writer::link(new moodle_url("/user/view.php", $params),
-                    $this->userfullnames[$event->userid]);
-            $username = get_string('eventloggedas', 'report_log', $a);
+                $this->userfullnames[$event->userid]);
+            $username = get_string('eventloggedas', 'report_loglive', $a);
         } else if (!empty($event->userid) && !empty($this->userfullnames[$event->userid])) {
             $params = array('id' => $event->userid);
             if ($event->courseid) {
@@ -294,48 +298,6 @@ class report_log_table_log extends table_sql {
     }
 
     /**
-     * Helper function to get legacy crud action.
-     *
-     * @param string $crud crud action
-     * @return string legacy action.
-     */
-    public function get_legacy_crud_action($crud) {
-        $legacyactionmap = array('c' => 'add', 'r' => 'view', 'u' => 'update', 'd' => 'delete');
-        if (array_key_exists($crud, $legacyactionmap)) {
-            return $legacyactionmap[$crud];
-        } else {
-            // From old legacy log.
-            return '-view';
-        }
-    }
-
-    /**
-     * Helper function which is used by build logs to get action sql and param.
-     *
-     * @return array sql and param for action.
-     */
-    public function get_action_sql() {
-        global $DB;
-
-        // In new logs we have a field to pick, and in legacy try get this from action.
-        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
-            $action = $this->get_legacy_crud_action($this->filterparams->action);
-            $firstletter = substr($action, 0, 1);
-            if ($firstletter == '-') {
-                $sql = $DB->sql_like('action', ':action', false, true, true);
-                $params['action'] = '%'.substr($action, 1).'%';
-            } else {
-                $sql = $DB->sql_like('action', ':action', false);
-                $params['action'] = '%'.$action.'%';
-            }
-        } else {
-            $sql = "crud = :crud";
-            $params['crud'] = $this->filterparams->action;
-        }
-        return array($sql, $params);
-    }
-
-    /**
      * Query the reader. Store results in the object for use by build_table.
      *
      * @param int $pagesize size of page for paginated displayed table.
@@ -346,42 +308,10 @@ class report_log_table_log extends table_sql {
         $joins = array();
         $params = array();
 
-        $groupid = 0;
+        // Set up filtering.
         if (!empty($this->filterparams->courseid)) {
-            if (!empty($this->filterparams->groupid)) {
-                $groupid = $this->filterparams->groupid;
-            }
-
             $joins[] = "courseid = :courseid";
             $params['courseid'] = $this->filterparams->courseid;
-        }
-
-        if (!empty($this->filterparams->siteerrors)) {
-            $joins[] = "( action='error' OR action='infected' OR action='failed' )";
-        }
-
-        if (!empty($this->filterparams->modid)) {
-            $joins[] = "contextinstanceid = :contextinstanceid";
-            $params['contextinstanceid'] = $this->filterparams->modid;
-        }
-
-        if (!empty($this->filterparams->action)) {
-            list($actionsql, $actionparams) = $this->get_action_sql();
-            $joins[] = $actionsql;
-            $params = array_merge($params, $actionparams);
-        }
-
-        // Getting all members of a group.
-        if ($groupid and empty($this->filterparams->userid)) {
-            if ($gusers = groups_get_members($groupid)) {
-                $gusers = array_keys($gusers);
-                $joins[] = 'userid IN (' . implode(',', $gusers) . ')';
-            } else {
-                $joins[] = 'userid = 0'; // No users in groups, so we want something that will always be false.
-            }
-        } else if (!empty($this->filterparams->userid)) {
-            $joins[] = "userid = :userid";
-            $params['userid'] = $this->filterparams->userid;
         }
 
         if (!empty($this->filterparams->date)) {
@@ -389,22 +319,20 @@ class report_log_table_log extends table_sql {
             $params['date'] = $this->filterparams->date;
         }
 
-        if (isset($this->filterparams->edulevel) && ($this->filterparams->edulevel >= 0)) {
-            $joins[] = "edulevel = :edulevel";
-            $params['edulevel'] = $this->filterparams->edulevel;
+        if (!empty($this->filterparams->date)) {
+            $joins[] = "anonymous = :anon";
+            $params['anon'] = $this->filterparams->anonymous;
         }
 
         $selector = implode(' AND ', $joins);
 
-        if (!$this->is_downloading()) {
-            $total = $this->filterparams->logreader->get_events_select_count($selector, $params);
-            $this->pagesize($pagesize, $total);
-        }
+        $total = $this->filterparams->logreader->get_events_select_count($selector, $params);
+        $this->pagesize($pagesize, $total);
         $this->rawdata = $this->filterparams->logreader->get_events_select($selector, $params, $this->filterparams->orderby,
                 $this->get_page_start(), $this->get_page_size());
 
         // Set initial bars.
-        if ($useinitialsbar && !$this->is_downloading()) {
+        if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);
         }
 
