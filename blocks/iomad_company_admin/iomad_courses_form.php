@@ -76,7 +76,13 @@ $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'ioma
 $blockpage->setup();
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
+$companyid = iomad::get_my_companyid($systemcontext, false);
+
+// Is the users company set and no other company selected?
+if (empty($company) && !empty($companyid)) {
+    $company = $companyid;
+    $params['company'] = $company;
+}
 
 if (!empty($update)) {
     // Need to change something.
