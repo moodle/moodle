@@ -553,13 +553,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $sectionno The section number in the coruse which is being dsiplayed
      * @return string HTML to output.
      */
-    protected function section_hidden($sectionno) {
+    protected function section_hidden($sectionno, $courseorid) {
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix hidden'));
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
         $o.= html_writer::tag('div', '', array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));
-        $o.= get_string('notavailable');
+        $o .= html_writer::tag('div', get_string('notavailablecourse', '', get_section_name(
+            $courseorid, $sectionno, array('class' => 'availabilityinfo'))));
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
         return $o;
@@ -624,7 +625,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if (!$sectioninfo->uservisible) {
             if (!$course->hiddensections) {
                 echo $this->start_section_list();
-                echo $this->section_hidden($displaysection);
+                echo $this->section_hidden($displaysection, $course->id);
                 echo $this->end_section_list();
             }
             // Can't view this section.
@@ -744,7 +745,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 // form', then display the hidden section message - UNLESS the section is
                 // hidden by the availability system, which is set to hide the reason.
                 if (!$course->hiddensections && $thissection->available) {
-                    echo $this->section_hidden($section);
+                    echo $this->section_hidden($section, $course->id);
                 }
 
                 continue;
