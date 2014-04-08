@@ -266,10 +266,15 @@ if (!empty($company)) {
 
 // Display the table.
 $table = new html_table();
-$table->head = array (get_string('company', 'block_iomad_company_admin'), get_string('course'),
-                      get_string('licensed', 'block_iomad_company_admin'), get_string('shared', 'block_iomad_company_admin'),
-                      get_string('validfor', 'block_iomad_company_admin'), get_string('warnexpire', 'block_iomad_company_admin'),
-                      get_string('warncompletion', 'block_iomad_company_admin'));
+$table->head = array (
+    get_string('company', 'block_iomad_company_admin'),
+    get_string('course'),
+    get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
+    get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
+    get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
+    get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
+    get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin')
+);
 $table->align = array ("left", "center", "center", "center", "center", "center", "center");
 $table->width = "95%";
 $selectbutton = array('0' => get_string('no'), '1' => get_string('yes'));

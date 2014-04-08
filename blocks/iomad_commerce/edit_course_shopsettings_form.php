@@ -89,6 +89,7 @@ class course_edit_form extends moodleform {
             }
 
             $mform->addElement('selectyesno', 'enabled', get_string('course_shop_enabled', 'block_iomad_commerce'));
+            $mform->addHelpButton('enabled', 'course_shop_enabled', 'block_iomad_commerce');
 
             $mform->addElement('editor', 'short_summary_editor', get_string('course_short_summary', 'block_iomad_commerce'),
                                           null, $this->editoroptions);
@@ -103,25 +104,30 @@ class course_edit_form extends moodleform {
             $mform->addElement('header', 'header', get_string('single_purchase', 'block_iomad_commerce'));
 
             $mform->addElement('selectyesno', 'allow_single_purchase', get_string('allow_single_purchase', 'block_iomad_commerce'));
+            $mform->addHelpButton('allow_single_purchase', 'allow_single_purchase', 'block_iomad_commerce');
 
             $mform->addElement('text', 'single_purchase_price',
                                         get_string('single_purchase_price', 'block_iomad_commerce') . ' ' . $this->currency);
             $mform->addRule('single_purchase_price',
                              get_string('decimalnumberonly', 'block_iomad_commerce'), 'numeric');
             $mform->setType('single_purchase_price', PARAM_TEXT);
+            $mform->addHelpButton('single_purchase_price', 'single_purchase_price', 'block_iomad_commerce');
 
             $mform->addElement('text', 'single_purchase_validlength',
                                         get_string('single_purchase_validlength', 'block_iomad_commerce'));
-            $mform->setType('single_purchase_validlength', PARAM_TEXT);
+            $mform->setType('single_purchase_validlength', PARAM_INT);
+            $mform->addHelpButton('single_purchase_validlength', 'single_purchase_validlength', 'block_iomad_commerce');
 
             $mform->addElement('text', 'single_purchase_shelflife',
                                         get_string('single_purchase_shelflife', 'block_iomad_commerce'));
-            $mform->setType('single_purchase_shelflife', PARAM_TEXT);
+            $mform->setType('single_purchase_shelflife', PARAM_INT);
+            $mform->addHelpButton('single_purchase_shelflife', 'single_purchase_shelflife', 'block_iomad_commerce');
 
             /****** license blocks *********/
             $mform->addElement('header', 'header', get_string('licenseblocks', 'block_iomad_commerce'));
 
             $mform->addElement('selectyesno', 'allow_license_blocks', get_string('allow_license_blocks', 'block_iomad_commerce'));
+            $mform->addHelpButton('allow_license_blocks', 'allow_license_blocks', 'block_iomad_commerce');
 
             $table = new html_table();
             $table->id = "licenseblockstable";
