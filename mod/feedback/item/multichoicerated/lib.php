@@ -295,10 +295,11 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         $align = right_to_left() ? 'right' : 'left';
         $info = $this->get_info($item);
-        $str_required_mark = '<span class="feedback_required_mark">*</span>';
+        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
-        $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
+        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
         if ($info->subtype == 'd') {
@@ -344,29 +345,34 @@ class feedback_item_multichoicerated extends feedback_item_base {
         global $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
         $info = $this->get_info($item);
-        $str_required_mark = '<span class="feedback_required_mark">*</span>';
+        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
-        $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
-        if ($highlightrequire AND $item->required AND intval($value) <= 0) {
-            $highlight = ' missingrequire';
-        } else {
-            $highlight = '';
-        }
+        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
 
         //print the question and label
-        echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+        $inputname = $item->typ . '_' . $item->id;
+        echo '<div class="feedback_item_label_'.$align.'">';
         if ($info->subtype == 'd') {
-            echo '<label for="'. $item->typ . '_' . $item->id .'">';
-            echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            echo '<label for="'. $inputname .'">';
+            echo format_text($item->name.$requiredmark, true, false, false);
+            if ($highlightrequire AND $item->required AND intval($value) <= 0) {
+                echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
+                    '</span><br id="id_error_break_'.$inputname.'" class="error" >';
+            }
             echo '</label>';
         } else {
             echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            if ($highlightrequire AND $item->required AND intval($value) <= 0) {
+                echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
+                    '</span><br id="id_error_break_'.$inputname.'" class="error" >';
+            }
         }
         echo '</div>';
 
         //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
+        echo '<div class="feedback_item_presentation_'.$align.'">';
         switch($info->subtype) {
             case 'r':
                 $this->print_item_radio($item, $value, $info, $align, false, $lines);
@@ -392,7 +398,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $info = $this->get_info($item);
 
         $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
-        $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
