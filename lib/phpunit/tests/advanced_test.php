@@ -405,6 +405,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message1->fullmessageformat = FORMAT_MARKDOWN;
         $message1->fullmessagehtml   = '<p>message body</p>';
         $message1->smallmessage      = 'small message';
+        $message1->notification      = 0;
 
         $message2 = new stdClass();
         $message2->component         = 'moodle';
@@ -416,6 +417,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message2->fullmessageformat = FORMAT_MARKDOWN;
         $message2->fullmessagehtml   = '<p>message body</p>';
         $message2->smallmessage      = 'small message';
+        $message2->notification      = 0;
 
         // There should be debugging message without redirection.
         message_send($message1);
@@ -478,6 +480,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message3->fullmessageformat = FORMAT_MARKDOWN;
         $message3->fullmessagehtml   = '<p>message body</p>';
         $message3->smallmessage      = 'small message';
+        $message3->notification      = 0;
 
         try {
             message_send($message3);
@@ -523,6 +526,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message->fullmessageformat = FORMAT_MARKDOWN;
         $message->fullmessagehtml   = '<p>message body</p>';
         $message->smallmessage      = 'small message';
+        $message->notification      = 0;
 
         message_send($message);
         $this->assertEquals(2, $sink->count());

@@ -2187,6 +2187,7 @@ function message_post_message($userfrom, $userto, $message, $format) {
     }
 
     $eventdata->timecreated     = time();
+    $eventdata->notification    = 0;
     return message_send($eventdata);
 }
 
