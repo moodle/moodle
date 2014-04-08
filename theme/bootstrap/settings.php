@@ -32,6 +32,8 @@ if ($ADMIN->fulltree) {
 
     $simplesettings = new simple_theme_settings($settings, 'theme_bootstrap');
 
+    $simplesettings->add_file('logo');
+
     $simplesettings->add_checkbox('fluidwidth');
 
     $simplesettings->add_checkbox('fonticons');

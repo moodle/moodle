@@ -48,6 +48,11 @@ $string['footerwidget'] = 'Footer Widget #{$a}';
 $string['footerwidgetdesc'] = 'All footer widgets have the same description';
 $string['inversenavbar'] = 'Inverse Navbar';
 $string['inversenavbardesc'] = 'Enable this option to use the inverted color scheme for the navbar';
+$string['logo'] = 'Site Logo';
+$string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.<br>
+If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
+a.logo {height: 100px;} or whatever height in pixels the logo is.';
+
 $string['pluginname'] = 'Bootstrap 3';
 $string['reader'] = 'Reader';
 $string['region-side-post'] = 'Right';
@@ -78,12 +83,15 @@ Feel free to modify / improve / share
 </p>
 <p>
 This theme has been created with the help of:
-Joby Harding, Gareth J Barnard.
+Joby Harding, Gareth J Barnard and brought under Iomad by Derick Turner.
 </p>
 <p>
-Authors: Bas Brands, David Scotson<br>
+Original Authors: Bas Brands, David Scotson<br>
 Contact: bas@sonsbeekmedia.nl<br>
 Website: <a href="http://www.basbrands.nl">www.basbrands.nl</a><br>
+Iomad-fied by: Derick Turner</br>
+Contact: derick@e-learndesign.co.uk</br>
+Website: <a href="http://www.e-learndesign.co.uk">www.e-learndesign.co.uk</a></br>
 </p>
 
 <h3>Reporting bugs</h3>
