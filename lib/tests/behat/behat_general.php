@@ -951,4 +951,28 @@ class behat_general extends behat_base {
             return;
         }
     }
+
+    /**
+     * Checks whether there is an attribute on the given element that contains the specified text.
+     *
+     * @Then /^the "(?P<attribute_string>[^"]*)" attribute of "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should contain "(?P<text_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @param string $attribute Name of attribute
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     * @param string $text Expected substring
+     */
+    public function the_attribute_of_should_contain($attribute, $element, $selectortype, $text) {
+        // Get the container node (exception if it doesn't exist).
+        $containernode = $this->get_selected_node($selectortype, $element);
+        $value = $containernode->getAttribute($attribute);
+        if ($value == null) {
+            throw new ExpectationException('The attribute "' . $attribute. '" does not exist',
+                    $this->getSession());
+        } else if (strpos($value, $text) === false) {
+            throw new ExpectationException('The attribute "' . $attribute .
+                    '" does not contain "' . $text . '" (actual value: "' . $value . '")',
+                    $this->getSession());
+        }
+    }
 }
