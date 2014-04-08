@@ -146,6 +146,7 @@ $string['invalidparams'] = 'Invalid parameters';
 $string['isactive'] = 'Active?';
 $string['keyword'] = 'Keyword';
 $string['lastmodified'] = 'Last modified:';
+$string['license'] = 'License:';
 $string['linkexternal'] = 'Link external';
 $string['listview'] = 'View as list';
 $string['loading'] = 'Loading...';

@@ -744,21 +744,21 @@ class core_files_renderer extends plugin_renderer_base {
     </div>
     <form class="form-horizontal">
         <div class="fp-forminset">
-                <div class="fp-linktype-2 control-group clearfix">
-                    <label class="control-label">'.get_string('makefileinternal', 'repository').'</label>
-                    <div class="controls">
+                <div class="fp-linktype-2 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefileinternal', 'repository').'</label>
+                    <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
                 </div>
-                <div class="fp-linktype-1 control-group clearfix">
-                    <label class="control-label">'.get_string('makefilelink', 'repository').'</label>
-                    <div class="controls">
+                <div class="fp-linktype-1 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilelink', 'repository').'</label>
+                    <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
                 </div>
-                <div class="fp-linktype-4 control-group clearfix">
-                    <label class="control-label">'.get_string('makefilereference', 'repository').'</label>
-                    <div class="controls">
+                <div class="fp-linktype-4 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilereference', 'repository').'</label>
+                    <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
                 </div>
@@ -790,10 +790,10 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="fp-hr"></div>
         <p class="fp-thumbnail"></p>
         <div class="fp-fileinfo">
-            <div class="fp-datemodified">'.get_string('lastmodified', 'moodle').'<span class="fp-value"></span></div>
+            <div class="fp-datemodified">'.get_string('lastmodified', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-datecreated">'.get_string('datecreated', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-size">'.get_string('size', 'repository').'<span class="fp-value"></span></div>
-            <div class="fp-license">'.get_string('license', 'moodle').'<span class="fp-value"></span></div>
+            <div class="fp-license">'.get_string('license', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-author">'.get_string('author', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-dimensions">'.get_string('dimensions', 'repository').'<span class="fp-value"></span></div>
         </div>
