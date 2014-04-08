@@ -415,7 +415,7 @@ function scorm_get_scoes($id, $organisation=false) {
     }
 }
 
-function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $value, $forcecompleted=false) {
+function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $value, $forcecompleted=false, $trackdata = null) {
     global $DB, $CFG;
 
     $id = null;
@@ -497,15 +497,25 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
 
     }
 
-    if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
+    $track = null;
+    if ($trackdata !== null) {
+        if (isset($trackdata[$element])) {
+            $track = $trackdata[$element];
+        }
+    } else {
+        $track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
                                                             'scormid' => $scormid,
                                                             'scoid' => $scoid,
                                                             'attempt' => $attempt,
-                                                            'element' => $element))) {
+                                                            'element' => $element));
+    }
+    if ($track) {
         if ($element != 'x.start.time' ) { // Don't update x.start.time - keep the original value.
-            $track->value = $value;
-            $track->timemodified = time();
-            $DB->update_record('scorm_scoes_track', $track);
+            if ($track->value != $value) {
+                $track->value = $value;
+                $track->timemodified = time();
+                $DB->update_record('scorm_scoes_track', $track);
+            }
             $id = $track->id;
         }
     } else {

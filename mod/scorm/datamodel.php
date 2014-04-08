@@ -54,11 +54,15 @@ if (confirm_sesskey() && (!empty($scoid))) {
     $result = true;
     $request = null;
     if (has_capability('mod/scorm:savetrack', context_module::instance($cm->id))) {
+        // Preload all current tracking data.
+        $trackdata = $DB->get_records('scorm_scoes_track', array('userid' => $USER->id, 'scormid' => $scorm->id, 'scoid' => $scoid,
+                                                                 'attempt' => $attempt), '', 'element, id, value, timemodified');
         foreach (data_submitted() as $element => $value) {
             $element = str_replace('__', '.', $element);
             if (substr($element, 0, 3) == 'cmi') {
                 $netelement = preg_replace('/\.N(\d+)\./', "\.\$1\.", $element);
-                $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value, $scorm->forcecompleted) && $result;
+                $result = scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, $element, $value, $scorm->forcecompleted,
+                                             $trackdata) && $result;
             }
             if (substr($element, 0, 15) == 'adl.nav.request') {
                 // SCORM 2004 Sequencing Request
