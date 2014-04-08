@@ -52,7 +52,7 @@ $strautocreategroups = get_string('autocreategroups', 'group');
 
 $PAGE->set_title($strgroups);
 $PAGE->set_heading($course->fullname. ': '.$strgroups);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 navigation_node::override_active_url(new moodle_url('/group/index.php', array('id' => $courseid)));
 
 // Print the page and form
