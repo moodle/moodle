@@ -908,7 +908,7 @@ class core_plugin_manager {
         $plugins = array(
             'qformat' => array('blackboard'),
             'enrol' => array('authorize'),
-            'tool' => array('bloglevelupgrade'),
+            'tool' => array('bloglevelupgrade', 'qeupgradehelper'),
             'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
                 'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
                 'splash', 'standard', 'standardold'),
@@ -1129,7 +1129,7 @@ class core_plugin_manager {
                 'assignmentupgrade', 'behat', 'capability', 'customlang',
                 'dbtransfer', 'generator', 'health', 'innodb', 'installaddon',
                 'langimport', 'log', 'multilangupgrade', 'phpunit', 'profiling',
-                'qeupgradehelper', 'replace', 'spamcleaner', 'task', 'timezoneimport',
+                'replace', 'spamcleaner', 'task', 'timezoneimport',
                 'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 
