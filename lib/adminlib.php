@@ -166,6 +166,10 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
+    // Delete all tag instances associated with this plugin.
+    require_once($CFG->dirroot . '/tag/lib.php');
+    tag_delete_instances($component);
+
     // Custom plugin uninstall.
     $plugindirectory = core_component::get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
@@ -230,9 +234,6 @@ function uninstall_plugin($type, $name) {
     // Delete all remaining files in the filepool owned by the component.
     $fs = get_file_storage();
     $fs->delete_component_files($component);
-
-    // Delete all tag instances for this component.
-    $DB->delete_records('tag_instance', array('component' => $component));
 
     // Finally purge all caches.
     purge_all_caches();

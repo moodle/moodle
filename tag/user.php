@@ -47,8 +47,6 @@ switch ($action) {
     case 'flaginappropriate':
 
         $tagid = tag_get_id($tag);
-        // Add flaging action to logs
-        add_to_log(SITEID, 'tag', 'flag', 'index.php?id='. $tagid, $tagid, '', $USER->id);
 
         tag_set_flag($tagid);
 
