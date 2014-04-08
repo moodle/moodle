@@ -6,3 +6,6 @@ div.editor_atto_content caption {
     min-width: 30px;
     height: 13px;
 }
+div.editor_atto_content caption {
+    height: auto;
+}
