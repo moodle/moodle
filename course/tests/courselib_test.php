@@ -1943,7 +1943,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventdata->userid     = $USER->id;
         $this->assertEventLegacyData($eventdata, $event);
 
-        $arr = array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$cm->id", "assign $cm->instance");
+        $arr = array(
+            array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$cm->id", "assign $cm->instance"),
+            array($cm->course, "assign", "add", "view.php?id=$cm->id", $cm->instance, $cm->id)
+        );
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -2049,7 +2052,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventdata->userid     = $USER->id;
         $this->assertEventLegacyData($eventdata, $event);
 
-        $arr = array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance");
+        $arr = array(
+            array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance"),
+            array($cm->course, "forum", "update", "view.php?id=$cm->id", $cm->instance, $cm->id)
+        );
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -2359,5 +2365,36 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
         $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
         $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+    }
+
+    public function test_view_resources_list() {
+        $this->resetAfterTest();
+
+        $course = self::getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $event = \core\event\course_resources_list_viewed::create(array('context' => context_course::instance($course->id)));
+        $event->set_legacy_logdata(array('book', 'page', 'resource'));
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_resources_list_viewed', $event);
+        $this->assertEquals(null, $event->objecttable);
+        $this->assertEquals(null, $event->objectid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $expecteddesc = "User with id '$event->userid' viewed list of resources in course with id '$event->courseid'";
+        $this->assertEquals($expecteddesc, $event->get_description());
+        $expectedlegacydata = array(
+            array($course->id, "book", "view all", 'index.php?id=' . $course->id, ''),
+            array($course->id, "page", "view all", 'index.php?id=' . $course->id, ''),
+            array($course->id, "resource", "view all", 'index.php?id=' . $course->id, ''),
+        );
+        $this->assertEventLegacyLogData($expectedlegacydata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }
