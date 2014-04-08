@@ -51,6 +51,7 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
      * Test is_system_configured
      */
     public function test_is_system_configured() {
+        global $DB;
 
         $this->resetAfterTest(true);
 
@@ -63,6 +64,9 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
 
         // Fake configuration.
         set_config('airnotifieraccesskey', random_string());
+        // Enable the plugin.
+        $DB->set_field('message_processors', 'enabled', 1, array('name' => 'airnotifier'));
+
         $configured = message_airnotifier_external::is_system_configured();
         $this->assertEquals(1, $configured);
     }
