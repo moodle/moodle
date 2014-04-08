@@ -95,7 +95,8 @@ Y.extend(TOOLBOX, Y.Base, {
             data = {};
         }
         // Handle any variables which we must pass back through to.
-        var pageparams = this.get('config').pageparams;
+        var pageparams = this.get('config').pageparams,
+            varname;
         for (varname in pageparams) {
             data[varname] = pageparams[varname];
         }
@@ -180,7 +181,7 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
      *
      * Updates all span.commands with relevant handlers and other required changes
      */
-    initializer : function(config) {
+    initializer : function() {
         this.setup_for_device();
     },
     /**
@@ -192,7 +193,7 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
      */
     setup_for_device : function(baseselector) {
         if (!baseselector) {
-            var baseselector = CSS.AIRNOTIFIERCONTENT;
+            baseselector = CSS.AIRNOTIFIERCONTENT;
         }
 
         Y.all(baseselector).each(this._setup_for_device, this);
@@ -200,7 +201,7 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
     _setup_for_device : function(toolboxtarget) {
 
         // Show/Hide.
-        var showhide = this.replace_button(toolboxtarget, CSS.HIDEDEVICE, this.toggle_hide_device);
+        this.replace_button(toolboxtarget, CSS.HIDEDEVICE, this.toggle_hide_device);
     },
     toggle_hide_device : function(e) {
         // Prevent the default button action.
