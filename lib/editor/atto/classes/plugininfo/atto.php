@@ -81,6 +81,6 @@ class atto extends base {
      * @return null|string the settings section name.
      */
     public function get_settings_section_name() {
-        return 'atto' . $this->name . 'settings';
+        return 'atto_' . $this->name . '_settings';
     }
 }
