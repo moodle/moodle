@@ -6760,31 +6760,40 @@ class assign {
         }
 
         if ($this->get_instance()->teamsubmission) {
-            $submission = $this->get_group_submission($userid, 0, false);
+            $oldsubmission = $this->get_group_submission($userid, 0, false);
         } else {
-            $submission = $this->get_user_submission($userid, false);
+            $oldsubmission = $this->get_user_submission($userid, false);
         }
 
-        if (!$submission) {
+        if (!$oldsubmission) {
             return false;
         }
 
         // No more than max attempts allowed.
         if ($this->get_instance()->maxattempts != ASSIGN_UNLIMITED_ATTEMPTS &&
-            $submission->attemptnumber >= ($this->get_instance()->maxattempts - 1)) {
+            $oldsubmission->attemptnumber >= ($this->get_instance()->maxattempts - 1)) {
             return false;
         }
 
         // Create the new submission record for the group/user.
         if ($this->get_instance()->teamsubmission) {
-            $submission = $this->get_group_submission($userid, 0, true, $submission->attemptnumber+1);
+            $newsubmission = $this->get_group_submission($userid, 0, true, $oldsubmission->attemptnumber + 1);
         } else {
-            $submission = $this->get_user_submission($userid, true, $submission->attemptnumber+1);
+            $newsubmission = $this->get_user_submission($userid, true, $oldsubmission->attemptnumber + 1);
         }
 
         // Set the status of the new attempt to reopened.
-        $submission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
-        $this->update_submission($submission, $userid, false, $this->get_instance()->teamsubmission);
+        $newsubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+
+        // Give each submission plugin a chance to process the add_attempt.
+        $plugins = $this->get_submission_plugins();
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                $plugin->add_attempt($oldsubmission, $newsubmission);
+            }
+        }
+
+        $this->update_submission($newsubmission, $userid, false, $this->get_instance()->teamsubmission);
         return true;
     }
 
