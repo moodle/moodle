@@ -135,9 +135,9 @@ Y.extend(FetchLogs, Y.Base, {
             firstTr = tbody.get('firstChild');
             if (firstTr) {
                 tbody.insertBefore(logs, firstTr);
-            } else {
-                // @Todo, when no data is present our library should generate an empty table. so data can be added dynamically (MDL-44525).
             }
+            // @Todo, when no data is present our library should generate an empty table. so data can be added dynamically (MDL-44525).
+
             // Let us chop off some data from end of table to prevent really long pages.
             var oldChildren = tbody.get('children').slice(this.get('perpage'));
             oldChildren.remove();
