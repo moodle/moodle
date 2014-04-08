@@ -165,10 +165,9 @@ class core_course_external extends external_api {
                         //user that can view hidden module should know about the visibility
                         $module['visible'] = $cm->visible;
 
-                        //availability date (also send to user who can see hidden module when the showavailabilyt is ON)
-                        if ($canupdatecourse or ($CFG->enableavailability && $canviewhidden && $cm->showavailability)) {
-                            $module['availablefrom'] = $cm->availablefrom;
-                            $module['availableuntil'] = $cm->availableuntil;
+                        // Availability date (also send to user who can see hidden module).
+                        if ($CFG->enableavailability && ($canviewhidden || $canupdatecourse)) {
+                            $module['availability'] = $cm->availability;
                         }
 
                         $baseurl = 'webservice/pluginfile.php';
@@ -223,8 +222,7 @@ class core_course_external extends external_api {
                                     'modicon' => new external_value(PARAM_URL, 'activity icon url'),
                                     'modname' => new external_value(PARAM_PLUGIN, 'activity module type'),
                                     'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
-                                    'availablefrom' => new external_value(PARAM_INT, 'module availability start date', VALUE_OPTIONAL),
-                                    'availableuntil' => new external_value(PARAM_INT, 'module availability en date', VALUE_OPTIONAL),
+                                    'availability' => new external_value(PARAM_RAW, 'module availability settings', VALUE_OPTIONAL),
                                     'indent' => new external_value(PARAM_INT, 'number of identation in the site'),
                                     'contents' => new external_multiple_structure(
                                           new external_single_structure(

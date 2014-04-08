@@ -3369,5 +3369,228 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014032700.02);
     }
 
+    if ($oldversion < 2014040800.00) {
+
+        // Define field availability to be added to course_modules.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('availability', XMLDB_TYPE_TEXT, null, null, null, null, null, 'showdescription');
+
+        // Conditionally launch add field availability.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field availability to be added to course_sections.
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('availability', XMLDB_TYPE_TEXT, null, null, null, null, null, 'groupingid');
+
+        // Conditionally launch add field availability.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Update existing conditions to new format. This could be a slow
+        // process, so begin by counting the number of affected modules/sections.
+        // (Performance: On the OU system, these took ~0.3 seconds, with about
+        // 20,000 results out of about 400,000 total rows in those tables.)
+        $cmcount = $DB->count_records_sql("
+                SELECT COUNT(1)
+                  FROM {course_modules} cm
+                 WHERE cm.availablefrom != 0 OR
+                       cm.availableuntil != 0 OR
+                       EXISTS (SELECT 1 FROM {course_modules_availability} WHERE coursemoduleid = cm.id) OR
+                       EXISTS (SELECT 1 FROM {course_modules_avail_fields} WHERE coursemoduleid = cm.id)");
+        $sectcount = $DB->count_records_sql("
+                SELECT COUNT(1)
+                  FROM {course_sections} cs
+                 WHERE cs.groupingid != 0 OR
+                       cs.availablefrom != 0 OR
+                       cs.availableuntil != 0 OR
+                       EXISTS (SELECT 1 FROM {course_sections_availability} WHERE coursesectionid = cs.id) OR
+                       EXISTS (SELECT 1 FROM {course_sections_avail_fields} WHERE coursesectionid = cs.id)");
+
+        if ($cmcount + $sectcount > 0) {
+            // Show progress bar and start db transaction.
+            $transaction = $DB->start_delegated_transaction();
+            $pbar = new progress_bar('availupdate', 500, true);
+
+            // Loop through all course-modules.
+            // (Performance: On the OU system, the query took <1 second for ~20k
+            // results; updating all those entries took ~3 minutes.)
+            $done = 0;
+            $lastupdate = 0;
+            $rs = $DB->get_recordset_sql("
+                    SELECT cm.id, cm.availablefrom, cm.availableuntil, cm.showavailability,
+                           COUNT (DISTINCT cma.id) AS availcount,
+                           COUNT (DISTINCT cmf.id) AS fieldcount
+                      FROM {course_modules} cm
+                           LEFT JOIN {course_modules_availability} cma ON cma.coursemoduleid = cm.id
+                           LEFT JOIN {course_modules_avail_fields} cmf ON cmf.coursemoduleid = cm.id
+                     WHERE cm.availablefrom != 0 OR
+                           cm.availableuntil != 0 OR
+                           cma.id IS NOT NULL OR
+                           cmf.id IS NOT NULL
+                  GROUP BY cm.id, cm.availablefrom, cm.availableuntil, cm.showavailability");
+            foreach ($rs as $rec) {
+                // Update progress initially and then once per second.
+                if (time() != $lastupdate) {
+                    $lastupdate = time();
+                    $pbar->update($done, $cmcount + $sectcount,
+                            "Updating activity availability settings ($done/$cmcount)");
+                }
+
+                // Get supporting records - only if there are any (to reduce the
+                // number of queries where just date/group is used).
+                if ($rec->availcount) {
+                    $availrecs = $DB->get_records('course_modules_availability',
+                            array('coursemoduleid' => $rec->id));
+                } else {
+                    $availrecs = array();
+                }
+                if ($rec->fieldcount) {
+                    $fieldrecs = $DB->get_records_sql("
+                            SELECT cmaf.userfield, cmaf.operator, cmaf.value, uif.shortname
+                              FROM {course_modules_avail_fields} cmaf
+                         LEFT JOIN {user_info_field} uif ON uif.id = cmaf.customfieldid
+                             WHERE cmaf.coursemoduleid = ?", array($rec->id));
+                } else {
+                    $fieldrecs = array();
+                }
+
+                // Update item.
+                $availability = upgrade_availability_item(0, 0,
+                        $rec->availablefrom, $rec->availableuntil,
+                        $rec->showavailability, $availrecs, $fieldrecs);
+                if ($availability) {
+                    $DB->set_field('course_modules', 'availability', $availability, array('id' => $rec->id));
+                }
+
+                // Update progress.
+                $done++;
+            }
+            $rs->close();
+
+            // Loop through all course-sections.
+            // (Performance: On the OU system, this took <1 second for, er, 150 results.)
+            $done = 0;
+            $rs = $DB->get_recordset_sql("
+                    SELECT cs.id, cs.groupingid, cs.availablefrom,
+                           cs.availableuntil, cs.showavailability,
+                           COUNT (DISTINCT csa.id) AS availcount,
+                           COUNT (DISTINCT csf.id) AS fieldcount
+                      FROM {course_sections} cs
+                           LEFT JOIN {course_sections_availability} csa ON csa.coursesectionid = cs.id
+                           LEFT JOIN {course_sections_avail_fields} csf ON csf.coursesectionid = cs.id
+                     WHERE cs.groupingid != 0 OR
+                           cs.availablefrom != 0 OR
+                           cs.availableuntil != 0 OR
+                           csa.id IS NOT NULL OR
+                           csf.id IS NOT NULL
+                  GROUP BY cs.id, cs.groupingid, cs.availablefrom,
+                           cs.availableuntil, cs.showavailability");
+            foreach ($rs as $rec) {
+                // Update progress once per second.
+                if (time() != $lastupdate) {
+                    $lastupdate = time();
+                    $pbar->update($done + $cmcount, $cmcount + $sectcount,
+                            "Updating section availability settings ($done/$sectcount)");
+                }
+
+                // Get supporting records - only if there are any (to reduce the
+                // number of queries where just date/group is used).
+                if ($rec->availcount) {
+                    $availrecs = $DB->get_records('course_sections_availability',
+                            array('coursesectionid' => $rec->id));
+                } else {
+                    $availrecs = array();
+                }
+                if ($rec->fieldcount) {
+                    $fieldrecs = $DB->get_records_sql("
+                            SELECT csaf.userfield, csaf.operator, csaf.value, uif.shortname
+                              FROM {course_sections_avail_fields} csaf
+                         LEFT JOIN {user_info_field} uif ON uif.id = csaf.customfieldid
+                             WHERE csaf.coursesectionid = ?", array($rec->id));
+                } else {
+                    $fieldrecs = array();
+                }
+
+                // Update item.
+                $availability = upgrade_availability_item($rec->groupingid ? 1 : 0,
+                        $rec->groupingid, $rec->availablefrom, $rec->availableuntil,
+                        $rec->showavailability, $availrecs, $fieldrecs);
+                if ($availability) {
+                    $DB->set_field('course_sections', 'availability', $availability, array('id' => $rec->id));
+                }
+
+                // Update progress.
+                $done++;
+            }
+            $rs->close();
+
+            // Final progress update for 100%.
+            $pbar->update($done + $cmcount, $cmcount + $sectcount,
+                    'Availability settings updated for ' . ($cmcount + $sectcount) .
+                    ' activities and sections');
+
+            $transaction->allow_commit();
+        }
+
+        // Drop tables which are not necessary because they are covered by the
+        // new availability fields.
+        $table = new xmldb_table('course_modules_availability');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $table = new xmldb_table('course_modules_avail_fields');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $table = new xmldb_table('course_sections_availability');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $table = new xmldb_table('course_sections_avail_fields');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Drop unnnecessary fields from course_modules.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('availablefrom');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('availableuntil');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('showavailability');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Drop unnnecessary fields from course_sections.
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('availablefrom');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('availableuntil');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('showavailability');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('groupingid');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014040800.00);
+    }
+
     return true;
 }

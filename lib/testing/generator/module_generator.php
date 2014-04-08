@@ -176,7 +176,7 @@ abstract class testing_module_generator extends component_generator_base {
         $easymergefields = array('section', 'added', 'score', 'indent',
             'visible', 'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
-            'availablefrom', 'availableuntil', 'showavailability', 'showdescription');
+            'availability', 'showdescription');
         foreach ($easymergefields as $key) {
             if (isset($options[$key])) {
                 $moduleinfo->$key = $options[$key];
@@ -191,9 +191,7 @@ abstract class testing_module_generator extends component_generator_base {
             'groupmode' => 0,
             'groupingid' => 0,
             'groupmembersonly' => 0,
-            'showavailability' => 0,
-            'availablefrom' => 0,
-            'availableuntil' => 0,
+            'availability' => null,
             'completion' => 0,
             'completionview' => 0,
             'completionexpected' => 0,

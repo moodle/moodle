@@ -179,22 +179,8 @@ class assign_upgrade_manager {
             }
 
             // Upgrade availability data.
-            $DB->set_field('course_modules_avail_fields',
-                           'coursemoduleid',
-                           $newcoursemodule->id,
-                           array('coursemoduleid'=>$oldcoursemodule->id));
-            $DB->set_field('course_modules_availability',
-                           'coursemoduleid',
-                           $newcoursemodule->id,
-                           array('coursemoduleid'=>$oldcoursemodule->id));
-            $DB->set_field('course_modules_availability',
-                           'sourcecmid',
-                           $newcoursemodule->id,
-                           array('sourcecmid'=>$oldcoursemodule->id));
-            $DB->set_field('course_sections_availability',
-                           'sourcecmid',
-                           $newcoursemodule->id,
-                           array('sourcecmid'=>$oldcoursemodule->id));
+            \core_availability\info::update_dependency_id_across_course(
+                    $newcoursemodule->course, 'course_modules', $oldcoursemodule->id, $newcoursemodule->id);
 
             // Upgrade completion data.
             $DB->set_field('course_modules_completion',
@@ -400,9 +386,7 @@ class assign_upgrade_manager {
         $newcm->completionview            = $cm->completionview;
         $newcm->completionexpected        = $cm->completionexpected;
         if (!empty($CFG->enableavailability)) {
-            $newcm->availablefrom             = $cm->availablefrom;
-            $newcm->availableuntil            = $cm->availableuntil;
-            $newcm->showavailability          = $cm->showavailability;
+            $newcm->availability = $cm->availability;
         }
         $newcm->showdescription = $cm->showdescription;
 

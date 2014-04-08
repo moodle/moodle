@@ -64,9 +64,13 @@
             <directory suffix="_test.php">grade/tests</directory>
             <directory suffix="_test.php">grade/grading/tests</directory>
         </testsuite>
+        <testsuite name="core_availability">
+            <directory suffix="_test.php">availability/tests</directory>
+        </testsuite>
         <testsuite name="core_backup">
             <directory suffix="_test.php">backup/controller/tests</directory>
             <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
+            <directory suffix="_test.php">backup/moodle2/tests</directory>
             <directory suffix="_test.php">backup/util</directory>
         </testsuite>
         <testsuite name="core_badges">

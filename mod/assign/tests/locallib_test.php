@@ -863,6 +863,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign = new testable_assign($context, $cm, $this->course);
 
         $this->setUser($this->teachers[0]);
+        get_fast_modinfo($this->course, 0, true);
         $this->assertCount(5, $assign->list_participants(0, true));
 
     }

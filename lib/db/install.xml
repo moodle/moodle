@@ -298,10 +298,8 @@
         <FIELD NAME="completiongradeitemnumber" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Grade-item number used to track automatic completion, if applicable."/>
         <FIELD NAME="completionview" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Controls whether a page view is part of the automatic completion requirements for this activity. 0 = view not required 1 = view required"/>
         <FIELD NAME="completionexpected" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Date at which students are expected to complete this activity. This field is used when displaying student progress."/>
-        <FIELD NAME="availablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set non-zero, the activity only becomes available from the time given here."/>
-        <FIELD NAME="availableuntil" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set non-zero, the activity is only available until the time given here."/>
-        <FIELD NAME="showavailability" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1 and the activity is not available because the 'availablefrom' date has not been reached, or one of the conditions in course_modules_availability is not matched, then the item will be displayed greyed-out (unclickable) with an information message such as 'Available from (date)'. Otherwise, the item will not be displayed to students at all."/>
         <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Some module types support a 'description' which shows within the module pages. This option controls whether it also displays on the course main page. 0 = does not display (default), 1 = displays"/>
+        <FIELD NAME="availability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Availability restrictions for viewing this activity, in JSON format. Null if no restrictions."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -314,37 +312,6 @@
         <INDEX NAME="instance" UNIQUE="false" FIELDS="instance"/>
         <INDEX NAME="idnumber-course" UNIQUE="false" FIELDS="idnumber, course" COMMENT="non unique index (although programatically we are guarantying some sort of uniqueness both under this table and the grade_items one). TODO: We need a central store of module idnumbers in the future."/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="course_modules_availability" COMMENT="Table stores conditions that affect whether a module/activity is currently available to students or not.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the module whose availability is being restricted by this condition."/>
-        <FIELD NAME="sourcecmid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is based on completion of another activity, then this is the course-module ID of that activity. Otherwise null."/>
-        <FIELD NAME="requiredcompletion" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is on a module's completion, then this should be set to the required completion state. Otherwise null. Suitable values are 1 = completed, 2 = completed-passed, 3 = completed-failed."/>
-        <FIELD NAME="gradeitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is based on a gradebook score, the item ID is given here (and the item will now not be available until a value is achieved for that grade). Otherwise null."/>
-        <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="If set, this is the minimum grade percentage that must be reached (greater than or equal) in order for this module to appear. Otherwise null."/>
-        <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="If set, this is the maximum grade percentage that users must be below (less than) in order to display this item. Otherwise null."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="coursemoduleid" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="course_modules" REFFIELDS="id"/>
-        <KEY NAME="sourcecmid" TYPE="foreign" FIELDS="sourcecmid" REFTABLE="course_modules" REFFIELDS="id"/>
-        <KEY NAME="gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="course_modules_avail_fields" COMMENT="Stores user field conditions that affect whether an activity is currently available.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the module whose availability is being restricted by this condition."/>
-        <FIELD NAME="userfield" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The user profile field this record relates to if it is not a custom profile field"/>
-        <FIELD NAME="customfieldid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID for the custom field if this relates to one"/>
-        <FIELD NAME="operator" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The operator, such as less than or equal to, between the field and the value"/>
-        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The required value of the field"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="coursemoduleid" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="course_modules" REFFIELDS="id"/>
-      </KEYS>
     </TABLE>
     <TABLE NAME="course_modules_completion" COMMENT="Stores the completion state (completed or not completed, etc) of each user on each activity.">
       <FIELDS>
@@ -373,10 +340,7 @@
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="sequence" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="availablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set non-zero, the section only becomes available from the time given here."/>
-        <FIELD NAME="availableuntil" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set non-zero, the section is only available until the time given here."/>
-        <FIELD NAME="showavailability" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1 and the section is not available because the 'availablefrom' date has not been reached, or one of the conditions in course_sections_availability_cg is not matched, then the item will be displayed greyed-out (unclickable) with an information message such as 'Available from (date)'. Otherwise, the item will not be displayed to students at all."/>
-        <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Grouping that has access to this section."/>
+        <FIELD NAME="availability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Availability restrictions for viewing this section, in JSON format. Null if no restrictions."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -384,37 +348,6 @@
       <INDEXES>
         <INDEX NAME="course_section" UNIQUE="true" FIELDS="course, section"/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="course_sections_availability" COMMENT="Completion or grade conditions that affect if a section is currently available to students.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="coursesectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the section whose availability is being restricted by this condition."/>
-        <FIELD NAME="sourcecmid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is based on completion of some activity, then this is the course-module ID of that activity. Otherwise null."/>
-        <FIELD NAME="requiredcompletion" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is on a module's completion, then this should be set to the required completion state. Otherwise null. Suitable values are 1 = completed, 2 = completed-passed, 3 = completed-failed."/>
-        <FIELD NAME="gradeitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is based on a gradebook score, the item ID is given here (and the item will now not be available until a value is achieved for that grade). Otherwise null."/>
-        <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="If set, this is the minimum grade percentage that must be reached (greater than or equal) in order for this section to appear. Otherwise null."/>
-        <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="If set, this is the maximum grade percentage that users must be below (less than) in order to display this item. Otherwise null."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="coursesectionid" TYPE="foreign" FIELDS="coursesectionid" REFTABLE="course_sections" REFFIELDS="id"/>
-        <KEY NAME="sourcecmid" TYPE="foreign" FIELDS="sourcecmid" REFTABLE="course_modules" REFFIELDS="id"/>
-        <KEY NAME="gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="course_sections_avail_fields" COMMENT="Stores user field conditions that affect whether an activity is currently available.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="coursesectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the section whose availability is being restricted by this condition."/>
-        <FIELD NAME="userfield" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The user profile field this record relates to if it is not a custom profile field"/>
-        <FIELD NAME="customfieldid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID for the custom field if this relates to one"/>
-        <FIELD NAME="operator" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The operator, such as less than or equal to, between the field and the value"/>
-        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The required value of the field"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="coursesectionid" TYPE="foreign" FIELDS="coursesectionid" REFTABLE="course_sections" REFFIELDS="id"/>
-      </KEYS>
     </TABLE>
     <TABLE NAME="course_request" COMMENT="course requests">
       <FIELDS>

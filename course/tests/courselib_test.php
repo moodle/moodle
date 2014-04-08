@@ -220,9 +220,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
 
         // Conditional activity.
-        $moduleinfo->availablefrom = time();
-        $moduleinfo->availableuntil = time() + (7 * 24 * 3600);
-        $moduleinfo->showavailability = CONDITION_STUDENTVIEW_SHOW;
+        $moduleinfo->availability = '{"op":"&","showc":[true,true],"c":[' .
+                '{"type":"date","d":">=","t":' . time() . '},' .
+                '{"type":"date","d":"<","t":' . (time() + (7 * 24 * 3600)) . '}' .
+                ']}';
         $coursegradeitem = grade_item::fetch_course_item($moduleinfo->course); //the activity will become available only when the user reach some grade into the course itself.
         $moduleinfo->conditiongradegroup = array(array('conditiongradeitemid' => $coursegradeitem->id, 'conditiongrademin' => 10, 'conditiongrademax' => 80));
         $moduleinfo->conditionfieldgroup = array(array('conditionfield' => 'email', 'conditionfieldoperator' => OP_CONTAINS, 'conditionfieldvalue' => '@'));
@@ -280,9 +281,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
         $this->assertEquals($moduleinfo->completiongradeitemnumber, $dbcm->completiongradeitemnumber);
         $this->assertEquals($moduleinfo->completionexpected, $dbcm->completionexpected);
-        $this->assertEquals($moduleinfo->availablefrom, $dbcm->availablefrom);
-        $this->assertEquals($moduleinfo->availableuntil, $dbcm->availableuntil);
-        $this->assertEquals($moduleinfo->showavailability, $dbcm->showavailability);
+        $this->assertEquals($moduleinfo->availability, $dbcm->availability);
         $this->assertEquals($moduleinfo->showdescription, $dbcm->showdescription);
         $this->assertEquals($moduleinfo->groupmode, $dbcm->groupmode);
         $this->assertEquals($moduleinfo->cmidnumber, $dbcm->idnumber);
@@ -297,25 +296,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->name, $dbmodinstance->name);
         $this->assertEquals($moduleinfo->intro, $dbmodinstance->intro);
         $this->assertEquals($moduleinfo->introformat, $dbmodinstance->introformat);
-
-        // Common values when conditional activity is enabled.
-        foreach ($moduleinfo->conditionfieldgroup as $fieldgroup) {
-            $isfieldgroupsaved = $DB->count_records('course_modules_avail_fields', array('coursemoduleid' => $dbcm->id,
-                'userfield' => $fieldgroup['conditionfield'], 'operator' => $fieldgroup['conditionfieldoperator'],
-                'value' => $fieldgroup['conditionfieldvalue']));
-            $this->assertEquals(1, $isfieldgroupsaved);
-        }
-        foreach ($moduleinfo->conditiongradegroup as $gradegroup) {
-            $isgradegroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
-                'grademin' => $gradegroup['conditiongrademin'], 'grademax' => $gradegroup['conditiongrademax'],
-                'gradeitemid' => $gradegroup['conditiongradeitemid']));
-            $this->assertEquals(1, $isgradegroupsaved);
-        }
-        foreach ($moduleinfo->conditioncompletiongroup as $completiongroup) {
-            $iscompletiongroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
-                'sourcecmid' => $completiongroup['conditionsourcecmid'], 'requiredcompletion' => $completiongroup['conditionrequiredcompletion']));
-            $this->assertEquals(1, $iscompletiongroupsaved);
-        }
 
         // Test specific to the module.
         $modulerunasserts = $modulename.'_create_run_asserts';
@@ -478,13 +458,14 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->completionunlocked = 1;
 
         // Conditional activity.
-        $moduleinfo->availablefrom = time();
-        $moduleinfo->availableuntil = time() + (7 * 24 * 3600);
-        $moduleinfo->showavailability = CONDITION_STUDENTVIEW_SHOW;
         $coursegradeitem = grade_item::fetch_course_item($moduleinfo->course); //the activity will become available only when the user reach some grade into the course itself.
-        $moduleinfo->conditiongradegroup = array(array('conditiongradeitemid' => $coursegradeitem->id, 'conditiongrademin' => 10, 'conditiongrademax' => 80));
-        $moduleinfo->conditionfieldgroup = array(array('conditionfield' => 'email', 'conditionfieldoperator' => OP_CONTAINS, 'conditionfieldvalue' => '@'));
-        $moduleinfo->conditioncompletiongroup = array(array('conditionsourcecmid' => $assigncm->id, 'conditionrequiredcompletion' => COMPLETION_COMPLETE)); // "conditionsourcecmid == 0" => none
+        $moduleinfo->availability = '{"op":"&","showc":[true,true],"c":[' .
+                '{"type":"date","d":">=","t":' . time() . '},' .
+                '{"type":"date","d":"<","t":' . (time() + (7 * 24 * 3600)) . '}' .
+                '{"type":"grade","id":' . $coursegradeitem->id . ',"min":10,"max":80},' .
+                '{"type":"profile","sf":"email","op":"contains","v":"@"},'.
+                '{"type":"completion","id":'. $assigncm->id . ',"e":' . COMPLETION_COMPLETE . '}' .
+                ']}';
 
         // Grading and Advanced grading.
         require_once($CFG->dirroot . '/rating/lib.php');
@@ -533,9 +514,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
         $this->assertEquals($moduleinfo->completiongradeitemnumber, $dbcm->completiongradeitemnumber);
         $this->assertEquals($moduleinfo->completionexpected, $dbcm->completionexpected);
-        $this->assertEquals($moduleinfo->availablefrom, $dbcm->availablefrom);
-        $this->assertEquals($moduleinfo->availableuntil, $dbcm->availableuntil);
-        $this->assertEquals($moduleinfo->showavailability, $dbcm->showavailability);
+        $this->assertEquals($moduleinfo->availability, $dbcm->availability);
         $this->assertEquals($moduleinfo->showdescription, $dbcm->showdescription);
         $this->assertEquals($moduleinfo->groupmode, $dbcm->groupmode);
         $this->assertEquals($moduleinfo->cmidnumber, $dbcm->idnumber);
@@ -550,25 +529,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->name, $dbmodinstance->name);
         $this->assertEquals($moduleinfo->intro, $dbmodinstance->intro);
         $this->assertEquals($moduleinfo->introformat, $dbmodinstance->introformat);
-
-        // Common values when conditional activity is enabled.
-        foreach ($moduleinfo->conditionfieldgroup as $fieldgroup) {
-            $isfieldgroupsaved = $DB->count_records('course_modules_avail_fields', array('coursemoduleid' => $dbcm->id,
-                'userfield' => $fieldgroup['conditionfield'], 'operator' => $fieldgroup['conditionfieldoperator'],
-                'value' => $fieldgroup['conditionfieldvalue']));
-            $this->assertEquals(1, $isfieldgroupsaved);
-        }
-        foreach ($moduleinfo->conditiongradegroup as $gradegroup) {
-            $isgradegroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
-                'grademin' => $gradegroup['conditiongrademin'], 'grademax' => $gradegroup['conditiongrademax'],
-                'gradeitemid' => $gradegroup['conditiongradeitemid']));
-            $this->assertEquals(1, $isgradegroupsaved);
-        }
-        foreach ($moduleinfo->conditioncompletiongroup as $completiongroup) {
-            $iscompletiongroupsaved = $DB->count_records('course_modules_availability', array('coursemoduleid' => $dbcm->id,
-                'sourcecmid' => $completiongroup['conditionsourcecmid'], 'requiredcompletion' => $completiongroup['conditionrequiredcompletion']));
-            $this->assertEquals(1, $iscompletiongroupsaved);
-        }
 
         // Test specific to the module.
         $modulerunasserts = $modulename.'_update_run_asserts';

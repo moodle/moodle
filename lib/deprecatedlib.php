@@ -2386,7 +2386,6 @@ function delete_course_module($id) {
     // features are not turned on, in case they were turned on previously (these will be
     // very quick on an empty table)
     $DB->delete_records('course_modules_completion', array('coursemoduleid' => $cm->id));
-    $DB->delete_records('course_modules_availability', array('coursemoduleid'=> $cm->id));
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
@@ -4388,4 +4387,23 @@ function count_login_failures($mode, $username, $lastlogin) {
 function ajaxenabled(array $browsers = null) {
     debugging('ajaxenabled() is deprecated - please update your code to assume it returns true.', DEBUG_DEVELOPER);
     return true;
+}
+
+/**
+ * Determine whether a course module is visible within a course,
+ * this is different from instance_is_visible() - faster and visibility for user
+ *
+ * @global object
+ * @global object
+ * @uses DEBUG_DEVELOPER
+ * @uses CONTEXT_MODULE
+ * @param object $cm object
+ * @param int $userid empty means current user
+ * @return bool Success
+ * @deprecated Since Moodle 2.7
+ */
+function coursemodule_visible_for_user($cm, $userid=0) {
+    debugging('coursemodule_visible_for_user() deprecated since Moodle 2.7. ' .
+            'Replace with \core_availability\info_module::is_user_visible().');
+    return \core_availability\info_module::is_user_visible($cm, $userid, false);
 }

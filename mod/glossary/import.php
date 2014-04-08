@@ -134,9 +134,7 @@ if ($xml = glossary_read_imported_file($result)) {
 
             // These fields were not included in export, assume zero.
             $glossary->assessed = 0;
-            $glossary->availablefrom = 0;
-            $glossary->availableuntil = 0;
-            $glossary->showavailability = 0;
+            $glossary->availability = null;
 
             // New glossary is to be inserted in section 0, it is always visible.
             $glossary->section = 0;

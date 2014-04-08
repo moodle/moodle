@@ -235,7 +235,7 @@ class core_calendar_external extends external_api {
                 $events[$eventid] = $event;
             } else if (!empty($eventobj->modulename)) {
                 $cm = get_coursemodule_from_instance($eventobj->modulename, $eventobj->instance);
-                if (groups_course_module_visible($cm)) {
+                if (\core_availability\info_module::is_user_visible($cm, 0, false)) {
                     $events[$eventid] = $event;
                 }
             } else {

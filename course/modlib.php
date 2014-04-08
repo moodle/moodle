@@ -75,9 +75,17 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         $newcm->completionexpected        = $moduleinfo->completionexpected;
     }
     if(!empty($CFG->enableavailability)) {
-        $newcm->availablefrom             = $moduleinfo->availablefrom;
-        $newcm->availableuntil            = $moduleinfo->availableuntil;
-        $newcm->showavailability          = $moduleinfo->showavailability;
+        // This code is used both when submitting the form, which uses a long
+        // name to avoid clashes, and by unit test code which uses the real
+        // name in the table.
+        $newcm->availability = null;
+        if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
+            if ($moduleinfo->availabilityconditionsjson !== '') {
+                $newcm->availability = $moduleinfo->availabilityconditionsjson;
+            }
+        } else if (property_exists($moduleinfo, 'availability')) {
+            $newcm->availability = $moduleinfo->availability;
+        }
     }
     if (isset($moduleinfo->showdescription)) {
         $newcm->showdescription = $moduleinfo->showdescription;
@@ -138,11 +146,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
     $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
-
-    // Set up conditions.
-    if ($CFG->enableavailability) {
-        condition_info::update_cm_from_form((object)array('id'=>$moduleinfo->coursemodule), $moduleinfo, false);
-    }
 
     // Trigger event based on the action we did.
     $event = \core\event\course_module_created::create(array(
@@ -473,10 +476,18 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $cm->completionexpected        = $moduleinfo->completionexpected;
     }
     if (!empty($CFG->enableavailability)) {
-        $cm->availablefrom             = $moduleinfo->availablefrom;
-        $cm->availableuntil            = $moduleinfo->availableuntil;
-        $cm->showavailability          = $moduleinfo->showavailability;
-        condition_info::update_cm_from_form($cm,$moduleinfo,true);
+        // This code is used both when submitting the form, which uses a long
+        // name to avoid clashes, and by unit test code which uses the real
+        // name in the table.
+        if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
+            if ($moduleinfo->availabilityconditionsjson !== '') {
+                $cm->availability = $moduleinfo->availabilityconditionsjson;
+            } else {
+                $cm->availability = null;
+            }
+        } else if (property_exists($moduleinfo, 'availability')) {
+            $cm->availability = $moduleinfo->availability;
+        }
     }
     if (isset($moduleinfo->showdescription)) {
         $cm->showdescription = $moduleinfo->showdescription;

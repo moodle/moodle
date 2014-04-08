@@ -265,7 +265,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
         foreach ($events as $eventid => $event) {
             if (!empty($event->modulename)) {
                 $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
-                if (!groups_course_module_visible($cm)) {
+                if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
                     unset($events[$eventid]);
                 }
             }
@@ -571,7 +571,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     if (!$cm = get_coursemodule_from_instance($event->modulename, $event->instance)) {
                         continue;
                     }
-                    if (!coursemodule_visible_for_user($cm)) {
+                    if (!\core_availability\info_module::is_user_visible($cm, 0, false)) {
                         continue;
                     }
                 }

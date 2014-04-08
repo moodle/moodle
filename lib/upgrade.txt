@@ -22,10 +22,31 @@ DEPRECATIONS:
 * mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
 * mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
 * The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
+* Conditional availability API has moved and changed. The condition_info class is
+  replaced by \core_availability\info_module, and condition_info_section by
+  \core_availability\info_section. (Code that uses the old classes will generally
+  still work.)
+* coursemodule_visible_for_user() has been deprecated but still works - replaced
+  by a new static function \core_availability\info_module::is_user_visible()
+* cm_info::is_user_access_restricted_by_conditional_access has been deprecated
+  but still works (it has never done what its name suggests, and is
+  unnecessary).
+* cm_info and section_info property showavailability has been deprecated, but
+  still works (with the caveat that this information is now per-user).
+* cm_info and section_info properties availablefrom and availableuntil have been
+  deprecated and always return zero (underlying data doesn't have these values).
+* section_info property groupingid has been deprecated and always returns zero,
+  same deal.
 * Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
   get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
 * The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
 * count_login_failures() has been deprecated, use user_count_login_failures() instead. Refer MDL-42891 for details.
+
+Conditional availability (activities and sections):
+* New conditional availability API in /availability, including new availability
+  condition plugins in /availability/condition. The new API is very similar with
+  regard to checking availability, but any code that modifies availability settings
+  for an activity or section is likely to need substantial changes.
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been
