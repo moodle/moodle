@@ -266,7 +266,7 @@ class core_backup_moodle2_testcase extends advanced_testcase {
     /**
      * Tests the backup and restore of single activity to same course (duplicate)
      * when it contains availability conditions that depend on other items in
-     * course. 
+     * course.
      */
     public function test_duplicate_availability() {
         global $DB, $CFG;
