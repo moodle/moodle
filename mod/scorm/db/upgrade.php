@@ -83,6 +83,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     // Remove old imsrepository type - convert any existing records to external type to help prevent major errors.
     if ($oldversion < 2013081301) {
+        require_once($CFG->dirroot . '/mod/scorm/lib.php');
         $scorms = $DB->get_recordset('scorm', array('scormtype' => 'imsrepository'));
         foreach ($scorms as $scorm) {
             $scorm->scormtype = SCORM_TYPE_EXTERNAL;
