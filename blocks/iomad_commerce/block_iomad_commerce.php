@@ -47,4 +47,8 @@ class block_iomad_commerce extends block_base {
         return $this->content;
     }
 
+    function has_config() {
+        return true;
+    }
 }
+
