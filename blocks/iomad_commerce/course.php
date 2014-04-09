@@ -109,7 +109,7 @@ if ($course) {
                     }
                 }
 
-                if (isloggedin()) {
+                if (isloggedin() && iomad::is_company_admin()) {
                     $msg = '';
                     if ($licenseformempty) {
                         $msg = "<p class='error'>" . get_string('licenseformempty', 'block_iomad_commerce') . "</p>";
