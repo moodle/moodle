@@ -278,6 +278,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .fitem.disabled .filemanager .fp-pathbar,
 .fitem.disabled .filemanager .fp-restrictions,
 .fitem.disabled .filemanager .fm-content-wrapper {display:none;}
+.filemanager .fp-img-downloading {display:none;padding-top: 3px;}
 
  /*
  * File Manager layout
