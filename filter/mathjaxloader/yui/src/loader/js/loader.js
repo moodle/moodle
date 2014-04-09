@@ -73,7 +73,10 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
      */
     _setLocale: function() {
         if (!this._configured) {
-            MathJax.Localization.setLocale(this._lang);
+            var lang = this._lang;
+            MathJax.Hub.Queue(function () {
+                MathJax.Localization.setLocale(lang);
+            });
             MathJax.Hub.Configured();
             this._configured = true;
         }
