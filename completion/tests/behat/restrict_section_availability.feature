@@ -38,18 +38,22 @@ Feature: Restrict sections availability through completion or grade conditions
       | Name | Test page name |
       | Description | Test page description |
       | Page content | Test page contents |
-    When I edit the section "2" and I fill the form with:
-      | id_conditioncompletiongroup_0_conditionsourcecmid | Test label |
-      | id_conditioncompletiongroup_0_conditionrequiredcompletion | must be marked complete |
-      | Before section can be accessed | Show section greyed-out, with restriction information |
+    When I edit the section "2"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | cm | Test label |
+      | Required completion status | must be marked complete |
+    And I press "Save changes"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    Then I should see "Not available until the activity Test label is marked complete."
+    Then I should see "Not available unless: The activity Test label is marked complete"
     And I should not see "Test page name"
     And I press "Not completed: Test label. Select to mark as complete."
     And I should see "Test page name"
-    And I should not see "Not available until the activity Test label is marked complete."
+    And I should not see "Not available unless: The activity Test label is marked complete"
 
   @javascript
   Scenario: Show section greyed-out to student when grade condition is not satisfied
@@ -65,14 +69,19 @@ Feature: Restrict sections availability through completion or grade conditions
       | Name | Test page name |
       | Description | Restricted section page resource, till grades in Grade assignment is at least 20% |
       | Page content | Test page contents |
-    And I edit the section "2" and I fill the form with:
-      | id_conditiongradegroup_0_conditiongradeitemid | 2 |
-      | id_conditiongradegroup_0_conditiongrademin | 20 |
-      | Before section can be accessed | 1 |
+    And I edit the section "2"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Grade" "button" in the "Add restriction..." "dialogue"
+    And I click on "min" "checkbox"
+    And I set the following fields to these values:
+      | id | 2 |
+      | minval | 20 |
+    And I press "Save changes"
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
-    Then I should see "Not available until you achieve a required score in Grade assignment"
+    Then I should see "Not available unless: You achieve a required score in Grade assignment"
     And "Test page name" activity should be hidden
     And I follow "Grade assignment"
     And I press "Add submission"
@@ -93,4 +102,4 @@ Feature: Restrict sections availability through completion or grade conditions
     And I log in as "student1"
     And I follow "Course 1"
     And "Test page name" activity should be visible
-    And I should not see "Not available until you achieve a required score in Grade assignment"
+    And I should not see "Not available unless: You achieve a required score in Grade assignment"
