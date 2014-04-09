@@ -453,7 +453,7 @@ if (!$users) {
         } else {
             if ((has_capability('block/iomad_company_admin:editusers', $systemcontext)
                  or has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-                $deletebutton = "<a href=\"editusers.php?delete=$user->id&amp;sesskey= ".sesskey()."\">$strdelete</a>";
+                $deletebutton = "<a href=\"editusers.php?delete=$user->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
             } else {
                 $deletebutton = "";
             }
