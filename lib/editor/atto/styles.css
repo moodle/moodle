@@ -155,7 +155,7 @@ div.editor_atto_content:hover .atto_control {
     display: block;
 }
 
-.yui3-menu-hidden {
+.editor_atto_menu.yui3-menu-hidden {
     display: none;
 }
 
