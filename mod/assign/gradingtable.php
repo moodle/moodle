@@ -181,7 +181,9 @@ class assign_grading_table extends table_sql implements renderable {
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
             } else if ($filter == ASSIGN_FILTER_NOT_SUBMITTED) {
-                $where .= ' AND (s.timemodified IS NULL) ';
+                $where .= ' AND (s.timemodified IS NULL OR s.status = :draft OR s.status = :reopened) ';
+                $params['draft'] = ASSIGN_SUBMISSION_STATUS_DRAFT;
+                $params['reopened'] = ASSIGN_SUBMISSION_STATUS_REOPENED;
 
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
