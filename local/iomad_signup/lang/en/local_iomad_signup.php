@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+$string['company'] = 'Company users is assigned to';
+$string['configcompany'] = 'This is the company that the user will be assigned to once they have completed the sign up process';
 $string['enable'] = 'Enable';
 $string['enable_help'] = 'New email authentication users will be given the Client Administrator role on creation when this is enabled';
 $string['pluginname'] = 'Iomad signup';
+$string['role'] = 'Role to be assigned';
+$string['configrole'] = 'This is the role the user will be given when they have completed the sign up process';

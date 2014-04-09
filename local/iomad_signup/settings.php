@@ -26,4 +26,15 @@ if ($hassiteconfig) {
         get_string('enable_help', 'local_iomad_signup'),
         1)
     );
+
+    $siteroles = $DB->get_records_menu('role', array(), 'id', 'id,shortname');
+    $availableroles = array('0' => 'none') + $siteroles;
+    $settings->add(new admin_setting_configselect('local_iomad_signup_role', get_string('role', 'local_iomad_signup'),
+                       get_string('configrole', 'local_iomad_signup'), 'none', $availableroles));
+
+    $sitecompanies = $DB->get_records_menu('company', array(), 'name', 'id,name');
+    $availablecompanies = array('0' => 'none') + $sitecompanies;
+    $settings->add(new admin_setting_configselect('local_iomad_signup_company', get_string('company', 'local_iomad_signup'),
+                       get_string('configcompany', 'local_iomad_signup'), 'none', $availablecompanies));
+
 }

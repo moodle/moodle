@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') || die;
-
-// Role to assign (shortname)
-define('IOMAD_SIGNUP_ROLE', 'clientadministrator');
+require_once($CFG->dirroot.'/local/iomad/lib/company.php');
 
 /**
  * Event handler for 'user_created'
  * For 'email' authentication (only) add this user
- * to the client admin role (site)
+ * to the defined role and company.
  */
 function local_iomad_signup_user_created($user) {
     global $CFG, $DB;
@@ -40,11 +38,24 @@ function local_iomad_signup_user_created($user) {
     // Get context
     $context = context_system::instance();
 
-    // Get role
-    $role = $DB->get_record('role', array('shortname' => IOMAD_SIGNUP_ROLE), '*', MUST_EXIST);
+    // Do we have a company to assign?
+    if (!empty($CFG->local_iomad_signup_company)) {
+        // Get company.
+        $company = new company($CFG->local_iomad_signup_company);
 
-    // assign the user to the role
-    role_assign($role->id, $user->id, $context->id);
+        // assign the user to the company.
+        $company->assign_user_to_company($user->id);
+    }
+    
+    // Do we have a role to assign?
+    if (!empty($CFG->local_iomad_signup_role)) {
+        // Get role
+        if ($role = $DB->get_record('role', array('id' => $CFG->local_iomad_signup_role), '*', MUST_EXIST)) {
+
+            // assign the user to the role
+            role_assign($role->id, $user->id, $context->id);
+        }
+    }
 
     return true;
 }
