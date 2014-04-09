@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot.'/report/participation/locallib.php');
 
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
@@ -67,14 +68,9 @@ require_capability('report/participation:view', $context);
 $strparticipation = get_string('participationreport');
 $strviews         = get_string('views');
 $strposts         = get_string('posts');
-$strview          = get_string('view');
-$strpost          = get_string('post');
-$strallactions    = get_string('allactions');
 $strreports       = get_string('reports');
 
-$actionoptions = array('' => $strallactions,
-                       'view' => $strview,
-                       'post' => $strpost,);
+$actionoptions = report_participation_get_action_options();
 if (!array_key_exists($action, $actionoptions)) {
     $action = '';
 }
@@ -86,26 +82,11 @@ echo $OUTPUT->header();
 $uselegacyreader = false; // Use legacy reader with sql_internal_reader to aggregate records.
 $onlyuselegacyreader = false; // Use only legacy log table to aggregate records.
 
-// Get prefered sql_internal_reader reader (if enabled).
-$logmanager = get_log_manager();
-$readers = $logmanager->get_readers();
+$logtable = report_participation_get_log_table_name(); // Log table to use for fetaching records.
 
-// Get preferred reader.
-if (!empty($readers)) {
-    foreach ($readers as $readerpluginname => $reader) {
-        // If legacy reader is preferred reader.
-        if ($readerpluginname == 'logstore_legacy') {
-            $onlyuselegacyreader = true;
-            break;
-        }
-
-        // If sql_internal_reader is preferred reader.
-        if ($reader instanceof \core\log\sql_internal_reader) {
-            $onlyuselegacyreader = false;
-            $logtable = $reader->get_internal_log_table_name();
-            break;
-        }
-    }
+// If no log table, then use legacy records.
+if (empty($logtable)) {
+    $onlyuselegacyreader = true;
 }
 
 // If no legacy and no logtable then don't proceed.
@@ -118,30 +99,6 @@ if (!$onlyuselegacyreader && empty($logtable)) {
 }
 
 $modinfo = get_fast_modinfo($course);
-
-$modules = $DB->get_records_select('modules', "visible = 1", null, 'name ASC');
-
-$instanceoptions = array();
-foreach ($modules as $module) {
-    if (empty($modinfo->instances[$module->name])) {
-        continue;
-    }
-    $instances = array();
-    foreach ($modinfo->instances[$module->name] as $cm) {
-        // Skip modules such as label which do not actually have links;
-        // this means there's nothing to participate in
-        if (!$cm->has_view()) {
-            continue;
-        }
-        $instances[$cm->id] = format_string($cm->name);
-    }
-    if (count($instances) == 0) {
-        continue;
-    }
-    $instanceoptions[] = array(get_string('modulenameplural', $module->name)=>$instances);
-}
-
-$timeoptions = array();
 
 $minloginternalreader = 0; // Time of first record in sql_internal_reader.
 
@@ -166,49 +123,8 @@ if ($onlyuselegacyreader) {
     }
 }
 
-$now = usergetmidnight(time());
-
-// days
-for ($i = 1; $i < 7; $i++) {
-    if (strtotime('-'.$i.' days',$now) >= $minlog) {
-        $timeoptions[strtotime('-'.$i.' days',$now)] = get_string('numdays','moodle',$i);
-    }
-}
-// weeks
-for ($i = 1; $i < 10; $i++) {
-    if (strtotime('-'.$i.' weeks',$now) >= $minlog) {
-        $timeoptions[strtotime('-'.$i.' weeks',$now)] = get_string('numweeks','moodle',$i);
-    }
-}
-// months
-for ($i = 2; $i < 12; $i++) {
-    if (strtotime('-'.$i.' months',$now) >= $minlog) {
-        $timeoptions[strtotime('-'.$i.' months',$now)] = get_string('nummonths','moodle',$i);
-    }
-}
-// try a year
-if (strtotime('-1 year',$now) >= $minlog) {
-    $timeoptions[strtotime('-1 year',$now)] = get_string('lastyear');
-}
-
-// TODO: we need a new list of roles that are visible here
-$roles = get_roles_used_in_context($context);
-$guestrole = get_guest_role();
-$roles[$guestrole->id] = $guestrole;
-$roleoptions = role_fix_names($roles, $context, ROLENAME_ALIAS, true);
-
-// print first controls.
-echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
-     '<input type="hidden" name="id" value="'.$course->id.'" />'."\n";
-echo '<label for="menuinstanceid">'.get_string('activitymodule').'</label>'."\n";
-echo html_writer::select($instanceoptions, 'instanceid', $instanceid);
-echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
-echo html_writer::select($timeoptions,'timefrom',$timefrom);
-echo '<label for="menuroleid">'.get_string('showonly').'</label>'."\n";
-echo html_writer::select($roleoptions,'roleid',$roleid,false);
-echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
-echo html_writer::select($actionoptions,'action',$action,false);
-echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
+// Print first controls.
+report_participation_print_filter_form($course, $timefrom, $minlog, $action, $roleid, $instanceid);
 
 $baseurl =  $CFG->wwwroot.'/report/participation/index.php?id='.$course->id.'&amp;roleid='
     .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
@@ -303,47 +219,13 @@ if (!empty($instanceid) && !empty($roleid)) {
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
 
-    $viewnames = array();
-    $postnames = array();
     if ($uselegacyreader || $onlyuselegacyreader) {
-        include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
-
-        $viewfun = $cm->modname.'_get_view_actions';
-        $postfun = $cm->modname.'_get_post_actions';
-
-        if (function_exists($viewfun)) {
-            $viewnames = $viewfun();
-        }
-
-        if (function_exists($postfun)) {
-            $postnames = $postfun();
-        }
-    }
-
-    switch ($action) {
-        case 'view':
-            $actions = $viewnames;
-            $crud = 'r';
-            break;
-        case 'post':
-            $actions = $postnames;
-            $crud = array('c', 'u', 'd');
-            break;
-        default:
-            // Some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
-            $actions = array_merge($viewnames, $postnames);
-            $crud = array();
-    }
-
-    if (!empty($actions)) {
-        list($actionsql, $actionparams) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action');
-        $actionsql = " AND action $actionsql";
+        list($actionsql, $actionparams) = report_participation_get_action_sql($action, $cm->modname);
         $params = array_merge($params, $actionparams);
     }
 
-    if (!empty($crud)) {
-        list($crudsql, $crudparams) = $DB->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'crud');
-        $crudsql = " AND crud $crudsql";
+    if (!$onlyuselegacyreader) {
+        list($crudsql, $crudparams) = report_participation_get_crud_sql($action);
         $params = array_merge($params, $crudparams);
     }
 
