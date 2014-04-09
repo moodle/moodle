@@ -232,12 +232,13 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $slist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
 
+    $allusernames = user_picture::fields('u');
     $rs = $DB->get_recordset_sql("SELECT sa.userid, sa.survey, MAX(sa.time) AS time,
-                                         u.firstname, u.lastname, u.email, u.picture
+                                         $allusernames
                                     FROM {survey_answers} sa
                                     JOIN {user} u ON u.id = sa.userid
                                    WHERE sa.survey IN ($slist) AND sa.time > ?
-                                GROUP BY sa.userid, sa.survey, u.firstname, u.lastname, u.email, u.picture
+                                GROUP BY sa.userid, sa.survey, $allusernames
                                 ORDER BY time ASC", array($timestart));
     if (!$rs->valid()) {
         $rs->close(); // Not going to iterate (but exit), close rs
