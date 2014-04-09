@@ -200,8 +200,10 @@ if (!empty($courseid)) {
         echo '"'.$usercompletion[$courseid]->data[$courseid]->coursename."\"\n";
     }
     // Show some extra details.
+    $extradetail = false;
     foreach ($usercompletion[$courseid]->criteria as $criteria) {
         if ($criteria->module == "quiz") {
+            $extradetail = true;
             require_once($CFG->dirroot . '/mod/quiz/locallib.php');
             $quizinfo = array_pop($DB->get_records_sql("SELECT q.*
                                                         FROM {quiz} q, {course_modules} cm
@@ -230,6 +232,7 @@ if (!empty($courseid)) {
             }
         }
         if ($criteria->module == "scorm" ) {
+            $extradetail = true;
             $instanceinfo = $DB->get_record('course_modules',
                                              array('id' => $criteria->moduleinstance));
             $scorminfo = $DB->get_record('scorm', array('id' => $instanceinfo->instance));
@@ -347,6 +350,10 @@ if (!empty($courseid)) {
             }
         }
     }
+    if (!$extradetail && empty($dodownload)) {
+        echo "<h2>" . get_string('nofurtherdetail', 'local_report_users') . "</h2>";
+    }
+
 }
 if (!empty($dodownload)) {
     exit;
