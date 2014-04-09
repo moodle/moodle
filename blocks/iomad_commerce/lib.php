@@ -167,7 +167,11 @@ function payment_provider_enabled($providername) {
     global $CFG;
 
     $penabled = $providername . "_enabled";
-    return ($CFG->$penabled);
+    if (!empty($CFG->$penabled)) {
+        return ($CFG->$penabled);
+    } else {
+        return false;
+    }
 }
 
 function get_enabled_payment_providers() {
