@@ -3421,8 +3421,8 @@ function xmldb_main_upgrade($oldversion) {
             $lastupdate = 0;
             $rs = $DB->get_recordset_sql("
                     SELECT cm.id, cm.availablefrom, cm.availableuntil, cm.showavailability,
-                           COUNT (DISTINCT cma.id) AS availcount,
-                           COUNT (DISTINCT cmf.id) AS fieldcount
+                           COUNT(DISTINCT cma.id) AS availcount,
+                           COUNT(DISTINCT cmf.id) AS fieldcount
                       FROM {course_modules} cm
                            LEFT JOIN {course_modules_availability} cma ON cma.coursemoduleid = cm.id
                            LEFT JOIN {course_modules_avail_fields} cmf ON cmf.coursemoduleid = cm.id
@@ -3476,8 +3476,8 @@ function xmldb_main_upgrade($oldversion) {
             $rs = $DB->get_recordset_sql("
                     SELECT cs.id, cs.groupingid, cs.availablefrom,
                            cs.availableuntil, cs.showavailability,
-                           COUNT (DISTINCT csa.id) AS availcount,
-                           COUNT (DISTINCT csf.id) AS fieldcount
+                           COUNT(DISTINCT csa.id) AS availcount,
+                           COUNT(DISTINCT csf.id) AS fieldcount
                       FROM {course_sections} cs
                            LEFT JOIN {course_sections_availability} csa ON csa.coursesectionid = cs.id
                            LEFT JOIN {course_sections_avail_fields} csf ON csf.coursesectionid = cs.id
