@@ -120,7 +120,7 @@ class feedback_item_captcha extends feedback_item_base {
      * @return void
      */
     public function print_item_preview($item) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         $align = right_to_left() ? 'right' : 'left';
 
