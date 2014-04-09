@@ -25,7 +25,7 @@
 require('../../../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
-define('AIRNOTIFIER_PUBLICURL', 'http://messages.moodle.net');
+define('AIRNOTIFIER_PUBLICURL', 'https://messages.moodle.net');
 
 $PAGE->set_url(new moodle_url('/message/output/airnotifier/requestaccesskey.php'));
 $PAGE->set_context(context_system::instance());

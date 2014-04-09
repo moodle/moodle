@@ -43,10 +43,6 @@ class message_airnotifier_manager {
     public function include_device_ajax() {
         global $PAGE, $CFG;
 
-        if (!$CFG->enableajax) {
-            return false;
-        }
-
         $config = new stdClass();
         $config->resturl = '/message/output/airnotifier/rest.php';
         $config->pageparams = array();

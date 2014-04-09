@@ -150,24 +150,26 @@ class message_airnotifier_external extends external_api {
                     }
 
                     foreach (array('loggedin', 'loggedoff') as $state) {
-                        if ($configured) {
+
+                        $prefstocheck = array();
+                        $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
+
+                        // First get forced settings.
+                        if ($forcedpref = get_config('message', $prefname)) {
+                            $prefstocheck = explode(',', $forcedpref);
+                        }
+
+                        // Then get user settings.
+                        if ($userpref = get_user_preferences($prefname, '', $user->id)) {
+                            $prefstocheck += explode(',', $userpref);
+                        }
+
+                        if (in_array('airnotifier', $prefstocheck)) {
+                            $preferences['configured'] = 1;
+                            $configured = true;
                             break;
                         }
 
-                        $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
-                        $linepref = get_user_preferences($prefname, '', $user->id);
-                        if ($linepref == '') {
-                            continue;
-                        }
-                        $lineprefarray = explode(',', $linepref);
-
-                        foreach ($lineprefarray as $pref) {
-                            if ($pref == 'airnotifier') {
-                                $preferences['configured'] = 1;
-                                $configured = true;
-                                break;
-                            }
-                        }
                     }
                 }
 
