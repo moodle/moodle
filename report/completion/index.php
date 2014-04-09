@@ -746,3 +746,7 @@ print '<li><a href="'.$excelurl->out().'">'.get_string('excelcsvdownload','compl
 print '</ul>';
 
 echo $OUTPUT->footer($course);
+
+// Trigger a report viewed event.
+$event = \report_completion\event\report_viewed::create(array('context' => $context));
+$event->trigger();
