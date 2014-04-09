@@ -489,8 +489,6 @@ $CFG->admin = 'admin';
 //
 // "\\core\\lock\\postgres_lock_factory" - DB locking based on postgres advisory locks.
 //
-// "\\core\\lock\\mysql_lock_factory" - DB locking based on mysql lock functions.
-//
 // Settings used by the lock factories
 //
 // Location for lock files used by the File locking factory. This must exist

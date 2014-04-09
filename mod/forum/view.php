@@ -133,7 +133,9 @@
         'context' => $context,
         'objectid' => $forum->id
     );
-    $event = \mod_forum\event\forum_viewed::create($params);
+    $event = \mod_forum\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('forum', $forum);
     $event->trigger();
 

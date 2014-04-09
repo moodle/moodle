@@ -3,12 +3,19 @@ information provided here is intended especially for developers.
 
 === 2.7 ===
 
+* PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
+
+Events and Logging:
+* Significant changes in Logging API. For upgrading existing events_trigger() and
+  add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
+  For accessing logs from plugins see http://docs.moodle.org/dev/Migrating_log_access_in_reports
 
 DEPRECATIONS:
 * $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.
 * Update init methods in all event classes - "level" property was renamed to "edulevel", the level property is now deprecated.
 * Abstract class \core\event\course_module_instances_list_viewed is deprecated now, use \core\event\instances_list_viewed instead.
+* Abstract class core\event\content_viewed has been deprecated. Please extend base event or other relevant abstract class.
 * mod_book\event\instances_list_viewed has been deprecated. Please use mod_book\event\course_module_instance_list_viewed instead.
 * mod_chat\event\instances_list_viewed has been deprecated. Please use mod_chat\event\course_module_instance_list_viewed instead.
 * mod_choice\event\instances_list_viewed has been deprecated. Please use mod_choice\event\course_module_instance_list_viewed instead.
@@ -18,6 +25,7 @@ DEPRECATIONS:
 * Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
   get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
 * The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
+* count_login_failures() has been deprecated, use user_count_login_failures() instead. Refer MDL-42891 for details.
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been
@@ -35,6 +43,11 @@ JavaSript:
       events provided.
 
 * New locking api and admin settings to configure the system locking type.
+* New "Time spent waiting for the database" performance metric displayed along with the
+  other MDL_PERF vars; the change affects both the error logs and the vars displayed in
+  the page footer.
+* Changes in the tag API. The component and contextid are now saved when assigning tags to an item. Please see
+  tag/upgrade.txt for more information.
 
 === 2.6 ===
 

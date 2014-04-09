@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class chapter_viewed extends \core\event\content_viewed {
+class chapter_viewed extends \core\event\base {
 
     /**
      * Returns description of what happened.
@@ -81,17 +81,4 @@ class chapter_viewed extends \core\event\content_viewed {
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'book_chapters';
     }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        // Hack to please the parent class. 'view chapter' was the key used in old add_to_log().
-        $this->data['other']['content'] = 'view chapter';
-        parent::validate_data();
-    }
-
 }

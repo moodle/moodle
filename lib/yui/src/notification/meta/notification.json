@@ -15,6 +15,7 @@
         "panel",
         "event-key",
         "dd-plugin",
+        "moodle-core-widget-focusafterclose",
         "moodle-core-lockscroll"
     ]
   },

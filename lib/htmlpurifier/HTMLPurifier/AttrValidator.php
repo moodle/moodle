@@ -9,17 +9,14 @@ class HTMLPurifier_AttrValidator
 {
 
     /**
-     * Validates the attributes of a token, returning a modified token
+     * Validates the attributes of a token, mutating it as necessary.
      * that has valid tokens
-     * @param $token Reference to token to validate. We require a reference
-     *     because the operation this class performs on the token are
-     *     not atomic, so the context CurrentToken to be updated
-     *     throughout
-     * @param $config Instance of HTMLPurifier_Config
-     * @param $context Instance of HTMLPurifier_Context
+     * @param HTMLPurifier_Token $token Token to validate.
+     * @param HTMLPurifier_Config $config Instance of HTMLPurifier_Config
+     * @param HTMLPurifier_Context $context Instance of HTMLPurifier_Context
      */
-    public function validateToken(&$token, &$config, $context) {
-
+    public function validateToken($token, $config, $context)
+    {
         $definition = $config->getHTMLDefinition();
         $e =& $context->get('ErrorCollector', true);
 
@@ -32,12 +29,15 @@ class HTMLPurifier_AttrValidator
 
         // initialize CurrentToken if necessary
         $current_token =& $context->get('CurrentToken', true);
-        if (!$current_token) $context->register('CurrentToken', $token);
+        if (!$current_token) {
+            $context->register('CurrentToken', $token);
+        }
 
-        if (
-            !$token instanceof HTMLPurifier_Token_Start &&
+        if (!$token instanceof HTMLPurifier_Token_Start &&
             !$token instanceof HTMLPurifier_Token_Empty
-        ) return $token;
+        ) {
+            return;
+        }
 
         // create alias to global definition array, see also $defs
         // DEFINITION CALL
@@ -51,7 +51,9 @@ class HTMLPurifier_AttrValidator
         foreach ($definition->info_attr_transform_pre as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
             if ($e) {
-                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                if ($attr != $o) {
+                    $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                }
             }
         }
 
@@ -60,7 +62,9 @@ class HTMLPurifier_AttrValidator
         foreach ($definition->info[$token->name]->attr_transform_pre as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
             if ($e) {
-                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                if ($attr != $o) {
+                    $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                }
             }
         }
 
@@ -77,7 +81,7 @@ class HTMLPurifier_AttrValidator
         foreach ($attr as $attr_key => $value) {
 
             // call the definition
-            if ( isset($defs[$attr_key]) ) {
+            if (isset($defs[$attr_key])) {
                 // there is a local definition defined
                 if ($defs[$attr_key] === false) {
                     // We've explicitly been told not to allow this element.
@@ -89,15 +93,19 @@ class HTMLPurifier_AttrValidator
                 } else {
                     // validate according to the element's definition
                     $result = $defs[$attr_key]->validate(
-                                    $value, $config, $context
-                               );
+                        $value,
+                        $config,
+                        $context
+                    );
                 }
-            } elseif ( isset($d_defs[$attr_key]) ) {
+            } elseif (isset($d_defs[$attr_key])) {
                 // there is a global definition defined, validate according
                 // to the global definition
                 $result = $d_defs[$attr_key]->validate(
-                                $value, $config, $context
-                           );
+                    $value,
+                    $config,
+                    $context
+                );
             } else {
                 // system never heard of the attribute? DELETE!
                 $result = false;
@@ -107,7 +115,9 @@ class HTMLPurifier_AttrValidator
             if ($result === false || $result === null) {
                 // this is a generic error message that should replaced
                 // with more specific ones when possible
-                if ($e) $e->send(E_ERROR, 'AttrValidator: Attribute removed');
+                if ($e) {
+                    $e->send(E_ERROR, 'AttrValidator: Attribute removed');
+                }
 
                 // remove the attribute
                 unset($attr[$attr_key]);
@@ -137,7 +147,9 @@ class HTMLPurifier_AttrValidator
         foreach ($definition->info_attr_transform_post as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
             if ($e) {
-                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                if ($attr != $o) {
+                    $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                }
             }
         }
 
@@ -145,14 +157,18 @@ class HTMLPurifier_AttrValidator
         foreach ($definition->info[$token->name]->attr_transform_post as $transform) {
             $attr = $transform->transform($o = $attr, $config, $context);
             if ($e) {
-                if ($attr != $o) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                if ($attr != $o) {
+                    $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
+                }
             }
         }
 
         $token->attr = $attr;
 
         // destroy CurrentToken if we made it ourselves
-        if (!$current_token) $context->destroy('CurrentToken');
+        if (!$current_token) {
+            $context->destroy('CurrentToken');
+        }
 
     }
 

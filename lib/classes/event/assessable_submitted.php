@@ -59,8 +59,9 @@ abstract class assessable_submitted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
-        if (!$this->contextlevel === CONTEXT_MODULE) {
-            throw new \coding_exception('Content level must be CONTEXT_MODULE.');
+        parent::validate_data();
+        if ($this->contextlevel != CONTEXT_MODULE) {
+            throw new \coding_exception('Context passed must be module context.');
         }
     }
 

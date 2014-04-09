@@ -304,6 +304,11 @@ if (defined('WEB_CRON_EMULATED_CLI')) {
     }
 }
 
+// All web service requests have WS_SERVER == true.
+if (!defined('WS_SERVER')) {
+    define('WS_SERVER', false);
+}
+
 // Detect CLI maintenance mode - this is useful when you need to mess with database, such as during upgrades
 if (file_exists("$CFG->dataroot/climaintenance.html")) {
     if (!CLI_SCRIPT) {
@@ -347,7 +352,7 @@ if (!defined('AJAX_SCRIPT')) {
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.13.0';
+$CFG->yui3version = '3.15.0';
 
 // Patching the upstream YUI release.
 // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
@@ -737,12 +742,16 @@ try {
 }
 // And the 'default' course - this will usually get reset later in require_login() etc.
 $COURSE = clone($SITE);
-/** @deprecated Id of the frontpage course, use $SITE->id instead */
+// Id of the frontpage course.
 define('SITEID', $SITE->id);
 
 // init session prevention flag - this is defined on pages that do not want session
 if (CLI_SCRIPT) {
     // no sessions in CLI scripts possible
+    define('NO_MOODLE_COOKIES', true);
+
+} else if (WS_SERVER) {
+    // No sessions possible in web services.
     define('NO_MOODLE_COOKIES', true);
 
 } else if (!defined('NO_MOODLE_COOKIES')) {
@@ -804,7 +813,7 @@ unset($urlthemename);
 
 // Ensure a valid theme is set.
 if (!isset($CFG->theme)) {
-    $CFG->theme = 'standard';
+    $CFG->theme = 'clean';
 }
 
 // Set language/locale of printed times.  If user has chosen a language that
@@ -819,6 +828,21 @@ if (isset($_GET['lang']) and ($lang = optional_param('lang', '', PARAM_SAFEDIR))
     }
 }
 unset($lang);
+
+// PARAM_SAFEDIR used instead of PARAM_LANG because using PARAM_LANG results
+// in an empty string being returned when a non-existant language is specified,
+// which would make it necessary to log out to undo the forcelang setting.
+// With PARAM_SAFEDIR, it's possible to specify ?forcelang=none to drop the forcelang effect.
+if ($forcelang = optional_param('forcelang', '', PARAM_SAFEDIR)) {
+    if (isloggedin()
+        && get_string_manager()->translation_exists($forcelang, false)
+        && has_capability('moodle/site:forcelanguage', context_system::instance())) {
+        $SESSION->forcelang = $forcelang;
+    } else if (isset($SESSION->forcelang)) {
+        unset($SESSION->forcelang);
+    }
+}
+unset($forcelang);
 
 setup_lang_from_browser();
 

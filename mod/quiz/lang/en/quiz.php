@@ -17,10 +17,9 @@
 /**
  * Strings for component 'quiz', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['accessnoticesheader'] = 'You can preview this quiz, but if this were a real attempt, you would be blocked because:';
@@ -557,7 +556,12 @@ $string['overrides'] = 'Overrides';
 $string['overrideuser'] = 'Override user';
 $string['overrideusereventname'] = '{$a->quiz} - Override';
 $string['page-mod-quiz-x'] = 'Any quiz module page';
+$string['page-mod-quiz-attempt'] = 'Attempt quiz page';
 $string['page-mod-quiz-edit'] = 'Edit quiz page';
+$string['page-mod-quiz-report'] = 'Any quiz report page';
+$string['page-mod-quiz-review'] = 'Review quiz attempt page';
+$string['page-mod-quiz-summary'] = 'Quiz attempt summary page';
+$string['page-mod-quiz-view'] = 'Quiz information page';
 $string['pagesize'] = 'Page size';
 $string['parent'] = 'Parent';
 $string['parentcategory'] = 'Parent category';

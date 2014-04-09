@@ -106,11 +106,11 @@ class user_loggedin extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->data['objectid'])) {
             throw new \coding_exception("objectid has to be specified.");
         } else if (!isset($this->data['other']['username'])) {
             throw new \coding_exception("other['username'] has to be specified.");
         }
     }
-
 }

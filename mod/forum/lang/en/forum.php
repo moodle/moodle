@@ -150,7 +150,6 @@ $string['eventdiscussionupdated'] = 'Discussion updated';
 $string['eventdiscussiondeleted'] = 'Discussion deleted';
 $string['eventdiscussionmoved'] = 'Discussion moved';
 $string['eventdiscussionviewed'] = 'Discussion viewed';
-$string['eventforumviewed'] = 'Forum viewed';
 $string['eventuserreportviewed'] = 'User report viewed';
 $string['eventpostcreated'] = 'Post created';
 $string['eventpostdeleted'] = 'Post deleted';
@@ -361,6 +360,7 @@ $string['postmailinfo'] = 'This is a copy of a message posted on the {$a} websit
 
 To reply click on this link:';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
+$string['postmailsubject'] = '{$a->courseshortname}: {$a->subject}';
 $string['postrating1'] = 'Mostly separate knowing';
 $string['postrating2'] = 'Separate and connected';
 $string['postrating3'] = 'Mostly connected knowing';

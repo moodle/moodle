@@ -85,7 +85,6 @@ function cohort_update_cohort($cohort) {
         'context' => context::instance_by_id($cohort->contextid),
         'objectid' => $cohort->id,
     ));
-    $event->add_record_snapshot('cohort', $cohort);
     $event->trigger();
 }
 

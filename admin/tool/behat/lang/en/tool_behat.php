@@ -29,6 +29,8 @@ $string['errorcomposer'] = 'Composer dependencies are not installed.';
 $string['errordataroot'] = '$CFG->behat_dataroot is not set or is invalid.';
 $string['errorsetconfig'] = '$CFG->behat_dataroot, $CFG->behat_prefix and $CFG->behat_wwwroot need to be set in config.php.';
 $string['erroruniqueconfig'] = '$CFG->behat_dataroot, $CFG->behat_prefix and $CFG->behat_wwwroot values need to be different than $CFG->dataroot, $CFG->prefix, $CFG->wwwroot, $CFG->phpunit_dataroot and $CFG->phpunit_prefix values.';
+$string['fieldvalueargument'] = 'Field value arguments';
+$string['fieldvalueargument_help'] = 'This argument should be completed by a field value, there are many field types, simple ones like checkboxes, selects or textareas or complex ones like date selectors. You can check <a href="http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps" target="_blank">Field values</a> to see the expected field value depending on the field type you provide.';
 $string['giveninfo'] = 'Given. Processes to set up the environment';
 $string['infoheading'] = 'Info';
 $string['installinfo'] = 'Read {$a} for installation and tests execution info';

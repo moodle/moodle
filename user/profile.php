@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,8 +25,7 @@
  * This script implements the user's view of the public profile, and allows editing
  * of the public profile.
  *
- * @package    moodlecore
- * @subpackage my
+ * @package    core_user
  * @copyright  2010 Remote-Learner.net
  * @author     Hubert Chathi <hubert@remote-learner.net>
  * @author     Olav Jordan <olav.jordan@remote-learner.net>
@@ -41,10 +39,10 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
 $userid = optional_param('id', 0, PARAM_INT);
-$edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
+$edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
 $reset  = optional_param('reset', null, PARAM_BOOL);
 
-$PAGE->set_url('/user/profile.php', array('id'=>$userid));
+$PAGE->set_url('/user/profile.php', array('id' => $userid));
 
 if (!empty($CFG->forceloginforprofiles)) {
     require_login();
@@ -56,7 +54,7 @@ if (!empty($CFG->forceloginforprofiles)) {
     require_login();
 }
 
-$userid = $userid ? $userid : $USER->id;       // Owner of the page
+$userid = $userid ? $userid : $USER->id;       // Owner of the page.
 if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->deleted)) {
     $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
@@ -77,12 +75,12 @@ if (!$currentuser &&
     !has_capability('moodle/user:viewdetails', $context) &&
     !has_coursecontact_role($userid)) {
 
-    // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
+    // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
     $struser = get_string('user');
     $PAGE->set_context(context_system::instance());
-    $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name
+    $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
     $PAGE->set_heading("$SITE->shortname: $struser");
-    $PAGE->set_url('/user/profile.php', array('id'=>$userid));
+    $PAGE->set_url('/user/profile.php', array('id' => $userid));
     $PAGE->navbar->add($struser);
     echo $OUTPUT->header();
     echo $OUTPUT->notification(get_string('usernotavailable', 'error'));
@@ -96,17 +94,17 @@ if (!$currentpage = my_get_page($userid, MY_PAGE_PUBLIC)) {
 }
 
 if (!$currentpage->userid) {
-    $context = context_system::instance();  // A trick so that we even see non-sticky blocks
+    $context = context_system::instance();  // A trick so that we even see non-sticky blocks.
 }
 
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('mypublic');
 $PAGE->set_pagetype('user-profile');
 
-// Set up block editing capabilities
-if (isguestuser()) {     // Guests can never edit their profile
-    $USER->editing = $edit = 0;  // Just in case
-    $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');  // unlikely :)
+// Set up block editing capabilities.
+if (isguestuser()) {     // Guests can never edit their profile.
+    $USER->editing = $edit = 0;  // Just in case.
+    $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');  // unlikely :).
 } else {
     if ($currentuser) {
         $PAGE->set_blocks_editing_capability('moodle/user:manageownblocks');
@@ -127,7 +125,7 @@ if (has_capability('moodle/site:viewuseridentity', $context)) {
     $identityfields = array();
 }
 
-// Start setting up the page
+// Start setting up the page.
 $strpublicprofile = get_string('publicprofile');
 
 $PAGE->blocks->add_region('content');
@@ -148,40 +146,40 @@ if ($node = $PAGE->settingsnav->get('root')) {
 }
 
 
-// Toggle the editing state and switches
+// Toggle the editing state and switches.
 if ($PAGE->user_allowed_editing()) {
     if ($reset !== null) {
         if (!is_null($userid)) {
-            if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')){
+            if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
                 print_error('reseterror', 'my');
             }
             redirect(new moodle_url('/user/profile.php'));
         }
-    } else if ($edit !== null) {             // Editing state was specified
-        $USER->editing = $edit;       // Change editing state
+    } else if ($edit !== null) {             // Editing state was specified.
+        $USER->editing = $edit;       // Change editing state.
         if (!$currentpage->userid && $edit) {
             // If we are viewing a system page as ordinary user, and the user turns
             // editing on, copy the system pages as new user pages, and get the
-            // new page record
+            // new page record.
             if (!$currentpage = my_copy_page($USER->id, MY_PAGE_PUBLIC, 'user-profile')) {
                 print_error('mymoodlesetup');
             }
             $PAGE->set_context($usercontext);
             $PAGE->set_subpage($currentpage->id);
         }
-    } else {                          // Editing state is in session
-        if ($currentpage->userid) {   // It's a page we can edit, so load from session
+    } else {                          // Editing state is in session.
+        if ($currentpage->userid) {   // It's a page we can edit, so load from session.
             if (!empty($USER->editing)) {
                 $edit = 1;
             } else {
                 $edit = 0;
             }
-        } else {                      // It's a system page and they are not allowed to edit system pages
-            $USER->editing = $edit = 0;          // Disable editing completely, just to be safe
+        } else {                      // It's a system page and they are not allowed to edit system pages.
+            $USER->editing = $edit = 0;          // Disable editing completely, just to be safe.
         }
     }
 
-    // Add button for editing page
+    // Add button for editing page.
     $params = array('edit' => !$edit);
 
     $resetbutton = '';
@@ -189,7 +187,7 @@ if ($PAGE->user_allowed_editing()) {
     $reseturl = new moodle_url("$CFG->wwwroot/user/profile.php", array('edit' => 1, 'reset' => 1));
 
     if (!$currentpage->userid) {
-        // viewing a system page -- let the user customise it
+        // Viewing a system page -- let the user customise it.
         $editstring = get_string('updatemymoodleon');
         $params['edit'] = 1;
     } else if (empty($edit)) {
@@ -208,19 +206,17 @@ if ($PAGE->user_allowed_editing()) {
     $USER->editing = $edit = 0;
 }
 
-// HACK WARNING!  This loads up all this page's blocks in the system context
+// HACK WARNING!  This loads up all this page's blocks in the system context.
 if ($currentpage->userid == 0) {
     $CFG->blockmanagerclass = 'my_syspage_block_manager';
 }
 
 // TODO WORK OUT WHERE THE NAV BAR IS!
-
 echo $OUTPUT->header();
 echo '<div class="userprofile">';
 
 
-// Print the standard content of this page, the basic profile info
-
+// Print the standard content of this page, the basic profile info.
 echo $OUTPUT->heading(fullname($user));
 
 if (is_mnet_remote_user($user)) {
@@ -239,27 +235,27 @@ if (is_mnet_remote_user($user)) {
 }
 
 echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
-echo $OUTPUT->user_picture($user, array('size'=>100));
+echo $OUTPUT->user_picture($user, array('size' => 100));
 echo '</div>';
 
 echo '<div class="descriptionbox"><div class="description">';
-// Print the description
-
+// Print the description.
 if ($user->description && !isset($hiddenfields['description'])) {
-    if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser && !$DB->record_exists('role_assignments', array('userid'=>$user->id))) {
+    if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
+        !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
         echo get_string('profilenotshown', 'moodle');
     } else {
-        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user', 'profile', null);
-        $options = array('overflowdiv'=>true);
+        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user',
+                                                          'profile', null);
+        $options = array('overflowdiv' => true);
         echo format_text($user->description, $user->descriptionformat, $options);
     }
 }
 echo '</div>';
 
 
-// Print all the little details in a list
-
-echo html_writer::start_tag('dl', array('class'=>'list'));
+// Print all the little details in a list.
+echo html_writer::start_tag('dl', array('class' => 'list'));
 if (!isset($hiddenfields['country']) && $user->country) {
     echo html_writer::tag('dt', get_string('country'));
     echo html_writer::tag('dd', get_string($user->country, 'countries'));
@@ -319,9 +315,9 @@ if ($user->url && !isset($hiddenfields['webpage'])) {
 }
 
 if ($user->icq && !isset($hiddenfields['icqnumber'])) {
-    $imurl = new moodle_url('http://web.icq.com/wwp', array('uin'=>$user->icq) );
-    $iconurl = new moodle_url('http://web.icq.com/whitepages/online', array('icq'=>$user->icq, 'img'=>'5'));
-    $statusicon = html_writer::tag('img', '', array('src'=>$iconurl, 'class'=>'icon icon-post', 'alt'=>get_string('status')));
+    $imurl = new moodle_url('http://web.icq.com/wwp', array('uin' => $user->icq) );
+    $iconurl = new moodle_url('http://web.icq.com/whitepages/online', array('icq' => $user->icq, 'img' => '5'));
+    $statusicon = html_writer::tag('img', '', array('src' => $iconurl, 'class' => 'icon icon-post', 'alt' => get_string('status')));
     echo html_writer::tag('dt', get_string('icqnumber'));
     echo html_writer::tag('dd', html_writer::link($imurl, s($user->icq) . $statusicon));
 }
@@ -333,15 +329,17 @@ if ($user->skype && !isset($hiddenfields['skypeid'])) {
         // Bad luck, skype devs are lazy to set up SSL on their servers - see MDL-37233.
         $statusicon = '';
     } else {
-        $statusicon = html_writer::empty_tag('img', array('src'=>$iconurl, 'class'=>'icon icon-post', 'alt'=>get_string('status')));
+        $statusicon = html_writer::empty_tag('img',
+            array('src' => $iconurl, 'class' => 'icon icon-post', 'alt' => get_string('status')));
     }
     echo html_writer::tag('dt', get_string('skypeid'));
     echo html_writer::tag('dd', html_writer::link($imurl, s($user->skype) . $statusicon));
 }
 if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
-    $imurl = new moodle_url('http://edit.yahoo.com/config/send_webmesg', array('.target'=>$user->yahoo, '.src'=>'pg'));
-    $iconurl = new moodle_url('http://opi.yahoo.com/online', array('u'=>$user->yahoo, 'm'=>'g', 't'=>'0'));
-    $statusicon = html_writer::tag('img', '', array('src'=>$iconurl, 'class'=>'iconsmall icon-post', 'alt'=>get_string('status')));
+    $imurl = new moodle_url('http://edit.yahoo.com/config/send_webmesg', array('.target' => $user->yahoo, '.src' => 'pg'));
+    $iconurl = new moodle_url('http://opi.yahoo.com/online', array('u' => $user->yahoo, 'm' => 'g', 't' => '0'));
+    $statusicon = html_writer::tag('img', '',
+        array('src' => $iconurl, 'class' => 'iconsmall icon-post', 'alt' => get_string('status')));
     echo html_writer::tag('dt', get_string('yahooid'));
     echo html_writer::tag('dd', html_writer::link($imurl, s($user->yahoo) . $statusicon));
 }
@@ -355,13 +353,13 @@ if ($user->msn && !isset($hiddenfields['msnid'])) {
     echo html_writer::tag('dd', s($user->msn));
 }
 
-/// Print the Custom User Fields
+// Print the Custom User Fields.
 profile_display_fields($user->id);
 
 
 if (!isset($hiddenfields['mycourses'])) {
-    if ($mycourses = enrol_get_all_users_courses($user->id, true, NULL, 'visible DESC,sortorder ASC')) {
-        $shown=0;
+    if ($mycourses = enrol_get_all_users_courses($user->id, true, null, 'visible DESC, sortorder ASC')) {
+        $shown = 0;
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
             if ($mycourse->category) {
@@ -374,16 +372,17 @@ if (!isset($hiddenfields['mycourses'])) {
                     }
                     $class = 'class="dimmed"';
                 }
-                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >" . $ccontext->get_context_name(false) . "</a>, ";
+                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >" .
+                    $ccontext->get_context_name(false) . "</a>, ";
             }
             $shown++;
-            if($shown==20) {
-                $courselisting.= "...";
+            if ($shown == 20) {
+                $courselisting .= "...";
                 break;
             }
         }
         echo html_writer::tag('dt', get_string('courseprofiles'));
-        echo html_writer::tag('dd', rtrim($courselisting,', '));
+        echo html_writer::tag('dd', rtrim($courselisting, ', '));
     }
 }
 if (!isset($hiddenfields['firstaccess'])) {
@@ -405,7 +404,18 @@ if (!isset($hiddenfields['lastaccess'])) {
     echo html_writer::tag('dd', $datestring);
 }
 
-/// Printing tagged interests
+if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
+    if ($user->lastip) {
+        $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $USER->id));
+        $ipstring = html_writer::link($iplookupurl, $user->lastip);
+    } else {
+        $ipstring = get_string("none");
+    }
+    echo html_writer::tag('dt', get_string('lastip'));
+    echo html_writer::tag('dd', $ipstring);
+}
+
+// Printing tagged interests.
 if (!empty($CFG->usetags)) {
     if ($interests = tag_get_tags_csv('user', $user->id) ) {
         echo html_writer::tag('dt', get_string('interests'));
@@ -431,7 +441,7 @@ echo '<div id="region-content" class="block-region"><div class="region-content">
 echo $OUTPUT->blocks_for_region('content');
 echo '</div></div>';
 
-// Print messaging link if allowed
+// Print messaging link if allowed.
 if (isloggedin() && has_capability('moodle/site:sendmessage', $context)
     && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id)) {
     echo '<div class="messagebox">';
@@ -439,5 +449,5 @@ if (isloggedin() && has_capability('moodle/site:sendmessage', $context)
     echo '</div>';
 }
 
-echo '</div>';  // userprofile class
+echo '</div>';  // Userprofile class.
 echo $OUTPUT->footer();

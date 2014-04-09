@@ -1,0 +1,8 @@
+{
+    "moodle-core-widget-focusafterclose": {
+        "requires": [
+            "base-build",
+            "widget"
+        ]
+    }
+}

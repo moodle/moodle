@@ -1744,6 +1744,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     $ra->itemid       = $itemid;
     $ra->timemodified = $timemodified;
     $ra->modifierid   = empty($USER->id) ? 0 : $USER->id;
+    $ra->sortorder    = 0;
 
     $ra->id = $DB->insert_record('role_assignments', $ra);
 
@@ -5242,7 +5243,7 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param stdClass $record
      */
     protected function __construct(stdClass $record) {
-        $this->_id           = $record->id;
+        $this->_id           = (int)$record->id;
         $this->_contextlevel = (int)$record->contextlevel;
         $this->_instanceid   = $record->instanceid;
         $this->_path         = $record->path;
@@ -5787,6 +5788,13 @@ class context_helper extends context {
     }
 
     /**
+     * Reset internal context levels array.
+     */
+    public static function reset_levels() {
+        self::$alllevels = null;
+    }
+
+    /**
      * Initialise context levels, call before using self::$alllevels.
      */
     private static function init_levels() {
@@ -5808,8 +5816,17 @@ class context_helper extends context {
             return;
         }
 
+        $levels = $CFG->custom_context_classes;
+        if (!is_array($levels)) {
+            $levels = @unserialize($levels);
+        }
+        if (!is_array($levels)) {
+            debugging('Invalid $CFG->custom_context_classes detected, value ignored.', DEBUG_DEVELOPER);
+            return;
+        }
+
         // Unsupported custom levels, use with care!!!
-        foreach ($CFG->custom_context_classes as $level => $classname) {
+        foreach ($levels as $level => $classname) {
             self::$alllevels[$level] = $classname;
         }
         ksort(self::$alllevels);

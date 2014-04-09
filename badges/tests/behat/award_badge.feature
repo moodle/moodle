@@ -7,20 +7,18 @@ Feature: Award badges
   @javascript
   Scenario: Award profile badge
     Given I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Badges" node
-    And I follow "Add a new badge"
-    And I fill the moodle form with:
+    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I set the following fields to these values:
       | Name | Profile Badge |
       | Description | Test badge description |
       | issuername | Test Badge Site |
       | issuercontact | testuser@test-badge-site.com |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I select "Profile completion" from "type"
-    And I check "First name"
-    And I check "Email address"
-    And I check "Phone"
+    And I set the field "type" to "Profile completion"
+    And I set the field "First name" to "1"
+    And I set the field "Email address" to "1"
+    And I set the field "Phone" to "1"
     When I press "Save"
     Then I should see "Profile completion"
     And I should see "First name"
@@ -31,7 +29,7 @@ Feature: Award badges
     And I expand "My profile settings" node
     And I follow "Edit profile"
     And I expand all fieldsets
-    And I fill in "Phone" with "123456789"
+    And I set the field "Phone" to "123456789"
     And I press "Update profile"
     And I follow "My badges"
     Then I should see "Profile Badge"
@@ -39,30 +37,28 @@ Feature: Award badges
 
   @javascript
   Scenario: Award site badge
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher | teacher | 1 | teacher1@asd.com |
       | student | student | 1 | student1@asd.com |
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Badges" node
-    And I follow "Add a new badge"
-    And I fill the moodle form with:
+    And I navigate to "Add a new badge" node in "Site administration > Badges"
+    And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
       | issuername | Tester of site badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I select "Manual issue by role" from "type"
-    And I check "Teacher"
+    And I set the field "type" to "Manual issue by role"
+    And I set the field "Teacher" to "1"
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
     And I follow "Recipients (0)"
     And I press "Award badge"
-    And I select "teacher 1 (teacher1@asd.com)" from "potentialrecipients[]"
+    And I set the field "potentialrecipients[]" to "teacher 1 (teacher1@asd.com)"
     And I press "Award badge"
-    And I select "student 1 (student1@asd.com)" from "potentialrecipients[]"
+    And I set the field "potentialrecipients[]" to "student 1 (student1@asd.com)"
     And I press "Award badge"
     When I follow "Site Badge"
     Then I should see "Recipients (2)"
@@ -74,15 +70,15 @@ Feature: Award badges
 
   @javascript
   Scenario: Award course badge
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -91,22 +87,22 @@ Feature: Award badges
     And I follow "Course 1"
     And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
     And I follow "Add a new badge"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
       | issuername | Tester of course badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I select "Manual issue by role" from "type"
-    And I check "Teacher"
+    And I set the field "type" to "Manual issue by role"
+    And I set the field "Teacher" to "1"
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
     And I follow "Recipients (0)"
     And I press "Award badge"
-    And I select "Student 2 (student2@asd.com)" from "potentialrecipients[]"
+    And I set the field "potentialrecipients[]" to "Student 2 (student2@asd.com)"
     And I press "Award badge"
-    And I select "Student 1 (student1@asd.com)" from "potentialrecipients[]"
+    And I set the field "potentialrecipients[]" to "Student 1 (student1@asd.com)"
     When I press "Award badge"
     And I follow "Course Badge"
     Then I should see "Recipients (2)"
@@ -119,14 +115,14 @@ Feature: Award badges
 
   @javascript
   Scenario: Award badge on activity completion
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | Frist | teacher1@asd.com |
       | student1 | Student | First | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -136,7 +132,7 @@ Feature: Award badges
     And I follow "Home"
     And I follow "Course 1"
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save changes"
     And I turn editing mode on
@@ -148,14 +144,14 @@ Feature: Award badges
     And I follow "Course 1"
     And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
     And I follow "Add a new badge"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
       | issuername | Tester of course badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I select "Activity completion" from "type"
-    And I check "Test assignment name"
+    And I set the field "type" to "Activity completion"
+    And I set the field "Test assignment name" to "1"
     And I press "Save"
     And I press "Enable access"
     When I press "Continue"
@@ -174,14 +170,14 @@ Feature: Award badges
 
   @javascript
   Scenario: Award badge on course completion
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | Frist | teacher1@asd.com |
       | student1 | Student | First | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -191,7 +187,7 @@ Feature: Award badges
     And I follow "Home"
     And I follow "Course 1"
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save changes"
     And I turn editing mode on
@@ -200,23 +196,23 @@ Feature: Award badges
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
     And I follow "Course completion"
-    And I select "2" from "id_overall_aggregation"
+    And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
-    And I check "Assign - Test assignment name"
+    And I set the field "Assign - Test assignment name" to "1"
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
     And I follow "Add a new badge"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
       | issuername | Tester of course badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
-    And I select "Course completion" from "type"
-    And I fill the moodle form with:
+    And I set the field "type" to "Course completion"
+    And I set the following fields to these values:
       | grade_2 | 0 |
     And I press "Save"
     And I press "Enable access"
@@ -235,6 +231,8 @@ Feature: Award badges
     # We can't wait for cron to happen, so the admin manually triggers it.
     And I trigger cron
     # The admin needs to trigger cron twice to see the completion status as completed.
+    # We wait more than 1 minute because of the next cron run scheduled time.
+    And I wait "61" seconds
     And I trigger cron
     # Finally the admin goes back to homepage to continue the user story.
     And I am on homepage

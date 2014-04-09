@@ -87,7 +87,7 @@ class page_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        if (!empty($this->data->other['wid'])) {
+        if (!empty($this->data['other']['wid'])) {
             return new \moodle_url('/mod/wiki/view.php', array('wid' => $this->data['other']['wid'],
                     'title' => $this->data['other']['title'],
                     'uid' => $this->relateduserid,

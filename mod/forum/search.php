@@ -431,7 +431,7 @@ function forum_print_big_search_form($course) {
  *
  * @param string $words String containing space-separated strings to search for
  * @param string $prefix String to prepend to the each token taken out of $words
- * @returns array
+ * @return array
  * @todo Take the hardcoded limit out of this function and put it into a user-specified parameter
  */
 function forum_clean_search_terms($words, $prefix='') {

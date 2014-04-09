@@ -18,8 +18,7 @@
 /**
  * View a single (usually the own) submission, submit own work.
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -233,7 +232,7 @@ if ($edit) {
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
         $event = \mod_workshop\event\submission_updated::create($params);
-        $event->add_record_snapshot('workshop_submissions', $formdata);
+        $event->add_record_snapshot('workshop', $workshop);
         $event->trigger();
 
         // send submitted content for plagiarism detection

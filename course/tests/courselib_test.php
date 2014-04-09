@@ -29,6 +29,7 @@ global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
 require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
+require_once($CFG->dirroot . '/tag/lib.php');
 
 class core_course_courselib_testcase extends advanced_testcase {
 
@@ -1366,28 +1367,40 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Generate an assignment with due date (will generate a course event).
         $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(), 'course' => $course->id));
 
-        $cm = get_coursemodule_from_instance('assign', $assign->id);
+        // Get the module context.
+        $modcontext = context_module::instance($assign->cmid);
 
         // Verify context exists.
-        $this->assertInstanceOf('context_module', context_module::instance($cm->id, IGNORE_MISSING));
+        $this->assertInstanceOf('context_module', $modcontext);
+
+        // Add some tags to this assignment.
+        tag_set('assign', $assign->id, array('Tag 1', 'Tag 2', 'Tag 3'), 'mod_assign', $modcontext->id);
+
+        // Confirm the tag instances were added.
+        $this->assertEquals(3, $DB->count_records('tag_instance', array('component' => 'mod_assign', 'contextid' =>
+            $modcontext->id)));
 
         // Verify event assignment event has been generated.
         $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
         $this->assertEquals(1, $eventcount);
 
         // Run delete..
-        course_delete_module($cm->id);
+        course_delete_module($assign->cmid);
 
         // Verify the context has been removed.
-        $this->assertFalse(context_module::instance($cm->id, IGNORE_MISSING));
+        $this->assertFalse(context_module::instance($assign->cmid, IGNORE_MISSING));
 
         // Verify the course_module record has been deleted.
-        $cmcount = $DB->count_records('course_modules', array('id' => $cm->id));
+        $cmcount = $DB->count_records('course_modules', array('id' => $assign->cmid));
         $this->assertEmpty($cmcount);
 
         // Verify event assignment events have been removed.
         $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
         $this->assertEmpty($eventcount);
+
+        // Verify the tag instances were deleted.
+        $this->assertEquals(0, $DB->count_records('tag_instance', array('component' => 'mod_assign', 'contextid' =>
+            $modcontext->id)));
     }
 
     /**
@@ -1483,6 +1496,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($updatedcourse->id, $event->objectid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $url = new moodle_url('/course/edit.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($updatedcourse, $event->get_record_snapshot('course', $event->objectid));
         $this->assertEquals('course_updated', $event->get_legacy_eventname());
         $this->assertEventLegacyData($updatedcourse, $event);
@@ -1569,9 +1584,14 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertSame($course->idnumber, $eventdata['other']['idnumber']);
         $this->assertSame($course->fullname, $eventdata['other']['fullname']);
         $this->assertSame($course->shortname, $eventdata['other']['shortname']);
-        // The legacy data also passed the context in the course object.
-        $course->context = $coursecontext;
-        $this->assertEventLegacyData($course, $event);
+
+        // The legacy data also passed the context in the course object and substitutes timemodified with the current date.
+        $expectedlegacy = clone($course);
+        $expectedlegacy->context = $coursecontext;
+        $expectedlegacy->timemodified = $event->timecreated;
+        $this->assertEventLegacyData($expectedlegacy, $event);
+
+        // Validate legacy log data.
         $expectedlog = array(SITEID, 'course', 'delete', 'view.php?id=' . $course->id, $course->fullname . '(ID ' . $course->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
         $this->assertEventContextNotUsed($event);
@@ -1648,6 +1668,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($category->id, $event->objectid);
         $this->assertEquals($categorycontext->id, $event->contextid);
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $this->assertEquals(null, $event->get_url());
         $this->assertEventLegacyData($category, $event);
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category->name . '(ID ' . $category->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
@@ -1744,6 +1765,8 @@ class core_course_courselib_testcase extends advanced_testcase {
             'operation' => $rc->get_operation(),
             'samesite' => $rc->is_samesite()
         );
+        $url = new moodle_url('/course/view.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -1795,6 +1818,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($coursecontext->id, $event->contextid);
         $expecteddesc = 'Course ' . $event->courseid . ' section ' . $event->other['sectionnum'] . ' updated by user ' . $event->userid;
         $this->assertEquals($expecteddesc, $event->get_description());
+        $url = new moodle_url('/course/editsection.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
         $id = $section->id;
         $sectionnum = $section->section;
@@ -1945,7 +1970,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($cm->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals('course_modules', $event->objecttable);
-        $url = new moodle_url('/mod/assign/view.php', array('id' => $mod->id));
+        $url = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());
 
         // Test legacy data.
@@ -1958,7 +1983,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventdata->userid     = $USER->id;
         $this->assertEventLegacyData($eventdata, $event);
 
-        $arr = array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$mod->id", "assign $cm->instance");
+        $arr = array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$cm->id", "assign $cm->instance");
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -2051,7 +2076,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($cm->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals('course_modules', $event->objecttable);
-        $url = new moodle_url('/mod/forum/view.php', array('id' => $mod->id));
+        $url = new moodle_url('/mod/forum/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());
 
         // Test legacy data.
@@ -2064,7 +2089,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventdata->userid     = $USER->id;
         $this->assertEventLegacyData($eventdata, $event);
 
-        $arr = array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$mod->id", "forum $cm->instance");
+        $arr = array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance");
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }

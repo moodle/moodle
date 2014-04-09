@@ -43,7 +43,6 @@ class quizaccess_securewindow_testcase extends basic_testcase {
     public function test_securewindow_access_rule() {
         $quiz = new stdClass();
         $quiz->browsersecurity = 'securewindow';
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);

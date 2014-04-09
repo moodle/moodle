@@ -97,6 +97,7 @@ class page_version_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['versionid'])) {
             throw new \coding_exception('The versionid need to be set in $other');
         }

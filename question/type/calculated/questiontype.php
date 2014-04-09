@@ -1706,12 +1706,12 @@ class qtype_calculated extends question_type {
                     $line++;
                     $text .= "<td align=\"left\" style=\"white-space:nowrap;\">$qu->name</td>";
                     // TODO MDL-43779 should not have quiz-specific code here.
-                    $nbofquiz = $DB->count_records('quiz_question_instances', array('questionid' => $qu->id));
+                    $nbofquiz = $DB->count_records('quiz_slots', array('questionid' => $qu->id));
                     $nbofattempts = $DB->count_records_sql("
                             SELECT count(1)
-                              FROM {quiz_question_instances} qqi
-                              JOIN {quiz_attempts} quiza ON quiza.quiz = qqi.quizid
-                             WHERE qqi.questionid = ?
+                              FROM {quiz_slots} slot
+                              JOIN {quiz_attempts} quiza ON quiza.quiz = slot.quizid
+                             WHERE slot.questionid = ?
                                AND quiza.preview = 0", array($qu->id));
                     if ($nbofquiz > 0) {
                         $text .= "<td align=\"center\">$nbofquiz</td>";

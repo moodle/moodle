@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Strings for component 'workshop', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -110,7 +108,6 @@ $string['eventassessmentevaluationsreset'] = 'Assessment evaluations reset';
 $string['eventassessableuploaded'] = 'Assessable uploaded';
 $string['eventassessmentevaluated'] = 'Assessment evaluated';
 $string['eventassessmentreevaluated'] = 'Assessment re-evaluated';
-$string['eventinstanceslistviewed'] = 'Workshop instance list viewed';
 $string['eventsubmissionassessed'] = 'Submission assessed';
 $string['eventsubmissionassessmentsreset'] = 'Submission assessments cleared';
 $string['eventsubmissioncreated'] = 'Submission created';

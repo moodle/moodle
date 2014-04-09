@@ -18,7 +18,7 @@
 /**
  * This file is responsible for producing the survey reports
  *
- * @package   mod-survey
+ * @package   mod_survey
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -92,8 +92,6 @@
     $strseemoredetail = get_string("seemoredetail", "survey");
     $strnotes = get_string("notes", "survey");
 
-    add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id", $cm->id);
-
     switch ($action) {
         case 'download':
             $PAGE->navbar->add(get_string('downloadresults', 'survey'));
@@ -130,6 +128,16 @@
     } else {
         $currentgroup = 0;
     }
+
+    $params = array(
+        'objectid' => $survey->id,
+        'context' => $context,
+        'courseid' => $course->id,
+        'relateduserid' => $student,
+        'other' => array('action' => $action, 'groupid' => $currentgroup)
+    );
+    $event = \mod_survey\event\report_viewed::create($params);
+    $event->trigger();
 
     if ($currentgroup) {
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $currentgroup, null, false);

@@ -1610,6 +1610,7 @@ function purge_all_caches() {
     remove_dir($CFG->localcachedir, true);
     set_config('localcachedirpurged', time());
     make_localcache_directory('', true);
+    \core\task\manager::clear_static_caches();
 }
 
 /**
@@ -3688,6 +3689,8 @@ function get_all_user_name_fields($returnsql = false, $tableprefix = null, $pref
 /**
  * Reduces lines of duplicated code for getting user name fields.
  *
+ * See also {@link user_picture::unalias()}
+ *
  * @param object $addtoobject Object to add user name fields to.
  * @param object $secondobject Object that contains user name field information.
  * @param string $prefix prefix to be added to all fields (including $additionalfields) e.g. authorfirstname.
@@ -4049,16 +4052,31 @@ function create_user_record($username, $password, $auth = 'manual') {
  */
 function update_user_record($username) {
     global $DB, $CFG;
-    require_once($CFG->dirroot."/user/profile/lib.php");
-    require_once($CFG->dirroot.'/user/lib.php');
     // Just in case check text case.
     $username = trim(core_text::strtolower($username));
 
     $oldinfo = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id), '*', MUST_EXIST);
+    return update_user_record_by_id($oldinfo->id);
+}
+
+/**
+ * Will update a local user record from an external source (MNET users can not be updated using this method!).
+ *
+ * @param int $id user id
+ * @return stdClass A complete user object
+ */
+function update_user_record_by_id($id) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot."/user/profile/lib.php");
+    require_once($CFG->dirroot.'/user/lib.php');
+
+    $params = array('mnethostid' => $CFG->mnet_localhost_id, 'id' => $id, 'deleted' => 0);
+    $oldinfo = $DB->get_record('user', $params, '*', MUST_EXIST);
+
     $newuser = array();
     $userauth = get_auth_plugin($oldinfo->auth);
 
-    if ($newinfo = $userauth->get_userinfo($username)) {
+    if ($newinfo = $userauth->get_userinfo($oldinfo->username)) {
         $newinfo = truncate_userinfo($newinfo);
         $customfields = $userauth->get_custom_user_profile_fields();
 
@@ -4196,7 +4214,7 @@ function delete_user(stdClass $user) {
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.
-    tag_set('user', $user->id, array());
+    tag_set('user', $user->id, array(), 'core', $usercontext->id);
 
     // Unconditionally unenrol from all courses.
     enrol_user_delete($user);
@@ -4322,7 +4340,7 @@ function guest_user() {
  *
  * Note: this function works only with non-mnet accounts!
  *
- * @param string $username  User's username
+ * @param string $username  User's username (or also email if $CFG->authloginviaemail enabled)
  * @param string $password  User's password
  * @param bool $ignorelockout useful when guessing is prevented by other mechanism such as captcha or SSO
  * @param int $failurereason login failure reason, can be used in renderers (it may disclose if account exists)
@@ -4332,9 +4350,27 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     global $CFG, $DB;
     require_once("$CFG->libdir/authlib.php");
 
+    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
+        // we have found the user
+
+    } else if (!empty($CFG->authloginviaemail)) {
+        if ($email = clean_param($username, PARAM_EMAIL)) {
+            $select = "mnethostid = :mnethostid AND LOWER(email) = LOWER(:email) AND deleted = 0";
+            $params = array('mnethostid' => $CFG->mnet_localhost_id, 'email' => $email);
+            $users = $DB->get_records_select('user', $select, $params, 'id', 'id', 0, 2);
+            if (count($users) === 1) {
+                // Use email for login only if unique.
+                $user = reset($users);
+                $user = get_complete_user_data('id', $user->id);
+                $username = $user->username;
+            }
+            unset($users);
+        }
+    }
+
     $authsenabled = get_enabled_auth_plugins();
 
-    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
+    if ($user) {
         // Use manual if auth not set.
         $auth = empty($user->auth) ? 'manual' : $user->auth;
         if (!empty($user->suspended)) {
@@ -4373,7 +4409,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             return false;
         }
 
-        // Do not try to authenticate non-existent accounts when user creation is not disabled.
+        // Do not try to authenticate non-existent accounts when user creation is disabled.
         if (!empty($CFG->authpreventaccountcreation)) {
             $failurereason = AUTH_LOGIN_NOUSER;
 
@@ -4426,7 +4462,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             // User already exists in database.
             if (empty($user->auth)) {
                 // For some reason auth isn't set yet.
-                $DB->set_field('user', 'auth', $auth, array('username' => $username));
+                $DB->set_field('user', 'auth', $auth, array('id' => $user->id));
                 $user->auth = $auth;
             }
 
@@ -4436,7 +4472,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
 
             if ($authplugin->is_synchronised_with_external()) {
                 // Update user record from external DB.
-                $user = update_user_record($username);
+                $user = update_user_record_by_id($user->id);
             }
         } else {
             // Create account, we verified above that user creation is allowed.
@@ -4855,6 +4891,7 @@ function set_login_session_preferences() {
     $SESSION->justloggedin = true;
 
     unset($SESSION->lang);
+    unset($SESSION->forcelang);
     unset($SESSION->load_navigation_admin);
 }
 
@@ -6622,7 +6659,14 @@ function clean_filename($string) {
 function current_language() {
     global $CFG, $USER, $SESSION, $COURSE;
 
-    if (!empty($COURSE->id) and $COURSE->id != SITEID and !empty($COURSE->lang)) {
+    if (!empty($SESSION->forcelang)) {
+        // Allows overriding course-forced language (useful for admins to check
+        // issues in courses whose language they don't understand).
+        // Also used by some code to temporarily get language-related information in a
+        // specific language (see force_current_language()).
+        $return = $SESSION->forcelang;
+
+    } else if (!empty($COURSE->id) and $COURSE->id != SITEID and !empty($COURSE->lang)) {
         // Course language can override all other settings for this page.
         $return = $COURSE->lang;
 
@@ -6654,14 +6698,10 @@ function current_language() {
  * @return string
  */
 function get_parent_language($lang=null) {
-    global $COURSE, $SESSION;
 
     // Let's hack around the current language.
     if (!empty($lang)) {
-        $oldcourselang  = empty($COURSE->lang) ? '' : $COURSE->lang;
-        $oldsessionlang = empty($SESSION->lang) ? '' : $SESSION->lang;
-        $COURSE->lang  = '';
-        $SESSION->lang = $lang;
+        $oldforcelang = force_current_language($lang);
     }
 
     $parentlang = get_string('parentlanguage', 'langconfig');
@@ -6671,11 +6711,32 @@ function get_parent_language($lang=null) {
 
     // Let's hack around the current language.
     if (!empty($lang)) {
-        $COURSE->lang  = $oldcourselang;
-        $SESSION->lang = $oldsessionlang;
+        force_current_language($oldforcelang);
     }
 
     return $parentlang;
+}
+
+/**
+ * Force the current language to get strings and dates localised in the given language.
+ *
+ * After calling this function, all strings will be provided in the given language
+ * until this function is called again, or equivalent code is run.
+ *
+ * @param string $language
+ * @return string previous $SESSION->forcelang value
+ */
+function force_current_language($language) {
+    global $SESSION;
+    $sessionforcelang = isset($SESSION->forcelang) ? $SESSION->forcelang : '';
+    if ($language !== $sessionforcelang) {
+        // Seting forcelang to null or an empty string disables it's effect.
+        if (empty($language) || get_string_manager()->translation_exists($language, false)) {
+            $SESSION->forcelang = $language;
+            moodle_setlocale();
+        }
+    }
+    return $sessionforcelang;
 }
 
 /**
@@ -7604,7 +7665,18 @@ function moodle_setlocale($locale='') {
         $messages= setlocale (LC_MESSAGES, 0);
     }
     // Set locale to all.
-    setlocale (LC_ALL, $currentlocale);
+    $result = setlocale (LC_ALL, $currentlocale);
+    // If setting of locale fails try the other utf8 or utf-8 variant,
+    // some operating systems support both (Debian), others just one (OSX).
+    if ($result === false) {
+        if (stripos($currentlocale, '.UTF-8') !== false) {
+            $newlocale = str_ireplace('.UTF-8', '.UTF8', $currentlocale);
+            setlocale (LC_ALL, $newlocale);
+        } else if (stripos($currentlocale, '.UTF8') !== false) {
+            $newlocale = str_ireplace('.UTF8', '.UTF-8', $currentlocale);
+            setlocale (LC_ALL, $newlocale);
+        }
+    }
     // Set old values.
     setlocale (LC_MONETARY, $monetary);
     setlocale (LC_NUMERIC, $numeric);

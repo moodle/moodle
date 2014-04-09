@@ -2,14 +2,36 @@ This files describes API changes in the quiz code.
 
 === 2.7 ===
 
-* The columns of the quiz_question_instances table have been renamed to match
-  the coding guidelines. Specifically
+* The old quiz.questions database column (comma-separated list of question ids)
+  is gone, and instead the quiz_question_instances table has been renamed to
+  to quiz_slots. Some of the columns of that table have been renamed to match
+  the coding guidelines. Specifically:
       quiz     -> quizid
       question -> questionid
       grade    -> maxmark
+  also there are two new columns:
+      slot     -  numbers the questions in the quiz in order, as on the edit quiz page.
+      page     -  new way to determine which question is on which page.
+  naturally, other parts of the code and APIs have been updated to reflect that
+  change.
 
+* The following functions, which were part of the internal workings of the quiz,
+  have been removed.
+      quiz_get_slot_for_question
+      quiz_number_of_questions_in_quiz
+      quiz_repaginate               (there is now a quiz_repaginate_questions with a different API).
+      quiz_add_page_break_at        (see quiz_add_page_break_after_slot)
+      quiz_add_page_break_after     (see quiz_add_page_break_after_slot)
+      quiz_number_of_pages
+      quiz_remove_question          (see quiz_remove_slot)
+      quiz_update_question_instance (see quiz_update_slot_maxmark)
+
+* The following internal functions have had their API changed.
+      quiz_delete_empty_page: has had its arguments changed to $quiz and $pagenumber.
+      quiz_has_question_use: now takes $quiz and $slot, not $questionid.
 
 === 2.6 ===
+
 * As part of improving the page usability and accessibility, we updated the
   heading levels for quiz module so it has a proper nesting. (MDL-41615)
 

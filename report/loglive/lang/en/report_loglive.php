@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['eventreportviewed'] = 'Live log report viewed';
 $string['loglive:view'] = 'View live logs';
 $string['pluginname'] = 'Live logs';
 $string['livelogs'] = 'Live logs from the past hour';

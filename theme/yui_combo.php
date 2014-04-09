@@ -83,7 +83,8 @@ while (count($parts)) {
 
     $version = array_shift($bits);
     if ($version === 'rollup') {
-        $revision = array_shift($bits);
+        $yuipatchedversion = explode('_', array_shift($bits));
+        $revision = $yuipatchedversion[0];
         $rollupname = array_shift($bits);
 
         if (strpos($rollupname, 'yui-moodlesimple') !== false) {
@@ -108,16 +109,7 @@ while (count($parts)) {
             $yuiversion = $yuipatchedversion[0];
 
             $yuimodules = array(
-                // Include everything from original SimpleYUI,
-                // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules
-                // listed in https://github.com/yui/yui3/blob/v3.12.0/build/simpleyui/simpleyui.js#L21327
                 'yui',
-                'yui-base',
-                'get',
-                'features',
-                'loader-base',
-                'loader-rollup',
-                'loader-yui3',
                 'oop',
                 'event-custom-base',
                 'dom-core',
@@ -222,6 +214,7 @@ while (count($parts)) {
             $yuimodules = array(
                 'core/tooltip/tooltip',
                 'core/popuphelp/popuphelp',
+                'core/widget-focusafterclose/widget-focusafterclose',
                 'core/dock/dock-loader',
                 'core/notification/notification-dialogue',
             );

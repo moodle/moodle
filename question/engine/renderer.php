@@ -41,6 +41,34 @@ class core_question_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render an icon, optionally with the word 'Preview' beside it, to preview
+     * a given question.
+     * @param int $questionid the id of the question to be previewed.
+     * @param context $context the context in which the preview is happening.
+     *      Must be a course or category context.
+     * @param bool $showlabel if true, show the word 'Preview' after the icon.
+     *      If false, just show the icon.
+     */
+    public function question_preview_link($questionid, context $context, $showlabel) {
+        if ($showlabel) {
+            $alt = '';
+            $label = ' ' . get_string('preview');
+            $attributes = array();
+        } else {
+            $alt = get_string('preview');
+            $label = '';
+            $attributes = array('title' => $alt);
+        }
+
+        $image = $this->pix_icon('t/preview', $alt, '', array('class' => 'iconsmall'));
+        $link = question_preview_url($questionid, null, null, null, null, $context);
+        $action = new popup_action('click', $link, 'questionpreview',
+                question_preview_popup_params());
+
+        return $this->action_link($link, $image . $label, $action, $attributes);
+    }
+
+    /**
      * Generate the display of a question in a particular state, and with certain
      * display options. Normally you do not call this method directly. Intsead
      * you call {@link question_usage_by_activity::render_question()} which will

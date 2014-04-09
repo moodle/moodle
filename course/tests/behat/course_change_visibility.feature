@@ -6,10 +6,10 @@ Feature: We can change the visibility of courses in the management interface.
 
   # Test hiding and showing a course.
   Scenario: Test toggling course visibility through the management interfaces.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -53,10 +53,10 @@ Feature: We can change the visibility of courses in the management interface.
   # Test hiding and showing a course with JS, same as the above test.
   @javascript
   Scenario: Test using AJAX to hide a course through the management interfaces.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 

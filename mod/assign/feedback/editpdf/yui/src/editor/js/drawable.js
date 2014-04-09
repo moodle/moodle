@@ -14,14 +14,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a drawable thing which contains both
- * Y.Nodes, and Y.Shapes.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * DRAWABLE
+ * Class representing a drawable thing which contains both Y.Nodes, and Y.Shapes.
  *
  * @namespace M.assignfeedback_editpdf
  * @param M.assignfeedback_editpdf.editor editor

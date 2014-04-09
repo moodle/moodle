@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
 require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_options.php');
 require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_form.php');
-require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_table.php');
+require_once($CFG->dirroot . '/mod/quiz/report/responses/last_responses_table.php');
+require_once($CFG->dirroot . '/mod/quiz/report/responses/first_or_all_responses_table.php');
 
 
 /**
@@ -48,7 +49,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_table.php');
 class quiz_responses_report extends quiz_attempts_report {
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $OUTPUT;
+        global $OUTPUT;
 
         list($currentgroup, $students, $groupstudents, $allowed) =
                 $this->init('responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
@@ -76,7 +77,12 @@ class quiz_responses_report extends quiz_attempts_report {
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
-        $table = new quiz_responses_table($quiz, $this->context, $this->qmsubselect,
+        if ($options->whichtries === question_attempt::LAST_TRY) {
+            $tableclassname = 'quiz_last_responses_table';
+        } else {
+            $tableclassname = 'quiz_first_or_all_responses_table';
+        }
+        $table = new $tableclassname($quiz, $this->context, $this->qmsubselect,
                 $options, $groupstudents, $students, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
@@ -109,7 +115,7 @@ class quiz_responses_report extends quiz_attempts_report {
             }
         }
 
-        $hasquestions = quiz_questions_in_quiz($quiz->questions);
+        $hasquestions = quiz_has_questions($quiz->id);
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
                 echo quiz_no_questions_message($quiz, $cm, $this->context);
@@ -185,7 +191,7 @@ class quiz_responses_report extends quiz_attempts_report {
             $table->no_sorting('feedbacktext');
             $table->column_class('sumgrades', 'bold');
 
-            $table->set_attribute('id', 'attempts');
+            $table->set_attribute('id', 'responses');
 
             $table->collapsible(true);
 

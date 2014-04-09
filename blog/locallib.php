@@ -260,14 +260,14 @@ class blog_entry implements renderable {
             $this->add_associations();
         }
 
-        tag_set('post', $this->id, $this->tags);
+        tag_set('post', $this->id, $this->tags, 'core', context_user::instance($this->userid)->id);
 
         // Trigger an event for the new entry.
         $event = \core\event\blog_entry_created::create(array(
             'objectid'      => $this->id,
             'relateduserid' => $this->userid
         ));
-        $event->set_custom_data($this);
+        $event->set_blog_entry($this);
         $event->trigger();
     }
 
@@ -303,13 +303,13 @@ class blog_entry implements renderable {
 
         // Update record.
         $DB->update_record('post', $entry);
-        tag_set('post', $entry->id, $entry->tags);
+        tag_set('post', $entry->id, $entry->tags, 'core', context_user::instance($this->userid)->id);
 
         $event = \core\event\blog_entry_updated::create(array(
             'objectid'      => $entry->id,
             'relateduserid' => $entry->userid
         ));
-        $event->set_custom_data($entry);
+        $event->set_blog_entry($entry);
         $event->trigger();
     }
 
@@ -327,14 +327,14 @@ class blog_entry implements renderable {
         // Get record to pass onto the event.
         $record = $DB->get_record('post', array('id' => $this->id));
         $DB->delete_records('post', array('id' => $this->id));
-        tag_set('post', $this->id, array());
+        tag_set('post', $this->id, array(), 'core', context_user::instance($this->userid)->id);
 
         $event = \core\event\blog_entry_deleted::create(array(
             'objectid'      => $this->id,
             'relateduserid' => $this->userid
             ));
         $event->add_record_snapshot("post", $record);
-        $event->set_custom_data($this);
+        $event->set_blog_entry($this);
         $event->trigger();
     }
 
@@ -434,7 +434,7 @@ class blog_entry implements renderable {
             }
         }
 
-        tag_set('post', $this->id, $tags);
+        tag_set('post', $this->id, $tags, 'core', context_user::instance($this->userid)->id);
     }
 
     /**

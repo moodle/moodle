@@ -141,7 +141,7 @@ if ($tagnew = $tagform->get_data()) {
         }
 
         //updated related tags
-        tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
+        tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)), 'core', $systemcontext);
         //print_object($tagnew); die();
 
         redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
@@ -162,8 +162,7 @@ if (!empty($errorstring)) {
 
 $tagform->display();
 
-if (ajaxenabled()) {
-    $PAGE->requires->js('/tag/tag.js');
-    $PAGE->requires->js_function_call('init_tag_autocomplete', null, true);
-}
+$PAGE->requires->js('/tag/tag.js');
+$PAGE->requires->js_function_call('init_tag_autocomplete', null, true);
+
 echo $OUTPUT->footer();

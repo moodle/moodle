@@ -28,17 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Event for when a choice activity report is viewed.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string content viewed content identifier.
- * }
- *
  * @package mod_choice
  * @copyright 2013 Adrian Greeve
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed extends \core\event\content_viewed {
+class report_viewed extends \core\event\base {
 
     /**
      * Init method.
@@ -59,12 +53,20 @@ class report_viewed extends \core\event\content_viewed {
     }
 
     /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "The user with id $this->userid has viewed report for choice with instanceid $this->objectid";
+    }
+
+    /**
      * Returns relevant URL.
      * @return \moodle_url
      */
     public function get_url() {
-        $url = '/mod/choice/report.php';
-        return new \moodle_url($url, array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/choice/report.php', array('id' => $this->contextinstanceid));
     }
 
     /**

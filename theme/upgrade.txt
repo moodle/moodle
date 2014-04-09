@@ -3,6 +3,8 @@ information provided here is intended especially for theme designer.
 
 === 2.7 ===
 
+* CSS related functions in theme class and csslib.php were refactored, addons that are
+  using this private API need to be updated
 * Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.ro/.r1' to apply tr specific css for various tables.
   These classes are deprecated now and will be removed in Moodle 2.9. This has done to better support styling tables that will be altered by JavaScript.
   Here is an example to update your css:
@@ -13,6 +15,12 @@ information provided here is intended especially for theme designer.
     table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
     table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
 
+Removed themes:
+* afterburner, anomaly, arialist, binarius, boxxie, brick, formal_white, formfactor, fusion, leatherbound,
+  magazine, nimble, nonzero, overlay, serenity, sky_high, splash, standard and standardold have been removed.
+  During the upgrade process the themes will be uninstalled and all their settings will be deleted.
+  If you wish to keep your theme and its settings, download it from moodle.org and put it back in
+  the theme/ directory BEFORE UPGRADING.
 
 === 2.6 ===
 
@@ -59,19 +67,19 @@ Selector changes:
 Maintenance renderer notes:
 When the maintenance layout is being used $OUTPUT will be an instance of core_renderer_maintenance.
 This renderer mimics the core_renderer except that the following functions always return an empty string.
-* core_maintenance_renderer::block
-* core_maintenance_renderer::blocks
-* core_maintenance_renderer::blocks_for_regions
-* core_maintenance_renderer::course_header
-* core_maintenance_renderer::course_footer
-* core_maintenance_renderer::course_content_header
-* core_maintenance_renderer::course_content_footer
-* core_maintenance_renderer::custom_menu
-* core_maintenance_renderer::file_picker
-* core_maintenance_renderer::htmllize_file_tree
-* core_maintenance_renderer::lang_menu
-* core_maintenance_renderer::login_info
-* core_maintenance_renderer::user_picture
+* core_renderer_maintenance::block
+* core_renderer_maintenance::blocks
+* core_renderer_maintenance::blocks_for_regions
+* core_renderer_maintenance::course_header
+* core_renderer_maintenance::course_footer
+* core_renderer_maintenance::course_content_header
+* core_renderer_maintenance::course_content_footer
+* core_renderer_maintenance::custom_menu
+* core_renderer_maintenance::file_picker
+* core_renderer_maintenance::htmllize_file_tree
+* core_renderer_maintenance::lang_menu
+* core_renderer_maintenance::login_info
+* core_renderer_maintenance::user_picture
 
 If you have overridden methods of the core_renderer in your theme and want those changes to be shown during times of maintenance you
 will also need to override the core_renderer_maintenance and copy your customisations from the core_renderer to that.

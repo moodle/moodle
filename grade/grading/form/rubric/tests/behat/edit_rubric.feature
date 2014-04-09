@@ -5,14 +5,14 @@ Feature: Rubrics can be created and edited
   I need to edit previously used rubrics
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -25,7 +25,7 @@ Feature: Rubrics can be created and edited
       | Grading method | Rubric |
     When I go to "Test assignment 1 name" advanced grading definition page
     # Defining a rubric.
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Assignment 1 rubric |
       | Description | Rubric test description |
     And I define the following rubric:
@@ -84,12 +84,12 @@ Feature: Rubrics can be created and edited
     And I follow "Course 1"
     # Editing a rubric definition without regrading students.
     And I go to "Test assignment 1 name" advanced grading definition page
-    And "Save as draft" "button" should not exists
+    And "Save as draft" "button" should not exist
     And I click on "Move up" "button" in the "Criterion 1" "table_row"
     And I replace "Level 11" rubric level with "Level 11 edited" in "Criterion 1" criterion
     And I press "Save"
     And I should see "You are about to save changes to a rubric that has already been used for grading."
-    And I select "Do not mark for regrade" from "menurubricregrade"
+    And I set the field "menurubricregrade" to "Do not mark for regrade"
     And I press "Continue"
     And I log out
     # Check that the student still sees the grade.
@@ -135,13 +135,13 @@ Feature: Rubrics can be created and edited
     And I log in as "teacher1"
     And I follow "Course 1"
     And I go to "Test assignment 1 name" advanced grading definition page
-    And I uncheck "Allow users to preview rubric used in the module (otherwise rubric will only become visible after grading)"
-    And I uncheck "Display rubric description during evaluation"
-    And I uncheck "Display rubric description to those being graded"
-    And I uncheck "Display points for each level during evaluation"
-    And I uncheck "Display points for each level to those being graded"
+    And I set the field "Allow users to preview rubric used in the module (otherwise rubric will only become visible after grading)" to ""
+    And I set the field "Display rubric description during evaluation" to ""
+    And I set the field "Display rubric description to those being graded" to ""
+    And I set the field "Display points for each level during evaluation" to ""
+    And I set the field "Display points for each level to those being graded" to ""
     And I press "Save"
-    And I select "Do not mark for regrade" from "menurubricregrade"
+    And I set the field "menurubricregrade" to "Do not mark for regrade"
     And I press "Continue"
     And I log out
     # Students should not see anything.

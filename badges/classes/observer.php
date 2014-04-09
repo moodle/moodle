@@ -40,8 +40,8 @@ class core_badges_observer {
             require_once($CFG->dirroot.'/lib/badgeslib.php');
 
             $eventdata = $event->get_record_snapshot('course_modules_completion', $event->objectid);
-            $userid = $event->other['relateduserid'];
-            $mod = $eventdata->coursemoduleid;
+            $userid = $event->relateduserid;
+            $mod = $event->contextinstanceid;
 
             if ($eventdata->completionstate == COMPLETION_COMPLETE
                 || $eventdata->completionstate == COMPLETION_COMPLETE_PASS

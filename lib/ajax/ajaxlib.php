@@ -46,7 +46,7 @@ function user_preference_allow_ajax_update($name, $paramtype) {
  * This should be used in combination with ajax_check_captured_output to
  * report any captured output to the user.
  *
- * @retrun Boolean Returns true on success or false on failure.
+ * @return Boolean Returns true on success or false on failure.
  */
 function ajax_capture_output() {
     // Start capturing output in case of broken plugins.
@@ -68,11 +68,15 @@ function ajax_check_captured_output() {
     $output = ob_get_contents();
     ob_end_clean();
 
-    if ($CFG->debugdeveloper && !empty($output)) {
-        // Only throw an error if the site is in debugdeveloper.
-        throw new coding_exception('Unexpected output whilst processing AJAX request. ' .
+    if (!empty($output)) {
+        $message = 'Unexpected output whilst processing AJAX request. ' .
                 'This could be caused by trailing whitespace. Output received: ' .
-                var_export($output, true));
+                var_export($output, true);
+        if ($CFG->debugdeveloper && !empty($output)) {
+            // Only throw an error if the site is in debugdeveloper.
+            throw new coding_exception($message);
+        }
+        error_log('Potential coding error: ' . $message);
     }
     return $output;
 }

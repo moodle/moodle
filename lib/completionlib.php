@@ -1042,9 +1042,8 @@ class completion_info {
         // Trigger an event for course module completion changed.
         $event = \core\event\course_module_completion_updated::create(
             array('objectid' => $data->id,
-                'userid' => $USER->id,
                 'context' => $cmcontext,
-                'courseid' => $coursecontext->instanceid,
+                'relateduserid' => $data->userid,
                 'other' => array('relateduserid' => $data->userid)
                 )
             );

@@ -91,13 +91,15 @@ function enrol_get_plugins($enabled) {
     }
 
     foreach ($plugins as $plugin=>$location) {
-        if (!file_exists("$location/lib.php")) {
-            continue;
-        }
-        include_once("$location/lib.php");
         $class = "enrol_{$plugin}_plugin";
         if (!class_exists($class)) {
-            continue;
+            if (!file_exists("$location/lib.php")) {
+                continue;
+            }
+            include_once("$location/lib.php");
+            if (!class_exists($class)) {
+                continue;
+            }
         }
 
         $result[$plugin] = new $class();
@@ -2146,16 +2148,11 @@ abstract class enrol_plugin {
      * @param progress_trace $trace
      */
     protected function notify_expiry_enrolled($user, $ue, progress_trace $trace) {
-        global $CFG, $SESSION;
+        global $CFG;
 
         $name = $this->get_name();
 
-        // Some nasty hackery to get strings and dates localised for target user.
-        $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
-        if (get_string_manager()->translation_exists($user->lang, false)) {
-            $SESSION->lang = $user->lang;
-            moodle_setlocale();
-        }
+        $oldforcelang = force_current_language($user->lang);
 
         $enroller = $this->get_enroller($ue->enrolid);
         $context = context_course::instance($ue->courseid);
@@ -2189,10 +2186,7 @@ abstract class enrol_plugin {
             $trace->output("error notifying user $ue->userid that enrolment in course $ue->courseid expires on ".userdate($ue->timeend, '', $CFG->timezone), 1);
         }
 
-        if ($SESSION->lang !== $sessionlang) {
-            $SESSION->lang = $sessionlang;
-            moodle_setlocale();
-        }
+        force_current_language($oldforcelang);
     }
 
     /**
@@ -2207,7 +2201,7 @@ abstract class enrol_plugin {
      * @param progress_trace $trace
      */
     protected function notify_expiry_enroller($eid, $users, progress_trace $trace) {
-        global $DB, $SESSION;
+        global $DB;
 
         $name = $this->get_name();
 
@@ -2218,12 +2212,7 @@ abstract class enrol_plugin {
         $enroller = $this->get_enroller($instance->id);
         $admin = get_admin();
 
-        // Some nasty hackery to get strings and dates localised for target user.
-        $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
-        if (get_string_manager()->translation_exists($enroller->lang, false)) {
-            $SESSION->lang = $enroller->lang;
-            moodle_setlocale();
-        }
+        $oldforcelang = force_current_language($enroller->lang);
 
         foreach($users as $key=>$info) {
             $users[$key] = '* '.$info['fullname'].' - '.userdate($info['timeend'], '', $enroller->timezone);
@@ -2258,10 +2247,7 @@ abstract class enrol_plugin {
             $trace->output("error notifying user $enroller->id about all expiring $name enrolments in course $instance->courseid", 1);
         }
 
-        if ($SESSION->lang !== $sessionlang) {
-            $SESSION->lang = $sessionlang;
-            moodle_setlocale();
-        }
+        force_current_language($oldforcelang);
     }
 
     /**

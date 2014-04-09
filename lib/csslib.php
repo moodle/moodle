@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains CSS related class, and function for the CSS optimiser
+ * This file contains CSS related class, and function for the CSS optimiser.
  *
  * Please see the {@link css_optimiser} class for greater detail.
+ *
+ * NOTE: these functions are not expected to be used from any addons.
  *
  * @package core
  * @subpackage cssoptimiser
@@ -27,6 +29,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
+    // This can be also set in config.php file,
+    // it needs to be higher than the time it takes to generate all CSS content.
+    define('THEME_DESIGNER_CACHE_LIFETIME', 10);
+}
+
 /**
  * Stores CSS in a file at the given path.
  *
@@ -34,49 +42,14 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param theme_config $theme The theme that the CSS belongs to.
  * @param string $csspath The path to store the CSS at.
- * @param array $cssfiles The CSS files to store.
+ * @param string $csscontent the complete CSS in one string
  * @param bool $chunk If set to true these files will be chunked to ensure
  *      that no one file contains more than 4095 selectors.
  * @param string $chunkurl If the CSS is be chunked then we need to know the URL
  *      to use for the chunked files.
  */
-function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = false, $chunkurl = null) {
+function css_store_css(theme_config $theme, $csspath, $csscontent, $chunk = false, $chunkurl = null) {
     global $CFG;
-
-    $css = '';
-    foreach ($cssfiles as $file) {
-        $css .= file_get_contents($file)."\n";
-    }
-
-    // Check if both the CSS optimiser is enabled and the theme supports it.
-    if (!empty($CFG->enablecssoptimiser) && $theme->supportscssoptimisation) {
-        // This is an experimental feature introduced in Moodle 2.3
-        // The CSS optimiser organises the CSS in order to reduce the overall number
-        // of rules and styles being sent to the client. It does this by collating
-        // the CSS before it is cached removing excess styles and rules and stripping
-        // out any extraneous content such as comments and empty rules.
-        $optimiser = new css_optimiser;
-        $css = $theme->post_process($css);
-        $css = $optimiser->process($css);
-
-        // If cssoptimisestats is set then stats from the optimisation are collected
-        // and output at the beginning of the CSS.
-        if (!empty($CFG->cssoptimiserstats)) {
-            $css = $optimiser->output_stats_css().$css;
-        }
-    } else {
-        // This is the default behaviour.
-        // The cssoptimise setting was introduced in Moodle 2.3 and will hopefully
-        // in the future be changed from an experimental setting to the default.
-        // The css_minify_css will method will use the Minify library remove
-        // comments, additional whitespace and other minor measures to reduce the
-        // the overall CSS being sent.
-        // However it has the distinct disadvantage of having to minify the CSS
-        // before running the post process functions. Potentially things may break
-        // here if theme designers try to push things with CSS post processing.
-        $css = $theme->post_process($css);
-        $css = core_minify::css($css);
-    }
 
     clearstatcache();
     if (!file_exists(dirname($csspath))) {
@@ -88,11 +61,11 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
     ignore_user_abort(true);
 
     // First up write out the single file for all those using decent browsers.
-    css_write_file($csspath, $css);
+    css_write_file($csspath, $csscontent);
 
     if ($chunk) {
         // If we need to chunk the CSS for browsers that are sub-par.
-        $css = css_chunk_by_selector_count($css, $chunkurl);
+        $css = css_chunk_by_selector_count($csscontent, $chunkurl);
         $files = count($css);
         $count = 1;
         foreach ($css as $content) {
@@ -237,6 +210,32 @@ function css_send_cached_css($csspath, $etag) {
     }
 
     readfile($csspath);
+    die;
+}
+
+/**
+ * Sends a cached CSS content
+ *
+ * @param string $csscontent The actual CSS markup.
+ * @param string $etag The revision to make sure we utilise any caches.
+ */
+function css_send_cached_css_content($csscontent, $etag) {
+    // 60 days only - the revision may get incremented quite often.
+    $lifetime = 60*60*24*60;
+
+    header('Etag: "'.$etag.'"');
+    header('Content-Disposition: inline; filename="styles.php"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Pragma: ');
+    header('Cache-Control: public, max-age='.$lifetime);
+    header('Accept-Ranges: none');
+    header('Content-Type: text/css; charset=utf-8');
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.strlen($csscontent));
+    }
+
+    echo($csscontent);
     die;
 }
 

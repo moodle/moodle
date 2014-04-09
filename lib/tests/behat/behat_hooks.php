@@ -230,7 +230,8 @@ class behat_hooks extends behat_base {
 
             self::$initprocessesfinished = true;
         }
-
+        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
+        $this->resize_window('medium');
     }
 
     /**
@@ -358,7 +359,7 @@ class behat_hooks extends behat_base {
      * This is used for content such as the DOM, and screenshots.
      *
      * @param StepEvent $event
-     * @param String $filetype The file suffix to use.
+     * @param String $filetype The file suffix to use. Limited to 4 chars.
      */
     protected function get_faildump_filename(StepEvent $event, $filetype) {
         global $CFG;
@@ -381,7 +382,11 @@ class behat_hooks extends behat_base {
         // The scenario title + the failed step text.
         // We want a i-am-the-scenario-title_i-am-the-failed-step.$filetype format.
         $filename = $event->getStep()->getParent()->getTitle() . '_' . $event->getStep()->getText();
-        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename) . '.' . $filetype;
+        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename);
+
+        // File name limited to 255 characters. Leaving 4 chars for the file
+        // extension as we allow .png for images and .html for DOM contents.
+        $filename = substr($filename, 0, 250) . '.' . $filetype;
 
         return array($dir, $filename);
     }

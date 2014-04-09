@@ -15,18 +15,21 @@ YUI.add('moodle-question-preview', function (Y, NAME) {
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/*
+ * @copyright 2014 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 /**
  * JavaScript required by the question preview pop-up.
  *
  * @module moodle-question-preview
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 M.question = M.question || {};
 M.question.preview = M.question.preview || {};
 
-/**
+/*
  * Initialise JavaScript-specific parts of the question preview popup.
  */
 M.question.preview.init = function() {

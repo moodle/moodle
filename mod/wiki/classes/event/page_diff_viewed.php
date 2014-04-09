@@ -100,6 +100,7 @@ class page_diff_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['comparewith']) || !isset($this->other['compare'])) {
             throw new \coding_exception('The comparewith and compare need to be set in $other');
         }

@@ -18,8 +18,7 @@
 /**
  * Prints the list of all workshops in the course
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,7 +43,8 @@ $PAGE->navbar->add(get_string('modulenameplural', 'workshop'));
 echo $OUTPUT->header();
 
 $params = array('context' => context_course::instance($course->id));
-$event = \mod_workshop\event\instances_list_viewed::create($params);
+$event = \mod_workshop\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 /// Get all the appropriate data

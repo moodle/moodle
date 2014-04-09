@@ -100,12 +100,11 @@ if ($courseid AND $courseid != SITEID) {
 $event = \mod_feedback\event\course_module_viewed::create(array(
     'objectid' => $feedback->id,
     'context' => $context,
+    'anonymous' => ($feedback->anonymous == FEEDBACK_ANONYMOUS_YES),
     'other' => array(
-        'cmid' => $cm->id,
-        'instanceid' => $feedback->id,
-        'anonymous' => $feedback->anonymous
-        )
-    ));
+        'anonymous' => $feedback->anonymous // Deprecated.
+    )
+));
 $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('feedback', $feedback);

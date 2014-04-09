@@ -5,13 +5,11 @@ Feature: An admin can create courses using a CSV file
   I need to be able to upload a CSV file and navigate through the import process
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | First course | C1 | 0 |
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Courses" node
-    And I follow "Upload courses"
+    And I navigate to "Upload courses" node in "Site administration > Courses"
 
   @javascript
   Scenario: Creation of unexisting courses
@@ -30,7 +28,7 @@ Feature: An admin can create courses using a CSV file
   @javascript
   Scenario: Creation of existing courses
     Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filemanager
-    And I select "Create all, increment shortname if needed" from "Upload mode"
+    And I set the field "Upload mode" to "Create all, increment shortname if needed"
     And I click on "Preview" "button"
     When I click on "Upload courses" "button"
     Then I should see "Course created"

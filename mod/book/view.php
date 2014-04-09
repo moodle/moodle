@@ -80,6 +80,8 @@ if ($chapterid == '0') { // Go to first chapter if no given.
         'objectid' => $book->id
     );
     $event = \mod_book\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('book', $book);
     $event->trigger();
 

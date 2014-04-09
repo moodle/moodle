@@ -51,6 +51,12 @@ class question_dataset_dependent_items_form extends question_wizard_form {
      */
     public $qtypeobj;
 
+    /** @var stdClass the question category. */
+    protected $category;
+
+    /** @var context the context of the question category. */
+    protected $categorycontext;
+
     public $datasetdefs;
 
     public $maxnumber = -1;
@@ -108,8 +114,10 @@ class question_dataset_dependent_items_form extends question_wizard_form {
     }
 
     protected function definition() {
+        global $PAGE;
+
         $labelsharedwildcard = get_string("sharedwildcard", "qtype_calculated");
-        $mform =& $this->_form;
+        $mform = $this->_form;
         $mform->setDisableShortforms();
 
         $strquestionlabel = $this->qtypeobj->comment_header($this->question);
@@ -325,11 +333,19 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
         }
         $mform->addElement('static', 'outsidelimit', '', '');
-        // ...----------------------------------------------------------------------
-        // Non standard name for button element needed so not using add_action_buttons.
-        if (!($this->noofitems==0) ) {
-            $mform->addElement('submit', 'savechanges', get_string('savechanges'));
-            $mform->closeHeaderBefore('savechanges');
+
+        // Submit buttons.
+        if ($this->noofitems > 0) {
+            $buttonarray = array();
+            $buttonarray[] = $mform->createElement(
+                    'submit', 'savechanges', get_string('savechanges'));
+
+            $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
+                        $this->question->id, $this->categorycontext, true);
+            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
+
+            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+            $mform->closeHeaderBefore('buttonar');
         }
 
         $this->add_hidden_fields();

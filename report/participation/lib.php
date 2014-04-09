@@ -56,3 +56,17 @@ function report_participation_page_type_list($pagetype, $parentcontext, $current
     );
     return $array;
 }
+
+/**
+ * Callback to verify if the given instance of store is supported by this report or not.
+ *
+ * @param string $instance store instance.
+ *
+ * @return bool returns true if the store is supported by the report, false otherwise.
+ */
+function report_participation_supports_logstore($instance) {
+    if ($instance instanceof \core\log\sql_internal_reader || $instance instanceof \logstore_legacy\log\store) {
+        return true;
+    }
+    return false;
+}

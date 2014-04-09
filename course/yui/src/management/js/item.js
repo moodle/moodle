@@ -4,8 +4,7 @@
  * @namespace M.course.management
  * @class Item
  * @constructor
- * @extends Y.Base
- * @abstract
+ * @extends Base
  */
 function Item() {
     Item.superclass.constructor.apply(this, arguments);
@@ -55,7 +54,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Object|Boolean}
+     * @return {Object|Boolean}
      */
     checkAjaxResponse : function(transactionid, response, args) {
         if (response.status !== 200) {
@@ -83,7 +82,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     moveup : function(transactionid, response, args) {
         var node,
@@ -151,7 +150,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     movedown : function(transactionid, response, args) {
         var node,
@@ -219,7 +218,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     show : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -255,7 +254,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     hide : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),

@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod-wiki
+ * @package mod_wiki
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -45,10 +45,14 @@ if (!$gid = groups_get_activity_group($cm)) {
     $gid = 0;
 }
 if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $gid)) {
-    return false;
+    print_error('incorrectsubwikiid', 'wiki');
 }
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'wiki');
+}
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewfiles', 'wiki');
 }
 
 $wikipage = new page_wiki_search($wiki, $subwiki, $cm);

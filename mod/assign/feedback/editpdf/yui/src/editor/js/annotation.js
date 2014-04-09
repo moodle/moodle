@@ -14,9 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a list of annotations.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
+ * Class representing a highlight.
+ *
+ * @namespace M.assignfeedback_editpdf
+ * @class annotation
+ * @constructor
  */
 ANNOTATION = function(config) {
     ANNOTATION.superclass.constructor.apply(this, [config]);

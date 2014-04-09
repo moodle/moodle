@@ -1225,8 +1225,13 @@ class page_requirements_manager {
             $format = '-debug';
         }
 
+        $rollupversion = $CFG->yui3version;
+        if (!empty($CFG->yuipatchlevel)) {
+            $rollupversion .= '_' . $CFG->yuipatchlevel;
+        }
+
         $baserollups = array(
-            'rollup/' . $CFG->yui3version . "/yui-moodlesimple{$yuiformat}.js",
+            'rollup/' . $rollupversion . "/yui-moodlesimple{$yuiformat}.js",
             'rollup/' . $jsrev . "/mcore{$format}.js",
         );
 

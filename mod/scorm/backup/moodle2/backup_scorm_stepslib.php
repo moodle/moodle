@@ -45,7 +45,8 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
             'skipview', 'hidebrowse', 'hidetoc', 'nav', 'navpositionleft', 'navpositiontop',
             'auto', 'popup', 'options', 'width',
             'height', 'timeopen', 'timeclose', 'timemodified',
-            'completionstatusrequired', 'completionscorerequired'));
+            'completionstatusrequired', 'completionscorerequired',
+            'displayactivityname'));
 
         $scoes = new backup_nested_element('scoes');
 

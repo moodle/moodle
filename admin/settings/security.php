@@ -108,10 +108,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // "notifications" settingpage
     $temp = new admin_settingpage('notifications', new lang_string('notifications', 'admin'));
-    $temp->add(new admin_setting_configselect('displayloginfailures', new lang_string('displayloginfailures', 'admin'), new lang_string('configdisplayloginfailures', 'admin'), '', array('' => new lang_string('nobody'),
-                                                                                                                                                                                'admin' => new lang_string('administrators'),
-                                                                                                                                                                                'teacher' => new lang_string('administratorsandteachers'),
-                                                                                                                                                                                'everybody' => new lang_string('everybody'))));
+    $temp->add(new admin_setting_configcheckbox('displayloginfailures', new lang_string('displayloginfailures', 'admin'),
+            new lang_string('configdisplayloginfailures', 'admin'), 0));
     $temp->add(new admin_setting_users_with_capability('notifyloginfailures', new lang_string('notifyloginfailures', 'admin'), new lang_string('confignotifyloginfailures', 'admin'), array(), 'moodle/site:config'));
     $options = array();
     for ($i = 1; $i <= 100; $i++) {

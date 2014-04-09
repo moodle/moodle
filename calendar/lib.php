@@ -2165,7 +2165,7 @@ class calendar_event {
      * @return bool event updated
      */
     public function update($data, $checkcapability=true) {
-        global $CFG, $DB, $USER;
+        global $DB, $USER;
 
         foreach ($data as $key=>$value) {
             $this->properties->$key = $value;
@@ -2173,6 +2173,17 @@ class calendar_event {
 
         $this->properties->timemodified = time();
         $usingeditor = (!empty($this->properties->description) && is_array($this->properties->description));
+
+        // Prepare event data.
+        $eventargs = array(
+            'context' => $this->properties->context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'repeatid' => empty($this->properties->repeatid) ? 0 : $this->properties->repeatid,
+                'timestart' => $this->properties->timestart,
+                'name' => $this->properties->name
+            )
+        );
 
         if (empty($this->properties->id) || $this->properties->id < 1) {
 
@@ -2239,7 +2250,10 @@ class calendar_event {
             }
 
             // Log the event entry.
-            add_to_log($this->properties->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+            $eventargs['objectid'] = $this->properties->id;
+            $eventargs['context'] = $this->properties->context;
+            $event = \core\event\calendar_event_created::create($eventargs);
+            $event->trigger();
 
             $repeatedids = array();
 
@@ -2267,8 +2281,12 @@ class calendar_event {
                     }
 
                     $repeatedids[] = $eventcopyid;
-                    // Log the event entry.
-                    add_to_log($eventcopy->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventcopyid, $eventcopy->name);
+
+                    // Trigger an event.
+                    $eventargs['objectid'] = $eventcopyid;
+                    $eventargs['other']['timestart'] = $eventcopy->timestart;
+                    $event = \core\event\calendar_event_created::create($eventargs);
+                    $event->trigger();
                 }
             }
 
@@ -2322,13 +2340,22 @@ class calendar_event {
                 }
                 $DB->execute($sql, $params);
 
-                // Log the event update.
-                add_to_log($this->properties->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+                // Trigger an update event for each of the calendar event.
+                $events = $DB->get_records('event', array('repeatid' => $event->repeatid), '', 'id,timestart');
+                foreach ($events as $event) {
+                    $eventargs['objectid'] = $event->id;
+                    $eventargs['other']['timestart'] = $event->timestart;
+                    $event = \core\event\calendar_event_updated::create($eventargs);
+                    $event->trigger();
+                }
             } else {
                 $DB->update_record('event', $this->properties);
                 $event = calendar_event::load($this->properties->id);
                 $this->properties = $event->properties();
-                add_to_log($this->properties->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+
+                // Trigger an update event.
+                $event = \core\event\calendar_event_updated::create($eventargs);
+                $event->trigger();
             }
 
             // Hook for tracking event updates
@@ -2356,9 +2383,22 @@ class calendar_event {
             debugging('Attempting to delete an event before it has been loaded', DEBUG_DEVELOPER);
             return false;
         }
-
+        $calevent = $DB->get_record('event',  array('id' => $this->properties->id), '*', MUST_EXIST);
         // Delete the event
         $DB->delete_records('event', array('id'=>$this->properties->id));
+
+        // Trigger an event for the delete action.
+        $eventargs = array(
+            'context' => $this->properties->context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'repeatid' => empty($this->properties->repeatid) ? 0 : $this->properties->repeatid,
+                'timestart' => $this->properties->timestart,
+                'name' => $this->properties->name
+            ));
+        $event = \core\event\calendar_event_deleted::create($eventargs);
+        $event->add_record_snapshot('event', $calevent);
+        $event->trigger();
 
         // If we are deleting parent of a repeated event series, promote the next event in the series as parent
         if (($this->properties->id == $this->properties->repeatid) && !$deleterepeated) {
@@ -2367,8 +2407,14 @@ class calendar_event {
                 $DB->execute("UPDATE {event} SET repeatid = ? WHERE repeatid = ?", array($newparent, $this->properties->id));
                 // Get all records where the repeatid is the same as the event being removed
                 $events = $DB->get_records('event', array('repeatid' => $newparent));
-                // For each of the returned events trigger the event_update hook.
+                // For each of the returned events trigger the event_update hook and an update event.
                 foreach ($events as $event) {
+                    // Trigger an event for the update.
+                    $eventargs['objectid'] = $event->id;
+                    $eventargs['other']['timestart'] = $event->timestart;
+                    $event = \core\event\calendar_event_updated::create($eventargs);
+                    $event->trigger();
+
                     self::calendar_event_hook('update_event', array($event, false));
                 }
             }
@@ -2584,10 +2630,13 @@ class calendar_event {
     /**
      * Creates a new event and returns a calendar_event object
      *
-     * @param object|array $properties An object containing event properties
-     * @return calendar_event|false The event object or false if it failed
+     * @param stdClass|array $properties An object containing event properties
+     * @param bool $checkcapability Check caps or not
+     * @throws coding_exception
+     *
+     * @return calendar_event|bool The event object or false if it failed
      */
-    public static function create($properties) {
+    public static function create($properties, $checkcapability = true) {
         if (is_array($properties)) {
             $properties = (object)$properties;
         }
@@ -2595,7 +2644,7 @@ class calendar_event {
             throw new coding_exception('When creating an event properties should be either an object or an assoc array');
         }
         $event = new calendar_event($properties);
-        if ($event->update($properties)) {
+        if ($event->update($properties, $checkcapability)) {
             return $event;
         } else {
             return false;
@@ -2758,11 +2807,11 @@ class calendar_information {
 function calendar_get_pollinterval_choices() {
     return array(
         '0' => new lang_string('never', 'calendar'),
-        '3600' => new lang_string('hourly', 'calendar'),
-        '86400' => new lang_string('daily', 'calendar'),
-        '604800' => new lang_string('weekly', 'calendar'),
+        HOURSECS => new lang_string('hourly', 'calendar'),
+        DAYSECS => new lang_string('daily', 'calendar'),
+        WEEKSECS => new lang_string('weekly', 'calendar'),
         '2628000' => new lang_string('monthly', 'calendar'),
-        '31536000' => new lang_string('annually', 'calendar')
+        YEARSECS => new lang_string('annually', 'calendar')
     );
 }
 
@@ -2835,14 +2884,14 @@ function calendar_add_subscription($sub) {
 /**
  * Add an iCalendar event to the Moodle calendar.
  *
- * @param object $event The RFC-2445 iCalendar event
+ * @param stdClass $event The RFC-2445 iCalendar event
  * @param int $courseid The course ID
  * @param int $subscriptionid The iCalendar subscription ID
  * @throws dml_exception A DML specific exception is thrown for invalid subscriptionids.
- * @return int Code: 1=updated, 2=inserted, 0=error
+ * @return int Code: CALENDAR_IMPORT_EVENT_UPDATED = updated,  CALENDAR_IMPORT_EVENT_INSERTED = inserted, 0 = error
  */
 function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
-    global $DB, $USER;
+    global $DB;
 
     // Probably an unsupported X-MICROSOFT-CDO-BUSYSTATUS event.
     if (empty($event->properties['SUMMARY'])) {
@@ -2872,11 +2921,16 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
         return 0;
     }
 
-    $eventrecord->timestart = strtotime($event->properties['DTSTART'][0]->value);
+    $defaulttz = date_default_timezone_get();
+    $tz = isset($event->properties['DTSTART'][0]->parameters['TZID']) ? $event->properties['DTSTART'][0]->parameters['TZID'] :
+            'UTC';
+    $eventrecord->timestart = strtotime($event->properties['DTSTART'][0]->value . ' ' . $tz);
     if (empty($event->properties['DTEND'])) {
         $eventrecord->timeduration = 3600; // one hour if no end time specified
     } else {
-        $eventrecord->timeduration = strtotime($event->properties['DTEND'][0]->value) - $eventrecord->timestart;
+        $endtz = isset($event->properties['DTEND'][0]->parameters['TZID']) ? $event->properties['DTEND'][0]->parameters['TZID'] :
+                'UTC';
+        $eventrecord->timeduration = strtotime($event->properties['DTEND'][0]->value . ' ' . $endtz) - $eventrecord->timestart;
     }
     $eventrecord->uuid = $event->properties['UID'][0]->value;
     $eventrecord->timemodified = time();
@@ -2892,17 +2946,22 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
 
     if ($updaterecord = $DB->get_record('event', array('uuid' => $eventrecord->uuid))) {
         $eventrecord->id = $updaterecord->id;
-        if ($DB->update_record('event', $eventrecord)) {
-            return CALENDAR_IMPORT_EVENT_UPDATED;
-        } else {
-            return 0;
-        }
+        $return = CALENDAR_IMPORT_EVENT_UPDATED; // Update.
     } else {
-        if ($DB->insert_record('event', $eventrecord)) {
-            return CALENDAR_IMPORT_EVENT_INSERTED;
-        } else {
-            return 0;
+        $return = CALENDAR_IMPORT_EVENT_INSERTED; // Insert.
+    }
+    if ($createdevent = calendar_event::create($eventrecord, false)) {
+        if (!empty($event->properties['RRULE'])) {
+            // Repeating events.
+            date_default_timezone_set($tz); // Change time zone to parse all events.
+            $rrule = new \core_calendar\rrule_manager($event->properties['RRULE'][0]->value);
+            $rrule->parse_rrule();
+            $rrule->create_events($createdevent);
+            date_default_timezone_set($defaulttz); // Change time zone back to what it was.
         }
+        return $return;
+    } else {
+        return 0;
     }
 }
 

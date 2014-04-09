@@ -18,7 +18,7 @@
 /**
  * This file is responsible for displaying the survey
  *
- * @package   mod-survey
+ * @package   mod_survey
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -96,8 +96,14 @@ $completion->set_module_viewed($cm);
 //  Check the survey hasn't already been filled out.
 
     if (survey_already_done($survey->id, $USER->id)) {
-
-        add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", $survey->id, $cm->id);
+        $params = array(
+            'objectid' => $survey->id,
+            'context' => $context,
+            'courseid' => $course->id,
+            'other' => array('viewed' => 'graph')
+        );
+        $event = \mod_survey\event\course_module_viewed::create($params);
+        $event->trigger();
         $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
 
         if ($showscales) {
@@ -134,7 +140,14 @@ $completion->set_module_viewed($cm);
     }
 
 //  Start the survey form
-    add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
+    $params = array(
+        'objectid' => $survey->id,
+        'context' => $context,
+        'courseid' => $course->id,
+        'other' => array('viewed' => 'form')
+    );
+    $event = \mod_survey\event\course_module_viewed::create($params);
+    $event->trigger();
 
     echo "<form method=\"post\" action=\"save.php\" id=\"surveyform\">";
     echo '<div>';

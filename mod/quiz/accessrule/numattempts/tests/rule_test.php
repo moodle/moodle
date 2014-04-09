@@ -41,7 +41,6 @@ class quizaccess_numattempts_testcase extends basic_testcase {
     public function test_num_attempts_access_rule() {
         $quiz = new stdClass();
         $quiz->attempts = 3;
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);

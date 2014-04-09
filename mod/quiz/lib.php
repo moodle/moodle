@@ -20,8 +20,7 @@
  * This contains functions that are called also from outside the quiz module
  * Functions that are only called by the quiz module itself are in {@link locallib.php}
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -81,7 +80,6 @@ function quiz_add_instance($quiz) {
 
     // Process the options from the form.
     $quiz->created = time();
-    $quiz->questions = '';
     $result = quiz_process_options($quiz);
     if ($result && is_string($result)) {
         return $result;
@@ -122,13 +120,6 @@ function quiz_update_instance($quiz, $mform) {
     $quiz->sumgrades = $oldquiz->sumgrades;
     $quiz->grade     = $oldquiz->grade;
 
-    // Repaginate, if asked to.
-    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
-        $quiz->questions = quiz_repaginate(quiz_clean_layout($oldquiz->questions, true),
-                $quiz->questionsperpage);
-    }
-    unset($quiz->repaginatenow);
-
     // Update the database.
     $quiz->id = $quiz->instance;
     $DB->update_record('quiz', $quiz);
@@ -151,6 +142,11 @@ function quiz_update_instance($quiz, $mform) {
     // Delete any previous preview attempts.
     quiz_delete_previews($quiz);
 
+    // Repaginate, if asked to.
+    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
+        quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
+    }
+
     return true;
 }
 
@@ -170,7 +166,7 @@ function quiz_delete_instance($id) {
     quiz_delete_all_attempts($quiz);
     quiz_delete_all_overrides($quiz);
 
-    $DB->delete_records('quiz_question_instances', array('quizid' => $quiz->id));
+    $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
@@ -378,6 +374,16 @@ function quiz_get_best_grade($quiz, $userid) {
  */
 function quiz_has_grades($quiz) {
     return $quiz->grade >= 0.000005 && $quiz->sumgrades >= 0.000005;
+}
+
+/**
+ * Does this quiz allow multiple tries?
+ *
+ * @return bool
+ */
+function quiz_allows_multiple_tries($quiz) {
+    $bt = question_engine::get_behaviour_type($quiz->preferredbehaviour);
+    return $bt->allows_multiple_submitted_responses();
 }
 
 /**
@@ -847,7 +853,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $params['timestart'] = $timestart;
     $params['quizid'] = $quiz->id;
 
-    $ufields = user_picture::fields('u');
+    $ufields = user_picture::fields('u', null, 'useridagain');
     if (!$attempts = $DB->get_records_sql("
               SELECT qa.*,
                      {$ufields}
@@ -920,8 +926,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             $tmpactivity->content->maxgrade  = null;
         }
 
-        $tmpactivity->user = username_load_fields_from_object(new stdClass(), $attempt, null,
-                explode(',', user_picture::fields()));
+        $tmpactivity->user = user_picture::unalias($attempt, null, 'useridagain');
         $tmpactivity->user->fullname  = fullname($tmpactivity->user, $viewfullnames);
 
         $activities[$index++] = $tmpactivity;
@@ -1278,7 +1283,7 @@ function quiz_questions_in_use($questionids) {
     global $DB, $CFG;
     require_once($CFG->libdir . '/questionlib.php');
     list($test, $params) = $DB->get_in_or_equal($questionids);
-    return $DB->record_exists_select('quiz_question_instances',
+    return $DB->record_exists_select('quiz_slots',
             'questionid ' . $test, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));
@@ -1753,8 +1758,14 @@ function quiz_question_pluginfile($course, $context, $component,
  */
 function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array(
-        'mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'),
-        'mod-quiz-edit'=>get_string('page-mod-quiz-edit', 'quiz'));
+        'mod-quiz-*'       => get_string('page-mod-quiz-x', 'quiz'),
+        'mod-quiz-view'    => get_string('page-mod-quiz-view', 'quiz'),
+        'mod-quiz-attempt' => get_string('page-mod-quiz-attempt', 'quiz'),
+        'mod-quiz-summary' => get_string('page-mod-quiz-summary', 'quiz'),
+        'mod-quiz-review'  => get_string('page-mod-quiz-review', 'quiz'),
+        'mod-quiz-edit'    => get_string('page-mod-quiz-edit', 'quiz'),
+        'mod-quiz-report'  => get_string('page-mod-quiz-report', 'quiz'),
+    );
     return $module_pagetype;
 }
 

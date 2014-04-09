@@ -247,6 +247,27 @@ function message_send($eventdata) {
         }
     }
 
+    // We may be sending a message from the 'noreply' address, which means we are not actually sending a
+    // message from a valid user. In this case, we will set the userid to 0.
+    // Check if the userid is valid.
+    if (core_user::is_real_user($eventdata->userfrom->id)) {
+        $userfromid = $eventdata->userfrom->id;
+    } else {
+        $userfromid = 0;
+    }
+
+    // Trigger event for sending a message.
+    $event = \core\event\message_sent::create(array(
+        'userid' => $userfromid,
+        'context'  => context_system::instance(),
+        'relateduserid' => $eventdata->userto->id,
+        'other' => array(
+            'messageid' => $messageid // Can't use this as the objectid as it can either be the id in the 'message_read'
+                                      // or 'message' table.
+        )
+    ));
+    $event->trigger();
+
     return $messageid;
 }
 

@@ -12,10 +12,10 @@ Feature: Test category management actions
   Test we can manage filters for a category
 
   Scenario: Test editing a category through the management interface.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -33,7 +33,7 @@ Feature: Test category management actions
     # Redirect
     And I should see "Edit category settings"
     And I should see "Cat 1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Category name | Category 1 (edited) |
       | Category ID number | CAT1e |
     And I press "Save changes"
@@ -43,13 +43,13 @@ Feature: Test category management actions
     And I should see "Category 1 (edited)" in the "#course-listing h3" "css_element"
 
   Scenario: Test deleting a categories through the management interface.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
       | Cat 3 | 0 | CAT3 |
 
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT3 | Course 1 | Course 1 | C1 |
 
@@ -88,7 +88,7 @@ Feature: Test category management actions
     And I click on "delete" action for "Cat 3" in management category listing
     # Redirect
     And I should see "Delete category: Cat 3"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | What to do | Move contents to another category |
       | Move into  | Cat 1                             |
     And I press "Delete"
@@ -104,10 +104,10 @@ Feature: Test category management actions
     And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
 
   Scenario: Test I can assign roles for a category through the management interface.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -124,10 +124,10 @@ Feature: Test category management actions
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
 
   Scenario: Test I can set access permissions for a category through the management interface.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -143,10 +143,10 @@ Feature: Test category management actions
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
 
   Scenario: Test clicking to manage cohorts for a category through the management interface.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -158,10 +158,10 @@ Feature: Test category management actions
     And I should see "Category: Cat 1: available cohorts"
 
   Scenario: Test configuring filters for a category
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -178,7 +178,7 @@ Feature: Test category management actions
 
   @javascript
   Scenario: Test that I can create a category and view it in the management interface
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
     And I log in as "admin"
@@ -187,7 +187,7 @@ Feature: Test category management actions
     And I click on "Create new category" "link" in the ".category-listing-actions" "css_element"
     # Redirect.
     And I should see "Add new category"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Category name | Test category 2 |
       | Category ID number | TC2 |
     And I press "Create category"
@@ -199,7 +199,7 @@ Feature: Test category management actions
     And I click on "createnewsubcategory" action for "Test category 2" in management category listing
     # Redirect
     And I should see "Add new category"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Category name | Test category 3 |
       | Category ID number | TC3 |
     And I press "Create category"
@@ -211,7 +211,7 @@ Feature: Test category management actions
 
   @javascript
   Scenario: Test moving a categories through the management interface.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
@@ -225,7 +225,7 @@ Feature: Test category management actions
     And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
     And I select category "Cat 2" in the management interface
     And I select category "Cat 3" in the management interface
-    And I select "Cat 1" from "menumovecategoriesto"
+    And I set the field "menumovecategoriesto" to "Cat 1"
     When I press "bulkmovecategories"
     # Redirect
     And I click on category "Cat 1" in the management interface
@@ -238,12 +238,12 @@ Feature: Test category management actions
 
   @javascript
   Scenario: Test bulk action is shown only when some category/course is selected
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
       | Cat 3 | 0 | CAT3 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT3 | Course 1 | Course 1 | C1 |
       | CAT3 | Course 2 | Course 2 | C2 |
@@ -257,7 +257,7 @@ Feature: Test category management actions
     And the "movecategoriesto" "select" should be disabled
     And the "resortcategoriesby" "select" should be disabled
     And the "resortcoursesby" "select" should be disabled
-    When I select "allcategories" from "selectsortby"
+    When I set the field "selectsortby" to "allcategories"
     Then the "resortcategoriesby" "select" should be enabled
     And the "resortcoursesby" "select" should be enabled
     And the "movecategoriesto" "select" should be disabled
@@ -265,7 +265,7 @@ Feature: Test category management actions
     And the "movecategoriesto" "select" should be enabled
     And the "resortcategoriesby" "select" should be enabled
     And the "resortcoursesby" "select" should be enabled
-    And I select "selectedcategories" from "selectsortby"
+    And I set the field "selectsortby" to "selectedcategories"
     And the "movecategoriesto" "select" should be enabled
     And the "resortcategoriesby" "select" should be enabled
     And the "resortcoursesby" "select" should be enabled
@@ -332,3 +332,17 @@ Feature: Test category management actions
     And the "movecategoriesto" "select" should be disabled
     And the "resortcategoriesby" "select" should be disabled
     And the "resortcoursesby" "select" should be disabled
+
+  Scenario: Test that is not possible to create a course category with a duplicate idnumber
+    Given the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And I log in as "admin"
+    And I expand "Site administration" node
+    And I expand "Courses" node
+    And I follow "Add a category"
+    And I set the following fields to these values:
+      | Category name | Test duplicate |
+      | Category ID number | CAT1 |
+    When I press "Create category"
+    Then I should see "ID number is already used for another category"

@@ -31,17 +31,11 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for event to be triggered when a note is viewed.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string content hard-coded to notes.
- * }
- *
  * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class notes_viewed extends \core\event\content_viewed {
+class notes_viewed extends \core\event\base {
 
     /**
      * Set basic properties for the event.
@@ -66,7 +60,11 @@ class notes_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return 'Note for user with id "'. $this->relateduserid . '" was viewed by user with id "'. $this->userid . '"';
+        if (!empty($this->relateduserid)) {
+            return 'Note for user with id "'. $this->relateduserid . '" was viewed by user with id "'. $this->userid . '"';
+        } else {
+            return 'Note for course with id "'. $this->courseid . '" was viewed by user with id "'. $this->userid . '"';
+        }
     }
 
     /**
@@ -74,7 +72,7 @@ class notes_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/note/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
+        return new \moodle_url('/notes/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
     }
 
     /**

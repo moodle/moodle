@@ -42,8 +42,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class course_module_instance_list_viewed extends base{
 
-    /** @var string private var to store mod name */
-    private $modname;
+    /** @var string protected var to store mod name */
+    protected $modname;
 
     /**
      * Init method.
@@ -105,8 +105,9 @@ abstract class course_module_instance_list_viewed extends base{
      * @return void
      */
     protected function validate_data() {
-        if ($this->contextlevel !== CONTEXT_COURSE) {
-            throw new \coding_exception('The context must be a course level context.');
+        parent::validate_data();
+        if ($this->contextlevel != CONTEXT_COURSE) {
+            throw new \coding_exception('Context passed must be course context.');
         }
     }
 

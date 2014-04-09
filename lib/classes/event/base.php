@@ -47,6 +47,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read int $userid who did this?
  * @property-read int $courseid
  * @property-read int $relateduserid
+ * @property-read int $anonymous 1 means event should not be visible in reports, 0 means normal event,
+ *                    create() argument may be also true/false.
  * @property-read mixed $other array or scalar, can not contain objects
  * @property-read int $timecreated
  */
@@ -102,7 +104,7 @@ abstract class base implements \IteratorAggregate {
     /** @var array list of event properties */
     private static $fields = array(
         'eventname', 'component', 'action', 'target', 'objecttable', 'objectid', 'crud', 'edulevel', 'contextid',
-        'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'other',
+        'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'anonymous', 'other',
         'timecreated');
 
     /** @var array simple record cache */
@@ -158,6 +160,9 @@ abstract class base implements \IteratorAggregate {
         $event->restored = false;
         $event->dispatched = false;
 
+        // By default all events are visible in logs.
+        $event->data['anonymous'] = 0;
+
         // Set static event data specific for child class.
         $event->init();
 
@@ -178,6 +183,10 @@ abstract class base implements \IteratorAggregate {
         $event->data['userid'] = isset($data['userid']) ? $data['userid'] : $USER->id;
         $event->data['other'] = isset($data['other']) ? $data['other'] : null;
         $event->data['relateduserid'] = isset($data['relateduserid']) ? $data['relateduserid'] : null;
+        if (isset($data['anonymous'])) {
+            $event->data['anonymous'] = $data['anonymous'];
+        }
+        $event->data['anonymous'] = (int)(bool)$event->data['anonymous'];
 
         if (isset($event->context)) {
             if (isset($data['context'])) {
@@ -228,6 +237,13 @@ abstract class base implements \IteratorAggregate {
                 } else if (!in_array($key, self::$fields)) {
                     debugging("Data key '$key' does not exist in \\core\\event\\base");
                 }
+            }
+            $expectedcourseid = 0;
+            if ($coursecontext = $event->context->get_course_context(false)) {
+                $expectedcourseid = $coursecontext->instanceid;
+            }
+            if ($expectedcourseid != $event->data['courseid']) {
+                debugging("Inconsistent courseid - context combination detected.", DEBUG_DEVELOPER);
             }
         }
 
@@ -288,12 +304,18 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
-     * Define whether a user can view the event or not.
+     * This method was originally intended for granular
+     * access control on the event level, unfortunately
+     * the proper implementation would be too expensive
+     * in many cases.
+     *
+     * @deprecated since 2.7
      *
      * @param int|\stdClass $user_or_id ID of the user.
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($user_or_id = null) {
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
         return is_siteadmin($user_or_id);
     }
 
@@ -323,6 +345,7 @@ abstract class base implements \IteratorAggregate {
             return false;
         }
 
+        $event->init(); // Init method of events could be setting custom properties.
         $event->restored = true;
         $event->triggered = true;
         $event->dispatched = true;
@@ -343,6 +366,92 @@ abstract class base implements \IteratorAggregate {
             }
         }
         $event->data = $data;
+
+        return $event;
+    }
+
+    /**
+     * Create fake event from legacy log data.
+     *
+     * @param \stdClass $legacy
+     * @return base
+     */
+    public static final function restore_legacy($legacy) {
+        $classname = get_called_class();
+        /** @var base $event */
+        $event = new $classname();
+        $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
+
+        $context = false;
+        $component = 'legacy';
+        if ($legacy->cmid) {
+            $context = \context_module::instance($legacy->cmid, IGNORE_MISSING);
+            $component = 'mod_'.$legacy->module;
+        } else if ($legacy->course) {
+            $context = \context_course::instance($legacy->course, IGNORE_MISSING);
+        }
+        if (!$context) {
+            $context = \context_system::instance();
+        }
+
+        $event->data = array();
+
+        $event->data['eventname'] = $legacy->module.'_'.$legacy->action;
+        $event->data['component'] = $component;
+        $event->data['action'] = $legacy->action;
+        $event->data['target'] = null;
+        $event->data['objecttable'] = null;
+        $event->data['objectid'] = null;
+        if (strpos($legacy->action, 'view') !== false) {
+            $event->data['crud'] = 'r';
+        } else if (strpos($legacy->action, 'print') !== false) {
+            $event->data['crud'] = 'r';
+        } else if (strpos($legacy->action, 'update') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'hide') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'move') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'write') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'tag') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'remove') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'delete') !== false) {
+            $event->data['crud'] = 'p';
+        } else if (strpos($legacy->action, 'create') !== false) {
+            $event->data['crud'] = 'c';
+        } else if (strpos($legacy->action, 'post') !== false) {
+            $event->data['crud'] = 'c';
+        } else if (strpos($legacy->action, 'add') !== false) {
+            $event->data['crud'] = 'c';
+        } else {
+            // End of guessing...
+            $event->data['crud'] = 'r';
+        }
+        $event->data['edulevel'] = $event::LEVEL_OTHER;
+        $event->data['contextid'] = $context->id;
+        $event->data['contextlevel'] = $context->contextlevel;
+        $event->data['contextinstanceid'] = $context->instanceid;
+        $event->data['userid'] = ($legacy->userid ? $legacy->userid : null);
+        $event->data['courseid'] = ($legacy->course ? $legacy->course : null);
+        $event->data['relateduserid'] = ($legacy->userid ? $legacy->userid : null);
+        $event->data['timecreated'] = $legacy->time;
+
+        $event->logextra = array();
+        if ($legacy->ip) {
+            $event->logextra['origin'] = 'web';
+            $event->logextra['ip'] = $legacy->ip;
+        } else {
+            $event->logextra['origin'] = 'cli';
+            $event->logextra['ip'] = null;
+        }
+        $event->logextra['realuserid'] = null;
+
+        $event->data['other'] = (array)$legacy;
 
         return $event;
     }
@@ -504,7 +613,10 @@ abstract class base implements \IteratorAggregate {
 
         if (isset($CFG->loglifetime) and $CFG->loglifetime != -1) {
             if ($data = $this->get_legacy_logdata()) {
-                call_user_func_array('add_to_log', $data);
+                $manager = get_log_manager();
+                if (method_exists($manager, 'legacy_add_to_log')) {
+                    call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                }
             }
         }
 
@@ -568,11 +680,26 @@ abstract class base implements \IteratorAggregate {
             throw new \coding_exception('It is not possible to add snapshots after triggering of events');
         }
 
+        // Special case for course module, allow instance of cm_info to be passed instead of stdClass.
+        if ($tablename === 'course_modules' && $record instanceof \cm_info) {
+            $record = $record->get_course_module_record();
+        }
+
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...
         if ($CFG->debugdeveloper) {
+            if (!($record instanceof \stdClass)) {
+                debugging('Argument $record must be an instance of stdClass.', DEBUG_DEVELOPER);
+            }
             if (!$DB->get_manager()->table_exists($tablename)) {
                 debugging("Invalid table name '$tablename' specified, database table does not exist.", DEBUG_DEVELOPER);
+            } else {
+                $columns = $DB->get_columns($tablename);
+                $missingfields = array_diff(array_keys($columns), array_keys((array)$record));
+                if (!empty($missingfields)) {
+                    debugging("Fields list in snapshot record does not match fields list in '$tablename'. Record is missing fields: ".
+                            join(', ', $missingfields), DEBUG_DEVELOPER);
+                }
             }
         }
         $this->recordsnapshots[$tablename][$record->id] = $record;
@@ -595,7 +722,7 @@ abstract class base implements \IteratorAggregate {
         }
 
         if (isset($this->recordsnapshots[$tablename][$id])) {
-            return $this->recordsnapshots[$tablename][$id];
+            return clone($this->recordsnapshots[$tablename][$id]);
         }
 
         $record = $DB->get_record($tablename, array('id'=>$id));

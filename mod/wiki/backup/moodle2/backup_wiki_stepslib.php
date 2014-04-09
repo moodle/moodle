@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * @package    mod_wiki
  * @subpackage backup-moodle2
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -120,7 +120,7 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
 
         // Define file annotations
         $wiki->annotate_files('mod_wiki', 'intro', null); // This file area hasn't itemid
-        $page->annotate_files('mod_wiki', 'attachments', 'id'); // This file area hasn't itemid
+        $subwiki->annotate_files('mod_wiki', 'attachments', 'id'); // This file area hasn't itemid
 
         // Return the root element (wiki), wrapped into standard activity structure
         return $this->prepare_activity_structure($wiki);

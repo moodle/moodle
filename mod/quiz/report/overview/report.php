@@ -102,7 +102,7 @@ class quiz_overview_report extends quiz_attempts_report {
             }
         }
 
-        $hasquestions = quiz_questions_in_quiz($quiz->questions);
+        $hasquestions = quiz_has_questions($quiz->id);
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
                 echo quiz_no_questions_message($quiz, $cm, $this->context);

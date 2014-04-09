@@ -97,7 +97,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 return false;
             }
         }
-        if (empty($prop->courseid)) {
+        if (!isset($prop->courseid)) {
             $prop->courseid = $SITE->id;
         }
         $event = new calendar_event($prop);

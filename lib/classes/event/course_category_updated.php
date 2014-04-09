@@ -49,6 +49,15 @@ class course_category_updated extends base {
     }
 
     /**
+     * Returns relevant URL.
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/course/editcategory.php', array('id' => $this->objectid));
+    }
+
+    /**
      * Returns non-localised description of what happened.
      *
      * @return string

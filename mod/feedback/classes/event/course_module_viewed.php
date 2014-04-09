@@ -53,16 +53,19 @@ class course_module_viewed extends \core\event\course_module_viewed {
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
+     * @deprecated since 2.7
+     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($userorid = null) {
         global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
 
         if (empty($userorid)) {
             $userorid = $USER;
         }
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
             return has_capability('mod/feedback:viewreports', $this->context, $userorid);
@@ -76,7 +79,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return null;
         } else {
             return parent::get_legacy_logdata();
@@ -91,9 +94,6 @@ class course_module_viewed extends \core\event\course_module_viewed {
     protected function validate_data() {
         if (!isset($this->other['anonymous'])) {
             throw new \coding_exception("Field other['anonymous'] cannot be empty");
-        }
-        if (!isset($this->other['cmid'])) {
-            throw new \coding_exception("Field other['cmid'] cannot be empty");
         }
 
         // Call parent validations.

@@ -664,16 +664,6 @@ table.mod_index {
     right: auto;
     margin: .3em;
 }
-.comment-delete-confirm {
-    background: #eee;
-    padding: 2px;
-    width: 5em;
-    text-align: center;
-}
-.comment-container {
-    float: left;
-    margin: 4px;
-}
 .comment-report-selectall{
     display: none
 }
@@ -837,8 +827,8 @@ table#tag-management-list th {
     position: absolute;
     width: 420px;
     left: 20%;
-    border: 1px solid #404040;
-    background: #fff;
+    border: 1px solid @dropdownBorder;
+    background: @dropdownBackground;
     overflow: hidden;
     z-index: 9050;
 }
@@ -867,7 +857,8 @@ table#tag-management-list th {
     white-space: nowrap;
 }
 #relatedtags-autocomplete li.yui-ac-highlight{
-    background: #FFFFCC;
+    background: @dropdownLinkBackgroundHover;
+    color: @dropdownLinkColorHover;
 }
 h2.tag-heading,
 div#tag-description,
@@ -1693,13 +1684,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     border-bottom: 1px solid #BBBBBB;
 }
 /* Only set these options if we're showing the js container */
-.jsenabled .choosercontainer #chooseform .alloptions {
+.jschooser .choosercontainer #chooseform .alloptions {
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 20.3em;
     .box-shadow(inset 0 0 30px 0px #ccc);
 }
-.dir-rtl.jsenabled .choosercontainer #chooseform .alloptions {
+.dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
     max-width: 18.3em;
 }
 /* Settings for option rows and option subtypes */
@@ -1764,8 +1755,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     margin: 0 0.2em 0 0;
 }
 /* The instruction/help area */
-.jsenabled .choosercontainer #chooseform .instruction,
-.jsenabled .choosercontainer #chooseform .typesummary {
+.jschooser .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .typesummary {
    display: none;
     position: absolute;
     top: 0;
@@ -1779,14 +1770,14 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-y: auto;
     line-height: 2em;
 }
-.dir-rtl.jsenabled .choosercontainer #chooseform .instruction,
-.dir-rtl.jsenabled .choosercontainer #chooseform .typesummary {
+.dir-rtl.jschooser .choosercontainer #chooseform .instruction,
+.dir-rtl.jschooser .choosercontainer #chooseform .typesummary {
     left: 0;
     right: 18.5em;
     border-right: 1px solid grey;
 }
 /* Selected option settings */
-.jsenabled .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .instruction,
 .choosercontainer #chooseform .selected .typesummary {
     display: block;
 }
@@ -1898,7 +1889,7 @@ a.criteria-action {
 }
 table.issuedbadgebox {
     width: 750px;
-    background-color: #FFFFFF;
+    background-color: @wellBackground;
 }
 table.badgeissuedimage {
     width: 150px;
@@ -2121,8 +2112,8 @@ img#persona_signin {
         display:block;
         position: absolute;
         text-align: left;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: @dropdownBackground;
+        border: 1px solid @dropdownBorder;
         z-index:1000;
         .border-radius(5px);
         .box-shadow(5px 5px 20px 0 #666);

@@ -88,10 +88,10 @@ class attempt_becameoverdue extends \core\event\base {
         return new \moodle_url('/mod/quiz/review.php', array('attempt' => $this->objectid));
     }
 
-     /**
+    /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $attempt = $this->get_record_snapshot('quiz_attempts', $this->objectid);
@@ -112,10 +112,11 @@ class attempt_becameoverdue extends \core\event\base {
     /**
      * Custom validation.
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!array_key_exists('submitterid', $this->other)) {
             throw new \coding_exception('Other must contain the key submitterid');
         } else if (!isset($this->relateduserid)) {

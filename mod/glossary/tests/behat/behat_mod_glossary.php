@@ -49,7 +49,7 @@ class behat_mod_glossary extends behat_base {
     public function i_add_a_glossary_entry_with_the_following_data(TableNode $data) {
         return array(
             new Given('I press "' . get_string('addentry', 'mod_glossary') . '"'),
-            new Given('I fill the moodle form with:', $data),
+            new Given('I set the following fields to these values:', $data),
             new Given('I press "' . get_string('savechanges') . '"')
         );
     }
@@ -66,7 +66,7 @@ class behat_mod_glossary extends behat_base {
             new Given('I follow "' . get_string('categoryview', 'mod_glossary') . '"'),
             new Given('I press "' . get_string('editcategories', 'mod_glossary') . '"'),
             new Given('I press "' . get_string('add').' '.get_string('category', 'glossary') . '"'),
-            new Given('I fill in "name" with "' . $this->escape($categoryname) . '"'),
+            new Given('I set the field "name" to "' . $this->escape($categoryname) . '"'),
             new Given('I press "' . get_string('savechanges') . '"'),
             new Given('I press "' . get_string('back', 'mod_glossary') . '"')
         );

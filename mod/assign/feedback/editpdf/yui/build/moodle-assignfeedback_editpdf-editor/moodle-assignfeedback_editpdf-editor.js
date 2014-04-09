@@ -92,17 +92,17 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a 2d point.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * POINT
+ * Class representing a 2d point.
  *
  * @namespace M.assignfeedback_editpdf
- * @param int x
- * @param int y
+ * @param Number x
+ * @param Number y
  * @class point
  */
 POINT = function(x, y) {
@@ -165,13 +165,13 @@ M.assignfeedback_editpdf.point = POINT;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a 2d rect.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * RECT
+ * Class representing a 2d rect.
  *
  * @namespace M.assignfeedback_editpdf
  * @param int x
@@ -308,7 +308,7 @@ M.assignfeedback_editpdf.rect = RECT;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a partially completed edit operation.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
@@ -412,14 +412,13 @@ M.assignfeedback_editpdf.edit = EDIT;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a drawable thing which contains both
- * Y.Nodes, and Y.Shapes.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * DRAWABLE
+ * Class representing a drawable thing which contains both Y.Nodes, and Y.Shapes.
  *
  * @namespace M.assignfeedback_editpdf
  * @param M.assignfeedback_editpdf.editor editor
@@ -489,9 +488,17 @@ M.assignfeedback_editpdf.drawable = DRAWABLE;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a list of annotations.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
+ * Class representing a highlight.
+ *
+ * @namespace M.assignfeedback_editpdf
+ * @class annotation
+ * @constructor
  */
 ANNOTATION = function(config) {
     ANNOTATION.superclass.constructor.apply(this, [config]);
@@ -820,12 +827,17 @@ M.assignfeedback_editpdf.annotation = ANNOTATION;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a line.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationline
- * @extends annotation
- * @module moodle-assignfeedback_editpdf-editor
+ * @extends M.assignfeedback_editpdf.annotation
  */
 ANNOTATIONLINE = function(config) {
     ANNOTATIONLINE.superclass.constructor.apply(this, [config]);
@@ -935,12 +947,17 @@ M.assignfeedback_editpdf.annotationline = ANNOTATIONLINE;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a rectangle.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationrectangle
- * @extends annotation
- * @module moodle-assignfeedback_editpdf-editor
+ * @extends M.assignfeedback_editpdf.annotation
  */
 ANNOTATIONRECTANGLE = function(config) {
     ANNOTATIONRECTANGLE.superclass.constructor.apply(this, [config]);
@@ -1043,12 +1060,17 @@ M.assignfeedback_editpdf.annotationrectangle = ANNOTATIONRECTANGLE;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a oval.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationoval
- * @extends annotation
- * @module moodle-assignfeedback_editpdf-editor
+ * @extends M.assignfeedback_editpdf.annotation
  */
 ANNOTATIONOVAL = function(config) {
     ANNOTATIONOVAL.superclass.constructor.apply(this, [config]);
@@ -1151,12 +1173,17 @@ M.assignfeedback_editpdf.annotationoval = ANNOTATIONOVAL;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a pen.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationpen
- * @extends annotation
- * @module moodle-assignfeedback_editpdf-editor
+ * @extends M.assignfeedback_editpdf.annotation
  */
 ANNOTATIONPEN = function(config) {
     ANNOTATIONPEN.superclass.constructor.apply(this, [config]);
@@ -1306,11 +1333,17 @@ M.assignfeedback_editpdf.annotationpen = ANNOTATIONPEN;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a highlight.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationhighlight
- * @extends annotation
+ * @extends M.assignfeedback_editpdf.annotation
  * @module moodle-assignfeedback_editpdf-editor
  */
 ANNOTATIONHIGHLIGHT = function(config) {
@@ -1453,12 +1486,17 @@ M.assignfeedback_editpdf.annotationhighlight = ANNOTATIONHIGHLIGHT;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a stamp.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationstamp
- * @extends annotation
- * @module moodle-assignfeedback_editpdf-editor
+ * @extends M.assignfeedback_editpdf.annotation
  */
 ANNOTATIONSTAMP = function(config) {
     ANNOTATIONSTAMP.superclass.constructor.apply(this, [config]);
@@ -1605,13 +1643,18 @@ var DROPDOWN_NAME = "Dropdown menu",
     DROPDOWN;
 
 /**
- * DROPDOWN
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * This is a drop down list of buttons triggered (and aligned to) a button.
  *
- * @namespace M.assignfeedback_editpdf.widget.dropdown
+ * @namespace M.assignfeedback_editpdf
  * @class dropdown
  * @constructor
- * @extends Y.Base
+ * @extends M.core.dialogue
  */
 DROPDOWN = function(config) {
     config.draggable = false;
@@ -1723,13 +1766,19 @@ var COLOURPICKER_NAME = "Colourpicker",
     COLOURPICKER;
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * COLOURPICKER
  * This is a drop down list of colours.
  *
- * @namespace M.assignfeedback_editpdf.colourpicker
- * @class dropdown
+ * @namespace M.assignfeedback_editpdf
+ * @class colourpicker
  * @constructor
- * @extends Y.Base
+ * @extends M.assignfeedback_editpdf.dropdown
  */
 COLOURPICKER = function(config) {
     COLOURPICKER.superclass.constructor.apply(this, [config]);
@@ -1847,13 +1896,18 @@ var STAMPPICKER_NAME = "Colourpicker",
     STAMPPICKER;
 
 /**
- * STAMPPICKER
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * This is a drop down list of stamps.
  *
- * @namespace M.assignfeedback_editpdf.stamppicker
- * @class dropdown
+ * @namespace M.assignfeedback_editpdf
+ * @class stamppicker
  * @constructor
- * @extends Y.Base
+ * @extends M.assignfeedback_editpdf.dropdown
  */
 STAMPPICKER = function(config) {
     STAMPPICKER.superclass.constructor.apply(this, [config]);
@@ -1953,13 +2007,19 @@ var COMMENTMENUNAME = "Commentmenu",
     COMMENTMENU;
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * COMMENTMENU
  * This is a drop down list of comment context functions.
  *
- * @namespace M.assignfeedback_editpdf.editor
+ * @namespace M.assignfeedback_editpdf
  * @class commentmenu
  * @constructor
- * @extends Y.Base
+ * @extends M.assignfeedback_editpdf.dropdown
  */
 COMMENTMENU = function(config) {
     COMMENTMENU.superclass.constructor.apply(this, [config]);
@@ -2068,13 +2128,18 @@ var COMMENTSEARCHNAME = "commentsearch",
     COMMENTSEARCH;
 
 /**
- * COMMENTSEARCH
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * This is a searchable dialogue of comments.
  *
- * @namespace M.assignfeedback_editpdf.editor
+ * @namespace M.assignfeedback_editpdf
  * @class commentsearch
  * @constructor
- * @extends Y.Base
+ * @extends M.core.dialogue
  */
 COMMENTSEARCH = function(config) {
     config.draggable = false;
@@ -2249,13 +2314,13 @@ M.assignfeedback_editpdf.commentsearch = COMMENTSEARCH;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a list of comments.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * COMMENT
+ * Class representing a list of comments.
  *
  * @namespace M.assignfeedback_editpdf
  * @class comment
@@ -2690,13 +2755,13 @@ M.assignfeedback_editpdf.comment = COMMENT;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a users quick comment.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * QUICKCOMMENT
+ * Class representing a users quick comment.
  *
  * @namespace M.assignfeedback_editpdf
  * @class quickcomment
@@ -2754,13 +2819,13 @@ M.assignfeedback_editpdf.quickcomment = QUICKCOMMENT;
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a users list of quick comments.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * QUICKLIST
+ * Class representing a users list of quick comments.
  *
  * @namespace M.assignfeedback_editpdf
  * @class quickcommentlist
@@ -2963,8 +3028,8 @@ M.assignfeedback_editpdf.quickcommentlist = QUICKCOMMENTLIST;
  * EDITOR
  * This is an in browser PDF editor.
  *
- * @namespace M.assignfeedback_editpdf.editor
- * @class Editor
+ * @namespace M.assignfeedback_editpdf
+ * @class editor
  * @constructor
  * @extends Y.Base
  */
@@ -2973,9 +3038,9 @@ EDITOR = function() {
 };
 EDITOR.prototype = {
 
-    // Instance variables.
     /**
      * The dialogue used for all action menu displays.
+     *
      * @property type
      * @type M.core.dialogue
      * @protected
@@ -2984,23 +3049,26 @@ EDITOR.prototype = {
 
     /**
      * The number of pages in the pdf.
-     * @property type
-     * @type int
+     *
+     * @property pagecount
+     * @type Number
      * @protected
      */
     pagecount : 0,
 
     /**
      * The active page in the editor.
-     * @property type
-     * @type int
+     *
+     * @property currentpage
+     * @type Number
      * @protected
      */
     currentpage : 0,
 
     /**
      * A list of page objects. Each page has a list of comments and annotations.
-     * @property type
+     *
+     * @property pages
      * @type array
      * @protected
      */
@@ -3008,15 +3076,17 @@ EDITOR.prototype = {
 
     /**
      * The yui node for the loading icon.
-     * @property type
-     * @type Y.Node
+     *
+     * @property loadingicon
+     * @type Node
      * @protected
      */
     loadingicon : null,
 
     /**
      * Image object of the current page image.
-     * @property type
+     *
+     * @property pageimage
      * @type Image
      * @protected
      */
@@ -3024,14 +3094,16 @@ EDITOR.prototype = {
 
     /**
      * YUI Graphic class for drawing shapes.
-     * @property type
-     * @type Y.Graphic
+     *
+     * @property graphic
+     * @type Graphic
      * @protected
      */
     graphic : null,
 
     /**
      * Info about the current edit operation.
+     *
      * @property currentedit
      * @type M.assignfeedback_editpdf.edit
      * @protected
@@ -3040,14 +3112,16 @@ EDITOR.prototype = {
 
     /**
      * Current drawable.
+     *
      * @property currentdrawable
-     * @type M.assignfeedback_editpdf.drawable (or false)
+     * @type M.assignfeedback_editpdf.drawable|false
      * @protected
      */
     currentdrawable : false,
 
     /**
      * Current drawables.
+     *
      * @property drawables
      * @type array(M.assignfeedback_editpdf.drawable)
      * @protected
@@ -4020,24 +4094,12 @@ Y.extend(EDITOR, Y.Base, EDITOR.prototype, {
     }
 });
 
-/**
- * Assignfeedback edit pdf namespace.
- * @static
- * @class assignfeedback_editpdf
- */
 M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
-
-/**
- * Editor namespace
- * @namespace M.assignfeedback_editpdf.editor
- * @class editor
- * @static
- */
 M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
 
 /**
  * Init function - will create a new instance every time.
- * @method init
+ * @method editor.init
  * @static
  * @param {Object} params
  */

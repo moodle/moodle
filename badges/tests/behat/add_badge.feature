@@ -13,12 +13,12 @@ Feature: Add badges to the system
     Given I expand "Site administration" node
     And I expand "Badges" node
     And I follow "Badges settings"
-    And I fill in "Default badge issuer name" with "Test Badge Site"
-    And I fill in "Default badge issuer contact details" with "testuser@test-badge-site.com"
+    And I set the field "Default badge issuer name" to "Test Badge Site"
+    And I set the field "Default badge issuer contact details" to "testuser@test-badge-site.com"
     And I press "Save changes"
     When I follow "Add a new badge"
-    Then the "issuercontact" field should match "testuser@test-badge-site.com" value
-    And the "issuername" field should match "Test Badge Site" value
+    Then the field "issuercontact" matches value "testuser@test-badge-site.com"
+    And the field "issuername" matches value "Test Badge Site"
 
   @javascript
   Scenario: Accessing the badges
@@ -31,7 +31,7 @@ Feature: Add badges to the system
     Given I expand "Site administration" node
     And I expand "Badges" node
     And I follow "Add a new badge"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test Badge |
       | Description | Test badge description |
       | issuername | Test Badge Site |

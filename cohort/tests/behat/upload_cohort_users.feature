@@ -6,11 +6,11 @@ Feature: Upload users to a cohort
 
   @javascript
   Scenario: Upload users and assign them to a course with cohort enrolment method enabled
-    Given the following "cohorts" exists:
+    Given the following "cohorts" exist:
       | name | idnumber |
       | Cohort 1 | ASD |
       | Cohort 2 | DSA |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
       | Course 2 | C2 | 0 |
@@ -22,11 +22,7 @@ Feature: Upload users to a cohort
     And I follow "Course 2"
     And I add "Cohort sync" enrolment method with:
       | Cohort | Cohort 2 |
-    And I collapse "Course administration" node
-    And I expand "Site administration" node
-    And I expand "Users" node
-    And I expand "Accounts" node
-    When I follow "Upload users"
+    When I navigate to "Upload users" node in "Site administration > Users > Accounts"
     And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filemanager
     And I press "Upload users"
     And I press "Upload users"

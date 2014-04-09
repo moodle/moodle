@@ -6,13 +6,13 @@ Feature: A teacher can edit questions in the question bank
 
   @javascript @_switch_window
   Scenario: Edit a previously created question
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | weeks |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
@@ -25,16 +25,16 @@ Feature: A teacher can edit questions in the question bank
     And I follow "Course 1"
     And I follow "Question bank"
     When I click on "Edit" "link" in the "Test question to be edited" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Question name | Edited question name |
       | Question text | Write a lot about what you want |
-    And I press "Save changes"
+    And I press "id_submitbutton"
     Then I should see "Edited question name"
     And I should not see "Test question to be edited"
     And I should see "Admin User" in the ".categoryquestionscontainer tbody .creatorname" "css_element"
     And I should see "Teacher 1" in the ".categoryquestionscontainer tbody .modifiername" "css_element"
     And I click on "Edit" "link" in the "Edited question name" "table_row"
-    And the "Question name" field should match "Edited question name" value
+    And the field "Question name" matches value "Edited question name"
     And I press "Cancel"
     And I click on "Preview" "link" in the "Edited question name" "table_row"
     And I switch to "questionpreview" window

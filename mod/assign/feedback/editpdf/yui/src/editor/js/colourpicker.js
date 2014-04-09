@@ -2,13 +2,19 @@ var COLOURPICKER_NAME = "Colourpicker",
     COLOURPICKER;
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * COLOURPICKER
  * This is a drop down list of colours.
  *
- * @namespace M.assignfeedback_editpdf.colourpicker
- * @class dropdown
+ * @namespace M.assignfeedback_editpdf
+ * @class colourpicker
  * @constructor
- * @extends Y.Base
+ * @extends M.assignfeedback_editpdf.dropdown
  */
 COLOURPICKER = function(config) {
     COLOURPICKER.superclass.constructor.apply(this, [config]);

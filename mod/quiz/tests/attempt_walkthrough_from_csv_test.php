@@ -113,10 +113,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
         $this->randqids = array();
         foreach ($slots as $slotno => $slotquestion) {
             if ($slotquestion['type'] !== 'random') {
-                quiz_add_quiz_question($slotquestion['id'], $this->quiz, 0);
-                // Setting default mark above does not affect the grade for multi-answer question type (and maybe others??).
-                // Set the mark again just to be sure.
-                quiz_update_question_instance($slotquestion['mark'], $slotquestion['id'], $this->quiz);
+                quiz_add_quiz_question($slotquestion['id'], $this->quiz, 0, $slotquestion['mark']);
             } else {
                 quiz_add_random_questions($this->quiz, 0, $slotquestion['catid'], 1, 0);
                 $this->randqids[$slotno] = $qidsbycat[$slotquestion['catid']];
@@ -186,7 +183,9 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             $quizsettings = $quizzes->getRow($rowno);
             $dataset = array();
             foreach ($this->files as $file) {
-                $dataset[$file] = $this->load_csv_data_file($file, $quizsettings['testnumber']);
+                if (file_exists($this->get_full_path_of_csv_file($file, $quizsettings['testnumber']))) {
+                    $dataset[$file] = $this->load_csv_data_file($file, $quizsettings['testnumber']);
+                }
             }
             $datasets[] = array($quizsettings, $dataset);
         }
@@ -263,7 +262,6 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             } else {
                 $attemptid = $attemptids[$step['quizattempt']];
             }
-
 
             // Process some responses from the student.
             $attemptobj = quiz_attempt::create($attemptid);

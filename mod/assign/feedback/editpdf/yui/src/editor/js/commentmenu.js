@@ -2,13 +2,19 @@ var COMMENTMENUNAME = "Commentmenu",
     COMMENTMENU;
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * COMMENTMENU
  * This is a drop down list of comment context functions.
  *
- * @namespace M.assignfeedback_editpdf.editor
+ * @namespace M.assignfeedback_editpdf
  * @class commentmenu
  * @constructor
- * @extends Y.Base
+ * @extends M.assignfeedback_editpdf.dropdown
  */
 COMMENTMENU = function(config) {
     COMMENTMENU.superclass.constructor.apply(this, [config]);

@@ -201,18 +201,30 @@ class core_files_renderer extends plugin_renderer_base {
     <div class="fp-navbar">
         <div class="filemanager-toolbar">
             <div class="fp-toolbar">
-                <div class="{!}fp-btn-add"><a role="button" title="'.$straddfile.'" href="#"><img src="'.$this->pix_url('a/add_file').'" alt="" /></a></div>
-                <div class="{!}fp-btn-mkdir"><a role="button" title="'.$strmakedir.'" href="#"><img src="'.$this->pix_url('a/create_folder').'" alt="" /></a></div>
-                <div class="{!}fp-btn-download"><a role="button" title="'.$strdownload.'" href="#"><img src="'.$this->pix_url('a/download_all').'" alt="" /></a></div>
+                <div class="fp-btn-add">
+                    <a role="button" title="'.$straddfile.'" href="#"><img src="'.$this->pix_url('a/add_file').'" alt="" /></a>
+                </div>
+                <div class="fp-btn-mkdir">
+                    <a role="button" title="'.$strmakedir.'" href="#"><img src="'.$this->pix_url('a/create_folder').'" alt="" /></a>
+                </div>
+                <div class="fp-btn-download">
+                    <a role="button" title="'.$strdownload.'" href="#"><img src="'.$this->pix_url('a/download_all').'" alt="" /></a>
+                </div>
             </div>
-            <div class="{!}fp-viewbar">
-                <a title="'. get_string('displayicons', 'repository') .'" class="{!}fp-vb-icons" href="#"><img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" /></a>
-                <a title="'. get_string('displaydetails', 'repository') .'" class="{!}fp-vb-details" href="#"><img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" /></a>
-                <a title="'. get_string('displaytree', 'repository') .'" class="{!}fp-vb-tree" href="#"><img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" /></a>
+            <div class="fp-viewbar">
+                <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
+                    <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                </a>
+                <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
+                    <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                </a>
+                <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
+                    <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                </a>
             </div>
         </div>
         <div class="fp-pathbar">
-            <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name" href="#"></a></span>
+            <span class="fp-path-folder"><a class="fp-path-folder-name" href="#"></a></span>
         </div>
     </div>
     <div class="filemanager-loading mdl-align">'.$icon_progress.'</div>
@@ -229,7 +241,7 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="filemanager-updating">'.$icon_progress.'</div>
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $html);
+        return $html;
     }
 
     /**
@@ -249,17 +261,17 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="fp-file">
     <a href="#">
     <div style="position:relative;">
-        <div class="{!}fp-thumbnail"></div>
+        <div class="fp-thumbnail"></div>
         <div class="fp-reficons1"></div>
         <div class="fp-reficons2"></div>
     </div>
     <div class="fp-filename-field">
-        <div class="{!}fp-filename"></div>
+        <div class="fp-filename"></div>
     </div>
     </a>
-    <a class="{!}fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
+    <a class="fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -279,14 +291,14 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <span class="fp-filename-icon">
     <a href="#">
-    <span class="{!}fp-icon"></span>
+    <span class="fp-icon"></span>
     <span class="fp-reficons1"></span>
     <span class="fp-reficons2"></span>
-    <span class="{!}fp-filename"></span>
+    <span class="fp-filename"></span>
     </a>
-    <a class="{!}fp-contextmenu" href="#" onclick="return false;">'.$this->pix_icon('i/menu', '▶').'</a>
+    <a class="fp-contextmenu" href="#" onclick="return false;">'.$this->pix_icon('i/menu', '▶').'</a>
 </span>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -309,10 +321,10 @@ class core_files_renderer extends plugin_renderer_base {
         <label id="fp-mkdir-dlg-title">' . get_string('newfoldername', 'repository') . '</label><br/>
         <input type="text" />
     </div>
-    <button class="{!}fp-dlg-butcreate">'.get_string('makeafolder').'</button>
-    <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
+    <button class="fp-dlg-butcreate btn-primary btn">'.get_string('makeafolder').'</button>
+    <button class="fp-dlg-butcancel btn-cancel btn">'.get_string('cancel').'</button>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -369,50 +381,78 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_fileselectlayout() {
         global $OUTPUT;
         $strloading  = get_string('loading', 'repository');
-        $icon_progress = $this->pix_icon('i/loading_small', $strloading).'';
+        $iconprogress = $this->pix_icon('i/loading_small', $strloading).'';
         $rv = '
 <div class="filemanager fp-select">
     <div class="fp-select-loading">
         <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
-    <form>
-        <button class="{!}fp-file-download">'.get_string('download').'</button>
-        <button class="{!}fp-file-delete">'.get_string('delete').'</button>
-        <button class="{!}fp-file-setmain">'.get_string('setmainfile', 'repository').'</button><span class="fp-file-setmain-help">'.$OUTPUT->help_icon('setmainfile', 'repository').'</span>
-        <button class="{!}fp-file-zip">'.get_string('zip', 'editor').'</button>
-        <button class="{!}fp-file-unzip">'.get_string('unzip').'</button>
+    <form class="form-horizontal">
+        <button class="fp-file-download">'.get_string('download').'</button>
+        <button class="fp-file-delete">'.get_string('delete').'</button>
+        <button class="fp-file-setmain">'.get_string('setmainfile', 'repository').'</button>
+        <span class="fp-file-setmain-help">'.$OUTPUT->help_icon('setmainfile', 'repository').'</span>
+        <button class="fp-file-zip">'.get_string('zip', 'editor').'</button>
+        <button class="fp-file-unzip">'.get_string('unzip').'</button>
         <div class="fp-hr"></div>
-        <table>
-            <tr class="{!}fp-saveas"><td class="mdl-right"><label>'.get_string('name', 'moodle').'</label>:</td>
-            <td class="mdl-left"><input type="text"/></td></tr>
-            <tr class="{!}fp-author"><td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
-            <td class="mdl-left"><input type="text"/></td></tr>
-            <tr class="{!}fp-license"><td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
-            <td class="mdl-left"><select></select></td></tr>
-            <tr class="{!}fp-path"><td class="mdl-right"><label>'.get_string('path', 'moodle').'</label>:</td>
-            <td class="mdl-left"><select></select></td></tr>
-            <tr class="{!}fp-original"><td class="mdl-right"><label>'.get_string('original', 'repository').'</label>:</td>
-            <td class="mdl-left"><span class="fp-originloading">'.$icon_progress.' '.$strloading.'</span><span class="fp-value"></span></td></tr>
-            <tr class="{!}fp-reflist"><td class="mdl-right"><label>'.get_string('referenceslist', 'repository').'</label>:</td>
-            <td class="mdl-left"><p class="{!}fp-refcount"></p><span class="fp-reflistloading">'.$icon_progress.' '.$strloading.'</span><ul class="fp-value"></ul></td></tr>
-        </table>
+
+        <div class="fp-forminset">
+                <div class="fp-saveas control-group clearfix">
+                    <label class="control-label">'.get_string('name', 'repository').'</label>
+                    <div class="controls">
+                        <input type="text"/>
+                    </div>
+                </div>
+                <div class="fp-author control-group clearfix">
+                    <label class="control-label">'.get_string('author', 'repository').'</label>
+                    <div class="controls">
+                        <input type="text"/>
+                    </div>
+                </div>
+                <div class="fp-license control-group clearfix">
+                    <label class="control-label">'.get_string('chooselicense', 'repository').'</label>
+                    <div class="controls">
+                        <select></select>
+                    </div>
+                </div>
+                <div class="fp-path control-group clearfix">
+                    <label class="control-label">'.get_string('path', 'repository').'</label>
+                    <div class="controls">
+                        <select></select>
+                    </div>
+                </div>
+                <div class="fp-original control-group clearfix">
+                    <label class="control-label">'.get_string('original', 'repository').'</label>
+                    <div class="controls">
+                        <span class="fp-originloading">'.$iconprogress.' '.$strloading.'</span><span class="fp-value"></span>
+                    </div>
+                </div>
+                <div class="fp-reflist control-group clearfix">
+                    <label class="control-label">'.get_string('referenceslist', 'repository').'</label>
+                    <div class="controls">
+                        <p class="fp-refcount"></p>
+                        <span class="fp-reflistloading">'.$iconprogress.' '.$strloading.'</span>
+                        <ul class="fp-value"></ul>
+                    </div>
+                </div>
+        </div>
         <div class="fp-select-buttons">
-            <button class="{!}fp-file-update">'.get_string('update', 'moodle').'</button>
-            <button class="{!}fp-file-cancel">'.get_string('cancel').'</button>
+            <button class="fp-file-update btn-primary btn">'.get_string('update', 'moodle').'</button>
+            <button class="fp-file-cancel btn-cancel btn">'.get_string('cancel').'</button>
         </div>
     </form>
     <div class="fp-info clearfix">
         <div class="fp-hr"></div>
-        <p class="{!}fp-thumbnail"></p>
+        <p class="fp-thumbnail"></p>
         <div class="fp-fileinfo">
-            <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
-            <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
-            <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
-            <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+            <div class="fp-datemodified">'.get_string('lastmodified', 'repository').' <span class="fp-value"></span></div>
+            <div class="fp-datecreated">'.get_string('datecreated', 'repository').' <span class="fp-value"></span></div>
+            <div class="fp-size">'.get_string('size', 'repository').' <span class="fp-value"></span></div>
+            <div class="fp-dimensions">'.get_string('dimensions', 'repository').' <span class="fp-value"></span></div>
         </div>
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -429,11 +469,11 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_confirmdialog() {
         $rv = '
 <div class="filemanager fp-dlg">
-    <div class="{!}fp-dlg-text"></div>
-    <button class="{!}fp-dlg-butconfirm">'.get_string('ok').'</button>
-    <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
+    <div class="fp-dlg-text"></div>
+    <button class="fp-dlg-butconfirm btn-primary btn">'.get_string('ok').'</button>
+    <button class="fp-dlg-butcancel btn-cancel btn">'.get_string('cancel').'</button>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -525,36 +565,64 @@ class core_files_renderer extends plugin_renderer_base {
 <div tabindex="0" class="file-picker fp-generallayout" role="dialog" aria-live="assertive">
     <div class="fp-repo-area">
         <ul class="fp-list">
-            <li class="{!}fp-repo"><a href="#"><img class="{!}fp-repo-icon" alt=" " width="16" height="16" />&nbsp;<span class="{!}fp-repo-name"></span></a></li>
+            <li class="fp-repo">
+                <a href="#"><img class="fp-repo-icon" alt=" " width="16" height="16" />&nbsp;<span class="fp-repo-name"></span></a>
+            </li>
         </ul>
     </div>
     <div class="fp-repo-items" tabindex="0">
         <div class="fp-navbar">
             <div>
-                <div class="{!}fp-toolbar">
-                    <div class="{!}fp-tb-back"><a href="#">'.get_string('back', 'repository').'</a></div>
-                    <div class="{!}fp-tb-search"><form></form></div>
-                    <div class="{!}fp-tb-refresh"><a title="'. get_string('refresh', 'repository') .'" href="#"><img alt=""  src="'.$this->pix_url('a/refresh').'" /></a></div>
-                    <div class="{!}fp-tb-logout"><a title="'. get_string('logout', 'repository') .'" href="#"><img alt="" src="'.$this->pix_url('a/logout').'" /></a></div>
-                    <div class="{!}fp-tb-manage"><a title="'. get_string('settings', 'repository') .'" href="#"><img alt="" src="'.$this->pix_url('a/setting').'" /></a></div>
-                    <div class="{!}fp-tb-help"><a title="'. get_string('help', 'repository') .'" href="#"><img alt="" src="'.$this->pix_url('a/help').'" /></a></div>
-                    <div class="{!}fp-tb-message"></div>
+                <div class="fp-toolbar">
+                    <div class="fp-tb-back">
+                        <a href="#">'.get_string('back', 'repository').'</a>
+                    </div>
+                    <div class="fp-tb-search">
+                        <form></form>
+                    </div>
+                    <div class="fp-tb-refresh">
+                        <a title="'. get_string('refresh', 'repository') .'" href="#">
+                            <img alt=""  src="'.$this->pix_url('a/refresh').'" />
+                        </a>
+                    </div>
+                    <div class="fp-tb-logout">
+                        <a title="'. get_string('logout', 'repository') .'" href="#">
+                            <img alt="" src="'.$this->pix_url('a/logout').'" />
+                        </a>
+                    </div>
+                    <div class="fp-tb-manage">
+                        <a title="'. get_string('settings', 'repository') .'" href="#">
+                            <img alt="" src="'.$this->pix_url('a/setting').'" />
+                        </a>
+                    </div>
+                    <div class="fp-tb-help">
+                        <a title="'. get_string('help', 'repository') .'" href="#">
+                            <img alt="" src="'.$this->pix_url('a/help').'" />
+                        </a>
+                    </div>
+                    <div class="fp-tb-message"></div>
                 </div>
-                <div class="{!}fp-viewbar">
-                    <a title="'. get_string('displayicons', 'repository') .'" class="{!}fp-vb-icons" href="#"><img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" /></a>
-                    <a title="'. get_string('displaydetails', 'repository') .'" class="{!}fp-vb-details" href="#"><img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" /></a>
-                    <a title="'. get_string('displaytree', 'repository') .'" class="{!}fp-vb-tree" href="#"><img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" /></a>
+                <div class="fp-viewbar">
+                    <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
+                        <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                    </a>
+                    <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
+                        <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                    </a>
+                    <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
+                        <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                    </a>
                 </div>
                 <div class="fp-clear-left"></div>
             </div>
             <div class="fp-pathbar">
-                 <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name" href="#"></a></span>
+                 <span class="fp-path-folder"><a class="fp-path-folder-name" href="#"></a></span>
             </div>
         </div>
-        <div class="{!}fp-content"></div>
+        <div class="fp-content"></div>
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -578,15 +646,15 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <a class="fp-file" href="#" >
     <div style="position:relative;">
-        <div class="{!}fp-thumbnail"></div>
+        <div class="fp-thumbnail"></div>
         <div class="fp-reficons1"></div>
         <div class="fp-reficons2"></div>
     </div>
     <div class="fp-filename-field">
-        <p class="{!}fp-filename"></p>
+        <p class="fp-filename"></p>
     </div>
 </a>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -609,11 +677,11 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <span class="fp-filename-icon">
     <a href="#">
-        <span class="{!}fp-icon"></span>
-        <span class="{!}fp-filename"></span>
+        <span class="fp-icon"></span>
+        <span class="fp-filename"></span>
     </a>
 </span>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -631,13 +699,13 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fp_js_template_nextpage() {
         $rv = '
-<div class="{!}fp-nextpage">
+<div class="fp-nextpage">
     <div class="fp-nextpage-link"><a href="#">'.get_string('more').'</a></div>
     <div class="fp-nextpage-loading">
         <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -674,46 +742,64 @@ class core_files_renderer extends plugin_renderer_base {
     <div class="fp-select-loading">
         <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
-    <form>
-        <table>
-            <tr class="{!}fp-linktype-2">
-                <td class="mdl-right"></td>
-                <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefileinternal', 'repository').'</label></td></tr>
-            <tr class="{!}fp-linktype-1">
-                <td class="mdl-right"></td>
-                <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefilelink', 'repository').'</label></td></tr>
-            <tr class="{!}fp-linktype-4">
-                <td class="mdl-right"></td>
-                <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefilereference', 'repository').'</label></td></tr>
-            <tr class="{!}fp-saveas">
-                <td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
-                <td class="mdl-left"><input type="text"/></td></tr>
-            <tr class="{!}fp-setauthor">
-                <td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
-                <td class="mdl-left"><input type="text" /></td></tr>
-            <tr class="{!}fp-setlicense">
-                <td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
-                <td class="mdl-left"><select></select></td></tr>
-        </table>
-        <div class="fp-select-buttons">
-            <button class="{!}fp-select-confirm">'.get_string('getfile', 'repository').'</button>
-            <button class="{!}fp-select-cancel">'.get_string('cancel').'</button>
+    <form class="form-horizontal">
+        <div class="fp-forminset">
+                <div class="fp-linktype-2 control-group clearfix">
+                    <label class="control-label">'.get_string('makefileinternal', 'repository').'</label>
+                    <div class="controls">
+                        <input type="radio"/>
+                    </div>
+                </div>
+                <div class="fp-linktype-1 control-group clearfix">
+                    <label class="control-label">'.get_string('makefilelink', 'repository').'</label>
+                    <div class="controls">
+                        <input type="radio"/>
+                    </div>
+                </div>
+                <div class="fp-linktype-4 control-group clearfix">
+                    <label class="control-label">'.get_string('makefilereference', 'repository').'</label>
+                    <div class="controls">
+                        <input type="radio"/>
+                    </div>
+                </div>
+                <div class="fp-saveas control-group clearfix">
+                    <label class="control-label">'.get_string('saveas', 'repository').'</label>
+                    <div class="controls">
+                        <input type="text"/>
+                    </div>
+                </div>
+                <div class="fp-setauthor control-group clearfix">
+                    <label class="control-label">'.get_string('author', 'repository').'</label>
+                    <div class="controls">
+                        <input type="text"/>
+                    </div>
+                </div>
+                <div class="fp-setlicense control-group clearfix">
+                    <label class="control-label">'.get_string('chooselicense', 'repository').'</label>
+                    <div class="controls">
+                        <select></select>
+                    </div>
+                </div>
+        </div>
+       <div class="fp-select-buttons">
+            <button class="fp-select-confirm btn-primary btn">'.get_string('getfile', 'repository').'</button>
+            <button class="fp-select-cancel btn-cancel btn">'.get_string('cancel').'</button>
         </div>
     </form>
     <div class="fp-info clearfix">
         <div class="fp-hr"></div>
-        <p class="{!}fp-thumbnail"></p>
+        <p class="fp-thumbnail"></p>
         <div class="fp-fileinfo">
-            <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
-            <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
-            <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
-            <div class="{!}fp-license">'.get_string('license', 'moodle').': <span class="fp-value"></span></div>
-            <div class="{!}fp-author">'.get_string('author', 'repository').': <span class="fp-value"></span></div>
-            <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+            <div class="fp-datemodified">'.get_string('lastmodified', 'moodle').'<span class="fp-value"></span></div>
+            <div class="fp-datecreated">'.get_string('datecreated', 'repository').'<span class="fp-value"></span></div>
+            <div class="fp-size">'.get_string('size', 'repository').'<span class="fp-value"></span></div>
+            <div class="fp-license">'.get_string('license', 'moodle').'<span class="fp-value"></span></div>
+            <div class="fp-author">'.get_string('author', 'repository').'<span class="fp-value"></span></div>
+            <div class="fp-dimensions">'.get_string('dimensions', 'repository').'<span class="fp-value"></span></div>
         </div>
     <div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -736,28 +822,42 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fp_js_template_uploadform() {
         $rv = '
-<div class="fp-upload-form mdl-align">
+<div class="fp-upload-form">
     <div class="fp-content-center">
-        <form enctype="multipart/form-data" method="POST">
-            <table >
-                <tr class="{!}fp-file">
-                    <td class="mdl-right"><label>'.get_string('attachment', 'repository').'</label>:</td>
-                    <td class="mdl-left"><input type="file"/></td></tr>
-                <tr class="{!}fp-saveas">
-                    <td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
-                    <td class="mdl-left"><input type="text"/></td></tr>
-                <tr class="{!}fp-setauthor">
-                    <td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
-                    <td class="mdl-left"><input type="text"/></td></tr>
-                <tr class="{!}fp-setlicense">
-                    <td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
-                    <td class="mdl-left"><select></select></td></tr>
-            </table>
+        <form enctype="multipart/form-data" method="POST" class="form-horizontal">
+            <div class="fp-formset">
+                <div class="fp-file control-group clearfix">
+                    <label class="control-label">'.get_string('attachment', 'repository').'</label>
+                    <div class="controls">
+                        <input type="file"/>
+                    </div>
+                </div>
+                <div class="fp-saveas control-group clearfix">
+                    <label class="control-label">'.get_string('saveas', 'repository').'</label>
+                    <div class="controls">
+                        <input type="text"/>
+                    </div>
+                </div>
+                <div class="fp-setauthor control-group clearfix">
+                    <label class="control-label">'.get_string('author', 'repository').'</label>
+                    <div class="controls">
+                        <input type="text"/>
+                    </div>
+                </div>
+                <div class="fp-setlicense control-group clearfix">
+                    <label class="control-label">'.get_string('chooselicense', 'repository').'</label>
+                    <div class="controls">
+                        <select ></select>
+                    </div>
+                </div>
+            </div>
         </form>
-        <div><button class="{!}fp-upload-btn">'.get_string('upload', 'repository').'</button></div>
+        <div class="mdl-align">
+            <button class="fp-upload-btn btn-primary btn">'.get_string('upload', 'repository').'</button>
+        </div>
     </div>
 </div> ';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -785,8 +885,8 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fp_js_template_error() {
         $rv = '
-<div class="fp-content-error" ><div class="{!}fp-error"></div></div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+<div class="fp-content-error" ><div class="fp-error"></div></div>';
+        return $rv;
     }
 
     /**
@@ -805,10 +905,10 @@ class core_files_renderer extends plugin_renderer_base {
     private function fp_js_template_message() {
         $rv = '
 <div class="file-picker fp-msg" role="alertdialog" aria-live="assertive" aria-labelledby="fp-msg-labelledby">
-    <p class="{!}fp-msg-text" id="fp-msg-labelledby"></p>
-    <button class="{!}fp-msg-butok">'.get_string('ok').'</button>
+    <p class="fp-msg-text" id="fp-msg-labelledby"></p>
+    <button class="fp-msg-butok btn-primary btn">'.get_string('ok').'</button>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -829,14 +929,14 @@ class core_files_renderer extends plugin_renderer_base {
     private function fp_js_template_processexistingfile() {
         $rv = '
 <div class="file-picker fp-dlg">
-    <p class="{!}fp-dlg-text"></p>
+    <p class="fp-dlg-text"></p>
     <div class="fp-dlg-buttons">
-        <button class="{!}fp-dlg-butoverwrite">'.get_string('overwrite', 'repository').'</button>
-        <button class="{!}fp-dlg-butrename"></button>
-        <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
+        <button class="fp-dlg-butoverwrite btn">'.get_string('overwrite', 'repository').'</button>
+        <button class="fp-dlg-butrename btn"></button>
+        <button class="fp-dlg-butcancel btn btn-cancel">'.get_string('cancel').'</button>
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -856,15 +956,15 @@ class core_files_renderer extends plugin_renderer_base {
     private function fp_js_template_processexistingfilemultiple() {
         $rv = '
 <div class="file-picker fp-dlg">
-    <p class="{!}fp-dlg-text"></p>
-    <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
-    <a class="{!}fp-dlg-butrename fp-panel-button" href="#"></a>
+    <p class="fp-dlg-text"></p>
+    <a class="fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
+    <a class="fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <a class="fp-dlg-butrename fp-panel-button" href="#"></a>
     <br/>
-    <a class="{!}fp-dlg-butoverwriteall fp-panel-button" href="#">'.get_string('overwriteall', 'repository').'</a>
-    <a class="{!}fp-dlg-butrenameall fp-panel-button" href="#">'.get_string('renameall', 'repository').'</a>
+    <a class="fp-dlg-butoverwriteall fp-panel-button" href="#">'.get_string('overwriteall', 'repository').'</a>
+    <a class="fp-dlg-butrenameall fp-panel-button" href="#">'.get_string('renameall', 'repository').'</a>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**
@@ -893,29 +993,35 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="fp-login-form">
     <div class="fp-content-center">
-        <form>
-            <table >
-                <tr class="{!}fp-login-popup">
-                    <td colspan="2">
-                        <label>'.get_string('popup', 'repository').'</label>
-                        <p class="fp-popup"><button class="{!}fp-login-popup-but">'.get_string('login', 'repository').'</button></p></td></tr>
-                <tr class="{!}fp-login-textarea">
-                    <td colspan="2"><p><textarea></textarea></p></td></tr>
-                <tr class="{!}fp-login-select">
-                    <td align="right"><label></label></td>
-                    <td align="left"><select></select></td></tr>
-                <tr class="{!}fp-login-input">
-                    <td class="label"><label></label></td>
-                    <td class="input"><input/></td></tr>
-                <tr class="{!}fp-login-radiogroup">
-                    <td align="right" width="30%" valign="top"><label></label></td>
-                    <td align="left" valign="top"><p class="{!}fp-login-radio"><input /> <label></label></p></td></tr>
-            </table>
-            <p><button class="{!}fp-login-submit">'.get_string('submit', 'repository').'</button></p>
+        <form class="form-horizontal">
+            <div class="fp-formset">
+                <div class="fp-login-popup control-group clearfix">
+                    <div class="controls fp-popup">
+                        <button class="fp-login-popup-but btn-primary btn">'.get_string('login', 'repository').'</button>
+                    </div>
+                </div>
+                <div class="fp-login-textarea control-group clearfix">
+                    <div class="controls"><textarea></textarea></div>
+                </div>
+                <div class="fp-login-select control-group clearfix">
+                    <label class="control-label"></label>
+
+                    <div class="controls"><select></select></div>
+                </div>
+                <div class="fp-login-input control-group clearfix">
+                    <label class="control-label"></label>
+                    <div class="controls"><input/></div>
+                </div>
+                <div class="fp-login-radiogroup control-group clearfix">
+                    <label class="control-label"></label>
+                    <div class="controls fp-login-radio"><input /> <label></label></div>
+                </div>
+            </div>
+            <p><button class="fp-login-submit btn-primary btn">'.get_string('submit', 'repository').'</button></p>
         </form>
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $rv);
+        return $rv;
     }
 
     /**

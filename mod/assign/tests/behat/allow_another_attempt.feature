@@ -6,14 +6,14 @@ Feature: In an assignment, students start a new attempt based on their previous 
 
   @javascript
   Scenario: Submit a text online and edit the submission
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -31,7 +31,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I follow "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student first submission |
     And I press "Save changes"
     And I log out
@@ -40,7 +40,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
     And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Allow another attempt | 1 |
     And I press "Save changes"
     And I log out

@@ -1052,7 +1052,6 @@ a.ygtvspacer:hover {
     width: 100%;
     height: 80px;
     position: absolute;
-    margin-left: -28px;
     top: 5px;
 }
 .fitem.disabled .filepicker-container,
@@ -1195,5 +1194,60 @@ a.ygtvspacer:hover {
         .yui-layout-unit-center {
             left: 0;
         }
+    }
+}
+// Upload form for file picker.
+.fp-formset {
+    max-width: 500px;
+    padding: 10px;
+    input[type="file"] {
+        line-height: inherit;
+    }
+}
+.fp-forminset {
+    max-width: 400px;
+    padding: 10px;
+    .control-group {
+        label.control-label {
+           width: 105px;
+        }
+        .controls {
+            margin-left: 125px;
+        }
+    }
+    .fp-select-buttons {
+        float: none;
+    }
+
+}
+
+.dir-rtl .fp-forminset {
+    max-width: 400px;
+    .control-group {
+        label.control-label {
+            float: right;
+            text-align: left;
+        }
+        .controls {
+            margin-left: 0;
+            margin-right: 125px;
+        }
+    }
+    .fp-select-buttons {
+        float: left;
+    }
+    input[type="text"] {
+        width: 248px;
+    }
+}
+
+.dir-rtl .filepicker .fp-formset {
+    label {
+        float: right;
+        text-align: left;
+    }
+    .controls {
+        margin-left: 0;
+        text-align: right;
     }
 }

@@ -5,14 +5,14 @@ Feature: Restrict sections availability through completion or grade conditions
   I need to restrict sections availability using different conditions
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | Frist | teacher1@asd.com |
       | student1 | Student | First | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -28,7 +28,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I follow "Course 1"
     And I turn editing mode on
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save changes"
     And I add a "Label" to section "1" and I fill the form with:
@@ -76,7 +76,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And "Test page name" activity should be hidden
     And I follow "Grade assignment"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission |
     And I press "Save changes"
     And I should see "Submitted for grading"
@@ -86,7 +86,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I follow "Grade assignment"
     And I follow "View/grade all submissions"
     And I click on "Grade Student First" "link" in the "Student First" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"
     And I log out

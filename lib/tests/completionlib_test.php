@@ -500,6 +500,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $data->coursemoduleid = $cm->id;
         $data->completionstate = COMPLETION_COMPLETE;
         $data->timemodified = time();
+        $data->viewed = COMPLETION_NOT_VIEWED;
 
         $c->internal_set_data($cm, $data);
         $d1 = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cm->id));
@@ -518,6 +519,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $d2->coursemoduleid = $cm2->id;
         $d2->completionstate = COMPLETION_COMPLETE;
         $d2->timemodified = time();
+        $d2->viewed = COMPLETION_NOT_VIEWED;
         $c->internal_set_data($cm2, $d2);
         $this->assertFalse(isset($SESSION->completioncache));
 
@@ -533,6 +535,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $d3->coursemoduleid = $cm3->id;
         $d3->completionstate = COMPLETION_COMPLETE;
         $d3->timemodified = time();
+        $d3->viewed = COMPLETION_NOT_VIEWED;
         $DB->insert_record('course_modules_completion', $d3);
         $c->internal_set_data($cm, $data);
     }

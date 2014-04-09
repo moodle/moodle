@@ -6,14 +6,11 @@ Feature: Block activity modules
 
   Background:
     Given I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Plugins" node
-    And I expand "Activity modules" node
-    And I follow "Manage activities"
+    And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
     And I click on "//a[@title=\"Show\"]" "xpath_element" in the "Feedback" "table_row"
 
   Scenario: Add activities block on the frontpage
-    Given the following "activities" exists:
+    Given the following "activities" exist:
       | activity   | name                        | intro                              | course               | idnumber    |
       | assign     | Frontpage assignment name   | Frontpage assignment description   | Acceptance test site | assign0     |
       | book       | Frontpage book name         | Frontpage book description         | Acceptance test site | book0       |
@@ -88,10 +85,10 @@ Feature: Block activity modules
     And I should see "Frontpage url name"
 
   Scenario: Add activities block in a course
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
       | book       | Test book name         | Test book description         | C1     | book1       |

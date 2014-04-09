@@ -17,10 +17,9 @@
 /**
  * Sub-plugin definitions for the quiz module.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 Petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2010 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

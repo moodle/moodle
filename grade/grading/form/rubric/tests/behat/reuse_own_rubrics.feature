@@ -5,13 +5,13 @@ Feature: Reuse my rubrics in other activities
   I need to reuse rubrics that I created previously
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -22,7 +22,7 @@ Feature: Reuse my rubrics in other activities
       | Description | Test assignment 1 description |
       | Grading method | Rubric |
     And I go to "Test assignment 1 name" advanced grading definition page
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Assignment 1 rubric |
       | Description | Assignment 1 description |
     And I define the following rubric:

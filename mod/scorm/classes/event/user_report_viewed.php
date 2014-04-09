@@ -98,6 +98,7 @@ class user_report_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (empty($this->other['attemptid'])) {
             throw new \coding_exception('The \\mod_scorm\\event\\user_report_viewed must specify attemptid.');
         }

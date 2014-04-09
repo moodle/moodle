@@ -29,17 +29,29 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Analysis for possible responses for parts of a question. It is up to a question type designer to decide on how many parts their
- * question has. A sub part might represent a sub question embedded in the question for example in a matching question there are
+ * question has. See {@link \question_type::get_possible_responses()} and sub classes where the sub parts and response classes are
+ * defined.
+ *
+ * A sub part might represent a sub question embedded in the question for example in a matching question there are
  * several sub parts. A numeric question with a unit might be divided into two sub parts for the purposes of response analysis
  * or the question type designer might decide to treat the answer, both the numeric and unit part,
  * as a whole for the purposes of response analysis.
  *
- * Responses can be further divided into 'classes' in which they are classified. One or more of these 'classes' are contained in
- * the responses
+ * - There is a separate data structure for each question or sub question's analysis
+ * {@link \core_question\statistics\responses\analysis_for_question}
+ * or {@link \core_question\statistics\responses\analysis_for_question_all_tries}.
+ * - There are separate analysis for each variant in this top level instance.
+ * - Then there are class instances representing the analysis of each of the sub parts of each variant of the question.
+ * {@link \core_question\statistics\responses\analysis_for_subpart}.
+ * - Then within the sub part analysis there are response class analysis
+ * {@link \core_question\statistics\responses\analysis_for_class}.
+ * - Then within each class analysis there are analysis for each actual response
+ * {@link \core_question\statistics\responses\analysis_for_actual_response}.
  *
- * @copyright 2013 Open University
- * @author    Jamie Pratt <me@jamiep.org>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_question
+ * @copyright  2014 The Open University
+ * @author     James Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class analysis_for_question {
 
@@ -150,6 +162,23 @@ class analysis_for_question {
     }
 
     /**
+     * @return bool Does this response analysis include counts for responses for multiple tries of the question?
+     */
+    public function has_multiple_tries_data() {
+        return false;
+    }
+
+    /**
+     * What is the highest number of tries at this question?
+     *
+     * @return int always 1 as this class is for analysing only one try.
+     */
+    public function get_maximum_tries() {
+        return 1;
+    }
+
+
+    /**
      * Takes an array of {@link \question_classified_response} and adds counts of the responses to the sub parts and classes.
      *
      * @param int                             $variantno
@@ -162,13 +191,15 @@ class analysis_for_question {
     }
 
     /**
-     * @param \qubaid_condition $qubaids
-     * @param int               $questionid the question id
+     * @param \qubaid_condition $qubaids    which question usages have been analysed.
+     * @param string            $whichtries which tries have been analysed?
+     * @param int               $questionid which question.
      */
-    public function cache($qubaids, $questionid) {
+    public function cache($qubaids, $whichtries, $questionid) {
         foreach ($this->get_variant_nos() as $variantno) {
             foreach ($this->get_subpart_ids($variantno) as $subpartid) {
-                $this->get_analysis_for_subpart($variantno, $subpartid)->cache($qubaids, $questionid, $variantno, $subpartid);
+                $analysisforsubpart = $this->get_analysis_for_subpart($variantno, $subpartid);
+                $analysisforsubpart->cache($qubaids, $whichtries, $questionid, $variantno, $subpartid);
             }
         }
     }

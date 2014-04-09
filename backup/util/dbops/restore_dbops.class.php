@@ -972,6 +972,7 @@ abstract class restore_dbops {
                 'timecreated' => $file->timecreated,
                 'timemodified'=> $file->timemodified,
                 'userid'      => $mappeduserid,
+                'source'      => $file->source,
                 'author'      => $file->author,
                 'license'     => $file->license,
                 'sortorder'   => $file->sortorder
@@ -1214,7 +1215,7 @@ abstract class restore_dbops {
                         $usertag = (object)$usertag;
                         $tags[] = $usertag->rawname;
                     }
-                    tag_set('user', $newuserid, $tags);
+                    tag_set('user', $newuserid, $tags, 'core', $newuserctxid);
                 }
 
                 // Process preferences

@@ -2286,7 +2286,6 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013070800.01);
     }
-
     if ($oldversion < 2013071500.01) {
         // The enrol_authorize plugin has been removed, if there are no records
         // and no plugin files then remove the plugin data.
@@ -3067,6 +3066,298 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2014021900.03);
+    }
+
+    if ($oldversion < 2014022600.00) {
+        $table = new xmldb_table('task_scheduled');
+
+        // Adding fields to table task_scheduled.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('classname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('lastruntime', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('nextruntime', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('blocking', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('minute', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('hour', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('day', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('month', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('dayofweek', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('faildelay', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('customised', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('disabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table task_scheduled.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table task_scheduled.
+        $table->add_index('classname_uniq', XMLDB_INDEX_UNIQUE, array('classname'));
+
+        // Conditionally launch create table for task_scheduled.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table task_adhoc to be created.
+        $table = new xmldb_table('task_adhoc');
+
+        // Adding fields to table task_adhoc.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('classname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('nextruntime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('faildelay', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('customdata', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('blocking', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table task_adhoc.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table task_adhoc.
+        $table->add_index('nextruntime_idx', XMLDB_INDEX_NOTUNIQUE, array('nextruntime'));
+
+        // Conditionally launch create table for task_adhoc.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014022600.00);
+    }
+
+    if ($oldversion < 2014031400.02) {
+        // Delete any cached stats to force recalculation later, then we can be sure that cached records will have the correct
+        // field.
+        $DB->delete_records('question_response_analysis');
+        $DB->delete_records('question_statistics');
+        $DB->delete_records('quiz_statistics');
+
+        // Define field response to be dropped from question_response_analysis.
+        $table = new xmldb_table('question_response_analysis');
+        $field = new xmldb_field('rcount');
+
+        // Conditionally launch drop field response.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014031400.02);
+    }
+
+    if ($oldversion < 2014031400.03) {
+
+        // Define table question_response_count to be created.
+        $table = new xmldb_table('question_response_count');
+
+        // Adding fields to table question_response_count.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('analysisid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('try', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('rcount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table question_response_count.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('analysisid', XMLDB_KEY_FOREIGN, array('analysisid'), 'question_response_analysis', array('id'));
+
+        // Conditionally launch create table for question_response_count.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014031400.03);
+    }
+
+    if ($oldversion < 2014031400.04) {
+
+        // Define field whichtries to be added to question_response_analysis.
+        $table = new xmldb_table('question_response_analysis');
+        $field = new xmldb_field('whichtries', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'hashcode');
+
+        // Conditionally launch add field whichtries.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014031400.04);
+    }
+
+    if ($oldversion < 2014032600.00) {
+        // Removing the themes from core.
+        $themes = array('afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white', 'formfactor',
+            'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
+            'standard', 'standardold');
+
+        foreach ($themes as $key => $theme) {
+            if (check_dir_exists($CFG->dirroot . '/theme/' . $theme, false)) {
+                // Ignore the themes that have been re-downloaded.
+                unset($themes[$key]);
+            }
+        }
+
+        list($insql, $inparams) = $DB->get_in_or_equal($themes, SQL_PARAMS_NAMED);
+
+        // Replace the theme usage.
+        $DB->set_field_select('course', 'theme', 'clean', "theme $insql", $inparams);
+        $DB->set_field_select('course_categories', 'theme', 'clean', "theme $insql", $inparams);
+        $DB->set_field_select('user', 'theme', 'clean', "theme $insql", $inparams);
+        $DB->set_field_select('mnet_host', 'theme', 'clean', "theme $insql", $inparams);
+
+        // Replace the theme configs.
+        if (in_array(get_config('core', 'theme'), $themes)) {
+            set_config('theme', 'clean');
+        }
+        if (in_array(get_config('core', 'thememobile'), $themes)) {
+            set_config('thememobile', 'clean');
+        }
+        if (in_array(get_config('core', 'themelegacy'), $themes)) {
+            set_config('themelegacy', 'clean');
+        }
+        if (in_array(get_config('core', 'themetablet'), $themes)) {
+            set_config('themetablet', 'clean');
+        }
+
+        // Hacky emulation of plugin uninstallation.
+        foreach ($themes as $theme) {
+            unset_all_config_for_plugin('theme_' . $theme);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032600.00);
+    }
+
+    if ($oldversion < 2014032600.02) {
+        // Add new fields to the 'tag_instance' table.
+        $table = new xmldb_table('tag_instance');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, false, null, null, 'tagid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'itemid');
+        // Define the 'contextid' foreign key to be added to the tag_instance table.
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_key($table, $key);
+            $DB->set_field('tag_instance', 'contextid', null, array('contextid' => 0));
+            $dbman->change_field_default($table, $field);
+        } else {
+            $dbman->add_field($table, $field);
+        }
+        $dbman->add_key($table, $key);
+
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'ordering');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $sql = "UPDATE {tag_instance}
+                   SET timecreated = timemodified";
+        $DB->execute($sql);
+
+        // Update all the course tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                     WHERE ctx.contextlevel = :contextlevel
+                                       AND ctx.instanceid = {tag_instance}.itemid)
+                 WHERE itemtype = 'course' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_COURSE));
+
+        // Update all the user tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                     WHERE ctx.contextlevel = :contextlevel
+                                       AND ctx.instanceid = {tag_instance}.itemid)
+                 WHERE itemtype = 'user' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_USER));
+
+        // Update all the blog post tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                      JOIN {post} p
+                                        ON p.userid = ctx.instanceid
+                                     WHERE ctx.contextlevel = :contextlevel
+                                       AND p.id = {tag_instance}.itemid)
+                 WHERE itemtype = 'post' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_USER));
+
+        // Update all the wiki page tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'mod_wiki',
+                       contextid = (SELECT ctx.id
+                                      FROM {context} ctx
+                                      JOIN {course_modules} cm
+                                        ON cm.id = ctx.instanceid
+                                      JOIN {modules} m
+                                        ON m.id = cm.module
+                                      JOIN {wiki} w
+                                        ON w.id = cm.instance
+                                      JOIN {wiki_subwikis} sw
+                                        ON sw.wikiid = w.id
+                                      JOIN {wiki_pages} wp
+                                        ON wp.subwikiid = sw.id
+                                     WHERE m.name = 'wiki'
+                                       AND ctx.contextlevel = :contextlevel
+                                       AND wp.id = {tag_instance}.itemid)
+                 WHERE itemtype = 'wiki_pages' AND contextid IS NULL";
+        $DB->execute($sql, array('contextlevel' => CONTEXT_MODULE));
+
+        // Update all the question tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core_question',
+                       contextid = (SELECT qc.contextid
+                                      FROM {question} q
+                                      JOIN {question_categories} qc
+                                        ON q.category = qc.id
+                                     WHERE q.id = {tag_instance}.itemid)
+                 WHERE itemtype = 'question' AND contextid IS NULL";
+        $DB->execute($sql);
+
+        // Update all the tag tags.
+        $sql = "UPDATE {tag_instance}
+                   SET component = 'core',
+                       contextid = :systemcontext
+                 WHERE itemtype = 'tag' AND contextid IS NULL";
+        $DB->execute($sql, array('systemcontext' => context_system::instance()->id));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032600.02);
+    }
+
+    if ($oldversion < 2014032700.01) {
+
+        // Define field disabled to be added to task_scheduled.
+        $table = new xmldb_table('task_scheduled');
+        $field = new xmldb_field('disabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'customised');
+
+        // Conditionally launch add field disabled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032700.01);
+    }
+
+    if ($oldversion < 2014032700.02) {
+
+        // Update displayloginfailures setting.
+        if (empty($CFG->displayloginfailures)) {
+            set_config('displayloginfailures', 0);
+        } else {
+            set_config('displayloginfailures', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032700.02);
     }
 
     return true;

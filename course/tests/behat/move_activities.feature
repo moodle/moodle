@@ -5,13 +5,13 @@ Feature: Activities can be moved between sections
   I need to move activities between sections
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections |
       | Course 1 | C1 | topics | 0 | 5 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -20,7 +20,7 @@ Feature: Activities can be moved between sections
     And I follow "Delete Recent activity block"
     And I press "Yes"
     And I follow "Configure Navigation block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Visible | Yes |
     And I press "Save changes"
     And I add a "Forum" to section "1" and I fill the form with:
@@ -34,7 +34,7 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in the course home with Javascript disabled using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save changes"
     When I move "Test forum name" activity to section "2"
@@ -43,7 +43,7 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save changes"
     And I add a "Forum" to section "1" and I fill the form with:

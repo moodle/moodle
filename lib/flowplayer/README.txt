@@ -1,6 +1,35 @@
 Version history:
 
+3.2.17
+------
+- #75 set the child display list different when a gradient is set.
+- The clip property 'bufferLength' now accepts decimal values, for example bufferLength: 0.2
+- #121 XSS fix: Only load plugins and external config from the same domain as the player swf is loaded from
+- Made it possible to tab out of the player and into the HTML page using the keyboard alone.
+- Change links in the context menu and in the logos to point to http://flash.flowplayer.org
+- Pausing a live stream now leaves the video frame visible #81
+- Audio plugin is not loaded nor used when the the provider is set excplicitly in the clip to a non-audio value, for
+ example to 'http'
+- Allow playing another instream clip while already playing one. Issue #131
+- Fixed memory leaks related to repeatedly starting playback with the play() API method. #163
+
 3.2.16
+------
+- new clip event onMetadataChange, dispatched for example when switching bitrate
+
+Fixes:
+
+- Shows logo in accelerated mode #20
+- mid-rolls freeze if multiple providers are used #42
+- onFire fired twice on replay #52
+- rtmp + hw accel + instream clips lose video, or aspect ratio #44
+- URL name parts containing semi-colons (;) should pass validation through linkUrl usage #53
+- cuepoints fired multiple times with the bitrateselect plugin #50
+- fix for dispatching onBegin in certain situations
+- if onStart has been dispatched already prevent dispatching many onBegin events
+
+
+3.2.15
 ------
 - #15 fixes for #627, handle the display init on startup.
 - #615 dispatch begin if in paused mode too early.
@@ -10,11 +39,11 @@ Version history:
 - #52 when replaying flag start has dispatched on the current clip.
 - #44 fixes for #627 check if the stagevideo dimensions and positioning has changed to update the stage video mask with.
 - unbinding and binding stage video events caused issues with instream playlists therefore has to be kept binded.
-  unbinded stage video events during seeking to prevent the mask repositioning.
+- unbinded stage video events during seeking to prevent the mask repositioning.
 - #53 update url filter to accomodate for pretty urls with semi colons.
 - #50 if we have metadata already set it is being updated during seeks and switching, dispatch metadata change events instead.
 
-3.2.15
+3.2.14
 ------
 - #614 when the clip ends if the next clip in the provider has a different provider close the provider stream.
 - #627 only detach / attach the display on start events which causes issues in buffering events after a seek in stagevideo.

@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_charmap-button",
+  "builds": {
+    "moodle-atto_charmap-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

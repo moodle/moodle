@@ -331,6 +331,9 @@ function question_delete_question($questionid) {
     question_bank::get_qtype($question->qtype, false)->delete_question(
             $questionid, $question->contextid);
 
+    // Delete all tag instances.
+    $DB->delete_records('tag_instance', array('component' => 'core_question', 'itemid' => $question->id));
+
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
             array('parent' => $questionid), '', 'id, qtype')) {
@@ -435,7 +438,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
                     // Check to see if there were any questions that were kept because
                     // they are still in use somehow, even though quizzes in courses
-                    // in this category will already have been deteted. This could
+                    // in this category will already have been deleted. This could
                     // happen, for example, if questions are added to a course,
                     // and then that course is moved to another category (MDL-14802).
                     $questionids = $DB->get_records_menu('question',
@@ -474,12 +477,17 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         }
 
     } else {
-        // Move question categories ot the new context.
+        // Move question categories to the new context.
         if (!$newcontext = context_coursecat::instance($newcategory->id)) {
             return false;
         }
-        $DB->set_field('question_categories', 'contextid', $newcontext->id,
-                array('contextid'=>$context->id));
+
+        // Update the contextid for any tag instances for questions in the old context.
+        $DB->set_field('tag_instance', 'contextid', $newcontext->id, array('component' => 'core_question',
+            'contextid' => $context->id));
+
+        $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid' => $context->id));
+
         if ($feedback) {
             $a = new stdClass();
             $a->oldplace = $context->get_context_name();
@@ -611,6 +619,10 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
     $DB->set_field_select('question', 'category', $newcategoryid,
             "parent $questionidcondition", $params);
 
+    // Update the contextid for any tag instances that may exist for these questions.
+    $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
+        "component = 'core_question' AND itemid $questionidcondition", $params);
+
     // TODO Deal with datasets.
 
     // Purge these questions from the cache.
@@ -641,6 +653,13 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
         question_bank::notify_question_edited($questionid);
     }
 
+    if ($questionids) {
+        // Update the contextid for any tag instances that may exist for these questions.
+        list($questionids, $params) = $DB->get_in_or_equal(array_keys($questionids));
+        $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
+            "component = 'core_question' AND itemid $questionids", $params);
+    }
+
     $subcatids = $DB->get_records_menu('question_categories',
             array('parent' => $categoryid), '', 'id,1');
     foreach ($subcatids as $subcatid => $notused) {
@@ -660,7 +679,7 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  *      be picked randomly.
  * @param object $context context to run the preview in (affects things like
  *      filter settings, theme, lang, etc.) Defaults to $PAGE->context.
- * @return string the URL.
+ * @return moodle_url the URL.
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
         $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
@@ -718,50 +737,58 @@ function question_preview_popup_params() {
  * to pull in extra data. See, for example, the usage in mod/quiz/attemptlib.php, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
- * @global object
- * @global object
- * @param array $questionids array of question ids.
+ * @param array $questionids array of question ids to load. If null, then all
+ * questions matched by $join will be loaded.
  * @param string $extrafields extra SQL code to be added to the query.
  * @param string $join extra SQL code to be added to the query.
  * @param array $extraparams values for any placeholders in $join.
- * You are strongly recommended to use named placeholder.
+ * You must use named placeholders.
+ * @param string $orderby what to order the results by. Optional, default is unspecified order.
  *
  * @return array partially complete question objects. You need to call get_question_options
  * on them before they can be properly used.
  */
-function question_preload_questions($questionids, $extrafields = '', $join = '',
-        $extraparams = array()) {
+function question_preload_questions($questionids = null, $extrafields = '', $join = '',
+        $extraparams = array(), $orderby = '') {
     global $DB;
-    if (empty($questionids)) {
-        return array();
+
+    if ($questionids === null) {
+        $where = '';
+        $params = array();
+    } else {
+        if (empty($questionids)) {
+            return array();
+        }
+
+        list($questionidcondition, $params) = $DB->get_in_or_equal(
+                $questionids, SQL_PARAMS_NAMED, 'qid0000');
+        $where = 'WHERE q.id ' . $questionidcondition;
     }
+
     if ($join) {
-        $join = ' JOIN '.$join;
+        $join = 'JOIN ' . $join;
     }
+
     if ($extrafields) {
         $extrafields = ', ' . $extrafields;
     }
-    list($questionidcondition, $params) = $DB->get_in_or_equal(
-            $questionids, SQL_PARAMS_NAMED, 'qid0000');
-    $sql = 'SELECT q.*, qc.contextid' . $extrafields . ' FROM {question} q
-            JOIN {question_categories} qc ON q.category = qc.id' .
-            $join .
-          ' WHERE q.id ' . $questionidcondition;
 
-    // Load the questions
-    if (!$questions = $DB->get_records_sql($sql, $extraparams + $params)) {
-        return array();
+    if ($orderby) {
+        $orderby = 'ORDER BY ' . $orderby;
     }
 
+    $sql = "SELECT q.*, qc.contextid{$extrafields}
+              FROM {question} q
+              JOIN {question_categories} qc ON q.category = qc.id
+              {$join}
+             {$where}
+          {$orderby}";
+
+    // Load the questions.
+    $questions = $DB->get_records_sql($sql, $extraparams + $params);
     foreach ($questions as $question) {
         $question->_partiallyloaded = true;
     }
-
-    // Note, a possible optimisation here would be to not load the TEXT fields
-    // (that is, questiontext and generalfeedback) here, and instead load them in
-    // question_load_questions. That would add one DB query, but reduce the amount
-    // of data transferred most of the time. I am not going to do this optimisation
-    // until it is shown to be worthwhile.
 
     return $questions;
 }

@@ -18,8 +18,7 @@
 /**
  * List of all pages in course
  *
- * @package    mod
- * @subpackage page
+ * @package mod_page
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,6 +34,7 @@ $PAGE->set_pagelayout('incourse');
 
 // Trigger instances list viewed event.
 $event = \mod_page\event\course_module_instance_list_viewed::create(array('context' => context_course::instance($course->id)));
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $strpage         = get_string('modulename', 'page');

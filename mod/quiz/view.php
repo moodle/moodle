@@ -18,10 +18,9 @@
  * This page is the entry page into the quiz UI. Displays information about the
  * quiz to students and teachers, and lets students see their previous attempts.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -184,7 +183,7 @@ if ($quiz->attempts != 1) {
 }
 
 // Determine wheter a start attempt button should be displayed.
-$viewobj->quizhasquestions = (bool) quiz_clean_layout($quiz->questions, true);
+$viewobj->quizhasquestions = $quizobj->has_questions();
 $viewobj->preventmessages = array();
 if (!$viewobj->quizhasquestions) {
     $viewobj->buttontext = '';

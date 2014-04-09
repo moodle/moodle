@@ -54,6 +54,8 @@ $params = array(
     'objectid' => $folder->id
 );
 $event = \mod_folder\event\course_module_viewed::create($params);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('folder', $folder);
 $event->trigger();
 

@@ -2,13 +2,18 @@ var COMMENTSEARCHNAME = "commentsearch",
     COMMENTSEARCH;
 
 /**
- * COMMENTSEARCH
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * This is a searchable dialogue of comments.
  *
- * @namespace M.assignfeedback_editpdf.editor
+ * @namespace M.assignfeedback_editpdf
  * @class commentsearch
  * @constructor
- * @extends Y.Base
+ * @extends M.core.dialogue
  */
 COMMENTSEARCH = function(config) {
     config.draggable = false;

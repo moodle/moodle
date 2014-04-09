@@ -1,0 +1,10 @@
+{
+    "name": "moodle-core-handlebars",
+    "builds": {
+        "moodle-core-handlebars": {
+            "jsfiles": [
+                "handlebars.js"
+            ]
+        }
+    }
+}

@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
-$makecopy = optional_param('makecopy', 0, PARAM_INT);
+$makecopy = optional_param('makecopy', 0, PARAM_BOOL);
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
@@ -46,7 +46,7 @@ $url = new moodle_url('/question/question.php');
 if ($id !== 0) {
     $url->param('id', $id);
 }
-if ($makecopy !== 0) {
+if ($makecopy) {
     $url->param('makecopy', $makecopy);
 }
 if ($qtype !== '') {
@@ -165,6 +165,7 @@ if ($id) {
     if ($makecopy) {
         // If we are duplicating a question, add some indication to the question name.
         $question->name = get_string('questionnamecopy', 'question', $question->name);
+        $question->beingcopied = true;
     }
 
 } else  { // creating a new question
@@ -237,7 +238,10 @@ if ($mform->is_cancelled()) {
     /// whence it came. (Where we are moving to is validated by the form.)
     list($newcatid, $newcontextid) = explode(',', $fromform->category);
     if (!empty($question->id) && $newcatid != $question->category) {
+        $contextid = $newcontextid;
         question_require_capability_on($question, 'move');
+    } else {
+        $contextid = $category->contextid;
     }
 
     // Ensure we redirect back to the category the question is being saved into.
@@ -247,7 +251,7 @@ if ($mform->is_cancelled()) {
     if (!empty($question->id)) {
         question_require_capability_on($question, 'edit');
     } else {
-        require_capability('moodle/question:add', context::instance_by_id($newcontextid));
+        require_capability('moodle/question:add', context::instance_by_id($contextid));
         if (!empty($fromform->makecopy) && !$question->formoptions->cansaveasnew) {
             print_error('nopermissions', '', '', 'edit');
         }
@@ -257,11 +261,18 @@ if ($mform->is_cancelled()) {
         // A wizardpage from multipe pages questiontype like calculated may not
         // allow editing the question tags, hence the isset($fromform->tags) test.
         require_once($CFG->dirroot.'/tag/lib.php');
-        tag_set('question', $question->id, $fromform->tags);
+        tag_set('question', $question->id, $fromform->tags, 'core_question', $contextid);
     }
 
     // Purge this question from the cache.
     question_bank::notify_question_edited($question->id);
+
+    // If we are saving and continuing to edit the question.
+    if (!empty($fromform->updatebutton)) {
+        $url->param('id', $question->id);
+        $url->remove_params('makecopy');
+        redirect($url);
+    }
 
     if ($qtypeobj->finished_edit_wizard($fromform)) {
         if ($inpopup) {

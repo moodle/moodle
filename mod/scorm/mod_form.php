@@ -81,12 +81,6 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->setType('scormtype', PARAM_ALPHA);
         }
 
-        // Update packages timing.
-        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
-        $mform->setType('updatefreq', PARAM_INT);
-        $mform->setDefault('updatefreq', $cfgscorm->updatefreq);
-        $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
-
         // New local package upload.
         $filemanageroptions = array();
         $filemanageroptions['accepted_types'] = array('.zip', '.xml');
@@ -97,6 +91,12 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('filemanager', 'packagefile', get_string('package', 'scorm'), null, $filemanageroptions);
         $mform->addHelpButton('packagefile', 'package', 'scorm');
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
+
+        // Update packages timing.
+        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
+        $mform->setType('updatefreq', PARAM_INT);
+        $mform->setDefault('updatefreq', $cfgscorm->updatefreq);
+        $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
 
         // Display Settings.
         $mform->addElement('header', 'displaysettings', get_string('appearance'));
@@ -129,6 +129,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addGroup($winoptgrp, 'winoptgrp', get_string('options', 'scorm'), '<br />', false);
         $mform->disabledIf('winoptgrp', 'popup', 'eq', 0);
         $mform->setAdvanced('winoptgrp', $cfgscorm->winoptgrp_adv);
+
+        // Display activity name.
+        $mform->addElement('advcheckbox', 'displayactivityname', get_string('displayactivityname', 'scorm'));
+        $mform->addHelpButton('displayactivityname', 'displayactivityname', 'scorm');
+        $mform->setDefault('displayactivityname', $cfgscorm->displayactivityname);
 
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
@@ -337,7 +342,6 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (!isset($defaultvalues['completionscorerequired']) || !strlen($defaultvalues['completionscorerequired'])) {
             $defaultvalues['completionscoredisabled'] = 1;
         }
-
     }
 
     public function validation($data, $files) {
@@ -374,7 +378,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                     if (!$file->is_external_file()) {
                         $errors['packagefile'] = get_string('aliasonly', 'mod_scorm');
                     } else {
-                        $repository = repository::get_repository_by_id($file->get_repository_id(), CONTEXT_SYSTEM);
+                        $repository = repository::get_repository_by_id($file->get_repository_id(), context_system::instance());
                         if (!$repository->supports_relative_file()) {
                             $errors['packagefile'] = get_string('repositorynotsupported', 'mod_scorm');
                         }

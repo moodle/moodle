@@ -6,15 +6,15 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
 
   @javascript
   Scenario: Edit feedback for a students previous attempt.
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -33,7 +33,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student first submission |
     And I press "Save changes"
     And I log out
@@ -42,7 +42,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
     And I click on "Grade Student 2" "link" in the "Student 2" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grade | 49 |
       | Feedback comments | I'm the teacher first feedback |
       | Allow another attempt | Yes |
@@ -61,7 +61,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I click on "Grade Student 2" "link" in the "Student 2" "table_row"
     And I click on ".mod-assign-history-link" "css_element"
     And I follow "Edit the grade and feedback for attempt number 1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grade | 50 |
       | Feedback comments | I'm the teacher second feedback |
     And I press "Save changes"

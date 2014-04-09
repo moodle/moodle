@@ -5,13 +5,13 @@ Feature: Importing of groups and groupings
   I need to upload a file and verify groups and groupings can be imported
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
@@ -56,25 +56,25 @@ Feature: Importing of groups and groupings
     And I should see "Group group-noid-1 added successfully"
     And I should see "Group group-noid-2 added successfully"
     And I press "Continue"
-    And I select "group-id-1" from "groups"
+    And I set the field "groups" to "group-id-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "group-id-1" value
+    And the field "id_idnumber" matches value "group-id-1"
     And I press "Cancel"
-    And I select "group-id-2" from "groups"
+    And I set the field "groups" to "group-id-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "group-id-2" value
+    And the field "id_idnumber" matches value "group-id-2"
     And I press "Cancel"
-    And I select "group-id-1-duplicate" from "groups"
+    And I set the field "groups" to "group-id-1-duplicate"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-1" from "groups"
+    And I set the field "groups" to "group-noid-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-2" from "groups"
+    And I set the field "groups" to "group-noid-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
 
   @javascript
@@ -94,23 +94,23 @@ Feature: Importing of groups and groupings
     When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
     And I press "Continue"
-    Then I select "group-id-1" from "groups"
+    Then I set the field "groups" to "group-id-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-id-2" from "groups"
+    And I set the field "groups" to "group-id-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-id-1-duplicate" from "groups"
+    And I set the field "groups" to "group-id-1-duplicate"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-1" from "groups"
+    And I set the field "groups" to "group-noid-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-2" from "groups"
+    And I set the field "groups" to "group-noid-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"

@@ -14,7 +14,7 @@ YUI.add('moodle-course-management', function (Y, NAME) {
  * @namespace M.course.management
  * @class Console
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 function Console() {
     Console.superclass.constructor.apply(this, arguments);
@@ -245,7 +245,7 @@ Console.prototype = {
      * Initialises all the categories being shown.
      * @method initialiseCategories
      * @private
-     * @returns {boolean}
+     * @return {boolean}
      */
     initialiseCategories : function(listing) {
         var count = 0;
@@ -289,7 +289,7 @@ Console.prototype = {
      * Initialises all the categories being shown.
      * @method initialiseCourses
      * @private
-     * @returns {boolean}
+     * @return {boolean}
      */
     initialiseCourses : function() {
         var category = this.getCategoryById(this.get('activecategoryid')),
@@ -483,7 +483,7 @@ Console.prototype = {
      * Returns the category with the given ID.
      * @method getCategoryById
      * @param {Number} id
-     * @returns {Category|Boolean} The category or false if it can't be found.
+     * @return {Category|Boolean} The category or false if it can't be found.
      */
     getCategoryById : function(id) {
         var i,
@@ -505,7 +505,7 @@ Console.prototype = {
      * Returns the course with the given id.
      * @method getCourseById
      * @param {Number} id
-     * @returns {Course|Boolean} The course or false if not found/
+     * @return {Course|Boolean} The course or false if not found/
      */
     getCourseById : function(id) {
         var i,
@@ -580,18 +580,21 @@ M.course.management.console = null;
 
 /**
  * Initalises the course management console.
+ *
+ * @method M.course.management.init
  * @static
  * @param {Object} config
  */
 M.course.management.init = function(config) {
     M.course.management.console = new Console(config);
-};/**
+};
+/**
  * Drag and Drop handler
  *
  * @namespace M.course.management
  * @class DragDrop
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 function DragDrop(config) {
     Console.superclass.constructor.apply(this, [config]);
@@ -853,14 +856,14 @@ DragDrop.prototype = {
         }
     }
 };
-Y.extend(DragDrop, Y.Base, DragDrop.prototype);/**
+Y.extend(DragDrop, Y.Base, DragDrop.prototype);
+/**
  * A managed course.
  *
  * @namespace M.course.management
  * @class Item
  * @constructor
- * @extends Y.Base
- * @abstract
+ * @extends Base
  */
 function Item() {
     Item.superclass.constructor.apply(this, arguments);
@@ -910,7 +913,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Object|Boolean}
+     * @return {Object|Boolean}
      */
     checkAjaxResponse : function(transactionid, response, args) {
         if (response.status !== 200) {
@@ -938,7 +941,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     moveup : function(transactionid, response, args) {
         var node,
@@ -1006,7 +1009,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     movedown : function(transactionid, response, args) {
         var node,
@@ -1074,7 +1077,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     show : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -1110,7 +1113,7 @@ Item.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     hide : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -1167,7 +1170,8 @@ Item.prototype = {
         }, 2500);
     }
 };
-Y.extend(Item, Y.Base, Item.prototype);/**
+Y.extend(Item, Y.Base, Item.prototype);
+/**
  * A managed category.
  *
  * @namespace M.course.management
@@ -1245,7 +1249,7 @@ Category.prototype = {
     /**
      * Returns the name of the category.
      * @method getName
-     * @returns {String}
+     * @return {String}
      */
     getName : function() {
         return this.get('node').one('a.categoryname').get('innerHTML');
@@ -1268,7 +1272,7 @@ Category.prototype = {
      * @method handle
      * @param {String} action
      * @param {EventFacade} e
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     handle : function(action, e) {
         var catarg = {categoryid : this.get('categoryid')},
@@ -1438,7 +1442,7 @@ Category.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     completeMoveCourse : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -1492,7 +1496,7 @@ Category.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     show : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -1524,7 +1528,7 @@ Category.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     hide : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -1608,7 +1612,8 @@ Category.prototype = {
         return this;
     }
 };
-Y.extend(Category, Item, Category.prototype);/**
+Y.extend(Category, Item, Category.prototype);
+/**
  * A managed course.
  *
  * @namespace M.course.management
@@ -1687,7 +1692,7 @@ Course.prototype = {
     /**
      * Returns the name of the course.
      * @method getName
-     * @returns {String}
+     * @return {String}
      */
     getName : function() {
         return this.get('node').one('a.coursename').get('innerHTML');
@@ -1698,7 +1703,7 @@ Course.prototype = {
      * @method handle
      * @param {String} action
      * @param {EventFacade} e
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     handle : function(action, e) {
         var managementconsole = this.get('console'),
@@ -1771,7 +1776,7 @@ Course.prototype = {
      * @param {Number} transactionid The transaction ID for the request.
      * @param {Object} response The response to the request.
      * @param {Objects} args The arguments that were given with the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     moveAfterResponse : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -1794,6 +1799,7 @@ Course.prototype = {
     }
 };
 Y.extend(Course, Item, Course.prototype);
+
 
 }, '@VERSION@', {
     "requires": [

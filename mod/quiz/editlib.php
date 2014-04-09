@@ -22,8 +22,7 @@
  * the module-indpendent code for handling questions and which in turn
  * initialises all the questiontype classes.
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,12 +47,20 @@ function quiz_require_question_use($questionid) {
 
 /**
  * Verify that the question exists, and the user has permission to use it.
- * @param int $questionid The id of the question.
+ * @param object $quiz the quiz settings.
+ * @param int $slot which question in the quiz to test.
  * @return bool whether the user can use this question.
  */
-function quiz_has_question_use($questionid) {
+function quiz_has_question_use($quiz, $slot) {
     global $DB;
-    $question = $DB->get_record('question', array('id' => $questionid), '*', MUST_EXIST);
+    $question = $DB->get_record_sql("
+            SELECT q.*
+              FROM {quiz_slots} slot
+              JOIN {question} q ON q.id = slot.questionid
+             WHERE slot.quizid = ? AND slot.slot = ?", array($quiz->id, $slot));
+    if (!$question) {
+        return false;
+    }
     return question_has_capability_on($question, 'use');
 }
 
@@ -62,118 +69,127 @@ function quiz_has_question_use($questionid) {
  * @param object $quiz the quiz object.
  * @param int $questionid The id of the question to be deleted.
  */
-function quiz_remove_question($quiz, $questionid) {
+function quiz_remove_slot($quiz, $slotnumber) {
     global $DB;
 
-    $questionids = explode(',', $quiz->questions);
-    $key = array_search($questionid, $questionids);
-    if ($key === false) {
+    $slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'slot' => $slotnumber));
+    $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', array($quiz->id));
+    if (!$slot) {
         return;
     }
 
-    unset($questionids[$key]);
-    $quiz->questions = implode(',', $questionids);
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
-    $DB->delete_records('quiz_question_instances',
-            array('quizid' => $quiz->instance, 'questionid' => $questionid));
+    $trans = $DB->start_delegated_transaction();
+    $DB->delete_records('quiz_slots', array('id' => $slot->id));
+    for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {
+        $DB->set_field('quiz_slots', 'slot', $i - 1,
+                array('quizid' => $quiz->id, 'slot' => $i));
+    }
+    $trans->allow_commit();
 }
 
 /**
  * Remove an empty page from the quiz layout. If that is not possible, do nothing.
- * @param string $layout the existinng layout, $quiz->questions.
- * @param int $index the position into $layout where the empty page should be removed.
- * @return the updated layout
+ * @param object $quiz the quiz settings.
+ * @param int $pagenumber the page number to delete.
  */
-function quiz_delete_empty_page($layout, $index) {
-    $questionids = explode(',', $layout);
+function quiz_delete_empty_page($quiz, $pagenumber) {
+    global $DB;
 
-    if ($index < -1 || $index >= count($questionids) - 1) {
-        return $layout;
+    if ($DB->record_exists('quiz_slots', array('quizid' => $quiz->id, 'page' => $pagenumber))) {
+        // This was not an empty page.
+        return;
     }
 
-    if (($index >= 0 && $questionids[$index] != 0) || $questionids[$index + 1] != 0) {
-        return $layout; // This was not an empty page.
-    }
-
-    unset($questionids[$index + 1]);
-
-    return implode(',', $questionids);
+    $DB->execute('UPDATE {quiz_slots} SET page = page - 1 WHERE quizid = ? AND page > ?',
+            array($quiz->id, $pagenumber));
 }
 
 /**
  * Add a question to a quiz
  *
  * Adds a question to a quiz by updating $quiz as well as the
- * quiz and quiz_question_instances tables. It also adds a page break
- * if required.
- * @param int $id The id of the question to be added
+ * quiz and quiz_slots tables. It also adds a page break if required.
+ * @param int $questionid The id of the question to be added
  * @param object $quiz The extended quiz object as used by edit.php
  *      This is updated by this function
  * @param int $page Which page in quiz to add the question on. If 0 (default),
  *      add at the end
+ * @param float $maxmark The maximum mark to set for this question. (Optional,
+ *      defaults to question.defaultmark.
  * @return bool false if the question was already in the quiz
  */
-function quiz_add_quiz_question($id, $quiz, $page = 0) {
+function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) {
     global $DB;
-    $questions = explode(',', quiz_clean_layout($quiz->questions));
-    if (in_array($id, $questions)) {
+    $slots = $DB->get_records('quiz_slots', array('quizid' => $quiz->id),
+            'slot', 'questionid, slot, page, id');
+    if (array_key_exists($questionid, $slots)) {
         return false;
     }
 
-    // Remove ending page break if it is not needed.
-    if ($breaks = array_keys($questions, 0)) {
-        // Determine location of the last two page breaks.
-        $end = end($breaks);
-        $last = prev($breaks);
-        $last = $last ? $last : -1;
-        if (!$quiz->questionsperpage || (($end - $last - 1) < $quiz->questionsperpage)) {
-            array_pop($questions);
-        }
-    }
-    if (is_int($page) && $page >= 1) {
-        $numofpages = quiz_number_of_pages($quiz->questions);
-        if ($numofpages<$page) {
-            // The page specified does not exist in quiz.
-            $page = 0;
-        } else {
-            // Add ending page break - the following logic requires doing
-            // this at this point.
-            $questions[] = 0;
-            $currentpage = 1;
-            $addnow = false;
-            foreach ($questions as $question) {
-                if ($question == 0) {
-                    $currentpage++;
-                    // The current page is the one after the one we want to add on,
-                    // so we add the question before adding the current page.
-                    if ($currentpage == $page + 1) {
-                        $questions_new[] = $id;
-                    }
-                }
-                $questions_new[] = $question;
-            }
-            $questions = $questions_new;
-        }
-    }
-    if ($page == 0) {
-        // Add question.
-        $questions[] = $id;
-        // Add ending page break.
-        $questions[] = 0;
-    }
+    $trans = $DB->start_delegated_transaction();
 
-    // Save new questionslist in database.
-    $quiz->questions = implode(',', $questions);
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    $maxpage = 1;
+    $numonlastpage = 0;
+    foreach ($slots as $slot) {
+        if ($slot->page > $maxpage) {
+            $maxpage = $slot->page;
+            $numonlastpage = 1;
+        } else {
+            $numonlastpage += 1;
+        }
+    }
 
     // Add the new question instance.
-    $instance = new stdClass();
-    $instance->quizid = $quiz->id;
-    $instance->questionid = $id;
-    $instance->maxmark = $DB->get_field('question', 'defaultmark', array('id' => $id));
-    $DB->insert_record('quiz_question_instances', $instance);
+    $slot = new stdClass();
+    $slot->quizid = $quiz->id;
+    $slot->questionid = $questionid;
+
+    if ($maxmark !== null) {
+        $slot->maxmark = $maxmark;
+    } else {
+        $slot->maxmark = $DB->get_field('question', 'defaultmark', array('id' => $questionid));
+    }
+
+    if (is_int($page) && $page >= 1) {
+        // Adding on a given page.
+        $lastslotbefore = 0;
+        foreach (array_reverse($slots) as $otherslot) {
+            if ($otherslot->page > $page) {
+                $DB->set_field('quiz_slots', 'slot', $otherslot->slot + 1, array('id' => $otherslot->id));
+            } else {
+                $lastslotbefore = $otherslot->slot;
+                break;
+            }
+        }
+        $slot->slot = $lastslotbefore + 1;
+        $slot->page = min($page, $maxpage + 1);
+
+    } else {
+        $lastslot = end($slots);
+        if ($lastslot) {
+            $slot->slot = $lastslot->slot + 1;
+        } else {
+            $slot->slot = 1;
+        }
+        if ($quiz->questionsperpage && $numonlastpage >= $quiz->questionsperpage) {
+            $slot->page = $maxpage + 1;
+        } else {
+            $slot->page = $maxpage;
+        }
+    }
+
+    $DB->insert_record('quiz_slots', $slot);
+    $trans->allow_commit();
 }
 
+/**
+ * Add a random question to the quiz at a given point.
+ * @param object $quiz the quiz settings.
+ * @param int $addonpage the page on which to add the question.
+ * @param int $categoryid the question category to add the question from.
+ * @param int $number the number of random questions to add.
+ * @param bool $includesubcategories whether to include questoins from subcategories.
+ */
 function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
         $includesubcategories) {
     global $DB;
@@ -195,7 +211,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
                 AND " . $DB->sql_compare_text('questiontext') . " = ?
                 AND NOT EXISTS (
                         SELECT *
-                          FROM {quiz_question_instances}
+                          FROM {quiz_slots}
                          WHERE questionid = q.id)
             ORDER BY id", array($category->id, $includesubcategories))) {
         // Take as many of these as needed.
@@ -228,136 +244,103 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
 }
 
 /**
- * Add a page break after at particular position$.
- * @param string $layout the existinng layout, $quiz->questions.
- * @param int $index the position into $layout where the empty page should be removed.
- * @return the updated layout
+ * Add a page break after a particular slot.
+ * @param object $quiz the quiz settings.
+ * @param int $slot the slot to add the page break after.
  */
-function quiz_add_page_break_at($layout, $index) {
-    $questionids = explode(',', $layout);
-    if ($index < 0 || $index >= count($questionids)) {
-        return $layout;
-    }
-
-    array_splice($questionids, $index, 0, '0');
-
-    return implode(',', $questionids);
-}
-
-/**
- * Add a page break after a particular question.
- * @param string $layout the existinng layout, $quiz->questions.
- * @param int $qustionid the question to add the page break after.
- * @return the updated layout
- */
-function quiz_add_page_break_after($layout, $questionid) {
-    $questionids = explode(',', $layout);
-    $key = array_search($questionid, $questionids);
-    if ($key === false || !$questionid) {
-        return $layout;
-    }
-
-    array_splice($questionids, $key + 1, 0, '0');
-
-    return implode(',', $questionids);
-}
-
-/**
- * Update the database after $quiz->questions has been changed. For example,
- * this deletes preview attempts and updates $quiz->sumgrades.
- * @param $quiz the quiz object.
- */
-function quiz_save_new_layout($quiz) {
+function quiz_add_page_break_after_slot($quiz, $slot) {
     global $DB;
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
-    quiz_delete_previews($quiz);
-    quiz_update_sumgrades($quiz);
+
+    $DB->execute('UPDATE {quiz_slots} SET page = page + 1 WHERE quizid = ? AND slot > ?',
+            array($quiz->id, $slot));
 }
 
 /**
- * Save changes to question instance
+ * Change the max mark for a slot.
  *
- * Saves changes to the question grades in the quiz_question_instances table.
+ * Saves changes to the question grades in the quiz_slots table and any
+ * corresponding question_attempts.
  * It does not update 'sumgrades' in the quiz table.
  *
- * @param float    $maxmark    the maximal grade for the question.
- * @param int      $questionid the question id.
- * @param stdClass $quiz       the quiz settings.
+ * @param stdClass $slot    row from the quiz_slots table.
+ * @param float    $maxmark the new maxmark.
  */
-function quiz_update_question_instance($maxmark, $questionid, $quiz) {
+function quiz_update_slot_maxmark($slot, $maxmark) {
     global $DB;
-    $instance = $DB->get_record('quiz_question_instances', array('quizid' => $quiz->id,
-            'questionid' => $questionid));
-    $slot = quiz_get_slot_for_question($quiz, $questionid);
 
-    if (!$instance || !$slot) {
-        throw new coding_exception('Attempt to change the max mark of a quesion not in the quiz.');
-    }
-
-    if (abs($maxmark - $instance->maxmark) < 1e-7) {
+    if (abs($maxmark - $slot->maxmark) < 1e-7) {
         // Grade has not changed. Nothing to do.
         return;
     }
 
-    $instance->maxmark = $maxmark;
-    $DB->update_record('quiz_question_instances', $instance);
-    question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($quiz->id),
-            $slot, $maxmark);
-}
-
-// Private function used by the following two.
-function _quiz_move_question($layout, $questionid, $shift) {
-    if (!$questionid || !($shift == 1 || $shift == -1)) {
-        return $layout;
-    }
-
-    $questionids = explode(',', $layout);
-    $key = array_search($questionid, $questionids);
-    if ($key === false) {
-        return $layout;
-    }
-
-    $otherkey = $key + $shift;
-    if ($otherkey < 0 || $otherkey >= count($questionids) - 1) {
-        return $layout;
-    }
-
-    $temp = $questionids[$otherkey];
-    $questionids[$otherkey] = $questionids[$key];
-    $questionids[$key] = $temp;
-
-    return implode(',', $questionids);
+    $slot->maxmark = $maxmark;
+    $DB->update_record('quiz_slots', $slot);
+    question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($slot->quizid),
+            $slot->slot, $maxmark);
 }
 
 /**
- * Move a particular question one space earlier in the $quiz->questions list.
- * If that is not possible, do nothing.
- * @param string $layout the existinng layout, $quiz->questions.
- * @param int $questionid the id of a question.
- * @return the updated layout
+ * Private function used by the following two.
+ * @param object $quiz the quiz settings.
+ * @param int $slotnumber the slot to move up.
+ * @param int $shift +1 means move down, -1 means move up.
  */
-function quiz_move_question_up($layout, $questionid) {
-    return _quiz_move_question($layout, $questionid, -1);
+function _quiz_move_question($quiz, $slotnumber, $shift) {
+    global $DB;
+
+    if (!$slotnumber || !($shift == 1 || $shift == -1)) {
+        return;
+    }
+
+    $slot = $DB->get_record('quiz_slots',
+            array('quizid' => $quiz->id, 'slot' => $slotnumber));
+    if (!$slot) {
+        return;
+    }
+
+    $otherslot = $DB->get_record('quiz_slots',
+            array('quizid' => $quiz->id, 'slot' => $slotnumber + $shift));
+    if (!$otherslot) {
+        return;
+    }
+
+    if ($otherslot->page != $slot->page) {
+        $DB->set_field('quiz_slots', 'page', $slot->page + $shift, array('id' => $slot->id));
+        return;
+    }
+
+    $trans = $DB->start_delegated_transaction();
+    $DB->set_field('quiz_slots', 'slot', -1,               array('id' => $slot->id));
+    $DB->set_field('quiz_slots', 'slot', $slot->slot,      array('id' => $otherslot->id));
+    $DB->set_field('quiz_slots', 'slot', $otherslot->slot, array('id' => $slot->id));
+    $trans->allow_commit();
 }
 
 /**
- * Move a particular question one space later in the $quiz->questions list.
+ * Move a particular question one space earlier in the quiz.
  * If that is not possible, do nothing.
- * @param string $layout the existinng layout, $quiz->questions.
- * @param int $questionid the id of a question.
- * @return the updated layout
+ * @param object $quiz the quiz settings.
+ * @param int $slot the slot to move up.
  */
-function quiz_move_question_down($layout, $questionid) {
-    return _quiz_move_question($layout, $questionid, +1);
+function quiz_move_question_up($quiz, $slot) {
+    _quiz_move_question($quiz, $slot, -1);
+}
+
+/**
+ * Move a particular question one space later in the quiz.
+ * If that is not possible, do nothing.
+ * @param object $quiz the quiz settings.
+ * @param int $slot the slot to move down.
+ */
+function quiz_move_question_down($quiz, $slot) {
+    return _quiz_move_question($quiz, $slot, 1);
 }
 
 /**
  * Prints a list of quiz questions for the edit.php main view for edit
  * ($reordertool = false) and order and paging ($reordertool = true) tabs
  *
- * @param object $quiz This is not the standard quiz object used elsewhere but
- *     it contains the quiz layout in $quiz->questions and the grades in
- *     $quiz->grades
+ * @param object $quiz The quiz settings.
  * @param moodle_url $pageurl The url of the current page with the parameters required
  *     for links returning to the current page, as a moodle_url object
  * @param bool $allowdelete Indicates whether the delete icons should be displayed
@@ -389,21 +372,14 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     $strtype = get_string('type', 'quiz');
     $strpreview = get_string('preview', 'quiz');
 
-    if ($quiz->questions) {
-        list($usql, $params) = $DB->get_in_or_equal(explode(',', $quiz->questions));
-        $params[] = $quiz->id;
-        $questions = $DB->get_records_sql("SELECT q.*, qc.contextid, qqi.maxmark
-                              FROM {question} q
-                              JOIN {question_categories} qc ON qc.id = q.category
-                              JOIN {quiz_question_instances} qqi ON qqi.questionid = q.id
-                             WHERE q.id $usql AND qqi.quizid = ?", $params);
-    } else {
-        $questions = array();
-    }
+    $questions = $DB->get_records_sql("SELECT slot.slot, q.*, qc.contextid, slot.page, slot.maxmark
+                          FROM {quiz_slots} slot
+                     LEFT JOIN {question} q ON q.id = slot.questionid
+                     LEFT JOIN {question_categories} qc ON qc.id = q.category
+                         WHERE slot.quizid = ?
+                      ORDER BY slot.slot", array($quiz->id));
 
-    $layout = quiz_clean_layout($quiz->questions);
-    $order = explode(',', $layout);
-    $lastindex = count($order) - 1;
+    $lastindex = count($questions) - 1;
 
     $disabled = '';
     $pagingdisabled = '';
@@ -468,6 +444,18 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         echo $reordercontrolstop;
     }
 
+    // Build fake order for backwards compatibility.
+    $currentpage = 1;
+    $order = array();
+    foreach ($questions as $question) {
+        while ($question->page > $currentpage) {
+            $currentpage += 1;
+            $order[] = 0;
+        }
+        $order[] = $question->slot;
+    }
+    $order[] = 0;
+
     // The current question ordinal (no descriptions).
     $qno = 1;
     // The current question (includes questions and descriptions).
@@ -476,28 +464,26 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     $pagecount = 0;
 
     $pageopen = false;
+    $lastslot = 0;
 
     $returnurl = $pageurl->out_as_local_url(false);
     $questiontotalcount = count($order);
 
-    foreach ($order as $count => $qnum) {
+    foreach ($order as $count => $qnum) { // Note: $qnum is acutally slot number, if it is not 0.
 
         $reordercheckbox = '';
         $reordercheckboxlabel = '';
         $reordercheckboxlabelclose = '';
 
         // If the questiontype is missing change the question type.
-        if ($qnum && !array_key_exists($qnum, $questions)) {
-            $fakequestion = new stdClass();
-            $fakequestion->id = $qnum;
-            $fakequestion->category = 0;
-            $fakequestion->qtype = 'missingtype';
-            $fakequestion->name = get_string('missingquestion', 'quiz');
-            $fakequestion->questiontext = ' ';
-            $fakequestion->questiontextformat = FORMAT_HTML;
-            $fakequestion->length = 1;
-            $questions[$qnum] = $fakequestion;
-            $quiz->grades[$qnum] = 0;
+        if ($qnum && $questions[$qnum]->qtype === null) {
+            $questions[$qnum]->id = $qnum;
+            $questions[$qnum]->category = 0;
+            $questions[$qnum]->qtype = 'missingtype';
+            $questions[$qnum]->name = get_string('missingquestion', 'quiz');
+            $questions[$qnum]->questiontext = ' ';
+            $questions[$qnum]->questiontextformat = FORMAT_HTML;
+            $questions[$qnum]->length = 1;
 
         } else if ($qnum && !question_bank::qtype_exists($questions[$qnum]->qtype)) {
             $questions[$qnum]->qtype = 'missingtype';
@@ -521,7 +507,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 if ($allowdelete) {
                     echo '<div class="quizpagedelete">';
                     echo $OUTPUT->action_icon($pageurl->out(true,
-                            array('deleteemptypage' => $count - 1, 'sesskey'=>sesskey())),
+                            array('deleteemptypage' => $pagecount, 'sesskey' => sesskey())),
                             new pix_icon('t/delete', $strremove),
                             new component_action('click',
                                     'M.core_scroll_manager.save_scroll_action'),
@@ -550,9 +536,9 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 $reordercheckboxlabel = '';
                 $reordercheckboxlabelclose = '';
                 if ($reordertool) {
-                    $reordercheckbox = '<input type="checkbox" name="s' . $question->id .
-                        '" id="s' . $question->id . '" />';
-                    $reordercheckboxlabel = '<label for="s' . $question->id . '">';
+                    $reordercheckbox = '<input type="checkbox" name="s' . $question->slot .
+                        '" id="s' . $question->slot . '" />';
+                    $reordercheckboxlabel = '<label for="s' . $question->slot . '">';
                     $reordercheckboxlabelclose = '</label>';
                 }
                 if ($question->length == 0) {
@@ -582,7 +568,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                             $upbuttonclass = 'upwithoutdown';
                         }
                         echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('up' => $question->id, 'sesskey'=>sesskey())),
+                                array('up' => $question->slot, 'sesskey' => sesskey())),
                                 new pix_icon('t/up', $strmoveup),
                                 new component_action('click',
                                         'M.core_scroll_manager.save_scroll_action'),
@@ -590,10 +576,10 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                     }
 
                 }
-                if ($count < $lastindex - 1) {
+                if ($count < $questiontotalcount - 2) {
                     if (!$hasattempts) {
                         echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('down' => $question->id, 'sesskey'=>sesskey())),
+                                array('down' => $question->slot, 'sesskey' => sesskey())),
                                 new pix_icon('t/down', $strmovedown),
                                 new component_action('click',
                                         'M.core_scroll_manager.save_scroll_action'),
@@ -605,7 +591,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                     // Remove from quiz, not question delete.
                     if (!$hasattempts) {
                         echo $OUTPUT->action_icon($pageurl->out(true,
-                                array('remove' => $question->id, 'sesskey'=>sesskey())),
+                                array('remove' => $question->slot, 'sesskey' => sesskey())),
                                 new pix_icon('t/delete', $strremove),
                                 new component_action('click',
                                         'M.core_scroll_manager.save_scroll_action'),
@@ -619,15 +605,15 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 <div class="points">
 <form method="post" action="edit.php" class="quizsavegradesform"><div>
     <fieldset class="invisiblefieldset" style="display: block;">
-    <label for="<?php echo "inputq$question->id" ?>"><?php echo $strmaxmark; ?></label>:<br />
+    <label for="<?php echo 'inputq' . $question->slot; ?>"><?php echo $strmaxmark; ?></label>:<br />
     <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <?php echo html_writer::input_hidden_params($pageurl); ?>
     <input type="hidden" name="savechanges" value="save" />
                     <?php
-                    echo '<input type="text" name="g' . $question->id .
-                            '" id="inputq' . $question->id .
+                    echo '<input type="text" name="g' . $question->slot .
+                            '" id="inputq' . $question->slot .
                             '" size="' . ($quiz->decimalpoints + 2) .
-                            '" value="' . (0 + $quiz->grades[$qnum]) .
+                            '" value="' . (0 + $question->maxmark) .
                             '" tabindex="' . ($lastindex + $qno) . '" />';
                     ?>
         <input type="submit" class="pointssubmitbutton" value="<?php echo $strsave; ?>" />
@@ -650,9 +636,9 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                         ?>
 <div class="qorder">
                         <?php
-                        echo '<label class="accesshide" for="o' . $question->id . '">' .
+                        echo '<label class="accesshide" for="o' . $question->slot . '">' .
                                 get_string('questionposition', 'quiz', $qnodisplay) . '</label>';
-                        echo '<input type="text" name="o' . $question->id .
+                        echo '<input type="text" name="o' . $question->slot .
                                 '" id="o' . $question->id . '"' .
                                 '" size="2" value="' . (10*$count + 10) .
                                 '" tabindex="' . ($lastindex + $qno) . '" />';
@@ -705,7 +691,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                     echo $OUTPUT->container_start('addpage');
                     $url = new moodle_url($pageurl->out_omit_querystring(),
                             array('cmid' => $quiz->cmid, 'courseid' => $quiz->course,
-                                    'addpage' => $count, 'sesskey' => sesskey()));
+                                    'addpage' => $pagecount, 'sesskey' => sesskey()));
                     echo $OUTPUT->single_button($url, get_string('addpagehere', 'quiz'), 'post',
                             array('disabled' => $hasattempts,
                             'actions' => array(new component_action('click',
@@ -728,9 +714,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
  * Print all the controls for adding questions directly into the
  * specific page in the edit tab of edit.php
  *
- * @param object $quiz This is not the standard quiz object used elsewhere but
- *     it contains the quiz layout in $quiz->questions and the grades in
- *     $quiz->grades
+ * @param object $quiz The quiz settings.
  * @param moodle_url $pageurl The url of the current page with the parameters required
  *     for links returning to the current page, as a moodle_url object
  * @param int $page the current page number.
@@ -934,7 +918,7 @@ function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz) {
  * @param object $questionurl The url of the question editing page as a moodle_url object
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
-function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz) {
+function quiz_print_randomquestion_reordertool($question, $pageurl, $quiz) {
     global $DB, $OUTPUT;
 
     // Load the category, and the number of available questions in it.
@@ -1311,7 +1295,7 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex) {
  * @param object $quiz The quiz object of the quiz in question
  */
 function quiz_print_status_bar($quiz) {
-    global $CFG;
+    global $DB;
 
     $bits = array();
 
@@ -1320,7 +1304,7 @@ function quiz_print_status_bar($quiz) {
             array('class' => 'totalpoints'));
 
     $bits[] = html_writer::tag('span',
-            get_string('numquestionsx', 'quiz', quiz_number_of_questions_in_quiz($quiz->questions)),
+            get_string('numquestionsx', 'quiz', $DB->count_records('quiz_slots', array('quizid' => $quiz->id))),
             array('class' => 'numberofquestions'));
 
     $timenow = time();

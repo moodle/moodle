@@ -5,14 +5,14 @@ Feature: Restrict activity availability through date conditions
   I need to set allow access dates to restrict activity access
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | Frist | teacher1@asd.com |
       | student1 | Student | First | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -30,7 +30,7 @@ Feature: Restrict activity availability through date conditions
   @javascript
   Scenario: Show activity greyed-out to students when available from date is in future
     Given I click on "id_availablefrom_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Assignment name | Test assignment 1 |
       | Description | This assignment is restricted by date |
       | assignsubmission_onlinetext_enabled | 1 |
@@ -50,7 +50,7 @@ Feature: Restrict activity availability through date conditions
   @javascript
   Scenario: Show activity hidden to students when available until date is in past
     Given I click on "id_availableuntil_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Assignment name | Test assignment 2 |
       | Description | This assignment is restricted by date |
       | assignsubmission_onlinetext_enabled | 1 |

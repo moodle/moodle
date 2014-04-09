@@ -5,14 +5,14 @@ Feature: Add activities to courses
   I need to add activites to a course
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
       | student2 | C1 | student |
@@ -32,9 +32,9 @@ Feature: Add activities to courses
     And I follow "Test name"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
-    And the "Name" field should match "Test name" value
-    And the "Entries required for completion" field should match "9" value
-    And the "Allow comments on entries" field should match "Yes" value
+    And the field "Name" matches value "Test name"
+    And the field "Entries required for completion" matches value "9"
+    And the field "Allow comments on entries" matches value "Yes"
 
   @javascript
   Scenario: Add an activity without the required fields
@@ -54,12 +54,12 @@ Feature: Add activities to courses
     And I should see "Add an activity to section 'Topic 3'"
     And I add a "Label" to section "2"
     And I should see "Adding a new Label to Topic 2"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Label text | I'm a label |
     And I press "Save and return to course"
     And I add a "Database" to section "3"
     And I should see "Adding a new Database to Topic 3"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test database name |
       | Description | Test database description |
     And I press "Save and return to course"

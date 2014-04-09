@@ -909,7 +909,9 @@ class core_plugin_manager {
             'qformat' => array('blackboard'),
             'enrol' => array('authorize'),
             'tool' => array('bloglevelupgrade'),
-            'theme' => array('mymobile'),
+            'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
+                'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
+                'splash', 'standard', 'standardold'),
         );
 
         if (!isset($plugins[$type])) {
@@ -927,6 +929,15 @@ class core_plugin_manager {
     public static function standard_plugins_list($type) {
 
         $standard_plugins = array(
+
+            'atto' => array(
+                'accessibilitychecker', 'accessibilityhelper', 'align',
+                'backcolor', 'bold', 'charmap', 'clear', 'collapse', 'emoticon',
+                'equation', 'fontcolor', 'html', 'image', 'indent', 'italic',
+                'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
+                'rtl', 'strike', 'subscript', 'superscript', 'table', 'title',
+                'underline', 'undo', 'unlink', 'unorderedlist'
+            ),
 
             'assignment' => array(
                 'offline', 'online', 'upload', 'uploadsingle'
@@ -990,7 +1001,7 @@ class core_plugin_manager {
             ),
 
             'editor' => array(
-                'textarea', 'tinymce'
+                'atto', 'textarea', 'tinymce'
             ),
 
             'enrol' => array(
@@ -1026,6 +1037,10 @@ class core_plugin_manager {
             ),
 
             'local' => array(
+            ),
+
+            'logstore' => array(
+                'database', 'legacy', 'standard',
             ),
 
             'message' => array(
@@ -1107,18 +1122,14 @@ class core_plugin_manager {
             ),
 
             'theme' => array(
-                'afterburner', 'anomaly', 'arialist', 'base', 'binarius', 'bootstrapbase',
-                'boxxie', 'brick', 'canvas', 'clean', 'formal_white', 'formfactor',
-                'fusion', 'leatherbound', 'magazine', 'nimble',
-                'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
-                'standard', 'standardold'
+                'base', 'bootstrapbase', 'canvas', 'clean', 'more'
             ),
 
             'tool' => array(
                 'assignmentupgrade', 'behat', 'capability', 'customlang',
                 'dbtransfer', 'generator', 'health', 'innodb', 'installaddon',
-                'langimport', 'multilangupgrade', 'phpunit', 'profiling',
-                'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport',
+                'langimport', 'log', 'multilangupgrade', 'phpunit', 'profiling',
+                'qeupgradehelper', 'replace', 'spamcleaner', 'task', 'timezoneimport',
                 'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 

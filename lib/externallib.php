@@ -43,12 +43,18 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
     }
 
-    //first find and include the ext implementation class
-    $function->classpath = empty($function->classpath) ? core_component::get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
-    if (!file_exists($function->classpath)) {
-        throw new coding_exception('Can not find file with external function implementation');
+    // First try class autoloading.
+    if (!class_exists($function->classname)) {
+        // Fallback to explicit include of externallib.php.
+        $function->classpath = empty($function->classpath) ? core_component::get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
+        if (!file_exists($function->classpath)) {
+            throw new coding_exception('Cannot find file with external function implementation');
+        }
+        require_once($function->classpath);
+        if (!class_exists($function->classname)) {
+            throw new coding_exception('Cannot find external class');
+        }
     }
-    require_once($function->classpath);
 
     $function->parameters_method = $function->methodname.'_parameters';
     $function->returns_method    = $function->methodname.'_returns';

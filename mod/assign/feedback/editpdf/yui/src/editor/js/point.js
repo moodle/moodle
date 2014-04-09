@@ -14,17 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a 2d point.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * POINT
+ * Class representing a 2d point.
  *
  * @namespace M.assignfeedback_editpdf
- * @param int x
- * @param int y
+ * @param Number x
+ * @param Number y
  * @class point
  */
 POINT = function(x, y) {

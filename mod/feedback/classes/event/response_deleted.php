@@ -84,16 +84,19 @@ class response_deleted extends \core\event\base {
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
+     * @deprecated since 2.7
+     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($userorid = null) {
         global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
 
         if (empty($userorid)) {
             $userorid = $USER;
         }
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
             return has_capability('mod/feedback:viewreports', $this->context, $userorid);
@@ -115,6 +118,9 @@ class response_deleted extends \core\event\base {
         if (!isset($this->other['instanceid'])) {
             throw new \coding_exception("Field other['instanceid'] cannot be empty");
         }
+
+        // Call parent validations.
+        parent::validate_data();
     }
 }
 

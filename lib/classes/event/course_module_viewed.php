@@ -92,9 +92,14 @@ abstract class course_module_viewed extends base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         // Make sure this class is never used without proper object details.
         if (empty($this->objectid) || empty($this->objecttable)) {
             throw new \coding_exception('course_module_viewed event must define objectid and object table.');
+        }
+        // Make sure the context level is set to module.
+        if ($this->contextlevel != CONTEXT_MODULE) {
+            throw new \coding_exception('Context passed must be module context.');
         }
     }
 

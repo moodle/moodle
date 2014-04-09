@@ -35,13 +35,6 @@ defined('MOODLE_INTERNAL') || die();
 class grouping_updated extends \core\event\base {
 
     /**
-     * Legacy data.
-     *
-     * @var mixed
-     */
-    protected $legacydata;
-
-    /**
      * Returns description of what happened.
      *
      * @return string
@@ -56,7 +49,7 @@ class grouping_updated extends \core\event\base {
      * @return stdClass
      */
     protected function get_legacy_eventdata() {
-        return $this->legacydata;
+        return $this->get_record_snapshot('groupings', $this->objectid);
     }
 
     /**
@@ -83,7 +76,7 @@ class grouping_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/group/groupings/index.php', array('id' => $this->courseid));
+        return new \moodle_url('/group/grouping.php', array('id' => $this->objectid));
     }
 
     /**
@@ -95,16 +88,6 @@ class grouping_updated extends \core\event\base {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groupings';
-    }
-
-    /**
-     * Set legacy data.
-     *
-     * @param mixed $legacydata.
-     * @return void
-     */
-    public function set_legacy_eventdata($legacydata) {
-        $this->legacydata = $legacydata;
     }
 
 }

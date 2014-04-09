@@ -279,7 +279,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
     // Outputs issued badge with actions available.
     protected function render_issued_badge(issued_badge $ibadge) {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $SITE;
         $issued = $ibadge->issued;
         $userinfo = $ibadge->recipient;
         $badgeclass = $ibadge->badgeclass;
@@ -316,11 +316,18 @@ class core_badges_renderer extends plugin_renderer_base {
 
         // Recipient information.
         $datatable->data[] = array($this->output->heading(get_string('recipientdetails', 'badges'), 3), '');
-        $datatable->data[] = array(get_string('name'), fullname($userinfo));
-        if (empty($userinfo->backpackemail)) {
-            $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->accountemail));
+        if ($userinfo->deleted) {
+            $strdata = new stdClass();
+            $strdata->user = fullname($userinfo);
+            $strdata->site = format_string($SITE->fullname, true, array('context' => context_system::instance()));
+            $datatable->data[] = array(get_string('name'), get_string('error:userdeleted', 'badges', $strdata));
         } else {
-            $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->backpackemail));
+            $datatable->data[] = array(get_string('name'), fullname($userinfo));
+            if (empty($userinfo->backpackemail)) {
+                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->accountemail));
+            } else {
+                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->backpackemail));
+            }
         }
 
         $datatable->data[] = array($this->output->heading(get_string('issuerdetails', 'badges'), 3), '');
@@ -938,7 +945,7 @@ class issued_badge implements renderable {
         if ($rec) {
             // Get a recipient from database.
             $namefields = get_all_user_name_fields(true, 'u');
-            $user = $DB->get_record_sql("SELECT u.id, $namefields,
+            $user = $DB->get_record_sql("SELECT u.id, $namefields, u.deleted,
                                                 u.email AS accountemail, b.email AS backpackemail
                         FROM {user} u LEFT JOIN {badge_backpack} b ON u.id = b.userid
                         WHERE u.id = :userid", array('userid' => $rec->userid));

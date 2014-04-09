@@ -67,7 +67,6 @@ function make_log_url($module, $url) {
         case 'login':
         case 'lib':
         case 'admin':
-        case 'calendar':
         case 'category':
         case 'mnet course':
             if (strpos($url, '../') === 0) {
@@ -75,6 +74,9 @@ function make_log_url($module, $url) {
             } else {
                 $url = "/course/$url";
             }
+            break;
+        case 'calendar':
+            $url = "/calendar/$url";
             break;
         case 'user':
         case 'blog':
@@ -1701,6 +1703,9 @@ function course_delete_module($cmid) {
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
+    // Delete the tag instances.
+    $DB->delete_records('tag_instance', array('component' => 'mod_' . $modulename, 'contextid' => $modcontext->id));
+
     // Delete the context.
     context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
 
@@ -2351,7 +2356,7 @@ function course_format_ajax_support($format) {
  * @return boolean
  */
 function can_delete_course($courseid) {
-    global $USER, $DB;
+    global $USER;
 
     $context = context_course::instance($courseid);
 
@@ -2365,11 +2370,25 @@ function can_delete_course($courseid) {
     }
 
     $since = time() - 60*60*24;
+    $course = get_course($courseid);
 
-    $params = array('userid'=>$USER->id, 'url'=>"view.php?id=$courseid", 'since'=>$since);
-    $select = "module = 'course' AND action = 'new' AND userid = :userid AND url = :url AND time > :since";
+    if ($course->timecreated < $since) {
+        return false; // Return if the course was not created in last 24 hours.
+    }
 
-    return $DB->record_exists_select('log', $select, $params);
+    $logmanger = get_log_manager();
+    $readers = $logmanger->get_readers('\core\log\sql_select_reader');
+    $reader = reset($readers);
+
+    if (empty($reader)) {
+        return false; // No log reader found.
+    }
+
+    // A proper reader.
+    $select = "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since";
+    $params = array('userid' => $USER->id, 'since' => $since, 'courseid' => $course->id, 'eventname' => '\core\event\course_created');
+
+    return (bool)$reader->get_events_select_count($select, $params);
 }
 
 /**

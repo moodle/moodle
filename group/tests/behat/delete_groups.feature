@@ -5,13 +5,13 @@ Feature: Automatic deletion of groups and groupings
   I need to create groups and groupings under different scenarios and check that the expected result occurs when attempting to delete them.
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -19,21 +19,21 @@ Feature: Automatic deletion of groups and groupings
     And I expand "Users" node
     And I follow "Groups"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group (without ID) |
     And I press "Save changes"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group (with ID) |
       | Group ID number | An ID |
     And I press "Save changes"
     And I follow "Groupings"
     And I press "Create grouping"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grouping name | Grouping (without ID) |
     And I press "Save changes"
     And I press "Create grouping"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grouping name | Grouping (with ID) |
       | Grouping ID number | An ID |
     And I press "Save changes"
@@ -41,11 +41,11 @@ Feature: Automatic deletion of groups and groupings
 
   @javascript
   Scenario: Delete groups and groupings with and without ID numbers
-    Given I select "Group (without ID) (0)" from "groups"
+    Given I set the field "groups" to "Group (without ID) (0)"
     And I press "Delete selected group"
     And I press "Yes"
     Then the "groups" select box should not contain "Group (without ID) (0)"
-    And I select "Group (with ID) (0)" from "groups"
+    And I set the field "groups" to "Group (with ID) (0)"
     And I press "Delete selected group"
     And I press "Yes"
     And the "groups" select box should not contain "Group (with ID) (0)"
@@ -68,9 +68,9 @@ Feature: Automatic deletion of groups and groupings
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Groups"
-    When I select "Group (with ID) (0)" from "groups"
+    When I set the field "groups" to "Group (with ID) (0)"
     Then the "Delete selected group" "button" should be disabled
-    And I select "Group (without ID) (0)" from "groups"
+    And I set the field "groups" to "Group (without ID) (0)"
     And I press "Delete selected group"
     And I press "Yes"
     And I should not see "Group (without ID)"

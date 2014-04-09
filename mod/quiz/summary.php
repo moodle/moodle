@@ -17,10 +17,9 @@
 /**
  * This page prints a summary of a quiz attempt before it is submitted.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
