@@ -92,7 +92,7 @@ if ($course) {
             $priceblocks = $DB->get_records('course_shopblockprice', array('courseid' => $course->courseid), 'price_bracket_start');
 
             if (count($priceblocks)) {
-                if (iomad::is_company_user()) {
+                if (iomad::is_company_admin()) {
                     foreach ($priceblocks as $priceblock) {
                         $table->data[] = array(get_string('licenseblock_n', 'block_iomad_commerce',
                                                            $priceblock->price_bracket_start),

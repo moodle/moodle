@@ -62,6 +62,25 @@ class iomad {
             return false;
         }
     }
+    /**
+     * Check to see if a user is a manager in a company.
+     *
+     * Returns int or false;
+     *
+     **/
+    public static function is_company_admin () {
+        global $USER, $DB;
+
+        if ($usercompany = $DB->get_record('company_users', array('userid' => $USER->id))) {
+            if ($usercompany->managertype > 0) {
+                return $usercompany->companyid;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Get a users company id.
