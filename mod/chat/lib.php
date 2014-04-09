@@ -347,7 +347,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
 
         $params = array('timeold'=>$timeold, 'timeoldext'=>$timeoldext, 'cmid'=>$cm->id);
 
-        $timeout = "AND (chu.version<>'basic' AND chu.lastping>:timeold) OR (chu.version='basic' AND chu.lastping>:timeoldext)";
+        $timeout = "AND ((chu.version<>'basic' AND chu.lastping>:timeold) OR (chu.version='basic' AND chu.lastping>:timeoldext))";
 
         foreach ($current as $cm) {
             //count users first
