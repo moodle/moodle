@@ -587,3 +587,10 @@ table#user-grades td.controls,
     margin-left: 0.5em;
 }
 
+.path-grade-report-grader .yui3-scrollview-scrollbar {
+    opacity: 1 !important;
+}
+
+.path-grade-report-grader .yui3-scrollview-scrollbar-horiz {
+    bottom: -2px;
+}
