@@ -95,6 +95,7 @@ $string['name'] = 'Name';
 $string['nocoursesnotontheshop'] = 'There are no courses available to be added to the shop.';
 $string['nocoursesontheshop'] = 'There are no courses on the shop matching your criteria.';
 $string['noinvoices'] = 'There are no invoices matching your criteria.';
+$string['noproviders'] = 'No payment providers have been enabled. Please contact the site administrator';
 $string['or'] = 'or';
 $string['order'] = 'Order';
 $string['orders'] = 'Orders';

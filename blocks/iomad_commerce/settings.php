@@ -43,20 +43,20 @@ if ($ADMIN->fulltree) {
     require_once($dir .'/lib.php');
 
     $settings->add(new admin_setting_configtext('commerce_admin_firstname',
-                                            get_string('commerce_admin_firstname', ' block_iomad_commerce'),
+                                            get_string('commerce_admin_firstname', 'block_iomad_commerce'),
                                             get_string('commerce_admin_firstname_help', 'block_iomad_commerce'),
                                             '',
                                             PARAM_TEXT));
 
     $settings->add(new admin_setting_configtext('commerce_admin_lastname',
-                                            get_string('commerce_admin_lastname', ' block_iomad_commerce'),
+                                            get_string('commerce_admin_lastname', 'block_iomad_commerce'),
                                             get_string('commerce_admin_lastname_help', 'block_iomad_commerce'),
                                             '',
                                             PARAM_TEXT));
 
     $settings->add(new admin_setting_configtext('commerce_admin_email',
                                             get_string('commerce_admin_email', 'block_iomad_commerce'),
-                                            get_string('commerce_admin_email_help', ' block_iomad_commerce'),
+                                            get_string('commerce_admin_email_help', 'block_iomad_commerce'),
                                             '',
                                             PARAM_EMAIL));
 

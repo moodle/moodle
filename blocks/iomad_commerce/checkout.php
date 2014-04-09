@@ -80,10 +80,15 @@ class checkout_form extends moodleform {
             $choices[$p] = get_payment_provider_displayname($p);
         }
 
-        $mform->addElement('select', 'paymentprovider', get_string('paymentprovider', 'block_iomad_commerce'), $choices);
-        $mform->addRule('paymentprovider', $strrequired, 'required', null, 'client');
+        if (!$choices) {
+            $mform->addElement('html', '<div class="alert">' . get_string('noproviders', 'block_iomad_commerce') . '</div>');
+        } else {
+            $mform->addElement('select', 'paymentprovider', get_string('paymentprovider', 'block_iomad_commerce'), $choices);
+            $mform->addRule('paymentprovider', $strrequired, 'required', null, 'client');
+        }
 
         $mform->addElement('hidden', 'userid', $USER->id);
+        $mform->setType('userid', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('continue'));
     }
