@@ -45,7 +45,7 @@ M.mod_assign.init_grading_table = function(Y) {
         if (selectall) {
             selectall.on('change', function(e) {
                 if (e.currentTarget.get('checked')) {
-                    checkboxes = Y.all('td.c0 input');
+                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
                     checkboxes.each(function(node) {
                         rowelement = node.get('parentNode').get('parentNode');
                         node.set('checked', true);
@@ -53,7 +53,7 @@ M.mod_assign.init_grading_table = function(Y) {
                         rowelement.addClass('selectedrow');
                     });
                 } else {
-                    checkboxes = Y.all('td.c0 input');
+                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
                     checkboxes.each(function(node) {
                         rowelement = node.get('parentNode').get('parentNode');
                         node.set('checked', false);
