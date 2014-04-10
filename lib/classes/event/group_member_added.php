@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * core_group member added event class.
  *
- * @package    core_group
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

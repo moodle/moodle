@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Cohort updated event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Course module instances list viewed event class for mod_choice.
  *
  * @package    mod_choice
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

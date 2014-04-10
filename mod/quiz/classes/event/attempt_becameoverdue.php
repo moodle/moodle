@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * Its name should not be used as a reference for other events to be created.
  *
  * @package    mod_quiz
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
