@@ -449,6 +449,7 @@ class block_manager {
         if (!isset($bc->attributes['data-block'])) {
             $bc->attributes['data-block'] = '_fake';
         }
+        $bc->attributes['class'] .= ' block_fake';
         $this->extracontent[$region][] = $bc;
     }
 
