@@ -191,6 +191,21 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Clicks link with specified id|title|alt|text, and confirming the alert dialog.
+     *
+     * @When /^I follow "(?P<link_string>(?:[^"]|\\")*)", confirming the dialog$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $link
+     */
+    public function click_link_confirm_dialog($link) {
+
+        $linknode = $this->find_link($link);
+        $this->ensure_node_is_visible($linknode);
+        $linknode->click();
+        $this->accept_currently_displayed_alert_dialog();
+    }
+
+    /**
      * Waits X seconds. Required after an action that requires data from an AJAX request.
      *
      * @Then /^I wait "(?P<seconds_number>\d+)" seconds$/
