@@ -1,4 +1,4 @@
-@core @core_availability @wip
+@core @core_availability
 Feature: edit_availability
   In order to control which students can see activities
   As a teacher
@@ -17,14 +17,6 @@ Feature: edit_availability
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
 
-  # This scenario does not need JavaScript, but I have added the tag because
-  # after today's composer/package update, I get this error:
-  # Notice: Undefined index: host in
-  # [...]\vendor\symfony\browser-kit\Symfony\Component\BrowserKit\CookieJar.php
-  # line 217
-  # Adding @javascript here causes it not to use whatever they just broke, and
-  # it then works again.
-  @javascript
   Scenario: Confirm the 'enable availability' option is working
     When I log in as "teacher1"
     And I follow "Course 1"
