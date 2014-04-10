@@ -95,7 +95,7 @@ function lti_add_instance($lti, $mform) {
     $lti->timemodified = $lti->timecreated;
     $lti->servicesalt = uniqid('', true);
 
-    if ($lti->typeid == 0 && isset($lti->urlmatchedtypeid)) {
+    if (empty($lti->typeid) && isset($lti->urlmatchedtypeid)) {
         $lti->typeid = $lti->urlmatchedtypeid;
     }
 
