@@ -16,7 +16,7 @@
 /**
  * Event for when a new blog entry is deleted.
  *
- * @package    core_blog
+ * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Event for when a new blog entry is deleted.
  *
- * @package    core_blog
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
