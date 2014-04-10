@@ -114,22 +114,14 @@ class current_company_course_selector extends company_course_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
         $params['departmentid'] = $this->departmentid;
-        if (!empty($this->departmentid)) {
+        /*if (!empty($this->departmentid)) {
             $departmentlist = company::get_all_subdepartments($this->departmentid);
         } else {
             $departmentlist = null;
         }
-        $parentnode = company::get_company_parentnode($this->companyid);
+        $parentnode = company::get_company_parentnode($this->companyid);*/
         $departmentsql = "";
-        if (!empty($departmentlist)) {
-            if ($parentnode->id == $this->departmentid) {
-                $departmentsql = "AND cc.departmentid in (".implode(',', array_keys($departmentlist)).")";
-            } else {
-                $departmentsql = "AND cc.departmentid in (".$parentnode->id.','.implode(',', array_keys($departmentlist)).")";
-            }
-        } else {
-            $departmentsql = "AND pc.departmentid = ".$parentnode->id;
-        }
+        $departmentsql = "AND cc.departmentid = ".$this->departmentid;
         $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('c');
         $countfields = 'SELECT COUNT(1)';
 
@@ -166,7 +158,10 @@ class current_company_course_selector extends company_course_selector_base {
                 $partialsharedsql = " FROM {course} c
                                     WHERE c.id IN (SELECT pc.courseid from {iomad_courses} pc
                                     INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
-                                       where pc.shared=2 AND csc.companyid = :companyid)";
+                                       where pc.shared=2 AND csc.companyid = :companyid)
+                                    AND c.id IN (
+                                       SELECT courseid FROM {company_course}
+                                       WHERE departmentid = :departmentid)";
             }
         } else {
             $sharedsql = " FROM {course} c WHERE 1 = 2";
@@ -373,7 +368,7 @@ class potential_company_course_selector extends company_course_selector_base {
             // Eemove courses for the current department.
             $departmentcondition = " AND c.id NOT IN (
                                                       SELECT courseid FROM {company_course}
-                                                      WHERE departmentid != ($this->departmentid)) ";
+                                                      WHERE departmentid = ($this->departmentid)) ";
         } else {
             $departmentcondition = "";
         }
@@ -389,7 +384,7 @@ class potential_company_course_selector extends company_course_selector_base {
             $sharedsql .= " AND c.id NOT IN (SELECT mcc.courseid FROM {company_course} mcc
                                              LEFT JOIN {iomad_courses} mic
                                              ON (mcc.courseid = mic.courseid)
-                                             WHERE mic.shared!=2 ) ";
+                                             WHERE mic.shared!=2 AND companyid != :companyid) ";
         } else {
             $sharedsql .= " AND NOT EXISTS ( SELECT NULL FROM {company_course} WHERE courseid = c.id ) ";
         }
@@ -408,7 +403,7 @@ class potential_company_course_selector extends company_course_selector_base {
         $sql = " FROM {course} c
                 WHERE $wherecondition
                       AND c.id != :siteid
-                       $sharedsql";
+                      $departmentcondition $sharedsql";
 
         $order = ' ORDER BY c.fullname ASC';
         if (!$this->is_validating()) {
@@ -418,6 +413,7 @@ class potential_company_course_selector extends company_course_selector_base {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
+
         $allcourses = $DB->get_records_sql($fields . $sql . $order, $params) +
         $DB->get_records_sql($distinctfields . $sqldistinct . $order, $params);
 

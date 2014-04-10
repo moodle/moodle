@@ -89,8 +89,8 @@ class company_courses_form extends moodleform {
         $mform->addElement('submit', 'updateselection',
                        get_string('updatedepartmentusersselection', 'block_iomad_company_admin'));
 
-        if (count($this->potentialcourses->find_courses('')) ||
-            count($this->currentcourses->find_courses(''))) {
+        //if (count($this->potentialcourses->find_courses('')) ||
+            //count($this->currentcourses->find_courses(''))) {
 
             $mform->addElement('html', '<table summary="" class="companycoursetable addremovetable'.
                                        ' generaltable generalbox boxaligncenter" cellspacing="0">
@@ -133,9 +133,9 @@ class company_courses_form extends moodleform {
                 $mform->addElement('html', get_string('unenrollincapable',
                                                       'block_iomad_company_admin'));
             }
-        } else {
-            $mform->addElement('html', get_string('nocourses', 'block_iomad_company_admin'));
-        }
+        //} else {
+            //$mform->addElement('html', get_string('nocourses', 'block_iomad_company_admin'));
+        //}
     }
 
     public function process() {
@@ -158,14 +158,21 @@ class company_courses_form extends moodleform {
                     if ($DB->get_record_sql("SELECT id FROM {iomad_courses}
                                              WHERE courseid=$addcourse->id
                                              AND shared != 0")) {
-                        $sharingrecord = new object();
-                        $sharingrecord->courseid = $addcourse->id;
-                        $sharingrecord->companyid = $company->id;
-                        $DB->insert_record('company_shared_courses', $sharingrecord);
-                        if ($this->departmentid != $this->companydepartment ) {
-                            $company->add_course($addcourse, $this->departmentid);
+                        if ($companycourserecord = $DB->get_record('company_course', array('companyid' => $this->selectedcompany,
+                                                                                           'courseid' => $addcourse->id))) {
+                            // Already assigned to the company so we are just moving it within it.
+                            $companycourserecord->departmentid = $this->departmentid;
+                            $DB->update_record('company_course', $companycourserecord);
                         } else {
-                            $company->add_course($addcourse, $this->companydepartment);
+                            $sharingrecord = new object();
+                            $sharingrecord->courseid = $addcourse->id;
+                            $sharingrecord->companyid = $company->id;
+                            $DB->insert_record('company_shared_courses', $sharingrecord);
+                            if ($this->departmentid != $this->companydepartment ) {
+                                $company->add_course($addcourse, $this->departmentid);
+                            } else {
+                                $company->add_course($addcourse, $this->companydepartment);
+                            }
                         }
                     } else {
                         // If company has enrollment then we must have BOTH
@@ -176,6 +183,10 @@ class company_courses_form extends moodleform {
                                 $this->unenroll_all($addcourse->id);
                                 $company->add_course($addcourse);
                             }
+                        } else if ($companycourserecord = $DB->get_record('company_course', array('companyid' => $this->selectedcompany,
+                                                                                                  'courseid' => $addcourse->id))) {
+                            $companycourserecord->departmentid = $this->departmentid;
+                            $DB->update_record('company_course', $companycourserecord);
                         } else {
                             if ($this->departmentid != $this->companydepartment ) {
                                 $company->add_course($addcourse, $this->departmentid);
