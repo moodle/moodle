@@ -43,7 +43,7 @@ class info_section extends info {
      * @param \section_info $section Section object
      */
     public function __construct(\section_info $section) {
-        parent::__construct(\get_course($section->course), $section->visible,
+        parent::__construct($section->modinfo->get_course(), $section->visible,
                 $section->availability);
         $this->section = $section;
     }
