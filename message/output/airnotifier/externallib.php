@@ -156,12 +156,12 @@ class message_airnotifier_external extends external_api {
 
                         // First get forced settings.
                         if ($forcedpref = get_config('message', $prefname)) {
-                            $prefstocheck = explode(',', $forcedpref);
+                            $prefstocheck = array_merge($prefstocheck, explode(',', $forcedpref));
                         }
 
                         // Then get user settings.
                         if ($userpref = get_user_preferences($prefname, '', $user->id)) {
-                            $prefstocheck += explode(',', $userpref);
+                            $prefstocheck = array_merge($prefstocheck, explode(',', $userpref));
                         }
 
                         if (in_array('airnotifier', $prefstocheck)) {
