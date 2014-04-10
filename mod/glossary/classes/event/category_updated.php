@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * mod_glossary glossary category updated event.
  *
  * @package    mod_glossary
+ * @since      Moodle 2.7
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

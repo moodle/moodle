@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * Triggered when glossary entry is autolinked and viewed by user from another context.
  *
  * @package    mod_glossary
+ * @since      Moodle 2.7
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

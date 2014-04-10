@@ -18,6 +18,7 @@
  * The mod_lti instance list viewed event.
  *
  * @package    mod_lti
+ * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

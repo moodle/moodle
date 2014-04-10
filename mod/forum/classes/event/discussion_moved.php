@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *     - int toforumid: The id of the forum the discussion is being moved to
  *
  * @package    mod_forum
+ * @since      Moodle 2.7
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

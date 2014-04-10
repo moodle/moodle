@@ -17,7 +17,7 @@
 /**
  * Grade edited event.
  *
- * @package    core_grades
+ * @package    core
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +37,8 @@ defined('MOODLE_INTERNAL') || die();
  *     -bool overridden: Is this grade override?
  *     -float finalgrade: the final grade value.
  *
- * @package    core_grades
+ * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -35,6 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  *     -int repeatid: Id of the parent event if present, else 0.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

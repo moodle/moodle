@@ -27,6 +27,7 @@ namespace report_loglive\event;
  * Event triggered, when loglive report is viewed.
  *
  * @package    report_loglive
+ * @since      Moodle 2.7
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

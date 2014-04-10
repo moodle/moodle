@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Event for when a scorm activity is viewed.
  *
  * @package    mod_scorm
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
