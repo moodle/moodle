@@ -377,3 +377,21 @@ function create_invoice_reference($invoiceid) {
         while ($invariant-- && !set_new_invoice_reference($invoiceid));
     }
 }
+
+function is_commerce_configured() {
+    global $CFG;
+
+    // Confirm commerce admin has been defined
+    if (!$CFG->commerce_admin_firstname || !$CFG->commerce_admin_lastname || $CFG->commerce_admin_email) {
+        return false;
+    }
+
+    // Confirm that there are some payment providers configured
+    $pp = get_payment_providers();
+    if (!$pp) {
+        return false;
+    } 
+
+    // Looks ok
+    return true;
+}

@@ -38,11 +38,18 @@ class block_iomad_commerce extends block_base {
         }
 
         $this->content = new stdClass;
+        $this->content->footer = '';
+
+        // Has this been setup properly
+        if (!is_commerce_configured()) {
+            $this->content->text = '<div class=\"alert alert-danger\">' . get_string('notconfigured', 'block_iomad_commerce') . '</div>';
+            return $this->content;
+        }
+
         $this->content->text = '<a href="' . new moodle_url('/blocks/iomad_commerce/shop.php') .
                                '">' . get_string('shop_title', 'block_iomad_commerce') . '</a>';
 
         $this->content->text .= get_basket_info();
-        $this->content->footer = '';
 
         return $this->content;
     }

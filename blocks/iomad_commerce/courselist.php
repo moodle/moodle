@@ -91,6 +91,13 @@ if ($hide) {
 }
 $blockpage->display_header();
 
+// Has this been setup properly
+if (!is_commerce_configured()) {
+    echo '<div class=\"alert alert-danger\">' . get_string('notconfigured', 'block_iomad_commerce') . '</div>';
+    echo $OUTPUT->footer();
+    die;
+}
+
 //  Check we can actually do anything on this page.
 require_capability('block/iomad_commerce:admin_view', $context);
 
