@@ -118,6 +118,9 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('securetoolurl');
         $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
 
+        $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
+        $mform->setType('urlmatchedtypeid', PARAM_INT);
+
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
