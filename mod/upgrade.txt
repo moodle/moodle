@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 2.7 ===
 
 * modgrade form element has been redesigned and allows setting the maximum grade point higher than 100.
+* The usage of $module in mod/xxx/version.php files is now deprecated. Please use
+  $plugin instead. The support for the legacy notation will be dropped in Moodle 2.10.
 
 === 2.6 ===
 
