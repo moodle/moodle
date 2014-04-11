@@ -124,7 +124,7 @@ if (isset($SESSION->shopsearch)) {
 }
 
 // Deal with company specific and shared courses.
-if (!empty($USER->profile['company'])) {
+if (iomad::is_company_user()) {
     // Get the company courses and the company shared courses.
     $company = company::get_company_byuserid($USER->id);
     $sharedsql = " AND ( c.id in ( select courseid from {companycourse} where companyid= $company->id)
