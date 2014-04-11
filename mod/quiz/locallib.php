@@ -289,14 +289,29 @@ function quiz_attempt_save_started($quizobj, $quba, $attempt) {
     question_engine::save_questions_usage_by_activity($quba);
     $attempt->uniqueid = $quba->get_id();
     $attempt->id = $DB->insert_record('quiz_attempts', $attempt);
-    // Log the new attempt.
+
+    // Params used by the events below.
+    $params = array(
+        'objectid' => $attempt->id,
+        'relateduserid' => $attempt->userid,
+        'courseid' => $quizobj->get_courseid(),
+        'context' => $quizobj->get_context()
+    );
+    // Decide which event we are using.
     if ($attempt->preview) {
-        add_to_log($quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id='.$quizobj->get_cmid(),
-                   $quizobj->get_quizid(), $quizobj->get_cmid());
+        $params['other'] = array(
+            'quizid' => $quizobj->get_quizid()
+        );
+        $event = \mod_quiz\event\attempt_preview_started::create($params);
     } else {
-        add_to_log($quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt='.$attempt->id,
-                   $quizobj->get_quizid(), $quizobj->get_cmid());
+        $event = \mod_quiz\event\attempt_started::create($params);
+
     }
+
+    // Trigger the event.
+    $event->add_record_snapshot('quiz', $quizobj->get_quiz());
+    $event->trigger();
+
     return $attempt;
 }
 
@@ -359,6 +374,19 @@ function quiz_delete_attempt($attempt, $quiz) {
 
     question_engine::delete_questions_usage_by_activity($attempt->uniqueid);
     $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
+
+    // Log the deletion of the attempt.
+    $params = array(
+        'objectid' => $attempt->id,
+        'relateduserid' => $attempt->userid,
+        'context' => context_module::instance($quiz->cmid),
+        'other' => array(
+            'quizid' => $quiz->id
+        )
+    );
+    $event = \mod_quiz\event\attempt_deleted::create($params);
+    $event->add_record_snapshot('quiz_attempts', $attempt);
+    $event->trigger();
 
     // Search quiz_attempts for other instances by this user.
     // If none, then delete record for this quiz, this user from quiz_grades

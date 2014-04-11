@@ -63,9 +63,6 @@ if ($confirm) {
 
     quiz_delete_override($quiz, $override->id);
 
-    add_to_log($cm->course, 'quiz', 'delete override',
-        "overrides.php?cmid=$cm->id", $quiz->id, $cm->id);
-
     redirect($cancelurl);
 }
 

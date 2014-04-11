@@ -35,7 +35,11 @@ $coursecontext = context_course::instance($id);
 require_login($course);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, "quiz", "view all", "index.php?id=$course->id", "");
+$params = array(
+    'context' => $coursecontext
+);
+$event = \mod_quiz\event\course_module_instance_list_viewed::create($params);
+$event->trigger();
 
 // Print the header.
 $strquizzes = get_string("modulenameplural", "quiz");

@@ -317,8 +317,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
                 // Ensure the attempt belongs to a student included in the report. If not skip.
                 continue;
             }
-            add_to_log($quiz->course, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
-                    $attemptid, $cm->id);
+
             quiz_delete_attempt($attempt, $quiz);
         }
     }
