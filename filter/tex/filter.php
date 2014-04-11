@@ -114,7 +114,11 @@ class filter_tex extends moodle_text_filter {
         global $CFG, $DB;
 
         /// Do a quick check using stripos to avoid unnecessary work
-        if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[') and !preg_match('/\[tex/i',$text)) { //added one more tag (dlnsk)
+        if ((!preg_match('/<tex/i', $text)) &&
+                (strpos($text,'$$') === false) &&
+                (strpos($text,'\\[') === false) &&
+                (strpos($text, '\\(') === false) &&
+                (!preg_match('/\[tex/i',$text))) {
             return $text;
         }
 
@@ -146,9 +150,20 @@ class filter_tex extends moodle_text_filter {
         // or $$ TeX expression $$
         // or \[ TeX expression \]          // original tag of MathType and TeXaide (dlnsk)
         // or [tex] TeX expression [/tex]   // somtime it's more comfortable than <tex> (dlnsk)
-        preg_match_all('/<tex(?:\s+alt=["\'](.*?)["\'])?>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
+        $rules = array(
+            '<tex(?:\s+alt=["\'](.*?)["\'])?>(.+?)<\/tex>',
+            '\$\$(.+?)\$\$',
+            '\\\\\[(.+?)\\\\\]',
+            '\\\\\((.+?)\\\\\)',
+            '\\[tex\\](.+?)\\[\/tex\\]'
+        );
+        $megarule = '/' . implode($rules, '|') . '/is';
+        preg_match_all($megarule, $text, $matches);
         for ($i=0; $i<count($matches[0]); $i++) {
-            $texexp = $matches[2][$i] . $matches[3][$i] . $matches[4][$i] . $matches[5][$i];
+            $texexp = '';
+            for ($j = 0; $j < count($rules); $j++) {
+                $texexp .= $matches[$j + 2][$i];
+            }
             $alt = $matches[1][$i];
             $texexp = str_replace('<nolink>','',$texexp);
             $texexp = str_replace('</nolink>','',$texexp);
