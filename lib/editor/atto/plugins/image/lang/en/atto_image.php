@@ -23,15 +23,10 @@
  */
 
 $string['alignment'] = 'Alignment';
-$string['alignment_baseline'] = 'Default (baseline)';
 $string['alignment_bottom'] = 'Bottom';
 $string['alignment_left'] = 'Left';
 $string['alignment_middle'] = 'Middle';
 $string['alignment_right'] = 'Right';
-$string['alignment_sub'] = 'Subscript';
-$string['alignment_super'] = 'Superscript';
-$string['alignment_textbottom'] = 'Text bottom';
-$string['alignment_texttop'] = 'Text top';
 $string['alignment_top'] = 'Top';
 $string['browserepositories'] = 'Browse repositories...';
 $string['constrain'] = 'Keep ratio';
