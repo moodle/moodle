@@ -518,7 +518,11 @@ class block_manager {
 
         $this->check_is_loaded();
         $this->ensure_content_created($region, $output);
-        foreach($this->visibleblockcontent[$region] as $instance) {
+        if (!$this->region_has_content($region, $output)) {
+            // If the region has no content then nothing is docked at all of course.
+            return false;
+        }
+        foreach ($this->visibleblockcontent[$region] as $instance) {
             if (!empty($instance->content) && !get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
                 return false;
             }
