@@ -46,7 +46,7 @@ $string['dbprefix'] = 'Prefisso tabelle';
 $string['dirroot'] = 'Cartella di Moodle';
 $string['environmenthead'] = 'Verifica dell\'ambiente...';
 $string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito minimo una data versione del PHP ed una serie di estensioni. Prima di una installazione o di un aggiornamento viene eseguita la verifica dei requisiti minimi. Se non sai come installare nuove versioni del PHP o le sue estensioni, contatta l\'amministratore del tuo server.';
-$string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
+$string['errorsinenvironment'] = 'Sono stati riscontarti problemi nel tuo ambiente';
 $string['installation'] = 'Installazione';
 $string['langdownloaderror'] = 'Purtroppo non è stato possibile scaricare la lingua "{$a}". L\'installazione proseguirà in lingua Inglese.';
 $string['memorylimithelp'] = '<p>Il limite di memoria assegnata al PHP attualmente è {$a}.</p>
@@ -57,10 +57,10 @@ $string['memorylimithelp'] = '<p>Il limite di memoria assegnata al PHP attualmen
 <ol>
 <li>Se possibile, ricompila il PHP con l\'opzione <i>--enable-memory-limit</i>.
 Questo consentirà a Moodle di impostare in autonomia il limite di memoria.</li>
-<li>Se hai accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non hai accesso, potete chiedere al vostro amministratore di sistema di farlo.</li>
+<li>Se hai accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non hai accesso, puoi chiedere all\'amministratore di sistema di farlo.</li>
 <li>Su alcuni server con il PHP è possibile creare un file .htaccess nella cartella di Moodle contenente questa linea:
 <blockquote>php_value memory_limit 40M</blockquote>
-<p>Tuttavia, su alcuni server la direttiva potrebbe impedire  a <b>tutte</b> le pagine PHP di funzionare (apapriranno degli erorri durante la visualizzazione delle pagine), in tal caso dovrai rimuovere il file .htaccess.</li></ol>';
+<p>Tuttavia, su alcuni server la direttiva potrebbe impedire a <b>tutte</b> le pagine PHP di funzionare (appariranno degli errori durante la visualizzazione delle pagine), in tal caso dovrai rimuovere il file .htaccess.</li></ol>';
 $string['paths'] = 'Percorsi';
 $string['pathserrcreatedataroot'] = 'Lo script di installazione non ha potuto creare la Cartella dei dati ({$a->dataroot}).';
 $string['pathshead'] = 'Conferma percorsi';
