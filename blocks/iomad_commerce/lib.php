@@ -382,7 +382,7 @@ function is_commerce_configured() {
     global $CFG;
 
     // Confirm commerce admin has been defined
-    if (!$CFG->commerce_admin_firstname || !$CFG->commerce_admin_lastname || $CFG->commerce_admin_email) {
+    if (!$CFG->commerce_admin_firstname || !$CFG->commerce_admin_lastname || !$CFG->commerce_admin_email) {
         return false;
     }
 
