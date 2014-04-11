@@ -478,6 +478,7 @@ class block_manager {
             throw new coding_exception('block_manager has already prepared the blocks in region ' .
                     $region . 'for output. It is too late to add a fake block.');
         }
+        $bc->attributes['class'] .= ' block_fake';
         $this->extracontent[$region][] = $bc;
     }
 
