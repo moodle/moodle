@@ -145,7 +145,7 @@ class analysis_for_class {
             return true;
         } else if (count($actualresponses) === 1) {
             $singleactualresponse = reset($actualresponses);
-            return $singleactualresponse != $this->modelresponse;
+            return (string)$singleactualresponse != $this->modelresponse;
         }
         return false;
     }
