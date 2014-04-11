@@ -161,7 +161,7 @@ class calculator {
                 $this->stats->for_subq($qid)->question = $subquestion;
                 $this->stats->for_subq($qid)->randomguessscore = $this->get_random_guess_score($subquestion);
 
-                if ($variants = $this->stats->get_variants_for_subq($qid)) {
+                if ($variants = $this->stats->for_subq($qid)->get_variants()) {
                     foreach ($variants as $variant) {
                         $this->stats->for_subq($qid, $variant)->question = $subquestion;
                         $this->stats->for_subq($qid, $variant)->randomguessscore = $this->get_random_guess_score($subquestion);

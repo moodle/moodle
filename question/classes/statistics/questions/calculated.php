@@ -230,7 +230,7 @@ class calculated {
         }
         $DB->insert_record('question_statistics', $toinsert, false);
 
-        if (count($this->variantstats) > 1) {
+        if ($this->get_variants()) {
             foreach ($this->variantstats as $variantstat) {
                 $variantstat->cache($qubaids);
             }
@@ -276,7 +276,7 @@ class calculated {
      */
     public function get_variants() {
         $variants = array_keys($this->variantstats);
-        if (count($variants) > 1) {
+        if (count($variants) > 1 || reset($variants) != 1) {
             return $variants;
         } else {
             return array();
