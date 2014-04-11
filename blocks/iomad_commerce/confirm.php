@@ -22,7 +22,7 @@ require_once(dirname(__FILE__) . '/processor/processor.php');
 
 require_commerce_enabled();
 
-$invoicereference = required_param('u', PARAM_INT);
+$invoicereference = required_param('u', PARAM_CLEAN);
 
 global $DB;
 
