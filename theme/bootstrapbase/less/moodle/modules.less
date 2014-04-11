@@ -54,15 +54,49 @@ select {
     .header {
         margin-bottom: 3px;
     }
-    .maincontent {
-        .left {
-            padding: 0 10px 0 10px;
+    .picture img {
+        margin: 3px;
+        &.userpicture {
+            margin-left: 3px;
+            margin-right: 10px;
+        }
+    }
+    .content {
+        .posting.fullpost {
+            margin-top: 8px;
+        }
+    }
+    .row {
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 48px;
+        }
+        &.side {
+            clear: both;
+        }
+    }
+}
+
+.dir-rtl .forumpost {
+    .picture img {
+        &.userpicture {
+            margin-left: 10px;
+            margin-right: 3px;
+        }
+    }
+    .row {
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 0;
+            margin-right: 48px;
         }
     }
 }
 
 .forumpost .row .left {
-    width: auto;
+    width: 48px;
 }
 
 .forumpost .options .commands {
