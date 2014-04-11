@@ -37,24 +37,6 @@ require_once(dirname(__FILE__) . '/wikimedia.php');
  */
 
 class repository_wikimedia extends repository {
-    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $SESSION;
-        parent::__construct($repositoryid, $context, $options);
-        $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
-        if (empty($this->keyword)) {
-            $this->keyword = optional_param('s', '', PARAM_RAW);
-        }
-        $sess_keyword = 'wikimedia_'.$this->id.'_keyword';
-        if (empty($this->keyword) && optional_param('page', '', PARAM_RAW)) {
-            // This is the request of another page for the last search, retrieve the cached keyword
-            if (isset($SESSION->{$sess_keyword})) {
-                $this->keyword = $SESSION->{$sess_keyword};
-            }
-        } else if (!empty($this->keyword)) {
-            // save the search keyword in the session so we can retrieve it later
-            $SESSION->{$sess_keyword} = $this->keyword;
-        }
-    }
 
     /**
      * Returns maximum width for images
@@ -116,6 +98,21 @@ class repository_wikimedia extends repository {
     }
    // login
     public function check_login() {
+        global $SESSION;
+        $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
+        if (empty($this->keyword)) {
+            $this->keyword = optional_param('s', '', PARAM_RAW);
+        }
+        $sess_keyword = 'wikimedia_'.$this->id.'_keyword';
+        if (empty($this->keyword) && optional_param('page', '', PARAM_RAW)) {
+            // This is the request of another page for the last search, retrieve the cached keyword.
+            if (isset($SESSION->{$sess_keyword})) {
+                $this->keyword = $SESSION->{$sess_keyword};
+            }
+        } else if (!empty($this->keyword)) {
+            // Save the search keyword in the session so we can retrieve it later.
+            $SESSION->{$sess_keyword} = $this->keyword;
+        }
         return !empty($this->keyword);
     }
     // if check_login returns false,
