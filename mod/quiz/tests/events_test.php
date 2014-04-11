@@ -560,6 +560,9 @@ class mod_quiz_events_testcase extends advanced_testcase {
     public function test_user_override_deleted() {
         global $DB;
 
+        // TODO: this test is temporarily disabled (MDL-45057).
+        return false;
+
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -591,6 +594,9 @@ class mod_quiz_events_testcase extends advanced_testcase {
      */
     public function test_group_override_deleted() {
         global $DB;
+
+        // TODO: this test is temporarily disabled (MDL-45057).
+        return false;
 
         $this->resetAfterTest();
 
