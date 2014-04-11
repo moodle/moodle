@@ -249,7 +249,7 @@ class qtype_numerical_question extends question_graded_automatically {
     }
 
     public function classify_response(array $response) {
-        if (empty($response['answer'])) {
+        if (!$this->is_gradable_response($response)) {
             return array($this->id => question_classified_response::no_response());
         }
 
