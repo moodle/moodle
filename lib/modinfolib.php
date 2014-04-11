@@ -2234,6 +2234,7 @@ class cached_cm_info {
  *    visible or not available, so this would be true in that case) - obtained dynamically
  * @property-read string $sequence Comma-separated list of all modules in the section. Note, this field may not exactly
  *    match course_sections.sequence if later has references to non-existing modules or not modules of not available module types.
+ * @property-read course_modinfo $modinfo
  */
 class section_info implements IteratorAggregate {
     /**
@@ -2647,6 +2648,15 @@ class section_info implements IteratorAggregate {
      */
     private function get_course() {
         return $this->modinfo->get_course_id();
+    }
+
+    /**
+     * Modinfo object
+     *
+     * @return course_modinfo
+     */
+    private function get_modinfo() {
+        return $this->modinfo;
     }
 
     /**
