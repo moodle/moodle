@@ -29,8 +29,7 @@ function xmldb_local_iomad_dashboard_install() {
     $page->blocks->add_region('content');
     $defaultblocks = array(
         'side_pre' => array('course_list'),
-        'content' => array('iomad_company_selector',
-                           'iomad_company_admin',
+        'content' => array('iomad_company_admin',
                            'iomad_reports'),
         'side_post' => array('news_items')
         );
