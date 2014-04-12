@@ -35,9 +35,9 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
 
         // Check if there is an instance of the company select block on the dashboard.
         if ($DB->get_record('block_instaces', array('blockname' => 'iomad_company_selector',
-                                                    'pagetypepattern', => 'local-iomad-dashboard-index'))) {
+                                                    'pagetypepattern' => 'local-iomad-dashboard-index'))) {
             $DB->delete_records('block_instaces', array('blockname' => 'iomad_company_selector', 
-                                                        'pagetypepattern', => 'local-iomad-dashboard-index'))
+                                                        'pagetypepattern' => 'local-iomad-dashboard-index'));
         }
 
         // Iomad_company_admin savepoint reached.
