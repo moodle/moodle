@@ -84,6 +84,11 @@ $courses = attendancerep::courseselectlist($companyid);
 $courseselect = new single_select($url, 'courseid', $courses, $courseid);
 $courseselect->label = get_string('course');
 $courseselect->formid = 'choosecourse';
+if (empty($courses)) {
+    echo get_string('nocourses', 'local_report_attendance');
+    echo $OUTPUT->footer();
+    die;
+}
 if (empty($dodownload)) {
     echo html_writer::tag('div',
                            $OUTPUT->render($courseselect),

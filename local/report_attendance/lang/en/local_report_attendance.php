@@ -42,6 +42,8 @@ $string['userrecordnotfound'] = 'The user record was not found';
 $string['coursename'] = 'Course name';
 $string['completionenabled'] = 'Completion enabled';
 $string['numusers'] = 'Number of users';
+$string['nocourses'] = '<h2>There are no training events</h2>
+<p>There are no training event activities set up in any of your courses. </p>';
 $string['notstartedusers'] = 'Not started';
 $string['inprogressusers'] = 'Still in progress';
 $string['completedusers'] = 'Completed';
