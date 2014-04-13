@@ -207,6 +207,7 @@ $string['newuser'] = 'New user';
 $string['nocompanies'] = 'There are no companies - please add a company first';
 $string['nocompany'] = 'Unallocated courses';
 $string['nocourses'] = 'There are no courses.';
+$string['nolicenses'] = '<p>You do not have licenses which you can allocate.</p>';
 $string['notallowedtoaccessothercompaniesdata'] = 'You\'re not allowed to that.';
 $string['nousers'] = 'There are no users.';
 $string['oktounenroll'] = 'OK to unenroll users';

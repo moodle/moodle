@@ -325,6 +325,13 @@ $select->formid = 'chooselicense';
 echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_license_selector'));
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_license_selector'));
 
+// Do we have any licenses?
+if (empty($licenselist)) {
+    echo get_string('nolicenses', 'block_iomad_company_admin');
+    echo $OUTPUT->footer();
+    die;
+}
+
 if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
     if ($returnurl) {
         redirect($returnurl);
