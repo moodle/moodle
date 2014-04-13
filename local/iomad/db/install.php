@@ -179,6 +179,7 @@ function xmldb_local_iomad_install() {
         'block/iomad_company_admin:allocate_licenses',
         'block/iomad_company_admin:assign_company_manager',
         'block/iomad_company_admin:classrooms',
+        'block/iomad_company_admin:classrooms_add',
         'block/iomad_company_admin:classrooms_delete',
         'block/iomad_company_admin:classrooms_edit',
         'block/iomad_company_admin:company_edit',
