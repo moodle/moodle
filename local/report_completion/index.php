@@ -142,8 +142,11 @@ $foundfields = $foundobj->foundfields;
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 
 // Get the appropriate list of departments.
+$selectparams = $params;
+$selectparams['courseid'] = 0;
+$selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($url, 'departmentid', $subhierarchieslist, $departmentid);
+$select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
 $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
