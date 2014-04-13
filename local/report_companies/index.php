@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('../../config.php');
+require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 require_once('lib.php');
 
 // Check permissions.
@@ -32,7 +33,9 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_companies/styles.css");
-$PAGE->navbar->add(get_string('pluginname', 'local_report_companies'), $url );
+
+// Set the url.
+company_admin_fix_breadcrumb($PAGE, get_string('pluginname', 'local_report_companies'), $url);
 
 // Navigation and header.
 echo $OUTPUT->header();
