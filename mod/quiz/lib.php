@@ -191,6 +191,11 @@ function quiz_delete_instance($id) {
 function quiz_delete_override($quiz, $overrideid) {
     global $DB;
 
+    if (!isset($quiz->cmid)) {
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        $quiz->cmid = $cm->id;
+    }
+
     $override = $DB->get_record('quiz_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
     // Delete the events.
@@ -204,7 +209,6 @@ function quiz_delete_override($quiz, $overrideid) {
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
 
-    /* TODO MDL-45057 - Restore this event firing.
     // Set the common parameters for one of the events we will be triggering.
     $params = array(
         'objectid' => $override->id,
@@ -225,7 +229,6 @@ function quiz_delete_override($quiz, $overrideid) {
     // Trigger the override deleted event.
     $event->add_record_snapshot('quiz_overrides', $override);
     $event->trigger();
-    */
 
     return true;
 }
