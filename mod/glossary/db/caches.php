@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Glossary module version information
+ * Glossary cache definitions.
  *
- * @package mod_glossary
- * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @package    mod_glossary
+ * @category   cache
+ * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2014040600;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014040300;    // Requires this Moodle version
-$plugin->component = 'mod_glossary';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$definitions = array(
+    // This MUST NOT be a local cache, sorry cluster lovers.
+    'concepts' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // The course id or 0 for global.
+        'simpledata' => false,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 30,
+    ),
+);

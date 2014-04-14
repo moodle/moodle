@@ -111,6 +111,9 @@ if ( $hook >0 ) {
             $event->add_record_snapshot('glossary', $glossary);
             $event->trigger();
 
+            // Reset caches.
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
+
         } else {
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($glossary->name), 2);
@@ -135,6 +138,9 @@ if ( $hook >0 ) {
             $event->add_record_snapshot('glossary_categories', $category);
             $event->add_record_snapshot('glossary', $glossary);
             $event->trigger();
+
+            // Reset caches.
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
 
             redirect("editcategories.php?id=$cm->id", get_string("categorydeleted", "glossary"), 2);
         } else {
@@ -201,6 +207,9 @@ if ( $hook >0 ) {
             $event->add_record_snapshot('glossary_categories', $cat);
             $event->add_record_snapshot('glossary', $glossary);
             $event->trigger();
+
+            // Reset caches.
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
         }
     } else {
         echo $OUTPUT->header();

@@ -201,7 +201,12 @@ function glossary_delete_instance($id) {
 
     glossary_grade_item_delete($glossary);
 
-    return $DB->delete_records('glossary', array('id'=>$id));
+    $DB->delete_records('glossary', array('id'=>$id));
+
+    // Reset caches.
+    \mod_glossary\local\concept_cache::reset_glossary($glossary);
+
+    return true;
 }
 
 /**
@@ -1145,19 +1150,12 @@ function  glossary_print_entry_concept($entry, $return=false) {
  * @param object $cm
  */
 function glossary_print_entry_definition($entry, $glossary, $cm) {
-    global $DB, $GLOSSARY_EXCLUDECONCEPTS;
+    global $GLOSSARY_EXCLUDEENTRY;
 
     $definition = $entry->definition;
 
-    //Calculate all the strings to be no-linked
-    //First, the concept
-    $GLOSSARY_EXCLUDECONCEPTS = array($entry->concept);
-    //Now the aliases
-    if ( $aliases = $DB->get_records('glossary_alias', array('entryid'=>$entry->id))) {
-        foreach ($aliases as $alias) {
-            $GLOSSARY_EXCLUDECONCEPTS[]=trim($alias->alias);
-        }
-    }
+    // Do not link self.
+    $GLOSSARY_EXCLUDEENTRY = $entry->id;
 
     $context = context_module::instance($cm->id);
     $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'mod_glossary', 'entry', $entry->id);
@@ -1171,7 +1169,7 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
     $text = format_text($definition, $entry->definitionformat, $options);
 
     // Stop excluding concepts from autolinking
-    unset($GLOSSARY_EXCLUDECONCEPTS);
+    unset($GLOSSARY_EXCLUDEENTRY);
 
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);

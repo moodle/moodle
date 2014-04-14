@@ -17,7 +17,7 @@
 /**
  * This filter provides automatic linking to
  * glossary entries, aliases and categories when
- * found inside every Moodle text
+ * found inside every Moodle text.
  *
  * @package    filter
  * @subpackage glossary
@@ -28,12 +28,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Glossary filtering
+ * Glossary linking filter class.
  *
- * TODO: erase the $GLOSSARY_EXCLUDECONCEPTS global => require format_text()
- *       to be able to pass arbitrary $options['filteroptions']['glossary'] to filter_text()
+ * NOTE: multilang glossary entries are not compatible with this filter.
  */
 class filter_glossary extends moodle_text_filter {
+    /** @var int $cachecourseid cache invalidation flag in case content from multiple courses displayed. */
+    protected $cachecourseid = null;
+    /** @var int $cacheuserid cache invalidation flag in case user is switched. */
+    protected $cacheuserid = null;
+    /** @var array $cacheconceptlist page level filter cache, this should be always faster than MUC */
+    protected $cacheconceptlist = null;
 
     public function setup($page, $context) {
         // This only requires execution once per request.
@@ -49,185 +54,100 @@ class filter_glossary extends moodle_text_filter {
     }
 
     public function filter($text, array $options = array()) {
-        global $CFG, $DB, $GLOSSARY_EXCLUDECONCEPTS;
-
-        // Trivial-cache - keyed on $cachedcontextid
-        static $cachedcontextid;
-        static $conceptlist;
-
-        static $nothingtodo;         // To avoid processing if no glossaries / concepts are found
+        global $CFG, $USER, $GLOSSARY_EXCLUDEENTRY;
 
         // Try to get current course.
         $coursectx = $this->context->get_course_context(false);
         if (!$coursectx) {
+            // Only global glossaries will be linked.
             $courseid = 0;
         } else {
             $courseid = $coursectx->instanceid;
         }
 
-        // Initialise/invalidate our trivial cache if dealing with a different context
-        if (!isset($cachedcontextid) || $cachedcontextid !== $this->context->id) {
-            $cachedcontextid = $this->context->id;
-            $conceptlist = array();
-            $nothingtodo = false;
+        if ($this->cachecourseid != $courseid or $this->cacheuserid != $USER->id) {
+            // Invalidate the page cache.
+            $this->cacheconceptlist = null;
         }
 
-        if (($nothingtodo === true) || (!has_capability('mod/glossary:view', $this->context))) {
+        if (is_array($this->cacheconceptlist) and empty($GLOSSARY_EXCLUDEENTRY)) {
+            if (empty($this->cacheconceptlist)) {
+                return $text;
+            }
+            return filter_phrases($text, $this->cacheconceptlist);
+        }
+
+        list($glossaries, $allconcepts) = \mod_glossary\local\concept_cache::get_concepts($courseid);
+
+        if (!$allconcepts) {
+            $this->cacheuserid = $USER->id;
+            $this->cachecourseid = $courseid;
+            $this->cacheconcepts = array();
             return $text;
         }
 
-        // Create a list of all the concepts to search for.  It may be cached already.
-        if (empty($conceptlist)) {
+        $strcategory = get_string('category', 'glossary');
 
-            // Find all the glossaries we need to examine
-            if (!$glossaries = $DB->get_records_sql_menu('
-                    SELECT g.id, g.name
-                      FROM {glossary} g, {course_modules} cm, {modules} m
-                     WHERE m.name = \'glossary\'
-                       AND cm.module = m.id
-                       AND cm.visible = 1
-                       AND g.id = cm.instance
-                       AND g.usedynalink != 0
-                       AND (g.course = ? OR g.globalglossary = 1)
-                  ORDER BY g.globalglossary, g.id', array($courseid))) {
-                $nothingtodo = true;
-                return $text;
-            }
+        $conceptlist = array();
+        $excluded = false;
 
-            // Make a list of glossary IDs for searching
-            $glossarylist = implode(',', array_keys($glossaries));
-
-            // Pull out all the raw data from the database for entries, categories and aliases
-            $entries = $DB->get_records_select('glossary_entries',
-                    'glossaryid IN ('.$glossarylist.') AND usedynalink != 0 AND approved != 0 ', null, '',
-                    'id,glossaryid, concept, casesensitive, 0 AS category, fullmatch');
-
-            $categories = $DB->get_records_select('glossary_categories',
-                    'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', null, '',
-                    'id,glossaryid,name AS concept, 1 AS casesensitive, 1 AS category, 1 AS fullmatch');
-
-            $aliases = $DB->get_records_sql('
-                    SELECT ga.id, ge.id AS entryid, ge.glossaryid,
-                           ga.alias AS concept, ge.concept AS originalconcept,
-                           casesensitive, 0 AS category, fullmatch
-                      FROM {glossary_alias} ga,
-                           {glossary_entries} ge
-                      WHERE ga.entryid = ge.id
-                        AND ge.glossaryid IN ('.$glossarylist.')
-                        AND ge.usedynalink != 0
-                        AND ge.approved != 0', null);
-
-            // Combine them into one big list
-            $concepts = array();
-            if ($entries and $categories) {
-                $concepts = array_merge($entries, $categories);
-            } else if ($categories) {
-                $concepts = $categories;
-            } else if ($entries) {
-                $concepts = $entries;
-            }
-
-            if ($aliases) {
-                $concepts = array_merge($concepts, $aliases);
-            }
-
-            if (!empty($concepts)) {
-                foreach ($concepts as $key => $concept) {
-                    // Trim empty or unlinkable concepts
-                    $currentconcept = trim(strip_tags($concept->concept));
-
-                    // Concept must be HTML-escaped, so do the same as format_string
-                    // to turn ampersands into &amp;.
-                    $currentconcept = replace_ampersands_not_followed_by_entity($currentconcept);
-
-                    if (empty($currentconcept)) {
-                        unset($concepts[$key]);
-                        continue;
-                    } else {
-                        $concepts[$key]->concept = $currentconcept;
-                    }
-
-                    // Rule out any small integers.  See bug 1446
-                    $currentint = intval($currentconcept);
-                    if ($currentint && (strval($currentint) == $currentconcept) && $currentint < 1000) {
-                        unset($concepts[$key]);
-                    }
-                }
-            }
-
-            if (empty($concepts)) {
-                $nothingtodo = true;
-                return $text;
-            }
-
-            usort($concepts, 'filter_glossary::sort_entries_by_length');
-
-            $strcategory = get_string('category', 'glossary');
-
-            // Loop through all the concepts, setting up our data structure for the filter
-            $conceptlist = array();    // We will store all the concepts here
-
+        foreach ($allconcepts as $concepts) {
             foreach ($concepts as $concept) {
-                $glossaryname = str_replace(':', '-', $glossaries[$concept->glossaryid]);
-                if ($concept->category) {       // Link to a category
-                    // TODO: Fix this string usage
-                    $title = strip_tags($glossaryname.': '.$strcategory.' '.$concept->concept);
-                    $href_tag_begin = '<a class="glossary autolink category glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
-                                      'href="'.$CFG->wwwroot.'/mod/glossary/view.php?g='.$concept->glossaryid.
-                                      '&amp;mode=cat&amp;hook='.$concept->id.'">';
+                if (!empty($GLOSSARY_EXCLUDEENTRY) and $concept->id == $GLOSSARY_EXCLUDEENTRY) {
+                    $excluded = true;
+                    continue;
+                }
+                if ($concept->category) { // Link to a category.
+                    // TODO: Fix this string usage.
+                    $title = $glossaries[$concept->glossaryid] . ': ' . $strcategory . ' ' . $concept->concept;
+                    $link = new moodle_url('/mod/glossary/view.php', array('g' => $concept->glossaryid, 'mode' => 'cat', 'hook' => $concept->id));
+                    $attributes = array(
+                        'href'  => $link,
+                        'title' => $title,
+                        'class' => 'glossary autolink category glossaryid' . $concept->glossaryid);
+
                 } else { // Link to entry or alias
-                    if (!empty($concept->originalconcept)) {  // We are dealing with an alias (so show and point to original)
-                        $title = str_replace('"', "'", html_entity_decode(
-                                strip_tags($glossaryname.': '.$concept->originalconcept)));
-                        $concept->id = $concept->entryid;
-                    } else { // This is an entry
-                        // We need to remove entities from the content here because it
-                        // will be escaped by html_writer below.
-                        $title = str_replace('"', "'", html_entity_decode(
-                                strip_tags($glossaryname.': '.$concept->concept)));
-                    }
-                    // hardcoding dictionary format in the URL rather than defaulting
+                    $title = $glossaries[$concept->glossaryid] . ': ' . $concept->concept;
+                    // Hardcoding dictionary format in the URL rather than defaulting
                     // to the current glossary format which may not work in a popup.
                     // for example "entry list" means the popup would only contain
                     // a link that opens another popup.
-                    $link = new moodle_url('/mod/glossary/showentry.php', array('courseid'=>$courseid, 'eid'=>$concept->id, 'displayformat'=>'dictionary'));
+                    $link = new moodle_url('/mod/glossary/showentry.php', array('eid' => $concept->id, 'displayformat' => 'dictionary'));
                     $attributes = array(
-                        'href' => $link,
-                        'title'=> $title,
-                        'class'=> 'glossary autolink concept glossaryid'.$concept->glossaryid);
-
-                    // this flag is optionally set by resource_pluginfile()
-                    // if processing an embedded file use target to prevent getting nested Moodles
-                    if (isset($CFG->embeddedsoforcelinktarget) && $CFG->embeddedsoforcelinktarget) {
-                        $attributes['target'] = '_top';
-                    }
-
-                    $href_tag_begin = html_writer::start_tag('a', $attributes);
+                        'href'  => $link,
+                        'title' => str_replace('&amp;', '&', $title), // Undo the s() mangling.
+                        'class' => 'glossary autolink concept glossaryid' . $concept->glossaryid);
                 }
+                // This flag is optionally set by resource_pluginfile()
+                // if processing an embedded file use target to prevent getting nested Moodles.
+                if (!empty($CFG->embeddedsoforcelinktarget)) {
+                    $attributes['target'] = '_top';
+                }
+                $href_tag_begin = html_writer::start_tag('a', $attributes);
+
                 $conceptlist[] = new filterobject($concept->concept, $href_tag_begin, '</a>',
                     $concept->casesensitive, $concept->fullmatch);
             }
-
-            $conceptlist = filter_remove_duplicates($conceptlist);
         }
 
-        if (!empty($GLOSSARY_EXCLUDECONCEPTS)) {
-            $reducedconceptlist=array();
-            foreach($conceptlist as $concept) {
-                if(!in_array($concept->phrase,$GLOSSARY_EXCLUDECONCEPTS)) {
-                    $reducedconceptlist[]=$concept;
-                }
-            }
-            return filter_phrases($text, $reducedconceptlist);
+        usort($conceptlist, 'filter_glossary::sort_entries_by_length');
+
+        if (!$excluded) {
+            // Do not cache the excluded list here, it is used once per page only.
+            $this->cacheuserid = $USER->id;
+            $this->cachecourseid = $courseid;
+            $this->cacheconceptlist = $conceptlist;
         }
 
+        if (empty($conceptlist)) {
+            return $text;
+        }
         return filter_phrases($text, $conceptlist);   // Actually search for concepts!
     }
 
-
     private static function sort_entries_by_length($entry0, $entry1) {
-        $len0 = strlen($entry0->concept);
-        $len1 = strlen($entry1->concept);
+        $len0 = strlen($entry0->phrase);
+        $len1 = strlen($entry1->phrase);
 
         if ($len0 < $len1) {
             return 1;
