@@ -319,7 +319,7 @@ class report_loglive_table_log extends table_sql {
             $params['date'] = $this->filterparams->date;
         }
 
-        if (!empty($this->filterparams->date)) {
+        if (isset($this->filterparams->anonymous)) {
             $joins[] = "anonymous = :anon";
             $params['anon'] = $this->filterparams->anonymous;
         }
