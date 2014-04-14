@@ -44,7 +44,6 @@ require_once(dirname(__FILE__).'/lib.php');
  * @return void
  */
 function report_log_print_graph($course, $userid, $type, $date=0, $logreader='') {
-    // If reader is not a sql_reader and not legacy store then don't show graph.
     $logmanager = get_log_manager();
     $readers = $logmanager->get_readers();
 
@@ -53,8 +52,9 @@ function report_log_print_graph($course, $userid, $type, $date=0, $logreader='')
     } else {
         $reader = $readers[$logreader];
     }
-    if (!($reader instanceof core\log\sql_select_reader)) {
-        return;
+    // If reader is not a sql_internal_reader and not legacy store then don't show graph.
+    if (!($reader instanceof \core\log\sql_internal_reader) && !($reader instanceof logstore_legacy\log\store)) {
+        return array();
     }
 
     $url = new moodle_url('/report/log/graph.php', array('id' => $course->id, 'user' => $userid, 'type' => $type,
@@ -82,8 +82,8 @@ function report_log_usercourse($userid, $courseid, $coursestart, $logreader = ''
         $reader = $readers[$logreader];
     }
 
-    // If reader is not a sql_reader and not legacy store then return.
-    if (!($reader instanceof \core\log\sql_reader) && !($reader instanceof logstore_legacy\log\store)) {
+    // If reader is not a sql_internal_reader and not legacy store then return.
+    if (!($reader instanceof \core\log\sql_internal_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 
@@ -93,7 +93,7 @@ function report_log_usercourse($userid, $courseid, $coursestart, $logreader = ''
         $timefield = 'time';
         $coursefield = 'course';
     } else {
-        $logtable = $reader->get_log_table();
+        $logtable = $reader->get_internal_log_table_name();
         $timefield = 'timecreated';
         $coursefield = 'courseid';
     }
@@ -131,8 +131,8 @@ function report_log_userday($userid, $courseid, $daystart, $logreader = '') {
         $reader = $readers[$logreader];
     }
 
-    // If reader is not a sql_reader and not legacy store then return.
-    if (!($reader instanceof \core\log\sql_reader) && !($reader instanceof logstore_legacy\log\store)) {
+    // If reader is not a sql_internal_reader and not legacy store then return.
+    if (!($reader instanceof \core\log\sql_internal_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 
@@ -143,7 +143,7 @@ function report_log_userday($userid, $courseid, $daystart, $logreader = '') {
         $timefield = 'time';
         $coursefield = 'course';
     } else {
-        $logtable = $reader->get_log_table();
+        $logtable = $reader->get_internal_log_table_name();
         $timefield = 'timecreated';
         $coursefield = 'courseid';
     }
