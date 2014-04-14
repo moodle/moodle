@@ -2920,7 +2920,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         if (!$backtrace) {
             $backtrace = debug_backtrace();
         }
-        $from = format_backtrace($backtrace, CLI_SCRIPT);
+        $from = format_backtrace($backtrace, CLI_SCRIPT || NO_DEBUG_DISPLAY);
         if (PHPUNIT_TEST) {
             if (phpunit_util::debugging_triggered($message, $level, $from)) {
                 // We are inside test, the debug message was logged.
@@ -2931,7 +2931,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         if (NO_DEBUG_DISPLAY) {
             // Script does not want any errors or debugging in output,
             // we send the info to error log instead.
-            error_log('Debugging: ' . $message . $from);
+            error_log('Debugging: ' . $message . ' in '. PHP_EOL . $from);
 
         } else if ($forcedebug or $CFG->debugdisplay) {
             if (!defined('DEBUGGING_PRINTED')) {
