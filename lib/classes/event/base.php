@@ -338,7 +338,7 @@ abstract class base implements \IteratorAggregate {
         }
 
         if (!class_exists($classname)) {
-            return false;
+            return self::restore_unknown($data, $logextra);
         }
         $event = new $classname();
         if (!($event instanceof \core\event\base)) {
@@ -366,6 +366,27 @@ abstract class base implements \IteratorAggregate {
             }
         }
         $event->data = $data;
+
+        return $event;
+    }
+
+    /**
+     * Restore unknown event.
+     *
+     * @param array $data
+     * @param array $logextra
+     * @return unknown_logged
+     */
+    protected static final function restore_unknown(array $data, array $logextra) {
+        $classname = '\core\event\unknown_logged';
+
+        /** @var unknown_logged $event */
+        $event = new $classname();
+        $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
+        $event->data = $data;
+        $event->logextra = $logextra;
 
         return $event;
     }
