@@ -739,6 +739,7 @@ $string['eventcoursesectionupdated'] = ' Course section updated';
 $string['eventcoursemoduleinstancelistviewed'] = 'Course module instance list viewed';
 $string['eventemailfailed'] = 'Email failed to send';
 $string['eventname'] = 'Event name';
+$string['eventunknownlogged'] = 'Unknown event';
 $string['eventusercreated'] = 'User created';
 $string['eventuserdeleted'] = 'User deleted';
 $string['eventuserlistviewed'] = 'User list viewed';
