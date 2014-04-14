@@ -155,6 +155,8 @@ if ($mform->is_cancelled()) {
                     $fromform->{$key} = $oldoverride->{$key};
                 }
             }
+            // Set the course module id before calling quiz_delete_override().
+            $quiz->cmid = $cm->id;
             quiz_delete_override($quiz, $oldoverride->id);
         }
     }

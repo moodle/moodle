@@ -61,6 +61,8 @@ if (!empty($override->userid)) {
 if ($confirm) {
     require_sesskey();
 
+    // Set the course module id before calling quiz_delete_override().
+    $quiz->cmid = $cm->id;
     quiz_delete_override($quiz, $override->id);
 
     redirect($cancelurl);
