@@ -158,5 +158,24 @@ class mod_glossary_concept_cache_testcase extends advanced_testcase {
 
         $concepts2 = \mod_glossary\local\concept_cache::get_concepts($course2->id);
         $this->assertEquals($concepts3, $concepts2);
+
+        // Test uservisible flag.
+        set_config('enablegroupmembersonly', 1);
+        $glossary1d = $this->getDataGenerator()->create_module('glossary',
+            array('course' => $course1->id, 'mainglossary' => 1, 'usedynalink' => 1, 'groupmembersonly' => 1));
+        $entry1d1 = $generator->create_content($glossary1d, array('concept' => 'membersonly', 'usedynalink' => 1));
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        \mod_glossary\local\concept_cache::reset_caches();
+        $concepts1 = \mod_glossary\local\concept_cache::get_concepts($course1->id);
+        $this->assertCount(4, $concepts1[0]);
+        $this->assertCount(4, $concepts1[1]);
+        $this->setUser($user);
+        course_modinfo::clear_instance_cache();
+        \mod_glossary\local\concept_cache::reset_caches();
+        $concepts1 = \mod_glossary\local\concept_cache::get_concepts($course1->id);
+        $this->assertCount(3, $concepts1[0]);
+        $this->assertCount(3, $concepts1[1]);
     }
 }

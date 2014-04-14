@@ -206,11 +206,13 @@ class concept_cache {
         foreach ($concepts as $modid => $unused) {
             if (!isset($cminfos[$modid])) {
                 // This should not happen.
-                unset($concepts[$modinfo]);
+                unset($concepts[$modid]);
+                unset($glossaries[$modid]);
                 continue;
             }
             if (!$cminfos[$modid]->uservisible) {
-                unset($concepts[$modinfo]);
+                unset($concepts[$modid]);
+                unset($glossaries[$modid]);
                 continue;
             }
         }
