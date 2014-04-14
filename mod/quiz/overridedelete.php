@@ -86,8 +86,9 @@ if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');
     $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
 } else {
+    $namefields = get_all_user_name_fields(true);
     $user = $DB->get_record('user', array('id' => $override->userid),
-            'id, firstname, lastname');
+            'id, ' . $namefields);
     $confirmstr = get_string("overridedeleteusersure", "quiz", fullname($user));
 }
 
