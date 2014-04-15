@@ -40,6 +40,7 @@ function atto_image_strings_for_js() {
         'browserepositories',
         'constrain',
         'createimage',
+        'customstyle',
         'enterurl',
         'enteralt',
         'height',

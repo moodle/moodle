@@ -31,6 +31,7 @@ $string['alignment_top'] = 'Top';
 $string['browserepositories'] = 'Browse repositories...';
 $string['constrain'] = 'Keep ratio';
 $string['createimage'] = 'Insert image';
+$string['customstyle'] = 'Custom style';
 $string['enteralt'] = 'Describe this image for someone who cannot see it';
 $string['enterurl'] = 'Enter URL';
 $string['height'] = 'Height';
