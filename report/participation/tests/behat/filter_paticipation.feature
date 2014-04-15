@@ -30,7 +30,14 @@ Feature: In a participation report, admin can filter student actions
 
   @javascript
   Scenario: Filter participation report when only legacy log reader is enabled
-    Given I log in as "student1"
+    Given I log in as "admin"
+    And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    And I click on "Disable" "link" in the "Standard log" "table_row"
+    And I click on "Enable" "link" in the "Legacy log" "table_row"
+    And I set the following administration settings values:
+      | Log legacy data | 1 |
+    And I log out
+    And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test book name"
     And I log out
@@ -44,7 +51,14 @@ Feature: In a participation report, admin can filter student actions
 
   @javascript
   Scenario: Filter participation report when standard log reader is enabled later
-    Given I log in as "student1"
+    Given I log in as "admin"
+    And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    And I click on "Disable" "link" in the "Standard log" "table_row"
+    And I click on "Enable" "link" in the "Legacy log" "table_row"
+    And I set the following administration settings values:
+      | Log legacy data | 1 |
+    And I log out
+    And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test book name"
     And I log out
@@ -66,12 +80,7 @@ Feature: In a participation report, admin can filter student actions
 
   @javascript
   Scenario: Filter participation report when only standard log reader is enabled by default
-    Given I log in as "admin"
-    And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
-    And I click on "Enable" "link" in the "Standard log" "table_row"
-    And I click on "Disable" "link" in the "Legacy log" "table_row"
-    And I log out
-    And I log in as "student1"
+    Given I log in as "student1"
     And I follow "Course 1"
     And I follow "Test book name"
     And I log out
