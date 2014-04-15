@@ -22,6 +22,7 @@ defined('MOODLE_INTERNAL') || die();
  * Unknown event class.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
