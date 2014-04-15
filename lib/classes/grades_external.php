@@ -499,13 +499,10 @@ class core_grades_external extends external_api {
      * @since Moodle 2.7
      */
     public static function update_grades_returns() {
-        return new external_single_structure(
-            array (
-                'result' => new external_value(
-                    PARAM_INT,
-                    'A value like ' . GRADE_UPDATE_OK . ' => OK, ' . GRADE_UPDATE_FAILED . ' => FAILED
-                    as defined in lib/grade/constants.php')
-            )
+        return new external_value(
+            PARAM_INT,
+            'A value like ' . GRADE_UPDATE_OK . ' => OK, ' . GRADE_UPDATE_FAILED . ' => FAILED
+            as defined in lib/grade/constants.php'
         );
     }
 }
