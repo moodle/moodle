@@ -69,6 +69,7 @@ class behat_selectors {
         'table' => 'table',
         'field' => 'field',
         'fieldset' => 'fieldset',
+        'text' => 'text',
         'css_element' => 'css_element',
         'xpath_element' => 'xpath_element'
     );
@@ -82,7 +83,10 @@ class behat_selectors {
      * @var XPaths for moodle elements.
      */
     protected static $moodleselectors = array(
-        'dialogue' => <<<XPATH
+        'text' => <<<XPATH
+//*[contains(., %locator%)][count(./descendant::*[contains(., %locator%)]) = 0]
+XPATH
+        , 'dialogue' => <<<XPATH
 //div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
     normalize-space(descendant::div[
         contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue-hd ')
