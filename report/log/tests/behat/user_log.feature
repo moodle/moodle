@@ -52,6 +52,7 @@ Feature: User can view activity log.
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I log out
     And I log in as "teacher1"
+    And I follow "Course 1"
     And I navigate to "Participants" node in "Current course > C1"
     And I follow "Student 1"
     When I navigate to "Today's logs" node in "Profile settings for Student 1 > Activity reports"
