@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Event for viewing the list of course resources.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

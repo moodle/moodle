@@ -18,6 +18,7 @@
  * The mod_imscp instance list viewed event.
  *
  * @package    mod_imscp
+ * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

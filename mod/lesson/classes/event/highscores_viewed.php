@@ -18,6 +18,7 @@
  * Event to be triggered when the highscores are viewed.
  *
  * @package    mod_lesson
+ * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */

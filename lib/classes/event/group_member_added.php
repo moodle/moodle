@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core_group member added event.
+ * Group member added event.
  *
- * @package    core_group
+ * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core_group member added event class.
+ * Group member added event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -35,7 +35,8 @@ defined('MOODLE_INTERNAL') || die();
  *      @type int itemid id of item.
  * }
  *
- * @package    core_group
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

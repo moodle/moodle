@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * assignsubmission_comments comment deleted event.
  *
  * @package    assignsubmission_comments
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

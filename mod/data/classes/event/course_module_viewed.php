@@ -18,6 +18,7 @@
  * The mod_data course module viewed event.
  *
  * @package    mod_data
+ * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

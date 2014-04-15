@@ -35,6 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  *     - string forumtype: The type of forum the post is part of.
  *
  * @package    mod_forum
+ * @since      Moodle 2.7
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -22,6 +22,7 @@ defined('MOODLE_INTERNAL') || die();
  * Legacy log emulation event class.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * mod_glossary course module instance list viewed event class.
  *
  * @package    mod_glossary
+ * @since      Moodle 2.7
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

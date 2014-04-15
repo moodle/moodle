@@ -34,6 +34,7 @@ namespace report_log\event;
  *     -string logformat: Log format in which logs were displayed.
  *
  * @package    report_log
+ * @since      Moodle 2.7
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

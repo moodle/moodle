@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * }
  *
  * @package    mod_assign
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Event triggered, when completion report is viewed.
  *
  * @package    report_completion
+ * @since      Moodle 2.7
  * @copyright  2014 onwards Ankit Agarwal<ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

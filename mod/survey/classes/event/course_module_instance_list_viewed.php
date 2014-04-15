@@ -18,6 +18,7 @@
  * Event triggered when all survey instances for a course are viewed.
  *
  * @package    mod_survey
+ * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

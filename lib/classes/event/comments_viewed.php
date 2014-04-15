@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * This class has to be extended by any event which is triggred while viewing comment.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

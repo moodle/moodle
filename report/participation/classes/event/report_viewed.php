@@ -34,6 +34,7 @@ namespace report_participation\event;
  *     -string action: (optional) action viewed.
  *
  * @package    report_participation
+ * @since      Moodle 2.7
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
