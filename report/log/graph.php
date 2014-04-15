@@ -121,7 +121,7 @@ if ($type === "usercourse.png") {
         $timestart = $timefinish;
     }
 
-    $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart);
+    $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart, $logreader);
 
     if (empty($rawlogs)) {
         return;
@@ -185,7 +185,7 @@ if ($type === "usercourse.png") {
         $hours[$i] = $i;
     }
 
-    $rawlogs = report_log_userday($user->id, $courseselect, $daystart);
+    $rawlogs = report_log_userday($user->id, $courseselect, $daystart, $logreader);
 
     if (empty($rawlogs)) {
         return;
