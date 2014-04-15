@@ -537,7 +537,7 @@ function lesson_grade_item_delete($lesson) {
  * @return array
  */
 function lesson_get_view_actions() {
-    return array('view');
+    return array('view','view all');
 }
 
 /**

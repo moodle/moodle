@@ -75,7 +75,7 @@ function url_reset_userdata($data) {
  * @return array
  */
 function url_get_view_actions() {
-    return array('view');
+    return array('view', 'view all');
 }
 
 /**
@@ -89,7 +89,7 @@ function url_get_view_actions() {
  * @return array
  */
 function url_get_post_actions() {
-    return array();
+    return array('update', 'add');
 }
 
 /**

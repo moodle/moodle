@@ -1113,7 +1113,7 @@ function chat_print_error($level, $msg) {
  * @return array
  */
 function chat_get_view_actions() {
-    return array('view');
+    return array('view','view all','report');
 }
 
 /**

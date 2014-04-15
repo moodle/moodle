@@ -722,7 +722,7 @@ function scorm_grade_item_delete($scorm) {
  * @return array
  */
 function scorm_get_view_actions() {
-    return array('pre-view', 'view');
+    return array('pre-view', 'view', 'view all', 'report');
 }
 
 /**

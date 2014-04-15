@@ -667,7 +667,7 @@ function choice_get_choice($choiceid) {
  * @return array
  */
 function choice_get_view_actions() {
-    return array('view');
+    return array('view','view all','report');
 }
 
 /**
