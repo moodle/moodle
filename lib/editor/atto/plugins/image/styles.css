@@ -1,6 +1,9 @@
 .atto_image_preview {
     max-width: 150px;
     max-height: 150px;
+}
+.atto_image_preview_box {
+    height: 150px;
     margin-bottom: 1em;
 }
 
