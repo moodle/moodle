@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * assignsubmission_file assessable uploaded event class.
  *
  * @package    assignsubmission_file
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

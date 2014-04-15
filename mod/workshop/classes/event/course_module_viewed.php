@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Event for when a workshop activity is viewed.
  *
  * @package    mod_workshop
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

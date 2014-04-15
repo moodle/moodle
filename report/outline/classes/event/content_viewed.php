@@ -27,6 +27,7 @@ namespace report_outline\event;
  * Event for when some content in outline report is viewed.
  *
  * @package    report_outline
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

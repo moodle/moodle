@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core_group grouping created event.
+ * Grouping created event.
  *
  * @package    core_group
  * @copyright  2013 Frédéric Massart
@@ -26,9 +26,10 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core_group grouping created event class.
+ * Grouping created event class.
  *
- * @package    core_group
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

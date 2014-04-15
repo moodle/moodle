@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * mod_chat message sent event class.
  *
  * @package    mod_chat
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

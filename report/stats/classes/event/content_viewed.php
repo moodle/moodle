@@ -27,6 +27,7 @@ namespace report_stats\event;
  * Event triggered, when some content in stats report is viewed.
  *
  * @package    report_stats
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

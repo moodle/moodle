@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * mod_feedback instances list viewed event class.
  *
  * @package    mod_feedback
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
