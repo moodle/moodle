@@ -33,14 +33,28 @@ Feature: User can view activity log.
       | Online text | I'm the student first submission |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
 
   @javascript
   Scenario: View Todays' and all log report for user
-    Given I follow "Course 1"
+    Given I log in as "teacher1"
+    And I follow "Course 1"
     And I navigate to "Participants" node in "Current course > C1"
     And I follow "Student 1"
     When I navigate to "Today's logs" node in "Profile settings for Student 1 > Activity reports"
     And I should see "Assignment: Test assignment name"
     And I navigate to "All logs" node in "Profile settings for Student 1 > Activity reports"
     Then I should see "Assignment: Test assignment name"
+
+  @javascript
+  Scenario: No log reader enabled should be visible when no log store enabled.
+    Given I log in as "admin"
+    And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
+    And I click on "Disable" "link" in the "Standard log" "table_row"
+    And I log out
+    And I log in as "teacher1"
+    And I navigate to "Participants" node in "Current course > C1"
+    And I follow "Student 1"
+    When I navigate to "Today's logs" node in "Profile settings for Student 1 > Activity reports"
+    And I should see "No log reader enabled"
+    And I navigate to "All logs" node in "Profile settings for Student 1 > Activity reports"
+    Then I should see "No log reader enabled"
