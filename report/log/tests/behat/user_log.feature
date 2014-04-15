@@ -16,10 +16,6 @@ Feature: User can view activity log.
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Log legacy data | 1 |
-    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -47,4 +43,4 @@ Feature: User can view activity log.
     When I navigate to "Today's logs" node in "Profile settings for Student 1 > Activity reports"
     And I should see "Assignment: Test assignment name"
     And I navigate to "All logs" node in "Profile settings for Student 1 > Activity reports"
-    And I should see "Assignment: Test assignment name"
+    Then I should see "Assignment: Test assignment name"
