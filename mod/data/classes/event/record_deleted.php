@@ -42,7 +42,7 @@ class record_deleted extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'data_records';
         $this->data['crud'] = 'd';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

@@ -139,20 +139,6 @@ function label_get_coursemodule_info($coursemodule) {
 }
 
 /**
- * @return array
- */
-function label_get_view_actions() {
-    return array();
-}
-
-/**
- * @return array
- */
-function label_get_post_actions() {
-    return array();
-}
-
-/**
  * This function is used by the reset_course_userdata function in moodlelib.
  *
  * @param object $data the data submitted from the reset course.

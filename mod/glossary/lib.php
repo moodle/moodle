@@ -2644,13 +2644,29 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
 
     return $code;
 }
+
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function glossary_get_view_actions() {
-    return array('view','view all','view entry');
+    return array('view','view entry');
 }
+
 /**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function glossary_get_post_actions() {
