@@ -172,7 +172,7 @@ class block_recent_activity extends block_base {
                     $changelist[$log->cmid] = array('action' => 'delete mod',
                         'module' => (object)array(
                             'modname' => $log->modname,
-                            'modfullname' => $modnames[$log->modname]
+                            'modfullname' => isset($modnames[$log->modname]) ? $modnames[$log->modname] : $log->modname
                          ));
 
                 } else if (!$wasdeleted && isset($modinfo->cms[$log->cmid]) && $canviewupdated) {
