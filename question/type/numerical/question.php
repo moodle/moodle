@@ -172,7 +172,7 @@ class qtype_numerical_question extends question_graded_automatically {
 
     /**
      * Get an answer that contains the feedback and fraction that should be
-     * awarded for this resonse.
+     * awarded for this response.
      * @param number $value the numerical value of a response.
      * @param number $multiplier for the unit the student gave, if any. When no
      *      unit was given, or an unrecognised unit was given, $multiplier will be null.
@@ -188,7 +188,7 @@ class qtype_numerical_question extends question_graded_automatically {
         } else {
             $scaledvalue = $value;
         }
-        foreach ($this->answers as $aid => $answer) {
+        foreach ($this->answers as $answer) {
             if ($answer->within_tolerance($scaledvalue)) {
                 $answer->unitisright = !is_null($multiplier);
                 return $answer;
@@ -266,7 +266,11 @@ class qtype_numerical_question extends question_graded_automatically {
             $resp = $this->ap->add_unit($resp, $unit);
         }
 
-        if (!$ans) {
+        if ($value === null) {
+            // Invalid response shown as no response (but show actual response).
+            return array($this->id => new question_classified_response(null, $resp, 0));
+        } else if (!$ans) {
+            // Does not match any answer.
             return array($this->id => new question_classified_response(0, $resp, 0));
         }
 
