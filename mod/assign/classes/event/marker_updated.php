@@ -43,10 +43,6 @@ defined('MOODLE_INTERNAL') || die();
 class marker_updated extends base {
     /** @var \assign */
     protected $assign;
-    /** @var \stdClass */
-    protected $user;
-    /** @var \stdClass */
-    protected $marker;
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -77,8 +73,8 @@ class marker_updated extends base {
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->assign = $assign;
-        $event->user = $user;
-        $event->marker = $marker;
+        $event->add_record_snapshot('user', $user);
+        $event->add_record_snapshot('user', $marker);
         return $event;
     }
 
@@ -96,38 +92,6 @@ class marker_updated extends base {
             throw new \coding_exception('get_assign() is intended for event observers only');
         }
         return $this->assign;
-    }
-
-    /**
-     * Get user instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_user() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_user() is intended for event observers only');
-        }
-        return $this->user;
-    }
-
-    /**
-     * Get marker user instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_marker() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_marker() is intended for event observers only');
-        }
-        return $this->marker;
     }
 
     /**
@@ -165,7 +129,9 @@ class marker_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $a = array('id' => $this->user->id, 'fullname' => fullname($this->user), 'marker' => fullname($this->marker));
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $marker = $this->get_record_snapshot('user', $this->other['markerid']);
+        $a = array('id' => $user->id, 'fullname' => fullname($user), 'marker' => fullname($marker));
         $logmessage = get_string('setmarkerallocationforlog', 'assign', $a);
         $this->set_legacy_logdata('set marking allocation', $logmessage);
         return parent::get_legacy_logdata();

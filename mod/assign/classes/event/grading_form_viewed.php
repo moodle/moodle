@@ -43,8 +43,6 @@ defined('MOODLE_INTERNAL') || die();
 class grading_form_viewed extends base {
     /** @var \assign */
     protected $assign;
-    /** @var \stdClass */
-    protected $user;
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -71,7 +69,7 @@ class grading_form_viewed extends base {
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->assign = $assign;
-        $event->user = $user;
+        $event->add_record_snapshot('user', $user);
         return $event;
     }
 
@@ -87,20 +85,6 @@ class grading_form_viewed extends base {
             throw new \coding_exception('get_assign() is intended for event observers only');
         }
         return $this->assign;
-    }
-
-    /**
-     * Get user instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @return \stdClass
-     */
-    public function get_user() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_user() is intended for event observers only');
-        }
-        return $this->user;
     }
 
     /**
@@ -136,9 +120,9 @@ class grading_form_viewed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $msg = new \lang_string('viewgradingformforstudent',
-            'assign',
-            array('id'=>$this->user->id, 'fullname'=>fullname($this->user)));
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $msg = get_string('viewgradingformforstudent', 'assign',
+            array('id' => $user->id, 'fullname' => fullname($user)));
         $this->set_legacy_logdata('view grading form', $msg);
         return parent::get_legacy_logdata();
     }

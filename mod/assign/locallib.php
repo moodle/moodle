@@ -3263,7 +3263,7 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/submission_form.php');
         // Need submit permission to submit an assignment.
         $userid = optional_param('userid', $USER->id, PARAM_INT);
-        $user = clone($USER);
+        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
         if ($userid == $USER->id) {
             // User is editing their own submission.
             require_capability('mod/assign:submit', $this->context);
@@ -3274,7 +3274,6 @@ class assign {
                 print_error('nopermission');
             }
 
-            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
             $name = $this->fullname($user);
             $title = get_string('editsubmissionother', 'assign', $name);
         }

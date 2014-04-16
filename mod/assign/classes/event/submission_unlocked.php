@@ -37,8 +37,6 @@ defined('MOODLE_INTERNAL') || die();
 class submission_unlocked extends base {
     /** @var \assign */
     protected $assign;
-    /** @var \stdClass */
-    protected $user;
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -65,7 +63,7 @@ class submission_unlocked extends base {
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->assign = $assign;
-        $event->user = $user;
+        $event->add_record_snapshot('user', $user);
         return $event;
     }
 
@@ -83,22 +81,6 @@ class submission_unlocked extends base {
             throw new \coding_exception('get_assign() is intended for event observers only');
         }
         return $this->assign;
-    }
-
-    /**
-     * Get user instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_user() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_user() is intended for event observers only');
-        }
-        return $this->user;
     }
 
     /**
@@ -136,7 +118,8 @@ class submission_unlocked extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $logmessage = get_string('unlocksubmissionforstudent', 'assign', array('id' => $this->user->id, 'fullname' => fullname($this->user)));
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $logmessage = get_string('unlocksubmissionforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
         $this->set_legacy_logdata('unlock submission', $logmessage);
         return parent::get_legacy_logdata();
     }
