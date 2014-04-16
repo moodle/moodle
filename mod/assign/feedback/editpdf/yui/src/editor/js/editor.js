@@ -196,7 +196,9 @@ EDITOR.prototype = {
 
             this.currentedit.start = false;
             this.currentedit.end = false;
-            this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+            if (!this.get('readonly')) {
+                this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+            }
         }
     },
 
@@ -453,7 +455,9 @@ EDITOR.prototype = {
         }
 
         // Update the ui.
-        this.quicklist.load();
+        if (this.quicklist) {
+            this.quicklist.load();
+        }
         this.setup_navigation();
         this.setup_toolbar();
         this.change_page();
