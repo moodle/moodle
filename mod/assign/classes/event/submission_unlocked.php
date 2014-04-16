@@ -35,6 +35,71 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submission_unlocked extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $user;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $user
+     * @return submission_unlocked
+     */
+    public static function create_from_user(\assign $assign, \stdClass $user) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id,
+            'relateduserid' => $user->id,
+        );
+        self::$preventcreatecall = false;
+        /** @var submission_unlocked $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->user = $user;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get user instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_user() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_user() is intended for event observers only');
+        }
+        return $this->user;
+    }
 
     /**
      * Returns description of what happened.
@@ -66,13 +131,28 @@ class submission_unlocked extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $logmessage = get_string('unlocksubmissionforstudent', 'assign', array('id' => $this->user->id, 'fullname' => fullname($this->user)));
+        $this->set_legacy_logdata('unlock submission', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
-     * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call submission_unlocked::create() directly, use submission_unlocked::create_from_user() instead.');
+        }
+
         parent::validate_data();
+
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('relateduserid is a mandatory property.');
         }

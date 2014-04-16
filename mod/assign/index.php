@@ -32,12 +32,7 @@ require_login($course);
 $PAGE->set_url('/mod/assign/index.php', array('id' => $id));
 $PAGE->set_pagelayout('incourse');
 
-$params = array(
-    'context' => context_course::instance($course->id)
-);
-$event = \mod_assign\event\course_module_instance_list_viewed::create($params);
-$event->add_record_snapshot('course', $course);
-$event->trigger();
+\mod_assign\event\course_module_instance_list_viewed::create_from_course($course)->trigger();
 
 // Print the header.
 $strplural = get_string("modulenameplural", "assign");

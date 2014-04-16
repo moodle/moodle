@@ -34,6 +34,74 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 class submission_viewed extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $submission;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @return submission_viewed
+     */
+    public static function create_from_submission(\assign $assign, \stdClass $submission) {
+        $data = array(
+            'objectid' => $submission->id,
+            'relateduserid' => $submission->userid,
+            'context' => $assign->get_context(),
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var submission_viewed $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->submission = $submission;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get submission instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_submission() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_submission() is intended for event observers only');
+        }
+        return $this->submission;
+    }
 
     /**
      * Init method.
@@ -64,11 +132,26 @@ class submission_viewed extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $logmessage = get_string('viewsubmissionforuser', 'assign', $this->submission->userid);
+        $this->set_legacy_logdata('view submission', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call submission_viewed::create() directly, use submission_viewed::create_from_submission() instead.');
+        }
+
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {

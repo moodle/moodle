@@ -34,6 +34,73 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 class submission_form_viewed extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $user;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $user
+     * @return submission_form_viewed
+     */
+    public static function create_from_user(\assign $assign, \stdClass $user) {
+        $data = array(
+            'relateduserid' => $user->id,
+            'context' => $assign->get_context(),
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var submission_form_viewed $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->user = $user;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get user instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_user() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_user() is intended for event observers only');
+        }
+        return $this->user;
+    }
 
     /**
      * Init method.
@@ -68,11 +135,31 @@ class submission_form_viewed extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        if ($this->relateduserid == $this->userid) {
+            $title = get_string('editsubmission', 'assign');
+        } else {
+            $name = $this->fullname($this->user);
+            $title = get_string('editsubmissionother', 'assign', $name);
+        }
+        $this->set_legacy_logdata('view submit assignment form', $title);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call submission_form_viewed::create() directly, use submission_form_viewed::create_from_user() instead.');
+        }
+
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {

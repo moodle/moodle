@@ -35,7 +35,52 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class extension_granted extends base {
+    /** @var \assign */
+    protected $assign;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param int $userid
+     * @return extension_granted
+     */
+    public static function create_from_assign(\assign $assign, $userid) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id,
+            'relateduserid' => $userid,
+        );
+        self::$preventcreatecall = false;
+        /** @var extension_granted $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
     /**
      * Returns description of what happened.
      *
@@ -66,13 +111,28 @@ class extension_granted extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('grant extension', $this->relateduserid);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call extension_granted::create() directly, use extension_granted::create_from_assign() instead.');
+        }
+
         parent::validate_data();
+
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('relateduserid is a mandatory property.');
         }

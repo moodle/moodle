@@ -35,6 +35,71 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submission_graded extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $grade;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $grade
+     * @return submission_graded
+     */
+    public static function create_from_grade(\assign $assign, \stdClass $grade) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $grade->id,
+            'relateduserid' => $grade->userid
+        );
+        self::$preventcreatecall = false;
+        /** @var submission_graded $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->grade = $grade;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get grade instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_grade() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_grade() is intended for event observers only');
+        }
+        return $this->grade;
+    }
 
     /**
      * Returns description of what happened.
@@ -66,13 +131,28 @@ class submission_graded extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('grade submission', $this->assign->format_grade_for_log($this->grade));
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call submission_graded::create() directly, use submission_graded::create_from_grade() instead.');
+        }
+
         parent::validate_data();
+
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('relateduserid is a mandatory property.');
         }

@@ -41,6 +41,74 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submission_status_updated extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $submission;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @return submission_status_updated
+     */
+    public static function create_from_submission(\assign $assign, \stdClass $submission) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $submission->id,
+            'relateduserid' => ($assign->get_instance()->teamsubmission) ? null : $submission->userid,
+            'other' => array(
+                'newstatus' => $submission->status
+            )
+        );
+        self::$preventcreatecall = false;
+        /** @var submission_status_updated $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->submission = $submission;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get submission instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_submission() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_submission() is intended for event observers only');
+        }
+        return $this->submission;
+    }
 
     /**
      * Returns description of what happened.
@@ -72,13 +140,31 @@ class submission_status_updated extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        global $DB;
+
+        $user = $DB->get_record('user', array('id' => $this->submission->userid), '*', MUST_EXIST);
+        $logmessage = get_string('reverttodraftforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
+        $this->set_legacy_logdata('revert submission to draft', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
-     * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call submission_status_updated::create() directly, use submission_status_updated::create_from_submission() instead.');
+        }
+
         parent::validate_data();
+
         if (!isset($this->other['newstatus'])) {
             throw new \coding_exception('newstatus must be set in $other.');
         }

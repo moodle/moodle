@@ -35,6 +35,70 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class statement_accepted extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $submission;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @return statement_accepted
+     */
+    public static function create_from_submission(\assign $assign, \stdClass $submission) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $submission->id
+        );
+        self::$preventcreatecall = false;
+        /** @var statement_accepted $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->submission = $submission;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get submission instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_submission() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_submission() is intended for event observers only');
+        }
+        return $this->submission;
+    }
 
     /**
      * Returns description of what happened.
@@ -63,5 +127,31 @@ class statement_accepted extends base {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'assign_submission';
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        global $USER;
+        $logmessage = get_string('submissionstatementacceptedlog', 'mod_assign', fullname($USER)); // Nasty hack.
+        $this->set_legacy_logdata('submission statement accepted', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call statement_accepted::create() directly, use statement_accepted::create_from_submission() instead.');
+        }
+
+        parent::validate_data();
     }
 }

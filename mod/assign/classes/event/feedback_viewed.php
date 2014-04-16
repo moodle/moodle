@@ -34,6 +34,74 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 class feedback_viewed extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $grade;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $grade
+     * @return feedback_viewed
+     */
+    public static function create_from_grade(\assign $assign, \stdClass $grade) {
+        $data = array(
+            'objectid' => $grade->id,
+            'relateduserid' => $grade->userid,
+            'context' => $assign->get_context(),
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var feedback_viewed $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->grade = $grade;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get grade instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_grade() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_grade() is intended for event observers only');
+        }
+        return $this->grade;
+    }
 
     /**
      * Init method.
@@ -64,11 +132,26 @@ class feedback_viewed extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $logmessage = get_string('viewfeedbackforuser', 'assign', $this->grade->userid);
+        $this->set_legacy_logdata('view feedback', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call feedback_viewed::create() directly, use feedback_viewed::create_from_grade() instead.');
+        }
+
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {

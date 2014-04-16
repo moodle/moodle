@@ -34,7 +34,52 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 class reveal_identities_confirmation_page_viewed extends base {
+    /** @var \assign */
+    protected $assign;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @return reveal_identities_confirmation_page_viewed
+     */
+    public static function create_from_assign(\assign $assign) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var reveal_identities_confirmation_page_viewed $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
     /**
      * Init method.
      */
@@ -62,12 +107,27 @@ class reveal_identities_confirmation_page_viewed extends base {
             assignment with the id {$this->other['assignid']}.";
     }
 
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('view', get_string('viewrevealidentitiesconfirm', 'assign'));
+        return parent::get_legacy_logdata();
+    }
+
     /**
      * Custom validation.
      *
      * @throws \coding_exception
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call reveal_identities_confirmation_page_viewed::create() directly, use reveal_identities_confirmation_page_viewed::create_from_grade() instead.');
+        }
+
         parent::validate_data();
 
         if (!isset($this->other['assignid'])) {

@@ -35,6 +35,50 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class identities_revealed extends base {
+    /** @var \assign */
+    protected $assign;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @return identities_revealed
+     */
+    public static function create_from_assign(\assign $assign) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id
+        );
+        self::$preventcreatecall = false;
+        /** @var identities_revealed $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
 
     /**
      * Returns description of what happened.
@@ -63,5 +107,29 @@ class identities_revealed extends base {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign';
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('reveal identities', get_string('revealidentities', 'assign'));
+        return parent::get_legacy_logdata();
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call identities_revealed::create() directly, use identities_revealed::create_from_assign() instead.');
+        }
+
+        parent::validate_data();
     }
 }

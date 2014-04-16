@@ -41,6 +41,94 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class marker_updated extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $user;
+    /** @var \stdClass */
+    protected $marker;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $user
+     * @param \stdClass $marker
+     * @return marker_updated
+     */
+    public static function create_from_marker(\assign $assign, \stdClass $user, \stdClass $marker) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id,
+            'relateduserid' => $user->id,
+            'other' => array(
+                'markerid' => $marker->id,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var marker_updated $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->user = $user;
+        $event->marker = $marker;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get user instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_user() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_user() is intended for event observers only');
+        }
+        return $this->user;
+    }
+
+    /**
+     * Get marker user instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_marker() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_marker() is intended for event observers only');
+        }
+        return $this->marker;
+    }
 
     /**
      * Returns description of what happened.
@@ -72,13 +160,29 @@ class marker_updated extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $a = array('id' => $this->user->id, 'fullname' => fullname($this->user), 'marker' => fullname($this->marker));
+        $logmessage = get_string('setmarkerallocationforlog', 'assign', $a);
+        $this->set_legacy_logdata('set marking allocation', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
-     * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call marker_updated::create() directly, use marker_updated::create_from_marker() instead.');
+        }
+
         parent::validate_data();
+
         if (!isset($this->other['markerid'])) {
             throw new \coding_exception('markerid must be set in $other.');
         } else if (!isset($this->relateduserid)) {

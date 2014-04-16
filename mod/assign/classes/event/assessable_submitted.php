@@ -41,6 +41,74 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assessable_submitted extends base {
+    /** @var \assign */
+    protected $assign;
+    /** @var \stdClass */
+    protected $submission;
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @param bool $editable
+     * @return assessable_submitted
+     */
+    public static function create_from_submission(\assign $assign, \stdClass $submission, $editable) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $submission->id,
+            'other' => array(
+                'submission_editable' => $editable,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var assessable_submitted $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->assign = $assign;
+        $event->submission = $submission;
+        return $event;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        return $this->assign;
+    }
+
+    /**
+     * Get submission instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @since Moodle 2.7
+     *
+     * @return \stdClass
+     */
+    public function get_submission() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_submission() is intended for event observers only');
+        }
+        return $this->submission;
+    }
 
     /**
      * Returns description of what happened.
@@ -97,12 +165,26 @@ class assessable_submitted extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('submit for grading', $this->assign->format_submission_for_log($this->submission));
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call assessable_submitted::create() directly, use assessable_submitted::create_from_submission() instead.');
+        }
+
         parent::validate_data();
 
         if (!isset($this->other['submission_editable'])) {
