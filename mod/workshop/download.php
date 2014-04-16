@@ -100,11 +100,17 @@ if (count($examples)) {
     }
 }
 
-list($select, $params) = $DB->get_in_or_equal(array_keys($submissions));
+list($select, $params) = $DB->get_in_or_equal(array_keys($examples) + array_keys($submissions));
 $feedbackset = $DB->get_records_select("workshop_assessments", "submissionid $select", $params);
 
 foreach($feedbackset as $record) {
-    $submissions[$record->submissionid]->feedback[$record->reviewerid] = $record->feedbackauthor;
+    if(isset($submissions[$record->submissionid])) {
+        $submissions[$record->submissionid]->feedback[$record->reviewerid] = $record->feedbackauthor;
+    }
+    
+    if(isset($examples[$record->submissionid])) {
+        $examples[$record->submissionid]->feedback = $record->feedbackauthor;
+    }
 }
 
 // Define some functions for later
@@ -207,6 +213,14 @@ foreach($examples as $ex) {
         $total += $ex->grades[$dimid]->grade;
     }
     
+    if(isset($ex->feedback)) {
+        $feedback = trim(strip_tags($ex->feedback));
+        $feedback = str_replace("\n", "\r", $feedback);
+        if (in_array(substr($feedback,0,1), array("-","+","="))) {
+            $feedback = " $comment";
+        }
+        $row['feedback'] = $feedback;
+    }
     $row['overallmark'] = $total;
     $row['scaledmark'] = round($ex->grade, 2);
     
@@ -354,4 +368,7 @@ table_to_csv($headers, $table2);
 
 $csv->download_file();
 
+// For debugging porpoises
+
+// header('Content-type: text/plain');
 // $csv->print_csv_data();
