@@ -168,7 +168,6 @@ class behat_hooks extends behat_base {
         behat_util::reset_database();
         behat_util::reset_dataroot();
 
-        purge_all_caches();
         accesslib_clear_all_caches(true);
 
         // Reset the nasty strings list used during the last test.
