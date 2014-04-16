@@ -24,7 +24,7 @@
  */
 
 $string['alfresco_url'] = 'Alfresco URL';
-$string['alfrescourltext'] = 'Afresco API url should be: http://yoursite.com/alfresco/api';
+$string['alfrescourltext'] = 'Afresco API URL should be: http://yoursite.com/alfresco/api or http://yoursite.com/alfresco/soapapi for Alfresco 4.2.d or greater.';
 $string['alfresco:view'] = 'View alfresco repository';
 $string['configplugin'] = 'Alfresco configuration';
 $string['notitle'] = 'notitle';
