@@ -629,6 +629,16 @@ abstract class assign_plugin {
     }
 
     /**
+     * This allows a plugin to render an introductory section which is displayed
+     * right below the activity's "intro" section on the main assignment page.
+     *
+     * @return string
+     */
+    public function view_header() {
+        return '';
+    }
+
+    /**
      * If this plugin should not include a column in the grading table or a row on the summary page
      * then return false
      *
