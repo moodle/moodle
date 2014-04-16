@@ -30,7 +30,7 @@ if ($ADMIN->fulltree) {
                     get_string('configairnotifierurl', 'message_airnotifier'), 'https://messages.moodle.net', PARAM_URL));
     $settings->add(new admin_setting_configtext('airnotifierport',
                     get_string('airnotifierport', 'message_airnotifier'),
-                    get_string('configairnotifierport', 'message_airnotifier'), '80', PARAM_INT));
+                    get_string('configairnotifierport', 'message_airnotifier'), 443, PARAM_INT));
     $settings->add(new admin_setting_configtext('airnotifiermobileappname',
                     get_string('airnotifiermobileappname', 'message_airnotifier'),
                     get_string('configairnotifiermobileappname', 'message_airnotifier'), 'com.moodle.moodlemobile', PARAM_TEXT));
