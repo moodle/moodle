@@ -195,32 +195,6 @@ function wiki_reset_course_form_definition(&$mform) {
 }
 
 /**
- * Return a small object with summary information about what a
- * user has done with a given particular instance of this module
- * Used for user activity reports.
- * $return->time = the time they did it
- * $return->info = a short text description
- *
- * @return null
- * @todo Finish documenting this function
- **/
-function wiki_user_outline($course, $user, $mod, $wiki) {
-    $return = NULL;
-    return $return;
-}
-
-/**
- * Print a detailed representation of what a user has done with
- * a given particular instance of this module, for user activity reports.
- *
- * @return boolean
- * @todo Finish documenting this function
- **/
-function wiki_user_complete($course, $user, $mod, $wiki) {
-    return true;
-}
-
-/**
  * Indicates API features that the wiki supports.
  *
  * @uses FEATURE_GROUPS

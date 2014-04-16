@@ -8,6 +8,10 @@ information provided here is intended especially for developers.
   $plugin instead. The support for the legacy notation will be dropped in Moodle 2.10.
 * xxx_get_view_actions() and xxx_get_post_actions() will be ignored by new logging system for
   participation report. view_action and post_action will be detected by event's crud and edulevel.
+* The functions xxx_user_outline() and xxx_user_complete() have been removed from the majority of core modules (see MDL-41286),
+  except for those that require unique functionality. These functions are used by the outline report, but now if they no longer
+  exist, the default behaviour is chosen, which supports the legacy and standard log storages introduced in 2.7 (see MDL-41266).
+  It is highly recommended you remove these functions from your module if they are simply performing the default behaviour.
 
 === 2.6 ===
 

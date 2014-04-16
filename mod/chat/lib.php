@@ -204,39 +204,6 @@ function chat_delete_instance($id) {
 }
 
 /**
- * Return a small object with summary information about what a
- * user has done with a given particular instance of this module
- * Used for user activity reports.
- * <code>
- * $return->time = the time they did it
- * $return->info = a short text description
- * </code>
- *
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $chat
- * @return void
- */
-function chat_user_outline($course, $user, $mod, $chat) {
-    return NULL;
-}
-
-/**
- * Print a detailed representation of what a  user has done with
- * a given particular instance of this module, for user activity reports.
- *
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $chat
- * @return bool
- */
-function chat_user_complete($course, $user, $mod, $chat) {
-    return true;
-}
-
-/**
  * Given a course and a date, prints a summary of all chat rooms past and present
  * This function is called from block_recent_activity
  *

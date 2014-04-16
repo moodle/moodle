@@ -60,11 +60,32 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($course->fullname));
 
-if (!$logstart = $DB->get_field_sql("SELECT MIN(time) FROM {log}")) {
-    print_error('logfilenotavailable');
+list($uselegacyreader, $useinternalreader, $minloginternalreader, $logtable) = report_outline_get_common_log_variables();
+
+// If no legacy and no internal log then don't proceed.
+if (!$uselegacyreader && !$useinternalreader) {
+    echo $OUTPUT->box_start('generalbox', 'notice');
+    echo $OUTPUT->notification(get_string('nologreaderenabled', 'report_outline'));
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    die();
 }
 
-echo $OUTPUT->container(get_string('computedfromlogs', 'admin', userdate($logstart)), 'loginfo');
+// We want to display the time we are beginning to get logs from in the heading.
+// If we are using the legacy reader check the minimum time in that log table.
+if ($uselegacyreader) {
+    $minlog = $DB->get_field_sql('SELECT min(time) FROM {log}');
+}
+
+// If we are using the internal reader check the minimum time in that table.
+if ($useinternalreader) {
+    // If new log table has older data then don't use the minimum time obtained from the legacy table.
+    if (empty($minlog) || ($minloginternalreader <= $minlog)) {
+        $minlog = $minloginternalreader;
+    }
+}
+
+echo $OUTPUT->container(get_string('computedfromlogs', 'admin', userdate($minlog)), 'loginfo');
 
 $outlinetable = new html_table();
 $outlinetable->attributes['class'] = 'generaltable boxaligncenter';
@@ -82,13 +103,65 @@ if ($showlastaccess) {
 
 $modinfo = get_fast_modinfo($course);
 
-$sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
-          FROM {course_modules} cm
-               JOIN {modules} m ON m.id = cm.module
-               JOIN {log} l     ON l.cmid = cm.id
-         WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1
-      GROUP BY cm.id";
-$views = $DB->get_records_sql($sql, array($course->id));
+// If using legacy log then get users from old table.
+if ($uselegacyreader) {
+    // If we are going to use the internal (not legacy) log table, we should only get records
+    // from the legacy table that exist before we started adding logs to the new table.
+    $limittime = '';
+    if (!empty($minloginternalreader)) {
+        $limittime = ' AND time < :timeto ';
+        $params['timeto'] = $minloginternalreader;
+    }
+    // Check if we need to show the last access.
+    $sqllasttime = '';
+    if ($showlastaccess) {
+        $sqllasttime = ", MAX(time) AS lasttime";
+    }
+    $logactionlike = $DB->sql_like('l.action', ':action');
+    $sql = "SELECT cm.id, COUNT('x') AS numviews $sqllasttime
+              FROM {course_modules} cm
+              JOIN {modules} m
+                ON m.id = cm.module
+              JOIN {log} l
+                ON l.cmid = cm.id
+             WHERE cm.course = :courseid
+               AND $logactionlike
+               AND m.visible = :visible $limittime
+          GROUP BY cm.id";
+    $params = array('courseid' => $course->id, 'action' => 'view%', 'visible' => 1);
+    $views = $DB->get_records_sql($sql, $params);
+}
+
+// Get record from sql_internal_reader and merge with records obtained from legacy log (if needed).
+if ($useinternalreader) {
+    // Check if we need to show the last access.
+    $sqllasttime = '';
+    if ($showlastaccess) {
+        $sqllasttime = ", MAX(timecreated) AS lasttime";
+    }
+    $sql = "SELECT contextinstanceid as cmid, COUNT('x') AS numviews $sqllasttime
+              FROM {" . $logtable . "} l
+             WHERE courseid = :courseid
+               AND anonymous = 0
+               AND crud = 'r'
+               AND contextlevel = :contextmodule
+          GROUP BY contextinstanceid";
+    $params = array('courseid' => $course->id, 'contextmodule' => CONTEXT_MODULE);
+    $v = $DB->get_records_sql($sql, $params);
+
+    if (empty($views)) {
+        $views = $v;
+    } else {
+        // Merge two view arrays.
+        foreach ($v as $key => $value) {
+            if (isset($views[$key]) && !empty($views[$key]->numviews)) {
+                $views[$key]->numviews += $value->numviews;
+            } else {
+                $views[$key] = $value;
+            }
+        }
+    }
+}
 
 $prevsecctionnum = 0;
 foreach ($modinfo->sections as $sectionnum=>$section) {
