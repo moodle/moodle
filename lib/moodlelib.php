@@ -7688,7 +7688,16 @@ function moodle_setlocale($locale='') {
  */
 function count_words($string) {
     $string = strip_tags($string);
-    return count(preg_split("/\w\b/", $string)) - 1;
+    // Decode HTML entities.
+    $string = html_entity_decode($string);
+    // Replace underscores (which are classed as word characters) with spaces.
+    $string = preg_replace('/_/u', ' ', $string);
+    // Remove any characters that shouldn't be treated as word boundaries.
+    $string = preg_replace('/[\'’-]/u', '', $string);
+    // Remove dots and commas from within numbers only.
+    $string = preg_replace('/([0-9])[.,]([0-9])/u', '$1$2', $string);
+
+    return count(preg_split('/\w\b/u', $string)) - 1;
 }
 
 /**
