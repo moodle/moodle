@@ -223,7 +223,7 @@ $blockpage->display_header();
 
 $companyids = $DB->get_records_menu('company', array(), 'id, name');
 $companyids['none'] = get_string('nocompany', 'block_iomad_company_admin');
-$companyids['0'] = get_string('allcourses', 'block_iomad_company_admin');
+$companyids['all'] = get_string('allcourses', 'block_iomad_company_admin');
 ksort($companyids);
 $companyselect = new single_select($linkurl, 'company', $companyids, $company);
 $companyselect->label = get_string('company', 'block_iomad_company_admin');
@@ -243,6 +243,14 @@ if (!empty($company)) {
         $sql = "SELECT * from {course} WHERE $select
                 id not in (select courseid from {company_course})";
         $courses = $DB->get_records_sql($sql);
+    } else  if ($company == 'all') {
+        // Get every course.
+        if (!empty($search)) {
+            $select = "fullname like '%$search%' AND id!=1";
+        } else {
+            $select = "id != 1";
+        }
+        $courses = $DB->get_records_select('course', $select);
     } else {
         // Get the courses belonging to that company only.
         if (!empty($search)) {
@@ -254,14 +262,6 @@ if (!empty($company)) {
                 cc.companyid=$company AND cc.courseid = c.id $select";
         $courses = $DB->get_records_sql($sql);
     }
-} else {
-    // Get every course.
-    if (!empty($search)) {
-        $select = "fullname like '%$search%' AND id!=1";
-    } else {
-        $select = "id != 1";
-    }
-    $courses = $DB->get_records_select('course', $select);
 }
 
 // Display the table.
