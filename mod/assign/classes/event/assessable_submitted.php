@@ -41,8 +41,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assessable_submitted extends base {
-    /** @var \assign */
-    protected $assign;
     /** @var \stdClass */
     protected $submission;
     /**
@@ -73,25 +71,9 @@ class assessable_submitted extends base {
         /** @var assessable_submitted $event */
         $event = self::create($data);
         self::$preventcreatecall = true;
-        $event->assign = $assign;
+        $event->set_assign($assign);
         $event->submission = $submission;
         return $event;
-    }
-
-    /**
-     * Get assign instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \assign
-     */
-    public function get_assign() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_assign() is intended for event observers only');
-        }
-        return $this->assign;
     }
 
     /**

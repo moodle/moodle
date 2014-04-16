@@ -35,8 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class all_submissions_downloaded extends base {
-    /** @var \assign */
-    protected $assign;
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -60,24 +58,8 @@ class all_submissions_downloaded extends base {
         /** @var submission_graded $event */
         $event = self::create($data);
         self::$preventcreatecall = true;
-        $event->assign = $assign;
+        $event->set_assign($assign);
         return $event;
-    }
-
-    /**
-     * Get assign instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \assign
-     */
-    public function get_assign() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_assign() is intended for event observers only');
-        }
-        return $this->assign;
     }
 
     /**

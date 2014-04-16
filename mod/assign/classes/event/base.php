@@ -30,6 +30,8 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 abstract class base extends \core\event\base {
+    /** @var \assign */
+    protected $assign;
 
     /**
      * Legacy log data.
@@ -37,6 +39,44 @@ abstract class base extends \core\event\base {
      * @var array
      */
     protected $legacylogdata;
+
+    /**
+     * Set assign instance for this event.
+     * @param \assign $assign
+     * @throws \coding_exception
+     */
+    public function set_assign(\assign $assign) {
+        if ($this->is_triggered()) {
+            throw new \coding_exception('set_assign() must be done before triggerring of event');
+        }
+        if ($assign->get_context()->id != $this->get_context()->id) {
+            throw new \coding_exception('Invalid assign isntance supplied!');
+        }
+        $this->assign = $assign;
+    }
+
+    /**
+     * Get assign instance.
+     *
+     * NOTE: to be used from observers only.
+     *
+     * @return \assign
+     */
+    public function get_assign() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('get_assign() is intended for event observers only');
+        }
+        if (!isset($this->assign)) {
+            debugging('assign property should be initialised in each event', DEBUG_DEVELOPER);
+            global $CFG;
+            require_once($CFG->dirroot . '/mod/assign/locallib.php');
+            $cm = get_coursemodule_from_id('assign', $this->contextinstanceid, 0, false, MUST_EXIST);
+            $course = get_course($cm->course);
+            $this->assign = new \assign($this->get_context(), $cm, $course);
+        }
+        return $this->assign;
+    }
+
 
     /**
      * Returns relevant URL.

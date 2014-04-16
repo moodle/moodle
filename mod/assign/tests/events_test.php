@@ -40,6 +40,30 @@ class assign_events_testcase extends mod_assign_base_testcase {
     /**
      * Basic tests for the submission_created() abstract class.
      */
+    public function test_base_event() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $instance = $generator->create_instance(array('course' => $this->course->id));
+        $modcontext = context_module::instance($instance->cmid);
+
+        $data = array(
+            'context' => $modcontext,
+        );
+        /** @var \mod_assign_unittests\event\nothing_happened $event */
+        $event = \mod_assign_unittests\event\nothing_happened::create($data);
+        $assign = $event->get_assign();
+        $this->assertDebuggingCalled();
+        $this->assertInstanceOf('assign', $assign);
+
+        $event = \mod_assign_unittests\event\nothing_happened::create($data);
+        $event->set_assign($assign);
+        $assign2 = $event->get_assign();
+        $this->assertDebuggingNotCalled();
+        $this->assertSame($assign, $assign2);
+    }
+
+    /**
+     * Basic tests for the submission_created() abstract class.
+     */
     public function test_submission_created() {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $instance = $generator->create_instance(array('course' => $this->course->id));
