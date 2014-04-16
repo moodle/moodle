@@ -43,6 +43,10 @@ if ($course->id == SITEID) {
     redirect("$CFG->wwwroot/");
 }
 
+if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+    print_error('coursehidden');
+}
+
 $PAGE->set_course($course);
 $PAGE->set_pagelayout('course');
 $PAGE->set_url('/enrol/index.php', array('id'=>$course->id));
