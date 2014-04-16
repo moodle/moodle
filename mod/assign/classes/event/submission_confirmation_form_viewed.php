@@ -17,6 +17,18 @@
 /**
  * The mod_assign submission form viewed event.
  *
+ * @package    mod_assign
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_assign\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_assign submission form viewed event.
+ *
  * @property-read array $other {
  *      Extra information about event.
  *
@@ -28,11 +40,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_assign\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class submission_confirmation_form_viewed extends base {
     /** @var \assign */
     protected $assign;
@@ -44,8 +51,6 @@ class submission_confirmation_form_viewed extends base {
 
     /**
      * Create instance of event.
-     *
-     * @since Moodle 2.7
      *
      * @param \assign $assign
      * @return submission_confirmation_form_viewed
@@ -69,8 +74,6 @@ class submission_confirmation_form_viewed extends base {
      * Get assign instance.
      *
      * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
      *
      * @return \assign
      */

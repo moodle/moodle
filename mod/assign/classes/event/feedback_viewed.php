@@ -17,6 +17,18 @@
 /**
  * The mod_assign feedback viewed event.
  *
+ * @package    mod_assign
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_assign\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_assign feedback viewed event.
+ *
  * @property-read array $other {
  *      Extra information about event.
  *
@@ -28,11 +40,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_assign\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class feedback_viewed extends base {
     /** @var \assign */
     protected $assign;
@@ -46,8 +53,6 @@ class feedback_viewed extends base {
 
     /**
      * Create instance of event.
-     *
-     * @since Moodle 2.7
      *
      * @param \assign $assign
      * @param \stdClass $grade
@@ -76,8 +81,6 @@ class feedback_viewed extends base {
      *
      * NOTE: to be used from observers only.
      *
-     * @since Moodle 2.7
-     *
      * @return \assign
      */
     public function get_assign() {
@@ -91,8 +94,6 @@ class feedback_viewed extends base {
      * Get grade instance.
      *
      * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
      *
      * @return \stdClass
      */
