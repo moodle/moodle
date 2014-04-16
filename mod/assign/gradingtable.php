@@ -90,6 +90,10 @@ class assign_grading_table extends table_sql implements renderable {
                                                   $this->assignment->get_context());
         $this->hasgrade = $this->assignment->can_grade();
 
+        // Check if we have the elevated view capablities to see the blind details.
+        $this->hasviewblind = has_capability('mod/assign:viewblinddetails',
+                $this->assignment->get_context());
+
         foreach ($assignment->get_feedback_plugins() as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {
                 foreach ($plugin->get_grading_batch_operations() as $action => $description) {
@@ -249,7 +253,7 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         // User picture.
-        if (!$this->assignment->is_blind_marking()) {
+        if ($this->hasviewblind || !$this->assignment->is_blind_marking()) {
             if (!$this->is_downloading()) {
                 $columns[] = 'picture';
                 $headers[] = get_string('pictureofuser');
@@ -270,6 +274,11 @@ class assign_grading_table extends table_sql implements renderable {
             // Record ID.
             $columns[] = 'recordid';
             $headers[] = get_string('recordid', 'assign');
+        }
+
+        if ($this->hasviewblind) {
+                $columns[] = 'recordid';
+                $headers[] = get_string('recordid', 'assign');
         }
 
         // Submission status.

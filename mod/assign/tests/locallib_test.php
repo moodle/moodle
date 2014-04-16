@@ -1475,5 +1475,46 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertTrue($assign->can_edit_submission($this->students[0]->id, $this->extrastudents[0]->id));
 
     }
+
+    /**
+     * Test if the view blind details capability works
+     */
+    public function test_can_view_blind_details() {
+        global $PAGE, $DB;
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+
+        $student = $this->students[0];// Get a student user.
+        // Create a teacher. Shouldn't be able to view blind marking ID.
+        $teacher = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($teacher->id,
+                                              $this->course->id,
+                                              $teacherrole->id);
+
+        // Create a manager.. Should be able to view blind marking ID.
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($manager->id,
+                $this->course->id,
+                $managerrole->id);
+
+        // Generate blind marking assignment.
+        $assign = $this->create_instance(array('blindmarking' => 1));
+        $this->assertEquals(true, $assign->is_blind_marking());
+
+        // Test student names are hidden to teacher.
+        $this->setUser($teacher);
+        $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+        $this->assertEquals(true, strpos($output, get_string('hiddenuser', 'assign')));    // "Participant" is somewhere on the page.
+        $this->assertEquals(false, strpos($output, fullname($student)));    // Students full name doesn't appear.
+
+        // Test student names are visible to manager.
+        $this->setUser($manager);
+        $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
+        $output = $assign->get_renderer()->render($gradingtable);
+        $this->assertEquals(true, strpos($output, get_string('hiddenuser', 'assign')));
+        $this->assertEquals(true, strpos($output, fullname($student)));    //students full name doesn't appear.
+    }
 }
 
