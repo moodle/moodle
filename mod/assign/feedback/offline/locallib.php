@@ -194,13 +194,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                                                         'text'=>$newvalue));
 
                             // Trigger event for updating the feedback.
-                            $event = \mod_assign\event\feedback_updated::create(array(
-                                'relateduserid' => $user->id,
-                                'context' => $this->assignment->get_context(),
-                                'other' => array(
-                                    'assignid' => $this->assignment->get_instance()->id
-                                )
-                            ));
+                            $event = \mod_assign\event\feedback_updated::create_from_grade($this->assignment, $grade);
                             $event->set_legacy_logdata('save grading feedback', $logdesc);
                             $event->trigger();
                         }

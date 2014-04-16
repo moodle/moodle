@@ -41,14 +41,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submission_status_updated extends base {
-    /** @var \stdClass */
-    protected $submission;
-    /**
-     * Flag for prevention of direct create() call.
-     * @var bool
-     */
-    protected static $preventcreatecall = true;
-
     /**
      * Create instance of event.
      *
@@ -67,29 +59,11 @@ class submission_status_updated extends base {
                 'newstatus' => $submission->status
             )
         );
-        self::$preventcreatecall = false;
         /** @var submission_status_updated $event */
         $event = self::create($data);
-        self::$preventcreatecall = true;
         $event->set_assign($assign);
-        $event->submission = $submission;
+        $event->add_record_snapshot('assign_submission', $submission);
         return $event;
-    }
-
-    /**
-     * Get submission instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_submission() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_submission() is intended for event observers only');
-        }
-        return $this->submission;
     }
 
     /**
@@ -127,9 +101,8 @@ class submission_status_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        global $DB;
-
-        $user = $DB->get_record('user', array('id' => $this->submission->userid), '*', MUST_EXIST);
+        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
+        $user = $this->get_record_snapshot('user', $submission->userid);
         $logmessage = get_string('reverttodraftforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
         $this->set_legacy_logdata('revert submission to draft', $logmessage);
         return parent::get_legacy_logdata();
@@ -141,10 +114,6 @@ class submission_status_updated extends base {
      * @throws \coding_exception
      */
     protected function validate_data() {
-        if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call submission_status_updated::create() directly, use submission_status_updated::create_from_submission() instead.');
-        }
-
         parent::validate_data();
 
         if (!isset($this->other['newstatus'])) {

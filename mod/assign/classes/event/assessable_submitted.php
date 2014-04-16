@@ -41,14 +41,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assessable_submitted extends base {
-    /** @var \stdClass */
-    protected $submission;
-    /**
-     * Flag for prevention of direct create() call.
-     * @var bool
-     */
-    protected static $preventcreatecall = true;
-
     /**
      * Create instance of event.
      *
@@ -67,29 +59,11 @@ class assessable_submitted extends base {
                 'submission_editable' => $editable,
             ),
         );
-        self::$preventcreatecall = false;
         /** @var assessable_submitted $event */
         $event = self::create($data);
-        self::$preventcreatecall = true;
         $event->set_assign($assign);
-        $event->submission = $submission;
+        $event->add_record_snapshot('assign_submission', $submission);
         return $event;
-    }
-
-    /**
-     * Get submission instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_submission() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_submission() is intended for event observers only');
-        }
-        return $this->submission;
     }
 
     /**
@@ -152,7 +126,8 @@ class assessable_submitted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $this->set_legacy_logdata('submit for grading', $this->assign->format_submission_for_log($this->submission));
+        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
+        $this->set_legacy_logdata('submit for grading', $this->assign->format_submission_for_log($submission));
         return parent::get_legacy_logdata();
     }
 
@@ -163,10 +138,6 @@ class assessable_submitted extends base {
      * @return void
      */
     protected function validate_data() {
-        if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call assessable_submitted::create() directly, use assessable_submitted::create_from_submission() instead.');
-        }
-
         parent::validate_data();
 
         if (!isset($this->other['submission_editable'])) {

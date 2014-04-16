@@ -41,14 +41,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submission_viewed extends base {
-    /** @var \stdClass */
-    protected $submission;
-    /**
-     * Flag for prevention of direct create() call.
-     * @var bool
-     */
-    protected static $preventcreatecall = true;
-
     /**
      * Create instance of event.
      *
@@ -65,27 +57,11 @@ class submission_viewed extends base {
                 'assignid' => $assign->get_instance()->id,
             ),
         );
-        self::$preventcreatecall = false;
         /** @var submission_viewed $event */
         $event = self::create($data);
-        self::$preventcreatecall = true;
         $event->set_assign($assign);
-        $event->submission = $submission;
+        $event->add_record_snapshot('assign_submission', $submission);
         return $event;
-    }
-
-    /**
-     * Get submission instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @return \stdClass
-     */
-    public function get_submission() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_submission() is intended for event observers only');
-        }
-        return $this->submission;
     }
 
     /**
@@ -122,7 +98,7 @@ class submission_viewed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $logmessage = get_string('viewsubmissionforuser', 'assign', $this->submission->userid);
+        $logmessage = get_string('viewsubmissionforuser', 'assign', $this->relateduserid);
         $this->set_legacy_logdata('view submission', $logmessage);
         return parent::get_legacy_logdata();
     }
@@ -133,10 +109,6 @@ class submission_viewed extends base {
      * @throws \coding_exception
      */
     protected function validate_data() {
-        if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call submission_viewed::create() directly, use submission_viewed::create_from_submission() instead.');
-        }
-
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {

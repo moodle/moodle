@@ -41,6 +41,28 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class feedback_updated extends base {
+    /**
+     * Create instance of event.
+     *
+     * @param \assign $assign
+     * @param \stdClass $grade
+     * @return feedback_updated
+     */
+    public static function create_from_grade(\assign $assign, \stdClass $grade) {
+        $data = array(
+            'objectid' => $grade->id,
+            'relateduserid' => $grade->userid,
+            'context' => $assign->get_context(),
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
+        );
+        /** @var feedback_updated $event */
+        $event = self::create($data);
+        $event->set_assign($assign);
+        $event->add_record_snapshot('assign_grades', $grade);
+        return $event;
+    }
 
     /**
      * Init method.

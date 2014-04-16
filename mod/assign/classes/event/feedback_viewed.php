@@ -41,14 +41,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class feedback_viewed extends base {
-    /** @var \stdClass */
-    protected $grade;
-    /**
-     * Flag for prevention of direct create() call.
-     * @var bool
-     */
-    protected static $preventcreatecall = true;
-
     /**
      * Create instance of event.
      *
@@ -65,27 +57,11 @@ class feedback_viewed extends base {
                 'assignid' => $assign->get_instance()->id,
             ),
         );
-        self::$preventcreatecall = false;
         /** @var feedback_viewed $event */
         $event = self::create($data);
-        self::$preventcreatecall = true;
         $event->set_assign($assign);
-        $event->grade = $grade;
+        $event->add_record_snapshot('assign_grades', $grade);
         return $event;
-    }
-
-    /**
-     * Get grade instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @return \stdClass
-     */
-    public function get_grade() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_grade() is intended for event observers only');
-        }
-        return $this->grade;
     }
 
     /**
@@ -122,7 +98,7 @@ class feedback_viewed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $logmessage = get_string('viewfeedbackforuser', 'assign', $this->grade->userid);
+        $logmessage = get_string('viewfeedbackforuser', 'assign', $this->relateduserid);
         $this->set_legacy_logdata('view feedback', $logmessage);
         return parent::get_legacy_logdata();
     }
@@ -133,10 +109,6 @@ class feedback_viewed extends base {
      * @throws \coding_exception
      */
     protected function validate_data() {
-        if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call feedback_viewed::create() directly, use feedback_viewed::create_from_grade() instead.');
-        }
-
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {

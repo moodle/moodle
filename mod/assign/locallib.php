@@ -2012,8 +2012,7 @@ class assign {
 
             $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
             $sid = $DB->insert_record('assign_submission', $submission);
-            $submission->id = $sid;
-            return $submission;
+            return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
     }
@@ -2616,8 +2615,7 @@ class assign {
                 $submission->attemptnumber = 0;
             }
             $sid = $DB->insert_record('assign_submission', $submission);
-            $submission->id = $sid;
-            return $submission;
+            return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
     }
@@ -5283,6 +5281,8 @@ class assign {
      * Take a grade object and print a short summary for the log file.
      * The size limit for the log file is 255 characters, so be careful not
      * to include too much information.
+     *
+     * @deprecated since 2.7
      *
      * @param stdClass $grade
      * @return string

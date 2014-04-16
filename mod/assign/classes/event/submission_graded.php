@@ -35,8 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class submission_graded extends base {
-    /** @var \stdClass */
-    protected $grade;
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -63,24 +61,8 @@ class submission_graded extends base {
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->set_assign($assign);
-        $event->grade = $grade;
+        $event->add_record_snapshot('assign_grades', $grade);
         return $event;
-    }
-
-    /**
-     * Get grade instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_grade() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_grade() is intended for event observers only');
-        }
-        return $this->grade;
     }
 
     /**
@@ -118,7 +100,8 @@ class submission_graded extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $this->set_legacy_logdata('grade submission', $this->assign->format_grade_for_log($this->grade));
+        $grade = $this->get_record_snapshot('assign_grades', $this->objectid);
+        $this->set_legacy_logdata('grade submission', $this->assign->format_grade_for_log($grade));
         return parent::get_legacy_logdata();
     }
 

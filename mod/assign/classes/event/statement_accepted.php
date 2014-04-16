@@ -35,8 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class statement_accepted extends base {
-    /** @var \stdClass */
-    protected $submission;
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -62,24 +60,8 @@ class statement_accepted extends base {
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->set_assign($assign);
-        $event->submission = $submission;
+        $event->add_record_snapshot('assign_submission', $submission);
         return $event;
-    }
-
-    /**
-     * Get submission instance.
-     *
-     * NOTE: to be used from observers only.
-     *
-     * @since Moodle 2.7
-     *
-     * @return \stdClass
-     */
-    public function get_submission() {
-        if ($this->is_restored()) {
-            throw new \coding_exception('get_submission() is intended for event observers only');
-        }
-        return $this->submission;
     }
 
     /**
