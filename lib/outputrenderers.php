@@ -3348,6 +3348,11 @@ class core_renderer_ajax extends core_renderer {
         $e->reproductionlink = NULL;
         if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
             $e->reproductionlink = $link;
+            if ($e->reproductionlink instanceof moodle_url) {
+                $e->reproductionlink = $e->reproductionlink->out();
+            } else if (!$e->reproductionlink instanceof string) {
+                unset($e->reproductionlink);
+            }
             if (!empty($debuginfo)) {
                 $e->debuginfo = $debuginfo;
             }
