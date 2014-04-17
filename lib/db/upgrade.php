@@ -3592,5 +3592,37 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014040800.00);
     }
 
+    if ($oldversion < 2014041500.01) {
+
+        $table = new xmldb_table('user_info_data');
+
+        $sql = 'SELECT DISTINCT info.id
+                  FROM {user_info_data} info
+            INNER JOIN {user_info_data} older
+                    ON info.fieldid = older.fieldid
+                   AND info.userid = older.userid
+                   AND older.id < info.id';
+        $transaction = $DB->start_delegated_transaction();
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $rec) {
+            $DB->delete_records('user_info_data', array('id' => $rec->id));
+        }
+        $transaction->allow_commit();
+
+        $oldindex = new xmldb_index('userid_fieldid', XMLDB_INDEX_NOTUNIQUE, array('userid', 'fieldid'));
+        if ($dbman->index_exists($table, $oldindex)) {
+            $dbman->drop_index($table, $oldindex);
+        }
+
+        $newindex = new xmldb_index('userid_fieldid', XMLDB_INDEX_UNIQUE, array('userid', 'fieldid'));
+
+        if (!$dbman->index_exists($table, $newindex)) {
+            $dbman->add_index($table, $newindex);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014041500.01);
+    }
+
     return true;
 }
