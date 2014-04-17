@@ -227,6 +227,9 @@ class assign_submission_file extends assign_submission_plugin {
                 'pathnamehashes' => array_keys($files)
             )
         );
+        if (!empty($submission->userid) && ($submission->userid != $USER->id)) {
+            $params->relateduserid = $submission->userid;
+        }
         $event = \assignsubmission_file\event\assessable_uploaded::create($params);
         $event->set_legacy_files($files);
         $event->trigger();

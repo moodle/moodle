@@ -52,6 +52,8 @@ class assessable_submitted extends base {
      * @return assessable_submitted
      */
     public static function create_from_submission(\assign $assign, \stdClass $submission, $editable) {
+        global $USER;
+
         $data = array(
             'context' => $assign->get_context(),
             'objectid' => $submission->id,
@@ -59,6 +61,9 @@ class assessable_submitted extends base {
                 'submission_editable' => $editable,
             ),
         );
+        if (!empty($submission->userid) && ($submission->userid != $USER->id)) {
+            $data['relateduserid'] = $submission->userid;
+        }
         /** @var assessable_submitted $event */
         $event = self::create($data);
         $event->set_assign($assign);

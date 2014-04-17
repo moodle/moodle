@@ -228,6 +228,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                 'format' => $data->onlinetext_editor['format']
             )
         );
+        if (!empty($submission->userid) && ($submission->userid != $USER->id)) {
+            $params['relateduserid'] = $submission->userid;
+        }
         $event = \assignsubmission_onlinetext\event\assessable_uploaded::create($params);
         $event->trigger();
 
