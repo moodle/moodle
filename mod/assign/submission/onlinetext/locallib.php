@@ -262,6 +262,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             $params['objectid'] = $onlinetextsubmission->id;
             $updatestatus = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
             $event = \assignsubmission_onlinetext\event\submission_updated::create($params);
+            $event->set_assign($this->assignment);
             $event->trigger();
             return $updatestatus;
         } else {
@@ -275,6 +276,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
             $params['objectid'] = $onlinetextsubmission->id;
             $event = \assignsubmission_onlinetext\event\submission_created::create($params);
+            $event->set_assign($this->assignment);
             $event->trigger();
             return $onlinetextsubmission->id > 0;
         }

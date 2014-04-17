@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission status updated event.
+ * The mod_assign submission viewed event.
  *
  * @package    mod_assign
- * @copyright  2013 Frédéric Massart
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,43 +27,59 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission status updated event class.
+ * The mod_assign submission viewed event.
  *
  * @property-read array $other {
- *      Extra information about event.
+ *      Extra information about the event.
  *
- *      @type string newstatus status of submission.
+ *      - int assignid: the id of the assignment.
  * }
  *
  * @package    mod_assign
- * @since      Moodle 2.6
- * @copyright  2013 Frédéric Massart
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submission_status_updated extends base {
+class submission_viewed extends base {
     /**
      * Create instance of event.
      *
-     * @since Moodle 2.7
-     *
      * @param \assign $assign
      * @param \stdClass $submission
-     * @return submission_status_updated
+     * @return submission_viewed
      */
     public static function create_from_submission(\assign $assign, \stdClass $submission) {
         $data = array(
-            'context' => $assign->get_context(),
             'objectid' => $submission->id,
-            'relateduserid' => ($assign->get_instance()->teamsubmission) ? null : $submission->userid,
+            'relateduserid' => $submission->userid,
+            'context' => $assign->get_context(),
             'other' => array(
-                'newstatus' => $submission->status
-            )
+                'assignid' => $assign->get_instance()->id,
+            ),
         );
-        /** @var submission_status_updated $event */
+        /** @var submission_viewed $event */
         $event = self::create($data);
         $event->set_assign($assign);
         $event->add_record_snapshot('assign_submission', $submission);
         return $event;
+    }
+
+    /**
+     * Init method.
+     */
+    protected function init() {
+        $this->data['objecttable'] = 'assign_submission';
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventsubmissionviewed', 'mod_assign');
     }
 
     /**
@@ -72,27 +88,8 @@ class submission_status_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has updated the status of the submission {$this->objectid} to {$this->other['newstatus']}.";
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventsubmissionstatusupdated', 'mod_assign');
-    }
-
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'assign_submission';
+        return "The user with the id {$this->userid} viewed the submission for the user with the id {$this->relateduserid} for the
+            assignment with the id {$this->other['assignid']}.";
     }
 
     /**
@@ -101,10 +98,8 @@ class submission_status_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
-        $user = $this->get_record_snapshot('user', $submission->userid);
-        $logmessage = get_string('reverttodraftforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
-        $this->set_legacy_logdata('revert submission to draft', $logmessage);
+        $logmessage = get_string('viewsubmissionforuser', 'assign', $this->relateduserid);
+        $this->set_legacy_logdata('view submission', $logmessage);
         return parent::get_legacy_logdata();
     }
 
@@ -116,8 +111,12 @@ class submission_status_updated extends base {
     protected function validate_data() {
         parent::validate_data();
 
-        if (!isset($this->other['newstatus'])) {
-            throw new \coding_exception('newstatus must be set in $other.');
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['assignid'])) {
+            throw new \coding_exception('The \'assignid\' must be set in other.');
         }
     }
 }

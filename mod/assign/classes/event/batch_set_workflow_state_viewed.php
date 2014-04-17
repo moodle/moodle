@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign all submissions downloaded event.
+ * The mod_assign assignment batch set workflow stated viewed event.
  *
  * @package    mod_assign
- * @copyright  2013 Frédéric Massart
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,14 +27,20 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign all submissions downloaded event class.
+ * The mod_assign assignment batch set workflow stated viewed event.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int assignid: the id of the assignment.
+ * }
  *
  * @package    mod_assign
- * @since      Moodle 2.6
- * @copyright  2013 Frédéric Massart
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class all_submissions_downloaded extends base {
+class batch_set_workflow_state_viewed extends base {
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -44,22 +50,39 @@ class all_submissions_downloaded extends base {
     /**
      * Create instance of event.
      *
-     * @since Moodle 2.7
-     *
      * @param \assign $assign
-     * @return all_submissions_downloaded
+     * @return batch_set_workflow_state_viewed
      */
     public static function create_from_assign(\assign $assign) {
         $data = array(
             'context' => $assign->get_context(),
-            'objectid' => $assign->get_instance()->id
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
         );
         self::$preventcreatecall = false;
-        /** @var submission_graded $event */
+        /** @var batch_set_workflow_state_viewed $event */
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->set_assign($assign);
         return $event;
+    }
+
+    /**
+     * Init method.
+     */
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventbatchsetworkflowstateviewed', 'mod_assign');
     }
 
     /**
@@ -68,27 +91,7 @@ class all_submissions_downloaded extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has downloaded all the submissions.";
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventallsubmissionsdownloaded', 'mod_assign');
-    }
-
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'assign';
+        return "The user with the id {$this->userid} viewed the batch set workflow for the assignment with the id {$this->other['assignid']}.";
     }
 
     /**
@@ -97,7 +100,8 @@ class all_submissions_downloaded extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $this->set_legacy_logdata('download all submissions', get_string('downloadall', 'assign'));
+        $logmessage = get_string('viewbatchsetmarkingworkflowstate', 'assign');
+        $this->set_legacy_logdata('view batch set marking workflow state', $logmessage);
         return parent::get_legacy_logdata();
     }
 
@@ -109,9 +113,13 @@ class all_submissions_downloaded extends base {
      */
     protected function validate_data() {
         if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call all_submissions_downloaded::create() directly, use all_submissions_downloaded::create_from_assign() instead.');
+            throw new \coding_exception('cannot call batch_set_workflow_state_viewed::create() directly, use batch_set_workflow_state_viewed::create_from_assign() instead.');
         }
 
         parent::validate_data();
+
+        if (!isset($this->other['assignid'])) {
+            throw new \coding_exception('The \'assignid\' must be set in other.');
+        }
     }
 }

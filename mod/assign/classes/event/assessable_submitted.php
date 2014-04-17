@@ -40,14 +40,31 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assessable_submitted extends \core\event\assessable_submitted {
-
+class assessable_submitted extends base {
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @param bool $editable
+     * @return assessable_submitted
      */
-    protected $legacylogdata;
+    public static function create_from_submission(\assign $assign, \stdClass $submission, $editable) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $submission->id,
+            'other' => array(
+                'submission_editable' => $editable,
+            ),
+        );
+        /** @var assessable_submitted $event */
+        $event = self::create($data);
+        $event->set_assign($assign);
+        $event->add_record_snapshot('assign_submission', $submission);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -84,40 +101,12 @@ class assessable_submitted extends \core\event\assessable_submitted {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('event_assessable_submitted', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
-    }
-
-    /**
-     * Sets the legacy event log data.
-     *
-     * @param \stdClass $legacylogdata legacy log data.
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+        return get_string('eventassessablesubmitted', 'mod_assign');
     }
 
     /**
@@ -126,8 +115,20 @@ class assessable_submitted extends \core\event\assessable_submitted {
      * @return void
      */
     protected function init() {
-        parent::init();
         $this->data['objecttable'] = 'assign_submission';
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
+        $this->set_legacy_logdata('submit for grading', $this->assign->format_submission_for_log($submission));
+        return parent::get_legacy_logdata();
     }
 
     /**
@@ -138,6 +139,7 @@ class assessable_submitted extends \core\event\assessable_submitted {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (!isset($this->other['submission_editable'])) {
             throw new \coding_exception('Other must contain the key submission_editable.');
         }

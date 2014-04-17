@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class submission_created extends \core\event\base {
+abstract class submission_created extends base {
 
     /**
      * Init method.
@@ -58,14 +58,6 @@ abstract class submission_created extends \core\event\base {
      */
     public static function get_name() {
         return get_string('eventsubmissioncreated', 'mod_assign');
-    }
-
-    /**
-     * Returns relevant URL.
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**

@@ -34,14 +34,35 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class extension_granted extends \core\event\base {
+class extension_granted extends base {
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param int $userid
+     * @return extension_granted
      */
-    protected $legacylogdata;
+    public static function create_from_assign(\assign $assign, $userid) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id,
+            'relateduserid' => $userid,
+        );
+        self::$preventcreatecall = false;
+        /** @var extension_granted $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->set_assign($assign);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -53,30 +74,12 @@ class extension_granted extends \core\event\base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('event_extension_granted', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
+        return get_string('eventextensiongranted', 'mod_assign');
     }
 
     /**
@@ -91,13 +94,13 @@ class extension_granted extends \core\event\base {
     }
 
     /**
-     * Sets the legacy event log data.
+     * Return legacy data for add_to_log().
      *
-     * @param \stdClass $legacylogdata legacy log data.
-     * @return void
+     * @return array
      */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('grant extension', $this->relateduserid);
+        return parent::get_legacy_logdata();
     }
 
     /**
@@ -107,7 +110,12 @@ class extension_granted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call extension_granted::create() directly, use extension_granted::create_from_assign() instead.');
+        }
+
         parent::validate_data();
+
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('relateduserid is a mandatory property.');
         }

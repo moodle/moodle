@@ -260,6 +260,7 @@ class assign_submission_file extends assign_submission_plugin {
             $params['objectid'] = $filesubmission->id;
 
             $event = \assignsubmission_file\event\submission_updated::create($params);
+            $event->set_assign($this->assignment);
             $event->trigger();
             return $updatestatus;
         } else {
@@ -272,6 +273,7 @@ class assign_submission_file extends assign_submission_plugin {
             $params['objectid'] = $filesubmission->id;
 
             $event = \assignsubmission_file\event\submission_created::create($params);
+            $event->set_assign($this->assignment);
             $event->trigger();
             return $filesubmission->id > 0;
         }

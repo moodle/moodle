@@ -34,14 +34,35 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submission_duplicated extends \core\event\base {
+class submission_duplicated extends base {
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @return submission_duplicated
      */
-    protected $legacylogdata;
+    public static function create_from_submission(\assign $assign, \stdClass $submission) {
+        $data = array(
+            'objectid' => $submission->id,
+            'context' => $assign->get_context(),
+        );
+        self::$preventcreatecall = false;
+        /** @var submission_duplicated $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->set_assign($assign);
+        $event->add_record_snapshot('assign_submission', $submission);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -53,30 +74,12 @@ class submission_duplicated extends \core\event\base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('event_submission_duplicated', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action.
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
+        return get_string('eventsubmissionduplicated', 'mod_assign');
     }
 
     /**
@@ -91,13 +94,26 @@ class submission_duplicated extends \core\event\base {
     }
 
     /**
-     * Sets the legacy event log data.
+     * Return legacy data for add_to_log().
      *
-     * @param \stdClass $legacylogdata legacy log data.
-     * @return void
+     * @return array
      */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+    protected function get_legacy_logdata() {
+        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
+        $this->set_legacy_logdata('submissioncopied', $this->assign->format_submission_for_log($submission));
+        return parent::get_legacy_logdata();
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     */
+    protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call submission_duplicated::create() directly, use submission_duplicated::create_from_submission() instead.');
+        }
+
+        parent::validate_data();
+    }
 }

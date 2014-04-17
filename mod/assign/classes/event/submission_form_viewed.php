@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign workflow state updated event.
+ * The mod_assign submission form viewed event.
  *
  * @package    mod_assign
- * @copyright  2013 Frédéric Massart
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,20 +27,20 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign workflow state updated event class.
+ * The mod_assign submission form viewed event.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string newstatus status of submission.
+ *      - int assignid: the id of the assignment.
  * }
  *
  * @package    mod_assign
- * @since      Moodle 2.6
- * @copyright  2013 Frédéric Massart
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class workflow_state_updated extends base {
+class submission_form_viewed extends base {
     /**
      * Flag for prevention of direct create() call.
      * @var bool
@@ -50,24 +50,20 @@ class workflow_state_updated extends base {
     /**
      * Create instance of event.
      *
-     * @since Moodle 2.7
-     *
      * @param \assign $assign
      * @param \stdClass $user
-     * @param string $state
-     * @return workflow_state_updated
+     * @return submission_form_viewed
      */
-    public static function create_from_user(\assign $assign, \stdClass $user, $state) {
+    public static function create_from_user(\assign $assign, \stdClass $user) {
         $data = array(
-            'context' => $assign->get_context(),
-            'objectid' => $assign->get_instance()->id,
             'relateduserid' => $user->id,
+            'context' => $assign->get_context(),
             'other' => array(
-                'newstate' => $state,
+                'assignid' => $assign->get_instance()->id,
             ),
         );
         self::$preventcreatecall = false;
-        /** @var workflow_state_updated $event */
+        /** @var submission_form_viewed $event */
         $event = self::create($data);
         self::$preventcreatecall = true;
         $event->set_assign($assign);
@@ -76,32 +72,35 @@ class workflow_state_updated extends base {
     }
 
     /**
+     * Init method.
+     */
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventsubmissionformviewed', 'mod_assign');
+    }
+
+    /**
      * Returns description of what happened.
      *
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has set the workflow state of {$this->relateduserid} to {$this->other['newstate']}.";
-    }
+        if ($this->userid != $this->relateduserid) {
+            return "The user with the id {$this->userid} viewed the submission form for the user with the id {$this->relateduserid}
+                for the assignment with the id {$this->other['assignid']}.";
+        }
 
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventworkflowstateupdated', 'mod_assign');
-    }
-
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'assign';
+        return "The user with the id {$this->userid} viewed their submission for the assignment with the id
+            {$this->other['assignid']}.";
     }
 
     /**
@@ -110,10 +109,13 @@ class workflow_state_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $user = $this->get_record_snapshot('user', $this->relateduserid);
-        $a = array('id' => $user->id, 'fullname' => fullname($user), 'state' => $this->other['newstate']);
-        $logmessage = get_string('setmarkingworkflowstateforlog', 'assign', $a);
-        $this->set_legacy_logdata('set marking workflow state', $logmessage);
+        if ($this->relateduserid == $this->userid) {
+            $title = get_string('editsubmission', 'assign');
+        } else {
+            $user = $this->get_record_snapshot('user', $this->relateduserid);
+            $title = get_string('editsubmissionother', 'assign', fullname($user));
+        }
+        $this->set_legacy_logdata('view submit assignment form', $title);
         return parent::get_legacy_logdata();
     }
 
@@ -124,15 +126,17 @@ class workflow_state_updated extends base {
      */
     protected function validate_data() {
         if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call workflow_state_updated::create() directly, use workflow_state_updated::create_from_user() instead.');
+            throw new \coding_exception('cannot call submission_form_viewed::create() directly, use submission_form_viewed::create_from_user() instead.');
         }
 
         parent::validate_data();
 
-        if (!isset($this->other['newstate'])) {
-            throw new \coding_exception('newstate must be set in $other.');
-        } else if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set.');
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['assignid'])) {
+            throw new \coding_exception('The \'assignid\' must be set in other.');
         }
     }
 }

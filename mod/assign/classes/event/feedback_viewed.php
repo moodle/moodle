@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission graded event.
+ * The mod_assign feedback viewed event.
  *
  * @package    mod_assign
- * @copyright  2013 Frédéric Massart
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,42 +27,59 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission graded event class.
+ * The mod_assign feedback viewed event.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int assignid: the id of the assignment.
+ * }
  *
  * @package    mod_assign
- * @since      Moodle 2.6
- * @copyright  2013 Frédéric Massart
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submission_graded extends base {
-    /**
-     * Flag for prevention of direct create() call.
-     * @var bool
-     */
-    protected static $preventcreatecall = true;
-
+class feedback_viewed extends base {
     /**
      * Create instance of event.
      *
-     * @since Moodle 2.7
-     *
      * @param \assign $assign
      * @param \stdClass $grade
-     * @return submission_graded
+     * @return feedback_viewed
      */
     public static function create_from_grade(\assign $assign, \stdClass $grade) {
         $data = array(
-            'context' => $assign->get_context(),
             'objectid' => $grade->id,
-            'relateduserid' => $grade->userid
+            'relateduserid' => $grade->userid,
+            'context' => $assign->get_context(),
+            'other' => array(
+                'assignid' => $assign->get_instance()->id,
+            ),
         );
-        self::$preventcreatecall = false;
-        /** @var submission_graded $event */
+        /** @var feedback_viewed $event */
         $event = self::create($data);
-        self::$preventcreatecall = true;
         $event->set_assign($assign);
         $event->add_record_snapshot('assign_grades', $grade);
         return $event;
+    }
+
+    /**
+     * Init method.
+     */
+    protected function init() {
+        $this->data['objecttable'] = 'assign_grades';
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventfeedbackviewed', 'mod_assign');
     }
 
     /**
@@ -71,27 +88,8 @@ class submission_graded extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has graded the submission {$this->objectid}.";
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventsubmissiongraded', 'mod_assign');
-    }
-
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'assign_grades';
+        return "The user with the id {$this->userid} viewed the feedback for the user with the id {$this->relateduserid}
+            for the assignment with the id {$this->other['assignid']}.";
     }
 
     /**
@@ -100,8 +98,8 @@ class submission_graded extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $grade = $this->get_record_snapshot('assign_grades', $this->objectid);
-        $this->set_legacy_logdata('grade submission', $this->assign->format_grade_for_log($grade));
+        $logmessage = get_string('viewfeedbackforuser', 'assign', $this->relateduserid);
+        $this->set_legacy_logdata('view feedback', $logmessage);
         return parent::get_legacy_logdata();
     }
 
@@ -109,17 +107,16 @@ class submission_graded extends base {
      * Custom validation.
      *
      * @throws \coding_exception
-     * @return void
      */
     protected function validate_data() {
-        if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call submission_graded::create() directly, use submission_graded::create_from_grade() instead.');
-        }
-
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid is a mandatory property.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['assignid'])) {
+            throw new \coding_exception('The \'assignid\' must be set in other.');
         }
     }
 }
