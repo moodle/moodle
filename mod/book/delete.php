@@ -77,7 +77,6 @@ if ($confirm) {  // the operation was confirmed.
     $fs->delete_area_files($context->id, 'mod_book', 'chapter', $chapter->id);
     $DB->delete_records('book_chapters', array('id'=>$chapter->id));
 
-    add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
     $params = array(
         'context' => $context,
         'objectid' => $chapter->id

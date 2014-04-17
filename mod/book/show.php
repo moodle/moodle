@@ -79,10 +79,6 @@ if (!$chapter->subchapter) {
     }
 }
 
-// MDL-39963 Decide what to do with those logs.
-add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
-add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
-
 book_preload_chapters($book); // fix structure
 $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 

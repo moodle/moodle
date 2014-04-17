@@ -75,7 +75,6 @@ if ($mform->is_cancelled()) {
         $DB->update_record('book_chapters', $data);
         $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 
-        add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
         $params = array(
             'context' => $context,
             'objectid' => $data->id
@@ -110,7 +109,6 @@ if ($mform->is_cancelled()) {
         $DB->update_record('book_chapters', $data);
         $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 
-        add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
         $params = array(
             'context' => $context,
             'objectid' => $data->id
