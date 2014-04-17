@@ -179,9 +179,9 @@ class core_message_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the message read event.
+     * Test the message viewed event.
      */
-    public function test_message_read() {
+    public function test_message_viewed() {
         global $DB;
 
         // Create a message to mark as read.
@@ -199,7 +199,7 @@ class core_message_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\message_read', $event);
+        $this->assertInstanceOf('\core\event\message_viewed', $event);
         $this->assertEquals(context_user::instance(2), $event->get_context());
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());

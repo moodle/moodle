@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Item untagged event.
+ * Event for when a tag has been added to an item.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -37,14 +37,14 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-class item_untagged extends base {
+class tag_added extends base {
 
     /**
      * Initialise the event data.
      */
     protected function init() {
         $this->data['objecttable'] = 'tag_instance';
-        $this->data['crud'] = 'd';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
@@ -54,7 +54,7 @@ class item_untagged extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventitemuntagged', 'tag');
+        return get_string('eventtagadded', 'tag');
     }
 
     /**
@@ -63,8 +63,22 @@ class item_untagged extends base {
      * @return string
      */
     public function get_description() {
-        return 'The tag with the id ' . $this->other['tagid'] . ' was removed from the item type \'' . s($this->other['itemtype']) .
+        return 'The tag with the id ' . $this->other['tagid'] . ' was added to the item type \'' . s($this->other['itemtype']) .
             '\' with the id ' . $this->other['itemid'] . ' by the user with the id ' . $this->userid;
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        if ($this->other['itemtype'] === 'course') {
+            $url = 'tag/search.php?query=' . urlencode($this->other['tagrawname']);
+            return array($this->courseid, 'coursetags', 'add', $url, 'Course tagged');
+        }
+
+        return null;
     }
 
     /**

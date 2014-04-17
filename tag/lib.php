@@ -678,15 +678,15 @@ function tag_delete($tagids) {
     if ($taginstances) {
         // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
         $syscontextid = context_system::instance()->id;
-        // Loop through the tag instances and fire an 'item_untagged' event.
+        // Loop through the tag instances and fire a 'tag_removed'' event.
         foreach ($taginstances as $taginstance) {
             // We can not fire an event with 'null' as the contextid.
             if (is_null($taginstance->contextid)) {
                 $taginstance->contextid = $syscontextid;
             }
 
-            // Trigger item untagged event.
-            $event = \core\event\item_untagged::create(array(
+            // Trigger tag removed event.
+            $event = \core\event\tag_removed::create(array(
                 'objectid' => $taginstance->id,
                 'contextid' => $taginstance->contextid,
                 'other' => array(
@@ -757,15 +757,15 @@ function tag_delete_instances($component, $contextid = null) {
         $DB->delete_records('tag_instance',$params);
         // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
         $syscontextid = context_system::instance()->id;
-        // Loop through the tag instances and fire an 'item_untagged' event.
+        // Loop through the tag instances and fire an 'tag_removed' event.
         foreach ($taginstances as $taginstance) {
             // We can not fire an event with 'null' as the contextid.
             if (is_null($taginstance->contextid)) {
                 $taginstance->contextid = $syscontextid;
             }
 
-            // Trigger item untagged event.
-            $event = \core\event\item_untagged::create(array(
+            // Trigger tag removed event.
+            $event = \core\event\tag_removed::create(array(
                 'objectid' => $taginstance->id,
                 'contextid' => $taginstance->contextid,
                 'other' => array(
@@ -814,8 +814,8 @@ function tag_delete_instance($record_type, $record_id, $tagid, $userid = null) {
             $taginstance->contextid = context_system::instance()->id;
         }
 
-        // Trigger item untagged event.
-        $event = \core\event\item_untagged::create(array(
+        // Trigger tag removed event.
+        $event = \core\event\tag_removed::create(array(
             'objectid' => $taginstance->id,
             'contextid' => $taginstance->contextid,
             'other' => array(
@@ -1020,8 +1020,8 @@ function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0, $c
         $contextid = context_system::instance()->id;
     }
 
-    // Trigger item tagged event.
-    $event = \core\event\item_tagged::create(array(
+    // Trigger tag added event.
+    $event = \core\event\tag_added::create(array(
         'objectid' => $tag_instance_object->id,
         'contextid' => $contextid,
         'other' => array(

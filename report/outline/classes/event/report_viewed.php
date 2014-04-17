@@ -34,7 +34,7 @@ namespace report_outline\event;
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outline_viewed extends \core\event\base {
+class report_viewed extends \core\event\base {
 
     /**
      * Init method.

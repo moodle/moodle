@@ -121,7 +121,7 @@ $params = array(
     'relateduserid' => $user->id,
     'other' => array('reportmode' => $mode),
 );
-$event = \mod_forum\event\userreport_viewed::create($params);
+$event = \mod_forum\event\user_report_viewed::create($params);
 $event->trigger();
 
 // Get the posts by the requested user that the current user can access.

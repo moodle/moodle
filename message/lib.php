@@ -2378,7 +2378,7 @@ function message_mark_message_read($message, $timeread, $messageworkingempty=fal
     $DB->delete_records('message', array('id' => $messageid));
 
     // Trigger event for reading a message.
-    $event = \core\event\message_read::create(array(
+    $event = \core\event\message_viewed::create(array(
         'objectid' => $messagereadid,
         'userid' => $message->useridto, // Using the user who read the message as they are the ones performing the action.
         'context'  => context_user::instance($message->useridto),

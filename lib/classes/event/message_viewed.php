@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Message read event class.
+ * Message viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -32,7 +32,7 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-class message_read extends base {
+class message_viewed extends base {
 
     /**
      * Init method.
@@ -49,7 +49,7 @@ class message_read extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventmessageread', 'message');
+        return get_string('eventmessageviewed', 'message');
     }
 
     /**

@@ -1083,9 +1083,9 @@ class mod_forum_events_testcase extends advanced_testcase {
     }
 
     /**
-     *  Ensure userreport_viewed event validates that the reportmode is set.
+     *  Ensure user_report_viewed event validates that the reportmode is set.
      */
-    public function test_userreport_viewed_reportmode_validation() {
+    public function test_user_report_viewed_reportmode_validation() {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
 
@@ -1095,13 +1095,13 @@ class mod_forum_events_testcase extends advanced_testcase {
         );
 
         $this->setExpectedException('coding_exception', 'reportmode must be set in other.');
-        \mod_forum\event\userreport_viewed::create($params);
+        \mod_forum\event\user_report_viewed::create($params);
     }
 
     /**
-     *  Ensure userreport_viewed event validates that the contextlevel is correct.
+     *  Ensure user_report_viewed event validates that the contextlevel is correct.
      */
-    public function test_userreport_viewed_contextlevel_validation() {
+    public function test_user_report_viewed_contextlevel_validation() {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1113,13 +1113,13 @@ class mod_forum_events_testcase extends advanced_testcase {
         );
 
         $this->setExpectedException('coding_exception', 'Context passed must be system or course.');
-        \mod_forum\event\userreport_viewed::create($params);
+        \mod_forum\event\user_report_viewed::create($params);
     }
 
     /**
-     *  Ensure userreport_viewed event validates that the relateduserid is set.
+     *  Ensure user_report_viewed event validates that the relateduserid is set.
      */
-    public function test_userreport_viewed_relateduserid_validation() {
+    public function test_user_report_viewed_relateduserid_validation() {
 
         $params = array(
             'context' => context_system::instance(),
@@ -1127,13 +1127,13 @@ class mod_forum_events_testcase extends advanced_testcase {
         );
 
         $this->setExpectedException('coding_exception', 'relateduserid must be set.');
-        \mod_forum\event\userreport_viewed::create($params);
+        \mod_forum\event\user_report_viewed::create($params);
     }
 
     /**
-     * Test the userreport_viewed event.
+     * Test the user_report_viewed event.
      */
-    public function test_userreport_viewed() {
+    public function test_user_report_viewed() {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -1145,7 +1145,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('reportmode' => 'discussions'),
         );
 
-        $event = \mod_forum\event\userreport_viewed::create($params);
+        $event = \mod_forum\event\user_report_viewed::create($params);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -1155,7 +1155,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_forum\event\userreport_viewed', $event);
+        $this->assertInstanceOf('\mod_forum\event\user_report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'user report',
             "user.php?id={$user->id}&amp;mode=discussions&amp;course={$course->id}", $user->id);

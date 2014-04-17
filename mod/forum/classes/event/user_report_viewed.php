@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userreport_viewed extends \core\event\base {
+class user_report_viewed extends \core\event\base {
 
     /**
      * Init method.
