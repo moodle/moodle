@@ -8764,10 +8764,15 @@ class assign {
 
         // Trigger the course module viewed event.
         $assigninstance = $this->get_instance();
-        $event = \mod_assign\event\course_module_viewed::create(array(
-                'objectid' => $assigninstance->id,
-                'context' => $this->get_context()
-        ));
+        $params = [
+            'objectid' => $assigninstance->id,
+            'context' => $this->get_context()
+        ];
+        if ($this->is_blind_marking()) {
+            $params['anonymous'] = 1;
+        }
+
+        $event = \mod_assign\event\course_module_viewed::create($params);
 
         $event->add_record_snapshot('assign', $assigninstance);
         $event->trigger();
