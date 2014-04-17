@@ -60,14 +60,7 @@ if ($confirm) {  // the operation was confirmed.
             } else if ($found and $ch->subchapter) {
                 $fs->delete_area_files($context->id, 'mod_book', 'chapter', $ch->id);
                 $DB->delete_records('book_chapters', array('id'=>$ch->id));
-
-                $params = array(
-                    'context' => $context,
-                    'objectid' => $ch->id
-                );
-                $event = \mod_book\event\chapter_deleted::create($params);
-                $event->add_record_snapshot('book_chapters', $ch);
-                $event->trigger();
+                \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $ch)->trigger();
             } else if ($found) {
                 break;
             }
@@ -77,14 +70,7 @@ if ($confirm) {  // the operation was confirmed.
     $fs->delete_area_files($context->id, 'mod_book', 'chapter', $chapter->id);
     $DB->delete_records('book_chapters', array('id'=>$chapter->id));
 
-    $params = array(
-        'context' => $context,
-        'objectid' => $chapter->id
-    );
-    $event = \mod_book\event\chapter_deleted::create($params);
-    $event->add_record_snapshot('book_chapters', $chapter);
-    $event->set_legacy_logdata(array($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id));
-    $event->trigger();
+    \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $chapter)->trigger();
 
     book_preload_chapters($book); // Fix structure.
     $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));

@@ -46,12 +46,9 @@ class booktool_exportimscp_events_testcase extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
+        $context = context_module::instance($book->cmid);
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $book->id
-        );
-        $event = \booktool_exportimscp\event\book_exported::create($params);
+        $event = \booktool_exportimscp\event\book_exported::create_from_book($book, $context);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();

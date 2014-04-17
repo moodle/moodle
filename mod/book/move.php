@@ -173,13 +173,9 @@ if (!$nothing) {
     foreach ($newchapters as $ch) {
         $ch->pagenum = $i;
         $DB->update_record('book_chapters', $ch);
+        $ch = $DB->get_record('book_chapters', array('id' => $ch->id));
 
-        $params = array(
-            'context' => $context,
-            'objectid' => $ch->id
-        );
-        $event = \mod_book\event\chapter_updated::create($params);
-        $event->trigger();
+        \mod_book\event\chapter_updated::create_from_chapter($book, $context, $ch)->trigger();
 
         $i++;
     }

@@ -82,15 +82,10 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
                 }
 
                 $chapter->id = $DB->insert_record('book_chapters', $chapter);
+                $chapter = $DB->get_record('book_chapters', array('id' => $chapter->id));
                 $chapters[$chapter->id] = $chapter;
 
-                $params = array(
-                    'context' => $context,
-                    'objectid' => $chapter->id
-                );
-                $event = \mod_book\event\chapter_created::create($params);
-                $event->add_record_snapshot('book_chapters', $chapter);
-                $event->trigger();
+                \mod_book\event\chapter_created::create_from_chapter($book, $context, $chapter)->trigger();
             }
         }
     }

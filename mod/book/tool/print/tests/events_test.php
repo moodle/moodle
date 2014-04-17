@@ -46,12 +46,9 @@ class booktool_print_events_testcase extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
+        $context = context_module::instance($book->cmid);
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $book->id
-        );
-        $event = \booktool_print\event\book_printed::create($params);
+        $event = \booktool_print\event\book_printed::create_from_book($book, $context);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -78,12 +75,9 @@ class booktool_print_events_testcase extends advanced_testcase {
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
+        $context = context_module::instance($book->cmid);
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \booktool_print\event\chapter_printed::create($params);
+        $event = \booktool_print\event\chapter_printed::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
