@@ -70,7 +70,7 @@ class webservice_function_called extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_function_called', 'webservice');
+        return get_string('eventwebservicefunctioncalled', 'webservice');
     }
 
     /**

@@ -53,7 +53,7 @@ class cohort_member_removed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_cohort_member_removed', 'core_cohort');
+        return get_string('eventcohortmemberremoved', 'core_cohort');
     }
 
     /**

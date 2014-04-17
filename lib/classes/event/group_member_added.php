@@ -80,7 +80,7 @@ class group_member_added extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_member_added', 'group');
+        return get_string('eventgroupmemberadded', 'group');
     }
 
     /**

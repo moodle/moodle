@@ -61,7 +61,7 @@ class message_sent extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_message_sent', 'mod_chat');
+        return get_string('eventmessagesent', 'mod_chat');
     }
 
     /**

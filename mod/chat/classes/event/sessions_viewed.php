@@ -64,7 +64,7 @@ class sessions_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_sessions_viewed', 'mod_chat');
+        return get_string('eventsessionsviewed', 'mod_chat');
     }
 
     /**

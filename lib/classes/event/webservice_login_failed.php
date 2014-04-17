@@ -74,7 +74,7 @@ class webservice_login_failed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_login_failed', 'webservice');
+        return get_string('eventwebserviceloginfailed', 'webservice');
     }
 
     /**

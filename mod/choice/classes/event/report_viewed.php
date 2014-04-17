@@ -50,7 +50,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_report_viewed', 'choice');
+        return get_string('eventreportviewed', 'mod_choice');
     }
 
     /**

@@ -74,7 +74,7 @@ class answer_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_answer_updated', 'mod_choice');
+        return get_string('eventanswerupdated', 'mod_choice');
     }
 
     /**

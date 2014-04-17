@@ -68,7 +68,7 @@ class grouping_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_grouping_updated', 'group');
+        return get_string('eventgroupingupdated', 'group');
     }
 
     /**

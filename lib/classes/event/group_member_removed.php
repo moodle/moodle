@@ -71,7 +71,7 @@ class group_member_removed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_member_removed', 'group');
+        return get_string('eventgroupmemberremoved', 'group');
     }
 
     /**

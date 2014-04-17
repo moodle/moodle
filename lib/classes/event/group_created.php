@@ -68,7 +68,7 @@ class group_created extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_created', 'group');
+        return get_string('eventgroupcreated', 'group');
     }
 
     /**

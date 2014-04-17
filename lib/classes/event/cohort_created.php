@@ -52,7 +52,7 @@ class cohort_created extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_cohort_created', 'core_cohort');
+        return get_string('eventcohortcreated', 'core_cohort');
     }
 
     /**

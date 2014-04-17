@@ -62,7 +62,7 @@ class webservice_service_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_service_updated', 'webservice');
+        return get_string('eventwebserviceserviceupdated', 'webservice');
     }
 
     /**

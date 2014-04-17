@@ -81,7 +81,7 @@ class chapter_deleted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_deleted', 'mod_book');
+        return get_string('eventchapterdeleted', 'mod_book');
     }
 
     /**

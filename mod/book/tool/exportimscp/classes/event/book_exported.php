@@ -79,7 +79,7 @@ class book_exported extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_book_exported', 'booktool_exportimscp');
+        return get_string('eventbookexported', 'booktool_exportimscp');
     }
 
     /**

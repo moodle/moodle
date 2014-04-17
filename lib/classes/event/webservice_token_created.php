@@ -68,7 +68,7 @@ class webservice_token_created extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_token_created', 'webservice');
+        return get_string('eventwebservicetokencreated', 'webservice');
     }
 
     /**

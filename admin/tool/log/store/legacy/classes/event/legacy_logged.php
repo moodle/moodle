@@ -33,7 +33,7 @@ class legacy_logged extends \core\event\base {
     }
 
     public static function get_name() {
-        return get_string('event_legacy_logged', 'logstore_legacy');
+        return get_string('eventlegacylogged', 'logstore_legacy');
     }
 
     public function get_description() {

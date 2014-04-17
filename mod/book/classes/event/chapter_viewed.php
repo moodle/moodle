@@ -81,7 +81,7 @@ class chapter_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_viewed', 'mod_book');
+        return get_string('eventchapterviewed', 'mod_book');
     }
 
     /**

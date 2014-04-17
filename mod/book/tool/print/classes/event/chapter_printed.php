@@ -82,7 +82,7 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_printed', 'booktool_print');
+        return get_string('eventchapterprinted', 'booktool_print');
     }
 
     /**

@@ -61,7 +61,7 @@ class webservice_service_user_removed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_service_user_removed', 'webservice');
+        return get_string('eventwebserviceserviceuserremoved', 'webservice');
     }
 
     /**

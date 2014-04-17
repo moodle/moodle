@@ -74,7 +74,7 @@ class answer_submitted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_answer_created', 'mod_choice');
+        return get_string('eventanswercreated', 'mod_choice');
     }
 
     /**

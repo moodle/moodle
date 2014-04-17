@@ -79,7 +79,7 @@ class book_printed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_book_printed', 'booktool_print');
+        return get_string('eventbookprinted', 'booktool_print');
     }
 
     /**
