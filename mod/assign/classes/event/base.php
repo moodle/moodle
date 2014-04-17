@@ -115,4 +115,17 @@ abstract class base extends \core\event\base {
 
         return null;
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if ($this->contextlevel != CONTEXT_MODULE) {
+            throw new \coding_exception('Context passed must be module context.');
+        }
+    }
 }

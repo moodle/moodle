@@ -143,9 +143,5 @@ class assessable_submitted extends base {
         if (!isset($this->other['submission_editable'])) {
             throw new \coding_exception('Other must contain the key submission_editable.');
         }
-
-        if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
-        }
     }
 }
