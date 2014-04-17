@@ -166,10 +166,8 @@ class behat_forms extends behat_base {
      */
     public function the_field_matches_value($field, $value) {
 
-        $fieldnode = $this->find_field($field);
-
         // Get the field.
-        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
 
         // Checks if the provided value matches the current field value.
         if (!$formfield->matches($value)) {
@@ -193,10 +191,8 @@ class behat_forms extends behat_base {
      */
     public function the_field_does_not_match_value($field, $value) {
 
-        $fieldnode = $this->find_field($field);
-
         // Get the field.
-        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
 
         // Checks if the provided value matches the current field value.
         if ($formfield->matches($value)) {
@@ -348,11 +344,9 @@ class behat_forms extends behat_base {
      */
     protected function set_field_value($fieldlocator, $value) {
 
-        $node = $this->find_field($fieldlocator);
-
         // We delegate to behat_form_field class, it will
         // guess the type properly as it is a select tag.
-        $field = behat_field_manager::get_form_field($node, $this->getSession());
+        $field = behat_field_manager::get_form_field_from_label($fieldlocator, $this);
         $field->set_value($value);
     }
 

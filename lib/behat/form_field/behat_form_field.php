@@ -51,6 +51,12 @@ class behat_form_field {
     protected $field;
 
     /**
+     * @var string The field's locator.
+     */
+    protected $fieldlocator = false;
+
+
+    /**
      * General constructor with the node and the session to interact with.
      *
      * @param Session $session Reference to Mink session to traverse/modify the page DOM.
@@ -171,4 +177,63 @@ class behat_form_field {
         }
         return true;
     }
+
+    /**
+     * Gets the field locator.
+     *
+     * Defaults to the field label but you can
+     * specify other locators if you are interested.
+     *
+     * Public visibility as in most cases will be hard to
+     * use this method in a generic way, as fields can
+     * be selected using multiple ways (label, id, name...).
+     *
+     * @throws coding_exception
+     * @param string $locatortype
+     * @return string
+     */
+    protected function get_field_locator($locatortype = false) {
+
+        if (!empty($this->fieldlocator)) {
+            return $this->fieldlocator;
+        }
+
+        $fieldid = $this->field->getAttribute('id');
+
+        // Defaults to label.
+        if ($locatortype == 'label' || $locatortype == false) {
+
+            $labelnode = $this->session->getPage()->find('xpath', '//label[@for="' . $fieldid . '"]');
+
+            // Exception only if $locatortype was specified.
+            if (!$labelnode && $locatortype == 'label') {
+                throw new coding_exception('Field with "' . $fieldid . '" id does not have a label.');
+            }
+
+            $this->fieldlocator = $labelnode->getText();
+        }
+
+        // Let's look for the name as a second option (more popular than
+        // id's when pointing to fields).
+        if (($locatortype == 'name' || $locatortype == false) &&
+                empty($this->fieldlocator)) {
+
+            $name = $this->field->getAttribute('name');
+
+            // Exception only if $locatortype was specified.
+            if (!$name && $locatortype == 'name') {
+                throw new coding_exception('Field with "' . $fieldid . '" id does not have a name attribute.');
+            }
+
+            $this->fieldlocator = $name;
+        }
+
+        // Otherwise returns the id if no specific locator type was provided.
+        if (empty($this->fieldlocator)) {
+            $this->fieldlocator = $fieldid;
+        }
+
+        return $this->fieldlocator;
+    }
+
 }
