@@ -958,7 +958,7 @@ M.core_availability.EyeIcon = function(individual, shown) {
         M.core_availability.form.update();
     };
     hideButton.on('click', click, this);
-    hideButton.on('keyup', click, this);
+    hideButton.on('key', click, 'up:enter', this);
 };
 
 /**
