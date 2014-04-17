@@ -24,12 +24,18 @@ Feature: In an assignment, students can add and edit text online
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
+      | assignsubmission_onlinetext_wordlimit_enabled | 1 |
+      | assignsubmission_onlinetext_wordlimit | 10 |
       | assignsubmission_file_enabled | 0 |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | This is more than 10 words. 1 2 3 4 5 6 7 8 9 10. |
+    And I press "Save changes"
+    Then I should see "Please review your submission and try again."
     And I set the following fields to these values:
       | Online text | I'm the student first submission |
     And I press "Save changes"
