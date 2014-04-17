@@ -349,9 +349,7 @@ class behat_backup extends behat_base {
         foreach ($datahash as $locator => $value) {
 
             try {
-                // Using $this->find* to enforce stability over speed.
-                $fieldnode = $this->find_field($locator);
-                $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+                $field = behat_field_manager::get_form_field_from_label($locator, $this);
                 $field->set_value($value);
 
             } catch (ElementNotFoundException $e) {

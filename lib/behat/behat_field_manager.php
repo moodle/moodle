@@ -26,7 +26,9 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 use Behat\Mink\Session as Session,
-    Behat\Mink\Element\NodeElement as NodeElement;
+    Behat\Mink\Element\NodeElement as NodeElement,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
+    Behat\MinkExtension\Context\RawMinkContext as RawMinkContext;
 
 /**
  * Helper to interact with form fields.
@@ -37,6 +39,30 @@ use Behat\Mink\Session as Session,
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_field_manager {
+
+    /**
+     * Gets an instance of the form field from it's label
+     *
+     * @param string $label
+     * @param RawMinkContext $context
+     * @return behat_form_field
+     */
+    public static function get_form_field_from_label($label, RawMinkContext $context) {
+
+        // There are moodle form elements that are not directly related with
+        // a basic HTML form field, we should also take care of them.
+        try {
+            // The DOM node.
+            $fieldnode = $context->find_field($label);
+        } catch (ElementNotFoundException $e) {
+
+            // Looking for labels that points to filemanagers.
+            $fieldnode = $context->find_filemanager($label);
+        }
+
+        // The behat field manager.
+        return self::get_form_field($fieldnode, $context->getSession());
+    }
 
     /**
      * Gets an instance of the form field.
@@ -217,6 +243,7 @@ class behat_field_manager {
      * @todo MDL-XXXXX This will be deleted in Moodle 2.8
      * @see behat_field_manager::get_form_field()
      * @param NodeElement $fieldnode
+     * @param string $locator
      * @param Session $session The behat browser session
      * @return behat_form_field
      */
@@ -237,6 +264,7 @@ class behat_field_manager {
      * @todo MDL-XXXXX This will be deleted in Moodle 2.8
      * @see behat_field_manager::get_field_node_type()
      * @param NodeElement $fieldnode The current node.
+     * @param string $locator
      * @param Session $session The behat browser session
      * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
      */
