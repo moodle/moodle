@@ -34,6 +34,25 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class book_printed extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \stdClass $book
+     * @param \context_module $context
+     * @return book_printed
+     */
+    public static function create_from_book(\stdClass $book, \context_module $context) {
+        $data = array(
+            'context' => $context,
+            'objectid' => $book->id
+        );
+        /** @var book_printed $event */
+        $event = self::create($data);
+        $event->add_record_snapshot('book', $book);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.

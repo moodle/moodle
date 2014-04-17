@@ -82,15 +82,10 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
                 }
 
                 $chapter->id = $DB->insert_record('book_chapters', $chapter);
+                $chapter = $DB->get_record('book_chapters', array('id' => $chapter->id));
                 $chapters[$chapter->id] = $chapter;
 
-                $params = array(
-                    'context' => $context,
-                    'objectid' => $chapter->id
-                );
-                $event = \mod_book\event\chapter_created::create($params);
-                $event->add_record_snapshot('book_chapters', $chapter);
-                $event->trigger();
+                \mod_book\event\chapter_created::create_from_chapter($book, $context, $chapter)->trigger();
             }
         }
     }
@@ -154,7 +149,6 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
         }
     }
 
-    add_to_log($book->course, 'course', 'update mod', '../mod/book/view.php?id='.$context->instanceid, 'book '.$book->id);
     $fs->delete_area_files($context->id, 'mod_book', 'importhtmltemp', 0);
 
     // update the revision flag - this takes a long time, better to refetch the current value

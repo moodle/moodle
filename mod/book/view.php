@@ -75,15 +75,7 @@ if ($allowedit and !$chapters) {
 }
 // Check chapterid and read chapter data
 if ($chapterid == '0') { // Go to first chapter if no given.
-    $params = array(
-        'context' => $context,
-        'objectid' => $book->id
-    );
-    $event = \mod_book\event\course_module_viewed::create($params);
-    $event->add_record_snapshot('course_modules', $cm);
-    $event->add_record_snapshot('course', $course);
-    $event->add_record_snapshot('book', $book);
-    $event->trigger();
+    \mod_book\event\course_module_viewed::create_from_book($book, $context)->trigger();
 
     foreach ($chapters as $ch) {
         if ($edit) {
@@ -119,13 +111,7 @@ unset($chapterid);
 
 // Security checks END.
 
-$params = array(
-    'context' => $context,
-    'objectid' => $chapter->id
-);
-$event = \mod_book\event\chapter_viewed::create($params);
-$event->add_record_snapshot('book_chapters', $chapter);
-$event->trigger();
+\mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter)->trigger();
 
 // Read standard strings.
 $strbooks = get_string('modulenameplural', 'mod_book');

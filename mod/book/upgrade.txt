@@ -1,0 +1,6 @@
+This files describes API changes in the book code.
+
+=== 2.7 ===
+
+* bogus legacy log calls were removed
+* \mod_book\event\chapter_deleted::set_legacy_logdata() was removed
