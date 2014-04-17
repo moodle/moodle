@@ -123,6 +123,22 @@ Feature: edit_availability
     When I click on ".availability-item .availability-delete img" "css_element"
     Then I should not see "or" in the "Restrict access" "fieldset"
 
+    # Add a nested restriction set with two dates so there will be inner connector.
+    When I click on "Add restriction..." "button"
+    And I click on "Restriction set" "button" in the "Add restriction..." "dialogue"
+    And I click on "Add restriction..." "button" in the ".availability-children .availability-list" "css_element"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I click on "Add restriction..." "button" in the ".availability-children .availability-list" "css_element"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    Then I should see "and" in the ".availability-children .availability-list .availability-connector" "css_element"
+
+    # Check changing the outer one does not affect the inner one.
+    When I set the field "Required restrictions" to "all"
+    Then I should not see "or" in the "Restrict access" "fieldset"
+    When I set the field "Required restrictions" to "any"
+    Then I should see "or" in the "Restrict access" "fieldset"
+    And I should not see "or" in the ".availability-children .availability-list .availability-connector" "css_element"
+
   @javascript
   Scenario: Edit availability using settings in section form
     # Set up.

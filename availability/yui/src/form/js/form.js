@@ -507,7 +507,7 @@ M.core_availability.List.prototype.updateHtml = function() {
     } else {
         connectorText = M.str.availability.or;
     }
-    this.inner.all('.availability-connector span.label').each(function(span) {
+    this.inner.all('> .availability-children > .availability-connector span.label').each(function(span) {
         span.set('innerHTML', connectorText);
     });
 };
