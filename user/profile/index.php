@@ -87,12 +87,11 @@ switch ($action) {
         //normal form
 }
 
-/// Print the header
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('profilefields', 'admin'));
+// Show all categories.
+$categories = $DB->get_records('user_info_category', null, 'sortorder ASC');
 
-/// Check that we have at least one category defined
-if ($DB->count_records('user_info_category') == 0) {
+// Check that we have at least one category defined.
+if (empty($categories)) {
     $defaultcategory = new stdClass();
     $defaultcategory->name = $strdefaultcategory;
     $defaultcategory->sortorder = 1;
@@ -100,8 +99,9 @@ if ($DB->count_records('user_info_category') == 0) {
     redirect($redirect);
 }
 
-/// Show all categories
-$categories = $DB->get_records('user_info_category', null, 'sortorder ASC');
+// Print the header.
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('profilefields', 'admin'));
 
 foreach ($categories as $category) {
     $table = new html_table();
