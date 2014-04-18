@@ -43,13 +43,6 @@ interface reader {
     public function get_description();
 
     /**
-     * Can the current user access this store?
-     * @param \context $context
-     * @return bool
-     */
-    public function can_access(\context $context);
-
-    /**
      * Are the new events appearing in the reader?
      *
      * @return bool true means new log events are being added, false means no new data will be added
