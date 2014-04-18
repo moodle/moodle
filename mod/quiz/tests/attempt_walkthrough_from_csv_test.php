@@ -53,6 +53,23 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      */
     protected $randqids;
 
+    /**
+     * The only test in this class. This is run multiple times depending on how many sets of files there are in fixtures/
+     * directory.
+     *
+     * @param array $quizsettings of settings read from csv file quizzes.csv
+     * @param PHPUnit_Extensions_Database_DataSet_ITable[] $csvdata of data read from csv file "questionsXX.csv",
+     *                                                                                  "stepsXX.csv" and "resultsXX.csv".
+     * @dataProvider get_data_for_walkthrough
+     */
+    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
+
+        // CSV data files for these tests were generated using :
+        // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator
+
+        $this->create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata);
+    }
+
     public function create_quiz($quizsettings, $qs) {
         global $SITE, $DB;
         $this->setAdminUser();
@@ -103,7 +120,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
         // Settings from param override defaults.
-        $aggregratedsettings = $quizsettings + array('course'=>$SITE->id,
+        $aggregratedsettings = $quizsettings + array('course' => $SITE->id,
                                                      'questionsperpage' => 0,
                                                      'grade' => 100.0,
                                                      'sumgrades' => $sumofgrades);
@@ -118,6 +135,25 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
                 quiz_add_random_questions($this->quiz, 0, $slotquestion['catid'], 1, 0);
                 $this->randqids[$slotno] = $qidsbycat[$slotquestion['catid']];
             }
+        }
+    }
+
+    /**
+     * Create quiz, simulate attempts and check results (if resultsXX.csv exists).
+     *
+     * @param array $quizsettings Quiz overrides for this quiz.
+     * @param PHPUnit_Extensions_Database_DataSet_ITable[] $csvdata Data loaded from csv files for this test.
+     */
+    protected function create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata) {
+        $this->resetAfterTest(true);
+        question_bank::get_qtype('random')->clear_caches_before_testing();
+
+        $this->create_quiz($quizsettings, $csvdata['questions']);
+
+        $attemptids = $this->walkthrough_attempts($csvdata['steps']);
+
+        if (isset($csvdata['results'])) {
+            $this->check_attempts_results($csvdata['results'], $attemptids);
         }
     }
 
@@ -190,29 +226,6 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             $datasets[] = array($quizsettings, $dataset);
         }
         return $datasets;
-    }
-
-    /**
-     * Create a quiz add questions to it, walk through quiz attempts and then check results.
-     *
-     * @param $quizsettings array of settings read from csv file quizzes.csv
-     * @param $csvdata \PHPUnit_Extensions_Database_DataSet_ITable[] of data read from csv file "questionsXX.csv",
-     *                                                                                  "stepsXX.csv" and "resultsXX.csv".
-     * @dataProvider get_data_for_walkthrough
-     */
-    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
-
-        // CSV data files for these tests were generated using :
-        // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator
-
-        $this->resetAfterTest(true);
-        question_bank::get_qtype('random')->clear_caches_before_testing();
-
-        $this->create_quiz($quizsettings, $csvdata['questions']);
-
-        $attemptids = $this->walkthrough_attempts($csvdata['steps']);
-
-        $this->check_attempts_results($csvdata['results'], $attemptids);
     }
 
     /**
