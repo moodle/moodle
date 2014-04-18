@@ -193,12 +193,7 @@ abstract class info {
             $tree = $this->get_availability_tree();
             $result = $tree->check_available(false, $this, $grabthelot, $userid);
         } catch (\coding_exception $e) {
-            // We catch the message because it causes fatal problems in most of
-            // the GUI if this exception gets thrown (you can't edit the
-            // activity to fix it). Obviously it should never happen anyway, but
-            // just in case.
-            debugging('Error processing availability data for &lsquo;' .
-                    $this->get_thing_name() . '&rsquo;: ' . s($e->a), DEBUG_DEVELOPER);
+            $this->warn_about_invalid_availability($e);
             $this->modinfo = null;
             return false;
         }
@@ -237,7 +232,12 @@ abstract class info {
         if (is_null($this->availability)) {
             return true;
         } else {
-            return $this->get_availability_tree()->is_available_for_all();
+            try {
+                return $this->get_availability_tree()->is_available_for_all();
+            } catch (\coding_exception $e) {
+                $this->warn_about_invalid_availability($e);
+                return false;
+            }
         }
     }
 
@@ -273,11 +273,30 @@ abstract class info {
             $this->modinfo = null;
             return $result;
         } catch (\coding_exception $e) {
-            // Again we catch the message to avoid problems in GUI.
-            debugging('Error processing availability data for &lsquo;' .
-                    $this->get_thing_name() . '&rsquo;: ' . s($e->a), DEBUG_DEVELOPER);
+            $this->warn_about_invalid_availability($e);
             return false;
         }
+    }
+
+    /**
+     * In some places we catch coding_exception because if a bug happens, it
+     * would be fatal for the course page GUI; instead we just show a developer
+     * debug message.
+     *
+     * @param \coding_exception $e Exception that occurred
+     */
+    protected function warn_about_invalid_availability(\coding_exception $e) {
+        $name = $this->get_thing_name();
+        // If it occurs while building modinfo based on somebody calling $cm->name,
+        // we can't get $cm->name, and this line will cause a warning.
+        $htmlname = @$this->format_info($name, $this->course);
+        if ($htmlname === '') {
+            // So instead use the numbers (cmid) from the tag.
+            $htmlname = preg_replace('~[^0-9]~', '', $name);
+        }
+        $info = 'Error processing availability data for &lsquo;' . $htmlname
+                 . '&rsquo;: ' . s($e->a);
+        debugging($info, DEBUG_DEVELOPER);
     }
 
     /**
