@@ -60,7 +60,7 @@ class qtype_ddtoimage_base extends question_type {
         $this->initialise_combined_feedback($question, $questiondata, true);
 
         $question->choices = array();
-        $choiceindexmap= array();
+        $choiceindexmap = array();
 
         // Store the choices in arrays by group.
         foreach ($questiondata->options->drags as $dragdata) {
@@ -165,18 +165,11 @@ class qtype_ddtoimage_base extends question_type {
 
         $parts = array();
         foreach ($question->places as $placeno => $place) {
-            $group = $place->group;
             $choices = array();
 
-            foreach ($question->choices[$group] as $i => $choice) {
-                $summarisechoice = $choice->summarise();
-
+            foreach ($question->choices[$place->group] as $i => $choice) {
                 $correct = $question->rightchoices[$placeno] == $i;
-                if ($correct) {
-                    $choices[$choice->no] = new question_possible_response(
-                                                        $summarisechoice,
-                                                        $correct?1:0);
-                }
+                $choices[$choice->no] = new question_possible_response($choice->summarise(), $correct ? 1 : 0);
             }
             $choices[null] = question_possible_response::no_response();
 

@@ -122,8 +122,12 @@ class qtype_ddtoimage_question_base extends qtype_gapselect_question_base {
             $choice = $this->choices[$group][$choiceno];
 
             $correct = $this->get_right_choice_for($placeno) == $response[$fieldname];
-            $parts[$placeno] = new question_classified_response(
-                    $choiceno, $choice->summarise(), $correct?1:0);
+            if ($correct) {
+                $grade = 1;
+            } else {
+                $grade = 0;
+            }
+            $parts[$placeno] = new question_classified_response($choiceno, $choice->summarise(), $grade);
         }
         return $parts;
     }
