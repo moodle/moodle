@@ -481,7 +481,7 @@ class report_log_table_log extends table_sql {
             $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
             $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
             $courseparams['contextlevel'] = CONTEXT_COURSE;
-            $sql = "SELECT c.id,c.shortname $ccselect FROM {course} as c
+            $sql = "SELECT c.id,c.shortname $ccselect FROM {course} c
                    $ccjoin
                      WHERE c.id " . $coursesql;
 
