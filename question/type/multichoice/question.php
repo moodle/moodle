@@ -197,7 +197,7 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
     public function prepare_simulated_post_data($simulatedresponse) {
         $ansid = 0;
         foreach ($this->answers as $answer) {
-            if ($answer->answer == $simulatedresponse['answer']) {
+            if (clean_param($answer->answer, PARAM_NOTAGS) == $simulatedresponse['answer']) {
                 $ansid = $answer->id;
             }
         }
@@ -360,12 +360,11 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
     public function prepare_simulated_post_data($simulatedresponse) {
         $postdata = array();
         foreach ($simulatedresponse as $ans => $checked) {
-            if ($checked) {
-                foreach ($this->answers as $ansid => $answer) {
-                    if ($answer->answer == $ans) {
-                        $fieldno = array_search($ansid, $this->order);
-                        $postdata[$this->field($fieldno)] = '1';
-                    }
+            foreach ($this->answers as $ansid => $answer) {
+                if (clean_param($answer->answer, PARAM_NOTAGS) == $ans) {
+                    $fieldno = array_search($ansid, $this->order);
+                    $postdata[$this->field($fieldno)] = $checked;
+                    break;
                 }
             }
         }
@@ -376,7 +375,8 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
         $simulatedresponse = array();
         foreach ($this->order as $fieldno => $ansid) {
             if (isset($postdata[$this->field($fieldno)])) {
-                $simulatedresponse[$this->answers[$ansid]->answer] = 1;
+                $checked = $postdata[$this->field($fieldno)];
+                $simulatedresponse[clean_param($this->answers[$ansid]->answer, PARAM_NOTAGS)] = $checked;
             }
         }
         ksort($simulatedresponse);
