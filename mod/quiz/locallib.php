@@ -372,6 +372,11 @@ function quiz_delete_attempt($attempt, $quiz) {
         return;
     }
 
+    if (!isset($quiz->cmid)) {
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        $quiz->cmid = $cm->id;
+    }
+
     question_engine::delete_questions_usage_by_activity($attempt->uniqueid);
     $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
 
