@@ -64,15 +64,15 @@ $string['awards'] = 'Recipients';
 $string['backpackavailability'] = 'External badge verification';
 $string['backpackavailability_help'] = 'For badge recipients to be able to prove they earned their badges from you, an external backpack service should be able to access your site and verify badges issued from it. Your site does not currently appear to be accessible, which means that badges you have already issued or will issue in the future cannot be verified.
 
-##Why am I seeing this message?
+**Why am I seeing this message?**
 
 It may be that your firewall prevents access from users outside your network, your site is password protected, or you are running the site on a computer that is not available from the Internet (such as a local development machine).
 
-##Is this a problem?
+**Is this a problem?**
 
 You should fix this issue on any production site where you are planning to issue badges, otherwise the recipients will not be able to prove they earned their badges from you. If your site is not yet live you can create and issue test badges, as long as the site is accessible before you go live.
 
-##What if I can\'t make my whole site publicly accessible?
+**What if I can\'t make my whole site publicly accessible?**
 
 The only URL required for verification is [your-site-url]/badges/assertion.php so if you are able to modify your firewall to allow external access to that file, badge verification will still work.';
 $string['backpackbadges'] = 'You have {$a->totalbadges} badge(s) displayed from {$a->totalcollections} collection(s). <a href="mybackpack.php">Change backpack settings</a>.';
