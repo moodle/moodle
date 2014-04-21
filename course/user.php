@@ -105,12 +105,11 @@ if (!in_array($mode, $modes)) {
     $mode = reset($modes);
 }
 
-$eventdata = array();
-$eventdata['courseid'] = $id;
-$eventdata['context'] = $coursecontext;
-$eventdata['userid'] = $user->id;
-$eventdata['other'] = array();
-$eventdata['other']['mode'] = $mode;
+$eventdata = array(
+    'context' => $coursecontext,
+    'relateduserid' => $user->id,
+    'other' => array('mode' => $mode),
+);
 $event = \core\event\course_user_report_viewed::create($eventdata);
 $event->trigger();
 

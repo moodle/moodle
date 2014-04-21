@@ -42,8 +42,6 @@ class course_viewed extends \core\event\base {
     /**
      * Init method.
      *
-     * Please override this in extending class and specify objecttable.
-     *
      * @return void
      */
     protected function init() {
@@ -57,7 +55,7 @@ class course_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "A user with the id '$this->userid' viewed the course  '$this->courseid'";
+        return "A user with the id '$this->userid' viewed the course '$this->courseid'";
     }
 
     /**
@@ -75,7 +73,11 @@ class course_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return \course_get_url($this->courseid, $this->other['coursesectionid']);
+        $sectionid = null;
+        if (isset($this->other['coursesectionid'])) {
+            $sectionid = $this->other['coursesectionid'];
+        }
+        return \course_get_url($this->courseid, $sectionid);
     }
 
     /**
@@ -84,12 +86,16 @@ class course_viewed extends \core\event\base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        if (!empty($this->other['coursesectionid'])) {
+        if ($this->courseid == SITEID and !isloggedin()) {
+            // We did not log frontpage access in older Moodle versions.
+            return null;
+        }
+
+        if (isset($this->other['coursesectionid'])) {
             return array($this->courseid, 'course', 'view section', 'view.php?id=' . $this->courseid . '&amp;sectionid='
                     . $this->other['coursesectionid'], $this->other['coursesectionid']);
-        } else {
-            return array($this->courseid, 'course', 'view', 'view.php?id=' . $this->courseid, $this->courseid);
         }
+        return array($this->courseid, 'course', 'view', 'view.php?id=' . $this->courseid, $this->courseid);
     }
 
     /**
@@ -99,6 +105,8 @@ class course_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
+
         if ($this->contextlevel != CONTEXT_COURSE) {
             throw new \coding_exception('Context passed must be course context.');
         }

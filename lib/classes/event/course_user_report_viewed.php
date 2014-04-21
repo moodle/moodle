@@ -42,8 +42,6 @@ class course_user_report_viewed extends \core\event\base {
     /**
      * Init method.
      *
-     * Please override this in extending class and specify objecttable.
-     *
      * @return void
      */
     protected function init() {
@@ -57,7 +55,7 @@ class course_user_report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "A user with the id '$this->userid' viewed the user report in the course  '$this->courseid'";
+        return "A user with the id '$this->userid' viewed the user report in the course '$this->courseid' for user '$this->relateduserid'";
     }
 
     /**
@@ -75,7 +73,7 @@ class course_user_report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url("/course/user.php", array('id' => $this->courseid, 'user' => $this->userid,
+        return new \moodle_url("/course/user.php", array('id' => $this->courseid, 'user' => $this->relateduserid,
                 'mode' => $this->other['mode']));
     }
 
@@ -86,7 +84,7 @@ class course_user_report_viewed extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, 'course', 'user report', 'user.php?id=' . $this->courseid . '&amp;user='
-                . $this->userid . '&amp;mode=' . $this->other['mode'], $this->userid);
+                . $this->relateduserid . '&amp;mode=' . $this->other['mode'], $this->relateduserid);
     }
 
     /**
@@ -96,6 +94,16 @@ class course_user_report_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
+
+        if ($this->contextlevel != CONTEXT_COURSE) {
+            throw new \coding_exception('Context passed must be course context.');
+        }
+
+        if (empty($this->relateduserid)) {
+            throw new \coding_exception('relateduserid needs to be set.');
+        }
+
         // Make sure this class is never used without proper object details.
         if (!isset($this->other['mode'])) {
             throw new \coding_exception('mode needs to be set in $other.');

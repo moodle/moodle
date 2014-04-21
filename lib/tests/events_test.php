@@ -189,9 +189,8 @@ class core_events_testcase extends advanced_testcase {
         $context = context_course::instance($course->id);
 
         $eventparams = array();
-        $eventparams['courseid'] = $course->id;
         $eventparams['context'] = $context;
-        $eventparams['userid'] = $user->id;
+        $eventparams['relateduserid'] = $user->id;
         $eventparams['other'] = array();
         $eventparams['other']['mode'] = 'grade';
         $event = \core\event\course_user_report_viewed::create($eventparams);
@@ -221,9 +220,7 @@ class core_events_testcase extends advanced_testcase {
 
         // First try with no optional parameters.
         $eventparams = array();
-        $eventparams['courseid'] = $course->id;
         $eventparams['context'] = $context;
-        $eventparams['userid'] = $user->id;
         $event = \core\event\course_viewed::create($eventparams);
 
         // Trigger and capture the event.
@@ -239,13 +236,10 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
 
         // Now try with optional parameters.
-        $eventparams = array();
-        $eventparams['courseid'] = $course->id;
-        $eventparams['context'] = $context;
-        $eventparams['userid'] = $user->id;
-        $eventparams['other'] = array();
         $sectionid = 34;
-        $eventparams['other']['coursesectionid'] = $sectionid;
+        $eventparams = array();
+        $eventparams['context'] = $context;
+        $eventparams['other'] = array('coursesectionid' => $sectionid);
         $event = \core\event\course_viewed::create($eventparams);
 
         // Trigger and capture the event.

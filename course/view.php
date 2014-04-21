@@ -282,15 +282,11 @@
     echo html_writer::end_tag('div');
 
     // Trigger course viewed event.
-    $eventparams = array();
-    $eventparams['context'] = $context;
-    $eventparams['courseid'] = $course->id;
-    $eventparams['userid'] = $USER->id;
+    $eventdata = array('context' => $context);
     if (!empty($section)) {
-        $eventparams['other'] = array();
-        $eventparams['other']['coursesectionid'] = $section;
+        $eventdata['other'] = array('coursesectionid' => $section);
     }
-    $event = \core\event\course_viewed::create($eventparams);
+    $event = \core\event\course_viewed::create($eventdata);
     $event->trigger();
 
     // Include course AJAX
