@@ -1603,6 +1603,7 @@ function &get_mimetypes_array() {
         'webm'  => array ('type'=>'video/webm', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
         'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
         'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
+        'wma'  => array ('type'=>'audio/x-ms-wma', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
 
         'xbk'  => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
         'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
