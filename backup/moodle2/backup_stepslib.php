@@ -379,13 +379,7 @@ class backup_section_structure_step extends backup_structure_step {
         $section->add_child($formatoptions);
 
         // Define sources.
-        // The 'availability' field needs to be renamed because it clashes with
-        // the old nested element structure for availability data.
-        $section->set_source_sql("
-                SELECT *, availability AS availabilityjson
-                  FROM {course_sections} WHERE id = ?",
-                array('id' => backup::VAR_SECTIONID));
-
+        $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $formatoptions->set_source_sql('SELECT cfo.id, cfo.format, cfo.name, cfo.value
               FROM {course} c
               JOIN {course_format_options} cfo
@@ -395,6 +389,9 @@ class backup_section_structure_step extends backup_structure_step {
 
         // Aliases
         $section->set_source_alias('section', 'number');
+        // The 'availability' field needs to be renamed because it clashes with
+        // the old nested element structure for availability data.
+        $section->set_source_alias('availability', 'availabilityjson');
 
         // Set annotations
         $section->annotate_files('course', 'section', 'id');
