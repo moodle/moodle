@@ -159,12 +159,16 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 200;
         $observer->internal = false;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
         $observer = new stdClass();
         $observer->callable = '\core_tests\event\unittest_observer::observe_one';
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = $CFG->dirroot.'/lib/tests/fixtures/event_fixtures.php';
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[1] = $observer;
 
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
@@ -175,6 +179,8 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 100;
         $observer->internal = true;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
 
         $this->assertEquals($expected, $result['\core\event\unknown_executed']);
@@ -185,12 +191,16 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 10;
         $observer->internal = true;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
         $observer = new stdClass();
         $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all_alt');
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[1] = $observer;
 
         $this->assertEquals($expected, $result['\core\event\base']);
@@ -213,6 +223,8 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = $CFG->dirroot.'/lib/tests/fixtures/event_fixtures.php';
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
 
@@ -748,5 +760,26 @@ class core_event_testcase extends advanced_testcase {
         $eventcontext = phpunit_event_mock::testable_get_event_context($event);
         phpunit_event_mock::testable_set_event_context($event, null);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test that all observer information is returned correctly.
+     */
+    public function test_get_all_observers() {
+        // Retrieve all observers.
+        $observers = \core\event\manager::get_all_observers();
+
+        // Expected information from the workshop allocation scheduled observer.
+        $expected = array();
+        $observer = new stdClass();
+        $observer->callable = '\workshopallocation_scheduled\observer::workshop_viewed';
+        $observer->priority = 0;
+        $observer->internal = true;
+        $observer->includefile = null;
+        $observer->plugintype = 'workshopallocation';
+        $observer->plugin = 'scheduled';
+        $expected[0] = $observer;
+
+        $this->assertEquals($expected, $observers['\mod_workshop\event\course_module_viewed']);
     }
 }
