@@ -479,6 +479,69 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
+     * Get static information about an event.
+     * This is used in reports and is not for general use.
+     *
+     * @return array Static information about the event.
+     */
+    public static final function get_static_info() {
+        /** Var \core\event\base $event. */
+        $event = new static();
+        // Set static event data specific for child class.
+        $event->init();
+        return array(
+            'eventname' => $event->data['eventname'],
+            'component' => $event->data['component'],
+            'target' => $event->data['target'],
+            'action' => $event->data['action'],
+            'crud' => $event->data['crud'],
+            'edulevel' => $event->data['edulevel'],
+            'objecttable' => $event->data['objecttable'],
+        );
+    }
+
+    /**
+     * Get an explanation of what the class does.
+     * By default returns the phpdocs from the child event class. Ideally this should
+     * be overridden to return a translatable get_string style markdown.
+     * e.g. return new lang_string('eventyourspecialevent', 'plugin_type');
+     *
+     * @return string An explanation of the event formatted in markdown style.
+     */
+    public static function get_explanation() {
+        $ref = new \ReflectionClass(get_called_class());
+        $docblock = $ref->getDocComment();
+
+        // Check that there is something to work on.
+        if (empty($docblock)) {
+            return null;
+        }
+
+        $docblocklines = explode("\n", $docblock);
+        // Remove the bulk of the comment characters.
+        $pattern = "/(^\s*\/\*\*|^\s+\*\s|^\s+\*)/";
+        $cleanline = array();
+        foreach ($docblocklines as $line) {
+            $templine = preg_replace($pattern, '', $line);
+            // If there is nothing on the line then don't add it to the array.
+            if (!empty($templine)) {
+                $cleanline[] = rtrim($templine);
+            }
+            // If we get to a line starting with an @ symbol then we don't want the rest.
+            if (preg_match("/^@|\//", $templine)) {
+                // Get rid of the last entry (it contains an @ symbol).
+                array_pop($cleanline);
+                // Break out of this foreach loop.
+                break;
+            }
+        }
+        // Add a line break to the sanitised lines.
+        $explanation = implode("\n", $cleanline);
+
+        return $explanation;
+    }
+
+    /**
      * Returns event context.
      * @return \context
      */
