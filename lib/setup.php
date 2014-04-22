@@ -359,8 +359,10 @@ $CFG->yui3version = '3.15.0';
 // If we need to patch a YUI modules between official YUI releases, the yuipatchlevel will need to be manually
 // incremented here. The module will also need to be listed in the yuipatchedmodules.
 // When upgrading to a subsequent version of YUI, these should be reset back to 0 and an empty array.
-$CFG->yuipatchlevel = 0;
+$CFG->yuipatchlevel = 1;
 $CFG->yuipatchedmodules = array(
+    'dd-drag',
+    'dd-gestures',
 );
 
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides.
