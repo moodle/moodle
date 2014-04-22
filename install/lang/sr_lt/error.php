@@ -46,7 +46,7 @@ $string['dmlexceptiononinstall'] = '<p>Došlo je do greške vezane za bazu podat
 $string['downloadedfilecheckfailed'] = 'Nije uspela provera preuzete datoteke';
 $string['invalidmd5'] = 'Neispravna md5 datoteka';
 $string['missingrequiredfield'] = 'Nedostaje neko obavezno polje';
-$string['remotedownloaderror'] = 'Preuzimanje komponente na Vaš server nije uspelo. Proverite podešavanja proksi serevera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href="{$a->url}">{$a->url}</a> datoteku ručno, kopirate je u direktorijum "{$a->dest}" na svom sereveru tamo je raspakujete.';
+$string['remotedownloaderror'] = 'Preuzimanje komponente na vaš server nije uspelo. Proverite podešavanja proksi servera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href="{$a->url}">{$a->url}</a> datoteku ručno, kopirate je u direktorijum "{$a->dest}" na svom serveru i tamo je raspakujete.';
 $string['wrongdestpath'] = 'Pogrešna odredišna putanja';
 $string['wrongsourcebase'] = 'Pogrešna baza izvornog URL-a';
 $string['wrongzipfilename'] = 'Pogrešan naziv arhive';
