@@ -113,6 +113,36 @@ class admintree_testcase extends advanced_testcase {
     }
 
     /**
+     * Testing whether a configexecutable setting is executable.
+     */
+    public function test_admin_setting_configexecutable() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $executable = new admin_setting_configexecutable('test1', 'Text 1', 'Help Path', '');
+
+        // Check for an invalid path.
+        $result = $executable->output_html($CFG->dirroot . '/lib/tests/other/file_does_not_exist');
+        $this->assertRegexp('/class="patherror"/', $result);
+
+        // Check for a directory.
+        $result = $executable->output_html($CFG->dirroot);
+        $this->assertRegexp('/class="patherror"/', $result);
+
+        // Check for a file which is not executable.
+        $result = $executable->output_html($CFG->dirroot . '/config.php');
+        $this->assertRegexp('/class="patherror"/', $result);
+
+        // Check for an executable file.
+        $result = $executable->output_html($CFG->dirroot . '/lib/tests/other/executable.php');
+        $this->assertRegexp('/class="pathok"/', $result);
+
+        // Check for no file specified.
+        $result = $executable->output_html('');
+        $this->assertRegexp('/name="s__test1" value=""/', $result);
+    }
+
+    /**
      * Saving of values.
      */
     public function test_config_logging() {

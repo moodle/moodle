@@ -2164,7 +2164,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         $default = $this->get_defaultsetting();
 
         if ($data) {
-            if (file_exists($data) and is_executable($data)) {
+            if (file_exists($data) and !is_dir($data) and is_executable($data)) {
                 $executable = '<span class="pathok">&#x2714;</span>';
             } else {
                 $executable = '<span class="patherror">&#x2718;</span>';
