@@ -72,7 +72,7 @@ class subscription_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/forum/view.php', array('id' => $this->other['forumid']));
+        return new \moodle_url('/mod/forum/view.php', array('f' => $this->other['forumid']));
     }
 
     /**
