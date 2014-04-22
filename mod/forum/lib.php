@@ -126,18 +126,27 @@ function forum_add_instance($forum, $mform = null) {
         }
     }
 
-    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
-        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email');
-        foreach ($users as $user) {
-            forum_subscribe($user->id, $forum->id);
-        }
-    }
-
     forum_grade_item_update($forum);
 
     return $forum->id;
 }
 
+/**
+ * Handle changes following the creation of a forum instance.
+ * This function is typically called by the course_module_created observer.
+ *
+ * @param object $context the forum context
+ * @param stdClass $forum The forum object
+ * @return void
+ */
+function forum_instance_created($context, $forum) {
+    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
+        $users = forum_get_potential_subscribers($context, 0, 'u.id, u.email');
+        foreach ($users as $user) {
+            forum_subscribe($user->id, $forum->id);
+        }
+    }
+}
 
 /**
  * Given an object containing all the necessary data,
