@@ -166,6 +166,7 @@ if ($usernew = $userform->get_data()) {
 
     $usernew->timemodified = time();
     $createpassword = false;
+    $passwordupdated = false;
 
     if ($usernew->id == -1) {
         unset($usernew->id);
@@ -190,6 +191,8 @@ if ($usernew = $userform->get_data()) {
             if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
                 // Do not stop here, we need to finish user creation.
                 debugging(get_string('cannotupdatepasswordonextauth', '', '', $usernew->auth), DEBUG_NONE);
+            } else {
+                $passwordupdated = true;
             }
         }
 
@@ -207,6 +210,8 @@ if ($usernew = $userform->get_data()) {
             if ($authplugin->can_change_password()) {
                 if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
                     print_error('cannotupdatepasswordonextauth', '', '', $usernew->auth);
+                } else {
+                    $passwordupdated = true;
                 }
                 unset_user_preference('create_password', $usernew); // Prevent cron from generating the password.
             }
@@ -244,6 +249,10 @@ if ($usernew = $userform->get_data()) {
 
     // Reload from db.
     $usernew = $DB->get_record('user', array('id' => $usernew->id));
+
+    if ($passwordupdated) {
+        \core\event\user_password_updated::create_from_user($usernew)->trigger();
+    }
 
     if ($createpassword) {
         setnew_password_and_mail($usernew);

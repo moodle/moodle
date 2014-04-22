@@ -169,10 +169,11 @@ function core_login_process_password_reset_request() {
     echo $OUTPUT->footer();
 }
 
-/** This function processes a user's submitted token to validate the request to set a new password.
- *  If the user's token is validated, they are prompted to set a new password.
+/**
+ * This function processes a user's submitted token to validate the request to set a new password.
+ * If the user's token is validated, they are prompted to set a new password.
  * @param string $token the one-use identifier which should verify the password reset request as being valid.
- * @return null
+ * @return void
  */
 function core_login_process_password_set($token) {
     global $DB, $CFG, $OUTPUT, $PAGE, $SESSION;
@@ -238,7 +239,6 @@ function core_login_process_password_set($token) {
         if (!$userauth->user_update_password($user, $data->password)) {
             print_error('errorpasswordupdate', 'auth');
         }
-        add_to_log(SITEID, 'user', 'set password', "view.php?id=$user->id&amp;course=" . SITEID, $user->id);
         // Reset login lockout (if present) before a new password is set.
         login_unlock_account($user);
         // Clear any requirement to change passwords.
@@ -249,8 +249,11 @@ function core_login_process_password_set($token) {
             // Unset previous session language - use user preference instead.
             unset($SESSION->lang);
         }
-        add_to_log(SITEID, 'user', 'login', "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
-        complete_user_login($user);
+        complete_user_login($user); // Triggers the login event.
+
+        $user = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
+        \core\event\user_password_updated::create_from_user($user, true)->trigger();
+
         $urltogo = core_login_get_return_url();
         unset($SESSION->wantsurl);
         redirect($urltogo, get_string('passwordset'), 1);

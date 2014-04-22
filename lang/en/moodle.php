@@ -746,6 +746,7 @@ $string['eventusercreated'] = 'User created';
 $string['eventuserdeleted'] = 'User deleted';
 $string['eventuserlistviewed'] = 'User list viewed';
 $string['eventuserloggedout'] = 'User logged out';
+$string['eventuserpasswordupdated'] = 'User password updated';
 $string['eventuserprofileviewed'] = 'User profile viewed';
 $string['eventuserupdated'] = 'User updated';
 $string['everybody'] = 'Everybody';
