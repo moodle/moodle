@@ -62,6 +62,7 @@ class plagiarism extends base {
      * @return moodle_url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/plagiarism.php');
+        global $CFG;
+        return !empty($CFG->enableplagiarism) ? new moodle_url('/admin/plagiarism.php') : null;
     }
 }
