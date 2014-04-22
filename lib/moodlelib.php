@@ -4933,6 +4933,11 @@ function delete_course($courseorid, $showfeedback = true) {
     $DB->delete_records("course", array("id" => $courseid));
     $DB->delete_records("course_format_options", array("courseid" => $courseid));
 
+    // Reset all course related caches here.
+    if (class_exists('format_base', false)) {
+        format_base::reset_course_cache($courseid);
+    }
+
     // Trigger a course deleted event.
     $event = \core\event\course_deleted::create(array(
         'objectid' => $course->id,

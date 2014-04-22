@@ -245,8 +245,10 @@ class core_events_testcase extends advanced_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $event->trigger();
+        $loggeddata = $event->get_data();
         $events = $sink->get_events();
         $event = reset($events);
+
 
         $this->assertInstanceOf('\core\event\course_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
@@ -254,5 +256,10 @@ class core_events_testcase extends advanced_testcase {
                 . $sectionid, $sectionid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+
+        delete_course($course->id, false);
+        $restored = \core\event\base::restore($loggeddata, array('origin' => 'web', 'ip' => '127.0.0.1'));
+        $this->assertInstanceOf('\core\event\course_viewed', $restored);
+        $this->assertNull($restored->get_url());
     }
 }

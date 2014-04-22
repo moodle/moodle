@@ -70,14 +70,18 @@ class course_viewed extends \core\event\base {
     /**
      * Get URL related to the action.
      *
-     * @return \moodle_url
+     * @return \moodle_url|null
      */
     public function get_url() {
         $sectionid = null;
         if (isset($this->other['coursesectionid'])) {
             $sectionid = $this->other['coursesectionid'];
         }
-        return \course_get_url($this->courseid, $sectionid);
+        try {
+            return \course_get_url($this->courseid, $sectionid);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
