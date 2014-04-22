@@ -572,7 +572,7 @@ if ($showactivity) {
                          AND r.dataid = :dataid
                          AND r.userid = u.id ';
             $params['dataid'] = $data->id;
-            $sortorder = ' ORDER BY '.$ordering.', r.id ASC ';
+            $sortorder = " ORDER BY $ordering, r.id $order";
             $searchselect = '';
 
             // If requiredentries is not reached, only show current user's entries
