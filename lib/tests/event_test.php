@@ -782,4 +782,51 @@ class core_event_testcase extends advanced_testcase {
 
         $this->assertEquals($expected, $observers['\mod_workshop\event\course_module_viewed']);
     }
+
+    /**
+     * Test formatting of the get_explanation method.
+     * This formats the information from an events class docblock.
+     */
+    public function test_get_explanation() {
+        $explanation = \core_tests\event\full_docblock::get_explanation();
+
+        $expected = "This is an explanation of the event.
+     - I'm making a point here.
+     - I have a second {@link something}  point here.
+     - whitespace is intentional to test it's removal.
+I have something else *Yeah* that.";
+
+        $this->assertEquals($explanation, $expected);
+
+        $explanation = \core_tests\event\docblock_test2::get_explanation();
+
+        $expected = "We have only the description in the docblock
+and nothing else.";
+
+        $this->assertEquals($explanation, $expected);
+
+        $explanation = \core_tests\event\docblock_test3::get_explanation();
+        $expected = "Calendar event created event.";
+        $this->assertEquals($explanation, $expected);
+
+    }
+
+    /**
+     * Test that general information about an event is returned
+     * by the get_static_info() method.
+     */
+    public function test_get_static_info() {
+        $staticinfo = \core_tests\event\static_info_viewing::get_static_info();
+
+        $expected = array(
+            'eventname'   => '\\core_tests\\event\\static_info_viewing',
+            'component'   => 'core_tests',
+            'target'      => 'static_info',
+            'action'      => 'viewing',
+            'crud'        => 'r',
+            'edulevel'    => 0,
+            'objecttable' => 'mod_unittest'
+        );
+        $this->assertEquals($staticinfo, $expected);
+    }
 }

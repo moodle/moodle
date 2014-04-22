@@ -276,3 +276,66 @@ class context_used_in_event extends \core\event\base {
         return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id=' . $this->context->instanceid);
     }
 }
+
+/**
+ * This is an explanation of the event.
+ *      - I'm making a point here.
+ *      - I have a second {@link something}  point here.
+ *      - whitespace is intentional to test it's removal.
+ *
+ *
+ * I have something else *Yeah* that.
+ *
+ *
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2014 Adrian Greeve <adrian@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class full_docblock extends \core\event\base {
+
+    protected function init() {
+
+    }
+}
+
+/**
+ * We have only the description in the docblock
+ * and nothing else.
+ */
+class docblock_test2 extends \core\event\base {
+
+    protected function init() {
+
+    }
+}
+
+/**
+ * Calendar event created event.
+ *
+ * @property-read array $other Extra information about the event.
+ *     -int timestart: timestamp for event time start.
+ *     -string name: Name of the event.
+ *     -int repeatid: Id of the parent event if present, else 0.
+ *
+ * @package    core
+ * @since      Moodle 2.7
+ * @copyright  2014 onwards Adrian Greeve
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class docblock_test3 extends \core\event\base {
+
+    protected function init() {
+
+    }
+}
+
+class static_info_viewing extends \core\event\base {
+
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'mod_unittest';
+    }
+}
