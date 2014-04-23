@@ -69,6 +69,8 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_reader {
     public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
+        $sort = self::tweak_sort_by_id($sort);
+
         $events = array();
         $records = $DB->get_records_select('logstore_standard_log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
 
