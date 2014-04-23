@@ -1366,7 +1366,7 @@ class html_writer {
         if (empty($attributes['id'])) {
             $attributes['id'] = self::random_id('ts_');
         }
-        $timerselector = self::select($timeunits, $name, $currentdate[$userdatetype], null, array('id'=>$attributes['id']));
+        $timerselector = self::select($timeunits, $name, $currentdate[$userdatetype], null, $attributes);
         $label = self::tag('label', get_string(substr($type, 0, -1), 'form'), array('for'=>$attributes['id'], 'class'=>'accesshide'));
 
         return $label.$timerselector;
