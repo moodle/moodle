@@ -159,12 +159,16 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 200;
         $observer->internal = false;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
         $observer = new stdClass();
         $observer->callable = '\core_tests\event\unittest_observer::observe_one';
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = $CFG->dirroot.'/lib/tests/fixtures/event_fixtures.php';
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[1] = $observer;
 
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
@@ -175,6 +179,8 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 100;
         $observer->internal = true;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
 
         $this->assertEquals($expected, $result['\core\event\unknown_executed']);
@@ -185,12 +191,16 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 10;
         $observer->internal = true;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
         $observer = new stdClass();
         $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all_alt');
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = null;
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[1] = $observer;
 
         $this->assertEquals($expected, $result['\core\event\base']);
@@ -213,6 +223,8 @@ class core_event_testcase extends advanced_testcase {
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = $CFG->dirroot.'/lib/tests/fixtures/event_fixtures.php';
+        $observer->plugintype = null;
+        $observer->plugin = null;
         $expected[0] = $observer;
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
 
@@ -748,5 +760,73 @@ class core_event_testcase extends advanced_testcase {
         $eventcontext = phpunit_event_mock::testable_get_event_context($event);
         phpunit_event_mock::testable_set_event_context($event, null);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test that all observer information is returned correctly.
+     */
+    public function test_get_all_observers() {
+        // Retrieve all observers.
+        $observers = \core\event\manager::get_all_observers();
+
+        // Expected information from the workshop allocation scheduled observer.
+        $expected = array();
+        $observer = new stdClass();
+        $observer->callable = '\workshopallocation_scheduled\observer::workshop_viewed';
+        $observer->priority = 0;
+        $observer->internal = true;
+        $observer->includefile = null;
+        $observer->plugintype = 'workshopallocation';
+        $observer->plugin = 'scheduled';
+        $expected[0] = $observer;
+
+        $this->assertEquals($expected, $observers['\mod_workshop\event\course_module_viewed']);
+    }
+
+    /**
+     * Test formatting of the get_explanation method.
+     * This formats the information from an events class docblock.
+     */
+    public function test_get_explanation() {
+        $explanation = \core_tests\event\full_docblock::get_explanation();
+
+        $expected = "This is an explanation of the event.
+     - I'm making a point here.
+     - I have a second {@link something}  point here.
+     - whitespace is intentional to test it's removal.
+I have something else *Yeah* that.";
+
+        $this->assertEquals($explanation, $expected);
+
+        $explanation = \core_tests\event\docblock_test2::get_explanation();
+
+        $expected = "We have only the description in the docblock
+and nothing else.";
+
+        $this->assertEquals($explanation, $expected);
+
+        $explanation = \core_tests\event\docblock_test3::get_explanation();
+        $expected = "Calendar event created event.";
+        $this->assertEquals($explanation, $expected);
+
+    }
+
+    /**
+     * Test that general information about an event is returned
+     * by the get_static_info() method.
+     */
+    public function test_get_static_info() {
+        $staticinfo = \core_tests\event\static_info_viewing::get_static_info();
+
+        $expected = array(
+            'eventname'   => '\\core_tests\\event\\static_info_viewing',
+            'component'   => 'core_tests',
+            'target'      => 'static_info',
+            'action'      => 'viewing',
+            'crud'        => 'r',
+            'edulevel'    => 0,
+            'objecttable' => 'mod_unittest'
+        );
+        $this->assertEquals($staticinfo, $expected);
     }
 }
