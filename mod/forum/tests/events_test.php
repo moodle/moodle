@@ -655,6 +655,8 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'view forum', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -741,6 +743,8 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'subscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -827,6 +831,8 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'unsubscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -913,6 +919,8 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'start tracking', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -999,6 +1007,8 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'stop tracking', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1348,6 +1358,62 @@ class mod_forum_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'forum', 'add post', "discuss.php?d={$discussion->id}#p{$post->id}",
             $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
+        $url->set_anchor('p'.$event->objectid);
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test the post_created event for a single discussion forum.
+     */
+    public function test_post_created_single() {
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'type' => 'single'));
+        $user = $this->getDataGenerator()->create_user();
+
+        // Add a discussion.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add a post.
+        $record = array();
+        $record['discussion'] = $discussion->id;
+        $record['userid'] = $user->id;
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $context = context_module::instance($forum->cmid);
+
+        $params = array(
+            'context' => $context,
+            'objectid' => $post->id,
+            'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
+        );
+
+        $event = \mod_forum\event\post_created::create($params);
+
+        // Trigger and capturing the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\post_created', $event);
+        $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'add post', "view.php?f={$forum->id}#p{$post->id}",
+            $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $url->set_anchor('p'.$event->objectid);
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1545,6 +1611,59 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test post_deleted event for a single discussion forum.
+     */
+    public function test_post_deleted_single() {
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'type' => 'single'));
+        $user = $this->getDataGenerator()->create_user();
+
+        // Add a discussion.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add a post.
+        $record = array();
+        $record['discussion'] = $discussion->id;
+        $record['userid'] = $user->id;
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $context = context_module::instance($forum->cmid);
+
+        $params = array(
+            'context' => $context,
+            'objectid' => $post->id,
+            'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
+        );
+
+        $event = \mod_forum\event\post_deleted::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
+        $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'delete post', "view.php?f={$forum->id}", $post->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1743,6 +1862,62 @@ class mod_forum_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'forum', 'update post', "discuss.php?d={$discussion->id}#p{$post->id}",
             $post->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
+        $url->set_anchor('p'.$event->objectid);
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test post_updated event.
+     */
+    public function test_post_updated_single() {
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'type' => 'single'));
+        $user = $this->getDataGenerator()->create_user();
+
+        // Add a discussion.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add a post.
+        $record = array();
+        $record['discussion'] = $discussion->id;
+        $record['userid'] = $user->id;
+        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $context = context_module::instance($forum->cmid);
+
+        $params = array(
+            'context' => $context,
+            'objectid' => $post->id,
+            'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
+        );
+
+        $event = \mod_forum\event\post_updated::create($params);
+
+        // Trigger and capturing the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\post_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'update post', "view.php?f={$forum->id}#p{$post->id}",
+            $post->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $url->set_anchor('p'.$post->id);
+        $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
