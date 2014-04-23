@@ -4,7 +4,9 @@
 
     require('../../config.php');
 
+    $context = context_system::instance();
     $PAGE->set_url('/auth/shibboleth/index.php');
+    $PAGE->set_context($context);
 
     // Support for WAYFless URLs.
     $target = optional_param('target', '', PARAM_LOCALURL);
