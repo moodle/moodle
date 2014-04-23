@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/store.php');
 
 class logstore_database_store_testcase extends advanced_testcase {
     public function test_log_writing() {
@@ -223,6 +224,49 @@ class logstore_database_store_testcase extends advanced_testcase {
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
+    }
+
+    /**
+     * Test method is_event_ignored.
+     */
+    public function test_is_event_ignored() {
+        $this->resetAfterTest();
+
+        // Test guest filtering.
+        set_config('logguests', 0, 'logstore_database');
+        $this->setGuestUser();
+        $event = \logstore_database\event\unittest_executed::create(
+                array('context' => context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)));
+        $logmanager = get_log_manager();
+        $store = new \logstore_database\test\store($logmanager);
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('logguests', 1, 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertFalse($store->is_event_ignored($event));
+
+        // Test action/level filtering.
+        set_config('includelevels', '', 'logstore_database');
+        set_config('includeactions', '', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('includelevels', '0,1', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('includelevels', '0,1,2', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertFalse($store->is_event_ignored($event));
+
+        set_config('includelevels', '', 'logstore_database');
+        set_config('includeactions', 'c,r,d', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('includeactions', 'c,r,u,d', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertFalse($store->is_event_ignored($event));
     }
 
     /**

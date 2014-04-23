@@ -38,11 +38,11 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
     /** @var bool $logguests true if logging guest access */
     protected $logguests;
 
-    /** @var array $excludelevels An array of education levels to exclude */
-    protected $excludelevels = array();
+    /** @var array $includelevels An array of education levels to include */
+    protected $includelevels = array();
 
-    /** @var array $excludeactions An array of actions types to exclude */
-    protected $excludeactions = array();
+    /** @var array $includeactions An array of actions types to include */
+    protected $includeactions = array();
 
     /**
      * Construct
@@ -53,10 +53,10 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
         $this->helper_setup($manager);
         $this->buffersize = $this->get_config('buffersize', 50);
         $this->logguests = $this->get_config('logguests', 1);
-        $actions = $this->get_config('excludeactions', '');
-        $levels = $this->get_config('excludelevels', '');
-        $this->excludeactions = $actions === '' ? array() : explode(',', $actions);
-        $this->excludelevels = $levels === '' ? array() : explode(',', $levels);
+        $actions = $this->get_config('includeactions', '');
+        $levels = $this->get_config('includelevels', '');
+        $this->includeactions = $actions === '' ? array() : explode(',', $actions);
+        $this->includelevels = $levels === '' ? array() : explode(',', $levels);
     }
 
     /**
@@ -113,8 +113,8 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
      * @return bool
      */
     protected function is_event_ignored(\core\event\base $event) {
-        if (in_array($event->crud, $this->excludeactions) ||
-            in_array($event->edulevel, $this->excludelevels)
+        if (!in_array($event->crud, $this->includeactions) &&
+            !in_array($event->edulevel, $this->includelevels)
         ) {
             // Ignore event if the store settings do not want to store it.
             return true;

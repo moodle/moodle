@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External database log store.
+ * Database log store upgrade.
  *
- * @package    logstore_standard
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @package    logstore_database
+ * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+function xmldb_logstore_database_upgrade($oldversion) {
 
-$plugin->version = 2014041700; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2014011000; // Requires this Moodle version.
-$plugin->component = 'logstore_database'; // Full name of the plugin (used for diagnostics).
+    if ($oldversion < 2014041700) {
+        // Clean up old config.
+        unset_config('excludelevels', 'logstore_database');
+        unset_config('excludeactions', 'logstore_database');
+
+        // Savepoint reached.
+        upgrade_plugin_savepoint(true, 2014041700, 'logstore', 'database');
+    }
+
+    return true;
+}
