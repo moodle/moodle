@@ -29,5 +29,5 @@ function xmldb_filter_mathjaxloader_install() {
     global $CFG;
     require_once("$CFG->libdir/filterlib.php");
 
-    filter_set_global_state('mathjaxloader', TEXTFILTER_ON);
+    filter_set_global_state('mathjaxloader', TEXTFILTER_ON, -1);
 }
