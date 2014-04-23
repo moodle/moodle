@@ -8270,13 +8270,7 @@ class admin_setting_configstoredfile extends admin_setting {
 
         // Let's not deal with validation here, this is for admins only.
         $current = $this->get_setting();
-        if (empty($data)) {
-            // Most probably applying default settings.
-            if ($current === null) {
-                return ($this->config_write($this->name, '') ? '' : get_string('errorsetting', 'admin'));
-            }
-            return '';
-        } else if (!is_number($data)) {
+        if (!is_number($data)) {
             // Draft item id is expected here!
             return get_string('errorsetting', 'admin');
         }
@@ -8296,8 +8290,10 @@ class admin_setting_configstoredfile extends admin_setting {
 
         if ($fs->file_exists($options['context']->id, $component, $this->filearea, $this->itemid, '/', '.')) {
             // Make sure the settings form was not open for more than 4 days and draft areas deleted in the meantime.
+            // But we can safely ignore that if the destination area is empty, so that the user is not prompt
+            // with an error because the draft area does not exist, as he did not use it.
             $usercontext = context_user::instance($USER->id);
-            if (!$fs->file_exists($usercontext->id, 'user', 'draft', $data, '/', '.')) {
+            if (!$fs->file_exists($usercontext->id, 'user', 'draft', $data, '/', '.') && $current !== '') {
                 return get_string('errorsetting', 'admin');
             }
         }
