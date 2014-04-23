@@ -47,6 +47,7 @@ function atto_image_strings_for_js() {
         'height',
         'presentation',
         'presentationoraltrequired',
+        'size',
         'width',
     );
 

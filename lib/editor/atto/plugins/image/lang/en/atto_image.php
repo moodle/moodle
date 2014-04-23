@@ -41,4 +41,5 @@ $string['pluginname'] = 'Image';
 $string['presentationoraltrequired'] = 'Images must have a description, except if the description is marked as not necessary.';
 $string['preview'] = 'Preview';
 $string['saveimage'] = 'Save image';
+$string['size'] = 'Size';
 $string['width'] = 'Width';
