@@ -770,6 +770,12 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($value !== null) {
             $this->_form->setDefault($name, $value);
         }
+        $this->_form->addHelpButton($name, 'score', 'lesson');
+
+        // Score is only used for custom scoring. Disable the element when not in use to stop some confusion.
+        if (!$this->_customdata['lesson']->custom) {
+            $this->_form->freeze($name);
+        }
     }
 
     /**
