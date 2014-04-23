@@ -6,3 +6,6 @@
 #page-report-completion-index .export-actions {
     text-align: center;
 }
+#page-report-completion-index.dir-rtl #completion-progress th svg {
+    direction: ltr;
+}

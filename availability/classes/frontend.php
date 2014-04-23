@@ -172,7 +172,7 @@ abstract class frontend {
         $decoded = json_decode($data['availabilityconditionsjson']);
         if (!$decoded) {
             // This shouldn't be possible.
-            throw new coding_exception('Invalid JSON from availabilityconditionsjson field');
+            throw new \coding_exception('Invalid JSON from availabilityconditionsjson field');
         }
         if (!empty($decoded->errors)) {
             $error = '';

@@ -318,6 +318,8 @@ abstract class quiz_attempts_report extends quiz_default_report {
                 continue;
             }
 
+            // Set the course module id before calling quiz_delete_attempt().
+            $quiz->cmid = $cm->id;
             quiz_delete_attempt($attempt, $quiz);
         }
     }

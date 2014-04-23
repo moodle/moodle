@@ -61,15 +61,4 @@ trait reader {
         }
         return $this->store;
     }
-
-    /**
-     * If the current user can access current store or not.
-     *
-     * @param \context $context
-     *
-     * @return bool
-     */
-    public function can_access(\context $context) {
-        return has_capability('logstore/' . $this->store . ':read', $context);
-    }
 }

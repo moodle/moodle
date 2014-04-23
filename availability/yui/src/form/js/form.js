@@ -94,12 +94,16 @@ M.core_availability.form = {
 
         // Get top-level tree as JSON.
         var value = this.field.get('value');
-        if (value === '') {
-            this.rootList = new M.core_availability.List(null, true);
-        } else {
-            var data = Y.JSON.parse(value);
-            this.rootList = new M.core_availability.List(data, true);
+        var data = null;
+        if (value !== '') {
+            try {
+                data = Y.JSON.parse(value);
+            } catch(x) {
+                // If the JSON data is not valid, treat it as empty.
+                this.field.set('value', '');
+            }
         }
+        this.rootList = new M.core_availability.List(data, true);
         this.mainDiv.appendChild(this.rootList.node);
 
         // Update JSON value after loading (to reflect any changes that need
@@ -507,7 +511,7 @@ M.core_availability.List.prototype.updateHtml = function() {
     } else {
         connectorText = M.str.availability.or;
     }
-    this.inner.all('.availability-connector span.label').each(function(span) {
+    this.inner.all('> .availability-children > .availability-connector span.label').each(function(span) {
         span.set('innerHTML', connectorText);
     });
 };
