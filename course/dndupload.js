@@ -232,8 +232,12 @@ M.course_dndupload = {
     types_includes: function(e, type) {
         var i;
         var types = e._event.dataTransfer.types;
+        type = type.toLowerCase();
         for (i=0; i<types.length; i++) {
-            if (types[i] == type) {
+            if (!types.hasOwnProperty(i)) {
+                continue;
+            }
+            if (types[i].toLowerCase() === type) {
                 return true;
             }
         }
