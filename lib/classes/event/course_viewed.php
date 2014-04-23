@@ -73,12 +73,14 @@ class course_viewed extends \core\event\base {
      * @return \moodle_url|null
      */
     public function get_url() {
+        global $CFG;
         $sectionid = null;
         if (isset($this->other['coursesectionid'])) {
             $sectionid = $this->other['coursesectionid'];
         }
+        require_once($CFG->dirroot . '/course/lib.php');
         try {
-            return \course_get_url($this->courseid, $sectionid);
+            return course_get_url($this->courseid, $sectionid);
         } catch (\Exception $e) {
             return null;
         }
