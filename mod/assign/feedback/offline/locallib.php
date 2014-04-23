@@ -384,9 +384,9 @@ class assign_feedback_offline extends assign_feedback_plugin {
             $active = !empty($controller);
 
             if ($active) {
-                $enabledcache = false;
+                $this->enabledcache = false;
             } else {
-                $enabledcache = parent::is_enabled();
+                $this->enabledcache = parent::is_enabled();
             }
         }
         return $this->enabledcache;
