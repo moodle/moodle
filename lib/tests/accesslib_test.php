@@ -888,7 +888,7 @@ class accesslib_testcase extends advanced_testcase {
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $teacher = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $teacher->id, $coursecontext);
-        $teacherename = (object)array('roleid'=>$teacher->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
+        $teacherename = (object)array('roleid'=>$teacherrole->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
         $DB->insert_record('role_names', $teacherename);
 
         $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
@@ -996,7 +996,7 @@ class accesslib_testcase extends advanced_testcase {
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $teacher = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $teacher->id, $coursecontext);
-        $teacherename = (object)array('roleid'=>$teacher->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
+        $teacherename = (object)array('roleid'=>$teacherrole->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
         $DB->insert_record('role_names', $teacherename);
 
         $contexts = $DB->get_records('context');
@@ -1055,10 +1055,10 @@ class accesslib_testcase extends advanced_testcase {
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $teacher = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $teacher->id, $coursecontext);
-        $teacherename = (object)array('roleid'=>$teacher->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
+        $teacherename = (object)array('roleid'=>$teacherrole->id, 'name'=>'Učitel', 'contextid'=>$coursecontext->id);
         $DB->insert_record('role_names', $teacherename);
         $this->assertTrue($DB->record_exists('capabilities', array('name'=>'moodle/backup:backupcourse'))); // any capability is ok
-        assign_capability('moodle/backup:backupcourse', CAP_PROHIBIT, $teacher->id, $coursecontext->id);
+        assign_capability('moodle/backup:backupcourse', CAP_PROHIBIT, $teacherrole->id, $coursecontext->id);
 
         $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
         $student = $this->getDataGenerator()->create_user();
