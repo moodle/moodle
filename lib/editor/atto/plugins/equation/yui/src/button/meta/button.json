@@ -5,7 +5,8 @@
             "moodle-core-event",
             "io",
             "event-valuechange",
-            "tabview"
+            "tabview",
+            "array-extras"
         ]
     }
 }
