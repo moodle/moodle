@@ -262,4 +262,29 @@ class core_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\course_viewed', $restored);
         $this->assertNull($restored->get_url());
     }
+
+    public function test_recent_capability_viewed() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $event = \core\event\recent_activity_viewed::create(array('context' => $context));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\recent_activity_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, "course", "recent", "recent.php?id=$course->id", $course->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+        $url = new moodle_url('/course/recent.php', array('id' => $course->id));
+        $this->assertEquals($url, $event->get_url());
+        $event->get_name();
+    }
 }

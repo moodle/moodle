@@ -70,7 +70,15 @@ if (isguestuser()) {
     exit;
 }
 
-add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
+// Log this request - the problem here is that the view page
+// does not display the chat content which is actually in a new window.
+$params = array(
+    'objectid' => $chat->id,
+    'context' => $context
+);
+$event = \mod_chat\event\course_module_viewed::create($params);
+$event->add_record_snapshot('chat', $chat);
+$event->trigger();
 
 $strenterchat    = get_string('enterchat', 'chat');
 $stridle         = get_string('idle', 'chat');

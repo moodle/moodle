@@ -37,10 +37,9 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 require_login($course);
-
-add_to_log($course->id, "course", "recent", "recent.php?id=$course->id", $course->id);
-
 $context = context_course::instance($course->id);
+
+\core\event\recent_activity_viewed::create(array('context' => $context))->trigger();
 
 $lastlogin = time() - COURSE_MAX_RECENT_PERIOD;
 if (!isguestuser() and !empty($USER->lastcourseaccess[$COURSE->id])) {

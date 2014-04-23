@@ -741,6 +741,7 @@ $string['eventcourseuserreportviewed'] = 'Course user report viewed';
 $string['eventcourseviewed'] = 'Course viewed';
 $string['eventemailfailed'] = 'Email failed to send';
 $string['eventname'] = 'Event name';
+$string['eventrecentactivityviewed'] = 'Recent activity viewed';
 $string['eventunknownlogged'] = 'Unknown event';
 $string['eventusercreated'] = 'User created';
 $string['eventuserdeleted'] = 'User deleted';
