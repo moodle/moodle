@@ -418,7 +418,7 @@ function profile_list_categories() {
 function profile_edit_category($id, $redirect) {
     global $CFG, $DB, $OUTPUT;
 
-    require_once('index_category_form.php');
+    require_once($CFG->dirroot.'/user/profile/index_category_form.php');
     $categoryform = new category_form();
 
     if ($category = $DB->get_record('user_info_category', array('id'=>$id))) {
@@ -474,7 +474,7 @@ function profile_edit_field($id, $datatype, $redirect) {
     $field->description = clean_text($field->description, $field->descriptionformat);
     $field->description = array('text'=>$field->description, 'format'=>$field->descriptionformat, 'itemid'=>0);
 
-    require_once('index_field_form.php');
+    require_once($CFG->dirroot.'/user/profile/index_field_form.php');
     $fieldform = new field_form(null, $field->datatype);
 
     // Convert the data format for

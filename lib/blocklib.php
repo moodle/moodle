@@ -478,6 +478,7 @@ class block_manager {
             throw new coding_exception('block_manager has already prepared the blocks in region ' .
                     $region . 'for output. It is too late to add a fake block.');
         }
+        $bc->attributes['class'] .= ' block_fake';
         $this->extracontent[$region][] = $bc;
     }
 
@@ -515,7 +516,11 @@ class block_manager {
 
         $this->check_is_loaded();
         $this->ensure_content_created($region, $output);
-        foreach($this->visibleblockcontent[$region] as $instance) {
+        if (!$this->region_has_content($region, $output)) {
+            // If the region has no content then nothing is docked at all of course.
+            return false;
+        }
+        foreach ($this->visibleblockcontent[$region] as $instance) {
             if (!empty($instance->content) && !get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
                 return false;
             }
