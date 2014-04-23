@@ -31,7 +31,7 @@ Feature: In a report, admin can see loglive data
     And I should see "course_add mod"
     And I log out
 
-  @javascript
+  @javascript @_switch_window
   Scenario: Check loglive report entries and make sure the pause/resume button works for standard reader along with ajax calls
     Given I am on homepage
     When I navigate to "Live logs" node in "Site administration > Reports"
@@ -54,7 +54,7 @@ Feature: In a report, admin can see loglive data
     And I should see "Test name2"
     And I log out
 
-  @javascript
+  @javascript @_switch_window
   Scenario: Check loglive report entries and make sure the pause/resume button works for legacy reader along with ajax calls
     Given I am on homepage
     When I navigate to "Live logs" node in "Site administration > Reports"
