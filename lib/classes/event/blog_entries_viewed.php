@@ -25,14 +25,12 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * blog_entries_viewed
- *
  * Class for event to be triggered when blog entries are viewed.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int courseid id of associated course.
+ *      - int courseid: id of associated course.
  * }
  *
  * @package    core

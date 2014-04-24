@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a choice activity is viewed.
+ * The mod_choice course module viewed event.
  *
  * @package mod_choice
  * @copyright 2013 Adrian Greeve <adrian@moodle.com>
@@ -26,12 +26,12 @@ namespace mod_choice\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a choice activity is viewed.
+ * The mod_choice course module viewed event class.
  *
  * @package    mod_choice
  * @since      Moodle 2.6
- * @copyright 2013 Adrian Greeve
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2013 Adrian Greeve
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_viewed extends \core\event\course_module_viewed {
 

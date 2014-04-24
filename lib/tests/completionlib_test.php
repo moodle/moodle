@@ -817,7 +817,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals($current, $event->get_record_snapshot('course_modules_completion', $event->objectid));
         $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
         $this->assertEquals($USER->id, $event->userid);
-        $this->assertEquals($this->user->id, $event->other['relateduserid']);
+        $this->assertEquals($this->user->id, $event->relateduserid);
         $this->assertInstanceOf('moodle_url', $event->get_url());
         $this->assertEventLegacyData($current, $event);
     }
@@ -844,7 +844,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals($this->course->id, $event->get_record_snapshot('course_completions', $event->objectid)->course);
         $this->assertEquals($this->course->id, $event->courseid);
         $this->assertEquals($USER->id, $event->userid);
-        $this->assertEquals($this->user->id, $event->other['relateduserid']);
+        $this->assertEquals($this->user->id, $event->relateduserid);
         $this->assertEquals(context_course::instance($this->course->id), $event->get_context());
         $this->assertInstanceOf('moodle_url', $event->get_url());
         $data = $ccompletion->get_record_data();

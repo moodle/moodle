@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when completion report is viewed.
+ * The report_completion report viewed event.
  *
  * @package    report_completion
- * @copyright  2014 onwards Ankit Agarwal<ankit.agrr@gmail.com>
+ * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,11 +27,11 @@ namespace report_completion\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event triggered, when completion report is viewed.
+ * The report_completion report viewed event class.
  *
  * @package    report_completion
  * @since      Moodle 2.7
- * @copyright  2014 onwards Ankit Agarwal<ankit.agrr@gmail.com>
+ * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report_viewed extends \core\event\base {
@@ -61,7 +61,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed completion report for course with id " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the completion report for the course with the id '$this->courseid'.";
     }
 
     /**
@@ -82,7 +82,7 @@ class report_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if ($this->contextlevel != CONTEXT_COURSE) {
-            throw new \coding_exception('Context passed must be course context.');
+            throw new \coding_exception('Context level must be CONTEXT_COURSE.');
         }
     }
 }

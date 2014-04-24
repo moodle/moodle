@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when some content in participation report is viewed.
+ * The report_participation report viewed event.
  *
  * @package    report_participation
  * @copyright  2013 Ankit Agarwal
@@ -23,15 +23,20 @@
  */
 namespace report_participation\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event triggered, when some content in participation report is viewed.
+ * The report_participation report viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     -int instanceid: Id of instance.
- *     -int roleid: Role id for whom report is viewed.
- *     -int groupid: (optional) group id.
- *     -int timefrom: (optional) time from which report is viewed.
- *     -string action: (optional) action viewed.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int instanceid: Id of instance.
+ *      - int roleid: Role id for whom report is viewed.
+ *      - int groupid: (optional) group id.
+ *      - int timefrom: (optional) time from which report is viewed.
+ *      - string action: (optional) action viewed.
+ * }
  *
  * @package    report_participation
  * @since      Moodle 2.7
@@ -65,7 +70,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed course participation report for course with id " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the course participation report for the course with the id '$this->courseid'.";
     }
 
     /**
@@ -85,7 +90,7 @@ class report_viewed extends \core\event\base {
      */
     public function get_url() {
         return new \moodle_url('/report/participation/index.php', array('id' => $this->courseid,
-            'instanceid' => $this->data['other']['instanceid'], 'roleid' => $this->data['other']['roleid']));
+            'instanceid' => $this->other['instanceid'], 'roleid' => $this->other['roleid']));
     }
 
     /**
@@ -96,24 +101,24 @@ class report_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (empty($this->data['other']['instanceid'])) {
-            throw new \coding_exception('The property instanceid must be set in other.');
+        if (empty($this->other['instanceid'])) {
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
 
-        if (empty($this->data['other']['roleid'])) {
-            throw new \coding_exception('The property roleid must be set in other.');
+        if (empty($this->other['roleid'])) {
+            throw new \coding_exception('The \'roleid\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['groupid'])) {
-            throw new \coding_exception('The property groupid must be set in other.');
+        if (!isset($this->other['groupid'])) {
+            throw new \coding_exception('The \'groupid\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['timefrom'])) {
-            throw new \coding_exception('The property timefrom must be set in other.');
+        if (!isset($this->other['timefrom'])) {
+            throw new \coding_exception('The \'timefrom\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['action'])) {
-            throw new \coding_exception('The property action must be set in other.');
+        if (!isset($this->other['action'])) {
+            throw new \coding_exception('The \'action\' value must be set in other.');
         }
     }
 }

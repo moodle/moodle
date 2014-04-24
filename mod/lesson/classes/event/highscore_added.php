@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when a highscore is added.
+ * The mod_lesson highscore added event.
  *
  * @package    mod_lesson
- * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -28,7 +27,7 @@ namespace mod_lesson\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event to be triggered when a highscore is added.
+ * The mod_lesson highscore added event class.
  *
  * @property-read array $other {
  *      Extra information about event.

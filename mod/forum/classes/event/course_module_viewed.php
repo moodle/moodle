@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_forum forum viewed event.
+ * The mod_forum course module viewed event.
  *
  * @package    mod_forum
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
@@ -27,7 +27,7 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum forum viewed event.
+ * The mod_forum course module viewed event class.
  *
  * @package    mod_forum
  * @since      Moodle 2.7

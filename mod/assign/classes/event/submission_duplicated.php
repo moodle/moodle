@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission duplicated event.
+ * The mod_assign submission duplicated event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission duplicated event class.
+ * The mod_assign submission duplicated event class.
  *
  * @package    mod_assign
  * @since      Moodle 2.6
@@ -70,7 +70,8 @@ class submission_duplicated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} duplicated his submission {$this->objectid}.";
+        return "The user with the id '$this->userid' duplicated their submission with the id '$this->objectid' for the " .
+            "assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**

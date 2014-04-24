@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grouping_deleted extends \core\event\base {
+class grouping_deleted extends base {
 
     /**
      * Legacy data.
@@ -48,7 +48,7 @@ class grouping_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} deleted the grouping {$this->objectid}.";
+        return "The user with the id '$this->userid' deleted the grouping with the id '$this->objectid'.";
     }
 
     /**

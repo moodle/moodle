@@ -86,7 +86,7 @@ abstract class content_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed content';
+        return "The user with the id '$this->userid' viewed content.";
     }
 
     /**
@@ -117,7 +117,7 @@ abstract class content_viewed extends base {
         parent::validate_data();
         // Make sure this class is never used without a content identifier.
         if (empty($this->other['content'])) {
-            throw new \coding_exception('content_viewed event must define content identifier.');
+            throw new \coding_exception('The \'content\' value must be set in other.');
         }
     }
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * blog comment created event.
+ * The blog comment created event.
  *
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,14 +26,15 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * blog comment created event.
+ * The blog comment created event.
  *
  * @package    core
  * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blog_comment_created extends \core\event\comment_created {
+class blog_comment_created extends comment_created {
+
     /**
      * Get URL related to the action.
      *
@@ -49,6 +50,6 @@ class blog_comment_created extends \core\event\comment_created {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' added comment for blog with id ' . $this->other['itemid'];
+        return "The user with the id '$this->userid' added a comment to the blog with the id '{$this->other['itemid']}'.";
     }
 }

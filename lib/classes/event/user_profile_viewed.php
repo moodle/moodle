@@ -15,18 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the user profile viewed event.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int courseid id of course.
- *      @type string courseshortname short name of course.
- *      @type string coursefullname fullname of course.
- * }
+ * The user profile viewed event.
  *
  * @package    core
- * @since      Moodle 2.6
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,6 +26,22 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The user profile viewed event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int courseid: id of course.
+ *      - string courseshortname: short name of course.
+ *      - string coursefullname: fullname of course.
+ * }
+ *
+ * @package    core
+ * @since      Moodle 2.6
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class user_profile_viewed extends base {
 
     /**
@@ -61,7 +68,7 @@ class user_profile_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User ' . $this->userid . ' viewed the profile for user ' . $this->relateduserid . ' in the course ' .
+        return 'The user ' . $this->userid . ' viewed the profile for user ' . $this->relateduserid . ' in the course ' .
             $this->other['courseid'];
     }
 

@@ -25,7 +25,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * class blog_entry_deleted
+ * Class blog_entry_deleted
  *
  * Event for when a new blog entry is deleted.
  *
@@ -35,9 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class blog_entry_deleted extends \core\event\base {
+class blog_entry_deleted extends base {
 
-    /** @var  \blog_entry A reference to the active blog_entry object. */
+    /** @var \blog_entry A reference to the active blog_entry object. */
     protected $blogentry;
 
     /**
@@ -62,7 +62,7 @@ class blog_entry_deleted extends \core\event\base {
     /**
      * Sets blog_entry object to be used by observers.
      *
-     * @param \blog_entry $data A reference to the active blog_entry object.
+     * @param \blog_entry $blogentry A reference to the active blog_entry object.
      */
     public function set_blog_entry(\blog_entry $blogentry) {
         $this->blogentry = $blogentry;
@@ -71,6 +71,7 @@ class blog_entry_deleted extends \core\event\base {
     /**
      * Returns deleted blog entry for event observers.
      *
+     * @throws \coding_exception
      * @return \blog_entry
      */
     public function get_blog_entry() {
@@ -86,7 +87,7 @@ class blog_entry_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Blog entry id '. $this->objectid. ' was deleted by userid '. $this->userid;
+        return "The blog entry with the id '$this->objectid' was deleted by user with the id '$this->userid'.";
     }
 
     /**

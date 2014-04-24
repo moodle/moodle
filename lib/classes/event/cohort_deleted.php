@@ -61,7 +61,7 @@ class cohort_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'Cohort '.$this->objectid.' was deleted by '.$this->userid.' from context '.$this->contextid;
+        return "The cohort with the id '$this->objectid' was deleted by the user with the id '$this->userid'.";
     }
 
     /**

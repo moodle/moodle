@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string originalusername original username.
- *      @type string loggedinasusername username of logged in as user.
+ *      - string originalusername: original username.
+ *      - string loggedinasusername: username of logged in as user.
  * }
  *
  * @package    core
@@ -69,7 +69,7 @@ class user_loggedinas extends base {
      * @return string
      */
     public function get_description() {
-        return 'Userid ' . $this->userid . ' has logged in as '. $this->relateduserid;
+        return "The user with the id '$this->userid' has logged in as the user with the id '$this->relateduserid'.";
     }
 
     /**

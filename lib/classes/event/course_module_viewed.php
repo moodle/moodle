@@ -55,7 +55,8 @@ abstract class course_module_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid' viewed course module '$this->objecttable' with instance id '$this->objectid'";
+        return "The user with the id '$this->userid' viewed the '{$this->objecttable}' activity with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -96,12 +97,11 @@ abstract class course_module_viewed extends base {
         parent::validate_data();
         // Make sure this class is never used without proper object details.
         if (empty($this->objectid) || empty($this->objecttable)) {
-            throw new \coding_exception('course_module_viewed event must define objectid and object table.');
+            throw new \coding_exception('The course_module_viewed event must define objectid and object table.');
         }
         // Make sure the context level is set to module.
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
-
 }

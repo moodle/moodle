@@ -27,10 +27,13 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum course searched event.
+ * The mod_forum course searched event class.
  *
- * @property-read array $other Extra information about the event.
- *     -string searchterm: The searchterm used on forum search
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string searchterm: The searchterm used on forum search.
+ * }
  *
  * @package    mod_forum
  * @since      Moodle 2.7
@@ -56,8 +59,8 @@ class course_searched extends \core\event\base {
      */
     public function get_description() {
         $searchterm = s($this->other['searchterm']);
-        return "The user {$this->userid} has searched the course {$this->courseid} for ".
-            "forum posts containing '{$searchterm}''";
+        return "The user with the id '$this->userid' has searched the course with the id '$this->courseid' for forum posts " .
+            "containing \"{$searchterm}\".";
     }
 
     /**
@@ -100,11 +103,11 @@ class course_searched extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['searchterm'])) {
-            throw new \coding_exception('searchterm must be set in $other.');
+            throw new \coding_exception('The \'searchterm\' value must be set in other.');
         }
 
         if ($this->contextlevel != CONTEXT_COURSE) {
-            throw new \coding_exception('Context passed must be course.');
+            throw new \coding_exception('Context level must be CONTEXT_COURSE.');
         }
     }
 

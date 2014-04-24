@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop assessment evaluated event.
+ * The mod_workshop assessment evaluated event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,18 +26,17 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop assessment evaluated event class.
+ * The mod_workshop assessment evaluated event class.
  *
  * @property-read array $other {
  *     Extra information about the event.
  *
- *     @type string currentgrade current saved grade.
- *     @type string finalgrade final grade.
+ *     - string currentgrade: (could be null) current saved grade.
+ *     - string finalgrade: (could be null) final grade.
  * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,7 +59,8 @@ class assessment_evaluated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'An assessment has been evaluated ' . $this->objectid . '.';
+        return "The user with the id '$this->userid' has had their assessment attempt evaluated for the workshop with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**

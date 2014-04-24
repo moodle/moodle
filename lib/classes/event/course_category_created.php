@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course category created event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course category created event.
+ * Course category created event class.
  *
  * @package    core
  * @since      Moodle 2.7
@@ -61,8 +69,7 @@ class course_category_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'The course category with the id ' . $this->objectid . ' was created by the user with the id ' .
-            $this->userid;
+        return "The course category with the id '$this->objectid' was created by the user with the id '$this->userid'.";
     }
 
     /**

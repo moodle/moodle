@@ -27,10 +27,13 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum discussion updated event.
+ * The mod_forum discussion updated event class.
  *
- * @property-read array $other Extra information about the event.
- *     -int forumid: The id of the forum the discussion is in
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int forumid: The id of the forum the discussion is in
+ * }
  *
  * @package    mod_forum
  * @since      Moodle 2.7
@@ -55,7 +58,8 @@ class discussion_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has updated the discussion {$this->objectid}.";
+        return "The user with the id '$this->userid' has updated the discussion with the id '$this->objectid' in the forum " .
+            "with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -86,15 +90,11 @@ class discussion_updated extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['forumid'])) {
-            throw new \coding_exception('forumid must be set in $other.');
+            throw new \coding_exception('The \'forumid\' value must be set in other.');
         }
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
-        }
-
-        if (!isset($this->objectid)) {
-            throw new \coding_exception('objectid must be set to the discussionid.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when capability report is viewed.
+ * The tool_capability report viewed event.
  *
  * @package    tool_capability
  * @copyright  2014 Petr Skoda
@@ -24,7 +24,7 @@
 namespace tool_capability\event;
 
 /**
- * Event triggered, when capability report is viewed.
+ * The tool_capability report viewed event class.
  *
  * @package    tool_capability
  * @since      Moodle 2.7
@@ -59,7 +59,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed capability overview report";
+        return "The user with the id '$this->userid' viewed the capability overview report.";
     }
 
     /**

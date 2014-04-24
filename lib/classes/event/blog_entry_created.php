@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a new blog entry is added..
  *
@@ -25,6 +21,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class blog_entry_created
@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blog_entry_created extends \core\event\base {
+class blog_entry_created extends base {
 
     /** @var \blog_entry A reference to the active blog_entry object. */
     protected $blogentry;
@@ -54,7 +54,7 @@ class blog_entry_created extends \core\event\base {
     /**
      * Set blog_entry object to be used by observers.
      *
-     * @param \blog_entry $data A reference to the active blog_entry object.
+     * @param \blog_entry $blogentry A reference to the active blog_entry object.
      */
     public function set_blog_entry(\blog_entry $blogentry) {
         $this->blogentry = $blogentry;
@@ -63,6 +63,7 @@ class blog_entry_created extends \core\event\base {
     /**
      * Returns created blog_entry object for event observers.
      *
+     * @throws \coding_exception
      * @return \blog_entry
      */
     public function get_blog_entry() {
@@ -78,7 +79,7 @@ class blog_entry_created extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string("evententryadded", "core_blog");
+        return get_string('evententryadded', 'core_blog');
     }
 
     /**
@@ -87,7 +88,7 @@ class blog_entry_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Blog entry id '. $this->objectid. ' was created by userid '. $this->userid;
+        return "The blog entry with the id '$this->objectid' was created by the user with the id '$this->userid'.";
     }
 
     /**
@@ -117,12 +118,12 @@ class blog_entry_created extends \core\event\base {
     }
 
     /**
-     * replace add_to_log() statement.
+     * Replace add_to_log() statement.
      *
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
         return array (SITEID, 'blog', 'add', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
-                $this->blogentry->subject);
+            $this->blogentry->subject);
     }
 }

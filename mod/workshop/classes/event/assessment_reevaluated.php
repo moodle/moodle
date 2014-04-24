@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop assessment_reevaluated event.
+ * The mod_workshop assessment_reevaluated event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,18 +26,17 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop assessment_reevaluated event class.
+ * The mod_workshop assessment_reevaluated event class.
  *
  * @property-read array $other {
  *     Extra information about the event.
  *
- *     @type float currentgrade current saved grade.
- *     @type float finalgrade final grade.
+ *     - float currentgrade: (may be null) current saved grade.
+ *     - float finalgrade: (may be null) final grade.
  * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,7 +59,8 @@ class assessment_reevaluated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The assessment has been re-evaluated ' . $this->objectid . '.';
+        return "The user with the id '$this->userid' has had their assessment attempt reevaluated for the workshop with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**

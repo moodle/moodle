@@ -52,7 +52,7 @@ class blog_entry_updated extends base {
     /**
      * Sets blog_entry object to be used by observers.
      *
-     * @param \blog_entry $data A reference to the active blog_entry object.
+     * @param \blog_entry $blogentry A reference to the active blog_entry object.
      */
     public function set_blog_entry(\blog_entry $blogentry) {
         $this->blogentry = $blogentry;
@@ -61,6 +61,7 @@ class blog_entry_updated extends base {
     /**
      * Returns updated blog entry for event observers.
      *
+     * @throws \coding_exception
      * @return \blog_entry
      */
     public function get_blog_entry() {
@@ -85,7 +86,7 @@ class blog_entry_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Blog entry id '. $this->objectid. ' was updated by userid '. $this->userid;
+        return "The blog entry with the id '$this->objectid' was updated by the user with the id '$this->userid'.";
     }
 
     /**

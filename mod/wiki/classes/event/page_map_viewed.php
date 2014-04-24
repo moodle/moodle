@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki map viewed event.
+ * The mod_wiki map viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,12 +26,12 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki map viewed event class.
+ * The mod_wiki map viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int option map option viewed.
+ *      - int option: map option viewed.
  * }
  *
  * @package    mod_wiki
@@ -66,7 +66,8 @@ class page_map_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed wiki map for page id ' . $this->objectid;
+        return "The user with the id '$this->userid' viewed the wiki map for the page with the id '$this->objectid' for the wiki with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -97,7 +98,7 @@ class page_map_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['option'])) {
-            throw new \coding_exception('The option need to be set in $other, even if 0.');
+            throw new \coding_exception('The \'option\' value must be set in other, even if 0.');
         }
     }
 }

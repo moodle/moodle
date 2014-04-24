@@ -26,12 +26,12 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when user is enrolled in a course.
+ * Event class for when user is enrolled in a course.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string enrol name of enrolment instance.
+ *      - string enrol: name of enrolment instance.
  * }
  *
  * @package    core
@@ -65,7 +65,8 @@ class user_enrolment_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->relateduserid. ' is enrolled in course '.$this->courseid.' by user '.$this->userid;
+        return "The user with the id '$this->relateduserid' was enrolled in the course with the id '$this->courseid' by the " .
+            "user with the id '$this->userid'.";
     }
 
     /**
@@ -115,11 +116,13 @@ class user_enrolment_created extends base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (!isset($this->other['enrol'])) {
-            throw new \coding_exception('Enrolment plugin name must be set in $other.');
-        }
+
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('Related user id must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['enrol'])) {
+            throw new \coding_exception('The \'enrol\' value must be set in $other.');
         }
     }
 }

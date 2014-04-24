@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event when stats report is viewed.
+ * The report_stats report viewed event.
  *
  * @package    report_stats
  * @copyright  2013 Ankit Agarwal
@@ -23,13 +23,18 @@
  */
 namespace report_stats\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event triggered, when stats report is viewed.
+ * The report_stats report viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     -int report: (optional) Report type.
- *     -int time: (optional) Time from which report is viewed.
- *     -int mode: (optional) Report mode.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int report: (optional) Report type.
+ *      - int time: (optional) Time from which report is viewed.
+ *      - int mode: (optional) Report mode.
+ * }
  *
  * @package    report_stats
  * @since      Moodle 2.7
@@ -63,7 +68,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The user with id ' . $this->userid . ' viewed statistics report for course with id ' . $this->courseid;
+        return "The user with the id '$this->userid' viewed the statistics report for the course with the id '$this->courseid'.";
     }
 
     /**
@@ -81,8 +86,8 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/report/stats/index.php', array('id' => $this->courseid, 'mode' => $this->data['other']['mode'],
-                'report' => $this->data['other']['report']));
+        return new \moodle_url('/report/stats/index.php', array('id' => $this->courseid, 'mode' => $this->other['mode'],
+                'report' => $this->other['report']));
     }
 
     /**
@@ -93,20 +98,20 @@ class report_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (!isset($this->data['other']['report'])) {
-            throw new \coding_exception('The property report must be set in other.');
+        if (!isset($this->other['report'])) {
+            throw new \coding_exception('The \'report\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['time'])) {
-            throw new \coding_exception('The property time must be set in other.');
+        if (!isset($this->other['time'])) {
+            throw new \coding_exception('The \'time\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['mode'])) {
-            throw new \coding_exception('The property mode must be set in other.');
+        if (!isset($this->other['mode'])) {
+            throw new \coding_exception('The \'mode\' value must be set in other.');
         }
 
         if (!isset($this->data['relateduserid'])) {
-            throw new \coding_exception('The property relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

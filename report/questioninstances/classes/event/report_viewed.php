@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when capability report is viewed.
+ * The report_questioninstances report viewed event.
  *
  * @package    report_questioninstances
  * @copyright  2014 Petr Skoda
@@ -23,11 +23,16 @@
  */
 namespace report_questioninstances\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event triggered, when capability report is viewed.
+ * The report_questioninstances report viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     -string requestedqtype: Requested report type.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      -string requestedqtype: Requested question type.
+ * }
  *
  * @package    report_questioninstances
  * @since      Moodle 2.7
@@ -62,7 +67,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed question instances report";
+        return "The user with the id '$this->userid' viewed the question instances report.";
     }
 
     /**
@@ -91,9 +96,8 @@ class report_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-
-        if (!isset($this->data['other']['requestedqtype'])) {
-            throw new \coding_exception('requestedqtype must be set in other array.');
+        if (!isset($this->other['requestedqtype'])) {
+            throw new \coding_exception('The \'requestedqtype\' value must be set in other.');
         }
     }
 }

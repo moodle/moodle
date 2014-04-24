@@ -17,6 +17,18 @@
 /**
  * Tag created event.
  *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Tag created event class.
+ *
  * @property-read array $other {
  *      Extra information about event.
  *
@@ -29,11 +41,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class tag_created extends base {
 
     /**
@@ -60,7 +67,7 @@ class tag_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'The tag with the id ' . $this->objectid . ' was created by the user with the id ' . $this->userid;
+        return "The user with the id '$this->userid' created the tag with the id '$this->objectid'.";
     }
 
     /**
@@ -73,11 +80,11 @@ class tag_created extends base {
         parent::validate_data();
 
         if (!isset($this->other['name'])) {
-            throw new \coding_exception('The name must be set in $other.');
+            throw new \coding_exception('The \'name\' value must be set in other.');
         }
 
         if (!isset($this->other['rawname'])) {
-            throw new \coding_exception('The rawname must be set in $other.');
+            throw new \coding_exception('The \'rawname\' value must be set in other.');
         }
     }
 }

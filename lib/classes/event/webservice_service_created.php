@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core webservice service created event.
+ * Web service service created event.
  *
  * @package    core
  * @copyright  2013 Frédéric Massart
@@ -26,12 +26,12 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core webservice service created event class.
+ * Web service service created event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string sessionid session id.
+ *      - string: sessionid session id.
  * }
  *
  * @package    core
@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_service_created extends \core\event\base {
+class webservice_service_created extends base {
 
     /**
      * Returns description of what happened.

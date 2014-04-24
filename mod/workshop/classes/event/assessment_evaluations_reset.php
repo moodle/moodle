@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop assessment_evaluations reset event.
+ * The mod_workshop assessment_evaluations reset event.
  *
  * @package    mod_workshop
  * @category   event
@@ -27,11 +27,16 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop assessment_evaluations reset event class.
+ * The mod_workshop assessment_evaluations reset event class.
+ *
+ * @property-read array $other {
+ *     Extra information about the event.
+ *
+ *     - int workshopid: the ID of the workshop.
+ * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -45,7 +50,6 @@ class assessment_evaluations_reset extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'workshop_aggregations';
     }
 
     /**
@@ -54,7 +58,8 @@ class assessment_evaluations_reset extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The assessment evaluations have been reset ' . $this->objectid . '.';
+        return "The user with the id '$this->userid' has reset the assessment evaluations for the workshop with the course module id " .
+            "'$this->contextinstanceid'.";
     }
 
     /**
@@ -64,7 +69,7 @@ class assessment_evaluations_reset extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, 'workshop', 'update clear aggregated grade', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
+                $this->other['workshopid'], $this->contextinstanceid);
     }
 
     /**

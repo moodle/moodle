@@ -54,7 +54,7 @@ class course_resources_list_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid' viewed list of resources in course with id '$this->courseid'";
+        return "The user with the id '$this->userid' viewed the list of resources in the course with the id '$this->courseid'.";
     }
 
     /**
@@ -104,7 +104,6 @@ class course_resources_list_viewed extends base {
         return $logs;
     }
 
-
     /**
      * Custom validation.
      *
@@ -116,5 +115,4 @@ class course_resources_list_viewed extends base {
             throw new \coding_exception('Context passed must be course context.');
         }
     }
-
 }

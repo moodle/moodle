@@ -15,7 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Report viewed event.
+ * The mod_quiz report viewed event.
+ *
+ * @package    mod_quiz
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_quiz\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_quiz report viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -29,11 +41,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_quiz\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class report_viewed extends \core\event\base {
 
     /**
@@ -61,8 +68,8 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed the report \'' . s($this->other['reportname']) . '\' for the quiz
-            with the id ' . $this->other['quizid'];
+        return "The user with the id '$this->userid' viewed the report '" . s($this->other['reportname']) . "' for the quiz with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -95,11 +102,11 @@ class report_viewed extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' must be set in other.');
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
 
         if (!isset($this->other['reportname'])) {
-            throw new \coding_exception('The \'reportname\' must be set in other.');
+            throw new \coding_exception('The \'reportname\' value must be set in other.');
         }
     }
 }

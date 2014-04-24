@@ -14,21 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course restored event.
+ *
+ * @package    core
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course restored event.
+ * Course restored event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string type restore type, activity, course or section.
- *      @type int target where restored (new/existing/current/adding/deleting)
- *      @type int mode execution mode
- *      @type string opertaion restore
- *      @type boolean samesite true is restored to same site.
+ *      - string type: restore type, activity, course or section.
+ *      - int target: where restored (new/existing/current/adding/deleting).
+ *      - int mode: execution mode.
+ *      - string operation: what operation are we performing?
+ *      - boolean samesite: true if restoring to same site.
  * }
  *
  * @package    core
@@ -62,7 +70,7 @@ class course_restored extends base {
      * @return string
      */
     public function get_description() {
-        return "Course {$this->objectid} was restored by user {$this->userid}";
+        return "The course with the id '$this->objectid' was restored by the user with the id '$this->userid'.";
     }
 
     /**

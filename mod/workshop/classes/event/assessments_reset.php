@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop submission assessments reset event.
+ * The mod_workshop submission assessments reset event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,11 +26,16 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop submission assessments reset event class.
+ * The mod_workshop submission assessments reset event class.
+ *
+ * @property-read array $other {
+ *     Extra information about the event.
+ *
+ *     - int workshopid: the ID of the workshop.
+ * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -45,7 +49,6 @@ class assessments_reset extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'workshop_assessments';
     }
 
     /**
@@ -54,7 +57,8 @@ class assessments_reset extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The submission assessments of the workshop ' . $this->objectid . ' have been cleared.';
+        return "The user with the id '$this->userid' has reset the assessments for the workshop with the course module id " .
+            "'$this->contextinstanceid'.";
     }
 
     /**
@@ -64,7 +68,7 @@ class assessments_reset extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, 'workshop', 'update clear assessments', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
+            $this->other['workshopid'], $this->contextinstanceid);
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary course module instance list viewed event.
+ * The mod_glossary instance list viewed event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,7 +26,7 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary course module instance list viewed event class.
+ * The mod_glossary instance list viewed event class.
  *
  * @package    mod_glossary
  * @since      Moodle 2.7

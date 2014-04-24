@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class assessable_submitted extends \core\event\base {
+abstract class assessable_submitted extends base {
 
     /**
      * Init method.

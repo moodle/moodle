@@ -29,8 +29,12 @@ defined('MOODLE_INTERNAL') || die();
  * Course user report viewed event class.
  *
  * Class for event to be triggered when a course user report is viewed.
- * @property-read array $other Extra information about the event.
- *     -string mode: Mode is used to show the user different data.
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string mode: Mode is used to show the user different data.
+ * }
  *
  * @package    core
  * @since      Moodle 2.7
@@ -55,7 +59,8 @@ class course_user_report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "A user with the id '$this->userid' viewed the user report in the course '$this->courseid' for user '$this->relateduserid'";
+        return "The user with the id '$this->userid' viewed the user report for the course with the id '$this->courseid' " .
+            "for user with the id '$this->relateduserid'.";
     }
 
     /**

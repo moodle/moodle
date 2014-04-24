@@ -17,13 +17,6 @@
 /**
  * User enrolment deleted event.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string enrol name of enrolment instance.
- *      @type array userenrolment user_enrolment record.
- * }
- *
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,7 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when user is unenrolled from a course.
+ * Event class for when user is unenrolled from a course.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string enrol: name of enrolment instance.
+ *      - array userenrolment: user_enrolment record.
+ * }
  *
  * @package    core
  * @since      Moodle 2.6
@@ -66,7 +66,8 @@ class user_enrolment_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->relateduserid. ' is enrolled in course '.$this->courseid.' by user '.$this->userid;
+        return "The user with the id '$this->relateduserid' was unenrolled in the course with the id '$this->courseid' by the " .
+            "user with the id '$this->userid'.";
     }
 
     /**

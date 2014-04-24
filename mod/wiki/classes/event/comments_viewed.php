@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki comments viewed event.
+ * The mod_wiki comments viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,7 +26,7 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki comments viewed event.
+ * The mod_wiki comments viewed event class.
  *
  * @package    mod_wiki
  * @since      Moodle 2.7
@@ -51,8 +51,8 @@ class comments_viewed extends \core\event\comments_viewed {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed comments for wiki page id ' .
-                $this->objectid;
+        return "The user with the id '$this->userid' viewed a comment with the id '$this->objectid' on the page with the id " .
+            "'{$this->other['itemid']}' for the wiki with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -72,18 +72,5 @@ class comments_viewed extends \core\event\comments_viewed {
      */
     public function get_url() {
         return new \moodle_url('/mod/wiki/comments.php', array('pageid' => $this->objectid));
-    }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-        if (empty($this->objectid) || empty($this->objecttable)) {
-            throw new \coding_exception('The objectid and objecttable need to be set in $other');
-        }
     }
 }

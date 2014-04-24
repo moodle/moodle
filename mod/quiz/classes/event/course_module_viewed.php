@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course module viewed event.
+ * The mod_quiz course module viewed event.
  *
  * @package    mod_quiz
- * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +26,14 @@ namespace mod_quiz\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_quiz course module viewed event class.
+ *
+ * @package    mod_quiz
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class course_module_viewed extends \core\event\course_module_viewed {
 
     /**

@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when a lesson is started.
+ * The mod_lesson lesson started event.
  *
  * @package    mod_lesson
- * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -27,6 +26,14 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_lesson lesson started event class.
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
 class lesson_started extends \core\event\base {
 
     /**
@@ -62,7 +69,7 @@ class lesson_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The lesson ' . $this->objectid . ' was started by the user ' . $this->userid;
+        return "The user with the id '$this->userid' started the lesson with the course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -62,7 +62,8 @@ class cohort_member_removed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->relateduserid.' was removed from cohort '.$this->objectid.' by user '.$this->userid;
+        return "The user with the id '$this->relateduserid' was removed from the cohort with the id '$this->objectid' by the " .
+            "user with the id '$this->userid'.";
     }
 
     /**

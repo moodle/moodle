@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when the an essay attempt is viewed
+ * The mod_lesson essay attempt viewed event.
  *
  * @package    mod_lesson
- * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -27,6 +26,14 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_lesson essay attempt viewed event class.
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
 class essay_attempt_viewed extends \core\event\base {
 
     /**
@@ -63,8 +70,9 @@ class essay_attempt_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The essay grade for the user with the id ' . $this->relateduserid . ' for the attempt with the id ' .
-            $this->objectid . ' was viewed by the user with the id ' . $this->userid;
+        return "The essay grade for the user with the id '$this->relateduserid' for the attempt with the id " .
+            "'$this->objectid' was viewed by the user with the id '$this->userid' for the lesson activity with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

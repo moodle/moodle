@@ -15,7 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when a tag has been removed from an item.
+ * The tag removed event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Event class for when a tag has been removed from an item.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -32,11 +44,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class tag_removed extends base {
 
     /**
@@ -63,8 +70,8 @@ class tag_removed extends base {
      * @return string
      */
     public function get_description() {
-        return 'The tag with the id ' . $this->other['tagid'] . ' was removed from the item type \'' . s($this->other['itemtype']) .
-            '\' with the id ' . $this->other['itemid'] . ' by the user with the id ' . $this->userid;
+        return "The user with the id '$this->userid' removed the tag with the id '{$this->other['tagid']}' to the item type '" .
+            s($this->other['itemtype']) . "' with the id '{$this->other['itemid']}'.";
     }
 
     /**
@@ -77,23 +84,23 @@ class tag_removed extends base {
         parent::validate_data();
 
         if (!isset($this->other['tagid'])) {
-            throw new \coding_exception('The tagid must be set in $other.');
+            throw new \coding_exception('The \'tagid\' value must be set in other.');
         }
 
         if (!isset($this->other['itemid'])) {
-            throw new \coding_exception('The itemid must be set in $other.');
+            throw new \coding_exception('The \'itemid\' value must be set in other.');
         }
 
         if (!isset($this->other['itemtype'])) {
-            throw new \coding_exception('The itemtype must be set in $other.');
+            throw new \coding_exception('The \'itemtype\' value must be set in other.');
         }
 
         if (!isset($this->other['tagname'])) {
-            throw new \coding_exception('The tagname must be set in $other.');
+            throw new \coding_exception('The \'tagname\' value must be set in other.');
         }
 
         if (!isset($this->other['tagrawname'])) {
-            throw new \coding_exception('The tagrawname must be set in $other.');
+            throw new \coding_exception('The \'tagrawname\' value must be set in other.');
         }
     }
 }

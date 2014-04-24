@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a scorm report is viewed.
+ * The mod_scorm report viewed event.
  *
  * @package    mod_scorm
  * @copyright  2013 onwards Ankit Agarwal
@@ -26,13 +26,15 @@ namespace mod_scorm\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a scorm report is viewed.
+ * The mod_scorm report viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event properties.
  *
- *      @string mode Mode of the report viewed.
+ *      - int scormid: The ID of the scorm.
+ *      - string mode: Mode of the report viewed.
  * }
+ *
  * @package    mod_scorm
  * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
@@ -46,7 +48,6 @@ class report_viewed extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'scorm';
     }
 
     /**
@@ -55,8 +56,8 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed scorm report (' . $this->other['mode'] . ') with instanceid ' .
-            $this->objectid;
+        return "The user with the id '$this->userid' viewed the scorm report '{$this->other['mode']}' for the scorm with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -84,7 +85,7 @@ class report_viewed extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, 'scorm', 'report', 'report.php?id=' . $this->contextinstanceid .
-                '&mode=' . $this->other['mode'], $this->objectid, $this->contextinstanceid);
+                '&mode=' . $this->other['mode'], $this->other['scormid'], $this->contextinstanceid);
     }
 
     /**
@@ -95,8 +96,9 @@ class report_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (empty($this->other['mode'])) {
-            throw new \coding_exception('The event must specify mode to define which report was viewed.');
+            throw new \coding_exception('The \'mode\' value must be set in other.');
         }
     }
 }

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_deleted extends \core\event\base {
+class group_deleted extends base {
 
     /**
      * Returns description of what happened.
@@ -41,7 +41,7 @@ class group_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} deleted the group {$this->objectid}.";
+        return "The user with the id '$this->userid' deleted the group with the id '$this->objectid'.";
     }
 
     /**

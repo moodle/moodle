@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when attempts are deleted.
+ * The mod_scorm attempt deleted event.
  *
  * @package    mod_scorm
  * @copyright  2013 onwards Ankit Agarwal
@@ -26,13 +26,14 @@ namespace mod_scorm\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when attempts are deleted.
+ * The mod_scorm attempt deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event properties.
  *
- *      @type int attemptid Attempt id.
+ *      - int attemptid: Attempt id.
  * }
+ *
  * @package    mod_scorm
  * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
@@ -54,7 +55,8 @@ class attempt_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted attempt for scorm activity with attemptid ' . $this->other['attemptid'];
+        return "The user with the id '$this->userid' deleted the attempt with the id '{$this->other['attemptid']}' " .
+            "for the scorm activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -92,9 +94,10 @@ class attempt_deleted extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
-        if (empty($this->other['attemptid'])) {
-            throw new \coding_exception('The event must specify attemptid.');
-        }
         parent::validate_data();
+
+        if (empty($this->other['attemptid'])) {
+            throw new \coding_exception('The \'attemptid\' must be set in other.');
+        }
     }
 }

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string sessionid session id.
+ *      - string sessionid: session id.
  * }
  *
  * @package    core
@@ -66,7 +66,7 @@ class user_loggedout extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->objectid.' logged out.';
+        return "The user with the id '$this->objectid' has logged out.";
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course section updated.
+ * Course section updated event.
  *
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -27,12 +27,12 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course section updated.
+ * Course section updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int sectionnum section number.
+ *      - int sectionnum: section number.
  * }
  *
  * @package    core
@@ -68,7 +68,8 @@ class course_section_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Course ' . $this->courseid . ' section ' . $this->other['sectionnum'] . ' updated by user ' . $this->userid;
+        return "The user with the id '$this->userid' updated the section with the number '{$this->other['sectionnum']}' for the " .
+            "course with the id '$this->courseid'";
     }
 
     /**
@@ -98,8 +99,9 @@ class course_section_updated extends base {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (!isset($this->other['sectionnum'])) {
-            throw new \coding_exception('The sectionnum must be set in $other');
+            throw new \coding_exception('The \'sectionnum\' value must be set in other.');
         }
     }
 }

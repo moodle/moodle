@@ -163,9 +163,9 @@ class mod_workshop_events_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $event = \mod_workshop\event\assessment_evaluations_reset::create(array(
-            'objectid' => $this->workshop->id,
             'context'  => $this->context,
             'courseid' => $this->course->id,
+            'other' => array('workshopid' => $this->workshop->id)
         ));
 
         // Trigger and capture the event.
@@ -223,7 +223,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
                 'courseid'      => $this->course->id,
                 'relateduserid' => $user->id,
                 'other'         => array(
-                    'workshopid' => $this->workshop->id
+                    'submissiontitle' => 'The submission title'
                 )
             )
         );
@@ -259,7 +259,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
                 'courseid'      => $this->course->id,
                 'relateduserid' => $user->id,
                 'other'         => array(
-                    'workshopid' => $this->workshop->id
+                    'submissiontitle' => 'The submission title'
                 )
             )
         );

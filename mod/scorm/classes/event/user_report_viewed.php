@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a user report is viewed.
+ * The mod_scorm tracks user report viewed event.
  *
  * @package    mod_scorm
  * @copyright  2013 onwards Ankit Agarwal
@@ -26,14 +26,15 @@ namespace mod_scorm\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a user report is viewed.
+ * The mod_scorm tracks user report viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event properties.
  *
- *      @type int attemptid Attempt id.
- *      @type int instanceid Instance id of the scorm activity.
+ *      - int attemptid: Attempt id.
+ *      - int instanceid: Instance id of the scorm activity.
  * }
+ *
  * @package    mod_scorm
  * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
@@ -101,10 +102,10 @@ class user_report_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (empty($this->other['attemptid'])) {
-            throw new \coding_exception('The \\mod_scorm\\event\\user_report_viewed must specify attemptid.');
+            throw new \coding_exception('The \'attemptid\' value must be set in other.');
         }
         if (empty($this->other['instanceid'])) {
-            throw new \coding_exception('The \\mod_scorm\\event\\user_report_viewed must specify instanceid of the activity.');
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
     }
 }

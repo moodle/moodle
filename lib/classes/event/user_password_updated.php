@@ -21,6 +21,7 @@
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();

@@ -14,12 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Email failed event.
+ *
+ * @package    core
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Email failed event.
+ * Email failed event class.
  *
  * @package    core
  * @since      Moodle 2.7
@@ -51,8 +60,8 @@ class email_failed extends base {
      * @return string
      */
     public function get_description() {
-        return 'Failed to send an email from the user with the id ' . $this->userid . ' to the user with the id ' .
-            $this->relateduserid . ' due to the following error: \'' . $this->other['errorinfo'] . '\'';
+        return "Failed to send an email from the user with the id '$this->userid' to the user with the id '$this->relateduserid'
+            due to the following error: \"{$this->other['errorinfo']}\".";
     }
 
     /**

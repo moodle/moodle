@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary glossary category deleted event.
+ * The mod_glossary glossary category deleted event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,7 +26,7 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary glossary category deleted event.
+ * The mod_glossary glossary category deleted event class.
  *
  * @package    mod_glossary
  * @since      Moodle 2.7
@@ -58,7 +58,8 @@ class category_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has deleted a glossary category with id {$this->objectid}.";
+        return "The user with the id '$this->userid' deleted the category with the id '$this->objectid' in the " .
+            "glossary activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary entry created event.
+ * The mod_glossary entry created event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,12 +26,12 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary entry created event.
+ * The mod_glossary entry created event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string concept the concept of created entry.
+ *      - string concept: the concept of created entry.
  * }
  *
  * @package    mod_glossary
@@ -64,7 +64,8 @@ class entry_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has created a glossary entry with id {$this->objectid}.";
+        return "The user with the id '$this->userid' has created the glossary entry with the id '$this->objectid' for " .
+            "the glossary activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**

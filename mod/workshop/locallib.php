@@ -2476,7 +2476,6 @@ class workshop {
                 'finalgrade' => $finalgrade
             );
 
-
             // we need to save new calculation into the database
             if (is_null($agid)) {
                 // no aggregation record yet

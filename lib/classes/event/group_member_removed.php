@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_member_removed extends \core\event\base {
+class group_member_removed extends base {
 
     /**
      * Returns description of what happened.
@@ -41,7 +41,8 @@ class group_member_removed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} removed user {$this->relateduserid} from group {$this->objectid}.";
+        return "The user with the id '$this->userid' removed the user with the id '$this->relateduserid' to the group with " .
+            "the id '$this->objectid'.";
     }
 
     /**
@@ -93,5 +94,4 @@ class group_member_removed extends \core\event\base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groups';
     }
-
 }

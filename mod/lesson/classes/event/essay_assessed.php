@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_lesson essay assessed event.
+ * The mod_lesson essay assessed event.
  *
  * @package    mod_lesson
- * @since      Moodle 2.7
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,16 +27,17 @@ namespace mod_lesson\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_lesson essay assessed event class.
+ * The mod_lesson essay assessed event class.
  *
  * @property-read array $other {
  *     Extra information about the event.
  *
- *     @type int lessonid The ID of the lesson.
- *     @type int attemptid The ID for the attempt.
+ *     - int lessonid: The ID of the lesson.
+ *     - int attemptid: The ID for the attempt.
  * }
  *
  * @package    mod_lesson
+ * @since      Moodle 2.7
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,8 +60,8 @@ class essay_assessed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User ' . $this->userid . ' has marked the essay ' . $this->other['attemptid']
-                . ' and recorded a mark ' . $this->objectid . ' in the lesson ' . $this->other['lessonid'] . '.';
+        return "The user with the id '$this->userid' has marked the essay with the id '{$this->other['attemptid']}' and " .
+            "recorded a mark '$this->objectid' in the lesson with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -102,13 +102,13 @@ class essay_assessed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid is a mandatory property.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
         if (!isset($this->other['lessonid'])) {
-            throw new \coding_exception('lessonid is a mandatory property.');
+            throw new \coding_exception('The \'lessonid\' value must be set in other.');
         }
         if (!isset($this->other['attemptid'])) {
-            throw new \coding_exception('attemptid is a mandatory property.');
+            throw new \coding_exception('The \'attemptid\' value must be set in other.');
         }
     }
 }

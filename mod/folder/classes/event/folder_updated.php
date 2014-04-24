@@ -18,7 +18,6 @@
  * The mod_folder folder updated event.
  *
  * @package    mod_folder
- * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +26,14 @@ namespace mod_folder\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_folder folder updated event class.
+ *
+ * @package    mod_folder
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class folder_updated extends \core\event\base {
 
     /**
@@ -53,7 +60,7 @@ class folder_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' updated the folder activity with instance id ' . $this->objectid;
+        return "The user with the id '$this->userid' updated the folder activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

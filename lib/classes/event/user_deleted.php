@@ -69,7 +69,7 @@ class user_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'User profile deleted for the user with the id ' . $this->objectid;
+        return "The user with the id '$this->objectid' was deleted.";
     }
 
     /**

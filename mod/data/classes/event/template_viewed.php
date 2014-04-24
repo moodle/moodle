@@ -15,16 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_data templates viewed event.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int dataid the id of the data activity.
- * }
+ * The mod_data template viewed event.
  *
  * @package    mod_data
- * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +26,20 @@ namespace mod_data\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_data template viewed event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int dataid the id of the data activity.
+ * }
+ *
+ * @package    mod_data
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class template_viewed extends \core\event\base {
 
     /**
@@ -60,8 +67,8 @@ class template_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The template for the database activity with the id ' . $this->other['dataid'] . ' was viewed by the ' .
-            'user with the id ' . $this->userid;
+        return "The user with the id '$this->userid' viewed the template for the data activity with the course module " .
+            "id '$this->contextinstanceid'.";
     }
 
     /**
@@ -93,7 +100,7 @@ class template_viewed extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['dataid'])) {
-            throw new \coding_exception('The dataid must be set in $other.');
+            throw new \coding_exception('The \'dataid\' value must be set in other.');
         }
     }
 }

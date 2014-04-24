@@ -189,7 +189,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\mod_feedback\\event\\response_deleted to be triggered without
                     other['anonymous']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['anonymous'] cannot be empty", $e->getMessage());
+            $this->assertContains("The 'anonymous' value must be set in other.", $e->getMessage());
         }
     }
 
@@ -295,7 +295,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\mod_feedback\\event\\response_deleted to be triggered without
                     other['instanceid']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['instanceid'] cannot be empty", $e->getMessage());
+            $this->assertContains("The 'instanceid' value must be set in other.", $e->getMessage());
         }
 
         // Test not setting cmid.
@@ -309,7 +309,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\mod_feedback\\event\\response_deleted to be triggered without
                     other['cmid']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['cmid'] cannot be empty", $e->getMessage());
+            $this->assertContains("The 'cmid' value must be set in other.", $e->getMessage());
         }
 
         // Test not setting anonymous.
@@ -322,7 +322,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\mod_feedback\\event\\response_deleted to be triggered without
                     other['anonymous']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['anonymous'] cannot be empty", $e->getMessage());
+            $this->assertContains("The 'anonymous' value must be set in other.", $e->getMessage());
         }
     }
 }

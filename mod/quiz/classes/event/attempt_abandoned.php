@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz module event class.
+ * The mod_quiz attempt abandoned event.
  *
  * @package    mod_quiz
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -25,12 +25,13 @@ namespace mod_quiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a quiz attempt is abandoned.
+ * The mod_quiz attempt abandoned event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int submitterid id of submitter.
+ *      - int submitterid: id of submitter (null when trigged by CLI script).
+ *      - int quizid: id of the quiz.
  * }
  *
  * @package    mod_quiz
@@ -55,8 +56,8 @@ class attempt_abandoned extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A quiz with the id of ' . $this->other['quizid'] . ' has been marked as abandoned for the user with the id of ' .
-            $this->relateduserid;
+        return "The user with the id '$this->relateduserid' has had their attempt with the id '$this->objectid' marked as abandoned " .
+            "for the quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -110,13 +111,19 @@ class attempt_abandoned extends \core\event\base {
 
     /**
      * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
      */
     protected function validate_data() {
         parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (!array_key_exists('submitterid', $this->other)) {
-            throw new \coding_exception('Other must contain the key submitterid');
-        } else if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set');
+            throw new \coding_exception('The \'submitterid\' value must be set in other.');
         }
     }
 }

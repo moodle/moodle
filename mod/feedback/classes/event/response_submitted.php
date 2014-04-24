@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when a feedback response is submitted.
+ * The mod_feedback response submitted event.
  *
  * @package    mod_feedback
  * @copyright  2013 Ankit Agarwal
@@ -26,16 +26,16 @@ namespace mod_feedback\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class response_submitted
+ * The mod_feedback response submitted event class.
  *
- * Class for event to be triggered when a feedback response is submitted.
+ * This event is triggered when a feedback response is submitted.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int anonymous if feedback is anonymous.
- *      @type int cmid course module id.
- *      @type int instanceid id of instance.
+ *      - int anonymous: if feedback is anonymous.
+ *      - int cmid: course module id.
+ *      - int instanceid: id of instance.
  * }
  *
  * @package    mod_feedback
@@ -72,7 +72,8 @@ class response_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The user ' . $this->relateduserid . ' submited a feedback';
+        return "The user with the id '$this->userid' created feedback for the user with the id '$this->relateduserid' " .
+            "for the feedback activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -132,18 +133,17 @@ class response_submitted extends \core\event\base {
      * @throws \coding_exception in case of any problems.
      */
     protected function validate_data() {
+        parent::validate_data();
+
         if (!isset($this->other['anonymous'])) {
-            throw new \coding_exception("Field other['anonymous'] cannot be empty");
+            throw new \coding_exception('The \'anonymous\' value must be set in other.');
         }
         if (!isset($this->other['cmid'])) {
-            throw new \coding_exception("Field other['cmid'] cannot be empty");
+            throw new \coding_exception('The \'cmid\' value must be set in other.');
         }
         if (!isset($this->other['instanceid'])) {
-            throw new \coding_exception("Field other['instanceid'] cannot be empty");
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
-
-        // Call parent validations.
-        parent::validate_data();
     }
 }
 

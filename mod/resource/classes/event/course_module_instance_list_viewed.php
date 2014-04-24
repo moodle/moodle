@@ -27,7 +27,7 @@ namespace mod_resource\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_resource instance list viewed event.
+ * The mod_resource instance list viewed event class.
  *
  * @package    mod_resource
  * @since      Moodle 2.7

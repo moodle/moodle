@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string newstatus status of submission.
+ *      - string newstatus: status of submission.
  * }
  *
  * @package    mod_assign
@@ -81,7 +81,8 @@ class workflow_state_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has set the workflow state of {$this->relateduserid} to {$this->other['newstate']}.";
+        return "The user with the id '$this->userid' has set the workflow state of the user with the id '$this->relateduserid' " .
+            "to the state '{$this->other['newstate']}' for the assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -129,10 +130,12 @@ class workflow_state_updated extends base {
 
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (!isset($this->other['newstate'])) {
-            throw new \coding_exception('newstate must be set in $other.');
-        } else if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set.');
+            throw new \coding_exception('The \'newstate\' value must be set in other.');
         }
     }
 }

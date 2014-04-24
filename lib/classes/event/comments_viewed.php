@@ -29,14 +29,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Abstract comments viewed event class.
  *
- * This class has to be extended by any event which is triggred while viewing comment.
+ * This class has to be extended by any event which is triggered while viewing comment.
  *
  * @package    core
  * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class comments_viewed extends \core\event\base {
+abstract class comments_viewed extends base {
 
     /**
      * Init method.
@@ -63,8 +63,7 @@ abstract class comments_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id '. $this->userid . ' viewed comments for ' . $this->component . ' with instance id ' .
-                $this->objectid;
+        return "The user with the id '$this->userid' viewed the comments for '$this->component' with instance id '$this->objectid'.";
     }
 
     /**

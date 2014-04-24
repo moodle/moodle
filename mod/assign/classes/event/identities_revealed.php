@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign identities revealed event.
+ * The mod_assign identities revealed event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign identities revealed event class.
+ * The mod_assign identities revealed event class.
  *
  * @package    mod_assign
  * @since      Moodle 2.6
@@ -68,7 +68,8 @@ class identities_revealed extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has revealed the identities in assignment {$this->objectid}.";
+        return "The user with the id '$this->userid' has revealed the identities in the assignment with the course module " .
+            "id '$this->contextinstanceid'.";
     }
 
     /**

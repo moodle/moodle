@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course completed event.
+ *
+ * @package    core
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when course completed.
+ * Course completed event class.
  *
  * @package    core
  * @since      Moodle 2.6
@@ -52,7 +60,7 @@ class course_completed extends base {
      * @return string
      */
     public function get_description() {
-        return 'Course completed by user '.$this->userid;
+        return "The course with the id '$this->courseid' was completed by the user with the id '$this->userid'.";
     }
 
     /**
@@ -81,5 +89,4 @@ class course_completed extends base {
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('course_completions', $this->objectid);
     }
-
 }

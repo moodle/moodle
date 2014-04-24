@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * assignsubmission_onlinetext submission_created event.
+ * The assignsubmission_onlinetext submission_created event.
  *
  * @package    assignsubmission_onlinetext
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
@@ -27,14 +27,12 @@ namespace assignsubmission_onlinetext\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * assignsubmission_onlinetext submission_created event class.
+ * The assignsubmission_onlinetext submission_created event class.
  *
- * @property-read array $other Extra information about the event.
- *     -int submissionid: ID number of this submission.
- *     -int submissionattempt: Number of attempts made on this submission.
- *     -string submissionstatus: Status of the submission.
- *     -int groupid: (optional) The group ID if this is a teamsubmission (optional).
- *     -int onlinetextwordcount: Word count of the online text submission.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int onlinetextwordcount: Word count of the online text submission.
  * }
  *
  * @package    assignsubmission_onlinetext
@@ -58,24 +56,15 @@ class submission_created extends \mod_assign\event\submission_created {
      * @return string
      */
     public function get_description() {
+        $descriptionstring = "The user with the id '$this->userid' created an online text submission with " .
+            "'{$this->other['onlinetextwordcount']}' words in the assignment with the course module id " .
+            "'$this->contextinstanceid'";
         if (!empty($this->other['groupid'])) {
-            $context = $this->get_context();
-            if (isset($context)) {
-                $descriptionstring = 'A user with an id of ' . $this->userid . ' updated a file submission and uploaded ' .
-                        $this->other['onlinetextwordcount'] . ' file/s in the assign module with an id of ' .
-                        $this->other['submissionid'] . ' for the group ' .
-                        \format_string($this->other['groupname'], true, array('context' => $context)) . '.';
-            } else {
-                $descriptionstring = 'A user with an id of ' . $this->userid . ' updated a file submission and uploaded ' .
-                        $this->other['onlinetextwordcount'] . ' file/s in the assign module with an id of ' .
-                        $this->other['submissionid'] . ' for the group ' . $this->other['groupid'] . '.';
-
-            }
+            $descriptionstring .= " for the group with the id '{$this->other['groupid']}'.";
         } else {
-            $descriptionstring = 'A user with an id of ' . $this->userid . ' updated a file submission and uploaded '.
-                    $this->other['onlinetextwordcount'] . ' file/s in the assign module with an id of ' .
-                    $this->other['submissionid'];
+            $descriptionstring .= ".";
         }
+
         return $descriptionstring;
     }
 
@@ -88,7 +77,7 @@ class submission_created extends \mod_assign\event\submission_created {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['onlinetextwordcount'])) {
-            throw new \coding_exception('Other must contain the key onlinetextwordcount.');
+            throw new \coding_exception('The \'onlinetextwordcount\' value must be set in other.');
         }
     }
 }

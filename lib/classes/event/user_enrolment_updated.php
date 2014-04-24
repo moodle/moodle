@@ -26,12 +26,12 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when user enrolment is updated.
+ * Event class for when user enrolment is updated.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string enrol name of enrolment instance.
+ *      - string enrol: name of enrolment instance.
  * }
  *
  * @package    core
@@ -65,7 +65,8 @@ class user_enrolment_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->relateduserid. ' has updated enrolment for user '.$this->userid.' in course '.$this->courseid;
+        return "The user with the id '$this->userid' updated the enrolment for the user with the id '$this->relateduserid' in " .
+            "the course with the id '$this->courseid'.";
     }
 
     /**

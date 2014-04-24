@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission status updated event.
+ * The mod_assign submission status updated event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,12 +27,12 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission status updated event class.
+ * The mod_assign submission status updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string newstatus status of submission.
+ *      - string newstatus: status of submission.
  * }
  *
  * @package    mod_assign
@@ -72,7 +72,8 @@ class submission_status_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has updated the status of the submission {$this->objectid} to {$this->other['newstatus']}.";
+        return "The user with the id '$this->userid' has updated the status of the submission with the id '$this->objectid' for " .
+            "the assignment with the course module id '$this->contextinstanceid' to the status '{$this->other['newstatus']}'.";
     }
 
     /**
@@ -117,7 +118,7 @@ class submission_status_updated extends base {
         parent::validate_data();
 
         if (!isset($this->other['newstatus'])) {
-            throw new \coding_exception('newstatus must be set in $other.');
+            throw new \coding_exception('The \'newstatus\' value must be set in other.');
         }
     }
 }

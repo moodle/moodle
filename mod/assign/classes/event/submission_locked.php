@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission locked event.
+ * The mod_assign submission locked event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission locked event class.
+ * The mod_assign submission locked event class.
  *
  * @package    mod_assign
  * @since      Moodle 2.6
@@ -71,7 +71,8 @@ class submission_locked extends base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} locked the submission for user {$this->relateduserid}.";
+        return "The user with the id '$this->userid' locked the submission for the user with the id '$this->relateduserid' for " .
+            "the assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -119,7 +120,7 @@ class submission_locked extends base {
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid is a mandatory property.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

@@ -106,10 +106,10 @@ if (empty($rolenames) && !$isfrontpage) {
 }
 
 $event = \core\event\user_list_viewed::create(array(
-    'context' => $context,
     'objectid' => $course->id,
+    'courseid' => $course->id,
+    'context' => $context,
     'other' => array(
-        'courseid' => $course->id,
         'courseshortname' => $course->shortname,
         'coursefullname' => $course->fullname
     )

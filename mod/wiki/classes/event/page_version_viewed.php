@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki version viewed event.
+ * The mod_wiki version viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,12 +26,12 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki version viewed event.
+ * The mod_wiki version viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int versionid id page version.
+ *      - int versionid: id page version.
  * }
  *
  * @package    mod_wiki
@@ -66,8 +66,8 @@ class page_version_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed versionid ' . $this->other['versionid'] .
-                ' for page id ' . $this->objectid;
+        return "The user with the id '$this->userid' viewed the version for the page with the id '$this->objectid' for the wiki with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**

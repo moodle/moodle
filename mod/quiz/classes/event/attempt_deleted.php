@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Attempt deleted event class.
+ * The mod_quiz attempt deleted event.
  *
  * @package    mod_quiz
- * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +25,14 @@ namespace mod_quiz\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_quiz attempt deleted event class.
+ *
+ * @package    mod_quiz
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class attempt_deleted extends \core\event\base {
 
     /**
@@ -52,8 +59,8 @@ class attempt_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A quiz attempt with the id of ' . $this->objectid . ' belonging to the quiz with the id ' . $this->other['quizid'] .
-            ' for the user with the id ' . $this->relateduserid . ' was deleted by a user with the id ' . $this->userid;
+        return "The user with the id '$this->userid' deleted the attempt with the id '$this->objectid' belonging to the quiz " .
+            "with the course module id '$this->contextinstanceid' for the user with the id '$this->relateduserid'.";
     }
 
     /**
@@ -89,7 +96,7 @@ class attempt_deleted extends \core\event\base {
         }
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' must be set in other.');
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
     }
 }

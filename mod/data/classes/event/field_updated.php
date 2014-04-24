@@ -17,15 +17,7 @@
 /**
  * The mod_data field updated event.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string fieldname the name of the field.
- *      @type int dataid the id of the data activity.
- * }
- *
  * @package    mod_data
- * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,6 +26,21 @@ namespace mod_data\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_data field updated event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string fieldname: the name of the field.
+ *      - int dataid: the id of the data activity.
+ * }
+ *
+ * @package    mod_data
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class field_updated extends \core\event\base {
 
     /**
@@ -62,7 +69,8 @@ class field_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The field ' . $this->objectid . ' belonging to the data activity ' . $this->other['dataid'] . ' has been updated.';
+        return "The user with the id '$this->userid' updated the field with the id '$this->objectid' in the data activity " .
+            "with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -94,11 +102,11 @@ class field_updated extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['fieldname'])) {
-            throw new \coding_exception('The fieldname must be set in $other.');
+            throw new \coding_exception('The \'fieldname\' value must be set in other.');
         }
 
         if (!isset($this->other['dataid'])) {
-            throw new \coding_exception('The dataid must be set in $other.');
+            throw new \coding_exception('The \'dataid\' value must be set in other.');
         }
     }
 }

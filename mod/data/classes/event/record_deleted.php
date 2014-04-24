@@ -17,14 +17,7 @@
 /**
  * The mod_data record deleted event.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int dataid the id of the data activity.
- * }
- *
  * @package    mod_data
- * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +26,20 @@ namespace mod_data\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_data record deleted event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int dataid: the id of the data activity.
+ * }
+ *
+ * @package    mod_data
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class record_deleted extends \core\event\base {
 
     /**
@@ -61,8 +68,8 @@ class record_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The data record ' . $this->objectid . ' belonging to the database activity ' . $this->other['dataid'] .
-            ' was deleted by the user ' . $this->userid;
+        return "The user with the id '$this->userid' deleted the data record the id '$this->objectid' in the data activity " .
+            "with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -94,7 +101,7 @@ class record_deleted extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['dataid'])) {
-            throw new \coding_exception('The dataid must be set in $other.');
+            throw new \coding_exception('The \'dataid\' value must be set in other.');
         }
     }
 }

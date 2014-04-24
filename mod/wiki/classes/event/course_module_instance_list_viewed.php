@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki instances list viewed event.
+ * The mod_wiki instance list viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,7 +26,7 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki instances list viewed event class.
+ * The mod_wiki instance list viewed event class.
  *
  * @package    mod_wiki
  * @since      Moodle 2.7

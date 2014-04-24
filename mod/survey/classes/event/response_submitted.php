@@ -15,13 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *Event triggered, when survey response is submitted.
- *
- * @property-read array $other Extra information about the event.
- *     -int surveyid: ID of survey for which response was submitted.
+ * The mod_survey response submitted event.
  *
  * @package    mod_survey
- * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +26,20 @@ namespace mod_survey\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_survey response submitted event class.
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int surveyid: ID of survey for which response was submitted.
+ * }
+ *
+ * @package    mod_survey
+ * @since      Moodle 2.7
+ * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class response_submitted extends \core\event\base {
 
     /**
@@ -55,8 +65,7 @@ class response_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User with id '". $this->userid . "' submitted response for for survey with instance id '" .
-                $this->other['surveyid'] . "'";
+        return "The user with the id '$this->userid' submitted a response for the survey with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -87,7 +96,7 @@ class response_submitted extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (empty($this->other['surveyid'])) {
-            throw new \coding_exception('Other must contain the key surveyid.');
+            throw new \coding_exception('The \'surveyid\' value must be set in other.');
         }
     }
 }
