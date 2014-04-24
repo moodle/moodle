@@ -61,20 +61,31 @@ class question_category_created extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        if ($this->contextlevel == CONTEXT_MODULE) {
-            return new \moodle_url('/question/category.php', array('cmid' => $this->contextinstanceid));
-        } else {
-            return new \moodle_url('/question/category.php', array('courseid' => $this->courseid));
+        if ($this->courseid) {
+            $cat = $this->objectid . ',' . $this->contextid;
+            if ($this->contextlevel == CONTEXT_MODULE) {
+                return new \moodle_url('/question/edit.php', array('cmid' => $this->contextinstanceid, 'cat' => $cat));
+            }
+            return new \moodle_url('/question/edit.php', array('courseid' => $this->courseid, 'cat' => $cat));
         }
+
+        // Bad luck, there does not seem to be any simple intelligent way
+        // to go to specific question category in context above course,
+        // let's try to edit it from frontpage which may surprisingly work.
+        return new \moodle_url('/question/category.php', array('courseid' => SITEID, 'edit' => $this->objectid));
     }
 
     /**
      * Return the legacy event log data.
      *
-     * @return array
+     * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
-            $this->objectid, $this->contextinstanceid);
+        if ($this->contextlevel == CONTEXT_MODULE) {
+            return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
+                $this->objectid, $this->contextinstanceid);
+        }
+        // This is not related to individual quiz at all.
+        return null;
     }
 }
