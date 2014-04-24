@@ -46,7 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read int $contextlevel
  * @property-read int $contextinstanceid
  * @property-read int $userid who did this?
- * @property-read int $courseid
+ * @property-read int $courseid the courseid of the event context, 0 for contexts above course
  * @property-read int $relateduserid
  * @property-read int $anonymous 1 means event should not be visible in reports, 0 means normal event,
  *                    create() argument may be also true/false.
