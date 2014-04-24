@@ -27,6 +27,22 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Event to be triggered when a highscore is added.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int lessonid: the id of the lesson in the lesson table.
+ *      - string nickname: the user's nickname.
+ * }
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
+
 class highscore_added extends \core\event\base {
 
     /**
@@ -62,10 +78,8 @@ class highscore_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        $highscore = $this->get_record_snapshot('lesson_high_scores', $this->objectid);
-
-        return 'A new highscore was added to the lesson with the id ' . $highscore->lessonid .
-            ' for user with the id ' . $this->userid;
+        return "The user with the id '$this->userid' added a new highscore to the lesson activity with the course module " .
+            "id '$this->contextinstanceid'.";
     }
 
     /**
@@ -74,9 +88,25 @@ class highscore_added extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        $highscore = $this->get_record_snapshot('lesson_high_scores', $this->objectid);
-
         return array($this->courseid, 'lesson', 'update highscores', 'highscores.php?id=' . $this->contextinstanceid,
-            $highscore->nickname, $this->contextinstanceid);
+            $this->other['nickname'], $this->contextinstanceid);
+    }
+
+    /**
+     * Custom validations.
+     *
+     * @throws \coding_exception when validation fails.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['lessonid'])) {
+            throw new \coding_exception('The \'lessonid\' value must be set in other.');
+        }
+
+        if (!isset($this->other['nickname'])) {
+            throw new \coding_exception('The \'nickname\' value must be set in other.');
+        }
     }
 }
