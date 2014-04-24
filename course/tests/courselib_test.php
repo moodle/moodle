@@ -962,6 +962,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Create course.
         $course = $this->getDataGenerator()->create_course(array('numsections' => 3), array('createsections' => true));
 
+        $sink = $this->redirectEvents();
+
         // Testing an empty section.
         $sectionnumber = 1;
         set_section_visible($course->id, $sectionnumber, 0);
@@ -970,6 +972,11 @@ class core_course_courselib_testcase extends advanced_testcase {
         set_section_visible($course->id, $sectionnumber, 1);
         $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
         $this->assertEquals($section_info->visible, 1);
+
+        // Checking that an event was fired.
+        $events = $sink->get_events();
+        $this->assertInstanceOf('\core\event\course_section_updated', $events[0]);
+        $sink->close();
 
         // Testing a section with visible modules.
         $sectionnumber = 2;
