@@ -94,6 +94,8 @@ if (isset($USER->modattempts[$lesson->id])) {
         $attempts = $DB->get_records("lesson_attempts", array("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$nretakes), "timeseen", "id, pageid");
         $found = false;
         $temppageid = 0;
+        // Make sure that the newpageid always defaults to something valid.
+        $result->newpageid = LESSON_EOL;
         foreach($attempts as $attempt) {
             if ($found && $temppageid != $attempt->pageid) { // now try to find the next page, make sure next few attempts do no belong to current page
                 $result->newpageid = $attempt->pageid;
