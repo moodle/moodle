@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>Nelze vytvořit databázi.</p>
-<p>Určená databáze neexistuje a uživatel nemá oprávnění k vytvoření databáze. </p>
+<p>Určená databáze neexistuje a uživatel nemá oprávnění k vytvoření databáze.</p>
 <p>Správce stránek by měl ověřit konfiguraci databáze.</p>';
 $string['cannotcreatelangdir'] = 'Nelze vytvořit adresář pro jazykové soubory';
 $string['cannotcreatetempdir'] = 'Nelze vytvořit dočasný adresář';
