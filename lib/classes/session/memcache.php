@@ -92,9 +92,22 @@ class memcache extends handler {
             throw new exception('sessionhandlerproblem', 'error', '', null,
                     '$CFG->session_memcache_save_path must be specified in config.php');
         }
+        // Check in case anybody mistakenly includes tcp://, which you
+        // would do in the raw PHP config. We require the same format as
+        // for memcached (without tcp://). Otherwse the code that splits it into
+        // individual servers won't have worked properly.
+        if (strpos($this->savepath, 'tcp://') !== false) {
+            throw new exception('sessionhandlerproblem', 'error', '', null,
+                    '$CFG->session_memcache_save_path should not contain tcp://');
+        }
 
         ini_set('session.save_handler', 'memcache');
-        ini_set('session.save_path', $this->savepath);
+
+        // The format of save_path is different for memcache (compared to memcached).
+        // We are using the same format in config.php to avoid confusion.
+        // It has to have tcp:// at the start of each entry.
+        $memcacheformat = preg_replace('~(^|,\s*)~','$1tcp://', $this->savepath);
+        ini_set('session.save_path', $memcacheformat);
     }
 
     /**
