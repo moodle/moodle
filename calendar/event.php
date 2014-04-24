@@ -78,7 +78,7 @@ if ($cal_d !== 0) {
     $url->param('cal_d', $cal_d);
 }
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 if ($courseid != SITEID && !empty($courseid)) {
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
