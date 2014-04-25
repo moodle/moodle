@@ -59,6 +59,10 @@ input, textarea, .uneditable-input {
     width: 50%;
 }
 
+input[type=submit] {
+    width: 30%;
+}
+
 #installdiv {
   width: 800px;
   margin-left:auto;
