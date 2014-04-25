@@ -1168,6 +1168,17 @@ function quiz_get_overdue_handling_options() {
 }
 
 /**
+ * @return array string => lang string the options for whether to display the user's picture.
+ */
+function quiz_get_user_image_options() {
+    return array(
+        QUIZ_SHOWIMAGE_NONE  => get_string('shownoimage', 'quiz'),
+        QUIZ_SHOWIMAGE_SMALL => get_string('showsmallimage', 'quiz'),
+        QUIZ_SHOWIMAGE_LARGE => get_string('showlargeimage', 'quiz'),
+    );
+}
+
+/**
  * @param string $state one of the state constants like IN_PROGRESS.
  * @return string the human-readable state name.
  */
