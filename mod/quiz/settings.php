@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
