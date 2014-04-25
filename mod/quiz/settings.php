@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
@@ -150,14 +150,9 @@ foreach (mod_quiz_admin_review_setting::fields() as $field => $name) {
 }
 
 // Show the user's picture.
-$options = array(
-                QUIZ_SHOWIMAGE_NONE => get_string('shownoimage', 'quiz'),
-                QUIZ_SHOWIMAGE_SMALL => get_string('showsmallimage', 'quiz'),
-                QUIZ_SHOWIMAGE_LARGE => get_string('showlargeimage', 'quiz'));
-
-$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/showuserpicture',
+$quizsettings->add(new mod_quiz_admin_setting_user_image('quiz/showuserpicture',
         get_string('showuserpicture', 'quiz'), get_string('configshowuserpicture', 'quiz'),
-        array('value' => QUIZ_SHOWIMAGE_NONE, 'adv' => false), $options));
+        array('value' => 0, 'adv' => false), $options));
 
 // Decimal places for overall grades.
 $options = array();
