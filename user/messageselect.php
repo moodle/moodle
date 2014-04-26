@@ -104,7 +104,13 @@ if ($data = data_submitted()) {
     }
 }
 
-$strtitle = get_string('coursemessage');
+if ($course->id == SITEID) {
+    $strtitle = get_string('sitemessage');
+    $PAGE->set_pagelayout('admin');
+} else {
+    $strtitle = get_string('coursemessage');
+    $PAGE->set_pagelayout('incourse');
+}
 
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
