@@ -8270,7 +8270,10 @@ class admin_setting_configstoredfile extends admin_setting {
 
         // Let's not deal with validation here, this is for admins only.
         $current = $this->get_setting();
-        if (!is_number($data)) {
+        if (empty($data) && $current === null) {
+            // This will be the case when applying default settings (installation).
+            return ($this->config_write($this->name, '') ? '' : get_string('errorsetting', 'admin'));
+        } else if (!is_number($data)) {
             // Draft item id is expected here!
             return get_string('errorsetting', 'admin');
         }
