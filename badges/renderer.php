@@ -323,11 +323,6 @@ class core_badges_renderer extends plugin_renderer_base {
             $datatable->data[] = array(get_string('name'), get_string('error:userdeleted', 'badges', $strdata));
         } else {
             $datatable->data[] = array(get_string('name'), fullname($userinfo));
-            if (empty($userinfo->backpackemail)) {
-                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->accountemail));
-            } else {
-                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->backpackemail));
-            }
         }
 
         $datatable->data[] = array($this->output->heading(get_string('issuerdetails', 'badges'), 3), '');
@@ -414,13 +409,11 @@ class core_badges_renderer extends plugin_renderer_base {
         $datatable->data[] = array($this->output->heading(get_string('recipientdetails', 'badges'), 3), '');
         // Technically, we should alway have a user at this point, but added an extra check just in case.
         if ($userinfo) {
-            $datatable->data[] = array(get_string('name'), fullname($userinfo));
+            $notify = '';
             if (!$ibadge->valid) {
                 $notify = $this->output->notification(get_string('recipientvalidationproblem', 'badges'), 'notifynotice');
-                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->email) . $notify);
-            } else {
-                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->email));
             }
+            $datatable->data[] = array(get_string('name'), fullname($userinfo). $notify);
         } else {
             $notify = $this->output->notification(get_string('recipientidentificationproblem', 'badges'), 'notifynotice');
             $datatable->data[] = array(get_string('name'), $notify);
@@ -945,10 +938,8 @@ class issued_badge implements renderable {
         if ($rec) {
             // Get a recipient from database.
             $namefields = get_all_user_name_fields(true, 'u');
-            $user = $DB->get_record_sql("SELECT u.id, $namefields, u.deleted,
-                                                u.email AS accountemail, b.email AS backpackemail
-                        FROM {user} u LEFT JOIN {badge_backpack} b ON u.id = b.userid
-                        WHERE u.id = :userid", array('userid' => $rec->userid));
+            $user = $DB->get_record_sql("SELECT u.id, $namefields, u.deleted, u.email
+                        FROM {user} u WHERE u.id = :userid", array('userid' => $rec->userid));
             $this->recipient = $user;
             $this->visible = $rec->visible;
             $this->badgeid = $rec->badgeid;
