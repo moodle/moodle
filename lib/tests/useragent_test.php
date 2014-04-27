@@ -156,6 +156,17 @@ class core_useragent_testcase extends basic_testcase {
                 'Windows XP' => 'Opera/9.0 (Windows NT 5.1; U; en)',
                 'Debian Linux' => 'Opera/9.01 (X11; Linux i686; U; en)'
             )
+        ),
+        'MS Word' => array(
+            '2010' => array(
+                'Windows 7' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E; ms-office)',
+                'Mac OS X' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X) Word/14.38.0'
+            )
+        ),
+        'MS Outlook' => array(
+            '2010' => array(
+                'Windows 7' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E; Microsoft Outlook 14.0.7113; ms-office; MSOffice 14)'
+            )
         )
     );
 
@@ -183,6 +194,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_chrome_version());
         $this->assertFalse(core_useragent::is_safari_ios());
         $this->assertFalse(core_useragent::check_safari_ios_version());
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Safari iOS']['528']['iPhone']);
         $this->assertTrue(core_useragent::is_safari_ios());
@@ -195,6 +207,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_safari_version('500'));
         $this->assertFalse(core_useragent::is_chrome());
         $this->assertFalse(core_useragent::check_chrome_version());
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['WebKit Android']['530']['Nexus']);
         $this->assertTrue(core_useragent::is_webkit());
@@ -205,6 +218,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_safari_version());
         $this->assertFalse(core_useragent::is_chrome());
         $this->assertFalse(core_useragent::check_chrome_version());
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['WebKit Android']['537']['Samsung GT-9505']);
         $this->assertTrue(core_useragent::is_webkit());
@@ -234,12 +248,14 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_chrome_version(8));
         $this->assertFalse(core_useragent::check_chrome_version(10));
         $this->assertFalse(core_useragent::check_safari_version('1'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Opera']['9.0']['Windows XP']);
         $this->assertTrue(core_useragent::is_opera());
         $this->assertTrue(core_useragent::check_opera_version());
         $this->assertTrue(core_useragent::check_opera_version('8.0'));
         $this->assertFalse(core_useragent::check_opera_version('10.0'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['6.0']['Windows XP SP2']);
         $this->assertTrue(core_useragent::is_ie());
@@ -247,6 +263,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
         $this->assertFalse(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('7.0'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['5.0']['Windows 98']);
         $this->assertFalse(core_useragent::is_ie());
@@ -255,6 +272,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
         $this->assertFalse(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('7.0'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['9.0']['Windows 7']);
         $this->assertTrue(core_useragent::is_ie());
@@ -264,6 +282,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('9.0'));
         $this->assertFalse(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('10'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['9.0i']['Windows 7']);
         $this->assertTrue(core_useragent::is_ie());
@@ -273,6 +292,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('9.0'));
         $this->assertTrue(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('10'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['10.0']['Windows 8']);
         $this->assertTrue(core_useragent::is_ie());
@@ -283,6 +303,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('10'));
         $this->assertFalse(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('11'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['10.0i']['Windows 8']);
         $this->assertTrue(core_useragent::is_ie());
@@ -293,6 +314,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('10'));
         $this->assertTrue(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('11'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['11.0']['Windows 8.1']);
         $this->assertTrue(core_useragent::is_ie());
@@ -304,6 +326,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('11'));
         $this->assertFalse(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('12'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['MSIE']['11.0i']['Windows 8.1']);
         $this->assertTrue(core_useragent::is_ie());
@@ -315,6 +338,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('11'));
         $this->assertTrue(core_useragent::check_ie_compatibility_view());
         $this->assertFalse(core_useragent::check_ie_version('12'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -325,6 +349,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_gecko_version(20030516));
         $this->assertTrue(core_useragent::check_gecko_version(20051106));
         $this->assertTrue(core_useragent::check_gecko_version(2006010100));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['1.0.6']['Windows XP']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -336,6 +361,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_firefox_version('1.5'));
         $this->assertFalse(core_useragent::check_firefox_version('3.0'));
         $this->assertFalse(core_useragent::check_gecko_version('2'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -347,6 +373,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_gecko_version(20051106));
         $this->assertTrue(core_useragent::check_gecko_version(2006010100));
         $this->assertFalse(core_useragent::check_firefox_version('3.0'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['3.6']['Linux']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -360,6 +387,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_gecko_version(2006010100));
         $this->assertFalse(core_useragent::check_firefox_version('4'));
         $this->assertFalse(core_useragent::check_firefox_version('10'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['3.6']['Linux']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -375,6 +403,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_firefox_version('10'));
         $this->assertFalse(core_useragent::check_firefox_version('18'));
         $this->assertFalse(core_useragent::check_gecko_version('4'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['15.0a2']['Windows']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -392,6 +421,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_firefox_version('15'));
         $this->assertFalse(core_useragent::check_firefox_version('18'));
         $this->assertFalse(core_useragent::check_gecko_version('18'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['Firefox']['18.0']['Mac OS X']);
         $this->assertTrue(core_useragent::is_firefox());
@@ -411,6 +441,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_firefox_version('18'));
         $this->assertFalse(core_useragent::check_firefox_version('19'));
         $this->assertFalse(core_useragent::check_gecko_version('19'));
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['SeaMonkey']['2.0']['Windows']);
         $this->assertTrue(core_useragent::check_gecko_version('2'));
@@ -421,6 +452,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_gecko_version('4.0'));
         $this->assertFalse(core_useragent::is_firefox());
         $this->assertFalse(core_useragent::check_firefox_version());
+        $this->assertFalse(core_useragent::is_msword());
 
         core_useragent::instance(true, $this->user_agents['SeaMonkey']['2.1']['Linux']);
         $this->assertTrue(core_useragent::check_gecko_version('2'));
@@ -434,7 +466,18 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_firefox_version(4.0));
         $this->assertFalse(core_useragent::check_firefox_version(5));
         $this->assertFalse(core_useragent::check_gecko_version('18.0'));
+        $this->assertFalse(core_useragent::is_msword());
 
+        // We're not really interested in what MS Word gets identified as beyond MS Word itself.
+        core_useragent::instance(true, $this->user_agents['MS Word']['2010']['Windows 7']);
+        $this->assertTrue(core_useragent::is_msword());
+
+        core_useragent::instance(true, $this->user_agents['MS Word']['2010']['Mac OS X']);
+        $this->assertTrue(core_useragent::is_msword());
+
+        // Outlook should not be considered to be MS Word.
+        core_useragent::instance(true, $this->user_agents['MS Outlook']['2010']['Windows 7']);
+        $this->assertFalse(core_useragent::is_msword());
     }
 
     /**
@@ -442,8 +485,6 @@ class core_useragent_testcase extends basic_testcase {
      * works as expected.
      */
     public function test_supports_svg() {
-        $this->assertTrue(core_useragent::supports_svg());
-
         // MSIE 5.0 is not considered a browser at all: known false positive.
         core_useragent::instance(true, $this->user_agents['MSIE']['5.0']['Windows 98']);
         $this->assertTrue(core_useragent::supports_svg());
