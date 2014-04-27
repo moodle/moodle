@@ -54,10 +54,15 @@ class behat_field_manager {
         try {
             // The DOM node.
             $fieldnode = $context->find_field($label);
-        } catch (ElementNotFoundException $e) {
+        } catch (ElementNotFoundException $fieldexception) {
 
             // Looking for labels that points to filemanagers.
-            $fieldnode = $context->find_filemanager($label);
+            try {
+                $fieldnode = $context->find_filemanager($label);
+            } catch (ElementNotFoundException $filemanagerexception) {
+                // We want the generic 'field' exception.
+                throw $fieldexception;
+            }
         }
 
         // The behat field manager.
