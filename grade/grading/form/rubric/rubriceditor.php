@@ -220,7 +220,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                             'score' => 0,
                         );
                         foreach ($criterion['levels'] as $lastlevel) {
-                            if ($level['score'] < $lastlevel['score'] + 1) {
+                            if (isset($lastlevel['score']) && $level['score'] < $lastlevel['score'] + 1) {
                                 $level['score'] = $lastlevel['score'] + 1;
                             }
                         }
