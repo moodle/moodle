@@ -275,6 +275,7 @@ if (!empty($instanceid) && !empty($roleid)) {
                        AND edulevel = :edulevel
                        AND anonymous = 0
                        AND contextlevel = :contextlevel
+                       AND (origin = 'web' OR origin = 'ws')
                   GROUP BY userid) l ON (l.userid = ra.userid)";
 
         $params['edulevel'] = core\event\base::LEVEL_PARTICIPATING;
