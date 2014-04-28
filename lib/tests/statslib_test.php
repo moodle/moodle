@@ -367,6 +367,9 @@ class core_statslib_testcase extends advanced_testcase {
         \core_tests\event\update_executed::create(array('context' => context_system::instance()))->trigger();
         \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
 
+        // Fake the origin of events.
+        $DB->set_field('logstore_standard_log', 'origin', 'web', array());
+
         $logs = $DB->get_records('logstore_standard_log');
         $this->assertCount(4, $logs);
 
@@ -583,6 +586,9 @@ class core_statslib_testcase extends advanced_testcase {
 
         \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
         \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+
+        // Fake the origin of events.
+        $DB->set_field('logstore_standard_log', 'origin', 'web', array());
 
         $this->assertEquals(7, $DB->count_records('logstore_standard_log'));
 
