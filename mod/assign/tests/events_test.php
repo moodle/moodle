@@ -649,40 +649,6 @@ class assign_events_testcase extends mod_assign_base_testcase {
     }
 
     /**
-     * Test the feedback_updated event.
-     */
-    public function test_feedback_updated() {
-        $assign = $this->create_instance();
-
-        $logdesc = get_string('feedbackupdate', 'assignfeedback_offline',
-            array('field' => 'The description',
-                  'student' => 'The student\'s name',
-                  'text' => 'Text'));
-        $event = \mod_assign\event\feedback_updated::create(array(
-            'userid' => 2,
-            'relateduserid' => 2,
-            'context' => $assign->get_context(),
-            'other' => array(
-                'assignid' => $assign->get_instance()->id
-            )
-        ));
-        $event->set_legacy_logdata('save grading feedback', $logdesc);
-
-        // Trigger and capture the event.
-        $sink = $this->redirectEvents();
-        $event->trigger();
-        $events = $sink->get_events();
-        $event = reset($events);
-
-        $this->assertInstanceOf('\mod_assign\event\feedback_updated', $event);
-        $this->assertEquals($assign->get_context(), $event->get_context());
-        $expectedlog = array($assign->get_course()->id, 'assign', 'save grading feedback', 'view.php?id=' . $assign->get_course_module()->id,
-            $logdesc, $assign->get_course_module()->id);
-        $this->assertEventLegacyLogData($expectedlog, $event);
-        $this->assertEventContextNotUsed($event);
-    }
-
-    /**
      * Test the grading_form_viewed event.
      */
     public function test_grading_form_viewed() {

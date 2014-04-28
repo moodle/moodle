@@ -187,17 +187,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                         $updatecount += 1;
                         $grade = $this->assignment->get_user_grade($record->user->id, true);
                         $this->assignment->notify_grade_modified($grade);
-                        if ($plugin->set_editor_text($field, $newvalue, $grade->id)) {
-                            $logdesc = new lang_string('feedbackupdate', 'assignfeedback_offline',
-                                                  array('field'=>$description,
-                                                        'student'=>$userdesc,
-                                                        'text'=>$newvalue));
-
-                            // Trigger event for updating the feedback.
-                            $event = \mod_assign\event\feedback_updated::create_from_grade($this->assignment, $grade);
-                            $event->set_legacy_logdata('save grading feedback', $logdesc);
-                            $event->trigger();
-                        }
+                        $plugin->set_editor_text($field, $newvalue, $grade->id);
 
                         // If this is the gradebook comments plugin - post an update to the gradebook.
                         if (($plugin->get_subtype() . '_' . $plugin->get_type()) == $gradebookplugin) {
