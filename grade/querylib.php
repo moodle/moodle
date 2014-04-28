@@ -253,7 +253,7 @@ function grade_get_grade_items_for_activity($cm, $only_main_item=false) {
         $params = array($cm->id);
         $cm = $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
                                     FROM {course_modules} cm,
-                                         {modules} md,
+                                         {modules} md
                                    WHERE cm.id = ? AND md.id = cm.module", $params);
     }
 
