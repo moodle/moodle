@@ -68,6 +68,11 @@ class qtype extends base {
     public function is_uninstall_allowed() {
         global $DB;
 
+        if ($this->name === 'missingtype') {
+            // qtype_missingtype is used by the system. It cannot be uninstalled.
+            return false;
+        }
+
         return !$DB->record_exists('question', array('qtype' => $this->name));
     }
 
