@@ -72,8 +72,13 @@ if (!($canmanage and $assessment->weight == 1) and !empty($assessment->grade) an
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
+$options = array();
+if ($isreviewer and !$workshop->examplesreassess) {
+    $options['saveandcontinue'] = false;
+}
+
 // load the assessment form and process the submitted data eventually
-$mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable);
+$mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable, $options);
 
 // Set data managed by the workshop core, subplugins set their own data themselves.
 $currentdata = (object)array(

@@ -98,7 +98,9 @@ class workshop_assessment_form extends moodleform {
                 $buttonarray[] = $mform->createElement('submit', 'saveandshownext', get_string('saveandshownext', 'workshop'));
             }
             $buttonarray[] = $mform->createElement('submit', 'saveandclose', get_string('saveandclose', 'workshop'));
-            $buttonarray[] = $mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
+            if (!isset($this->options['saveandcontinue']) or $this->options['saveandcontinue'] == true) { //in some circumstances we want to disable save and continue
+                $buttonarray[] = $mform->createElement('submit', 'saveandcontinue', get_string('saveandcontinue', 'workshop'));
+            }
             $buttonarray[] = $mform->createElement('cancel');
         }
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
