@@ -70,15 +70,15 @@ background: #E2E2E2;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
 .fp-toolbar div {display: inline-block;padding: 0px 2px;padding-right: 10px;}
-.dir-rtl .fp-toolbar div {width:100px;}
+.dir-rtl .fp-toolbar div { padding-right: 0px; padding-left: 10px; }
 .fp-toolbar img {vertical-align: -15%; margin-right: 5px;}
 
 .fp-toolbar .fp-tb-search {width: 228px;height: 14px;}
 .fp-toolbar .fp-tb-search input {background:#FFFFFF url('[[pix:a/search]]') no-repeat 3px 3px;padding: 2px 6px 1px 20px;width: 200px;height: 16px;border: 1px solid #BBBBBB;}
 
-.fp-viewbar {float:right;width:69px;height:22px;margin-right:8px;}
-.dir-rtl .fp-toolbar img {vertical-align: -35%;}
-.dir-rtl .fp-viewbar {float: left;width: 100px;}
+.fp-viewbar {float:right;width:72px;height:22px;text-align:right;}
+.dir-rtl .fp-toolbar img {vertical-align: -35%; margin-right: 0px; margin-left: 5px; }
+.dir-rtl .fp-viewbar {float:left; text-align:left;}
 
 .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;width:22px;height:22px;display: inline-block;}
 .dir-rtl .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0; display: block; float:left; margin-right: 4px;}
