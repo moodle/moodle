@@ -31,6 +31,8 @@ Feature: In an assignment, students can comment in their submissions
     Then I should see "First student comment"
     And the field "content" matches value "Add a comment..."
     And I follow "Delete this comment"
+    # Wait for the animation to finish.
+    And I wait "2" seconds
     And I set the field "content" to "Second student comment"
     And I follow "Save comment"
     And I should see "Second student comment"
