@@ -40,11 +40,6 @@ abstract class testing_util {
     private static $dataroot = null;
 
     /**
-     * @var int last value of db writes counter, used for db resetting
-     */
-    public static $lastdbwrites = null;
-
-    /**
      * @var testing_data_generator
      */
     protected static $generator = null;
@@ -549,10 +544,6 @@ abstract class testing_util {
     public static function reset_database() {
         global $DB;
 
-        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
-            return false;
-        }
-
         $tables = $DB->get_tables(false);
         if (!$tables or empty($tables['config'])) {
             // not installed yet
@@ -680,8 +671,6 @@ abstract class testing_util {
                 $DB->get_manager()->drop_table(new xmldb_table($table));
             }
         }
-
-        self::$lastdbwrites = $DB->perf_get_writes();
 
         return true;
     }
