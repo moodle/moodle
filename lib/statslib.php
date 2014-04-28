@@ -1752,7 +1752,13 @@ function stats_temp_table_fill($timestart, $timeend) {
 
     // First decide from where we want the data.
 
-    $params = array('timestart' => $timestart, 'timeend' => $timeend, 'loginevent' => '\core\event\user_loggedin');
+    $params = array('timestart' => $timestart,
+                    'timeend' => $timeend,
+                    'participating' => \core\event\base::LEVEL_PARTICIPATING,
+                    'teaching' => \core\event\base::LEVEL_TEACHING,
+                    'loginevent1' => '\core\event\user_loggedin',
+                    'loginevent2' => '\core\event\user_loggedin',
+    );
 
     $filled = false;
     $manager = get_log_manager();
@@ -1773,6 +1779,8 @@ function stats_temp_table_fill($timestart, $timeend) {
             }
 
             // Let's fake the old records using new log data.
+            // We want only data relevant to educational process
+            // done by real users.
 
             $sql = "INSERT INTO {temp_log1} (userid, course, action)
 
@@ -1783,12 +1791,14 @@ function stats_temp_table_fill($timestart, $timeend) {
                       ELSE courseid
                    END,
                    CASE
-                       WHEN eventname = :loginevent THEN 'login'
+                       WHEN eventname = :loginevent1 THEN 'login'
                        WHEN crud = 'r' THEN 'view'
                        ELSE 'update'
                    END
               FROM {{$logtable}}
-             WHERE timecreated >= :timestart AND timecreated < :timeend";
+             WHERE timecreated >= :timestart AND timecreated < :timeend
+                   AND (origin = 'web' OR origin = 'ws')
+                   AND (edulevel = :participating OR edulevel = :teaching OR eventname = :loginevent2)";
 
             $DB->execute($sql, $params);
             $filled = true;
