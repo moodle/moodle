@@ -34,6 +34,11 @@ require_once(__DIR__.'/../../testing/classes/util.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class phpunit_util extends testing_util {
+    /**
+     * @var int last value of db writes counter, used for db resetting
+     */
+    public static $lastdbwrites = null;
+
     /** @var array An array of original globals, restored after each test */
     protected static $globals = array();
 
@@ -244,6 +249,27 @@ class phpunit_util extends testing_util {
             $warnings = implode("\n", $warnings);
             trigger_error($warnings, E_USER_WARNING);
         }
+    }
+
+    /**
+     * Reset all database tables to default values.
+     * @static
+     * @return bool true if reset done, false if skipped
+     */
+    public static function reset_database() {
+        global $DB;
+
+        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
+            return false;
+        }
+
+        if (!parent::reset_database()) {
+            return false;
+        }
+
+        self::$lastdbwrites = $DB->perf_get_writes();
+
+        return true;
     }
 
     /**
