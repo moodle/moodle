@@ -1208,7 +1208,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
         if (!empty($section->sequence)) {
             $modules = explode(",", $section->sequence);
             foreach ($modules as $moduleid) {
-                if ($cm = $DB->get_record('course_modules', array('id' => $moduleid), 'visible, visibleold')) {
+                if ($cm = get_coursemodule_from_id(null, $moduleid, $courseid)) {
                     if ($visibility) {
                         // As we unhide the section, we use the previously saved visibility stored in visibleold.
                         set_coursemodule_visible($moduleid, $cm->visibleold);
@@ -1217,6 +1217,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
                         set_coursemodule_visible($moduleid, 0);
                         $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id' => $moduleid));
                     }
+                    \core\event\course_module_updated::create_from_cm($cm)->trigger();
                 }
             }
         }
@@ -1518,6 +1519,16 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
     return $section->id;     // Return course_sections ID that was used.
 }
 
+/**
+ * Change the group mode of a course module.
+ *
+ * Note: Do not forget to trigger the event \core\event\course_module_updated as it needs
+ * to be triggered manually, refer to {@link \core\event\course_module_updated::create_from_cm()}.
+ *
+ * @param int $id course module ID.
+ * @param int $groupmode the new groupmode value.
+ * @return bool True if the $groupmode was updated.
+ */
 function set_coursemodule_groupmode($id, $groupmode) {
     global $DB;
     $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,groupmode', MUST_EXIST);
@@ -1540,6 +1551,9 @@ function set_coursemodule_idnumber($id, $idnumber) {
 
 /**
  * Set the visibility of a module and inherent properties.
+ *
+ * Note: Do not forget to trigger the event \core\event\course_module_updated as it needs
+ * to be triggered manually, refer to {@link \core\event\course_module_updated::create_from_cm()}.
  *
  * From 2.4 the parameter $prevstateoverrides has been removed, the logic it triggered
  * has been moved to {@link set_section_visible()} which was the only place from which
