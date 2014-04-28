@@ -83,4 +83,17 @@ class course_section_updated extends base {
         $sectiondata = $this->get_record_snapshot('course_sections', $this->objectid);
         return array($this->courseid, 'course', 'editsection', 'editsection.php?id=' . $this->objectid, $sectiondata->section);
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+        if (!isset($this->other['sectionnum'])) {
+            throw new \coding_exception('The sectionnum must be set in $other');
+        }
+    }
 }
