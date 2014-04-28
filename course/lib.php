@@ -1205,6 +1205,17 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
     $resourcestotoggle = array();
     if ($section = $DB->get_record("course_sections", array("course"=>$courseid, "section"=>$sectionnumber))) {
         $DB->set_field("course_sections", "visible", "$visibility", array("id"=>$section->id));
+
+        $event = \core\event\course_section_updated::create(array(
+            'context' => context_course::instance($courseid),
+            'objectid' => $section->id,
+            'other' => array(
+                'sectionnum' => $sectionnumber
+            )
+        ));
+        $event->add_record_snapshot('course_sections', $section);
+        $event->trigger();
+
         if (!empty($section->sequence)) {
             $modules = explode(",", $section->sequence);
             foreach ($modules as $moduleid) {
