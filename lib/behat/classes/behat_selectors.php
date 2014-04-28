@@ -91,7 +91,7 @@ class behat_selectors {
     normalize-space(descendant::div[@class='hd']) = %locator%]
 XPATH
         , 'block' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' '))] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]/descendant::h2[normalize-space(.) = %locator%]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]
+//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' '))] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]/descendant::h2[normalize-space(.) = %locator%]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')][@aria-label = %locator% ]
 XPATH
         , 'region' => <<<XPATH
 .//*[self::div | self::section | self::aside][./@id = %locator%]
