@@ -203,7 +203,7 @@ if ($ADMIN->fulltree) {
             get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
             array('value' => '-', 'adv' => true), null));
 
-    // Allow user to specify if setting outcomes is an advanced setting
+    // Allow user to specify if setting outcomes is an advanced setting.
     if (!empty($CFG->enableoutcomes)) {
         $quizsettings->add(new admin_setting_configcheckbox('quiz/outcomes_adv',
             get_string('outcomesadvanced', 'quiz'), get_string('configoutcomesadvanced', 'quiz'),
