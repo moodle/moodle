@@ -4,7 +4,7 @@ Feature: In an assignment, teachers can edit a students submission inline
   As a teacher
   I need to have a students submission text copied to the grading online form.
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Submit a text online and edit the submission
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
