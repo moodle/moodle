@@ -33,15 +33,29 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_admin_review_setting extends admin_setting {
-    /**#@+
-     * @var integer should match the constants defined in {@link mod_quiz_display_options}.
-     * again, copied for performance reasons.
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
      */
     const DURING            = 0x10000;
+
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     */
     const IMMEDIATELY_AFTER = 0x01000;
+
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     */
     const LATER_WHILE_OPEN  = 0x00100;
+
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     */
     const AFTER_CLOSE       = 0x00010;
-    /**#@-*/
 
     /**
      * @var boolean|null forced checked / disabled attributes for the during time.
@@ -82,6 +96,7 @@ class mod_quiz_admin_review_setting extends admin_setting {
     }
 
     /**
+     * Return the combination that means all times.
      * @return int all times.
      */
     public static function all_on() {
@@ -90,7 +105,8 @@ class mod_quiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * @return array name of all the possible times.
+     * Get an array of the names of all the possible times. 
+     * @return array an array of time constant => lang string.
      */
     protected static function times() {
         return array(

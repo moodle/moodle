@@ -1126,6 +1126,7 @@ function quiz_get_overdue_handling_options() {
 }
 
 /**
+ * Get the choices for what size user picture to show.
  * @return array string => lang string the options for whether to display the user's picture.
  */
 function quiz_get_user_image_options() {
@@ -1137,8 +1138,9 @@ function quiz_get_user_image_options() {
 }
 
 /**
- * @param string $state one of the state constants like IN_PROGRESS.
- * @return string the human-readable state name.
+ * Get the human-readable name for a quiz attempt state.
+ * @param string $state one of the state constants like {@link quiz_attempt::IN_PROGRESS}.
+ * @return string The lang string to describe that state.
  */
 function quiz_attempt_state_name($state) {
     switch ($state) {
