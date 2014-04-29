@@ -129,11 +129,16 @@ class core_admintree_testcase extends advanced_testcase {
         $this->assertRegexp('/class="patherror"/', $result);
 
         // Check for a file which is not executable.
-        $result = $executable->output_html($CFG->dirroot . '/config.php');
+        $result = $executable->output_html($CFG->dirroot . '/filter/tex/readme_moodle.txt');
         $this->assertRegexp('/class="patherror"/', $result);
 
         // Check for an executable file.
-        $result = $executable->output_html($CFG->dirroot . '/lib/tests/other/executable.php');
+        if ($CFG->ostype == 'WINDOWS') {
+            $filetocheck = 'mimetex.exe';
+        } else {
+            $filetocheck = 'mimetex.darwin';
+        }
+        $result = $executable->output_html($CFG->dirroot . '/filter/tex/' . $filetocheck);
         $this->assertRegexp('/class="pathok"/', $result);
 
         // Check for no file specified.
