@@ -1744,10 +1744,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                 array(
                     'objectid' => $section->id,
                     'courseid' => $course->id,
-                    'context' => context_course::instance($course->id),
-                    'other' => array(
-                        'sectionnum' => $section->section
-                    )
+                    'context' => context_course::instance($course->id)
                 )
             );
         $event->add_record_snapshot('course_sections', $section);
@@ -1764,7 +1761,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($section->id, $event->objectid);
         $this->assertEquals($course->id, $event->courseid);
         $this->assertEquals($coursecontext->id, $event->contextid);
-        $this->assertEquals($section->section, $event->other['sectionnum']);
         $expecteddesc = 'Course ' . $event->courseid . ' section ' . $event->other['sectionnum'] . ' updated by user ' . $event->userid;
         $this->assertEquals($expecteddesc, $event->get_description());
         $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
