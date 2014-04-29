@@ -588,6 +588,14 @@ function xmldb_quiz_upgrade($oldversion) {
                         continue;
                     }
 
+                    if ($questionid === '') {
+                        // This can happen as the result of old restore bugs.
+                        // There can be a missing number in the list of ids.
+                        // All we can do about this is ignore it, which is what
+                        // the quiz system used to do. See MDL-45321.
+                        continue;
+                    }
+
                     if (array_key_exists($questionid, $questionidtoslotrowid)) {
                         // Normal case. quiz_slots entry is present.
                         // Just need to add slot and page.
