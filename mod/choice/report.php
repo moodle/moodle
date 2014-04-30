@@ -50,7 +50,6 @@
     $eventdata['other']['content'] = 'choicereportcontentviewed';
 
     $event = \mod_choice\event\report_viewed::create($eventdata);
-    $event->set_page_detail();
     $event->trigger();
 
     if (data_submitted() && $action == 'delete' && has_capability('mod/choice:deleteresponses',$context) && confirm_sesskey()) {
