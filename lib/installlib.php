@@ -197,12 +197,22 @@ function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $pre
         $legacystring = $ex->errorcode;
         if ($stringmanager->string_exists($errorstring, $ex->module)) {
             // By using a different string id from the error code we are separating exception handling and output.
-            return $stringmanager->get_string($errorstring, $ex->module, $ex->a).'<br />'.$ex->debuginfo;
+            $returnstring = $stringmanager->get_string($errorstring, $ex->module, $ex->a);
+            if ($ex->debuginfo) {
+                $returnstring .= '<br />'.$ex->debuginfo;
+            }
+
+            return $returnstring;
         } else if ($stringmanager->string_exists($legacystring, $ex->module)) {
             // There are some DML exceptions that may be thrown here as well as during normal operation.
             // If we have a translated message already we still want to serve it here.
             // However it is not the preferred way.
-            return $stringmanager->get_string($legacystring, $ex->module, $ex->a).'<br />'.$ex->debuginfo;
+            $returnstring = $stringmanager->get_string($legacystring, $ex->module, $ex->a);
+            if ($ex->debuginfo) {
+                $returnstring .= '<br />'.$ex->debuginfo;
+            }
+
+            return $returnstring;
         }
         // No specific translation. Deliver a generic error message.
         return $stringmanager->get_string('dmlexceptiononinstall', 'error', $ex);
@@ -302,9 +312,10 @@ function install_print_help_page($help) {
  * @param string $stagename
  * @param string $heading
  * @param string $stagetext
+ * @param string $stageclass
  * @return void
  */
-function install_print_header($config, $stagename, $heading, $stagetext) {
+function install_print_header($config, $stagename, $heading, $stagetext, $stageclass = "alert-info") {
     global $CFG;
 
     @header('Content-Type: text/html; charset=UTF-8');
@@ -334,9 +345,9 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
                         <div class="headermenu">&nbsp;</div>
                     </div>
                     <div class="navbar clearfix">
-                        <div class="breadcrumb">
-                            <ul><li class="first">'.$stagename.'</li></ul>
-                        </div>
+                        <nav class="breadcrumb-nav">
+                            <ul class="breadcrumb"><li class="first">'.$stagename.'</li></ul>
+                        </nav>
                         <div class="navbutton">&nbsp;</div>
                     </div>
                 </div>
@@ -346,7 +357,7 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
     echo '<h2>'.$heading.'</h2>';
 
     if ($stagetext !== '') {
-        echo '<div class="stage generalbox box">';
+        echo '<div class="alert ' . $stageclass . '">';
         echo $stagetext;
         echo '</div>';
     }
@@ -382,9 +393,9 @@ function install_print_footer($config, $reload=false) {
     }
 
     if ($reload) {
-        $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('reload')).'" />';
+        $next = '<input type="submit" id="nextbutton" class="btn btn-primary" name="next" value="'.s(get_string('reload')).'" />';
     } else {
-        $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('next')).' &raquo;" />';
+        $next = '<input type="submit" id="nextbutton" class="btn btn-primary" name="next" value="'.s(get_string('next')).' &raquo;" />';
     }
 
     echo '</fieldset><fieldset id="nav_buttons">'.$first.$next.'</fieldset>';
@@ -394,7 +405,7 @@ function install_print_footer($config, $reload=false) {
        '<img src="pix/moodlelogo.png" alt="moodlelogo" /></a></div>';
 
     echo '</form></div>';
-    echo '<div id="footer"><hr />'.$homelink.'</div>';
+    echo '<div id="page-footer">'.$homelink.'</div>';
     echo '</div></body></html>';
 }
 
