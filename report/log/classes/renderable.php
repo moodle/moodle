@@ -105,7 +105,7 @@ class report_log_renderable implements renderable {
      * @param bool $showreport (optional) show report.
      * @param bool $showselectorform (optional) show selector form.
      * @param moodle_url|string $url (optional) page url.
-     * @param int $date date (optional) from which records will be fetched.
+     * @param int $date date (optional) timestamp of start of the day for which logs will be displayed.
      * @param string $logformat log format.
      * @param int $page (optional) page number.
      * @param int $perpage (optional) number of records to show per page.
