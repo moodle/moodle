@@ -372,8 +372,8 @@ function choice_show_reportlink($user, $cm) {
  *  * @param bool $allresponses
  * @return object
  */
-function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forcepublish=false) {
-    global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT, $PAGE, $OUTPUT, $DB;
+function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
+    global $OUTPUT;
 
     $display = clone($choice);
     $display->coursemoduleid = $cm->id;
@@ -406,144 +406,6 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
         return false;
     }
 
-
-    $totalresponsecount = 0;
-    foreach ($allresponses as $optionid => $userlist) {
-        if ($choice->showunanswered || $optionid) {
-            $totalresponsecount += count($userlist);
-        }
-    }
-
-    $hascapfullnames = has_capability('moodle/site:viewfullnames', $context);
-
-    $viewresponses = has_capability('mod/choice:readresponses', $context);
-    switch ($forcepublish) {
-        case CHOICE_PUBLISH_NAMES:
-            echo '<div id="tablecontainer">';
-            if ($viewresponses) {
-                echo '<form id="attemptsform" method="post" action="'.$FULLSCRIPT.'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes_js(get_string('deleteattemptcheck','quiz')).'\' : true);">';
-                echo '<div>';
-                echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
-                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-                echo '<input type="hidden" name="mode" value="overview" />';
-            }
-
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" class=\"results names\">";
-            echo "<tr>";
-
-            $columncount = array(); // number of votes in each column
-            if ($choice->showunanswered) {
-                $columncount[0] = 0;
-                echo "<th class=\"col0 header\" scope=\"col\">";
-                print_string('notanswered', 'choice');
-                echo "</th>";
-            }
-            $count = 1;
-            foreach ($choice->option as $optionid => $optiontext) {
-                $columncount[$optionid] = 0; // init counters
-                echo "<th class=\"col$count header\" scope=\"col\">";
-                echo format_string($optiontext);
-                echo "</th>";
-                $count++;
-            }
-            echo "</tr><tr>";
-
-            if ($choice->showunanswered) {
-                echo "<td class=\"col$count data\" >";
-                // added empty row so that when the next iteration is empty,
-                // we do not get <table></table> error from w3c validator
-                // MDL-7861
-                echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
-                if (!empty($allresponses[0])) {
-                    foreach ($allresponses[0] as $user) {
-                        echo "<tr>";
-                        echo "<td class=\"picture\">";
-                        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
-                        echo "</td><td class=\"fullname\">";
-                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
-                        echo fullname($user, $hascapfullnames);
-                        echo "</a>";
-                        echo "</td></tr>";
-                    }
-                }
-                echo "</table></td>";
-            }
-            $count = 1;
-            foreach ($choice->option as $optionid => $optiontext) {
-                    echo '<td class="col'.$count.' data" >';
-
-                    // added empty row so that when the next iteration is empty,
-                    // we do not get <table></table> error from w3c validator
-                    // MDL-7861
-                    echo '<table class="choiceresponse"><tr><td></td></tr>';
-                    if (isset($allresponses[$optionid])) {
-                        foreach ($allresponses[$optionid] as $user) {
-                            $columncount[$optionid] += 1;
-                            echo '<tr><td class="attemptcell">';
-                            if ($viewresponses and has_capability('mod/choice:deleteresponses',$context)) {
-                                echo '<input type="checkbox" name="attemptid[]" value="'. $user->id. '" />';
-                            }
-                            echo '</td><td class="picture">';
-                            echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
-                            echo '</td><td class="fullname">';
-                            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">";
-                            echo fullname($user, $hascapfullnames);
-                            echo '</a>';
-                            echo '</td></tr>';
-                       }
-                    }
-                    $count++;
-                    echo '</table></td>';
-            }
-            echo "</tr><tr>";
-            $count = 1;
-
-            if ($choice->showunanswered) {
-                echo "<td></td>";
-            }
-
-            foreach ($choice->option as $optionid => $optiontext) {
-                echo "<td align=\"center\" class=\"col$count count\">";
-                if ($choice->limitanswers) {
-                    echo get_string("taken", "choice").":";
-                    echo $columncount[$optionid];
-                    echo "<br/>";
-                    echo get_string("limit", "choice").":";
-                    echo $choice->maxanswers[$optionid];
-                } else {
-                    if (isset($columncount[$optionid])) {
-                        echo $columncount[$optionid];
-                    }
-                }
-                echo "</td>";
-                $count++;
-            }
-            echo "</tr>";
-
-            /// Print "Select all" etc.
-            if ($viewresponses and has_capability('mod/choice:deleteresponses',$context)) {
-                echo '<tr><td></td><td>';
-                echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall').'</a> / ';
-                echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('deselectall').'</a> ';
-                echo '&nbsp;&nbsp;';
-                echo html_writer::label(get_string('withselected', 'choice'), 'menuaction');
-                echo html_writer::select(array('delete' => get_string('delete')), 'action', '', array(''=>get_string('withselectedusers')), array('id'=>'menuaction', 'class' => 'autosubmit'));
-                $PAGE->requires->yui_module('moodle-core-formautosubmit',
-                    'M.core.init_formautosubmit',
-                    array(array('selectid' => 'menuaction'))
-                );
-                echo '<noscript id="noscriptmenuaction" style="display:inline">';
-                echo '<div>';
-                echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
-                echo '</td><td></td></tr>';
-            }
-
-            echo "</table></div>";
-            if ($viewresponses) {
-                echo "</form></div>";
-            }
-            break;
-    }
     return $display;
 }
 
