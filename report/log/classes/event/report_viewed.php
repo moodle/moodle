@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when log report is viewed.
+ * The report_log report viewed event.
  *
  * @package    report_log
  * @copyright  2013 Ankit Agarwal
@@ -23,15 +23,20 @@
  */
 namespace report_log\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event triggered, when log report is viewed.
+ * The report_log report viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     -int groupid: Group to display.
- *     -int date: Date to display logs from.
- *     -int modid: Module id for which logs were displayed.
- *     -string modaction: Module action.
- *     -string logformat: Log format in which logs were displayed.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int groupid: Group to display.
+ *      - int date: Date to display logs from.
+ *      - int modid: Module id for which logs were displayed.
+ *      - string modaction: Module action.
+ *      - string logformat: Log format in which logs were displayed.
+ * }
  *
  * @package    report_log
  * @since      Moodle 2.7
@@ -65,7 +70,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed log report for course with id " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the log report for the course with the id '$this->courseid'.";
     }
 
     /**
@@ -94,28 +99,28 @@ class report_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (!isset($this->data['other']['groupid'])) {
-            throw new \coding_exception('The property groupid must be set in other.');
+        if (!isset($this->other['groupid'])) {
+            throw new \coding_exception('The \'groupid\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['date'])) {
-            throw new \coding_exception('The property date must be set in other.');
+        if (!isset($this->other['date'])) {
+            throw new \coding_exception('The \'date\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['modid'])) {
-            throw new \coding_exception('The property modid must be set in other.');
+        if (!isset($this->other['modid'])) {
+            throw new \coding_exception('The \'modid\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['modaction'])) {
-            throw new \coding_exception('The property modaction must be set in other.');
+        if (!isset($this->other['modaction'])) {
+            throw new \coding_exception('The \'modaction\' value must be set in other.');
         }
 
-        if (!isset($this->data['other']['logformat'])) {
-            throw new \coding_exception('The property logformat must be set in other.');
+        if (!isset($this->other['logformat'])) {
+            throw new \coding_exception('The \'logformat\' value must be set in other.');
         }
 
         if (!isset($this->data['relateduserid'])) {
-            throw new \coding_exception('The property relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

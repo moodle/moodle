@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki history viewed event.
+ * The mod_wiki history viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,7 +26,7 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki history viewed event class.
+ * The mod_wiki history viewed event class.
  *
  * @package    mod_wiki
  * @since      Moodle 2.7
@@ -60,7 +60,8 @@ class page_history_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed wiki history for page id ' . $this->objectid;
+        return "The user with the id '$this->userid' viewed the history for the page with the id '$this->objectid' for the wiki with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**

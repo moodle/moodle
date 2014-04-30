@@ -32,10 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string associatetype type of blog association, course/coursemodule.
- *      @type int blogid id of blog.
- *      @type int associateid id of associate.
- *      @type string subject blog subject.
+ *      - string associatetype: type of blog association, course/coursemodule.
+ *      - int blogid: id of blog.
+ *      - int associateid: id of associate.
+ *      - string subject: blog subject.
  * }
  *
  * @package    core
@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blog_association_created extends \core\event\base {
+class blog_association_created extends base {
 
     /**
      * Set basic properties for the event.
@@ -70,8 +70,8 @@ class blog_association_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Blog association added between entry id {$this->other['blogid']} and {$this->other['associatetype']} with id
-                {$this->other['associateid']}";
+        return "The blog entry with the id '{$this->other['blogid']}' was associated with the context '{$this->other['associatetype']}' with " .
+            "the id '{$this->other['associateid']}' by the user with the id '$this->userid'.";
     }
 
     /**
@@ -91,10 +91,10 @@ class blog_association_created extends \core\event\base {
         if ($this->other['associatetype'] === 'course') {
             return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
                     $this->other['blogid'], $this->other['subject'], 0, $this->relateduserid);
-        } else {
-            return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
-                    $this->other['blogid'], $this->other['subject'], $this->other['associateid'], $this->relateduserid);
         }
+
+        return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
+                $this->other['blogid'], $this->other['subject'], $this->other['associateid'], $this->relateduserid);
     }
 
     /**
@@ -105,15 +105,16 @@ class blog_association_created extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (empty($this->other['associatetype']) || ($this->other['associatetype'] !== 'course'
                 && $this->other['associatetype'] !== 'coursemodule')) {
-            throw new \coding_exception('Invalid associatetype in event blog_association_created.');
+            throw new \coding_exception('The \'associatetype\' value must be set in other and be a valid type.');
         } else if (!isset($this->other['blogid'])) {
-            throw new \coding_exception('Blog id must be set in event blog_association_created.');
+            throw new \coding_exception('The \'blogid\' value must be set in other.');
         } else if (!isset($this->other['associateid'])) {
-            throw new \coding_exception('Associate id must be set in event blog_association_created.');
+            throw new \coding_exception('The \'associateid\' value must be set in other.');
         } else if (!isset($this->other['subject'])) {
-            throw new \coding_exception('Subject must be set in event blog_association_created.');
+            throw new \coding_exception('The \'subject\' value must be set in other.');
         }
     }
 }

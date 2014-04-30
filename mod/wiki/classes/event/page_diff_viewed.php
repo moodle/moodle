@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki diff viewed event.
+ * The mod_wiki diff viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,13 +26,13 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki diff viewed event class.
+ * The mod_wiki diff viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int comparewith version number to compare with.
- *      @type int compare version number to compare.
+ *      - int comparewith: version number to compare with.
+ *      - int compare: version number to compare.
  * }
  *
  * @package    mod_wiki
@@ -67,7 +67,8 @@ class page_diff_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed wiki diff for page id ' . $this->objectid;
+        return "The user with the id '$this->userid' viewed the diff for the page with the id '$this->objectid' for the wiki with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -102,8 +103,11 @@ class page_diff_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (!isset($this->other['comparewith']) || !isset($this->other['compare'])) {
-            throw new \coding_exception('The comparewith and compare need to be set in $other');
+        if (!isset($this->other['comparewith'])) {
+            throw new \coding_exception('The \'comparewith\' value must be set in other.');
+        }
+        if (!isset($this->other['compare'])) {
+            throw new \coding_exception('The \'compare\' value must be set in other.');
         }
     }
 }

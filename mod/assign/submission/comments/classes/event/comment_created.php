@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * assignsubmission_comments comment created event.
+ * The assignsubmission_comments comment created event.
  *
  * @package    assignsubmission_comments
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,7 +26,7 @@ namespace assignsubmission_comments\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * assignsubmission_comments comment created event.
+ * The assignsubmission_comments comment created event class.
  *
  * @package    assignsubmission_comments
  * @since      Moodle 2.7
@@ -49,6 +49,7 @@ class comment_created extends \core\event\comment_created {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' added comment for assignment submission with id ' . $this->other['itemid'];
+        return "The user with the id '$this->userid' added the comment with the id '$this->objectid' to the submission " .
+            "with the id '{$this->other['itemid']}' for the assignment with the course module id '$this->contextinstanceid'.";
     }
 }

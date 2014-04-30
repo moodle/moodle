@@ -14,19 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Role assigned event.
+ *
+ * @package    core
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Role assigned event.
+ * Role assigned event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string shortname shortname of role.
- *      @type string description role description.
- *      @type string archetype role type.
+ *      - string shortname: shortname of role.
+ *      - string description: role description.
+ *      - string archetype: role type.
  * }
  *
  * @package    core
@@ -34,7 +42,6 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class role_deleted extends base {
     /**
      * Initialise event parameters.
@@ -60,7 +67,7 @@ class role_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'Role ' . $this->objectid . ' is deleted by user ' . $this->userid;
+        return "The role with the id '$this->objectid' was deleted by the user with the id '$this->userid'.";
     }
 
     /**

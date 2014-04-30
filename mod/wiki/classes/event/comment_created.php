@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki comment created event.
+ * The mod_wiki comment created event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,13 +26,7 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki comment created event.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int itemid id of item for which comment is created.
- * }
+ * The mod_wiki comment created event class.
  *
  * @package    mod_wiki
  * @since      Moodle 2.7
@@ -56,6 +50,7 @@ class comment_created extends \core\event\comment_created {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' added comment for wiki with page id ' . $this->other['itemid'];
+        return "The user with the id '$this->userid' added a comment with the id '$this->objectid' on the page with the id " .
+            "'{$this->other['itemid']}' for the wiki with the course module id '$this->contextinstanceid'.";
     }
 }

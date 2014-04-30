@@ -27,7 +27,7 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum instance list viewed event.
+ * The mod_forum instance list viewed event class.
  *
  * @package    mod_forum
  * @since      Moodle 2.7

@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a workshop submission is created.
+ * The mod_workshop submission created event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,17 +26,16 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a workshop submission is created.
+ * The mod_workshop submission created event class.
  *
  * @property-read array $other {
  *     Extra information about the event.
  *
- *     @type string submissiontitle Submission title.
+ *     - string submissiontitle: Submission title.
  * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,7 +56,8 @@ class submission_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A user with an id of ' . $this->userid . ' created a workshop submission with an id of ' . $this->objectid;
+        return "The user with the id '$this->userid' created the submission with the id of '$this->objectid' for the workshop " .
+            "with the course module id '$this->contextinstanceid'.";
     }
 
     /**

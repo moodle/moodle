@@ -15,14 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event triggered, when survey report is viewed.
- *
- * @property-read array $other Extra information about the event.
- *     -string action: (optional) report view.
- *     -int groupid: (optional) report for groupid.
+ * The mod_survey report viewed event.
  *
  * @package    mod_survey
- * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +26,21 @@ namespace mod_survey\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_survey report viewed event class.
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string action: (optional) report view.
+ *      - int groupid: (optional) report for groupid.
+ * }
+ *
+ * @package    mod_survey
+ * @since      Moodle 2.7
+ * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_viewed extends \core\event\base {
 
     /**
@@ -57,7 +67,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid' viewed survey report for survey with instance id '$this->objectid'";
+        return "The user with the id '$this->userid' viewed the report for the survey with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -66,8 +76,12 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url("/mod/survey/report.php", array('id' => $this->contextinstanceid,
-            'action' => $this->other['action']));
+        $params = array();
+        $params['id'] = $this->contextinstanceid;
+        if (isset($this->other['action'])) {
+            $params['action'] = $this->other['action'];
+        }
+        return new \moodle_url("/mod/survey/report.php", $params);
     }
 
     /**

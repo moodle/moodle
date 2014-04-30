@@ -21,7 +21,10 @@
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Event for recent activity page.
@@ -58,7 +61,7 @@ class recent_activity_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed recent activity report in course " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the recent activity report in the course with the id '$this->courseid'.";
     }
 
     /**
@@ -88,7 +91,7 @@ class recent_activity_viewed extends \core\event\base {
         parent::validate_data();
 
         if ($this->contextlevel != CONTEXT_COURSE) {
-            throw new \coding_exception('recent_activity_viewed event expects only course contexts.');
+            throw new \coding_exception('Context level must be CONTEXT_COURSE.');
         }
     }
 }

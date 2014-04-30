@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/calendar/tests/externallib_test.php');
  * @copyright 2014 Ankit Agarwal <ankit.agrr@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_event_testcase extends advanced_testcase {
+class core_calendar_events_testcase extends advanced_testcase {
 
     /**
      * The test user.
@@ -126,7 +126,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_created to be triggered without
                     other['repeatid']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['repeatid'] must be set", $e->getMessage());
+            $this->assertContains('The \'repeatid\' value must be set in other.', $e->getMessage());
         }
 
         // Test not setting other['name'].
@@ -142,7 +142,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_created to be triggered without
                     other['name']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['name'] cannot be empty", $e->getMessage());
+            $this->assertContains('The \'name\' value must be set in other.', $e->getMessage());
         }
 
         // Test not setting other['timestart'].
@@ -158,7 +158,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_deleted to be triggered without
                     other['timestart']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['timestart'] cannot be empty", $e->getMessage());
+            $this->assertContains('The \'timestart\' value must be set in other.', $e->getMessage());
         }
     }
 
@@ -239,7 +239,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_updated to be triggered without
                     other['repeatid']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['repeatid'] must be set", $e->getMessage());
+            $this->assertContains('The \'repeatid\' value must be set in other.', $e->getMessage());
         }
 
         // Test not setting other['name'].
@@ -255,7 +255,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_updated to be triggered without
                     other['name']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['name'] cannot be empty", $e->getMessage());
+            $this->assertContains('The \'name\' value must be set in other.', $e->getMessage());
         }
 
         // Test not setting other['timestart'].
@@ -271,7 +271,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_deleted to be triggered without
                     other['timestart']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['timestart'] cannot be empty", $e->getMessage());
+            $this->assertContains('The \'timestart\' value must be set in other.', $e->getMessage());
         }
     }
 
@@ -351,7 +351,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_deleted to be triggered without
                     other['repeatid']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['repeatid'] must be set", $e->getMessage());
+            $this->assertContains('The \'repeatid\' value must be set in other.', $e->getMessage());
         }
 
         // Test not setting other['name'].
@@ -367,7 +367,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_deleted to be triggered without
                     other['name']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['name'] cannot be empty", $e->getMessage());
+            $this->assertContains('The \'name\' value must be set in other.', $e->getMessage());
         }
 
         // Test not setting other['timestart'].
@@ -383,7 +383,7 @@ class core_calendar_event_testcase extends advanced_testcase {
             $this->fail("Event validation should not allow \\core\\event\\calendar_event_deleted to be triggered without
                     other['timestart']");
         } catch (coding_exception $e) {
-            $this->assertContains("Field other['timestart'] cannot be empty", $e->getMessage());
+            $this->assertContains('The \'timestart\' value must be set in other.', $e->getMessage());
         }
     }
 }

@@ -15,6 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Message sent event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Message sent event class.
  *
  * @property-read array $other {
@@ -28,10 +40,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class message_sent extends base {
 
     /**
@@ -68,11 +76,10 @@ class message_sent extends base {
     public function get_description() {
         // Check if we are sending from a valid user.
         if (\core_user::is_real_user($this->userid)) {
-            return 'The user with the id \'' . $this->userid . '\' sent a message to the user with the id \'' .
-                $this->relateduserid . '\'.';
+            return "The user with the id '$this->objectid' sent a message to the user with the id '$this->relateduserid'.";
         }
 
-        return 'A message was sent by the system to the user with the id \'' . $this->relateduserid . '\'.';
+        return "A message was sent by the system to the user with the id '$this->relateduserid'.";
     }
 
     /**
@@ -105,7 +112,7 @@ class message_sent extends base {
         }
 
         if (!isset($this->other['messageid'])) {
-            throw new \coding_exception('The \'messageid\' needs to be set in $other.');
+            throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
     }
 }

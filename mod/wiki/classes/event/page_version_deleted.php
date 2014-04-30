@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki page version deleted.
+ * The mod_wiki page version deleted event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,12 +26,12 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki page version deleted.
+ * The mod_wiki page version deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int pageid id wiki page.
+ *      - int pageid: id wiki page.
  * }
  *
  * @package    mod_wiki
@@ -66,8 +66,8 @@ class page_version_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted version ' . $this->objectid . ' for page id ' .
-                $this->other['pageid'];
+        return "The user with the id '$this->userid' deleted version '$this->objectid' for the page with the id '{$this->other['pageid']}' " .
+            "for the wiki with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -98,7 +98,7 @@ class page_version_deleted extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['pageid'])) {
-            throw new \coding_exception('The pageid need to be set in $other');
+            throw new \coding_exception('The \'pageid\' value must be set in other.');
         }
     }
 }

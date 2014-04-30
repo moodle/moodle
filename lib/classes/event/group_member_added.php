@@ -31,8 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string component name of component
- *      @type int itemid id of item.
+ *      - string component: name of component
+ *      - int itemid: id of item.
  * }
  *
  * @package    core
@@ -40,7 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_member_added extends \core\event\base {
+class group_member_added extends base {
 
     /**
      * Returns description of what happened.
@@ -48,7 +48,8 @@ class group_member_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} added user {$this->relateduserid} to group {$this->objectid}.";
+        return "The user with the id '$this->userid' added the user with the id '$this->relateduserid' to the group with " .
+            "the id '$this->objectid'.";
     }
 
     /**
@@ -80,7 +81,7 @@ class group_member_added extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_member_added', 'group');
+        return get_string('eventgroupmemberadded', 'group');
     }
 
     /**
@@ -110,10 +111,14 @@ class group_member_added extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
-        if (!isset($this->other['component']) || !isset($this->other['itemid'])) {
-            throw new \coding_exception('The component and itemid need to be set in $other, even if empty.');
-        }
         parent::validate_data();
-    }
 
+        if (!isset($this->other['component'])) {
+            throw new \coding_exception('The \'component\' value must be set in other, even if empty.');
+        }
+
+        if (!isset($this->other['itemid'])) {
+            throw new \coding_exception('The \'itemid\' value must be set in other, even if empty.');
+        }
+    }
 }

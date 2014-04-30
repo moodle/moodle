@@ -17,14 +17,6 @@
 /**
  * Event to be triggered when a new course module is created.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string modulename name of module created.
- *      @type string name title of module.
- *      @type string instanceid id of module instance.
- * }
- *
  * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
@@ -37,6 +29,14 @@ defined('MOODLE_INTERNAL') || die();
  * Class course_module_created
  *
  * Class for event to be triggered when a new course module is created.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string modulename: name of module created.
+ *      - string name: title of module.
+ *      - string instanceid: id of module instance.
+ * }
  *
  * @package    core
  * @since      Moodle 2.6
@@ -69,8 +69,8 @@ class course_module_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'The '. $this->other['modulename'] . ' module with instance id ' . $this->other['instanceid'] .
-                ' was created by user with id ' . $this->userid;
+        return "The user with the id '$this->userid' created the '{$this->other['modulename']}' activity with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -120,20 +120,20 @@ class course_module_created extends base {
     }
 
     /**
-     * custom validations
+     * Custom validation.
      *
-     * Throw \coding_exception notice in case of any problems.
+     * @throw \coding_exception
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['modulename'])) {
-            throw new \coding_exception("Field other['modulename'] cannot be empty");
+            throw new \coding_exception('The \'modulename\' value must be set in other.');
         }
         if (!isset($this->other['instanceid'])) {
-            throw new \coding_exception("Field other['instanceid'] cannot be empty");
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
         if (!isset($this->other['name'])) {
-            throw new \coding_exception("Field other['name'] cannot be empty");
+            throw new \coding_exception('The \'name\' value must be set in other.');
         }
     }
 }

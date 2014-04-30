@@ -52,7 +52,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'context' => $coursectx,
         );
 
-        $this->setExpectedException('coding_exception', 'searchterm must be set in $other.');
+        $this->setExpectedException('coding_exception', 'The \'searchterm\' value must be set in other.');
         \mod_forum\event\course_searched::create($params);
     }
 
@@ -68,7 +68,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('searchterm' => 'testing'),
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be course.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_COURSE.');
         \mod_forum\event\course_searched::create($params);
     }
 
@@ -119,24 +119,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'context' => $context,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in $other.');
-        \mod_forum\event\discussion_created::create($params);
-    }
-
-    /**
-     * Ensure discussion_created event validates that discussionid is set.
-     */
-    public function test_discussion_created_objectid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $context = context_module::instance($forum->cmid);
-
-        $params = array(
-            'context' => $context,
-            'other' => array('forumid' => $forum->id)
-        );
-
-        $this->setExpectedException('coding_exception', 'objectid must be set to the discussionid.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\discussion_created::create($params);
     }
 
@@ -152,7 +135,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id),
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\discussion_created::create($params);
     }
 
@@ -213,24 +196,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'context' => $context,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in $other.');
-        \mod_forum\event\discussion_updated::create($params);
-    }
-
-    /**
-     * Ensure discussion_updated event validates that discussionid is set.
-     */
-    public function test_discussion_updated_objectid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $context = context_module::instance($forum->cmid);
-
-        $params = array(
-            'context' => $context,
-            'other' => array('forumid' => $forum->id)
-        );
-
-        $this->setExpectedException('coding_exception', 'objectid must be set to the discussionid.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\discussion_updated::create($params);
     }
 
@@ -246,7 +212,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id),
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\discussion_updated::create($params);
     }
 
@@ -305,24 +271,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'context' => $context,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in $other.');
-        \mod_forum\event\discussion_deleted::create($params);
-    }
-
-    /**
-     * Ensure discussion_deleted event validates that discussionid is set.
-     */
-    public function test_discussion_deleted_objectid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $context = context_module::instance($forum->cmid);
-
-        $params = array(
-            'context' => $context,
-            'other' => array('forumid' => $forum->id)
-        );
-
-        $this->setExpectedException('coding_exception', 'objectid must be set to the discussionid.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\discussion_deleted::create($params);
     }
 
@@ -338,7 +287,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id),
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\discussion_deleted::create($params);
     }
 
@@ -400,7 +349,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('toforumid' => $toforum->id)
         );
 
-        $this->setExpectedException('coding_exception', 'fromforumid must be set in $other.');
+        $this->setExpectedException('coding_exception', 'The \'fromforumid\' value must be set in other.');
         \mod_forum\event\discussion_moved::create($params);
     }
 
@@ -418,25 +367,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('fromforumid' => $fromforum->id)
         );
 
-        $this->setExpectedException('coding_exception', 'toforumid must be set in $other.');
-        \mod_forum\event\discussion_moved::create($params);
-    }
-
-    /**
-     * Ensure discussion_moved event validates that the discussionid is set.
-     */
-    public function test_discussion_moved_objectid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $fromforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $toforum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $context = context_module::instance($toforum->cmid);
-
-        $params = array(
-            'context' => $context,
-            'other' => array('fromforumid' => $fromforum->id, 'toforumid' => $toforum->id)
-        );
-
-        $this->setExpectedException('coding_exception', 'objectid must be set to the discussionid.');
+        $this->setExpectedException('coding_exception', 'The \'toforumid\' value must be set in other.');
         \mod_forum\event\discussion_moved::create($params);
     }
 
@@ -462,7 +393,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('fromforumid' => $fromforum->id, 'toforumid' => $toforum->id)
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\discussion_moved::create($params);
     }
 
@@ -511,21 +442,6 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_name());
     }
 
-    /**
-     * Ensure discussion_viewed event validates that the discussionid is set
-     */
-    public function test_discussion_viewed_objectid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $context = context_module::instance($forum->cmid);
-
-        $params = array(
-            'context' => $context,
-        );
-
-        $this->setExpectedException('coding_exception', 'objectid must be set to the discussionid.');
-        \mod_forum\event\discussion_viewed::create($params);
-    }
 
     /**
      * Ensure discussion_viewed event validates that the contextlevel is correct.
@@ -547,7 +463,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $discussion->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\discussion_viewed::create($params);
     }
 
@@ -595,22 +511,6 @@ class mod_forum_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Ensure course_module_viewed event validates that the forumid is set.
-     */
-    public function test_course_module_viewed_objectid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $context = context_module::instance($forum->cmid);
-
-        $params = array(
-            'context' => $context,
-        );
-
-        $this->setExpectedException('coding_exception', 'must define objectid');
-        \mod_forum\event\course_module_viewed::create($params);
-    }
-
-    /**
      * Ensure course_module_viewed event validates that the contextlevel is correct.
      */
     public function test_course_module_viewed_context_validation() {
@@ -622,7 +522,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $forum->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\course_module_viewed::create($params);
     }
 
@@ -675,7 +575,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\subscription_created::create($params);
     }
 
@@ -691,7 +591,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $forum->id,
         );
 
-        $this->setExpectedException('coding_exception', 'relateduserid must be set.');
+        $this->setExpectedException('coding_exception', 'The \'relateduserid\' must be set.');
         \mod_forum\event\subscription_created::create($params);
     }
 
@@ -709,7 +609,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\subscription_created::create($params);
     }
 
@@ -763,7 +663,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\subscription_deleted::create($params);
     }
 
@@ -779,7 +679,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $forum->id,
         );
 
-        $this->setExpectedException('coding_exception', 'relateduserid must be set.');
+        $this->setExpectedException('coding_exception', 'The \'relateduserid\' must be set.');
         \mod_forum\event\subscription_deleted::create($params);
     }
 
@@ -797,7 +697,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\subscription_deleted::create($params);
     }
 
@@ -851,7 +751,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\readtracking_enabled::create($params);
     }
 
@@ -867,7 +767,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $forum->id,
         );
 
-        $this->setExpectedException('coding_exception', 'relateduserid must be set.');
+        $this->setExpectedException('coding_exception', 'The \'relateduserid\' must be set.');
         \mod_forum\event\readtracking_enabled::create($params);
     }
 
@@ -885,7 +785,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\readtracking_enabled::create($params);
     }
 
@@ -939,7 +839,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\readtracking_disabled::create($params);
     }
 
@@ -955,7 +855,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $forum->id,
         );
 
-        $this->setExpectedException('coding_exception', 'relateduserid must be set.');
+        $this->setExpectedException('coding_exception', 'The \'relateduserid\' must be set.');
         \mod_forum\event\readtracking_disabled::create($params);
     }
 
@@ -973,7 +873,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\readtracking_disabled::create($params);
     }
 
@@ -1027,7 +927,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\subscribers_viewed::create($params);
     }
 
@@ -1045,7 +945,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE.');
         \mod_forum\event\subscribers_viewed::create($params);
     }
 
@@ -1083,9 +983,9 @@ class mod_forum_events_testcase extends advanced_testcase {
     }
 
     /**
-     *  Ensure userreport_viewed event validates that the reportmode is set.
+     *  Ensure user_report_viewed event validates that the reportmode is set.
      */
-    public function test_userreport_viewed_reportmode_validation() {
+    public function test_user_report_viewed_reportmode_validation() {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
 
@@ -1094,14 +994,14 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'reportmode must be set in other.');
-        \mod_forum\event\userreport_viewed::create($params);
+        $this->setExpectedException('coding_exception', 'The \'reportmode\' value must be set in other.');
+        \mod_forum\event\user_report_viewed::create($params);
     }
 
     /**
-     *  Ensure userreport_viewed event validates that the contextlevel is correct.
+     *  Ensure user_report_viewed event validates that the contextlevel is correct.
      */
-    public function test_userreport_viewed_contextlevel_validation() {
+    public function test_user_report_viewed_contextlevel_validation() {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -1112,28 +1012,28 @@ class mod_forum_events_testcase extends advanced_testcase {
             'relateduserid' => $user->id,
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be system or course.');
-        \mod_forum\event\userreport_viewed::create($params);
+        $this->setExpectedException('coding_exception', 'Context level must be either CONTEXT_SYSTEM or CONTEXT_COURSE.');
+        \mod_forum\event\user_report_viewed::create($params);
     }
 
     /**
-     *  Ensure userreport_viewed event validates that the relateduserid is set.
+     *  Ensure user_report_viewed event validates that the relateduserid is set.
      */
-    public function test_userreport_viewed_relateduserid_validation() {
+    public function test_user_report_viewed_relateduserid_validation() {
 
         $params = array(
             'context' => context_system::instance(),
             'other' => array('reportmode' => 'posts'),
         );
 
-        $this->setExpectedException('coding_exception', 'relateduserid must be set.');
-        \mod_forum\event\userreport_viewed::create($params);
+        $this->setExpectedException('coding_exception', 'The \'relateduserid\' must be set.');
+        \mod_forum\event\user_report_viewed::create($params);
     }
 
     /**
-     * Test the userreport_viewed event.
+     * Test the user_report_viewed event.
      */
-    public function test_userreport_viewed() {
+    public function test_user_report_viewed() {
         // Setup test data.
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -1145,7 +1045,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('reportmode' => 'discussions'),
         );
 
-        $event = \mod_forum\event\userreport_viewed::create($params);
+        $event = \mod_forum\event\user_report_viewed::create($params);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -1155,7 +1055,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_forum\event\userreport_viewed', $event);
+        $this->assertInstanceOf('\mod_forum\event\user_report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'user report',
             "user.php?id={$user->id}&amp;mode=discussions&amp;course={$course->id}", $user->id);
@@ -1185,7 +1085,6 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id, 'forumtype' => $forum->type, 'discussionid' => $discussion->id)
         );
 
-        $this->setExpectedException('coding_exception', 'objectid must be set to the postid.');
         \mod_forum\event\post_created::create($params);
     }
 
@@ -1216,7 +1115,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'discussionid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'discussionid\' value must be set in other.');
         \mod_forum\event\post_created::create($params);
     }
 
@@ -1247,7 +1146,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\post_created::create($params);
     }
 
@@ -1278,7 +1177,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id)
         );
 
-        $this->setExpectedException('coding_exception', 'forumtype must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumtype\' value must be set in other.');
         \mod_forum\event\post_created::create($params);
     }
 
@@ -1309,7 +1208,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE');
         \mod_forum\event\post_created::create($params);
     }
 
@@ -1439,7 +1338,6 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id, 'forumtype' => $forum->type, 'discussionid' => $discussion->id)
         );
 
-        $this->setExpectedException('coding_exception', 'objectid must be set to the postid.');
         \mod_forum\event\post_deleted::create($params);
     }
 
@@ -1470,7 +1368,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'discussionid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'discussionid\' value must be set in other.');
         \mod_forum\event\post_deleted::create($params);
     }
 
@@ -1501,7 +1399,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\post_deleted::create($params);
     }
 
@@ -1532,7 +1430,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id)
         );
 
-        $this->setExpectedException('coding_exception', 'forumtype must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumtype\' value must be set in other.');
         \mod_forum\event\post_deleted::create($params);
     }
 
@@ -1563,7 +1461,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE');
         \mod_forum\event\post_deleted::create($params);
     }
 
@@ -1670,30 +1568,6 @@ class mod_forum_events_testcase extends advanced_testcase {
     }
 
     /**
-     *  Ensure post_updated event validates that the postid is set.
-     */
-    public function test_post_updated_postid_validation() {
-        $course = $this->getDataGenerator()->create_course();
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $user = $this->getDataGenerator()->create_user();
-
-        // Add a discussion.
-        $record = array();
-        $record['course'] = $course->id;
-        $record['forum'] = $forum->id;
-        $record['userid'] = $user->id;
-        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-
-        $params = array(
-            'context' => context_module::instance($forum->cmid),
-            'other' => array('forumid' => $forum->id, 'forumtype' => $forum->type, 'discussionid' => $discussion->id)
-        );
-
-        $this->setExpectedException('coding_exception', 'objectid must be set to the postid.');
-        \mod_forum\event\post_updated::create($params);
-    }
-
-    /**
      *  Ensure post_updated event validates that the discussionid is set.
      */
     public function test_post_updated_discussionid_validation() {
@@ -1720,7 +1594,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('forumid' => $forum->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'discussionid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'discussionid\' value must be set in other.');
         \mod_forum\event\post_updated::create($params);
     }
 
@@ -1751,7 +1625,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'forumid must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumid\' value must be set in other.');
         \mod_forum\event\post_updated::create($params);
     }
 
@@ -1782,7 +1656,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id)
         );
 
-        $this->setExpectedException('coding_exception', 'forumtype must be set in other.');
+        $this->setExpectedException('coding_exception', 'The \'forumtype\' value must be set in other.');
         \mod_forum\event\post_updated::create($params);
     }
 
@@ -1813,7 +1687,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
         );
 
-        $this->setExpectedException('coding_exception', 'Context passed must be module context');
+        $this->setExpectedException('coding_exception', 'Context level must be CONTEXT_MODULE');
         \mod_forum\event\post_updated::create($params);
     }
 

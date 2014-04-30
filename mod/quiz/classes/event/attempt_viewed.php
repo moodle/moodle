@@ -15,7 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Attempt viewed event class.
+ * The mod_quiz attempt viewed event.
+ *
+ * @package    mod_quiz
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_quiz\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_quiz attempt viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -28,10 +40,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_quiz\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class attempt_viewed extends \core\event\base {
 
     /**
@@ -58,8 +66,8 @@ class attempt_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A quiz attempt with the id of ' . $this->objectid . ' belonging to the quiz with the id ' . $this->other['quizid'] .
-            ' was viewed by the user with the id ' . $this->relateduserid;
+        return "The user with the id '$this->userid' has viewed the attempt with the id '$this->objectid' belonging to the user " .
+            "with the id '$this->relateduserid' for the quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -95,7 +103,7 @@ class attempt_viewed extends \core\event\base {
         }
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' must be set in other.');
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
     }
 }

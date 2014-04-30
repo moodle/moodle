@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_forum userreport viewed event.
+ * The mod_forum user report viewed event.
  *
  * @package    mod_forum
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
@@ -27,17 +27,20 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum userreport viewed event.
+ * The mod_forum user report viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     - string reportmode: The mode the report has been viewed in (posts or discussions).
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string reportmode: The mode the report has been viewed in (posts or discussions).
+ * }
  *
  * @package    mod_forum
  * @since      Moodle 2.7
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userreport_viewed extends \core\event\base {
+class user_report_viewed extends \core\event\base {
 
     /**
      * Init method.
@@ -55,8 +58,8 @@ class userreport_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has viewed the userreport for user {$this->relateduserid} in ".
-            "course {$this->courseid} with viewing mode {$this->other['reportmode']}";
+        return "The user with the id '$this->userid' has viewed the user report for the user with the id '$this->relateduserid' in " .
+            "the course with the id '$this->courseid' with viewing mode '{$this->other['reportmode']}'.";
     }
 
     /**
@@ -106,10 +109,10 @@ class userreport_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
         if (!isset($this->other['reportmode'])) {
-            throw new \coding_exception('reportmode must be set in other.');
+            throw new \coding_exception('The \'reportmode\' value must be set in other.');
         }
 
         switch ($this->contextlevel)
@@ -120,7 +123,7 @@ class userreport_viewed extends \core\event\base {
                 break;
             default:
                 // Unexpected contextlevel.
-                throw new \coding_exception('Context passed must be system or course.');
+                throw new \coding_exception('Context level must be either CONTEXT_SYSTEM or CONTEXT_COURSE.');
         }
     }
 

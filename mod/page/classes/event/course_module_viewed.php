@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a page activity is viewed.
+ * The mod_page course module viewed event.
  *
  * @package    mod_page
  * @copyright  2013 Ankit Agarwal
@@ -26,7 +26,7 @@ namespace mod_page\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a page activity is viewed.
+ * The mod_page course module viewed event class.
  *
  * @package    mod_page
  * @since      Moodle 2.6

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop assessable uploaded event.
+ * The mod_workshop assessable uploaded event.
  *
  * @package    mod_workshop
  * @copyright  2013 Frédéric Massart
@@ -27,13 +27,13 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop assessable uploaded event class.
+ * The mod_workshop assessable uploaded event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type array pathnamehashes uploaded files path name hashes.
- *      @type string content string.
+ *      - array pathnamehashes: uploaded files path name hashes.
+ *      - string content: string.
  * }
  *
  * @package    mod_workshop
@@ -56,13 +56,14 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has uploaded the submission {$this->objectid}.";
+        return "The user with the id '$this->userid' has uploaded the submission with the id '$this->objectid' " .
+            "to the workshop activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $eventdata = new \stdClass();

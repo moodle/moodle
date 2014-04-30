@@ -105,7 +105,11 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $event = \mod_lesson\event\highscore_added::create(array(
             'objectid' => $newhighscore->id,
             'context' => context_module::instance($this->lesson->properties()->cmid),
-            'courseid' => $this->course->id
+            'courseid' => $this->course->id,
+            'other' => array(
+                'lessonid' => $this->lesson->id,
+                'nickname' => 'noob'
+            )
         ));
 
         // Trigger and capture the event.

@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_assign feedback viewed event.
+ * The mod_assign feedback viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -88,8 +88,8 @@ class feedback_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id {$this->userid} viewed the feedback for the user with the id {$this->relateduserid}
-            for the assignment with the id {$this->other['assignid']}.";
+        return "The user with the id '$this->userid' viewed the feedback for the user with the id '$this->relateduserid' " .
+            "for the assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -116,7 +116,7 @@ class feedback_viewed extends base {
         }
 
         if (!isset($this->other['assignid'])) {
-            throw new \coding_exception('The \'assignid\' must be set in other.');
+            throw new \coding_exception('The \'assignid\' value must be set in other.');
         }
     }
 }

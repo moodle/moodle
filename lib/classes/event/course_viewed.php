@@ -29,8 +29,12 @@ defined('MOODLE_INTERNAL') || die();
  * Course viewed event class.
  *
  * Class for event to be triggered when a course is viewed.
- * @property-read array $other Extra information about the event.
- *     -int coursesectionid: The course section ID (Optional!).
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int coursesectionid: (optional) The course section ID.
+ * }
  *
  * @package    core
  * @since      Moodle 2.7
@@ -55,7 +59,7 @@ class course_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "A user with the id '$this->userid' viewed the course '$this->courseid'";
+        return "The user with the id '$this->userid' viewed the course with the id '$this->courseid'.";
     }
 
     /**
@@ -114,7 +118,7 @@ class course_viewed extends \core\event\base {
         parent::validate_data();
 
         if ($this->contextlevel != CONTEXT_COURSE) {
-            throw new \coding_exception('Context passed must be course context.');
+            throw new \coding_exception('Context level must be CONTEXT_COURSE.');
         }
     }
 }

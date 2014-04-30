@@ -27,10 +27,13 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum read tracking enabled event.
+ * The mod_forum read tracking enabled event class.
  *
- * @property-read array $other Extra information about the event.
- *     - int forumid: The id of the forum which readtracking has been enabled on.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int forumid: The id of the forum which readtracking has been enabled on.
+ * }
  *
  * @package    mod_forum
  * @since      Moodle 2.7
@@ -54,7 +57,8 @@ class readtracking_enabled extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Read tracking has been enabled for user {$this->relateduserid} in forum {$this->other['forumid']}";
+        return "Read tracking has been enabled for the user with the id '$this->relateduserid' in the forum with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -95,15 +99,15 @@ class readtracking_enabled extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
 
         if (!isset($this->other['forumid'])) {
-            throw new \coding_exception('forumid must be set in other.');
+            throw new \coding_exception('The \'forumid\' value must be set in other.');
         }
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 }

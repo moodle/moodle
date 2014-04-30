@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary entry deleted event.
+ * The mod_glossary entry deleted event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,14 +26,14 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary entry deleted event.
+ * The mod_glossary entry deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string concept the concept of deleted entry.
- *      @type string mode (optional) view mode user was in before deleting entry.
- *      @type int|string hook (optional) hook parameter in the previous view mode.
+ *      - string concept: the concept of deleted entry.
+ *      - string mode: (optional) view mode user was in before deleting entry.
+ *      - int|string hook: (optional) hook parameter in the previous view mode.
  * }
  *
  * @package    mod_glossary
@@ -66,7 +66,8 @@ class entry_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has deleted a glossary entry with id {$this->objectid}.";
+        return "The user with the id '$this->userid' has deleted the glossary entry with the id '$this->objectid' in " .
+            "the glossary activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**

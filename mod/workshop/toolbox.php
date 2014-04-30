@@ -38,9 +38,9 @@ $workshop = new workshop($workshop, $cm, $course);
 require_sesskey();
 
 $params = array(
-    'objectid' => $workshop->id,
     'context' => $workshop->context,
-    'courseid' => $course->id
+    'courseid' => $course->id,
+    'other' => array('workshopid' => $workshop->id)
 );
 
 switch ($tool) {

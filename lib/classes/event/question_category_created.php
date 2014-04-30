@@ -15,6 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Question category created event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Question category created event class.
  *
  * @package    core
@@ -22,10 +34,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class question_category_created extends base {
 
     /**
@@ -52,7 +60,7 @@ class question_category_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'A question category with the id of ' . $this->objectid . ' was created by a user with the id ' . $this->userid;
+        return "A question category with the id of '$this->objectid' was created by the user with the id '$this->userid'.";
     }
 
     /**

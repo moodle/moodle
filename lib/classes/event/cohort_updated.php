@@ -52,7 +52,7 @@ class cohort_updated extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_cohort_updated', 'core_cohort');
+        return get_string('eventcohortupdated', 'core_cohort');
     }
 
     /**
@@ -61,7 +61,7 @@ class cohort_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Cohort '.$this->objectid.' was updated by '.$this->userid.' at context '.$this->contextid;
+        return "The cohort with the id '$this->objectid' was updated by the user with the id '$this->userid'.";
     }
 
     /**

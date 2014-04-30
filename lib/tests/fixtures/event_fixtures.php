@@ -314,10 +314,13 @@ class docblock_test2 extends \core\event\base {
 /**
  * Calendar event created event.
  *
- * @property-read array $other Extra information about the event.
- *     -int timestart: timestamp for event time start.
- *     -string name: Name of the event.
- *     -int repeatid: Id of the parent event if present, else 0.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int timestart: timestamp for event time start.
+ *      - string name: Name of the event.
+ *      - int repeatid: Id of the parent event if present, else 0.
+ * }
  *
  * @package    core
  * @since      Moodle 2.7

@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop submission_reassessed event.
+ * The mod_workshop submission reassessed event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,19 +26,18 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop submission_reassessed event class.
+ * The mod_workshop submission reassessed event class.
  *
  * @property-read array $other {
  *     Extra information about the event.
  *
- *     @type int workshopid Workshop ID.
- *     @type int submissionid Submission ID.
- *     @type float grade Assessment grade.
+ *     - int workshopid: Workshop ID.
+ *     - int submissionid: Submission ID.
+ *     - float grade: Assessment grade.
  * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,7 +60,8 @@ class submission_reassessed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A submission was re-assessed in the workshop ' . $this->other['workshopid'] . '.';
+        return "The submission with the id '$this->objectid' has been reassessed by the user with the id '$this->userid' for the user " .
+            "with the id '$this->relateduserid' in the workshop with the course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for an unknown service API call.
+ * The mod_lti unknown service api called event.
  *
  * @package    mod_lti
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -26,17 +26,9 @@ namespace mod_lti\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * The mod_lti unknown service api called event class.
+ *
  * Event for when something happens with an unknown lti service API call.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string body raw body.
- *      @type string messageid id of message.
- *      @type string messagetype type of message.
- *      @type string consumerkey key of consumer.
- *      @type string sharedsecret shared secret key.
- * }
  *
  * @package    mod_lti
  * @since      Moodle 2.6

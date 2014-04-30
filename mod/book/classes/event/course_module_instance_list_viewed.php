@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_book course module instance list viewed event.
+ * The mod_book instance list viewed event.
  *
  * @package    mod_book
  * @copyright  2013 Ankit Agarwal
@@ -26,7 +26,7 @@ namespace mod_book\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_book course module instance list viewed event class.
+ * The mod_book instance list viewed event class.
  *
  * @package    mod_book
  * @since      Moodle 2.7

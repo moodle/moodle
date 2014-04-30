@@ -204,10 +204,12 @@ class mod_scorm_event_testcase extends advanced_testcase {
     public function test_report_viewed_event() {
         $this->resetAfterTest();
         $event = \mod_scorm\event\report_viewed::create(array(
-             'objectid' => $this->eventscorm->id,
              'context' => context_module::instance($this->eventcm->id),
              'courseid' => $this->eventcourse->id,
-             'other' => array('mode' => 'basic')
+             'other' => array(
+                 'scormid' => $this->eventscorm->id,
+                 'mode' => 'basic'
+             )
         ));
 
         // Trigger and capture the event.
@@ -221,15 +223,6 @@ class mod_scorm_event_testcase extends advanced_testcase {
                 $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
-
-        // Test validations.
-        $this->setExpectedException('coding_exception');
-        \mod_scorm\event\report_viewed::create(array(
-            'objectid' => $this->eventscorm->id,
-            'context' => context_module::instance($this->eventcm->id),
-            'courseid' => $this->eventcourse->id
-        ));
-        $this->fail('Event \\mod_scorm\\event\\report_viewed is not validating "mode" properly');
     }
 
     /** Tests for sco launched event.

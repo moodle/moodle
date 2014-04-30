@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_page course module instance list viewed event.
+ * The mod_page instance list viewed event.
  *
  * @package    mod_page
  * @copyright  2013 Ankit Agarwal
@@ -26,7 +26,7 @@ namespace mod_page\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_page course module instance list event class.
+ * The mod_page instance list viewed event class.
  *
  * @package    mod_page
  * @since      Moodle 2.7

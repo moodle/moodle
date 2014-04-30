@@ -291,13 +291,5 @@ class core_authlib_testcase extends advanced_testcase {
         } catch(Exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
-
-        try {
-            $event = \core\event\user_loggedin::create(array('other' => array('username' => 'test')));
-            $this->fail('\core\event\user_loggedin requires objectid');
-        } catch(Exception $e) {
-            $this->assertInstanceOf('coding_exception', $e);
-        }
     }
-
 }

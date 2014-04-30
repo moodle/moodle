@@ -81,7 +81,7 @@ class core_badges_observer {
             require_once($CFG->dirroot.'/lib/badgeslib.php');
 
             $eventdata = $event->get_record_snapshot('course_completions', $event->objectid);
-            $userid = $event->other['relateduserid'];
+            $userid = $event->relateduserid;
             $courseid = $event->courseid;
 
             // Need to take into account that course can be a part of course_completion and courseset_completion criteria.

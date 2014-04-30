@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary entry viwed event.
+ * The mod_glossary entry viwed event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,7 +26,7 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary entry viewed event.
+ * The mod_glossary entry viewed event class.
  *
  * Triggered when glossary entry is autolinked and viewed by user from another context.
  *
@@ -60,7 +60,8 @@ class entry_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has viewed a glossary entry with id {$this->objectid}.";
+        return "The user with the id '$this->userid' has viewed the glossary entry with the id '$this->objectid' in " .
+            "the glossary activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**

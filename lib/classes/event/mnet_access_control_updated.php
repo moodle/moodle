@@ -15,6 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mnet access control updated event.
+ *
+ * @package    core
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Mnet access control updated event class.
  *
  * @package    core
@@ -22,10 +35,6 @@
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class mnet_access_control_updated extends base {
 
     /**
@@ -61,8 +70,8 @@ class mnet_access_control_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Access control created for the user with the username \'' . $this->other['username'] . '\' belonging
-            to the mnet host \'' . $this->other['hostname'] . '\'';
+        return "Access control updated for the user with the username '{$this->other['username']}' belonging to the mnet " .
+            "host '{$this->other['hostname']}'.";
     }
 
     /**
@@ -85,15 +94,15 @@ class mnet_access_control_updated extends base {
         parent::validate_data();
 
         if (!isset($this->other['username'])) {
-            throw new \coding_exception('The \'username\' must be set in other.');
+            throw new \coding_exception('The \'username\' value must be set in other.');
         }
 
         if (!isset($this->other['hostname'])) {
-            throw new \coding_exception('The \'hostname\' must be set in other.');
+            throw new \coding_exception('The \'hostname\' value must be set in other.');
         }
 
         if (!isset($this->other['accessctrl'])) {
-            throw new \coding_exception('The \'accessctrl\' must be set in other.');
+            throw new \coding_exception('The \'accessctrl\' value must be set in other.');
         }
     }
 }

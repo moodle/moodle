@@ -32,17 +32,20 @@ defined('MOODLE_INTERNAL') || die();
  * Note: use grade_grades_history table if you need to know
  *       the history of grades.
  *
- * @property-read array $other Extra information about the event.
- *     -int itemid: grade item id.
- *     -bool overridden: Is this grade override?
- *     -float finalgrade: the final grade value.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int itemid: grade item id.
+ *      - bool overridden: Is this grade override?
+ *      - float finalgrade: the final grade value.
+ * }
  *
  * @package    core
  * @since      Moodle 2.7
  * @copyright  2013 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_graded extends \core\event\base {
+class user_graded extends base {
     /** @var \grade_grade $grade */
     protected $grade;
 
@@ -104,7 +107,8 @@ class user_graded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} edited grade of user {$this->objectid} for grade item " . $this->other['itemid'];
+        return "The user with the id '$this->userid' updated the grade with the id {$this->objectid} for the user with the " .
+            "id '$this->relateduserid' for the grade item with the id '{$this->other['itemid']}'.";
     }
 
     /**

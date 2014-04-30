@@ -149,6 +149,10 @@ switch ($mode) {
                 'objectid' => $newhighscore->id,
                 'context' => $context,
                 'courseid' => $course->id,
+                'other' => array(
+                    'lessonid' => $lesson->id,
+                    'nickname' => $newhighscore->nickname
+                )
             ));
             $event->trigger();
 

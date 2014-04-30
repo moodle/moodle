@@ -15,6 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Message contact unblocked event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Message contact unblocked event class.
  *
  * @package    core
@@ -22,10 +34,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class message_contact_unblocked extends base {
 
     /**
@@ -61,8 +69,7 @@ class message_contact_unblocked extends base {
      * @return string
      */
     public function get_description() {
-        return 'The user with the id \'' . $this->userid . '\' unblocked the user with the id  \'' .
-            $this->relateduserid . '\' on their contact list.';
+        return "The user with the id '$this->userid' unblocked the user with the id '$this->relateduserid' on their contact list.";
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_scorm course module instances list viewed event.
+ * The mod_scorm instance list viewed event.
  *
  * @package    mod_scorm
  * @copyright  2013 Ankit Agarwal
@@ -26,7 +26,7 @@ namespace mod_scorm\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_scorm course module instances list viewed event class.
+ * The mod_scorm instance list viewed event class.
  *
  * @package    mod_scorm
  * @since      Moodle 2.7

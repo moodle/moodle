@@ -17,6 +17,18 @@
 /**
  * Tag flagged event.
  *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Tag flagged event class.
+ *
  * @property-read array $other {
  *      Extra information about event.
  *
@@ -29,11 +41,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class tag_flagged extends base {
 
     /**
@@ -60,7 +67,7 @@ class tag_flagged extends base {
      * @return string
      */
     public function get_description() {
-        return 'The tag with the id ' . $this->objectid . ' was flagged by the user with the id ' . $this->userid;
+        return "The tag with the id '$this->objectid' was flagged by the user with the id '$this->userid'.";
     }
 
     /**
@@ -82,11 +89,11 @@ class tag_flagged extends base {
         parent::validate_data();
 
         if (!isset($this->other['name'])) {
-            throw new \coding_exception('The name must be set in $other.');
+            throw new \coding_exception('The \'name\' value must be set in other.');
         }
 
         if (!isset($this->other['rawname'])) {
-            throw new \coding_exception('The rawname must be set in $other.');
+            throw new \coding_exception('The \'rawname\' value must be set in other.');
         }
     }
 }

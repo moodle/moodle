@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_chat message sent event.
+ * The mod_chat message sent event.
  *
  * @package    mod_chat
  * @copyright  2013 Frédéric Massart
@@ -26,7 +26,7 @@ namespace mod_chat\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_chat message sent event class.
+ * The mod_chat message sent event class.
  *
  * @package    mod_chat
  * @since      Moodle 2.6
@@ -41,7 +41,8 @@ class message_sent extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->relateduserid has sent a message in a chat.";
+        return "The user with the id '$this->relateduserid' has sent a message in the chat with the course module id
+            '$this->contextinstanceid'.";
     }
 
     /**
@@ -61,7 +62,7 @@ class message_sent extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_message_sent', 'mod_chat');
+        return get_string('eventmessagesent', 'mod_chat');
     }
 
     /**
@@ -87,12 +88,13 @@ class message_sent extends \core\event\base {
     /**
      * Custom validation.
      *
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('The property relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 

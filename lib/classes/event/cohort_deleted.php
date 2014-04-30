@@ -52,7 +52,7 @@ class cohort_deleted extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_cohort_deleted', 'core_cohort');
+        return get_string('eventcohortdeleted', 'core_cohort');
     }
 
     /**
@@ -61,7 +61,7 @@ class cohort_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'Cohort '.$this->objectid.' was deleted by '.$this->userid.' from context '.$this->contextid;
+        return "The cohort with the id '$this->objectid' was deleted by the user with the id '$this->userid'.";
     }
 
     /**

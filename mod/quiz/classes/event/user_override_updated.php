@@ -15,7 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * User override updated event class.
+ * The mod_quiz user override updated event.
+ *
+ * @package    mod_quiz
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_quiz\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_quiz user override updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -28,10 +40,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_quiz\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class user_override_updated extends \core\event\base {
 
     /**
@@ -58,8 +66,8 @@ class user_override_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'An override with the id ' . $this->objectid . ' for the quiz with the id of ' . $this->other['quizid'] .
-            ' was updated by the user with the id ' . $this->userid . ' for the user with the id ' . $this->relateduserid;
+        return "The user with the id '$this->userid' updated the override with the id '$this->objectid' for the quiz with the " .
+            "course module id '$this->contextinstanceid' for the user with the id '{$this->relateduserid}'.";
     }
 
     /**
@@ -95,7 +103,7 @@ class user_override_updated extends \core\event\base {
         }
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' must be set in other.');
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
     }
 }

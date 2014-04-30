@@ -65,7 +65,7 @@ $PAGE->set_title("$course->shortname: $stractivityreport");
 $PAGE->set_heading($course->fullname);
 
 // Trigger a report viewed event.
-$event = \report_outline\event\outline_viewed::create(array('context' => context_course::instance($course->id),
+$event = \report_outline\event\report_viewed::create(array('context' => context_course::instance($course->id),
         'relateduserid' => $userid, 'other' => array('mode' => $mode)));
 $event->trigger();
 

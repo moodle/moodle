@@ -15,7 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question manually graded event class.
+ * The mod_quiz question manually graded event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace mod_quiz\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_quiz question manually graded event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -30,10 +41,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_quiz\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class question_manually_graded extends \core\event\base {
 
     /**
@@ -60,8 +67,8 @@ class question_manually_graded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A question with the id of ' . $this->objectid . ' was manually graded by a user with the id ' . $this->userid .
-            ' for the attempt with the id ' . $this->other['attemptid'];
+        return "The user with the id '$this->userid' manually graded the question with the id '$this->objectid' for the attempt " .
+            "with the id '{$this->other['attemptid']}' for the quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -94,15 +101,15 @@ class question_manually_graded extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' must be set in other.');
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
 
         if (!isset($this->other['attemptid'])) {
-            throw new \coding_exception('The \'attemptid\' must be set in other.');
+            throw new \coding_exception('The \'attemptid\' value must be set in other.');
         }
 
         if (!isset($this->other['slot'])) {
-            throw new \coding_exception('The \'slot\' must be set in other.');
+            throw new \coding_exception('The \'slot\' value must be set in other.');
         }
 
     }

@@ -15,7 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Message read event class.
+ * Message viewed event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Message viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -28,11 +40,7 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
-class message_read extends base {
+class message_viewed extends base {
 
     /**
      * Init method.
@@ -49,7 +57,7 @@ class message_read extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventmessageread', 'message');
+        return get_string('eventmessageviewed', 'message');
     }
 
     /**
@@ -67,8 +75,7 @@ class message_read extends base {
      * @return string
      */
     public function get_description() {
-        return 'The user with the id \'' . $this->relateduserid . '\' read a message from the user with the id  \'' .
-            $this->userid . '\'.';
+        return "The user with the id '$this->relateduserid' read a message from the user with the id '$this->userid'.";
     }
 
     /**
@@ -85,7 +92,7 @@ class message_read extends base {
         }
 
         if (!isset($this->other['messageid'])) {
-            throw new \coding_exception('The \'messageid\' needs to be set in $other.');
+            throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
     }
 }

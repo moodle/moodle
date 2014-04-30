@@ -37,8 +37,8 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/outline:view', $context);
 
-// Trigger a content view event.
-$event = \report_outline\event\activity_viewed::create(array('context' => $context));
+// Trigger an activity report viewed event.
+$event = \report_outline\event\activity_report_viewed::create(array('context' => $context));
 $event->trigger();
 
 $showlastaccess = true;

@@ -15,7 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit page viewed event class.
+ * The mod_quiz edit page viewed event.
+ *
+ * @package    mod_quiz
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_quiz\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * The mod_quiz edit page viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -28,10 +40,6 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_quiz\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class edit_page_viewed extends \core\event\base {
 
     /**
@@ -57,8 +65,8 @@ class edit_page_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The edit quiz page belonging to the quiz with the id ' . $this->other['quizid'] . ' was viewed by the user
-            with the id ' . $this->userid;
+        return "The edit page for the quiz with the course module id '$this->contextinstanceid' was viewed by the user with " .
+            "the id '$this->userid'.";
     }
 
     /**
@@ -90,7 +98,7 @@ class edit_page_viewed extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' must be set in other.');
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
     }
 }

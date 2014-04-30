@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop phase switched event.
+ * The mod_workshop phase switched event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,17 +26,16 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop phase switched event class.
+ * The mod_workshop phase switched event class.
  *
  * @property-read array $other {
  *     Extra information about the event.
  *
- *     @type int workshopphase Workshop phase.
+ *     - int workshopphase: Workshop phase.
  * }
  *
  * @package    mod_workshop
  * @since      Moodle 2.7
- * @category   event
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +58,8 @@ class phase_switched extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The phase of the workshop ' . $this->objectid . ' has been switched to ' . $this->other['workshopphase']. '.';
+        return "The user with the id '$this->userid' has switched the phase of the workshop with the course module id " .
+            "'$this->contextinstanceid' to '{$this->other['workshopphase']}'.";
     }
 
     /**

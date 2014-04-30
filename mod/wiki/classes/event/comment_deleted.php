@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki comment deleted event.
+ * The mod_wiki comment deleted event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,13 +26,7 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki comment deleted event.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int itemid id of item for which comment is deleted.
- * }
+ * The mod_wiki comment deleted event class.
  *
  * @package    mod_wiki
  * @since      Moodle 2.7
@@ -56,6 +50,7 @@ class comment_deleted extends \core\event\comment_deleted {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted comment for wiki with page id ' . $this->other['itemid'];
+        return "The user with the id '$this->userid' deleted a comment with the id '$this->objectid' on the page with the id " .
+            "'{$this->other['itemid']}' for the wiki with the course module id '$this->contextinstanceid'.";
     }
 }

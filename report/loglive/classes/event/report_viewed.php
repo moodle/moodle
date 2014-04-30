@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when loglive report is viewed.
+ * The report_loglive report viewed event.
  *
  * @package    report_loglive
  * @copyright  2013 Ankit Agarwal
@@ -23,8 +23,10 @@
  */
 namespace report_loglive\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event triggered, when loglive report is viewed.
+ * The report_loglive report viewed event class.
  *
  * @package    report_loglive
  * @since      Moodle 2.7
@@ -58,7 +60,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed live log report for course with id " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the live log report for the course with the id '$this->courseid'.";
     }
 
     /**

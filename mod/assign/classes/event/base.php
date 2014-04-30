@@ -15,12 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_assign abstract base class.
- *
- * Most events can extend this class.
+ * The mod_assign abstract base event.
  *
  * @package    mod_assign
- * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +26,18 @@ namespace mod_assign\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_assign abstract base event class.
+ *
+ * Most mod_assign events can extend this class.
+ *
+ * @package    mod_assign
+ * @since      Moodle 2.7
+ * @copyright  2014 Mark Nelson
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class base extends \core\event\base {
+
     /** @var \assign */
     protected $assign;
 
@@ -60,6 +68,7 @@ abstract class base extends \core\event\base {
      *
      * NOTE: to be used from observers only.
      *
+     * @throws \coding_exception
      * @return \assign
      */
     public function get_assign() {
@@ -125,7 +134,7 @@ abstract class base extends \core\event\base {
         parent::validate_data();
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 }

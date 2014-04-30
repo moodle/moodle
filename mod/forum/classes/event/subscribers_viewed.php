@@ -27,10 +27,13 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum subscribers list viewed event.
+ * The mod_forum subscribers list viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     - int forumid: The id of the forum which the subscriberslist has been viewed.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int forumid: The id of the forum which the subscriberslist has been viewed.
+ * }
  *
  * @package    mod_forum
  * @since      Moodle 2.7
@@ -55,7 +58,8 @@ class subscribers_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has viewed the subscribers list for forum {$this->other['forumid']}";
+        return "The user with the id '$this->userid' has viewed the subscribers list for the forum with the course " .
+            "module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -96,11 +100,11 @@ class subscribers_viewed extends \core\event\base {
         parent::validate_data();
 
         if (!isset($this->other['forumid'])) {
-            throw new \coding_exception('forumid must be set in other.');
+            throw new \coding_exception('The \'forumid\' value must be set in other.');
         }
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 

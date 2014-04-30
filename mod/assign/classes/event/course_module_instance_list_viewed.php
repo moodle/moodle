@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_assign instance list viewed event.
+ * The mod_assign instance list viewed event class.
  *
  * @package    mod_assign
  * @since      Moodle 2.7

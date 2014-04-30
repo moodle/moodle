@@ -18,7 +18,6 @@
  * User login event.
  *
  * @package    core
- * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,14 +32,15 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string username name of user.
+ *      - string username: name of user.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_loggedin extends \core\event\base {
+class user_loggedin extends base {
 
     /**
      * Returns non-localised event description with id's for admin use only.
@@ -48,7 +48,7 @@ class user_loggedin extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Userid ' . $this->userid . ' has logged in';
+        return "The user with the id '$this->userid' has logged in.";
     }
 
     /**
@@ -67,7 +67,7 @@ class user_loggedin extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_user_loggedin', 'auth');
+        return get_string('eventuserloggedin', 'auth');
     }
 
     /**
@@ -85,7 +85,7 @@ class user_loggedin extends \core\event\base {
      * @return string
      */
     public function get_username() {
-        return $this->data['other']['username'];
+        return $this->other['username'];
     }
 
     /**
@@ -108,10 +108,9 @@ class user_loggedin extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (!isset($this->data['objectid'])) {
-            throw new \coding_exception("objectid has to be specified.");
-        } else if (!isset($this->data['other']['username'])) {
-            throw new \coding_exception("other['username'] has to be specified.");
+
+        if (!isset($this->other['username'])) {
+            throw new \coding_exception('The \'username\' value must be set in other.');
         }
     }
 }

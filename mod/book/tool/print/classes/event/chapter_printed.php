@@ -62,8 +62,8 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user " . $this->userid . " has printed the chapter $this->objectid of the book module " .
-                $this->contextinstanceid;
+        return "The user with the id '$this->userid' has printed the chapter with the id '$this->objectid' of the book with the
+            course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -82,7 +82,7 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_printed', 'booktool_print');
+        return get_string('eventchapterprinted', 'booktool_print');
     }
 
     /**

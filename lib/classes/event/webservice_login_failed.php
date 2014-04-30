@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core web service login failed event.
+ * Web service login failed event.
  *
  * @package    core
  * @copyright  2013 Frédéric Massart
@@ -26,14 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core web service login_failed event class.
+ * Web service login failed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string method authentication method.
- *      @type string reason failure reason.
- *      @type string tokenid id of token.
+ *      - string method: authentication method.
+ *      - string reason: failure reason.
+ *      - string tokenid: id of token.
  * }
  *
  * @package    core
@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_login_failed extends \core\event\base {
+class webservice_login_failed extends base {
 
     /**
      * Legacy log data.
@@ -56,7 +56,7 @@ class webservice_login_failed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Web service authentication failed with code: {$this->other['reason']}.";
+        return "Web service authentication failed with code: \"{$this->other['reason']}\".";
     }
 
     /**
@@ -74,7 +74,7 @@ class webservice_login_failed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_login_failed', 'webservice');
+        return get_string('eventwebserviceloginfailed', 'webservice');
     }
 
     /**
@@ -116,9 +116,9 @@ class webservice_login_failed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['reason'])) {
-           throw new \coding_exception('The key \'reason\' needs to be set in $other.');
+           throw new \coding_exception('The \'reason\' value must be set in other.');
         } else if (!isset($this->other['method'])) {
-           throw new \coding_exception('The key \'method\' needs to be set in $other.');
+           throw new \coding_exception('The \'method\' value must be set in other.');
         } else if (isset($this->other['token'])) {
            throw new \coding_exception('The token cannot be set in $other.');
         }

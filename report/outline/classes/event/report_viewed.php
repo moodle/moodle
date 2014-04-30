@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event when outline report is viewed.
+ * The report_outline outline report viewed event.
  *
  * @package    report_outline
  * @copyright  2013 Ankit Agarwal
@@ -23,18 +23,23 @@
  */
 namespace report_outline\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event when outline report is viewed.
+ * The report_outline outline report viewed event class.
  *
- * @property-read array $other Extra information about the event.
- *     -string mode: display mode.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string mode: display mode.
+ * }
  *
  * @package    report_outline
  * @since      Moodle 2.7
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outline_viewed extends \core\event\base {
+class report_viewed extends \core\event\base {
 
     /**
      * Init method.
@@ -61,8 +66,8 @@ class outline_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed outline report for user with id " . $this->relateduserid .
-            ", for course " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the outline report for the user with the id '$this->relateduserid' " .
+            "for the course with the id '$this->courseid'.";
     }
 
     /**
@@ -93,11 +98,11 @@ class outline_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (empty($this->data['other']['mode'])) {
-            throw new \coding_exception('The property mode must be set in other.');
+        if (empty($this->other['mode'])) {
+            throw new \coding_exception('The \'mode\' value must be set in other.');
         }
         if (empty($this->data['relateduserid'])) {
-            throw new \coding_exception('The property relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

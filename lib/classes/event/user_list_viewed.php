@@ -17,16 +17,7 @@
 /**
  * Defines the user list viewed event.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int courseid id of course.
- *      @type string courseshortname short name of course.
- *      @type string coursefullname full name of course.
- * }
- *
  * @package    core
- * @since      Moodle 2.6
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +26,23 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-class user_list_viewed extends \core\event\base {
+/**
+ * Defines the user list viewed event.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string courseshortname: the short name of course.
+ *      - string coursefullname: the full name of course.
+ * }
+ *
+ * @package    core
+ * @since      Moodle 2.6
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+class user_list_viewed extends base {
 
     /**
      * Initialise required event data properties.
@@ -61,7 +68,7 @@ class user_list_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User ' . $this->userid . ' viewed the list of users in the course ' . $this->other['courseid'];
+        return "The user with the id '$this->userid' viewed the list of users in the course with the id '$this->courseid'.";
     }
 
     /**
@@ -70,7 +77,7 @@ class user_list_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/user/index.php', array('id' => $this->other['courseid']));
+        return new \moodle_url('/user/index.php', array('id' => $this->courseid));
     }
 
     /**
@@ -79,7 +86,6 @@ class user_list_viewed extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->other['courseid'], 'user', 'view all', 'index.php?id=' . $this->other['courseid'], '');
+        return array($this->courseid, 'user', 'view all', 'index.php?id=' . $this->courseid, '');
     }
-
 }

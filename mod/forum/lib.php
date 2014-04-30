@@ -4652,8 +4652,8 @@ function forum_trigger_content_uploaded_event($post, $cm, $name) {
         'objectid' => $post->id,
         'other' => array(
             'content' => $post->message,
-            'discussionid' => $post->discussion,
             'pathnamehashes' => array_keys($files),
+            'discussionid' => $post->discussion,
             'triggeredfrom' => $name,
         )
     );

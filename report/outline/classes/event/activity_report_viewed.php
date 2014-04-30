@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event when activity report is viewed.
+ * The report_outline activity report viewed event.
  *
  * @package    report_outline
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
@@ -23,15 +23,17 @@
  */
 namespace report_outline\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event when activity report is viewed.
+ * The report_outline activity report viewed event class.
  *
  * @package    report_outline
  * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class activity_viewed extends \core\event\base {
+class activity_report_viewed extends \core\event\base {
 
     /**
      * Init method.
@@ -58,7 +60,7 @@ class activity_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id " . $this->userid . " viewed activity report for course with id " . $this->courseid;
+        return "The user with the id '$this->userid' viewed the outline activity report for the course with the id '$this->courseid'.";
     }
 
     /**

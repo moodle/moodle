@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a glossary activity is viewed.
+ * The mod_glossary course module viewed event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,7 +26,7 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a page activity is viewed.
+ * The mod_glossary course module viewed event class.
  *
  * @package    mod_glossary
  * @since      Moodle 2.7

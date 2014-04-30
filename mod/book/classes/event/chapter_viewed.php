@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_book chapter viewed event.
+ * The mod_book chapter viewed event.
  *
  * @package    mod_book
  * @copyright  2013 Frédéric Massart
@@ -26,7 +26,7 @@ namespace mod_book\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_book chapter viewed event class.
+ * The mod_book chapter viewed event class.
  *
  * @package    mod_book
  * @since      Moodle 2.6
@@ -62,7 +62,8 @@ class chapter_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has viewed the chapter $this->objectid of book module $this->contextinstanceid";
+        return "The chapter with the id '$this->objectid' of the book with the course module id '$this->contextinstanceid'
+            has been viewed by the user with the id '$this->userid'.";
     }
 
     /**
@@ -81,7 +82,7 @@ class chapter_viewed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_viewed', 'mod_book');
+        return get_string('eventchapterviewed', 'mod_book');
     }
 
     /**

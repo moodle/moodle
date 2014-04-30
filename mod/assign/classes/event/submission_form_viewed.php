@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_assign submission form viewed event.
+ * The mod_assign submission form viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -90,17 +90,17 @@ class submission_form_viewed extends base {
 
     /**
      * Returns description of what happened.
-     *
+     *the course module id '$this->contextinstanceid'
      * @return string
      */
     public function get_description() {
         if ($this->userid != $this->relateduserid) {
-            return "The user with the id {$this->userid} viewed the submission form for the user with the id {$this->relateduserid}
-                for the assignment with the id {$this->other['assignid']}.";
+            return "The user with the id '$this->userid' viewed the submission form for the user with the id '$this->relateduserid' " .
+                "for the assignment with the course module id '$this->contextinstanceid'.";
         }
 
-        return "The user with the id {$this->userid} viewed their submission for the assignment with the id
-            {$this->other['assignid']}.";
+        return "The user with the id '$this->userid' viewed their submission for the assignment with the the course " .
+            "module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -136,7 +136,7 @@ class submission_form_viewed extends base {
         }
 
         if (!isset($this->other['assignid'])) {
-            throw new \coding_exception('The \'assignid\' must be set in other.');
+            throw new \coding_exception('The \'assignid\' value must be set in other.');
         }
     }
 }

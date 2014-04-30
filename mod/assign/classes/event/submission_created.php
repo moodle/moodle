@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission_created abstract event.
+ * The mod_assign submission_created abstract event.
  *
  * @package    mod_assign
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
@@ -27,13 +27,16 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission_created abstract event class.
+ * The mod_assign submission_created abstract event class.
  *
- * @property-read array $other Extra information about the event.
- *     -int submissionid: ID number of this submission.
- *     -int submissionattempt: Number of attempts made on this submission.
- *     -string submissionstatus: Status of the submission.
- *     -int groupid: (optional) The group ID if this is a teamsubmission (optional).
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int submissionid: ID number of this submission.
+ *      - int submissionattempt: Number of attempts made on this submission.
+ *      - string submissionstatus: Status of the submission.
+ *      - int groupid: (optional) The group ID if this is a teamsubmission.
+ *      - string groupname: (optional) The name of the group if this is a teamsubmission.
  * }
  *
  * @package    mod_assign
@@ -69,13 +72,13 @@ abstract class submission_created extends base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['submissionid'])) {
-            throw new \coding_exception('Other must contain the key submissionid.');
+            throw new \coding_exception('The \'submissionid\' value must be set in other.');
         }
         if (!isset($this->other['submissionattempt'])) {
-            throw new \coding_exception('Other must contain the key submissionattempt.');
+            throw new \coding_exception('The \'submissionattempt\' value must be set in other.');
         }
         if (!isset($this->other['submissionstatus'])) {
-            throw new \coding_exception('Other must contain the key submissionstatus.');
+            throw new \coding_exception('The \'submissionstatus\' value must be set in other.');
         }
     }
 }
