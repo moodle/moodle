@@ -270,7 +270,7 @@ class all_calculated_for_qubaid_condition {
             foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
                 if ($this->for_subq($subqid)->differentweights) {
                     $name = $this->for_subq($subqid)->question->name;
-                    $errors[] = get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $name);
+                    $errors[] = get_string('erroritemappearsmorethanoncewithdifferentweight', 'question', $name);
                 }
             }
         }

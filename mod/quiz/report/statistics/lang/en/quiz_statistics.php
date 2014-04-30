@@ -51,7 +51,6 @@ $string['downloadeverything'] = 'Download full report as {$a->formatsmenu} {$a->
 $string['duration'] = 'Open for';
 $string['effective_weight'] = 'Effective weight';
 $string['errordeleting'] = 'Error deleting old {$a} records.';
-$string['erroritemappearsmorethanoncewithdifferentweight'] = 'Question ({$a}) appears more than once with different weights in different positions of the test. This is not currently supported by the statistics report and may make the statistics for this question unreliable.';
 $string['errormedian'] = 'Error fetching median';
 $string['errorpowerquestions'] = 'Error fetching data to calculate variance for question grades';
 $string['errorpowers'] = 'Error fetching data to calculate variance for quiz grades';
