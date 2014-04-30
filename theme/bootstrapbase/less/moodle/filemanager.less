@@ -357,7 +357,6 @@
 .dir-rtl .fp-pathbar span {
     display: inline-block;
     .ie7-inline-block();
-    float: right;
     margin-left: 32px;
 }
 .fp-pathbar .fp-path-folder-name {
@@ -1155,6 +1154,33 @@ a.ygtvspacer:hover {
     text-align: left;
 }
 
+// Alfresco.
+.repository_alfresco {
+    .fp-toolbar {
+        .fp-tb-search {
+            width: auto;
+            height: auto;
+
+            @searchMargin: 0px;
+            input {
+                height: 25px;
+                width: 140px;
+                border-radius: 4px;
+                padding: 2px 6px 1px 28px;
+                background-position: 6px 6px;
+                margin-bottom: @searchMargin;
+            }
+            .alfresco-workplace {
+                width: 160px;
+                margin-bottom: @searchMargin;
+            }
+        }
+    }
+    .fp-clear-left {
+        clear: both;
+    }
+}
+
 // RTL Overrides
 .dir-rtl {
     .filemanager {
@@ -1176,5 +1202,9 @@ a.ygtvspacer:hover {
         .yui-layout-unit-center {
             left: 0;
         }
+    }
+    .repository_alfresco .fp-toolbar .fp-tb-search input {
+        background-position: right 6px;
+        padding: 2px 28px 1px 6px;
     }
 }

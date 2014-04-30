@@ -411,6 +411,22 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  */
 .file-picker div.bd {text-align:left;}
 
+
+/*
+ * Alfresco.
+ */
+.repository_alfresco .fp-toolbar .fp-tb-search {
+    width: auto;
+}
+.repository_alfresco .fp-toolbar .fp-tb-search input {
+    height: 17px;
+    width: 140px;
+    border-radius: 2px;
+}
+.repository_alfresco .fp-toolbar .fp-tb-search .alfresco-workplace {
+    width: 160px;
+}
+
 /* RTL Overrides
 -------------------------*/
 .dir-rtl .file-picker div.bd {text-align: right;}
@@ -421,3 +437,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .dir-rtl #filemenu .yuimenuitemlabel {text-align: right;}
 .dir-rtl .filemanager-container .yui3-skin-sam .yui3-datatable-header {text-align: right;}
 .dir-rtl .filemanager .fp-restrictions { text-align: left; }
+
+.dir-rtl .fp-toolbar .fp-tb-search input {
+    background-position: right 3px;
+    padding: 2px 20px 1px 6px;
+}
