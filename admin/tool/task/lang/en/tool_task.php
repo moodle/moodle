@@ -37,6 +37,7 @@ $string['pluginname'] = 'Scheduled task configuration';
 $string['resettasktodefaults'] = 'Reset task schedule to defaults';
 $string['resettasktodefaults_help'] = 'This will discard any local changes and revert the schedule for this task back to its original settings.';
 $string['scheduledtasks'] = 'Scheduled tasks';
+$string['scheduledtaskchangesdisabled'] = 'Modifications to the list of scheduled tasks have been prevented in Moodle configuration';
 $string['taskscheduleday'] = 'Day';
 $string['taskscheduleday_help'] = 'Day of month field for task schedule. The field uses the same format as unix cron. Some examples are:<br/><ul><li><strong>*</strong> Every day</li><li><strong>*/2</strong> Every 2nd day</li><li><strong>1</strong> The first of every month</li><li><strong>1,15</strong> The first and fifteenth of every month</li></ul>';
 $string['taskscheduledayofweek'] = 'Day of week';

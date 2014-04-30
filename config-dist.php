@@ -452,6 +452,11 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disableonclickaddoninstall = true;
 //
+// Use the following flag to disable modifications to scheduled tasks
+// whilst still showing the state of tasks.
+//
+//      $CFG->preventscheduledtaskchanges = true;
+//
 // As of version 2.4 Moodle serves icons as SVG images if the users browser appears
 // to support SVG.
 // For those wanting to control the serving of SVG images the following setting can
