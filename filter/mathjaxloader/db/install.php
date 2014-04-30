@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Filter post install hook
+ * Mathjax filter post install hook
  *
- * @package    filter_activitynames
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @package    filter
+ * @subpackage mathjaxloader
+ * @copyright  2014 onwards Andrew Davis (andyjdavis)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function xmldb_filter_activitynames_install() {
+defined('MOODLE_INTERNAL') || die();
+
+function xmldb_filter_mathjaxloader_install() {
     global $CFG;
     require_once("$CFG->libdir/filterlib.php");
 
-    filter_set_global_state('activitynames', TEXTFILTER_ON, 1);
+    filter_set_global_state('mathjaxloader', TEXTFILTER_ON, -1);
 }
-
