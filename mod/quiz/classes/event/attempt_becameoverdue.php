@@ -59,7 +59,7 @@ class attempt_becameoverdue extends \core\event\base {
      * @return string
      */
     public function get_description() {
-
+        return "Attempt with the id '$this->objectid' for the user with the id '$this->relateduserid' became overdue.";
     }
 
     /**

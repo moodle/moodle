@@ -138,6 +138,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEquals('quiz_attempts', $event->objecttable);
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals($attempt->userid, $event->relateduserid);
+        $this->assertNotEmpty($event->get_description());
         // Submitterid should be the user, but as we are in PHP Unit, CLI_SCRIPT is set to true which sets null in submitterid.
         $this->assertEquals(null, $event->other['submitterid']);
         $this->assertEquals('quiz_attempt_overdue', $event->get_legacy_eventname());
