@@ -34,7 +34,7 @@ admin_externalpage_setup('reportbackups', '', null, '', array('pagelayout'=>'rep
 $table = new html_table;
 $table->head = array(
     get_string("course"),
-    get_string("timetaken", "quiz"),
+    get_string("timetaken", "backup"),
     get_string("status"),
     get_string("backupnext")
 );

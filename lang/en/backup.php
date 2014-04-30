@@ -258,6 +258,7 @@ $string['skipmodifdays'] = 'Skip courses not modified since';
 $string['skipmodifdayshelp'] = 'Choose to skip courses that have not been modified since a number of days';
 $string['skipmodifprev'] = 'Skip courses not modified since previous backup';
 $string['skipmodifprevhelp'] = 'Choose whether to skip courses that have not been modified since the last automatic backup. This requires logging to be enabled.';
+$string['timetaken'] = 'Time taken';
 $string['title'] = 'Title';
 $string['totalcategorysearchresults'] = 'Total categories: {$a}';
 $string['totalcoursesearchresults'] = 'Total courses: {$a}';
