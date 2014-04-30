@@ -68,8 +68,8 @@ class note_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The note with the id '$this->objectid' for the user with the id '$this->relateduserid' was deleted by the user " .
-            "with the id '$this->userid'.";
+        return "The user with the id '$this->userid' deleted the note with the id '$this->objectid' for the user with the id " .
+            "'$this->relateduserid'";
     }
 
     /**

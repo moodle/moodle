@@ -57,8 +57,8 @@ class readtracking_enabled extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Read tracking has been enabled for the user with the id '$this->relateduserid' in the forum with the " .
-            "course module id '$this->contextinstanceid'.";
+        return "The user with the id '$this->userid' has enabled read tracking for the user with the id '$this->relateduserid' " .
+            "in the forum with the course module id '$this->contextinstanceid'.";
     }
 
     /**

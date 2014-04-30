@@ -41,7 +41,7 @@ class webservice_service_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The web service service $this->objectid has been updated by user $this->userid.";
+        return "The user with the id '$this->userid' updated the web service with the id '$this->objectid'.";
     }
 
     /**

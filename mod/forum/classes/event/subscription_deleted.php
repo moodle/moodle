@@ -57,8 +57,8 @@ class subscription_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' was unsubscribed to the forum with the course module id " .
-            "'$this->contextinstanceid' by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' unsubscribed the user with the id '$this->relateduserid' to the forum with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

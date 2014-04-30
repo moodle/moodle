@@ -70,8 +70,8 @@ class mnet_access_control_created extends base {
      * @return string
      */
     public function get_description() {
-        return "Access control created for the user with the username '{$this->other['username']}' belonging to the mnet " .
-            "host '{$this->other['hostname']}'.";
+        return "The user with the id '$this->userid' created access control for the user with the username '{$this->other['username']}' " .
+            "belonging to the mnet host '{$this->other['hostname']}'.";
     }
 
     /**

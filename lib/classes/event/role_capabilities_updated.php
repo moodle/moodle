@@ -63,7 +63,7 @@ class role_capabilities_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The capabilities for the role with the id '$this->objectid' were updated by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' updated the capabilities for the role with the id '$this->objectid'.";
     }
 
     /**

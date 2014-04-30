@@ -59,7 +59,7 @@ class role_allow_switch_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "Allow role switch updated by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' updated the allowed role switches";
     }
 
     /**

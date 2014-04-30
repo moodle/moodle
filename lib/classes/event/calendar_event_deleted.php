@@ -70,7 +70,8 @@ class calendar_event_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The event '" . s($this->other['name']) . "' was deleted by the user with the id '{$this->userid}'.";
+        $eventname = s($this->other['name']);
+        return "The user with the id '$this->userid' deleted the event '$eventname' with the id '$this->objectid'.";
     }
 
     /**

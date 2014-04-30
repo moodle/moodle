@@ -67,7 +67,7 @@ class tag_unflagged extends base {
      * @return string
      */
     public function get_description() {
-        return "The tag with the id '$this->objectid' was unflagged by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' unflagged the tag with the id '$this->objectid'.";
     }
 
     /**

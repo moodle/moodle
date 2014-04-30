@@ -70,7 +70,7 @@ class course_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The course with the id '$this->courseid' was updated by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' updated the course with the id '$this->courseid'.";
     }
 
     /**

@@ -107,7 +107,7 @@ class user_graded extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the grade with the id {$this->objectid} for the user with the " .
+        return "The user with the id '$this->userid' updated the grade with the id '$this->objectid' for the user with the " .
             "id '$this->relateduserid' for the grade item with the id '{$this->other['itemid']}'.";
     }
 

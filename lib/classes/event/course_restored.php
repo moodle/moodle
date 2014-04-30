@@ -70,7 +70,7 @@ class course_restored extends base {
      * @return string
      */
     public function get_description() {
-        return "The course with the id '$this->objectid' was restored by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' restored the course with the id '$this->courseid'.";
     }
 
     /**
