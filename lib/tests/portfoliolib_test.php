@@ -24,6 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
 require_once($CFG->libdir.'/portfoliolib.php');
 require_once($CFG->libdir.'/portfolio/formats.php');
