@@ -3205,13 +3205,6 @@ function xmldb_main_upgrade($oldversion) {
 
         // Check we actually have themes to remove.
         if (count($themes) > 0) {
-            list($insql, $inparams) = $DB->get_in_or_equal($themes, SQL_PARAMS_NAMED);
-
-            // Replace the theme usage.
-            $DB->set_field_select('course', 'theme', 'clean', "theme $insql", $inparams);
-            $DB->set_field_select('course_categories', 'theme', 'clean', "theme $insql", $inparams);
-            $DB->set_field_select('user', 'theme', 'clean', "theme $insql", $inparams);
-            $DB->set_field_select('mnet_host', 'theme', 'clean', "theme $insql", $inparams);
 
             // Replace the theme configs.
             if (in_array(get_config('core', 'theme'), $themes)) {
@@ -3225,11 +3218,6 @@ function xmldb_main_upgrade($oldversion) {
             }
             if (in_array(get_config('core', 'themetablet'), $themes)) {
                 set_config('themetablet', 'clean');
-            }
-
-            // Hacky emulation of plugin uninstallation.
-            foreach ($themes as $theme) {
-                unset_all_config_for_plugin('theme_' . $theme);
             }
         }
 
