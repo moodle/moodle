@@ -4,6 +4,17 @@ Feature: edit_availability
   As a teacher
   I need to set up availability options for activities and sections
 
+  # PURPOSE OF THIS TEST FEATURE:
+  #
+  # This test covers the user interface around editing availability conditions,
+  # especially the JavaScript code which is not tested elsewhere (e.g. does the
+  # 'Add restriction' dialog work). It tests both forms and also the admin
+  # setting interface.
+  #
+  # This test does not check the detailed behaviour of the availability system,
+  # which is mainly covered in PHPUnit (and, from the user interface
+  # perspective, in the other Behat tests for each type of condition).
+
   Background:
     Given the following "courses" exist:
       | fullname | shortname | format |
