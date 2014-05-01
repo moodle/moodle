@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This page is the entry page into the quiz UI. Displays information about the
- * quiz to students and teachers, and lets students see their previous attempts.
+ * Admin settings class for the quiz review opitions.
  *
  * @package    mod
  * @subpackage quiz
@@ -35,15 +34,29 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_admin_review_setting extends admin_setting {
-    /**#@+
-     * @var integer should match the constants defined in {@link mod_quiz_display_options}.
-     * again, copied for performance reasons.
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
      */
-    const DURING =            0x10000;
+    const DURING            = 0x10000;
+
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     */
     const IMMEDIATELY_AFTER = 0x01000;
-    const LATER_WHILE_OPEN =  0x00100;
-    const AFTER_CLOSE =       0x00010;
-    /**#@-*/
+
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     */
+    const LATER_WHILE_OPEN  = 0x00100;
+
+    /**
+     * @var integer should match the constants defined in
+     * {@link mod_quiz_display_options}. Copied for performance reasons.
+     */
+    const AFTER_CLOSE       = 0x00010;
 
     /**
      * @var boolean|null forced checked / disabled attributes for the during time.
@@ -57,16 +70,26 @@ class mod_quiz_admin_review_setting extends admin_setting {
      */
     public static function fields() {
         return array(
-            'attempt' => get_string('theattempt', 'quiz'),
-            'correctness' => get_string('whethercorrect', 'question'),
-            'marks' => get_string('marks', 'question'),
+            'attempt'          => get_string('theattempt', 'quiz'),
+            'correctness'      => get_string('whethercorrect', 'question'),
+            'marks'            => get_string('marks', 'question'),
             'specificfeedback' => get_string('specificfeedback', 'question'),
-            'generalfeedback' => get_string('generalfeedback', 'question'),
-            'rightanswer' => get_string('rightanswer', 'question'),
-            'overallfeedback' => get_string('overallfeedback', 'quiz'),
+            'generalfeedback'  => get_string('generalfeedback', 'question'),
+            'rightanswer'      => get_string('rightanswer', 'question'),
+            'overallfeedback'  => get_string('overallfeedback', 'quiz'),
         );
     }
 
+    /**
+     * Constructor.
+     *
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config,
+     *                     or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised name
+     * @param string $description localised long description
+     * @param mixed $defaultsetting string or array depending on implementation
+     * @param bool|null $duringstate
+     */
     public function __construct($name, $visiblename, $description,
             $defaultsetting, $duringstate = null) {
         $this->duringstate = $duringstate;
@@ -74,6 +97,7 @@ class mod_quiz_admin_review_setting extends admin_setting {
     }
 
     /**
+     * Return the combination that means all times.
      * @return int all times.
      */
     public static function all_on() {
@@ -81,12 +105,16 @@ class mod_quiz_admin_review_setting extends admin_setting {
                 self::AFTER_CLOSE;
     }
 
+    /**
+     * Get an array of the names of all the possible times. 
+     * @return array an array of time constant => lang string.
+     */
     protected static function times() {
         return array(
-            self::DURING => get_string('reviewduring', 'quiz'),
+            self::DURING            => get_string('reviewduring', 'quiz'),
             self::IMMEDIATELY_AFTER => get_string('reviewimmediately', 'quiz'),
-            self::LATER_WHILE_OPEN => get_string('reviewopen', 'quiz'),
-            self::AFTER_CLOSE => get_string('reviewclosed', 'quiz'),
+            self::LATER_WHILE_OPEN  => get_string('reviewopen', 'quiz'),
+            self::AFTER_CLOSE       => get_string('reviewclosed', 'quiz'),
         );
     }
 
@@ -145,77 +173,5 @@ class mod_quiz_admin_review_setting extends admin_setting {
 
         return format_admin_setting($this, $this->visiblename, $return,
                 $this->description, true, '', get_string('everythingon', 'quiz'), $query);
-    }
-}
-
-
-/**
- * Admin settings class for the quiz grading method.
- *
- * Just so we can lazy-load the choices.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_quiz_admin_setting_grademethod extends admin_setting_configselect_with_advanced {
-    public function load_choices() {
-        global $CFG;
-
-        if (is_array($this->choices)) {
-            return true;
-        }
-
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $this->choices = quiz_get_grading_options();
-
-        return true;
-    }
-}
-
-
-/**
- * Admin settings class for the quiz browser security option.
- *
- * Just so we can lazy-load the choices.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_quiz_admin_setting_browsersecurity extends admin_setting_configselect_with_advanced {
-    public function load_choices() {
-        global $CFG;
-
-        if (is_array($this->choices)) {
-            return true;
-        }
-
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $this->choices = quiz_access_manager::get_browser_security_choices();
-
-        return true;
-    }
-}
-
-
-/**
- * Admin settings class for the quiz overdue attempt handling method.
- *
- * Just so we can lazy-load the choices.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_quiz_admin_setting_overduehandling extends admin_setting_configselect_with_advanced {
-    public function load_choices() {
-        global $CFG;
-
-        if (is_array($this->choices)) {
-            return true;
-        }
-
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $this->choices = quiz_get_overdue_handling_options();
-
-        return true;
     }
 }
