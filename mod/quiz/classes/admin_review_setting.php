@@ -106,7 +106,7 @@ class mod_quiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * Get an array of the names of all the possible times. 
+     * Get an array of the names of all the possible times.
      * @return array an array of time constant => lang string.
      */
     protected static function times() {
