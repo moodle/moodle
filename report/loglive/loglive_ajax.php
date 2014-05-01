@@ -30,10 +30,13 @@ $page    = optional_param('page', 0, PARAM_INT);
 $since    = optional_param('since', 0, PARAM_INT);
 $logreader = optional_param('logreader', '', PARAM_COMPONENT); // Reader which will be used for displaying logs.
 
+$PAGE->set_url('/report/loglive/loglive_ajax.php');
+
 // Capability checks.
 if (empty($id)) {
     require_login();
     $context = context_system::instance();
+    $PAGE->set_context($context);
 } else {
     $course = get_course($id);
     require_login($course);
