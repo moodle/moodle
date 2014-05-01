@@ -154,7 +154,7 @@ if ($ADMIN->fulltree) {
     // Show the user's picture.
     $quizsettings->add(new mod_quiz_admin_setting_user_image('quiz/showuserpicture',
             get_string('showuserpicture', 'quiz'), get_string('configshowuserpicture', 'quiz'),
-            array('value' => 0, 'adv' => false), $options));
+            array('value' => 0, 'adv' => false), null));
 
     // Decimal places for overall grades.
     $options = array();
