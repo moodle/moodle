@@ -39,6 +39,8 @@ class tool_task_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function scheduled_tasks_table($tasks) {
+        global $CFG;
+
         $table = new html_table();
         $table->head  = array(get_string('name'),
                               get_string('component', 'tool_task'),
@@ -70,8 +72,12 @@ class tool_task_renderer extends plugin_renderer_base {
             } else {
                 $nextrun = $asap;
             }
-            $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php', array('action'=>'edit', 'task' => get_class($task)));
-            $editlink = $this->action_icon($configureurl, new pix_icon('t/edit', get_string('edittaskschedule', 'tool_task', $task->get_name())));
+            if (empty($CFG->preventscheduledtaskchanges)) {
+                $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php', array('action'=>'edit', 'task' => get_class($task)));
+                $editlink = $this->action_icon($configureurl, new pix_icon('t/edit', get_string('edittaskschedule', 'tool_task', $task->get_name())));
+            } else {
+                $editlink = $this->render(new pix_icon('t/locked', get_string('scheduledtaskchangesdisabled', 'tool_task')));
+            }
 
             $namecell = new html_table_cell($task->get_name() . "\n" . html_writer::tag('span', '\\'.get_class($task), array('class' => 'task-class')));
             $namecell->header = true;
