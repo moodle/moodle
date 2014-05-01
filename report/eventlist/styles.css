@@ -9,23 +9,19 @@
 
 #page-admin-report-eventlist-index dt {
     float: left;
-    clear: left;
     text-align: right;
-    padding-right: 1em;
     width: 20em;
 
 }
 
 #page-admin-report-eventlist-index dd {
     display: block;
-    float: left;
     text-align: left;
-    margin-left: 0;
+    margin-left: 21em;
 }
 
 #page-admin-report-eventlist-index dd + dd {
     clear: left;
-    margin-left: 21em;
 }
 
 @media (max-width : 767px) {
@@ -45,22 +41,18 @@
 
 #page-admin-report-eventlist-index.dir-rtl dt {
     float: right;
-    clear: right;
     text-align: left;
-    padding-left: 1em;
     width: 20em;
 }
 
 #page-admin-report-eventlist-index.dir-rtl dd {
     display: block;
-    float: right;
     text-align: right;
-    margin-right: 0;
+    margin-right: 22em;
 }
 
 #page-admin-report-eventlist-index.dir-rtl dd + dd {
     clear: right;
-    margin-right: 22em;
 }
 
 @media (max-width : 767px) {
@@ -70,10 +62,10 @@
     }
 
     #page-admin-report-eventlist-index.dir-rtl dd {
-        margin-right: 1em;
+        margin-right: 0em;
     }
 
     #page-admin-report-eventlist-index.dir-rtl dd + dd {
-        margin-right: 1em;
+        margin-right: 0em;
     }
 }
