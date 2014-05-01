@@ -1436,8 +1436,8 @@ sup {vertical-align: super;}
     padding: 0 0.5em 0 0;
 }
 
-.choosercontainer #chooseform .option span.modicon img.icon,
-.choosercontainer #chooseform .nonoption span.modicon img.icon {
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .option span.modicon img.icon,
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .nonoption span.modicon img.icon {
     height: 24px; width: 24px;
 }
 
