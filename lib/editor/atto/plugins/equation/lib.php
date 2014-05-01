@@ -34,6 +34,7 @@ function atto_equation_strings_for_js() {
     $PAGE->requires->strings_for_js(array('saveequation',
                                           'editequation',
                                           'preview',
+                                          'cursorinfo',
                                           'update',
                                           'librarygroup1',
                                           'librarygroup2',
