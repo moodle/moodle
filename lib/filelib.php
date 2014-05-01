@@ -1454,6 +1454,9 @@ function &get_mimetypes_array() {
         'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'unknown'),
 
         'doc'  => array ('type'=>'application/msword', 'icon'=>'document', 'groups'=>array('document')),
+        'bdoc' => array ('type'=>'application/x-digidoc', 'icon'=>'document', 'groups'=>array('archive')),
+        'cdoc' => array ('type'=>'application/x-digidoc', 'icon'=>'document', 'groups'=>array('archive')),
+        'ddoc' => array ('type'=>'application/x-digidoc', 'icon'=>'document', 'groups'=>array('archive')),
         'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'document', 'groups'=>array('document')),
         'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'document'),
         'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'document'),
