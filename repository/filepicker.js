@@ -496,7 +496,7 @@ M.core_filepicker.loadedpreviews = M.core_filepicker.loadedpreviews || {};
 /**
 * Set selected file info
 *
-* @parma object file info
+* @param object file info
 */
 M.core_filepicker.select_file = function(file) {
     M.core_filepicker.active_filepicker.select_file(file);
