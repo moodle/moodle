@@ -378,6 +378,12 @@ M.gradereport_grader.classes.ajax.prototype.make_editable = function(e) {
             break;
     }
     this.current.replace().attach_key_events();
+
+    // Making a field editable changes the grade table width.
+    // Update the top scroll bar to reflect the new table width.
+    Y.use('moodle-gradereport_grader-scrollview', function() {
+        M.gradereport_grader.scrollview.resize();
+    });
 };
 /**
  * Callback function for the user pressing the enter key on an editable field

@@ -60,8 +60,7 @@ M.gradereport_grader.scrollview = {
 
         var _this = this;
         Y.on('domready', function () {
-            var width = Y.one(_this.SELECTORS.GRADETABLE).get('offsetWidth');
-            Y.one('.topscrollcontent').setStyle('width', width + 'px');
+            M.gradereport_grader.scrollview.resize();
         });
 
         Y.one(src).on('scroll', function() {
@@ -72,5 +71,10 @@ M.gradereport_grader.scrollview = {
             Y.one(src).set('scrollLeft', node.get('scrollLeft'));
         });
 
+    },
+
+    resize: function() {
+        var width = Y.one(M.gradereport_grader.scrollview.SELECTORS.GRADETABLE).get('offsetWidth');
+        Y.one('.topscrollcontent').setStyle('width', width + 'px');
     }
 };
