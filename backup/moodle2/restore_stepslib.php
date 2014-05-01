@@ -237,7 +237,13 @@ class restore_gradebook_structure_step extends restore_structure_step {
             $data->timecreated  = $this->apply_date_offset($data->timecreated);
             $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-            $newitemid = $DB->insert_record('grade_grades', $data);
+            $gradeexists = $DB->record_exists('grade_grades', array('userid' => $data->userid, 'itemid' => $data->itemid));
+            if ($gradeexists) {
+                $message = "User id '{$data->userid}' already has a grade entry for grade item id '{$data->itemid}'";
+                $this->log($message, backup::LOG_DEBUG);
+            } else {
+                $newitemid = $DB->insert_record('grade_grades', $data);
+            }
         } else {
             $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
             $this->log($message, backup::LOG_DEBUG);
