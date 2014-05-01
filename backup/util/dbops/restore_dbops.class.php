@@ -1215,6 +1215,9 @@ abstract class restore_dbops {
                         $usertag = (object)$usertag;
                         $tags[] = $usertag->rawname;
                     }
+                    if (empty($newuserctxid)) {
+                        $newuserctxid = null; // Tag apis expect a null contextid not 0.
+                    }
                     tag_set('user', $newuserid, $tags, 'core', $newuserctxid);
                 }
 
