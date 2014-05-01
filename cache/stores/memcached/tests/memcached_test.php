@@ -54,6 +54,8 @@ class cachestore_memcached_test extends cachestore_tests {
      * Tests the valid keys to ensure they work.
      */
     public function test_valid_keys() {
+        $this->resetAfterTest(true);
+
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
         $instance = cachestore_memcached::initialise_unit_test_instance($definition);
 
@@ -69,15 +71,199 @@ class cachestore_memcached_test extends cachestore_tests {
             // Underscores.
             'a_1', '1_a', '_a1', 'a1_'
         );
+
+        // Set some keys.
         foreach ($keys as $key) {
             $this->assertTrue($instance->set($key, $key), "Failed to set key `$key`");
         }
+
+        // Get some keys.
         foreach ($keys as $key) {
             $this->assertEquals($key, $instance->get($key), "Failed to get key `$key`");
         }
+
+        // Try get many.
         $values = $instance->get_many($keys);
         foreach ($values as $key => $value) {
             $this->assertEquals($key, $value);
+        }
+
+        // Reset a key.
+        $this->assertTrue($instance->set($keys[0], 'New'), "Failed to reset key `$key`");
+        $this->assertEquals('New', $instance->get($keys[0]), "Failed to get reset key `$key`");
+
+        // Delete and check that we can't retrieve.
+        foreach ($keys as $key) {
+            $this->assertTrue($instance->delete($key), "Failed to delete key `$key`");
+            $this->assertFalse($instance->get($key), "Retrieved deleted key `$key`");
+        }
+
+        // Try set many, and check that count is correct.
+        $many = array();
+        foreach ($keys as $key) {
+            $many[] = array('key' => $key, 'value' => $key);
+        }
+        $returncount = $instance->set_many($many);
+        $this->assertEquals(count($many), $returncount, 'Set many count didn\'t match');
+
+        // Check keys retrieved with get_many.
+        $values = $instance->get_many($keys);
+        foreach ($keys as $key) {
+            $this->assertTrue(isset($values[$key]), "Failed to get_many key `$key`");
+            $this->assertEquals($key, $values[$key], "Failed to match get_many key `$key`");
+        }
+
+        // Delete many, make sure count matches.
+        $returncount = $instance->delete_many($keys);
+        $this->assertEquals(count($many), $returncount, 'Delete many count didn\'t match');
+
+        // Check that each key was deleted.
+        foreach ($keys as $key) {
+            $this->assertFalse($instance->get($key), "Retrieved many deleted key `$key`");
+        }
+
+        // Set the keys again.
+        $returncount = $instance->set_many($many);
+        $this->assertEquals(count($many), $returncount, 'Set many count didn\'t match');
+
+        // Purge.
+        $this->assertTrue($instance->purge(), 'Failure to purge');
+
+        // Delete and check that we can't retrieve.
+        foreach ($keys as $key) {
+            $this->assertFalse($instance->get($key), "Retrieved purged key `$key`");
+        }
+    }
+
+    /**
+     * Tests the clustering feature.
+     */
+    public function test_clustered() {
+        $this->resetAfterTest(true);
+
+        $testservers = explode("\n", trim(TEST_CACHESTORE_MEMCACHED_TESTSERVERS));
+
+        if (count($testservers) < 2) {
+            $this->markTestSkipped();
+        }
+
+        // Use the first server as our primary.
+        // We need to set a prefix for all, otherwise it uses the name, which will not match between connections.
+        set_config('testprefix', 'pre', 'cachestore_memcached');
+        // We need to set a name, otherwise we get a reused connection.
+        set_config('testname', 'cluster', 'cachestore_memcached');
+        set_config('testservers', $testservers[0], 'cachestore_memcached');
+        set_config('testsetservers', TEST_CACHESTORE_MEMCACHED_TESTSERVERS, 'cachestore_memcached');
+        set_config('testclustered', true, 'cachestore_memcached');
+
+        // First and instance that we can use to test the second server.
+        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
+        $instance = cachestore_memcached::initialise_test_instance($definition);
+
+        if (!$instance) {
+            $this->markTestSkipped();
+        }
+
+        // Now we are going to setup a connection to each independent server.
+        set_config('testclustered', false, 'cachestore_memcached');
+        set_config('testsetservers', '', 'cachestore_memcached');
+        $checkinstances = array();
+        foreach ($testservers as $testserver) {
+            // We need to set a name, otherwise we get a reused connection.
+            set_config('testname', $testserver, 'cachestore_memcached');
+            set_config('testservers', $testserver, 'cachestore_memcached');
+            $checkinstance = cachestore_memcached::initialise_test_instance($definition);
+            if (!$checkinstance) {
+                $this->markTestSkipped();
+            }
+            $checkinstances[] = $checkinstance;
+        }
+
+        $keys = array(
+            // Alphanumeric.
+            'abc', 'ABC', '123', 'aB1', '1aB',
+            // Hyphens.
+            'a-1', '1-a', '-a1', 'a1-',
+            // Underscores.
+            'a_1', '1_a', '_a1', 'a1_'
+        );
+
+        // Set each key.
+        foreach ($keys as $key) {
+            $this->assertTrue($instance->set($key, $key), "Failed to set key `$key`");
+        }
+
+        // Check each key.
+        foreach ($keys as $key) {
+            $this->assertEquals($key, $instance->get($key), "Failed to get key `$key`");
+            foreach ($checkinstances as $id => $checkinstance) {
+                $this->assertEquals($key, $checkinstance->get($key), "Failed to get key `$key` from server $id");
+            }
+        }
+
+        // Reset a key.
+        $this->assertTrue($instance->set($keys[0], 'New'), "Failed to reset key `$key`");
+        $this->assertEquals('New', $instance->get($keys[0]), "Failed to get reset key `$key`");
+        foreach ($checkinstances as $id => $checkinstance) {
+            $this->assertEquals('New', $checkinstance->get($keys[0]), "Failed to get reset key `$key` from server $id");
+        }
+
+        // Delete and check that we can't retrieve.
+        foreach ($keys as $key) {
+            $this->assertTrue($instance->delete($key), "Failed to delete key `$key`");
+            $this->assertFalse($instance->get($key), "Retrieved deleted key `$key`");
+            foreach ($checkinstances as $id => $checkinstance) {
+                $this->assertFalse($checkinstance->get($key), "Retrieved deleted key `$key` from server $id");
+            }
+        }
+
+        // Try set many, and check that count is correct.
+        $many = array();
+        foreach ($keys as $key) {
+            $many[] = array('key' => $key, 'value' => $key);
+        }
+        $returncount = $instance->set_many($many);
+        $this->assertEquals(count($many), $returncount, 'Set many count didn\'t match');
+
+        // Check keys retrieved with get_many.
+        $values = $instance->get_many($keys);
+        foreach ($keys as $key) {
+            $this->assertTrue(isset($values[$key]), "Failed to get_many key `$key`");
+            $this->assertEquals($key, $values[$key], "Failed to match get_many key `$key`");
+        }
+        foreach ($checkinstances as $id => $checkinstance) {
+            $values = $checkinstance->get_many($keys);
+            foreach ($keys as $key) {
+                $this->assertTrue(isset($values[$key]), "Failed to get_many key `$key` from server $id");
+                $this->assertEquals($key, $values[$key], "Failed to get_many key `$key` from server $id");
+            }
+        }
+
+        // Delete many, make sure count matches.
+        $returncount = $instance->delete_many($keys);
+        $this->assertEquals(count($many), $returncount, 'Delete many count didn\'t match');
+
+        // Check that each key was deleted.
+        foreach ($keys as $key) {
+            $this->assertFalse($instance->get($key), "Retrieved many deleted key `$key`");
+            foreach ($checkinstances as $id => $checkinstance) {
+                $this->assertFalse($checkinstance->get($key), "Retrieved many deleted key `$key` from server $id");
+            }
+        }
+
+        // Set the keys again.
+        $returncount = $instance->set_many($many);
+        $this->assertEquals(count($many), $returncount, 'Set many count didn\'t match');
+
+        // Purge.
+        $this->assertTrue($instance->purge(), 'Failure to purge');
+
+        // Delete and check that we can't retrieve.
+        foreach ($keys as $key) {
+            $this->assertFalse($instance->get($key), "Retrieved purged key `$key`");
+            foreach ($checkinstances as $id => $checkinstance) {
+                $this->assertFalse($checkinstance->get($key), "Retrieved purged key `$key` from server 2");
+            }
         }
     }
 }

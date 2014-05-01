@@ -87,6 +87,24 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
     protected $definition;
 
     /**
+     * Set to true when this store is clustered.
+     * @var bool
+     */
+    protected $clustered = false;
+
+    /**
+     * Array of servers to set when in clustered mode.
+     * @var array
+     */
+    protected $setservers = array();
+
+    /**
+     * The an array of memcache connections for the set servers, once established.
+     * @var array
+     */
+    protected $setconnections = array();
+
+    /**
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
@@ -127,6 +145,30 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             }
             $this->servers[] = $server;
         }
+
+        $this->clustered = array_key_exists('clustered', $configuration) ? (bool)$configuration['clustered'] : false;
+
+        if ($this->clustered) {
+            if (!array_key_exists('setservers', $configuration) || (count($configuration['setservers']) < 1)) {
+                // Can't setup clustering without set servers.
+                return;
+            }
+            if (count($this->servers) !== 1) {
+                // Can only setup cluster with exactly 1 get server.
+                return;
+            }
+            foreach ($configuration['setservers'] as $server) {
+                // We do not use weights (3rd part) on these servers.
+                if (!is_array($server)) {
+                    $server = explode(':', $server, 3);
+                }
+                if (!array_key_exists(1, $server)) {
+                    $server[1] = 11211;
+                }
+                $this->setservers[] = $server;
+            }
+        }
+
         $this->options[Memcached::OPT_COMPRESSION] = $compression;
         $this->options[Memcached::OPT_SERIALIZER] = $serialiser;
         $this->options[Memcached::OPT_PREFIX_KEY] = $prefix;
@@ -141,7 +183,20 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             }
             $this->connection->addServers($this->servers);
         }
-        // Test the connection to the pool of servers.
+
+        if ($this->clustered) {
+            foreach ($this->setservers as $setserver) {
+                // Since we will have a number of them with the same name, append server and port.
+                $connection = new Memcached(crc32($this->name.$setserver[0].$setserver[1]));
+                foreach ($this->options as $key => $value) {
+                    $connection->setOption($key, $value);
+                }
+                $connection->addServer($setserver[0], $setserver[1]);
+                $this->setconnections[] = $connection;
+            }
+        }
+
+        // Test the connection to the main connection.
         $this->isready = @$this->connection->set("ping", 'ping', 1);
     }
 
@@ -267,6 +322,14 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return bool True if the operation was a success false otherwise.
      */
     public function set($key, $data) {
+        if ($this->clustered) {
+            $status = true;
+            foreach ($this->setconnections as $connection) {
+                $status = $connection->set($key, $data, $this->definition->get_ttl()) && $status;
+            }
+            return $status;
+        }
+
         return $this->connection->set($key, $data, $this->definition->get_ttl());
     }
 
@@ -283,7 +346,17 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         foreach ($keyvaluearray as $pair) {
             $pairs[$pair['key']] = $pair['value'];
         }
-        if ($this->connection->setMulti($pairs, $this->definition->get_ttl())) {
+
+        $status = true;
+        if ($this->clustered) {
+            foreach ($this->setconnections as $connection) {
+                $status = $connection->setMulti($pairs, $this->definition->get_ttl()) && $status;
+            }
+        } else {
+            $status = $this->connection->setMulti($pairs, $this->definition->get_ttl());
+        }
+
+        if ($status) {
             return count($keyvaluearray);
         }
         return 0;
@@ -296,6 +369,14 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return bool Returns true if the operation was a success, false otherwise.
      */
     public function delete($key) {
+        if ($this->clustered) {
+            $status = true;
+            foreach ($this->setconnections as $connection) {
+                $status = $connection->delete($key) && $status;
+            }
+            return $status;
+        }
+
         return $this->connection->delete($key);
     }
 
@@ -306,9 +387,29 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * @return int The number of items successfully deleted.
      */
     public function delete_many(array $keys) {
+        if ($this->clustered) {
+            // Get the minimum deleted from any of the connections.
+            $count = count($keys);
+            foreach ($this->setconnections as $connection) {
+                $count = min($this->delete_many_connection($connection, $keys), $count);
+            }
+            return $count;
+        }
+
+        return $this->delete_many_connection($this->connection, $keys);
+    }
+
+    /**
+     * Deletes several keys from the cache in a single action for a specific connection.
+     *
+     * @param Memcached $connection The connection to work on.
+     * @param array $keys The keys to delete
+     * @return int The number of items successfully deleted.
+     */
+    protected function delete_many_connection(Memcached $connection, array $keys) {
         $count = 0;
         foreach ($keys as $key) {
-            if ($this->connection->delete($key)) {
+            if ($connection->delete($key)) {
                 $count++;
             }
         }
@@ -322,7 +423,13 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      */
     public function purge() {
         if ($this->isready) {
-            $this->connection->flush();
+            if ($this->clustered) {
+                foreach ($this->setconnections as $connection) {
+                    $connection->flush();
+                }
+            } else {
+                $this->connection->flush();
+            }
         }
 
         return true;
@@ -382,6 +489,28 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             }
             $servers[] = explode(':', $line, 3);
         }
+
+        $clustered = false;
+        if (isset($data->clustered)) {
+            $clustered = true;
+        }
+
+        $lines = explode("\n", $data->setservers);
+        $setservers = array();
+        foreach ($lines as $line) {
+            // Trim surrounding colons and default whitespace.
+            $line = trim(trim($line), ":");
+            if ($line === '') {
+                continue;
+            }
+            $setserver = explode(':', $line, 3);
+            // We don't use weights, so display a debug message.
+            if (count($setserver) > 2) {
+                debugging('Memcached Set Server '.$setserver[0].' has too many parameters.');
+            }
+            $setservers[] = $setserver;
+        }
+
         return array(
             'servers' => $servers,
             'compression' => $data->compression,
@@ -389,6 +518,8 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             'prefix' => $data->prefix,
             'hash' => $data->hash,
             'bufferwrites' => $data->bufferwrites,
+            'clustered' => $clustered,
+            'setservers' => $setservers
         );
     }
 
@@ -421,6 +552,16 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         }
         if (isset($config['bufferwrites'])) {
             $data['bufferwrites'] = (bool)$config['bufferwrites'];
+        }
+        if (isset($config['clustered'])) {
+            $data['clustered'] = (bool)$config['clustered'];
+        }
+        if (!empty($config['setservers'])) {
+            $servers = array();
+            foreach ($config['setservers'] as $server) {
+                $servers[] = join(":", $server);
+            }
+            $data['setservers'] = join("\n", $servers);
         }
         $editform->set_data($data);
     }
@@ -464,7 +605,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         }
 
         $configuration = array();
-        $configuration['servers'] = $config->testservers;
+        $configuration['servers'] = explode("\n", $config->testservers);
         if (!empty($config->testcompression)) {
             $configuration['compression'] = $config->testcompression;
         }
@@ -480,8 +621,19 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         if (!empty($config->testbufferwrites)) {
             $configuration['bufferwrites'] = $config->testbufferwrites;
         }
+        if (!empty($config->testclustered)) {
+            $configuration['clustered'] = $config->testclustered;
+        }
+        if (!empty($config->testsetservers)) {
+            $configuration['setservers'] = explode("\n", $config->testsetservers);
+        }
+        if (!empty($config->testname)) {
+            $name = $config->testname;
+        } else {
+            $name = 'Test memcached';
+        }
 
-        $store = new cachestore_memcached('Test memcached', $configuration);
+        $store = new cachestore_memcached($name, $configuration);
         $store->initialise($definition);
 
         return $store;
