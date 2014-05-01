@@ -397,8 +397,9 @@ class report_log_table_log extends table_sql {
         }
 
         if (!empty($this->filterparams->date)) {
-            $joins[] = "timecreated > :date";
+            $joins[] = "timecreated > :date AND timecreated < :enddate";
             $params['date'] = $this->filterparams->date;
+            $params['enddate'] = $this->filterparams->date + DAYSECS; // Show logs only for the selected date.
         }
 
         if (isset($this->filterparams->edulevel) && ($this->filterparams->edulevel >= 0)) {
