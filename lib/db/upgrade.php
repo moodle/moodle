@@ -3676,5 +3676,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014061000.00);
     }
 
+    if ($oldversion < 2014062600.01) {
+        // Purge DragMath plugin which is incompatible with GNU GPL license.
+        // Hacky emulation of plugin uninstallation.
+        unset_all_config_for_plugin('tinymce_dragmath');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014062600.01);
+    }
+
     return true;
 }
