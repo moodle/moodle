@@ -570,7 +570,7 @@ M.core_availability.List.prototype.deleteDescendant = function(descendant) {
 M.core_availability.List.prototype.clickAdd = function() {
     var content = Y.Node.create('<div>' +
             '<ul class="list-unstyled"></ul>' +
-            '<div class="availability-buttons">' +
+            '<div class="availability-buttons mdl-align">' +
             '<button type="button" class="btn btn-default">' + M.str.moodle.cancel +
             '</button></div></div>');
     var cancel = content.one('button');
@@ -925,42 +925,44 @@ M.core_availability.Item.prototype.pluginNode = null;
  */
 M.core_availability.EyeIcon = function(individual, shown) {
     this.individual = individual;
-    this.span = Y.Node.create('<span class="availability-eye">');
+    this.span = Y.Node.create('<a class="availability-eye" href="#" role="button">');
     var iconBase = M.cfg.wwwroot + '/theme/image.php/' + M.cfg.theme + '/core/' + M.cfg.themerev;
-    var hideButton = Y.Node.create('<img tabindex="0" role="button"/>');
+    var icon = Y.Node.create('<img />');
+    this.span.appendChild(icon);
 
     // Set up button text and icon.
     var suffix = individual ? '_individual' : '_all';
     var setHidden = function() {
-        hideButton.set('src', iconBase + '/t/show');
-        hideButton.set('alt', M.str.availability['hidden' + suffix]);
-        hideButton.set('title', M.str.availability['hidden' + suffix] + ' \u2022 ' +
+        icon.set('src', iconBase + '/t/show');
+        icon.set('alt', M.str.availability['hidden' + suffix]);
+        this.span.set('title', M.str.availability['hidden' + suffix] + ' \u2022 ' +
                 M.str.availability.show_verb);
     };
     var setShown = function() {
-        hideButton.set('src', iconBase + '/t/hide');
-        hideButton.set('alt', M.str.availability['shown' + suffix]);
-        hideButton.set('title', M.str.availability['shown' + suffix] + ' \u2022 ' +
+        icon.set('src', iconBase + '/t/hide');
+        icon.set('alt', M.str.availability['shown' + suffix]);
+        this.span.set('title', M.str.availability['shown' + suffix] + ' \u2022 ' +
                 M.str.availability.hide_verb);
     };
     if(shown) {
-        setShown();
+        setShown.call(this);
     } else {
-        setHidden();
+        setHidden.call(this);
     }
 
     // Update when button is clicked.
-    this.span.appendChild(hideButton);
-    var click = function() {
+    var click = function(e) {
+        e.preventDefault();
         if (this.isHidden()) {
-            setShown();
+            setShown.call(this);
         } else {
-            setHidden();
+            setHidden.call(this);
         }
         M.core_availability.form.update();
     };
-    hideButton.on('click', click, this);
-    hideButton.on('key', click, 'up:enter', this);
+    this.span.on('click', click, this);
+    this.span.on('key', click, 'up:32', this);
+    this.span.on('key', function(e) { e.preventDefault(); }, 'down:32', this);
 };
 
 /**
@@ -1000,19 +1002,20 @@ M.core_availability.EyeIcon.prototype.isHidden = function() {
  * @param {M.core_availability.Item|M.core_availability.List} toDelete Thing to delete
  */
 M.core_availability.DeleteIcon = function(toDelete) {
-    this.span = Y.Node.create('<span class="availability-delete">');
-    var deleteButton = Y.Node.create('<img src="' +
+    this.span = Y.Node.create('<a class="availability-delete" href="#" title="' +
+            M.str.moodle['delete'] + '" role="button">');
+    var img = Y.Node.create('<img src="' +
             M.cfg.wwwroot + '/theme/image.php/' + M.cfg.theme + '/core/' + M.cfg.themerev +
-            '/t/delete" alt="' +
-            M.str.moodle['delete'] + '" title="' + M.str.moodle['delete'] +
-            '" tabindex="0" role="button"/>');
-    this.span.appendChild(deleteButton);
-    var click = function() {
+            '/t/delete" alt="' + M.str.moodle['delete'] + '" />');
+    this.span.appendChild(img);
+    var click = function(e) {
+        e.preventDefault();
         M.core_availability.form.rootList.deleteDescendant(toDelete);
         M.core_availability.form.rootList.renumber();
     };
-    deleteButton.on('click', click, this);
-    deleteButton.on('key', click, 'up:enter', this);
+    this.span.on('click', click, this);
+    this.span.on('key', click, 'up:32', this);
+    this.span.on('key', function(e) { e.preventDefault(); }, 'down:32', this);
 };
 
 /**
