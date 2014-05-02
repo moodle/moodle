@@ -26,7 +26,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The blog comment created event.
+ * The blog comment created event class.
  *
  * @package    core
  * @since      Moodle 2.7

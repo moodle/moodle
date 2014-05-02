@@ -25,8 +25,6 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * blog_association_created
- *
  * Class for event to be triggered when a new blog entry is associated with a context.
  *
  * @property-read array $other {

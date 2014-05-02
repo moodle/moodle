@@ -81,4 +81,3 @@ class report_viewed extends \core\event\base {
         return new \moodle_url('/report/loglive/index.php', array('id' => $this->courseid));
     }
 }
-

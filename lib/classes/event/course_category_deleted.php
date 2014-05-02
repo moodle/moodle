@@ -86,7 +86,7 @@ class course_category_deleted extends base {
     /**
      * Returns the legacy event data.
      *
-     * @return coursecat the category that was deleted
+     * @return \coursecat the category that was deleted
      */
     protected function get_legacy_eventdata() {
         return $this->coursecat;

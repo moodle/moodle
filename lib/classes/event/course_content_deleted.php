@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course content_deleted event class.
+ * Course content deleted event.
  *
  * @package    core
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -27,7 +27,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course content_deleted event class.
+ * Course content deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.

@@ -97,5 +97,4 @@ class message_sent extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
-
 }

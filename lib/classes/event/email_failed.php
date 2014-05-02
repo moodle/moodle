@@ -81,13 +81,13 @@ class email_failed extends base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['subject'])) {
-            throw new \coding_exception('The subject needs to be set in $other');
+            throw new \coding_exception('The \'subject\' value must be set in other.');
         }
         if (!isset($this->other['message'])) {
-            throw new \coding_exception('The message needs to be set in $other');
+            throw new \coding_exception('The \'message\' value must be set in other.');
         }
         if (!isset($this->other['errorinfo'])) {
-            throw new \coding_exception('The error info needs to be set in $other');
+            throw new \coding_exception('The \'errorinfo\' value must be set in other.');
         }
     }
 }

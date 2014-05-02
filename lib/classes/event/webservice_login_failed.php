@@ -120,7 +120,7 @@ class webservice_login_failed extends base {
         } else if (!isset($this->other['method'])) {
            throw new \coding_exception('The \'method\' value must be set in other.');
         } else if (isset($this->other['token'])) {
-           throw new \coding_exception('The token cannot be set in $other.');
+           throw new \coding_exception('The \'token\' value must not be set in other.');
         }
     }
 }

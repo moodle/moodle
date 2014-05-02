@@ -96,4 +96,3 @@ class user_report_viewed extends \core\event\base {
         }
     }
 }
-

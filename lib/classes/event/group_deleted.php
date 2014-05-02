@@ -47,7 +47,7 @@ class group_deleted extends base {
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('groups', $this->objectid);
@@ -90,5 +90,4 @@ class group_deleted extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groups';
     }
-
 }

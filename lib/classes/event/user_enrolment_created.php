@@ -122,7 +122,7 @@ class user_enrolment_created extends base {
         }
 
         if (!isset($this->other['enrol'])) {
-            throw new \coding_exception('The \'enrol\' value must be set in $other.');
+            throw new \coding_exception('The \'enrol\' value must be set in other.');
         }
     }
 }

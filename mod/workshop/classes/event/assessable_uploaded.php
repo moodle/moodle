@@ -135,5 +135,4 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     public function set_legacy_logdata($legacylogdata) {
         $this->legacylogdata = $legacylogdata;
     }
-
 }

@@ -85,7 +85,7 @@ class cohort_deleted extends base {
     /**
      * Return legacy event data.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('cohort', $this->objectid);

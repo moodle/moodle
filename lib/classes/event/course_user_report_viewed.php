@@ -106,12 +106,12 @@ class course_user_report_viewed extends \core\event\base {
         }
 
         if (empty($this->relateduserid)) {
-            throw new \coding_exception('relateduserid needs to be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
 
         // Make sure this class is never used without proper object details.
         if (!isset($this->other['mode'])) {
-            throw new \coding_exception('mode needs to be set in $other.');
+            throw new \coding_exception('The \'mode\' value must be set in other.');
         }
     }
 }
