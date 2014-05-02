@@ -4,6 +4,24 @@ Feature: display_availability
   As a user
   I need to see appropriate availability restrictions for activities and sections
 
+  # PURPOSE OF THIS TEST FEATURE:
+  #
+  # This test is to do a basic check of the user interface relating to display
+  # of availability conditions - i.e. if there's a condition, does it show up;
+  # are we doing the HTML correctly; does it correctly hide an activity where
+  # the options are set to not show it at all.
+  #
+  # Things this test is not:
+  # - It is not a test of the date condition specifically. The date condition is
+  #   only used as an example in order to get the availability information to
+  #   display. (The date condition has its own Behat test in
+  #   /availability/condition/date/tests/behat.)
+  # - It is not a complete test of the logic. This is supposed to be a shallow
+  #   check of the user interface parts and doesn't cover all logical
+  #   possibilities. The logic is tested in PHPUnit tests instead, which are
+  #   much more efficient. (Again there are unit tests for the overall system
+  #   and for each condition type.)
+
   Background:
     Given the following "courses" exist:
       | fullname | shortname | format |
@@ -39,7 +57,7 @@ Feature: display_availability
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I set the field "direction" to "until"
     And I set the field "x[year]" to "2013"
-    And I set the field "x[month]" to "January"
+    And I set the field "x[month]" to "March"
     And I press "Save and return to course"
 
     # Add a Page with 2 restrictions - one is set to hide from students if failed.
@@ -53,7 +71,7 @@ Feature: display_availability
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I set the field "direction" to "until"
     And I set the field "x[year]" to "2013"
-    And I set the field "x[month]" to "January"
+    And I set the field "x[month]" to "March"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I press "Add restriction..."
     And I click on "User profile" "button" in the "Add restriction..." "dialogue"

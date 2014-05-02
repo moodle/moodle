@@ -204,10 +204,9 @@ class condition extends \core_availability\condition {
      * timezone).
      *
      * @param int $time Time
-     * @return bool True if time refers to midnight, false if it's some other
-     *   time or if it is set to zero
+     * @return bool True if time refers to midnight, false otherwise
      */
     protected static function is_midnight($time) {
-        return $time && usergetmidnight($time) == $time;
+        return usergetmidnight($time) == $time;
     }
 }
