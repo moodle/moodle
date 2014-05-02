@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
+if ($hassiteconfig && !empty($CFG->enableavailability)) {
     $ADMIN->add('modules', new admin_category('availabilitysettings',
             new lang_string('type_availability_plural', 'plugin')));
     $ADMIN->add('availabilitysettings', new admin_externalpage('manageavailability',
