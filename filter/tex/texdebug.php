@@ -200,7 +200,7 @@
         // first check if it is likely to work at all
         $output .= "<h3>Checking executables</h3>\n";
         $executables_exist = true;
-        $pathlatex = get_config('filter_tex', 'pathlatex');
+        $pathlatex = trim(get_config('filter_tex', 'pathlatex'), " '\"");
         if (is_file($pathlatex)) {
             $output .= "latex executable ($pathlatex) is readable<br />\n";
         }
@@ -208,7 +208,7 @@
             $executables_exist = false;
             $output .= "<b>Error:</b> latex executable ($pathlatex) is not readable<br />\n";
         }
-        $pathdvips = get_config('filter_tex', 'pathdvips');
+        $pathdvips = trim(get_config('filter_tex', 'pathdvips'), " '\"");
         if (is_file($pathdvips)) {
             $output .= "dvips executable ($pathdvips) is readable<br />\n";
         }
@@ -216,7 +216,7 @@
             $executables_exist = false;
             $output .= "<b>Error:</b> dvips executable ($pathdvips) is not readable<br />\n";
         }
-        $pathconvert = get_config('filter_tex', 'pathconvert');
+        $pathconvert = trim(get_config('filter_tex', 'pathconvert'), " '\"");
         if (is_file($pathconvert)) {
             $output .= "convert executable ($pathconvert) is readable<br />\n";
         }
@@ -248,14 +248,17 @@
         chdir($latex->temp_dir);
 
         // step 1: latex command
+        $pathlatex = escapeshellarg($pathlatex);
         $cmd = "$pathlatex --interaction=nonstopmode --halt-on-error $tex";
         $output .= execute($cmd);
 
         // step 2: dvips command
+        $pathdvips = escapeshellarg($pathdvips);
         $cmd = "$pathdvips -E $dvi -o $ps";
         $output .= execute($cmd);
 
         // step 3: convert command
+        $pathconvert = escapeshellarg($pathconvert);
         $cmd = "$pathconvert -density 240 -trim $ps $img ";
         $output .= execute($cmd);
 
