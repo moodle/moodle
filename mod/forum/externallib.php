@@ -382,7 +382,7 @@ class mod_forum_external extends external_api {
      * @return array the forum post details
      * @since Moodle 2.7
      */
-    public static function get_forum_discussion_posts($discussionid, $sortby = "id", $sortdirection = "ASC") {
+    public static function get_forum_discussion_posts($discussionid, $sortby = "created", $sortdirection = "DESC") {
         global $CFG, $DB, $USER;
 
         $warnings = array();
@@ -463,9 +463,10 @@ class mod_forum_external extends external_api {
                 $posts[$pid]->postread = false;
             }
             $posts[$pid]->canreply = $canreply;
-            $posts[$pid]->children = array();
             if (!empty($posts[$pid]->children)) {
                 $posts[$pid]->children = array_keys($posts[$pid]->children);
+            } else {
+                $posts[$pid]->children = array();
             }
 
             $user = new stdclass();

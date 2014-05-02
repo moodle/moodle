@@ -491,7 +491,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'attachment' => $discussion1reply1->attachment,
             'totalscore' => $discussion1reply1->totalscore,
             'mailnow' => $discussion1reply1->mailnow,
-            'children' => array(),
+            'children' => array(4),
             'canreply' => true,
             'postread' => false,
             'userfullname' => fullname($user2)

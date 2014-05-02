@@ -199,15 +199,15 @@ class mod_forum_generator extends testing_module_generator {
         }
 
         if (!isset($record['mailed'])) {
-            $record['mailed'] = 1;
+            $record['mailed'] = 0;
         }
 
         if (!isset($record['messageformat'])) {
-            $record['messageformat'] = 1;
+            $record['messageformat'] = 0;
         }
 
         if (!isset($record['messagetrust'])) {
-            $record['messagetrust'] = 1;
+            $record['messagetrust'] = 0;
         }
 
         if (!isset($record['attachment'])) {
