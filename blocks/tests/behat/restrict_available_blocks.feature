@@ -15,7 +15,6 @@ Feature: Allowed blocks controls
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
-  @javascript
   Scenario: Blocks can be added with the default permissions
     Given I log in as "teacher1"
     And I follow "Course 1"
