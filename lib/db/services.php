@@ -761,6 +761,15 @@ $functions = array(
         'capabilities'=> '',
     ),
 
+    'core_message_get_messages' => array(
+        'classname'   => 'core_message_external',
+        'methodname'  => 'get_messages',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Retrieve a message list (conversations, notifications or boths)',
+        'type'        => 'read',
+        'capabilities'=> '',
+    ),
+
     // === notes related functions ===
 
     'moodle_notes_create_notes' => array(
@@ -958,7 +967,8 @@ $services = array(
             'mod_forum_get_forums_by_courses',
             'mod_forum_get_forum_discussions',
             'mod_forum_get_forum_discussion_posts',
-            'core_files_get_files'),
+            'core_files_get_files',
+            'core_message_get_messages'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,

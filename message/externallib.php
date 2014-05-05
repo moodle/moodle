@@ -568,6 +568,246 @@ class core_message_external extends external_api {
             'List of contacts'
         );
     }
+
+    /**
+     * Get messages parameters description.
+     *
+     * @return external_function_parameters
+     * @since 2.7
+     */
+    public static function get_messages_parameters() {
+        return new external_function_parameters(
+            array(
+                'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for any user'),
+                'type' => new external_value(PARAM_ALPHA,
+                            'type of message to return, expected values are: notifications, conversations, both'),
+                'read' => new external_value(PARAM_BOOL, 'true for retreiving read messages, false for unread'),
+                'useridfrom' => new external_value(PARAM_INT, 'user id who send the message, 0 for any user', VALUE_DEFAULT, 0),
+                'newestfirst' => new external_value(PARAM_BOOL,
+                            'true order by newest first, false for oldest first', VALUE_DEFAULT, true),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'limit number', VALUE_DEFAULT, 0)            )
+        );
+    }
+
+    /**
+     * Get messages function implementation.
+     * @param  int      $useridto       the user id who received the messages
+     * @param  string   $type           type of message tu return, notifications, conversations or both
+     * @param  bool     $read           true for retreiving read messages, false for unread
+     * @param  int      $useridfrom     user id from for filtering
+     * @param  bool     $newestfirst    true order by newest first, false for oldest first
+     * @param  int      $limitfrom      limit from
+     * @param  int      $limitnum       limit num
+     * @return external_description
+     * @since  2.7
+     */
+    public static function get_messages($useridto, $type, $read, $useridfrom = 0,
+                                        $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . "/message/lib.php");
+
+        $warnings = array();
+
+        $params = array(
+            'useridto' => $useridto,
+            'type' => $type,
+            'read' => $read,
+            'useridfrom' => $useridfrom,
+            'newestfirst' => $newestfirst,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        );
+
+        $params = self::validate_parameters(self::get_messages_parameters(), $params);
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $useridto = $params['useridto'];
+        $type = $params['type'];
+        $read = $params['read'];
+        $useridfrom = $params['useridfrom'];
+        $newestfirst = $params['newestfirst'];
+        $limitfrom = $params['limitfrom'];
+        $limitnum = $params['limitnum'];
+
+        $allowedvalues = array('notifications', 'conversations', 'both');
+        if (!in_array($type, $allowedvalues)) {
+            throw new invalid_parameter_exception('Invalid value for type parameter (value: ' . $type . '),' .
+                'allowed values are: ' . implode(',', $allowedvalues));
+        }
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            // If we are retreiving only conversations, and messaging is disabled, throw an exception.
+            // DOUBT -- check user is admin?
+            if ($type == "conversations") {
+                throw new moodle_exception('disabled', 'message');
+            }
+            if ($type == "both") {
+                $warning = array();
+                $warning['item'] = 'message';
+                $warning['itemid'] = $USER->id;
+                $warning['warningcode'] = '1';
+                $warning['message'] = 'Private messages (conversations) are not enabled in this site.
+                    Only notifications will be returned';
+                $warnings[] = $warning;
+            }
+        }
+
+        if (!empty($useridto)) {
+            $userto = $DB->get_record('user', array('id' => $useridto), '*', MUST_EXIST);
+        }
+
+        if (!empty($useridfrom)) {
+            // We use get_user here because the from user can be the noreply or support user.
+            $userfrom = core_user::get_user($useridfrom, '*', MUST_EXIST);
+        }
+
+        // Check if the current user is the sender/receiver or just a privileged user.
+        if ($useridto != $USER->id and $useridfrom != $USER->id and
+             !has_capability('moodle/site:readallmessages', $context)) {
+            throw new moodle_exception('accessdenied', 'admin');
+        }
+
+        if ($useridto == $useridfrom) {
+            throw new moodle_exception('invaliduserid');
+        }
+
+        // Get messages.
+        $messagetable = $read ? '{message_read}' : '{message}';
+        $usersql = "";
+        $params = array('deleted' => 0);
+
+        // Empty useridto means that we are going to retrieve messages send by the useridfrom to any user.
+        if (empty($useridto)) {
+            $userfields = get_all_user_name_fields(true, 'u', 'userto', 'userto');
+            $joinuserfield = "mr.useridto";
+            $usersql = "mr.useridfrom = :useridfrom";
+            $params['useridfrom'] = $useridfrom;
+        } else {
+            $userfields = get_all_user_name_fields(true, 'u', 'userfrom', 'userfrom');
+            $joinuserfield = "mr.useridfrom";
+            $usersql = "mr.useridto = :useridto";
+            $params['useridto'] = $useridto;
+            if (!empty($useridfrom)) {
+                $usersql .= " AND mr.useridfrom = :useridfrom";
+                $params['useridfrom'] = $useridfrom;
+            }
+        }
+
+        // Now, if retrieve notifications, conversations or both.
+        $typesql = "";
+        if ($type != 'both') {
+            $typesql = "AND mr.notification = :notification";
+            $params['notification'] = ($type == 'notification') ? 1 : 0;
+        }
+
+        // Finally the sort direction.
+        $orderdirection = $newestfirst ? 'DESC' : 'ASC';
+
+        $sql = "SELECT mr.*, $userfields
+                  FROM $messagetable mr
+                       JOIN {user} u ON u.id = $joinuserfield
+                 WHERE  $usersql AND u.deleted = :deleted
+                        $typesql
+                 ORDER BY mr.timecreated $orderdirection";
+
+        if ($messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
+            $canviewfullname = has_capability('moodle/site:viewfullnames', $context);
+
+            // In some cases, we don't need to get the to/from user objects from the sql query.
+            $userfromfullname = '';
+            $usertofullname = '';
+
+            // In this case, the useridto field is not empty, so we can get the user destinatary fullname from there.
+            if (!empty($useridto)) {
+                $usertofullname = fullname($userto, $canviewfullname);
+                // The user from may or may not be filled.
+                if (!empty($useridfrom)) {
+                    $userfromfullname = fullname($userfrom, $canviewfullname);
+                }
+            } else {
+                // If the useridto field is empty, the useridfrom must be filled.
+                $userfromfullname = fullname($userfrom, $canviewfullname);
+            }
+
+            foreach ($messages as $mid => $message) {
+
+                // We need to get the user from the query.
+                if (empty($userfromfullname)) {
+                    $user = new stdclass();
+                    $user = username_load_fields_from_object($user, $message, 'userfrom');
+                    $message->userfromfullname = fullname($user, $canviewfullname);
+                } else {
+                    $message->userfromfullname = $userfromfullname;
+                }
+
+                // We need to get the user from the query.
+                if (empty($usertofullname)) {
+                    $user = new stdclass();
+                    $user = username_load_fields_from_object($user, $message, 'userto');
+                    $message->usertofullname = fullname($user, $canviewfullname);
+                } else {
+                    $message->usertofullname = $usertofullname;
+                }
+
+                if (!isset($message->timeread)) {
+                    $message->timeread = 0;
+                }
+
+                // DOUBT, getting crazy with formats...
+                $message->text = message_format_message_text($message);
+
+                $messages[$mid] = (array) $message;
+            }
+        }
+
+        $results = array(
+            'messages' => $messages,
+            'warnings' => $warnings
+        );
+
+        return $results;
+    }
+
+    /**
+     * Get messages return description.
+     *
+     * @return external_description
+     * @since 2.7
+     */
+    public static function get_messages_returns() {
+        return new external_single_structure(
+            array(
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'mMssage id'),
+                            'useridfrom' => new external_value(PARAM_INT, 'User from id'),
+                            'useridto' => new external_value(PARAM_INT, 'User to id'),
+                            'subject' => new external_value(PARAM_TEXT, 'The message subject'),
+                            'text' => new external_value(PARAM_RAW, 'The message text formated'),
+                            'fullmessage' => new external_value(PARAM_RAW, 'The message'),
+                            'fullmessageformat' => new external_value(PARAM_INT, 'The message message format'),
+                            'fullmessagehtml' => new external_value(PARAM_RAW, 'The message in html'),
+                            'smallmessage' => new external_value(PARAM_RAW, 'The shorten message'),
+                            'notification' => new external_value(PARAM_INT, 'Is a notification?'),
+                            'contexturl' => new external_value(PARAM_RAW, 'Context URL'),
+                            'contexturlname' => new external_value(PARAM_TEXT, 'Context URL link name'),
+                            'timecreated' => new external_value(PARAM_INT, 'Time created'),
+                            'timeread' => new external_value(PARAM_INT, 'Time read'),
+                            'usertofullname' => new external_value(PARAM_TEXT, 'User to full name'),
+                            'userfromfullname' => new external_value(PARAM_TEXT, 'User from full name')
+                        ), 'message'
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
 /**
