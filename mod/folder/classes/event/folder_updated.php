@@ -26,6 +26,14 @@ namespace mod_folder\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_folder folder updated event class.
+ *
+ * @package    mod_folder
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class folder_updated extends \core\event\base {
 
     /**
@@ -33,7 +41,7 @@ class folder_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'folder';
     }
 
@@ -52,7 +60,7 @@ class folder_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' updated the folder activity with instance id ' . $this->objectid;
+        return "The user with the id '$this->userid' updated the folder activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -61,7 +69,7 @@ class folder_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/folder/edit.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/folder/edit.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -70,7 +78,7 @@ class folder_updated extends \core\event\base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'folder', 'edit', 'edit.php?id=' . $this->context->instanceid, $this->objectid,
-            $this->context->instanceid);
+        return array($this->courseid, 'folder', 'edit', 'edit.php?id=' . $this->contextinstanceid, $this->objectid,
+            $this->contextinstanceid);
     }
 }

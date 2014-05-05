@@ -97,7 +97,7 @@ echo $OUTPUT->header();
 
 // Prepare a progress bar which can display optionally during long-running
 // operations while setting up the UI.
-$slowprogress = new core_backup_display_progress_if_slow(get_string('preparingui', 'backup'));
+$slowprogress = new \core\progress\display_if_slow(get_string('preparingui', 'backup'));
 
 $previous = optional_param('previous', false, PARAM_BOOL);
 if ($backup->get_stage() == backup_ui::STAGE_SCHEMA && !$previous) {
@@ -121,7 +121,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Display an extra backup step bar so that we can show the 'processing' step first.
     echo html_writer::start_div('', array('id' => 'executionprogress'));
     echo $renderer->progress_bar($backup->get_progress_bar());
-    $backup->get_controller()->set_progress(new core_backup_display_progress());
+    $backup->get_controller()->set_progress(new \core\progress\display());
 
     // Prepare logger and add to end of chain.
     $logger = new core_backup_html_logger($CFG->debugdeveloper ? backup::LOG_DEBUG : backup::LOG_INFO);

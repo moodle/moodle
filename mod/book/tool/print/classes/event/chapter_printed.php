@@ -29,10 +29,32 @@ defined('MOODLE_INTERNAL') || die();
  * booktool_print chapter printed event class.
  *
  * @package    booktool_print
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chapter_printed extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \stdClass $book
+     * @param \context_module $context
+     * @param \stdClass $chapter
+     * @return chapter_printed
+     */
+    public static function create_from_chapter(\stdClass $book, \context_module $context, \stdClass $chapter) {
+        $data = array(
+            'context' => $context,
+            'objectid' => $chapter->id,
+        );
+        /** @var chapter_printed $event */
+        $event = self::create($data);
+        $event->add_record_snapshot('book', $book);
+        $event->add_record_snapshot('book_chapters', $chapter);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -40,7 +62,8 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has printed the chapter $this->objectid of the book module $this->context->instanceid.";
+        return "The user with the id '$this->userid' has printed the chapter with the id '$this->objectid' of the book with the
+            course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -49,8 +72,8 @@ class chapter_printed extends \core\event\base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'book', 'print chapter', 'tool/print/index.php?id=' . $this->context->instanceid .
-            '&chapterid=' . $this->objectid, $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'book', 'print chapter', 'tool/print/index.php?id=' . $this->contextinstanceid .
+            '&chapterid=' . $this->objectid, $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -59,7 +82,7 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_printed', 'booktool_print');
+        return get_string('eventchapterprinted', 'booktool_print');
     }
 
     /**
@@ -68,7 +91,7 @@ class chapter_printed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/book/tool/print/index.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/book/tool/print/index.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -78,7 +101,7 @@ class chapter_printed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'book';
     }
 

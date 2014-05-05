@@ -23,8 +23,7 @@
  * workshop_something() taking the workshop instance as the first
  * parameter, we use a class workshop that provides all methods.
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1506,6 +1505,7 @@ class workshop {
 
     /**
      * Workshop wrapper around {@see add_to_log()}
+     * @deprecated since 2.7 Please use the provided event classes for logging actions.
      *
      * @param string $action to be logged
      * @param moodle_url $url absolute url as returned by {@see workshop::submission_url()} and friends
@@ -1514,6 +1514,7 @@ class workshop {
      * @return void|array array of arguments for add_to_log if $return is true
      */
     public function log($action, moodle_url $url = null, $info = null, $return = false) {
+        debugging('The log method is now deprecated, please use event classes instead', DEBUG_DEVELOPER);
 
         if (is_null($url)) {
             $url = $this->view_url();
@@ -1691,6 +1692,15 @@ class workshop {
 
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
         $this->phase = $newphase;
+        $eventdata = array(
+            'objectid' => $this->id,
+            'context' => $this->context,
+            'other' => array(
+                'workshopphase' => $this->phase
+            )
+        );
+        $event = \mod_workshop\event\phase_switched::create($eventdata);
+        $event->trigger();
         return true;
     }
 
@@ -2451,8 +2461,21 @@ class workshop {
         if ($count > 0) {
             $finalgrade = grade_floatval($sumgrades / $count);
         }
+
+        // Event information.
+        $params = array(
+            'context' => $this->context,
+            'courseid' => $this->course->id,
+            'relateduserid' => $reviewerid
+        );
+
         // check if the new final grade differs from the one stored in the database
         if (grade_floats_different($finalgrade, $current)) {
+            $params['other'] = array(
+                'currentgrade' => $current,
+                'finalgrade' => $finalgrade
+            );
+
             // we need to save new calculation into the database
             if (is_null($agid)) {
                 // no aggregation record yet
@@ -2461,13 +2484,19 @@ class workshop {
                 $record->userid = $reviewerid;
                 $record->gradinggrade = $finalgrade;
                 $record->timegraded = $timegraded;
-                $DB->insert_record('workshop_aggregations', $record);
+                $record->id = $DB->insert_record('workshop_aggregations', $record);
+                $params['objectid'] = $record->id;
+                $event = \mod_workshop\event\assessment_evaluated::create($params);
+                $event->trigger();
             } else {
                 $record = new stdclass();
                 $record->id = $agid;
                 $record->gradinggrade = $finalgrade;
                 $record->timegraded = $timegraded;
                 $DB->update_record('workshop_aggregations', $record);
+                $params['objectid'] = $agid;
+                $event = \mod_workshop\event\assessment_reevaluated::create($params);
+                $event->trigger();
             }
         }
     }

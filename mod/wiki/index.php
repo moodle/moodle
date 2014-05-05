@@ -18,9 +18,9 @@
 /**
  * This page lists all the instances of wiki in a particular course
  *
- * @package mod-wiki-2.0
- * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
- * @copyrigth 2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @package mod_wiki
+ * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
  * @author Jordi Piguillem
  * @author Marc Alier
@@ -46,6 +46,7 @@ $PAGE->set_pagelayout('incourse');
 $context = context_course::instance($course->id);
 
 $event = \mod_wiki\event\course_module_instance_list_viewed::create(array('context' => $context));
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 /// Get all required stringswiki

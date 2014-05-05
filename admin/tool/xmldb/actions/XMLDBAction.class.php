@@ -121,7 +121,7 @@ class XMLDBAction {
     /**
      * loadStrings method, loads the required strings specified in the
      * array parameter
-     * @params array $strings
+     * @param string[] $strings
      */
     function loadStrings($strings) {
         // Load some commonly used strings

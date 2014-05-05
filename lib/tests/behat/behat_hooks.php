@@ -78,11 +78,11 @@ class behat_hooks extends behat_base {
     protected static $currentstepexception = null;
 
     /**
-     * If we are saving screenshots on failures we should use the same parent dir during a run.
+     * If we are saving any kind of dump on failure we should use the same parent dir during a run.
      *
      * @var The parent dir name
      */
-    protected static $screenshotsdirname = false;
+    protected static $faildumpdirname = false;
 
     /**
      * Gives access to moodle codebase, ensures all is ready and sets up the test lock.
@@ -110,6 +110,7 @@ class behat_hooks extends behat_base {
         // Now that we are MOODLE_INTERNAL.
         require_once(__DIR__ . '/../../behat/classes/behat_command.php');
         require_once(__DIR__ . '/../../behat/classes/behat_selectors.php');
+        require_once(__DIR__ . '/../../behat/classes/behat_context_helper.php');
         require_once(__DIR__ . '/../../behat/classes/util.php');
         require_once(__DIR__ . '/../../testing/classes/test_lock.php');
         require_once(__DIR__ . '/../../testing/classes/nasty_strings.php');
@@ -142,8 +143,8 @@ class behat_hooks extends behat_base {
             self::$lastbrowsersessionstart = time();
         }
 
-        if (!empty($CFG->behat_screenshots_path) && !is_writable($CFG->behat_screenshots_path)) {
-            throw new Exception('You set $CFG->behat_screenshots_path to a non-writable directory');
+        if (!empty($CFG->behat_faildump_path) && !is_writable($CFG->behat_faildump_path)) {
+            throw new Exception('You set $CFG->behat_faildump_path to a non-writable directory');
         }
     }
 
@@ -184,6 +185,7 @@ class behat_hooks extends behat_base {
         // We need the Mink session to do it and we do it only before the first scenario.
         if (self::is_first_scenario()) {
             behat_selectors::register_moodle_selectors($session);
+            behat_context_helper::set_session($session);
         }
 
         // Reset $SESSION.
@@ -194,7 +196,6 @@ class behat_hooks extends behat_base {
         behat_util::reset_database();
         behat_util::reset_dataroot();
 
-        purge_all_caches();
         accesslib_clear_all_caches(true);
 
         // Reset the nasty strings list used during the last test.
@@ -230,7 +231,8 @@ class behat_hooks extends behat_base {
 
             self::$initprocessesfinished = true;
         }
-
+        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
+        $this->resize_window('medium');
     }
 
     /**
@@ -272,7 +274,7 @@ class behat_hooks extends behat_base {
         global $CFG;
 
         // Save a screenshot if the step failed.
-        if (!empty($CFG->behat_screenshots_path) &&
+        if (!empty($CFG->behat_faildump_path) &&
                 $event->getResult() === StepEvent::FAILED) {
             $this->take_screenshot($event);
         }
@@ -297,12 +299,29 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Getter for self::$screenshotsdirname
+     * Execute any steps required after the step has finished.
+     *
+     * This includes creating an HTML dump of the content if there was a failure.
+     *
+     * @AfterStep
+     */
+    public function after_step($event) {
+        global $CFG;
+
+        // Save the page content if the step failed.
+        if (!empty($CFG->behat_faildump_path) &&
+                $event->getResult() === StepEvent::FAILED) {
+            $this->take_contentdump($event);
+        }
+    }
+
+    /**
+     * Getter for self::$faildumpdirname
      *
      * @return string
      */
-    protected function get_run_screenshots_dir() {
-        return self::$screenshotsdirname;
+    protected function get_run_faildump_dir() {
+        return self::$faildumpdirname;
     }
 
     /**
@@ -312,34 +331,65 @@ class behat_hooks extends behat_base {
      * @param StepEvent $event
      */
     protected function take_screenshot(StepEvent $event) {
-        global $CFG;
-
         // Goutte can't save screenshots.
         if (!$this->running_javascript()) {
             return false;
         }
 
-        // All the run screenshots in the same parent dir.
-        if (!$screenshotsdirname = self::get_run_screenshots_dir()) {
-            $screenshotsdirname = self::$screenshotsdirname = date('Ymd_Hi');
+        list ($dir, $filename) = $this->get_faildump_filename($event, 'png');
+        $this->saveScreenshot($filename, $dir);
+    }
 
-            $dir = $CFG->behat_screenshots_path . DIRECTORY_SEPARATOR . $screenshotsdirname;
+    /**
+     * Take a dump of the page content when a step fails.
+     *
+     * @throws Exception
+     * @param StepEvent $event
+     */
+    protected function take_contentdump(StepEvent $event) {
+        list ($dir, $filename) = $this->get_faildump_filename($event, 'html');
 
-            if (!mkdir($dir, $CFG->directorypermissions, true)) {
+        $fh = fopen($dir . DIRECTORY_SEPARATOR . $filename, 'w');
+        fwrite($fh, $this->getSession()->getPage()->getContent());
+        fclose($fh);
+    }
+
+    /**
+     * Determine the full pathname to store a failure-related dump.
+     *
+     * This is used for content such as the DOM, and screenshots.
+     *
+     * @param StepEvent $event
+     * @param String $filetype The file suffix to use. Limited to 4 chars.
+     */
+    protected function get_faildump_filename(StepEvent $event, $filetype) {
+        global $CFG;
+
+        // All the contentdumps should be in the same parent dir.
+        if (!$faildumpdir = self::get_run_faildump_dir()) {
+            $faildumpdir = self::$faildumpdirname = date('Ymd_His');
+
+            $dir = $CFG->behat_faildump_path . DIRECTORY_SEPARATOR . $faildumpdir;
+
+            if (!is_dir($dir) && !mkdir($dir, $CFG->directorypermissions, true)) {
                 // It shouldn't, we already checked that the directory is writable.
-                throw new Exception('No directories can be created inside $CFG->behat_screenshots_path, check the directory permissions.');
+                throw new Exception('No directories can be created inside $CFG->behat_faildump_path, check the directory permissions.');
             }
         } else {
             // We will always need to know the full path.
-            $dir = $CFG->behat_screenshots_path . DIRECTORY_SEPARATOR . $screenshotsdirname;
+            $dir = $CFG->behat_faildump_path . DIRECTORY_SEPARATOR . $faildumpdir;
         }
 
         // The scenario title + the failed step text.
-        // We want a i-am-the-scenario-title_i-am-the-failed-step.png format.
+        // We want a i-am-the-scenario-title_i-am-the-failed-step.$filetype format.
         $filename = $event->getStep()->getParent()->getTitle() . '_' . $event->getStep()->getText();
-        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename) . '.png';
+        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename);
 
-        $this->saveScreenshot($filename, $dir);
+        // File name limited to 255 characters. Leaving 4 chars for the file
+        // extension as we allow .png for images and .html for DOM contents.
+        $filename = substr($filename, 0, 250) . '.' . $filetype;
+
+        return array($dir, $filename);
     }
 
     /**
@@ -429,7 +479,11 @@ class behat_hooks extends behat_base {
             if ($errormsg = $this->getSession()->getPage()->find('xpath', $exceptionsxpath)) {
 
                 // Getting the debugging info and the backtrace.
-                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
+                // If errorinfoboxes is empty, try find notifytiny (original) class.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                }
                 $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
                     $this->get_debug_text($errorinfoboxes[1]->getHtml());
 
@@ -513,3 +567,4 @@ class behat_hooks extends behat_base {
     }
 
 }
+

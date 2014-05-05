@@ -45,7 +45,8 @@ $string['dmlexceptiononinstall'] = '<p>Si è verificato un errore nel database: 
 $string['downloadedfilecheckfailed'] = 'Il controllo del file scaricato non è andato a buon fine.';
 $string['invalidmd5'] = 'La variabile di controllo era errata - prova di nuovo';
 $string['missingrequiredfield'] = 'Mancano alcuni campi richiesti';
-$string['remotedownloaderror'] = 'Lo scaricamento delle componenti non è andato a buon fine. Verificare le impostazioni del proxy. L\'estensione PHP cURL è fortemente consigliata.<br /><br />Devi scaricare manualmente il file <a href="{$a->url}">{$a->url}</a>, copiarlo in "{$a->dest}" e decomprimerlo.';
+$string['remotedownloaderror'] = '<p>Lo scaricamento delle componenti non è andato a buon fine. Verificare le impostazioni del proxy. L\'estensione PHP cURL è fortemente consigliata.</p>
+<p>Devi scaricare manualmente il file <a href="{$a->url}">{$a->url}</a>, copiarlo in "{$a->dest}" e decomprimerlo.</p>';
 $string['wrongdestpath'] = 'Percorso di destinazione errato';
 $string['wrongsourcebase'] = 'Indirizzo (URL) sorgente errato.';
 $string['wrongzipfilename'] = 'Il nome del file ZIP è errato.';

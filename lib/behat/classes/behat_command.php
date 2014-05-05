@@ -114,8 +114,7 @@ class behat_command {
     /**
      * Checks if behat is set up and working
      *
-     * Uses notice() instead of behat_error() because is
-     * also called from web interface
+     * Notifies failures both from CLI and web interface.
      *
      * It checks behat dependencies have been installed and runs
      * the behat help command to ensure it works as expected
@@ -125,24 +124,11 @@ class behat_command {
     public static function behat_setup_problem() {
         global $CFG;
 
-        $clibehaterrorstr = "Behat dependencies not installed. Ensure you ran the composer installer. " . self::DOCS_URL . "#Installation\n";
-
         // Moodle setting.
         if (!self::are_behat_dependencies_installed()) {
 
-
-            // With HTML.
-            if (!CLI_SCRIPT) {
-
-                $msg = get_string('wrongbehatsetup', 'tool_behat');
-                $docslink = self::DOCS_URL . '#Installation';
-                $docslink = html_writer::tag('a', $docslink, array('href' => $docslink, 'target' => '_blank'));
-                $msg .= get_string('moreinfoin', 'tool_behat', $docslink);
-            } else {
-                $msg = $clibehaterrorstr;
-            }
-
-            self::output_msg($msg);
+            // Returning composer error code to avoid conflicts with behat and moodle error codes.
+            self::output_msg(get_string('errorcomposer', 'tool_behat'));
             return BEHAT_EXITCODE_COMPOSER;
         }
 
@@ -150,14 +136,32 @@ class behat_command {
         list($output, $code) = self::run(' --help');
 
         if ($code != 0) {
+
             // Returning composer error code to avoid conflicts with behat and moodle error codes.
-            if (!CLI_SCRIPT) {
-                $msg = get_string('wrongbehatsetup', 'tool_behat');
-            } else {
-                $msg = $clibehaterrorstr;
-            }
-            self::output_msg($msg);
+            self::output_msg(get_string('errorbehatcommand', 'tool_behat', self::get_behat_command()));
             return BEHAT_EXITCODE_COMPOSER;
+        }
+
+        // No empty values.
+        if (empty($CFG->behat_dataroot) || empty($CFG->behat_prefix) || empty($CFG->behat_wwwroot)) {
+            self::output_msg(get_string('errorsetconfig', 'tool_behat'));
+            return BEHAT_EXITCODE_CONFIG;
+
+        }
+
+        // Not repeated values.
+        // We only need to check this when the behat site is not running as
+        // at this point, when it is running, all $CFG->behat_* vars have
+        // already been copied to $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.
+        if (!defined('BEHAT_SITE_RUNNING') &&
+                ($CFG->behat_prefix == $CFG->prefix ||
+                $CFG->behat_dataroot == $CFG->dataroot ||
+                $CFG->behat_wwwroot == $CFG->wwwroot ||
+                (!empty($CFG->phpunit_prefix) && $CFG->phpunit_prefix == $CFG->behat_prefix) ||
+                (!empty($CFG->phpunit_dataroot) && $CFG->phpunit_dataroot == $CFG->behat_dataroot)
+                )) {
+            self::output_msg(get_string('erroruniqueconfig', 'tool_behat'));
+            return BEHAT_EXITCODE_CONFIG;
         }
 
         // Checking behat dataroot existence otherwise echo about admin/tool/behat/cli/init.php.
@@ -165,7 +169,7 @@ class behat_command {
             $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
         }
         if (empty($CFG->behat_dataroot) || !is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
-            self::output_msg(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/init.php'));
+            self::output_msg(get_string('errordataroot', 'tool_behat'));
             return BEHAT_EXITCODE_CONFIG;
         }
 
@@ -193,13 +197,25 @@ class behat_command {
      * @return void
      */
     protected static function output_msg($msg) {
+        global $CFG, $PAGE;
 
+        // If we are using the web interface we want pretty messages.
         if (!CLI_SCRIPT) {
-            // General info about the tool purpose.
-            $msg = get_string('aim', 'tool_behat') . '<br /><br />' . $msg;
-            notice($msg);
+
+            $renderer = $PAGE->get_renderer('tool_behat');
+            echo $renderer->render_error($msg);
+
+            // Stopping execution.
+            exit(1);
+
         } else {
-            echo $msg;
+
+            // We continue execution after this.
+            $clibehaterrorstr = "Ensure you set \$CFG->behat_* vars in config.php " .
+                "and you ran admin/tool/behat/cli/init.php.\n" .
+                "More info in " . self::DOCS_URL . "#Installation\n\n";
+
+            echo 'Error: ' . $msg . "\n\n" . $clibehaterrorstr;
         }
     }
 

@@ -130,38 +130,132 @@ class core_authlib_testcase extends advanced_testcase {
 
         $_SERVER['HTTP_USER_AGENT'] = 'no browser'; // Hack around missing user agent in CLI scripts.
 
-        $user1 = $this->getDataGenerator()->create_user(array('username'=>'username1', 'password'=>'password1'));
-        $user2 = $this->getDataGenerator()->create_user(array('username'=>'username2', 'password'=>'password2', 'suspended'=>1));
-        $user3 = $this->getDataGenerator()->create_user(array('username'=>'username3', 'password'=>'password3', 'auth'=>'nologin'));
+        $user1 = $this->getDataGenerator()->create_user(array('username'=>'username1', 'password'=>'password1', 'email'=>'email1@example.com'));
+        $user2 = $this->getDataGenerator()->create_user(array('username'=>'username2', 'password'=>'password2', 'email'=>'email2@example.com', 'suspended'=>1));
+        $user3 = $this->getDataGenerator()->create_user(array('username'=>'username3', 'password'=>'password3', 'email'=>'email2@example.com', 'auth'=>'nologin'));
 
+        // Normal login.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username1', 'password1');
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals($user1->id, $result->id);
+
+        // Normal login with reason.
+        $reason = null;
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals(AUTH_LOGIN_OK, $reason);
+
+        // Test login via email
+        $reason = null;
+        $this->assertEmpty($CFG->authloginviaemail);
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('email1@example.com', 'password1', false, $reason);
+        $sink->close();
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_NOUSER, $reason);
+
+        set_config('authloginviaemail', 1);
+        $this->assertNotEmpty($CFG->authloginviaemail);
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('email1@example.com', 'password1');
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals($user1->id, $result->id);
 
         $reason = null;
-        $result = authenticate_user_login('username1', 'password1', false, $reason);
-        $this->assertInstanceOf('stdClass', $result);
-        $this->assertEquals(AUTH_LOGIN_OK, $reason);
-
-        $reason = null;
-        $result = authenticate_user_login('username1', 'nopass', false, $reason);
-        $this->assertFalse($result);
-        $this->assertEquals(AUTH_LOGIN_FAILED, $reason);
-
-        $reason = null;
-        $result = authenticate_user_login('username2', 'password2', false, $reason);
-        $this->assertFalse($result);
-        $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
-
-        $reason = null;
-        $result = authenticate_user_login('username3', 'password3', false, $reason);
-        $this->assertFalse($result);
-        $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
-
-        $reason = null;
-        $result = authenticate_user_login('username4', 'password3', false, $reason);
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('email2@example.com', 'password2', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
         $this->assertFalse($result);
         $this->assertEquals(AUTH_LOGIN_NOUSER, $reason);
+        set_config('authloginviaemail', 0);
+
+        $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'nopass', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_FAILED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username1');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username1');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED);
+        $this->assertEventContextNotUsed($event);
+
+        $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username2', 'password2', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username2');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username2');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_SUSPENDED);
+        $this->assertEventContextNotUsed($event);
+
+        $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username3', 'password3', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username3');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username3');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_SUSPENDED);
+        $this->assertEventContextNotUsed($event);
+
+        $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username4', 'password3', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_NOUSER, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username4');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username4');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_NOUSER);
+        $this->assertEventContextNotUsed($event);
 
         set_config('lockoutthreshold', 3);
 
@@ -197,13 +291,5 @@ class core_authlib_testcase extends advanced_testcase {
         } catch(Exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
-
-        try {
-            $event = \core\event\user_loggedin::create(array('other' => array('username' => 'test')));
-            $this->fail('\core\event\user_loggedin requires objectid');
-        } catch(Exception $e) {
-            $this->assertInstanceOf('coding_exception', $e);
-        }
     }
-
 }

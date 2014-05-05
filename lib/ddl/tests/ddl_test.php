@@ -1655,7 +1655,8 @@ class core_ddl_testcase extends database_driver_testcase {
         $DB->delete_records('testtable', array()); // This delete performs one DELETE.
 
         $dbman->reset_sequence($table); // Using xmldb object.
-        $this->assertEquals(1, $DB->insert_record('testtable', (object)array('course'=>13)));
+        $this->assertEquals(1, $DB->insert_record('testtable', (object)array('course'=>13)),
+            'Some versions of MySQL 5.6.x are known to not support lowering of auto-increment numbers.');
 
         $DB->import_record('testtable', $record);
         $dbman->reset_sequence($tablename); // Using string.

@@ -82,8 +82,11 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             $DB = phpunit_util::get_global_backup('DB');
 
             // Deal with any debugging messages.
-            phpunit_util::display_debugging_messages();
+            $debugerror = phpunit_util::display_debugging_messages();
             phpunit_util::reset_debugging();
+            if ($debugerror) {
+                trigger_error('Unenxpected debugging() call detected.', E_USER_NOTICE);
+            }
 
         } catch (Exception $e) {
             // cleanup after failed expectation
@@ -341,6 +344,34 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             $message = 'Event legacy log data does not match expected value.';
         }
         $this->assertEquals($expected, $legacydata, $message);
+    }
+
+    /**
+     * Assert that an event is not using event->contxet.
+     * While restoring context might not be valid and it should not be used by event url
+     * or description methods.
+     *
+     * @param \core\event\base $event the event object.
+     * @param string $message
+     * @return void
+     */
+    public function assertEventContextNotUsed(\core\event\base $event, $message = '') {
+        // Save current event->context and set it to false.
+        $eventcontext = phpunit_event_mock::testable_get_event_context($event);
+        phpunit_event_mock::testable_set_event_context($event, false);
+        if ($message === '') {
+            $message = 'Event should not use context property of event in any method.';
+        }
+
+        // Test event methods should not use event->context.
+        $event->get_url();
+        $event->get_description();
+        $event->get_legacy_eventname();
+        phpunit_event_mock::testable_get_legacy_eventdata($event);
+        phpunit_event_mock::testable_get_legacy_logdata($event);
+
+        // Restore event->context.
+        phpunit_event_mock::testable_set_event_context($event, $eventcontext);
     }
 
     /**

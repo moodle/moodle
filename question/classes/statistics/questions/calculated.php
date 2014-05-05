@@ -45,9 +45,21 @@ class calculated {
     public $slot = null;
 
     /**
+     * @var null|integer if this property is not null then this is the stats for a variant of a question or when inherited by
+     *                   calculated_for_subquestion and not null then this is the stats for a variant of a sub question.
+     */
+    public $variant = null;
+
+    /**
      * @var bool is this a sub question.
      */
     public $subquestion = false;
+
+    /**
+     * @var string if this stat has been picked as a min, median or maximum facility value then this string says which stat this
+     *                  is. Prepended to question name for display.
+     */
+    public $minmedianmaxnotice = '';
 
     /**
      * @var int total attempts at this question.
@@ -102,13 +114,18 @@ class calculated {
     // End of fields in db.
 
     protected $fieldsindb = array('questionid', 'slot', 'subquestion', 's', 'effectiveweight', 'negcovar', 'discriminationindex',
-        'discriminativeefficiency', 'sd', 'facility', 'subquestions', 'maxmark', 'positions', 'randomguessscore');
+        'discriminativeefficiency', 'sd', 'facility', 'subquestions', 'maxmark', 'positions', 'randomguessscore', 'variant');
 
     // Fields used for intermediate calculations.
 
     public $totalmarks = 0;
 
     public $totalothermarks = 0;
+
+    /**
+     * @var float The total of marks achieved for all positions in all attempts where this item was seen.
+     */
+    public $totalsummarks = 0;
 
     public $markvariancesum = 0;
 
@@ -130,6 +147,11 @@ class calculated {
 
     public $othermarkaverage;
 
+    /**
+     * @var float The average for all attempts, of the sum of the marks for all positions in which this item appeared.
+     */
+    public $summarksaverage;
+
     public $markvariance;
     public $othermarkvariance;
     public $covariance;
@@ -142,11 +164,56 @@ class calculated {
     public $question;
 
     /**
+     * An array of calculated stats for each variant of the question. Even when there is just one variant we still calculate this
+     * data as there is no way to know if there are variants before we have finished going through the attempt data one time.
+     *
+     * @var calculated[] $variants
+     */
+    public $variantstats = array();
+
+    /**
      * Set if this record has been retrieved from cache. This is the time that the statistics were calculated.
      *
      * @var integer
      */
     public $timemodified;
+
+    /**
+     * Set up a calculated instance ready to store a question's (or a variant of a slot's question's)
+     * stats for one slot in the quiz.
+     *
+     * @param null|object     $question
+     * @param null|int     $slot
+     * @param null|int $variant
+     */
+    public function __construct($question = null, $slot = null, $variant = null) {
+        if ($question !== null) {
+            $this->questionid = $question->id;
+            $this->maxmark = $question->maxmark;
+            $this->positions = $question->number;
+            $this->question = $question;
+        }
+        if ($slot !== null) {
+            $this->slot = $slot;
+        }
+        if ($variant !== null) {
+            $this->variant = $variant;
+        }
+    }
+
+    /**
+     * Used to determine which random questions pull sub questions from the same pools. Where pool means category and possibly
+     * all the sub categories of that category.
+     *
+     * @return null|string represents the pool of questions from which this question draws if it is random, or null if not.
+     */
+    public function random_selector_string() {
+        if ($this->question->qtype == 'random') {
+            return $this->question->category .'/'. $this->question->questiontext;
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Cache calculated stats stored in this object in 'question_statistics' table.
@@ -162,9 +229,17 @@ class calculated {
             $toinsert->{$field} = $this->{$field};
         }
         $DB->insert_record('question_statistics', $toinsert, false);
+
+        if ($this->get_variants()) {
+            foreach ($this->variantstats as $variantstat) {
+                $variantstat->cache($qubaids);
+            }
+        }
     }
 
     /**
+     * Load properties of this class from db record.
+     *
      * @param object $record Given a record from 'question_statistics' copy stats from record to properties.
      */
     public function populate_from_record($record) {
@@ -174,4 +249,55 @@ class calculated {
         $this->timemodified = $record->timemodified;
     }
 
+    /**
+     * Sort the variants of this question by variant number.
+     */
+    public function sort_variants() {
+        ksort($this->variantstats);
+    }
+
+    /**
+     * Get any sub question ids for this question.
+     *
+     * @return int[] array of sub-question ids or empty array if there are none.
+     */
+    public function get_sub_question_ids() {
+        if ($this->subquestions !== '') {
+            return explode(',', $this->subquestions);
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Array of variants that have appeared in the attempt data for this question. Or an empty array if there is only one variant.
+     *
+     * @return int[] the variant nos.
+     */
+    public function get_variants() {
+        $variants = array_keys($this->variantstats);
+        if (count($variants) > 1 || reset($variants) != 1) {
+            return $variants;
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Do we break down the stats for this question by variant or not?
+     *
+     * @return bool Do we?
+     */
+    public function break_down_by_variant() {
+        $qtype = \question_bank::get_qtype($this->question->qtype);
+        return $qtype->break_down_stats_and_response_analysis_by_variant($this->question);
+    }
+
+
+    /**
+     * Delete the data structure for storing variant stats.
+     */
+    public function clear_variants() {
+        $this->variantstats = array();
+    }
 }

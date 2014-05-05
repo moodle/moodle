@@ -1,3 +1,5 @@
+About bootstrap in Moodle
+-------------------------
 If you want to make changes to the .css generated from these .less files then you
 need to use a LESS Compiler. Details on specific compilers and how to install them
 can be found at http://docs.moodle.org/dev/LESS
@@ -10,20 +12,22 @@ the following commands from the "theme/bootstrapbase/less" directory:
 
 For the main Moodle styles:
 
-recess --compile --compress moodle.less > ../style/moodle.css
+    recess --compile --compress moodle.less > ../style/moodle.css
 
 And for the subset of styles of interest to the TinyMCE editor:
 
-recess --compile --compress editor.less >  ../style/editor.css
+    recess --compile --compress editor.less >  ../style/editor.css
 
 You can add --watch to make sure it updates every time you make a change.
 
 If the compilation is failing and you're not getting any useful error message, try using lessc instead i.e.:
 
-lessc moodle.less
+    lessc moodle.less
 
 This is the same tool that's getting called by recess, but the errors seems better if you go direct.
 
+More information
+----------------
 Additional information about the Moodle bootstrap base theme can be found at
 http://docs.moodle.org/dev/Bootstrap
 

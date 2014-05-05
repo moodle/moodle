@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_choice answer updated event.
+ * The mod_choice answer updated event.
  *
  * @package    mod_choice
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -27,16 +27,17 @@ namespace mod_choice\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_choice answer updated event class.
+ * The mod_choice answer updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int choiceid id of choice.
- *      @type int optionid id of option
+ *      - int choiceid: id of choice.
+ *      - int optionid: id of option.
  * }
  *
  * @package    mod_choice
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,7 +49,8 @@ class answer_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has updated their choice {$this->objectid} in {$this->other['choiceid']}.";
+        return "The user with the id '$this->userid' updated their choice with the id '$this->objectid' in the choice activity
+            with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -60,9 +62,9 @@ class answer_updated extends \core\event\base {
         $legacylogdata = array($this->courseid,
             'choice',
             'choose again',
-            'view.php?id=' . $this->context->instanceid,
+            'view.php?id=' . $this->contextinstanceid,
             $this->other['choiceid'],
-            $this->context->instanceid);
+            $this->contextinstanceid);
 
         return $legacylogdata;
     }
@@ -73,7 +75,7 @@ class answer_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_answer_updated', 'mod_choice');
+        return get_string('eventanswerupdated', 'mod_choice');
     }
 
     /**
@@ -82,7 +84,7 @@ class answer_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/choice/view.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/choice/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -92,7 +94,7 @@ class answer_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'choice_answers';
     }
 
@@ -103,8 +105,10 @@ class answer_updated extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
+
         if (!isset($this->other['choiceid'])) {
-            throw new \coding_exception('choiceid must be set in $other.');
+            throw new \coding_exception('The \'choiceid\' value must be set in other.');
         }
     }
 }

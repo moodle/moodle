@@ -76,11 +76,11 @@ class enrol_self_edit_form extends moodleform {
         $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
         $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
 
-        $mform->addElement('date_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_self'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_self'), array('optional' => true));
         $mform->setDefault('enrolstartdate', 0);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_self');
 
-        $mform->addElement('date_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_self'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_self'), array('optional' => true));
         $mform->setDefault('enrolenddate', 0);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_self');
 

@@ -250,13 +250,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
                 tag_type_set($tagid, $tagtype);
 
                 //tag_instance entry
-                tag_assign('course', $courseid, $tagid, $ordering, $userid);
-
-                //logging - note only for user added tags
-                if ($tagtype == 'default' and $myurl != '') {
-                    $url = $myurl.'?query='.urlencode($tag);
-                    add_to_log($courseid, 'coursetags', 'add', $url, 'Course tagged');
-                }
+                tag_assign('course', $courseid, $tagid, $ordering, $userid, 'core', context_course::instance($courseid)->id);
             }
         }
     }
@@ -273,32 +267,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
  * @param    int      $courseid the course that the tag is associated with
  */
 function coursetag_delete_keyword($tagid, $userid, $courseid) {
-
-    global $CFG, $DB;
-
-    $sql = "SELECT COUNT(*)
-        FROM {tag_instance}
-        WHERE tagid = $tagid
-        AND tiuserid = $userid
-        AND itemtype = 'course'
-        AND itemid = $courseid";
-    if ($DB->count_records_sql($sql) == 1) {
-        $sql = "tagid = $tagid
-            AND tiuserid = $userid
-            AND itemtype = 'course'
-            AND itemid = $courseid";
-        $DB->delete_records_select('tag_instance', $sql);
-        // if there are no other instances of the tag then consider deleting the tag as well
-        if (!$DB->record_exists('tag_instance', array('tagid' => $tagid))) {
-            // if the tag is a personal tag then delete it - don't do official tags
-            if ($DB->record_exists('tag', array('id' => $tagid, 'tagtype' => 'default'))) {
-                $DB->delete_records('tag', array('id' => $tagid, 'tagtype' => 'default'));
-            }
-        }
-    } else {
-        print_error("errordeleting", 'tag', '', $tagid);
-    }
-
+    tag_delete_instance('course', $courseid, $tagid, $userid);
 }
 
 /**
@@ -346,18 +315,10 @@ function coursetag_get_tagged_courses($tagid) {
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
     global $DB, $OUTPUT;
 
-    if ($tags = $DB->get_records_select('tag_instance', "itemtype='course' AND itemid=:courseid", array('courseid'=>$courseid))) {
-        foreach ($tags as $tag) {
-            //delete the course tag instance record
-            $DB->delete_records('tag_instance', array('tagid'=>$tag->tagid, 'itemtype'=>'course', 'itemid'=> $courseid));
-            // delete tag if there are no other tag_instance entries now
-            if (!($DB->record_exists('tag_instance', array('tagid'=>$tag->tagid)))) {
-                $DB->delete_records('tag', array('id'=>$tag->tagid));
-                // Delete files
-                $fs = get_file_storage();
-                $fs->delete_area_files(context_system::instance()->id, 'tag', 'description', $tag->tagid);
-            }
-        }
+    if ($taginstances = $DB->get_fieldset_select('tag_instance', 'tagid', "itemtype = 'course' AND itemid = :courseid",
+        array('courseid' => $courseid))) {
+
+        tag_delete(array_values($taginstances));
     }
 
     if ($showfeedback) {

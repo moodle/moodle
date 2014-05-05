@@ -268,10 +268,8 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $sink->close();
 
         // Check that the event is valid.
-        $this->assertCount(2, $events);
-        $event = $events[0];
-        $this->assertInstanceOf('\core\event\user_updated', $event);
-        $event = $events[1];
+        $this->assertCount(1, $events);
+        $event = reset($events);
         $this->assertInstanceOf('\core\event\user_loggedin', $event);
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals('2', $event->objectid);

@@ -56,7 +56,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '28,19,0',
             'sumgrades' => '14.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -83,7 +82,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'timemodified' => '1306425746',
             'layout' => '28,19,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '28',
@@ -261,7 +259,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '28,19,0',
             'sumgrades' => '14.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -288,7 +285,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'timemodified' => '1306425762',
             'layout' => '28,19,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '28',
@@ -445,7 +441,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '28,19,0',
             'sumgrades' => '14.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -472,7 +467,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'timemodified' => '1306425931',
             'layout' => '28,19,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '28',
@@ -671,7 +665,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '28,19,0',
             'sumgrades' => '14.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -698,7 +691,6 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'timemodified' => '1306425746',
             'layout' => '28,19,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '19',
@@ -1358,7 +1350,6 @@ b) What grade would you give it? _____',
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '28,19,0',
             'sumgrades' => '14.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -1385,7 +1376,6 @@ b) What grade would you give it? _____',
             'timemodified' => '1306425762',
             'layout' => '28,19,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '19',
@@ -2017,7 +2007,6 @@ b) What grade would you give it? _____',
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '28,19,0',
             'sumgrades' => '14.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -2044,7 +2033,6 @@ b) What grade would you give it? _____',
             'timemodified' => '1306425931',
             'layout' => '28,19,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '19',

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core webservice service updated event.
+ * Web service service updated event.
  *
  * @package    core
  * @copyright  2013 Frédéric Massart
@@ -26,13 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core webservice service updated event class.
+ * Web service service updated event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_service_updated extends \core\event\base {
+class webservice_service_updated extends base {
 
     /**
      * Returns description of what happened.
@@ -61,7 +62,7 @@ class webservice_service_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_service_updated', 'webservice');
+        return get_string('eventwebserviceserviceupdated', 'webservice');
     }
 
     /**
@@ -70,7 +71,7 @@ class webservice_service_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/settings.php', array('section' => 'externalservices'));
+        return new \moodle_url('/admin/webservice/service.php', array('id' => $this->objectid));
     }
 
     /**
@@ -81,7 +82,7 @@ class webservice_service_updated extends \core\event\base {
     protected function init() {
         $this->context = \context_system::instance();
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
 

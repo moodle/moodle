@@ -17,15 +17,14 @@
 /**
  * Resource module version information
  *
- * @package    mod
- * @subpackage resource
+ * @package    mod_resource
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013110500;       // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2013110500;    // Requires this Moodle version
-$module->component = 'mod_resource'; // Full name of the plugin (used for diagnostics)
-$module->cron      = 0;
+$plugin->version   = 2013110500;       // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2013110500;    // Requires this Moodle version
+$plugin->component = 'mod_resource'; // Full name of the plugin (used for diagnostics)
+$plugin->cron      = 0;

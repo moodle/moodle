@@ -92,7 +92,7 @@ if ($data = $form->get_data()) {
     }
 }
 
-add_to_log(SITEID, "admin", "tool capability", "tool/capability/index.php", count($capabilities));
+\tool_capability\event\report_viewed::create()->trigger();
 
 $renderer = $PAGE->get_renderer('tool_capability');
 

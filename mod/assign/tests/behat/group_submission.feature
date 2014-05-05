@@ -6,24 +6,24 @@ Feature: Group assignment submissions
 
   @javascript
   Scenario: Switch between group modes
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student0 | Student | 0 | student0@asd.com |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
       | student3 | Student | 3 | student3@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student0 | C1 | student |
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
-    And the following "groups" exists:
+    And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
     And I log in as "teacher1"
@@ -36,16 +36,16 @@ Feature: Group assignment submissions
       | Group mode | No groups |
     And I follow "Test assignment name"
     When I follow "View/grade all submissions"
-    Then "//tr[contains(., 'Student 0')][contains(., 'Default group')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 1')][contains(., 'Default group')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exists
+    Then "//tr[contains(., 'Student 0')][contains(., 'Default group')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 1')][contains(., 'Default group')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exist
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and return to course"
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save changes"
     And I expand "Users" node
@@ -55,11 +55,11 @@ Feature: Group assignment submissions
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
-    And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exists
+    And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exist
     And I should not see "Student 2"
-    And I select "All participants" from "Separate groups"
-    And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exists
-    And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exists
+    And I set the field "Separate groups" to "All participants"
+    And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exist
+    And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exist

@@ -174,6 +174,8 @@ class core_bloglib_testcase extends advanced_testcase {
 
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_entry_created', $event);
+        $url = new moodle_url('/blog/index.php', array('entryid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
@@ -183,6 +185,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEquals("blog_entry_added", $event->get_legacy_eventname());
         $this->assertEventLegacyData($blog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -206,6 +209,8 @@ class core_bloglib_testcase extends advanced_testcase {
 
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_entry_updated', $event);
+        $url = new moodle_url('/blog/index.php', array('entryid' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
@@ -215,6 +220,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($blog, $event);
         $arr = array (SITEID, 'blog', 'update', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id, $blog->subject);
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -238,6 +244,7 @@ class core_bloglib_testcase extends advanced_testcase {
 
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_entry_deleted', $event);
+        $this->assertEquals(null, $event->get_url());
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
@@ -249,6 +256,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 $blog->id);
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventLegacyData($blog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 
@@ -275,6 +283,8 @@ class core_bloglib_testcase extends advanced_testcase {
         // Validate event data.
         $this->assertInstanceOf('\core\event\blog_association_created', $event);
         $this->assertEquals($sitecontext->id, $event->contextid);
+        $url = new moodle_url('/blog/index.php', array('entryid' => $event->other['blogid']));
+        $this->assertEquals($url, $event->get_url());
         $this->assertEquals($blog->id, $event->other['blogid']);
         $this->assertEquals($this->courseid, $event->other['associateid']);
         $this->assertEquals('course', $event->other['associatetype']);
@@ -301,6 +311,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
                      $blog->subject, $this->cmid, $this->userid);
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -317,7 +328,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 'objectid' => 3,
                 'other' => array('associateid' => 2 , 'blogid' => 3, 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid associatetype', $e->getMessage());
+            $this->assertContains('The \'associatetype\' value must be set in other and be a valid type.', $e->getMessage());
         }
         try {
             \core\event\blog_association_created::create(array(
@@ -325,7 +336,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 'objectid' => 3,
                 'other' => array('associateid' => 2 , 'blogid' => 3, 'associatetype' => 'random', 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid associatetype', $e->getMessage());
+            $this->assertContains('The \'associatetype\' value must be set in other and be a valid type.', $e->getMessage());
         }
         // Make sure associateid validations work.
         try {
@@ -334,7 +345,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 'objectid' => 3,
                 'other' => array('blogid' => 3, 'associatetype' => 'course', 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
-            $this->assertContains('Associate id must be set', $e->getMessage());
+            $this->assertContains('The \'associateid\' value must be set in other.', $e->getMessage());
         }
         // Make sure blogid validations work.
         try {
@@ -343,7 +354,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 'objectid' => 3,
                 'other' => array('associateid' => 3, 'associatetype' => 'course', 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
-            $this->assertContains('Blog id must be set', $e->getMessage());
+            $this->assertContains('The \'blogid\' value must be set in other.', $e->getMessage());
         }
         // Make sure blogid validations work.
         try {
@@ -352,7 +363,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 'objectid' => 3,
                 'other' => array('blogid' => 3, 'associateid' => 3, 'associatetype' => 'course')));
         } catch (coding_exception $e) {
-            $this->assertContains('Subject must be set', $e->getMessage());
+            $this->assertContains('The \'subject\' value must be set in other.', $e->getMessage());
         }
     }
 
@@ -381,6 +392,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
         $arr = array(SITEID, 'blog', 'view', $url2->out(), 'view blog entry');
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -416,6 +428,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($this->postid, $event->other['itemid']);
         $url = new moodle_url('/blog/index.php', array('entryid' => $this->postid));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -452,6 +465,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($this->postid, $event->other['itemid']);
         $url = new moodle_url('/blog/index.php', array('entryid' => $this->postid));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 }
 

@@ -77,7 +77,7 @@ Course.prototype = {
     /**
      * Returns the name of the course.
      * @method getName
-     * @returns {String}
+     * @return {String}
      */
     getName : function() {
         return this.get('node').one('a.coursename').get('innerHTML');
@@ -88,7 +88,7 @@ Course.prototype = {
      * @method handle
      * @param {String} action
      * @param {EventFacade} e
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     handle : function(action, e) {
         var managementconsole = this.get('console'),
@@ -161,7 +161,7 @@ Course.prototype = {
      * @param {Number} transactionid The transaction ID for the request.
      * @param {Object} response The response to the request.
      * @param {Objects} args The arguments that were given with the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     moveAfterResponse : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),

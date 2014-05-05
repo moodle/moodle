@@ -35,4 +35,5 @@ $string['checkingsourcetables'] = 'Checking source table structure';
 $string['importschemaexception'] = 'Current database structure does not match all install.xml files. <br /> {$a}';
 $string['importversionmismatchexception'] = 'Current version {$a->currentver} does not match exported version {$a->schemaver}.';
 $string['malformedxmlexception'] = 'Malformed XML found, can not continue.';
+$string['tablex'] = 'Table {$a}:';
 $string['unknowntableexception'] = 'Unknown table {$a} found in export file.';

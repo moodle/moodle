@@ -60,4 +60,16 @@ class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
 
         return $errors;
     }
+
+    protected function other_attempt_fields(MoodleQuickForm $mform) {
+        parent::other_attempt_fields($mform);
+        if (quiz_allows_multiple_tries($this->_customdata['quiz'])) {
+            $mform->addElement('select', 'whichtries', get_string('whichtries', 'question'), array(
+                                           question_attempt::FIRST_TRY    => get_string('firsttry', 'question'),
+                                           question_attempt::LAST_TRY     => get_string('lasttry', 'question'),
+                                           question_attempt::ALL_TRIES    => get_string('alltries', 'question'))
+            );
+            $mform->setDefault('whichtries', question_attempt::LAST_TRY);
+        }
+    }
 }

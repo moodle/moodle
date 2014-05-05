@@ -17,8 +17,7 @@
 /**
  * Upgrade script for the quiz module.
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  2006 Eloy Lafuente (stronk7)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -409,6 +408,366 @@ function xmldb_quiz_upgrade($oldversion) {
 
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2014011300) {
+
+        // Define key quiz (foreign) to be dropped form quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('quiz', XMLDB_KEY_FOREIGN, array('quiz'), 'quiz', array('id'));
+
+        // Launch drop key quiz.
+        $dbman->drop_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011300, 'quiz');
+    }
+
+    if ($oldversion < 2014011301) {
+
+        // Rename field quiz on table quiz_question_instances to quizid.
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('quiz', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
+
+        // Launch rename field quiz.
+        $dbman->rename_field($table, $field, 'quizid');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011301, 'quiz');
+    }
+
+    if ($oldversion < 2014011302) {
+
+        // Define key quizid (foreign) to be added to quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('quizid', XMLDB_KEY_FOREIGN, array('quizid'), 'quiz', array('id'));
+
+        // Launch add key quizid.
+        $dbman->add_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011302, 'quiz');
+    }
+
+    if ($oldversion < 2014011303) {
+
+        // Define key question (foreign) to be dropped form quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
+
+        // Launch drop key question.
+        $dbman->drop_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011303, 'quiz');
+    }
+
+    if ($oldversion < 2014011304) {
+
+        // Rename field question on table quiz_question_instances to questionid.
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'quiz');
+
+        // Launch rename field question.
+        $dbman->rename_field($table, $field, 'questionid');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011304, 'quiz');
+    }
+
+    if ($oldversion < 2014011305) {
+
+        // Define key questionid (foreign) to be added to quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('questionid', XMLDB_KEY_FOREIGN, array('questionid'), 'question', array('id'));
+
+        // Launch add key questionid.
+        $dbman->add_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011305, 'quiz');
+    }
+
+    if ($oldversion < 2014011306) {
+
+        // Rename field grade on table quiz_question_instances to maxmark.
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'question');
+
+        // Launch rename field grade.
+        $dbman->rename_field($table, $field, 'maxmark');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011306, 'quiz');
+    }
+
+    if ($oldversion < 2014021300) {
+
+        // Define field needsupgradetonewqe to be dropped from quiz_attempts.
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('needsupgradetonewqe');
+
+        // Conditionally launch drop field needsupgradetonewqe.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014021300, 'quiz');
+    }
+
+    if ($oldversion < 2014022000) {
+
+        // Define table quiz_question_instances to be renamed to quiz_slots.
+        $table = new xmldb_table('quiz_question_instances');
+
+        // Launch rename table for quiz_question_instances.
+        $dbman->rename_table($table, 'quiz_slots');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022000, 'quiz');
+    }
+
+    if ($oldversion < 2014022001) {
+
+        // Define field slot to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('slot', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'id');
+
+        // Conditionally launch add field slot.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022001, 'quiz');
+    }
+
+    if ($oldversion < 2014022002) {
+
+        // Define field page to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('page', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'quizid');
+
+        // Conditionally launch add field page.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022002, 'quiz');
+    }
+
+    if ($oldversion < 2014022003) {
+
+        // Use the information in the old quiz.questions column to fill in the
+        // new slot and page columns.
+        $numquizzes = $DB->count_records('quiz');
+        if ($numquizzes > 0) {
+            $pbar = new progress_bar('quizquestionstoslots', 500, true);
+            $transaction = $DB->start_delegated_transaction();
+
+            $numberdone = 0;
+            $quizzes = $DB->get_recordset('quiz', null, 'id', 'id,questions,sumgrades');
+            foreach ($quizzes as $quiz) {
+                if ($quiz->questions === '') {
+                    $questionsinorder = array();
+                } else {
+                    $questionsinorder = explode(',', $quiz->questions);
+                }
+
+                $questionidtoslotrowid = $DB->get_records_menu('quiz_slots',
+                        array('quizid' => $quiz->id), '', 'questionid, id');
+
+                $problemfound = false;
+                $currentpage = 1;
+                $slot = 1;
+                foreach ($questionsinorder as $questionid) {
+                    if ($questionid === '0') {
+                        // Page break.
+                        $currentpage++;
+                        continue;
+                    }
+
+                    if ($questionid === '') {
+                        // This can happen as the result of old restore bugs.
+                        // There can be a missing number in the list of ids.
+                        // All we can do about this is ignore it, which is what
+                        // the quiz system used to do. See MDL-45321.
+                        continue;
+                    }
+
+                    if (array_key_exists($questionid, $questionidtoslotrowid)) {
+                        // Normal case. quiz_slots entry is present.
+                        // Just need to add slot and page.
+                        $quizslot = new stdClass();
+                        $quizslot->id   = $questionidtoslotrowid[$questionid];
+                        $quizslot->slot = $slot;
+                        $quizslot->page = $currentpage;
+                        $DB->update_record('quiz_slots', $quizslot);
+
+                        unset($questionidtoslotrowid[$questionid]); // So we can do a sanity check later.
+                        $slot++;
+                        continue;
+
+                    } else {
+                        // This should not happen. The question was listed in
+                        // quiz.questions, but there was not an entry for it in
+                        // quiz_slots (formerly quiz_question_instances).
+                        // Previously, if such question ids were found, then
+                        // starting an attempt at the quiz would throw an exception.
+                        // Here, we try to add the missing data.
+                        $problemfound = true;
+                        $defaultmark = $DB->get_field('question', 'defaultmark',
+                                array('id' => $questionid), IGNORE_MISSING);
+                        if ($defaultmark === false) {
+                            debugging('During upgrade, detected that question ' .
+                                    $questionid . ' was listed as being part of quiz ' .
+                                    $quiz->id . ' but this question no longer exists. Ignoring it.', DEBUG_NORMAL);
+
+                            // Non-existent question. Ignore it completely.
+                            continue;
+                        }
+
+                        debugging('During upgrade, detected that question ' .
+                                $questionid . ' was listed as being part of quiz ' .
+                                $quiz->id . ' but there was not entry for it in ' .
+                                'quiz_question_instances/quiz_slots. Creating an entry with default mark.', DEBUG_NORMAL);
+                        $quizslot = new stdClass();
+                        $quizslot->quizid     = $quiz->id;
+                        $quizslot->slot       = $slot;
+                        $quizslot->page       = $currentpage;
+                        $quizslot->questionid = $questionid;
+                        $quizslot->maxmark    = $defaultmark;
+                        $DB->insert_record('quiz_slots', $quizslot);
+
+                        $slot++;
+                        continue;
+                    }
+
+                }
+
+                // Now, as a sanity check, ensure we have done all the
+                // quiz_slots rows linked to this quiz.
+                if (!empty($questionidtoslotrowid)) {
+                    debugging('During upgrade, detected that questions ' .
+                            implode(', ', array_keys($questionidtoslotrowid)) .
+                            ' had instances in quiz ' . $quiz->id . ' but were not actually used. ' .
+                            'The instances have been removed.', DEBUG_NORMAL);
+
+                    $DB->delete_records_list('quiz_slots', 'id', array_values($questionidtoslotrowid));
+                    $problemfound = true;
+                }
+
+                // If there were problems found, we probably need to re-compute
+                // quiz.sumgrades.
+                if ($problemfound) {
+                    // C/f the quiz_update_sumgrades function in locallib.php,
+                    // but note that what we do here is a bit simpler.
+                    $newsumgrades = $DB->get_field_sql(
+                            "SELECT SUM(maxmark)
+                               FROM {quiz_slots}
+                              WHERE quizid = ?",
+                            array($quiz->id));
+                    if (abs($newsumgrades - $quiz->sumgrades) > 0.000005) {
+                        debugging('Because of the previously mentioned problems, ' .
+                                'sumgrades for quiz ' . $quiz->id .
+                                ' was changed from ' . $quiz->sumgrades . ' to ' .
+                                $newsumgrades . ' You should probably check that this quiz is still working: ' .
+                                $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id . '.', DEBUG_NORMAL);
+                        $DB->set_field('quiz', 'sumgrades', $newsumgrades, array('id' => $quiz->id));
+                    }
+                }
+
+                // Done with this quiz. Update progress bar.
+                $numberdone++;
+                $pbar->update($numberdone, $numquizzes,
+                        "Upgrading quiz structure - {$numberdone}/{$numquizzes}.");
+            }
+
+            $transaction->allow_commit();
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022003, 'quiz');
+    }
+
+    if ($oldversion < 2014022004) {
+
+        // If, for any reason, there were any quiz_slots missed, then try
+        // to do something about that now before we add the NOT NULL constraints.
+        // In fact, becuase of the sanity check at the end of the above check,
+        // any such quiz_slots rows must refer to a non-existent quiz id, so
+        // delete them.
+        $DB->delete_records_select('quiz_slots',
+                'NOT EXISTS (SELECT 1 FROM {quiz} q WHERE q.id = quizid)');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022004, 'quiz');
+
+        // Now, if any quiz_slots rows are left with slot or page NULL, something
+        // is badly wrong.
+        if ($DB->record_exists_select('quiz_slots', 'slot IS NULL OR page IS NULL')) {
+            throw new coding_exception('Something went wrong in the quiz upgrade step for MDL-43749. ' .
+                    'Some quiz_slots still contain NULLs which will break the NOT NULL constraints we need to add. ' .
+                    'Please report this problem at http://tracker.moodle.org/ so that it can be investigated. Thank you.');
+        }
+    }
+
+    if ($oldversion < 2014022005) {
+
+        // Changing nullability of field slot on table quiz_slots to not null.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('slot', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch change of nullability for field slot.
+        $dbman->change_field_notnull($table, $field);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022005, 'quiz');
+    }
+
+    if ($oldversion < 2014022006) {
+
+        // Changing nullability of field page on table quiz_slots to not null.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('page', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'quizid');
+
+        // Launch change of nullability for field page.
+        $dbman->change_field_notnull($table, $field);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022006, 'quiz');
+    }
+
+    if ($oldversion < 2014022007) {
+
+        // Define index quizid-slot (unique) to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $index = new xmldb_index('quizid-slot', XMLDB_INDEX_UNIQUE, array('quizid', 'slot'));
+
+        // Conditionally launch add index quizid-slot.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022007, 'quiz');
+    }
+
+    if ($oldversion < 2014022008) {
+
+        // Define field questions to be dropped from quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('questions');
+
+        // Conditionally launch drop field questions.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014022008, 'quiz');
+    }
 
     return true;
 }

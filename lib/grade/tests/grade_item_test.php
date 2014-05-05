@@ -65,6 +65,7 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->sub_test_grade_item_compute();
         $this->sub_test_update_final_grade();
         $this->sub_test_grade_item_can_control_visibility();
+        $this->sub_test_grade_item_fix_sortorder();
     }
 
     protected function sub_test_grade_item_construct() {
@@ -629,5 +630,107 @@ class core_grade_item_testcase extends grade_base_testcase {
         // Grade item  == Course module 7 == Quiz.
         $grade_item = new grade_item($this->grade_items[11], false);
         $this->assertFalse($grade_item->can_control_visibility());
+    }
+
+    /**
+     * Test the {@link grade_item::fix_duplicate_sortorder() function with
+     * faked duplicate sortorder data.
+     */
+    public function sub_test_grade_item_fix_sortorder() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Each set is used for filling the db with fake data and will be representing the result of query:
+        // "SELECT sortorder from {grade_items} WHERE courseid=? ORDER BY id".
+        $testsets = array(
+            // Items that need no action.
+            array(1,2,3),
+            array(5,6,7),
+            array(7,6,1,3,2,5),
+            // Items with sortorder duplicates
+            array(1,2,2,3,3,4,5),
+            // Only one sortorder duplicate.
+            array(1,1),
+            array(3,3),
+            // Non-sequential sortorders with one or multiple duplicates.
+            array(3,3,7,5,6,6,9,10,8,3),
+            array(7,7,3),
+            array(3,4,5,3,5,4,7,1)
+        );
+        $origsequence = array();
+
+        // Generate the data and remember the initial sequence or items.
+        foreach ($testsets as $testset) {
+            $course = $this->getDataGenerator()->create_course();
+            foreach ($testset as $sortorder) {
+                $this->insert_fake_grade_item_sortorder($course->id, $sortorder);
+            }
+            $DB->get_records('grade_items');
+            $origsequence[$course->id] = $DB->get_fieldset_sql("SELECT id FROM {grade_items} ".
+                "WHERE courseid = ? ORDER BY sortorder, id", array($course->id));
+        }
+
+        $duplicatedetectionsql = "SELECT courseid, sortorder
+                                    FROM {grade_items}
+                                WHERE courseid = :courseid
+                                GROUP BY courseid, sortorder
+                                  HAVING COUNT(id) > 1";
+
+        // Do the work.
+        foreach ($origsequence as $courseid => $ignore) {
+            grade_item::fix_duplicate_sortorder($courseid);
+            // Verify that no duplicates are left in the database.
+            $dupes = $DB->record_exists_sql($duplicatedetectionsql, array('courseid' => $courseid));
+            $this->assertFalse($dupes);
+        }
+
+        // Verify that sequences are exactly the same as they were before upgrade script.
+        $idx = 0;
+        foreach ($origsequence as $courseid => $sequence) {
+            if (count(($testsets[$idx])) == count(array_unique($testsets[$idx]))) {
+                // If there were no duplicates for this course verify that sortorders are not modified.
+                $newsortorders = $DB->get_fieldset_sql("SELECT sortorder from {grade_items} WHERE courseid=? ORDER BY id", array($courseid));
+                $this->assertEquals($testsets[$idx], $newsortorders);
+            }
+            $newsequence = $DB->get_fieldset_sql("SELECT id FROM {grade_items} ".
+                "WHERE courseid = ? ORDER BY sortorder, id", array($courseid));
+            $this->assertEquals($sequence, $newsequence,
+                    "Sequences do not match for test set $idx : ".join(',', $testsets[$idx]));
+            $idx++;
+        }
+    }
+
+    /**
+     * Populate some fake grade items into the database with specified
+     * sortorder and course id.
+     *
+     * NOTE: This function doesn't make much attempt to respect the
+     * gradebook internals, its simply used to fake some data for
+     * testing the upgradelib function. Please don't use it for other
+     * purposes.
+     *
+     * @param int $courseid id of course
+     * @param int $sortorder numeric sorting order of item
+     * @return stdClass grade item object from the database.
+     */
+    private function insert_fake_grade_item_sortorder($courseid, $sortorder) {
+        global $DB, $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
+
+        $item = new stdClass();
+        $item->courseid = $courseid;
+        $item->sortorder = $sortorder;
+        $item->gradetype = GRADE_TYPE_VALUE;
+        $item->grademin = 30;
+        $item->grademax = 110;
+        $item->itemnumber = 1;
+        $item->iteminfo = '';
+        $item->timecreated = time();
+        $item->timemodified = time();
+
+        $item->id = $DB->insert_record('grade_items', $item);
+
+        return $DB->get_record('grade_items', array('id' => $item->id));
     }
 }

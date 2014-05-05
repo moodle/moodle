@@ -50,7 +50,7 @@
 /**
  * This file contains a Trivial memory-based store - no support for tokens
  *
- * @package lti
+ * @package mod_lti
  * @copyright IMS Global Learning Consortium
  *
  * @author Charles Severance csev@umich.edu

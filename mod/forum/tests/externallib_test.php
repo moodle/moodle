@@ -90,7 +90,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $enrol->enrol_user($instance2, $user->id);
 
         // Assign capabilities to view forums for forum 2.
-        $cm2 = get_coursemodule_from_id('forum', $forum2->id, 0, false, MUST_EXIST);
+        $cm2 = get_coursemodule_from_id('forum', $forum2->cmid, 0, false, MUST_EXIST);
         $context2 = context_module::instance($cm2->id);
         $newrole = create_role('Role 2', 'role2', 'Role 2 description');
         $roleid2 = $this->assignUserCapability('mod/forum:viewdiscussion', $context2->id, $newrole);
@@ -256,13 +256,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $enrol->enrol_user($instance2, $user1->id);
 
         // Assign capabilities to view discussions for forum 2.
-        $cm = get_coursemodule_from_id('forum', $forum2->id, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('forum', $forum2->cmid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
         $newrole = create_role('Role 2', 'role2', 'Role 2 description');
         $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
 
         // Assign capabilities to view discussions for forum 3.
-        $cm = get_coursemodule_from_id('forum', $forum3->id, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('forum', $forum3->cmid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
         $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
 

@@ -22,7 +22,7 @@
  * If user have wiki:managewiki ability then only this page will show delete
  * options
  *
- * @package mod-wiki-2.0
+ * @package mod_wiki
  * @copyright 2011 Rajesh Taneja
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,6 +55,9 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
 
 require_login($course, true, $cm);
 
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 
 $context = context_module::instance($cm->id);
 require_capability('mod/wiki:managewiki', $context);

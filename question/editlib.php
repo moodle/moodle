@@ -441,16 +441,9 @@ class question_bank_checkbox_column extends question_bank_column_base {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
-            $PAGE->requires->js('/question/qengine.js');
-            $module = array(
-                'name'      => 'qbank',
-                'fullpath'  => '/question/qbank.js',
-                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-                'strings'   => array(),
-                'async'     => false,
-            );
-            $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-                    get_string('deselectall'), 'checkq' . $question->id), false, $module);
+            $PAGE->requires->strings_for_js(array('selectall', 'deselectall'), 'moodle');
+            $PAGE->requires->yui_module('moodle-question-qbankmanager', 'M.question.qbankmanager.init',
+                    array('checkq' . $question->id));
             $this->firstrow = false;
         }
     }
@@ -691,6 +684,35 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     }
 }
 
+/**
+ * Question bank column for the duplicate action icon.
+ *
+ * @copyright  2013 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_bank_copy_action_column extends question_bank_action_column_base {
+    /** @var string avoids repeated calls to get_string('duplicate'). */
+    protected $strcopy;
+
+    public function init() {
+        parent::init();
+        $this->strcopy = get_string('duplicate');
+    }
+
+    public function get_name() {
+        return 'copyaction';
+    }
+
+    protected function display_content($question, $rowclasses) {
+        // To copy a question, you need permission to add a question in the same
+        // category as the existing question, and ability to access the details of
+        // the question being copied.
+        if (question_has_capability_on($question, 'add') &&
+                (question_has_capability_on($question, 'edit') || question_has_capability_on($question, 'view'))) {
+            $this->print_icon('t/copy', $this->strcopy, $this->qbank->copy_question_url($question->id));
+        }
+    }
+}
 
 /**
  * Question bank columns for the preview action icon.
@@ -699,11 +721,8 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_preview_action_column extends question_bank_action_column_base {
-    protected $strpreview;
-
     public function init() {
         parent::init();
-        $this->strpreview = get_string('preview');
     }
 
     public function get_name() {
@@ -711,47 +730,15 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     }
 
     protected function display_content($question, $rowclasses) {
-        global $OUTPUT;
+        global $PAGE;
         if (question_has_capability_on($question, 'use')) {
-            // Build the icon.
-            $image = $OUTPUT->pix_icon('t/preview', $this->strpreview, '', array('class' => 'iconsmall'));
-
-            $link = $this->qbank->preview_question_url($question);
-            $action = new popup_action('click', $link, 'questionpreview',
-                    question_preview_popup_params());
-
-            echo $OUTPUT->action_link($link, $image, $action, array('title' => $this->strpreview));
+            echo $PAGE->get_renderer('core_question')->question_preview_link(
+                    $question->id, $this->qbank->get_most_specific_context(), false);
         }
     }
 
     public function get_required_fields() {
         return array('q.id');
-    }
-}
-
-
-/**
- * Question bank columns for the move action icon.
- *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class question_bank_move_action_column extends question_bank_action_column_base {
-    protected $strmove;
-
-    public function init() {
-        parent::init();
-        $this->strmove = get_string('move');
-    }
-
-    public function get_name() {
-        return 'moveaction';
-    }
-
-    protected function display_content($question, $rowclasses) {
-        if (question_has_capability_on($question, 'move')) {
-            $this->print_icon('t/move', $this->strmove, $this->qbank->move_question_url($question->id));
-        }
     }
 }
 
@@ -957,9 +944,8 @@ class question_bank_view {
     }
 
     protected function wanted_columns() {
-        $columns = array('checkbox', 'qtype', 'questionname', 'editaction',
-                'previewaction', 'moveaction', 'deleteaction', 'creatorname',
-                'modifiername');
+        $columns = array('checkbox', 'qtype', 'questionname', 'editaction', 'copyaction',
+                        'previewaction', 'deleteaction', 'creatorname', 'modifiername');
         if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new moodle_url(''))) {
             $columns[] = 'questiontext';
         }
@@ -983,8 +969,8 @@ class question_bank_view {
             new question_bank_creator_name_column($this),
             new question_bank_modifier_name_column($this),
             new question_bank_edit_action_column($this),
+            new question_bank_copy_action_column($this),
             new question_bank_preview_action_column($this),
-            new question_bank_move_action_column($this),
             new question_bank_delete_action_column($this),
             new question_bank_question_text_row($this),
         );
@@ -1253,13 +1239,31 @@ class question_bank_view {
         return $this->editquestionurl->out(true, array('id' => $questionid));
     }
 
-    public function move_question_url($questionid) {
-        return $this->editquestionurl->out(true, array('id' => $questionid, 'movecontext' => 1));
+    /**
+     * Get the URL for duplicating a given question.
+     * @param int $questionid the question id.
+     * @return moodle_url the URL.
+     */
+    public function copy_question_url($questionid) {
+        return $this->editquestionurl->out(true, array('id' => $questionid, 'makecopy' => 1));
     }
 
-    public function preview_question_url($question) {
-        return question_preview_url($question->id, null, null, null, null,
-                $this->contexts->lowest());
+    /**
+     * Get the context we are displaying the question bank for.
+     * @return context context object.
+     */
+    public function get_most_specific_context() {
+        return $this->contexts->lowest();
+    }
+
+    /**
+     * Get the URL to preview a question.
+     * @param stdClass $questiondata the data defining the question.
+     * @return moodle_url the URL.
+     */
+    public function preview_question_url($questiondata) {
+        return question_preview_url($questiondata->id, null, null, null, null,
+                $this->get_most_specific_context());
     }
 
     /**
@@ -1919,75 +1923,32 @@ function require_login_in_context($contextorid = null){
  * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
  *      those qtypes will be shown. Example value array('description', 'multichoice').
  */
-function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null) {
+function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
     global $CFG, $PAGE, $OUTPUT;
 
-    echo '<div id="chooseqtypehead" class="hd">' . "\n";
-    echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
-    echo "</div>\n";
-    echo '<div id="chooseqtype">' . "\n";
-    echo '<form action="' . $CFG->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";
-    foreach ($hiddenparams as $name => $value) {
-        echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
+    if ($enablejs) {
+        // Add the chooser.
+        $PAGE->requires->yui_module('moodle-question-chooser',
+            'M.question.init_chooser',
+            array(array('courseid' => $PAGE->course->id))
+        );
     }
-    echo "</div>\n";
-    echo '<div class="qtypes">' . "\n";
-    echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
-    echo '<div class="alloptions">' . "\n";
-    echo '<div class="realqtypes">' . "\n";
+
+    $realqtypes = array();
     $fakeqtypes = array();
     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
         if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
             continue;
         }
         if ($qtype->is_real_question_type()) {
-            print_qtype_to_add_option($qtype);
+            $realqtypes[] = $qtype;
         } else {
             $fakeqtypes[] = $qtype;
         }
     }
-    echo "</div>\n";
-    echo '<div class="fakeqtypes">' . "\n";
-    foreach ($fakeqtypes as $qtype) {
-        print_qtype_to_add_option($qtype);
-    }
-    echo "</div>\n";
-    echo "</div>\n";
-    echo "</div>\n";
-    echo '<div class="submitbuttons">' . "\n";
-    echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";
-    echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
-    echo "</div></form>\n";
-    echo "</div>\n";
 
-    $PAGE->requires->js('/question/qengine.js');
-    $module = array(
-        'name'      => 'qbank',
-        'fullpath'  => '/question/qbank.js',
-        'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-        'strings'   => array(),
-        'async'     => false,
-    );
-    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
-}
-
-/**
- * Private function used by the preceding one.
- * @param question_type $qtype the question type.
- */
-function print_qtype_to_add_option($qtype) {
-    echo '<div class="qtypeoption">' . "\n";
-    echo '<label for="' . $qtype->plugin_name() . '">';
-    echo '<input type="radio" name="qtype" id="' . $qtype->plugin_name() .
-            '" value="' . $qtype->name() . '" />';
-    echo '<span class="qtypename">';
-    $fakequestion = new stdClass();
-    $fakequestion->qtype = $qtype->name();
-    echo print_question_icon($fakequestion);
-    echo $qtype->menu_name() . '</span><span class="qtypesummary">' .
-            get_string('pluginnamesummary', $qtype->plugin_name());
-    echo "</span></label>\n";
-    echo "</div>\n";
+    $renderer = $PAGE->get_renderer('question', 'bank');
+    echo $renderer->qbank_chooser($realqtypes, $fakeqtypes, $PAGE->course, $hiddenparams);
 }
 
 /**

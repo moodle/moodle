@@ -207,9 +207,17 @@ class document_services {
             $tmpfile = $tmpdir . '/' . self::COMBINED_PDF_FILENAME;
 
             @unlink($tmpfile);
-            $pagecount = $pdf->combine_pdfs($compatiblepdfs, $tmpfile);
+            try {
+                $pagecount = $pdf->combine_pdfs($compatiblepdfs, $tmpfile);
+            } catch (\Exception $e) {
+                debugging('TCPDF could not process the pdf files:' . $e->getMessage(), DEBUG_DEVELOPER);
+                // TCPDF does not recover from errors so we need to re-initialise the class.
+                $pagecount = 0;
+            }
             if ($pagecount == 0) {
                 // We at least want a single blank page.
+                debugging('TCPDF did not produce a valid pdf:' . $tmpfile . '. Replacing with a blank pdf.', DEBUG_DEVELOPER);
+                $pdf = new pdf();
                 $pdf->AddPage();
                 @unlink($tmpfile);
                 $files = false;
@@ -229,14 +237,27 @@ class document_services {
 
         $fs->delete_area_files($record->contextid, $record->component, $record->filearea, $record->itemid);
 
+        // Detect corrupt generated pdfs and replace with a blank one.
+        if ($files) {
+            $pagecount = $pdf->load_pdf($tmpfile);
+            if ($pagecount <= 0) {
+                $files = false;
+            }
+        }
+
         if (!$files) {
             // This was a blank pdf.
+            unset($pdf);
+            $pdf = new pdf();
             $content = $pdf->Output(self::COMBINED_PDF_FILENAME, 'S');
             $file = $fs->create_file_from_string($record, $content);
         } else {
             // This was a combined pdf.
             $file = $fs->create_file_from_pathname($record, $tmpfile);
             @unlink($tmpfile);
+
+            // Test the generated file for correctness.
+            $compatiblepdf = pdf::ensure_pdf_compatible($file);
         }
 
         return $file;

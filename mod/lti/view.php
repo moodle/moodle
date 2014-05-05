@@ -35,8 +35,7 @@
 /**
  * This file contains all necessary code to view a lti activity instance
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
@@ -101,6 +100,8 @@ $params = array(
     'objectid' => $lti->id
 );
 $event = \mod_lti\event\course_module_viewed::create($params);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('lti', $lti);
 $event->trigger();
 

@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * All other event classes must extend this class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -40,13 +41,15 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read string $objecttable name of database table where is object record stored
  * @property-read int $objectid optional id of the object
  * @property-read string $crud letter indicating event type
- * @property-read int $level log level (number between 1 and 100)
+ * @property-read int $edulevel log level (one of the constants LEVEL_)
  * @property-read int $contextid
  * @property-read int $contextlevel
  * @property-read int $contextinstanceid
  * @property-read int $userid who did this?
- * @property-read int $courseid
+ * @property-read int $courseid the courseid of the event context, 0 for contexts above course
  * @property-read int $relateduserid
+ * @property-read int $anonymous 1 means event should not be visible in reports, 0 means normal event,
+ *                    create() argument may be also true/false.
  * @property-read mixed $other array or scalar, can not contain objects
  * @property-read int $timecreated
  */
@@ -101,8 +104,8 @@ abstract class base implements \IteratorAggregate {
 
     /** @var array list of event properties */
     private static $fields = array(
-        'eventname', 'component', 'action', 'target', 'objecttable', 'objectid', 'crud', 'level', 'contextid',
-        'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'other',
+        'eventname', 'component', 'action', 'target', 'objecttable', 'objectid', 'crud', 'edulevel', 'contextid',
+        'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'anonymous', 'other',
         'timecreated');
 
     /** @var array simple record cache */
@@ -148,7 +151,7 @@ abstract class base implements \IteratorAggregate {
      * @throws \coding_exception
      */
     public static final function create(array $data = null) {
-        global $PAGE, $USER, $CFG;
+        global $USER, $CFG;
 
         $data = (array)$data;
 
@@ -158,8 +161,19 @@ abstract class base implements \IteratorAggregate {
         $event->restored = false;
         $event->dispatched = false;
 
+        // By default all events are visible in logs.
+        $event->data['anonymous'] = 0;
+
         // Set static event data specific for child class.
         $event->init();
+
+        if (isset($event->data['level'])) {
+            if (!isset($event->data['edulevel'])) {
+                debugging('level property is deprecated, use edulevel property instead', DEBUG_DEVELOPER);
+                $event->data['edulevel'] = $event->data['level'];
+            }
+            unset($event->data['level']);
+        }
 
         // Set automatic data.
         $event->data['timecreated'] = time();
@@ -170,6 +184,10 @@ abstract class base implements \IteratorAggregate {
         $event->data['userid'] = isset($data['userid']) ? $data['userid'] : $USER->id;
         $event->data['other'] = isset($data['other']) ? $data['other'] : null;
         $event->data['relateduserid'] = isset($data['relateduserid']) ? $data['relateduserid'] : null;
+        if (isset($data['anonymous'])) {
+            $event->data['anonymous'] = $data['anonymous'];
+        }
+        $event->data['anonymous'] = (int)(bool)$event->data['anonymous'];
 
         if (isset($event->context)) {
             if (isset($data['context'])) {
@@ -205,7 +223,7 @@ abstract class base implements \IteratorAggregate {
         // Warn developers if they do something wrong.
         if ($CFG->debugdeveloper) {
             static $automatickeys = array('eventname', 'component', 'action', 'target', 'contextlevel', 'contextinstanceid', 'timecreated');
-            static $initkeys = array('crud', 'level', 'objecttable');
+            static $initkeys = array('crud', 'level', 'objecttable', 'edulevel');
 
             foreach ($data as $key => $ignored) {
                 if ($key === 'context') {
@@ -221,6 +239,13 @@ abstract class base implements \IteratorAggregate {
                     debugging("Data key '$key' does not exist in \\core\\event\\base");
                 }
             }
+            $expectedcourseid = 0;
+            if ($coursecontext = $event->context->get_course_context(false)) {
+                $expectedcourseid = $coursecontext->instanceid;
+            }
+            if ($expectedcourseid != $event->data['courseid']) {
+                debugging("Inconsistent courseid - context combination detected.", DEBUG_DEVELOPER);
+            }
         }
 
         // Let developers validate their custom data (such as $this->data['other'], contextlevel, etc.).
@@ -234,7 +259,7 @@ abstract class base implements \IteratorAggregate {
      *
      * Set all required data properties:
      *  1/ crud - letter [crud]
-     *  2/ level - using a constant self::LEVEL_*.
+     *  2/ edulevel - using a constant self::LEVEL_*.
      *  3/ objecttable - name of database table if objectid specified
      *
      * Optionally it can set:
@@ -280,12 +305,18 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
-     * Define whether a user can view the event or not.
+     * This method was originally intended for granular
+     * access control on the event level, unfortunately
+     * the proper implementation would be too expensive
+     * in many cases.
+     *
+     * @deprecated since 2.7
      *
      * @param int|\stdClass $user_or_id ID of the user.
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($user_or_id = null) {
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
         return is_siteadmin($user_or_id);
     }
 
@@ -308,13 +339,14 @@ abstract class base implements \IteratorAggregate {
         }
 
         if (!class_exists($classname)) {
-            return false;
+            return self::restore_unknown($data, $logextra);
         }
         $event = new $classname();
         if (!($event instanceof \core\event\base)) {
             return false;
         }
 
+        $event->init(); // Init method of events could be setting custom properties.
         $event->restored = true;
         $event->triggered = true;
         $event->dispatched = true;
@@ -340,6 +372,176 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
+     * Restore unknown event.
+     *
+     * @param array $data
+     * @param array $logextra
+     * @return unknown_logged
+     */
+    protected static final function restore_unknown(array $data, array $logextra) {
+        $classname = '\core\event\unknown_logged';
+
+        /** @var unknown_logged $event */
+        $event = new $classname();
+        $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
+        $event->data = $data;
+        $event->logextra = $logextra;
+
+        return $event;
+    }
+
+    /**
+     * Create fake event from legacy log data.
+     *
+     * @param \stdClass $legacy
+     * @return base
+     */
+    public static final function restore_legacy($legacy) {
+        $classname = get_called_class();
+        /** @var base $event */
+        $event = new $classname();
+        $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
+
+        $context = false;
+        $component = 'legacy';
+        if ($legacy->cmid) {
+            $context = \context_module::instance($legacy->cmid, IGNORE_MISSING);
+            $component = 'mod_'.$legacy->module;
+        } else if ($legacy->course) {
+            $context = \context_course::instance($legacy->course, IGNORE_MISSING);
+        }
+        if (!$context) {
+            $context = \context_system::instance();
+        }
+
+        $event->data = array();
+
+        $event->data['eventname'] = $legacy->module.'_'.$legacy->action;
+        $event->data['component'] = $component;
+        $event->data['action'] = $legacy->action;
+        $event->data['target'] = null;
+        $event->data['objecttable'] = null;
+        $event->data['objectid'] = null;
+        if (strpos($legacy->action, 'view') !== false) {
+            $event->data['crud'] = 'r';
+        } else if (strpos($legacy->action, 'print') !== false) {
+            $event->data['crud'] = 'r';
+        } else if (strpos($legacy->action, 'update') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'hide') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'move') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'write') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'tag') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'remove') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'delete') !== false) {
+            $event->data['crud'] = 'p';
+        } else if (strpos($legacy->action, 'create') !== false) {
+            $event->data['crud'] = 'c';
+        } else if (strpos($legacy->action, 'post') !== false) {
+            $event->data['crud'] = 'c';
+        } else if (strpos($legacy->action, 'add') !== false) {
+            $event->data['crud'] = 'c';
+        } else {
+            // End of guessing...
+            $event->data['crud'] = 'r';
+        }
+        $event->data['edulevel'] = $event::LEVEL_OTHER;
+        $event->data['contextid'] = $context->id;
+        $event->data['contextlevel'] = $context->contextlevel;
+        $event->data['contextinstanceid'] = $context->instanceid;
+        $event->data['userid'] = ($legacy->userid ? $legacy->userid : null);
+        $event->data['courseid'] = ($legacy->course ? $legacy->course : null);
+        $event->data['relateduserid'] = ($legacy->userid ? $legacy->userid : null);
+        $event->data['timecreated'] = $legacy->time;
+
+        $event->logextra = array();
+        if ($legacy->ip) {
+            $event->logextra['origin'] = 'web';
+            $event->logextra['ip'] = $legacy->ip;
+        } else {
+            $event->logextra['origin'] = 'cli';
+            $event->logextra['ip'] = null;
+        }
+        $event->logextra['realuserid'] = null;
+
+        $event->data['other'] = (array)$legacy;
+
+        return $event;
+    }
+
+    /**
+     * Get static information about an event.
+     * This is used in reports and is not for general use.
+     *
+     * @return array Static information about the event.
+     */
+    public static final function get_static_info() {
+        /** Var \core\event\base $event. */
+        $event = new static();
+        // Set static event data specific for child class.
+        $event->init();
+        return array(
+            'eventname' => $event->data['eventname'],
+            'component' => $event->data['component'],
+            'target' => $event->data['target'],
+            'action' => $event->data['action'],
+            'crud' => $event->data['crud'],
+            'edulevel' => $event->data['edulevel'],
+            'objecttable' => $event->data['objecttable'],
+        );
+    }
+
+    /**
+     * Get an explanation of what the class does.
+     * By default returns the phpdocs from the child event class. Ideally this should
+     * be overridden to return a translatable get_string style markdown.
+     * e.g. return new lang_string('eventyourspecialevent', 'plugin_type');
+     *
+     * @return string An explanation of the event formatted in markdown style.
+     */
+    public static function get_explanation() {
+        $ref = new \ReflectionClass(get_called_class());
+        $docblock = $ref->getDocComment();
+
+        // Check that there is something to work on.
+        if (empty($docblock)) {
+            return null;
+        }
+
+        $docblocklines = explode("\n", $docblock);
+        // Remove the bulk of the comment characters.
+        $pattern = "/(^\s*\/\*\*|^\s+\*\s|^\s+\*)/";
+        $cleanline = array();
+        foreach ($docblocklines as $line) {
+            $templine = preg_replace($pattern, '', $line);
+            // If there is nothing on the line then don't add it to the array.
+            if (!empty($templine)) {
+                $cleanline[] = rtrim($templine);
+            }
+            // If we get to a line starting with an @ symbol then we don't want the rest.
+            if (preg_match("/^@|\//", $templine)) {
+                // Get rid of the last entry (it contains an @ symbol).
+                array_pop($cleanline);
+                // Break out of this foreach loop.
+                break;
+            }
+        }
+        // Add a line break to the sanitised lines.
+        $explanation = implode("\n", $cleanline);
+
+        return $explanation;
+    }
+
+    /**
      * Returns event context.
      * @return \context
      */
@@ -347,7 +549,7 @@ abstract class base implements \IteratorAggregate {
         if (isset($this->context)) {
             return $this->context;
         }
-        $this->context = \context::instance_by_id($this->data['contextid'], false);
+        $this->context = \context::instance_by_id($this->data['contextid'], IGNORE_MISSING);
         return $this->context;
     }
 
@@ -362,7 +564,7 @@ abstract class base implements \IteratorAggregate {
     /**
      * Return standardised event data as array.
      *
-     * @return array
+     * @return array All elements are scalars except the 'other' field which is array.
      */
     public function get_data() {
         return $this->data;
@@ -371,7 +573,9 @@ abstract class base implements \IteratorAggregate {
     /**
      * Return auxiliary data that was stored in logs.
      *
-     * TODO MDL-41331: Properly define this method once logging is finalised.
+     * List of standard properties:
+     *  - origin: IP number, cli,cron
+     *  - realuserid: id of the user when logged-in-as
      *
      * @return array the format is standardised by logging API
      */
@@ -425,8 +629,8 @@ abstract class base implements \IteratorAggregate {
         if (empty($this->data['crud'])) {
             throw new \coding_exception('crud must be specified in init() method of each method');
         }
-        if (!isset($this->data['level'])) {
-            throw new \coding_exception('level must be specified in init() method of each method');
+        if (!isset($this->data['edulevel'])) {
+            throw new \coding_exception('edulevel must be specified in init() method of each method');
         }
         if (!empty($this->data['objectid']) and empty($this->data['objecttable'])) {
             throw new \coding_exception('objecttable must be specified in init() method if objectid present');
@@ -439,9 +643,9 @@ abstract class base implements \IteratorAggregate {
             if (!in_array($this->data['crud'], array('c', 'r', 'u', 'd'), true)) {
                 debugging("Invalid event crud value specified.", DEBUG_DEVELOPER);
             }
-            if (!in_array($this->data['level'], array(self::LEVEL_OTHER, self::LEVEL_TEACHING, self::LEVEL_PARTICIPATING))) {
+            if (!in_array($this->data['edulevel'], array(self::LEVEL_OTHER, self::LEVEL_TEACHING, self::LEVEL_PARTICIPATING))) {
                 // Bitwise combination of levels is not allowed at this stage.
-                debugging('Event property level must a constant value, see event_base::LEVEL_*', DEBUG_DEVELOPER);
+                debugging('Event property edulevel must a constant value, see event_base::LEVEL_*', DEBUG_DEVELOPER);
             }
             if (self::$fields !== array_keys($this->data)) {
                 debugging('Number of event data fields must not be changed in event classes', DEBUG_DEVELOPER);
@@ -494,7 +698,17 @@ abstract class base implements \IteratorAggregate {
 
         if (isset($CFG->loglifetime) and $CFG->loglifetime != -1) {
             if ($data = $this->get_legacy_logdata()) {
-                call_user_func_array('add_to_log', $data);
+                $manager = get_log_manager();
+                if (method_exists($manager, 'legacy_add_to_log')) {
+                    if (is_array($data[0])) {
+                        // Some events require several entries in 'log' table.
+                        foreach ($data as $d) {
+                            call_user_func_array(array($manager, 'legacy_add_to_log'), $d);
+                        }
+                    } else {
+                        call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                    }
+                }
             }
         }
 
@@ -558,11 +772,26 @@ abstract class base implements \IteratorAggregate {
             throw new \coding_exception('It is not possible to add snapshots after triggering of events');
         }
 
+        // Special case for course module, allow instance of cm_info to be passed instead of stdClass.
+        if ($tablename === 'course_modules' && $record instanceof \cm_info) {
+            $record = $record->get_course_module_record();
+        }
+
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...
         if ($CFG->debugdeveloper) {
+            if (!($record instanceof \stdClass)) {
+                debugging('Argument $record must be an instance of stdClass.', DEBUG_DEVELOPER);
+            }
             if (!$DB->get_manager()->table_exists($tablename)) {
                 debugging("Invalid table name '$tablename' specified, database table does not exist.", DEBUG_DEVELOPER);
+            } else {
+                $columns = $DB->get_columns($tablename);
+                $missingfields = array_diff(array_keys($columns), array_keys((array)$record));
+                if (!empty($missingfields)) {
+                    debugging("Fields list in snapshot record does not match fields list in '$tablename'. Record is missing fields: ".
+                            join(', ', $missingfields), DEBUG_DEVELOPER);
+                }
             }
         }
         $this->recordsnapshots[$tablename][$record->id] = $record;
@@ -585,7 +814,7 @@ abstract class base implements \IteratorAggregate {
         }
 
         if (isset($this->recordsnapshots[$tablename][$id])) {
-            return $this->recordsnapshots[$tablename][$id];
+            return clone($this->recordsnapshots[$tablename][$id]);
         }
 
         $record = $DB->get_record($tablename, array('id'=>$id));
@@ -601,6 +830,10 @@ abstract class base implements \IteratorAggregate {
      * @return mixed
      */
     public function __get($name) {
+        if ($name === 'level') {
+            debugging('level property is deprecated, use edulevel property instead', DEBUG_DEVELOPER);
+            return $this->data['edulevel'];
+        }
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         }
@@ -630,6 +863,10 @@ abstract class base implements \IteratorAggregate {
      * @return bool
      */
     public function __isset($name) {
+        if ($name === 'level') {
+            debugging('level property is deprecated, use edulevel property instead', DEBUG_DEVELOPER);
+            return isset($this->data['edulevel']);
+        }
         return isset($this->data[$name]);
     }
 

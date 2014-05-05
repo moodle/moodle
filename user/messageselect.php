@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,22 +19,22 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package user
+ * @package core_user
  */
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/message/lib.php');
 
-$id = required_param('id',PARAM_INT);
-$messagebody = optional_param('messagebody','',PARAM_CLEANHTML);
-$send = optional_param('send','',PARAM_BOOL);
-$preview = optional_param('preview','',PARAM_BOOL);
-$edit = optional_param('edit','',PARAM_BOOL);
-$returnto = optional_param('returnto','',PARAM_LOCALURL);
-$format = optional_param('format',FORMAT_MOODLE,PARAM_INT);
-$deluser = optional_param('deluser',0,PARAM_INT);
+$id = required_param('id', PARAM_INT);
+$messagebody = optional_param('messagebody', '', PARAM_CLEANHTML);
+$send = optional_param('send', '', PARAM_BOOL);
+$preview = optional_param('preview', '', PARAM_BOOL);
+$edit = optional_param('edit', '', PARAM_BOOL);
+$returnto = optional_param('returnto', '', PARAM_LOCALURL);
+$format = optional_param('format', FORMAT_MOODLE, PARAM_INT);
+$deluser = optional_param('deluser', 0, PARAM_INT);
 
-$url = new moodle_url('/user/messageselect.php', array('id'=>$id));
+$url = new moodle_url('/user/messageselect.php', array('id' => $id));
 if ($messagebody !== '') {
     $url->param('messagebody', $messagebody);
 }
@@ -59,25 +58,25 @@ if ($deluser !== 0) {
 }
 $PAGE->set_url($url);
 
-if (!$course = $DB->get_record('course', array('id'=>$id))) {
+if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
 }
 
 require_login($course);
 
-$coursecontext = context_course::instance($id);   // Course context
-$systemcontext = context_system::instance();   // SYSTEM context
+$coursecontext = context_course::instance($id);   // Course context.
+$systemcontext = context_system::instance();   // SYSTEM context.
 require_capability('moodle/course:bulkmessaging', $coursecontext);
 
 if (empty($SESSION->emailto)) {
     $SESSION->emailto = array();
 }
-if (!array_key_exists($id,$SESSION->emailto)) {
+if (!array_key_exists($id, $SESSION->emailto)) {
     $SESSION->emailto[$id] = array();
 }
 
 if ($deluser) {
-    if (array_key_exists($id,$SESSION->emailto) && array_key_exists($deluser,$SESSION->emailto[$id])) {
+    if (array_key_exists($id, $SESSION->emailto) && array_key_exists($deluser, $SESSION->emailto[$id])) {
         unset($SESSION->emailto[$id][$deluser]);
     }
 }
@@ -94,10 +93,10 @@ if ($data = data_submitted()) {
     require_sesskey();
     $namefields = get_all_user_name_fields(true);
     foreach ($data as $k => $v) {
-        if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
-            if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
+        if (preg_match('/^(user|teacher)(\d+)$/', $k, $m)) {
+            if (!array_key_exists($m[2], $SESSION->emailto[$id])) {
                 if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,
-                        ' . $namefields . ',idnumber,email,mailformat,lastaccess, lang, maildisplay')) {
+                        ' . $namefields . ', idnumber, email, mailformat, lastaccess, lang, maildisplay')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
                     $count++;
                 }
@@ -109,24 +108,25 @@ if ($data = data_submitted()) {
 $strtitle = get_string('coursemessage');
 
 $link = null;
-if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url("/user/index.php", array('id'=>$course->id));
+if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
+    has_capability('moodle/site:viewparticipants', $systemcontext)) {
+    $link = new moodle_url("/user/index.php", array('id' => $course->id));
 }
 $PAGE->navbar->add(get_string('participants'), $link);
 $PAGE->navbar->add($strtitle);
 $PAGE->set_title($strtitle);
 $PAGE->set_heading($strtitle);
 echo $OUTPUT->header();
-// if messaging is disabled on site, we can still allow users with capabilities to send emails instead
+// If messaging is disabled on site, we can still allow users with capabilities to send emails instead.
 if (empty($CFG->messaging)) {
-    echo $OUTPUT->notification(get_string('messagingdisabled','message'));
+    echo $OUTPUT->notification(get_string('messagingdisabled', 'message'));
 }
 
 if ($count) {
     if ($count == 1) {
-        $heading = get_string('addedrecip','moodle',$count);
+        $heading = get_string('addedrecip', 'moodle', $count);
     } else {
-        $heading = get_string('addedrecips','moodle',$count);
+        $heading = get_string('addedrecips', 'moodle', $count);
     }
     echo $OUTPUT->heading($heading);
 }
@@ -141,14 +141,15 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
 <input type="hidden" name="format" value="'.$format.'" />
 <input type="hidden" name="sesskey" value="' . sesskey() . '" />
 ';
-            echo "<h3>".get_string('previewhtml')."</h3><div class=\"messagepreview\">\n".format_text($messagebody,$format)."\n</div>\n";
+            echo "<h3>".get_string('previewhtml')."</h3>";
+            echo "<div class=\"messagepreview\">\n".format_text($messagebody, $format)."\n</div>\n";
             echo '<p align="center"><input type="submit" name="send" value="'.get_string('sendmessage', 'message').'" />'."\n";
             echo '<input type="submit" name="edit" value="'.get_string('update').'" /></p>';
             echo "\n</form>";
         } else if (!empty($send)) {
             $good = 1;
             foreach ($SESSION->emailto[$id] as $user) {
-                $good = $good && message_post_message($USER,$user,$messagebody,$format);
+                $good = $good && message_post_message($USER, $user, $messagebody, $format);
             }
             if (!empty($good)) {
                 echo $OUTPUT->heading(get_string('messagedselectedusers'));
@@ -166,7 +167,8 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
     }
 }
 
-echo '<p align="center"><a href="'.$returnto.'">'.get_string("keepsearching").'</a>'.((count($SESSION->emailto[$id])) ? ', '.get_string('usemessageform') : '').'</p>';
+echo '<p align="center"><a href="'.$returnto.'">'.get_string("keepsearching").'</a>'.
+    ((count($SESSION->emailto[$id])) ? ', '.get_string('usemessageform') : '').'</p>';
 
 if ((!empty($send) || !empty($preview) || !empty($edit)) && (empty($messagebody))) {
     echo $OUTPUT->notification(get_string('allfieldsrequired'));

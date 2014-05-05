@@ -130,6 +130,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @throws dml_connection_exception if error
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+        if ($prefix == '' and !$this->external) {
+            // Enforce prefixes for everybody but mysql.
+            throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
+        }
+
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {
@@ -380,7 +385,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         if ($result) {
             while ($row = sqlsrv_fetch_array($result)) {
                 $tablename = reset($row);
-                if ($this->prefix !== '') {
+                if ($this->prefix !== false && $this->prefix !== '') {
                     if (strpos($tablename, $this->prefix) !== 0) {
                         continue;
                     }
@@ -669,17 +674,26 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
     /**
      * Do NOT use in code, to be used by database_manager only!
-     * @param string $sql query
+     * @param string|array $sql query
      * @return bool true
-     * @throws dml_exception A DML specific exception is thrown for any errors.
+     * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
     public function change_database_structure($sql) {
+        $this->get_manager(); // Includes DDL exceptions classes ;-)
+        $sqls = (array)$sql;
+
+        try {
+            foreach ($sqls as $sql) {
+                $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+                $result = sqlsrv_query($this->sqlsrv, $sql);
+                $this->query_end($result);
+            }
+        } catch (ddl_change_structure_exception $e) {
+            $this->reset_caches();
+            throw $e;
+        }
+
         $this->reset_caches();
-
-        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
-        $result = sqlsrv_query($this->sqlsrv, $sql);
-        $this->query_end($result);
-
         return true;
     }
 

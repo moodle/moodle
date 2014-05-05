@@ -20,8 +20,7 @@
  * This contains functions that are called also from outside the quiz module
  * Functions that are only called by the quiz module itself are in {@link locallib.php}
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -81,7 +80,6 @@ function quiz_add_instance($quiz) {
 
     // Process the options from the form.
     $quiz->created = time();
-    $quiz->questions = '';
     $result = quiz_process_options($quiz);
     if ($result && is_string($result)) {
         return $result;
@@ -122,13 +120,6 @@ function quiz_update_instance($quiz, $mform) {
     $quiz->sumgrades = $oldquiz->sumgrades;
     $quiz->grade     = $oldquiz->grade;
 
-    // Repaginate, if asked to.
-    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
-        $quiz->questions = quiz_repaginate(quiz_clean_layout($oldquiz->questions, true),
-                $quiz->questionsperpage);
-    }
-    unset($quiz->repaginatenow);
-
     // Update the database.
     $quiz->id = $quiz->instance;
     $DB->update_record('quiz', $quiz);
@@ -151,6 +142,11 @@ function quiz_update_instance($quiz, $mform) {
     // Delete any previous preview attempts.
     quiz_delete_previews($quiz);
 
+    // Repaginate, if asked to.
+    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
+        quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
+    }
+
     return true;
 }
 
@@ -170,7 +166,7 @@ function quiz_delete_instance($id) {
     quiz_delete_all_attempts($quiz);
     quiz_delete_all_overrides($quiz);
 
-    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->id));
+    $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
@@ -195,6 +191,11 @@ function quiz_delete_instance($id) {
 function quiz_delete_override($quiz, $overrideid) {
     global $DB;
 
+    if (!isset($quiz->cmid)) {
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        $quiz->cmid = $cm->id;
+    }
+
     $override = $DB->get_record('quiz_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
     // Delete the events.
@@ -207,6 +208,28 @@ function quiz_delete_override($quiz, $overrideid) {
     }
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
+
+    // Set the common parameters for one of the events we will be triggering.
+    $params = array(
+        'objectid' => $override->id,
+        'context' => context_module::instance($quiz->cmid),
+        'other' => array(
+            'quizid' => $override->quiz
+        )
+    );
+    // Determine which override deleted event to fire.
+    if (!empty($override->userid)) {
+        $params['relateduserid'] = $override->userid;
+        $event = \mod_quiz\event\user_override_deleted::create($params);
+    } else {
+        $params['other']['groupid'] = $override->groupid;
+        $event = \mod_quiz\event\group_override_deleted::create($params);
+    }
+
+    // Trigger the override deleted event.
+    $event->add_record_snapshot('quiz_overrides', $override);
+    $event->trigger();
+
     return true;
 }
 
@@ -378,6 +401,16 @@ function quiz_get_best_grade($quiz, $userid) {
  */
 function quiz_has_grades($quiz) {
     return $quiz->grade >= 0.000005 && $quiz->sumgrades >= 0.000005;
+}
+
+/**
+ * Does this quiz allow multiple tries?
+ *
+ * @return bool
+ */
+function quiz_allows_multiple_tries($quiz) {
+    $bt = question_engine::get_behaviour_type($quiz->preferredbehaviour);
+    return $bt->allows_multiple_submitted_responses();
 }
 
 /**
@@ -814,15 +847,10 @@ function quiz_refresh_events($courseid = 0) {
  */
 function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $courseid, $cmid, $userid = 0, $groupid = 0) {
-    global $CFG, $COURSE, $USER, $DB;
+    global $CFG, $USER, $DB;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    if ($COURSE->id == $courseid) {
-        $course = $COURSE;
-    } else {
-        $course = $DB->get_record('course', array('id' => $courseid));
-    }
-
+    $course = get_course($courseid);
     $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
@@ -847,9 +875,10 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $params['timestart'] = $timestart;
     $params['quizid'] = $quiz->id;
 
+    $ufields = user_picture::fields('u', null, 'useridagain');
     if (!$attempts = $DB->get_records_sql("
               SELECT qa.*,
-                     u.firstname, u.lastname, u.email, u.picture, u.imagealt
+                     {$ufields}
                 FROM {quiz_attempts} qa
                      JOIN {user} u ON u.id = qa.userid
                      $groupjoin
@@ -868,11 +897,6 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $grader          = has_capability('mod/quiz:viewreports', $context);
     $groupmode       = groups_get_activity_groupmode($cm, $course);
 
-    if (is_null($modinfo->groups)) {
-        // Load all my groups and cache it in modinfo.
-        $modinfo->groups = groups_get_user_groups($course->id);
-    }
-
     $usersgroups = null;
     $aname = format_string($cm->name, true);
     foreach ($attempts as $attempt) {
@@ -883,16 +907,10 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             }
 
             if ($groupmode == SEPARATEGROUPS and !$accessallgroups) {
-                if (is_null($usersgroups)) {
-                    $usersgroups = groups_get_all_groups($course->id,
-                            $attempt->userid, $cm->groupingid);
-                    if (is_array($usersgroups)) {
-                        $usersgroups = array_keys($usersgroups);
-                    } else {
-                        $usersgroups = array();
-                    }
-                }
-                if (!array_intersect($usersgroups, $modinfo->groups[$cm->id])) {
+                $usersgroups = groups_get_all_groups($course->id,
+                        $attempt->userid, $cm->groupingid);
+                $usersgroups = array_keys($usersgroups);
+                if (!array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid))) {
                     continue;
                 }
             }
@@ -919,14 +937,8 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             $tmpactivity->content->maxgrade  = null;
         }
 
-        $tmpactivity->user = new stdClass();
-        $tmpactivity->user->id        = $attempt->userid;
-        $tmpactivity->user->firstname = $attempt->firstname;
-        $tmpactivity->user->lastname  = $attempt->lastname;
-        $tmpactivity->user->fullname  = fullname($attempt, $viewfullnames);
-        $tmpactivity->user->picture   = $attempt->picture;
-        $tmpactivity->user->imagealt  = $attempt->imagealt;
-        $tmpactivity->user->email     = $attempt->email;
+        $tmpactivity->user = user_picture::unalias($attempt, null, 'useridagain');
+        $tmpactivity->user->fullname  = fullname($tmpactivity->user, $viewfullnames);
 
         $activities[$index++] = $tmpactivity;
     }
@@ -1260,6 +1272,13 @@ function quiz_update_events($quiz, $override = null) {
 }
 
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function quiz_get_view_actions() {
@@ -1267,6 +1286,13 @@ function quiz_get_view_actions() {
 }
 
 /**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function quiz_get_post_actions() {
@@ -1282,8 +1308,8 @@ function quiz_questions_in_use($questionids) {
     global $DB, $CFG;
     require_once($CFG->libdir . '/questionlib.php');
     list($test, $params) = $DB->get_in_or_equal($questionids);
-    return $DB->record_exists_select('quiz_question_instances',
-            'question ' . $test, $params) || question_engine::questions_in_use(
+    return $DB->record_exists_select('quiz_slots',
+            'questionid ' . $test, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));
 }
@@ -1757,8 +1783,14 @@ function quiz_question_pluginfile($course, $context, $component,
  */
 function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array(
-        'mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'),
-        'mod-quiz-edit'=>get_string('page-mod-quiz-edit', 'quiz'));
+        'mod-quiz-*'       => get_string('page-mod-quiz-x', 'quiz'),
+        'mod-quiz-view'    => get_string('page-mod-quiz-view', 'quiz'),
+        'mod-quiz-attempt' => get_string('page-mod-quiz-attempt', 'quiz'),
+        'mod-quiz-summary' => get_string('page-mod-quiz-summary', 'quiz'),
+        'mod-quiz-review'  => get_string('page-mod-quiz-review', 'quiz'),
+        'mod-quiz-edit'    => get_string('page-mod-quiz-edit', 'quiz'),
+        'mod-quiz-report'  => get_string('page-mod-quiz-report', 'quiz'),
+    );
     return $module_pagetype;
 }
 

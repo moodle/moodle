@@ -16,8 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package assignment
- * @subpackage uploadsingle subplugin
+ * @package assignment_uploadsingle
  * @copyright 2011 onwards Aparup Banerjee (nebgor)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

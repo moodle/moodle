@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when the an essay attempt is viewed
+ * The mod_lesson essay attempt viewed event.
  *
  * @package    mod_lesson
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -26,6 +26,14 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_lesson essay attempt viewed event class.
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
 class essay_attempt_viewed extends \core\event\base {
 
     /**
@@ -34,7 +42,7 @@ class essay_attempt_viewed extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lesson_attempts';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
@@ -52,7 +60,7 @@ class essay_attempt_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/essay.php', array('id' => $this->context->instanceid,
+        return new \moodle_url('/mod/lesson/essay.php', array('id' => $this->contextinstanceid,
             'mode' => 'grade', 'attemptid' =>  $this->objectid));
     }
 
@@ -62,8 +70,9 @@ class essay_attempt_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The essay grade for the user with the id ' . $this->relateduserid . ' for the attempt with the id ' .
-            $this->objectid . ' was viewed by the user with the id ' . $this->userid;
+        return "The essay grade for the user with the id '$this->relateduserid' for the attempt with the id " .
+            "'$this->objectid' was viewed by the user with the id '$this->userid' for the lesson activity with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -72,7 +81,7 @@ class essay_attempt_viewed extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'lesson', 'view grade', 'essay.php?id=' . $this->context->instanceid . '&mode=grade&attemptid='
-            . $this->objectid, get_string('manualgrading', 'lesson'), $this->context->instanceid);
+        return array($this->courseid, 'lesson', 'view grade', 'essay.php?id=' . $this->contextinstanceid . '&mode=grade&attemptid='
+            . $this->objectid, get_string('manualgrading', 'lesson'), $this->contextinstanceid);
     }
 }

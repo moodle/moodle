@@ -11,6 +11,13 @@ select {
 
 // Forum
 
+.path-mod-forum .forumsearch {
+    input,
+    .helptooltip {
+        margin: 0 3px;
+    }
+}
+
 .path-mod-forum .forumheaderlist,
 .path-mod-forum .forumheaderlist td {
     border: none;
@@ -47,15 +54,49 @@ select {
     .header {
         margin-bottom: 3px;
     }
-    .maincontent {
-        .left {
-            padding: 0 10px 0 10px;
+    .picture img {
+        margin: 3px;
+        &.userpicture {
+            margin-left: 3px;
+            margin-right: 10px;
+        }
+    }
+    .content {
+        .posting.fullpost {
+            margin-top: 8px;
+        }
+    }
+    .row {
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 48px;
+        }
+        &.side {
+            clear: both;
+        }
+    }
+}
+
+.dir-rtl .forumpost {
+    .picture img {
+        &.userpicture {
+            margin-left: 10px;
+            margin-right: 3px;
+        }
+    }
+    .row {
+        .topic,
+        .content-mask,
+        .options {
+            margin-left: 0;
+            margin-right: 48px;
         }
     }
 }
 
 .forumpost .row .left {
-    width: auto;
+    width: 48px;
 }
 
 .forumpost .options .commands {
@@ -71,22 +112,19 @@ select {
      margin-bottom: 0 !important;
 }
 
-#page-mod-forum-discuss .discussioncontrol.displaymode {
-    text-align: left;
-}
-
-#page-mod-forum-discuss .discussioncontrols .discussioncontrol {
-    float: left;
+#page-mod-forum-discuss .discussioncontrols {
+    width: auto;
+    margin: 0;
 }
 
 #page-footer {
     margin-top: 1em;
     padding: 1em 0;
-    border-top: 2px solid #eee;
+    border-top: 2px solid @tableBorder;
 }
 
 .maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
-    border: 1px dotted #ddd;
+    border: 1px dotted @tableBorder;
 }
 
 .path-grade-report-grader h1 {
@@ -112,6 +150,11 @@ select {
 .breadcrumb-button {
     float: right;
     margin-top: 4px;
+}
+
+.breadcrumb-button .singlebutton {
+    float: left;
+    margin-left: 4px;
 }
 
 .dir-rtl {
@@ -140,6 +183,11 @@ select {
 .dir-rtl .breadcrumb-button,
 .dir-rtl .navbar .btn-navbar {
     float: left;
+}
+
+.dir-rtl .breadcrumb-button .singlebutton {
+    float: right;
+    margin-right: 4px;
 }
 
 .ie .row-fluid .desktop-first-column {
@@ -199,8 +247,8 @@ div#dock {
 
 .path-mod-survey {
     .surveytable {
-        .r0 {background-color: #eee;}
-        .r1 {background-color: #ddd;}
+      > tbody > tr:nth-of-type(odd) {background-color: @tableBackground;}
+      > tbody > tr:nth-of-type(even) {background-color: @tableBackgroundAccent;}
         .rblock label {text-align: center;}
     }
     .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {

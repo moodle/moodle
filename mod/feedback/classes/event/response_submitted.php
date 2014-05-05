@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when a feedback response is submitted.
+ * The mod_feedback response submitted event.
  *
  * @package    mod_feedback
  * @copyright  2013 Ankit Agarwal
@@ -26,19 +26,20 @@ namespace mod_feedback\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class response_submitted
+ * The mod_feedback response submitted event class.
  *
- * Class for event to be triggered when a feedback response is submitted.
+ * This event is triggered when a feedback response is submitted.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int anonymous if feedback is anonymous.
- *      @type int cmid course module id.
- *      @type int instanceid id of instance.
+ *      - int anonymous: if feedback is anonymous.
+ *      - int cmid: course module id.
+ *      - int instanceid: id of instance.
  * }
  *
  * @package    mod_feedback
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -53,7 +54,7 @@ class response_submitted extends \core\event\base {
         require_once($CFG->dirroot.'/mod/feedback/lib.php');
         $this->data['objecttable'] = 'feedback_completed';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -71,7 +72,8 @@ class response_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The user ' . $this->other['relateduserid']. ' submited a feedback';
+        return "The user with the id '$this->userid' created feedback for the user with the id '$this->relateduserid' " .
+            "for the feedback activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -84,7 +86,7 @@ class response_submitted extends \core\event\base {
                     'do_show' => 'showoneentry' , 'userid' => $this->relateduserid));
         } else {
             return new \moodle_url('/mod/feedback/show_entries_anonym.php', array('id' => $this->other['cmid'],
-                    'do_show' => 'showoneentry', 'showall', 'showcompleted' => $this->objectid));
+                    'do_show' => 'showoneentry', 'showall' => 1, 'showcompleted' => $this->objectid));
         }
     }
 
@@ -95,7 +97,7 @@ class response_submitted extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return null;
         } else {
             return array($this->courseid, 'feedback', 'submit', 'view.php?id=' . $this->other['cmid'],
@@ -106,16 +108,19 @@ class response_submitted extends \core\event\base {
     /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
+     * @deprecated since 2.7
+     *
      * @param int|\stdClass $userorid ID of the user.
      * @return bool True if the user can view the event, false otherwise.
      */
     public function can_view($userorid = null) {
         global $USER;
+        debugging('can_view() method is deprecated, use anonymous flag instead if necessary.', DEBUG_DEVELOPER);
 
         if (empty($userorid)) {
             $userorid = $USER;
         }
-        if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
+        if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
             return has_capability('mod/feedback:viewreports', $this->context, $userorid);
@@ -128,14 +133,16 @@ class response_submitted extends \core\event\base {
      * @throws \coding_exception in case of any problems.
      */
     protected function validate_data() {
+        parent::validate_data();
+
         if (!isset($this->other['anonymous'])) {
-            throw new \coding_exception("Field other['anonymous'] cannot be empty");
+            throw new \coding_exception('The \'anonymous\' value must be set in other.');
         }
         if (!isset($this->other['cmid'])) {
-            throw new \coding_exception("Field other['cmid'] cannot be empty");
+            throw new \coding_exception('The \'cmid\' value must be set in other.');
         }
         if (!isset($this->other['instanceid'])) {
-            throw new \coding_exception("Field other['instanceid'] cannot be empty");
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
     }
 }

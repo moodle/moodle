@@ -53,10 +53,14 @@ class filter_glossary_filter_testcase extends advanced_testcase {
                 array('course' => $course->id, 'mainglossary' => 1));
 
         // Create two entries with ampersands and one normal entry.
+        /** @var mod_glossary_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
         $normal = $generator->create_content($glossary, array('concept' => 'normal'));
         $amp1 = $generator->create_content($glossary, array('concept' => 'A&B'));
         $amp2 = $generator->create_content($glossary, array('concept' => 'C&amp;D'));
+
+        filter_manager::reset_caches();
+        \mod_glossary\local\concept_cache::reset_caches();
 
         // Format text with all three entries in HTML.
         $html = '<p>A&amp;B C&amp;D normal</p>';
@@ -64,7 +68,7 @@ class filter_glossary_filter_testcase extends advanced_testcase {
 
         // Find all the glossary links in the result.
         $matches = array();
-        preg_match_all('~courseid=' . $course->id . '&amp;eid=([0-9]+).*?title="(.*?)"~', $filtered, $matches);
+        preg_match_all('~eid=([0-9]+).*?title="(.*?)"~', $filtered, $matches);
 
         // There should be 3 glossary links.
         $this->assertEquals(3, count($matches[1]));

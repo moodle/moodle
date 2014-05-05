@@ -94,7 +94,10 @@ class assign_feedback_comments extends assign_feedback_plugin {
                 $commenttext = $feedbackcomments->commenttext;
             }
         }
-        return optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT) != $commenttext;
+        // Note that this handles the difference between empty and not in the quickgrading
+        // form at all (hidden column).
+        $newvalue = optional_param('quickgrade_comments_' . $userid, false, PARAM_TEXT);
+        return ($newvalue !== false) && ($newvalue != $commenttext);
     }
 
 
@@ -173,6 +176,11 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function save_quickgrading_changes($userid, $grade) {
         global $DB;
         $feedbackcomment = $this->get_feedback_comments($grade->id);
+        $feedbackpresent = optional_param('quickgrade_comments_' . $userid, false, PARAM_TEXT) !== false;
+        if (!$feedbackpresent) {
+            // Nothing to save (e.g. hidden column).
+            return true;
+        }
         if ($feedbackcomment) {
             $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
             return $DB->update_record('assignfeedback_comments', $feedbackcomment);

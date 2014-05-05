@@ -17,8 +17,7 @@
 /**
  * Block for displayed logged in user's course completion status
  *
- * @package    block
- * @subpackage completion
+ * @package    block_completionstatus
  * @copyright  2009-2012 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -235,7 +234,6 @@ class block_completionstatus extends block_base {
 
             // Display link to detailed view.
             $details = new moodle_url('/blocks/completionstatus/details.php', array('course' => $course->id));
-            $this->content->footer = html_writer::empty_tag('br');
             $this->content->footer = html_writer::link($details, get_string('moredetails', 'completion'));
         } else {
             // If user is not enrolled, show error.
@@ -244,6 +242,9 @@ class block_completionstatus extends block_base {
 
         if (has_capability('report/completion:view', $context)) {
             $report = new moodle_url('/report/completion/index.php', array('course' => $course->id));
+            if (empty($this->content->footer)) {
+                $this->content->footer = '';
+            }
             $this->content->footer .= html_writer::empty_tag('br');
             $this->content->footer .= html_writer::link($report, get_string('viewcoursereport', 'completion'));
         }

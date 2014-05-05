@@ -5,14 +5,14 @@ Feature: Perform basic calendar functionality
   I need to create calendar data
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
     When I log in as "admin"
@@ -76,7 +76,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I click on "//div[@class='commands']//a[contains(@href, 'edit')]" "xpath_element"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Event title | Mediocre event :( |
       | Description | Wait, this event isn't that great. |
     And I press "Save changes"

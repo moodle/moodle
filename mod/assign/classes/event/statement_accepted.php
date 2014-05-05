@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign statement accepted event.
+ * The mod_assign statement accepted event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,20 +27,42 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign statement accepted event class.
+ * The mod_assign statement accepted event class.
  *
  * @package    mod_assign
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statement_accepted extends \core\event\base {
+class statement_accepted extends base {
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @return statement_accepted
      */
-    protected $legacylogdata;
+    public static function create_from_submission(\assign $assign, \stdClass $submission) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $submission->id
+        );
+        self::$preventcreatecall = false;
+        /** @var statement_accepted $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->set_assign($assign);
+        $event->add_record_snapshot('assign_submission', $submission);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -48,16 +70,8 @@ class statement_accepted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has accepted the statement of the submission {$this->objectid}.";
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
+        return "The user with the id '$this->userid' has accepted the statement of the submission with the id '$this->objectid' " .
+            "for the assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -66,16 +80,7 @@ class statement_accepted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_statement_accepted', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action.
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->context->instanceid));
+        return get_string('eventstatementaccepted', 'mod_assign');
     }
 
     /**
@@ -85,18 +90,33 @@ class statement_accepted extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'assign_submission';
     }
 
     /**
-     * Sets the legacy event log data.
+     * Return legacy data for add_to_log().
      *
-     * @param stdClass $legacylogdata legacy log data.
-     * @return void
+     * @return array
      */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+    protected function get_legacy_logdata() {
+        global $USER;
+        $logmessage = get_string('submissionstatementacceptedlog', 'mod_assign', fullname($USER)); // Nasty hack.
+        $this->set_legacy_logdata('submission statement accepted', $logmessage);
+        return parent::get_legacy_logdata();
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call statement_accepted::create() directly, use statement_accepted::create_from_submission() instead.');
+        }
+
+        parent::validate_data();
+    }
 }

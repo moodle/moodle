@@ -18,9 +18,9 @@
  * Code fragment to define the version of wiki
  * This fragment is called by moodle_needs_upgrading() and /admin/index.php
  *
- * @package    mod-wiki-2.0
- * @copyrigth  2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
- * @copyrigth  2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @package    mod_wiki
+ * @copyright  2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
  * @author Jordi Piguillem
  * @author Marc Alier
@@ -33,7 +33,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013110500;       // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2013110500;    // Requires this Moodle version
-$module->component = 'mod_wiki';       // Full name of the plugin (used for diagnostics)
-$module->cron      = 0;
+$plugin->version   = 2013110500;       // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2013110500;    // Requires this Moodle version
+$plugin->component = 'mod_wiki';       // Full name of the plugin (used for diagnostics)
+$plugin->cron      = 0;

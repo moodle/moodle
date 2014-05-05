@@ -350,10 +350,10 @@ abstract class backup_controller_dbops extends backup_dbops {
      * to track progress in processing (in case this task takes a long time).
      *
      * @param string $backupid Backup ID
-     * @param core_backup_progress $progress Optional progress monitor
+     * @param \core\progress\base $progress Optional progress monitor
      */
     public static function get_moodle_backup_information($backupid,
-            core_backup_progress $progress = null) {
+            \core\progress\base $progress = null) {
 
         // Start tracking progress if required (for load_controller).
         if ($progress) {

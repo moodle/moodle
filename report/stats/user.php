@@ -59,12 +59,8 @@ $PAGE->set_title("$course->shortname: $stractivityreport");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-// Trigger a content view event.
-$event = \report_stats\event\content_viewed::create(array('courseid' => $course->id,
-                                                          'other'    => array('content' => 'user stats')));
-$event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, 'course', 'report stats',
-        "report/stats/user.php?id=$user->id&course=$course->id", $course->id));
+// Trigger a user report viewed event.
+$event = \report_stats\event\user_report_viewed::create(array('context' => $coursecontext, 'relateduserid' => $user->id));
 $event->trigger();
 
 if (empty($CFG->enablestats)) {
@@ -101,7 +97,8 @@ if (empty($timeoptions)) {
 }
 
 // use the earliest.
-$time = array_pop(array_keys($timeoptions));
+$timekeys = array_keys($timeoptions);
+$time = array_pop($timekeys);
 
 $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
 $params = $param->params;

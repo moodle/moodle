@@ -862,6 +862,15 @@ class convert_path {
     /**
      * Constructor
      *
+     * The optional recipe array can have three keys, and for each key, the value is another array.
+     * - newfields    => array fieldname => defaultvalue indicates fields that have been added to the table,
+     *                                                   and so should be added to the XML.
+     * - dropfields   => array fieldname                 indicates fieldsthat have been dropped from the table,
+     *                                                   and so can be dropped from the XML.
+     * - renamefields => array oldname => newname        indicates fieldsthat have been renamed in the table,
+     *                                                   and so should be renamed in the XML.
+     * {@line moodle1_course_outline_handler} is a good example that uses all of these.
+     *
      * @param string $name name of the element
      * @param string $path path of the element
      * @param array $recipe basic description of the structure conversion

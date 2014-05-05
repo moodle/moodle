@@ -31,14 +31,15 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type array reset_options all reset options settings including courseid.
+ *      - array reset_options: all reset options settings including courseid.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_reset_started extends \core\event\base {
+class course_reset_started extends base {
 
     /**
      * Returns description of what happened.
@@ -46,7 +47,7 @@ class course_reset_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has started the reset of course $this->courseid.";
+        return "The user with the id '$this->userid' has started the reset of course '$this->courseid''.";
     }
 
     /**
@@ -74,7 +75,7 @@ class course_reset_started extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
@@ -84,9 +85,9 @@ class course_reset_started extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['reset_options'])) {
-           throw new \coding_exception('The key reset_options must be set in $other.');
+            throw new \coding_exception('The \'reset_options\' value must be set in other.');
         }
     }
-
 }

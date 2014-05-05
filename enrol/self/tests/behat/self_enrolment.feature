@@ -5,14 +5,14 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
   I need to auto enrol me in courses
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
@@ -39,7 +39,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enrolment key | moodle_rules |
     And I press "Enrol me"
     Then I should see "Topic 1"
@@ -62,14 +62,14 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
       | Use group enrolment keys | Yes |
     And I follow "Groups"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group 1 |
       | Enrolment key | testgroupenrolkey |
     And I press "Save changes"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enrolment key | testgroupenrolkey |
     And I press "Enrol me"
     Then I should see "Topic 1"

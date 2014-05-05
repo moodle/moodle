@@ -18,7 +18,7 @@
 /**
  * This file contains all necessary code to define and process an edit form
  *
- * @package mod-wiki-2.0
+ * @package mod_wiki
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -77,6 +77,7 @@ class mod_wiki_create_form extends moodleform {
                 $groupname = $groupinfo[$groupid];
                 $mform->addElement('static', 'groupdesciption', get_string('group'), $groupname);
                 $mform->addElement('hidden', 'groupinfo', $groupid);
+                $mform->setType('groupinfo', PARAM_INT);
             }
         }
 

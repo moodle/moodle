@@ -18,10 +18,9 @@
  * Fallback page of /mod/quiz/edit.php add random question dialog,
  * for users who do not use javascript.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2008 Olli Savolainen
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2008 Olli Savolainen
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -90,10 +89,8 @@ if ($data = $mform->get_data()) {
         list($parentid, $contextid) = explode(',', $data->parent);
         $categoryid = $qcobject->add_category($data->parent, $data->name, '', true);
         $includesubcategories = 0;
-        add_to_log($quiz->course, 'quiz', 'addcategory',
-                'view.php?id=' . $cm->id, $categoryid, $cm->id);
-        $returnurl->param('cat', $categoryid . ',' . $contextid);
 
+        $returnurl->param('cat', $categoryid . ',' . $contextid);
     } else {
         throw new coding_exception(
                 'It seems a form was submitted without any button being pressed???');

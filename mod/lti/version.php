@@ -35,8 +35,7 @@
 /**
  * This file defines the version of lti
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
@@ -49,7 +48,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$module->version   = 2013110500;       // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2013110500;    // Requires this Moodle version
-$module->component = 'mod_lti';        // Full name of the plugin (used for diagnostics)
-$module->cron      = 0;
+$plugin->version   = 2013110500;       // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2013110500;    // Requires this Moodle version
+$plugin->component = 'mod_lti';        // Full name of the plugin (used for diagnostics)
+$plugin->cron      = 0;

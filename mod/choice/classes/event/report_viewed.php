@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a choice activity report is viewed.
+ * The mod_choice report viewed event.
  *
  * @package mod_choice
  * @copyright 2013 Adrian Greeve <adrian@moodle.com>
@@ -26,26 +26,21 @@ namespace mod_choice\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a choice activity report is viewed.
+ * The mod_choice report viewed event class.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string content viewed content identifier.
- * }
- *
- * @package mod_choice
- * @copyright 2013 Adrian Greeve
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_choice
+ * @since      Moodle 2.6
+ * @copyright  2013 Adrian Greeve
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed extends \core\event\content_viewed {
+class report_viewed extends \core\event\base {
 
     /**
      * Init method.
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'choice';
     }
 
@@ -55,7 +50,17 @@ class report_viewed extends \core\event\content_viewed {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_report_viewed', 'choice');
+        return get_string('eventreportviewed', 'mod_choice');
+    }
+
+    /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "The user with id '$this->userid' has viewed the report for the choice activity with the course module id
+            '$this->contextinstanceid'";
     }
 
     /**
@@ -63,8 +68,7 @@ class report_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        $url = '/mod/choice/report.php';
-        return new \moodle_url($url, array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/choice/report.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -73,7 +77,7 @@ class report_viewed extends \core\event\content_viewed {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        $url = new \moodle_url('report.php', array('id' => $this->context->instanceid));
-        return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->context->instanceid);
+        $url = new \moodle_url('report.php', array('id' => $this->contextinstanceid));
+        return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->contextinstanceid);
     }
 }

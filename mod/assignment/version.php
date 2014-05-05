@@ -17,15 +17,14 @@
 /**
  * Version information
  *
- * @package    mod
- * @subpackage assignment
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_assignment
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013121900;       // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2013110500;    // Requires this Moodle version
-$module->component = 'mod_assignment'; // Full name of the plugin (used for diagnostics)
-$module->cron      = 60;
+$plugin->version   = 2013121900;       // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2013110500;    // Requires this Moodle version
+$plugin->component = 'mod_assignment'; // Full name of the plugin (used for diagnostics)
+$plugin->cron      = 60;

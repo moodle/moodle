@@ -1293,6 +1293,10 @@ function get_course_mods($courseid) {
 /**
  * Given an id of a course module, finds the coursemodule description
  *
+ * Please note that this function performs 1-2 DB queries. When possible use cached
+ * course modinfo. For example get_fast_modinfo($courseorid)->get_cm($cmid)
+ * See also {@link cm_info::get_course_module_record()}
+ *
  * @global object
  * @param string $modulename name of module type, eg. resource, assignment,... (optional, slower and less safe if not specified)
  * @param int $cmid course module id (id in course_modules table)
@@ -1346,6 +1350,10 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
 
 /**
  * Given an instance number of a module, finds the coursemodule description
+ *
+ * Please note that this function performs DB query. When possible use cached course
+ * modinfo. For example get_fast_modinfo($courseorid)->instances[$modulename][$instance]
+ * See also {@link cm_info::get_course_module_record()}
  *
  * @global object
  * @param string $modulename name of module type, eg. resource, assignment,...
@@ -1514,6 +1522,11 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
  * and the module's type (eg "forum") returns whether the object
  * is visible or not, groupmembersonly visibility not tested
  *
+ * NOTE: This does NOT take into account visibility to a particular user.
+ * To get visibility access for a specific user, use get_fast_modinfo, get a
+ * cm_info object from this, and check the ->uservisible property; or use
+ * the \core_availability\info_module::is_user_visible() static function.
+ *
  * @global object
 
  * @param $moduletype Name of the module eg 'forum'
@@ -1540,48 +1553,43 @@ function instance_is_visible($moduletype, $module) {
     return true;  // visible by default!
 }
 
-/**
- * Determine whether a course module is visible within a course,
- * this is different from instance_is_visible() - faster and visibility for user
- *
- * @global object
- * @global object
- * @uses DEBUG_DEVELOPER
- * @uses CONTEXT_MODULE
- * @uses CONDITION_MISSING_EXTRATABLE
- * @param object $cm object
- * @param int $userid empty means current user
- * @return bool Success
- */
-function coursemodule_visible_for_user($cm, $userid=0) {
-    global $USER,$CFG;
-
-    if (empty($cm->id)) {
-        debugging("Incorrect course module parameter!", DEBUG_DEVELOPER);
-        return false;
-    }
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', context_module::instance($cm->id), $userid)) {
-        return false;
-    }
-    if ($CFG->enableavailability) {
-        require_once($CFG->libdir.'/conditionlib.php');
-        $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
-        if(!$ci->is_available($cm->availableinfo,false,$userid) and
-            !has_capability('moodle/course:viewhiddenactivities',
-                context_module::instance($cm->id), $userid)) {
-            return false;
-        }
-    }
-    return groups_course_module_visible($cm, $userid);
-}
-
-
-
 
 /// LOG FUNCTIONS /////////////////////////////////////////////////////
+
+/**
+ * Get instance of log manager.
+ *
+ * @param bool $forcereload
+ * @return \core\log\manager
+ */
+function get_log_manager($forcereload = false) {
+    /** @var \core\log\manager $singleton */
+    static $singleton = null;
+
+    if ($forcereload and isset($singleton)) {
+        $singleton->dispose();
+        $singleton = null;
+    }
+
+    if (isset($singleton)) {
+        return $singleton;
+    }
+
+    $classname = '\tool_log\log\manager';
+    if (defined('LOG_MANAGER_CLASS')) {
+        $classname = LOG_MANAGER_CLASS;
+    }
+
+    if (!class_exists($classname)) {
+        if (!empty($classname)) {
+            debugging("Cannot find log manager class '$classname'.", DEBUG_DEVELOPER);
+        }
+        $classname = '\core\log\dummy_manager';
+    }
+
+    $singleton = new $classname();
+    return $singleton;
+}
 
 /**
  * Add an entry to the config log table.
@@ -1611,109 +1619,6 @@ function add_to_config_log($name, $oldvalue, $value, $plugin) {
     $log->value     = $value;
     $log->plugin    = $plugin;
     $DB->insert_record('config_log', $log);
-}
-
-/**
- * Add an entry to the log table.
- *
- * Add an entry to the log table.  These are "action" focussed rather
- * than web server hits, and provide a way to easily reconstruct what
- * any particular student has been doing.
- *
- * @package core
- * @category log
- * @global moodle_database $DB
- * @global stdClass $CFG
- * @global stdClass $USER
- * @uses SITEID
- * @uses DEBUG_DEVELOPER
- * @uses DEBUG_ALL
- * @param    int     $courseid  The course id
- * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
- * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
- * @param    string  $url     The file and parameters used to see the results of the action
- * @param    string  $info    Additional description information
- * @param    string  $cm      The course_module->id if there is one
- * @param    string  $user    If log regards $user other than $USER
- * @return void
- */
-function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
-    // Note that this function intentionally does not follow the normal Moodle DB access idioms.
-    // This is for a good reason: it is the most frequently used DB update function,
-    // so it has been optimised for speed.
-    global $DB, $CFG, $USER;
-
-    if ($cm === '' || is_null($cm)) { // postgres won't translate empty string to its default
-        $cm = 0;
-    }
-
-    if ($user) {
-        $userid = $user;
-    } else {
-        if (\core\session\manager::is_loggedinas()) {  // Don't log
-            return;
-        }
-        $userid = empty($USER->id) ? '0' : $USER->id;
-    }
-
-    if (isset($CFG->logguests) and !$CFG->logguests) {
-        if (!$userid or isguestuser($userid)) {
-            return;
-        }
-    }
-
-    $REMOTE_ADDR = getremoteaddr();
-
-    $timenow = time();
-    $info = $info;
-    if (!empty($url)) { // could break doing html_entity_decode on an empty var.
-        $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
-    } else {
-        $url = '';
-    }
-
-    // Restrict length of log lines to the space actually available in the
-    // database so that it doesn't cause a DB error. Log a warning so that
-    // developers can avoid doing things which are likely to cause this on a
-    // routine basis.
-    if(!empty($info) && core_text::strlen($info)>255) {
-        $info = core_text::substr($info,0,252).'...';
-        debugging('Warning: logged very long info',DEBUG_DEVELOPER);
-    }
-
-    // If the 100 field size is changed, also need to alter print_log in course/lib.php
-    if(!empty($url) && core_text::strlen($url)>100) {
-        $url = core_text::substr($url,0,97).'...';
-        debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
-    }
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->logwrites++;};
-
-    $log = array('time'=>$timenow, 'userid'=>$userid, 'course'=>$courseid, 'ip'=>$REMOTE_ADDR, 'module'=>$module,
-                 'cmid'=>$cm, 'action'=>$action, 'url'=>$url, 'info'=>$info);
-
-    try {
-        $DB->insert_record_raw('log', $log, false);
-    } catch (dml_exception $e) {
-        debugging('Error: Could not insert a new entry to the Moodle log. '. $e->error, DEBUG_ALL);
-
-        // MDL-11893, alert $CFG->supportemail if insert into log failed
-        if ($CFG->supportemail and empty($CFG->noemailever)) {
-            // email_to_user is not usable because email_to_user tries to write to the logs table,
-            // and this will get caught in an infinite loop, if disk is full
-            $site = get_site();
-            $subject = 'Insert into log failed at your moodle site '.$site->fullname;
-            $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
-            $message .= "The failed query parameters are:\n\n" . var_export($log, true);
-
-            $lasttime = get_config('admin', 'lastloginserterrormail');
-            if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
-                //using email directly rather than messaging as they may not be able to log in to access a message
-                mail($CFG->supportemail, $subject, $message);
-                set_config('lastloginserterrormail', time(), 'admin');
-            }
-        }
-    }
 }
 
 /**
@@ -1900,43 +1805,6 @@ function get_logs_userday($userid, $courseid, $daystart) {
                                GROUP BY FLOOR((time - $daystart)/". HOURSECS .") ", $params);
 }
 
-/**
- * Returns an object with counts of failed login attempts
- *
- * Returns information about failed login attempts.  If the current user is
- * an admin, then two numbers are returned:  the number of attempts and the
- * number of accounts.  For non-admins, only the attempts on the given user
- * are shown.
- *
- * @global moodle_database $DB
- * @uses CONTEXT_SYSTEM
- * @param string $mode Either 'admin' or 'everybody'
- * @param string $username The username we are searching for
- * @param string $lastlogin The date from which we are searching
- * @return int
- */
-function count_login_failures($mode, $username, $lastlogin) {
-    global $DB;
-
-    $params = array('mode'=>$mode, 'username'=>$username, 'lastlogin'=>$lastlogin);
-    $select = "module='login' AND action='error' AND time > :lastlogin";
-
-    $count = new stdClass();
-
-    if (is_siteadmin()) {
-        if ($count->attempts = $DB->count_records_select('log', $select, $params)) {
-            $count->accounts = $DB->count_records_select('log', $select, $params, 'COUNT(DISTINCT info)');
-            return $count;
-        }
-    } else if ($mode == 'everybody') {
-        if ($count->attempts = $DB->count_records_select('log', "$select AND info = :username", $params)) {
-            return $count;
-        }
-    }
-    return NULL;
-}
-
-
 /// GENERAL HELPFUL THINGS  ///////////////////////////////////
 
 /**
@@ -1994,4 +1862,127 @@ function user_can_create_courses() {
     }
     $catsrs->close();
     return false;
+}
+
+/**
+ * This method can update the values in mulitple database rows for a colum with
+ * a unique index, without violating that constraint.
+ *
+ * Suppose we have a table with a unique index on (otherid, sortorder), and
+ * for a particular value of otherid, we want to change all the sort orders.
+ * You have to do this carefully or you will violate the unique index at some time.
+ * This method takes care of the details for you.
+ *
+ * Note that, it is the responsibility of the caller to make sure that the
+ * requested rename is legal. For example, if you ask for [1 => 2, 2 => 2]
+ * then you will get a unique key violation error from the database.
+ *
+ * @param string $table The database table to modify.
+ * @param string $field the field that contains the values we are going to change.
+ * @param array $newvalues oldvalue => newvalue how to change the values.
+ *      E.g. [1 => 4, 2 => 1, 3 => 3, 4 => 2].
+ * @param array $otherconditions array fieldname => requestedvalue extra WHERE clause
+ *      conditions to restrict which rows are affected. E.g. array('otherid' => 123).
+ * @param int $unusedvalue (defaults to -1) a value that is never used in $ordercol.
+ */
+function update_field_with_unique_index($table, $field, array $newvalues,
+        array $otherconditions, $unusedvalue = -1) {
+    global $DB;
+    $safechanges = decompose_update_into_safe_changes($newvalues, $unusedvalue);
+
+    $transaction = $DB->start_delegated_transaction();
+    foreach ($safechanges as $change) {
+        list($from, $to) = $change;
+        $otherconditions[$field] = $from;
+        $DB->set_field($table, $field, $to, $otherconditions);
+    }
+    $transaction->allow_commit();
+}
+
+/**
+ * Helper used by {@link update_field_with_unique_index()}. Given a desired
+ * set of changes, break them down into single udpates that can be done one at
+ * a time without breaking any unique index constraints.
+ *
+ * Suppose the input is array(1 => 2, 2 => 1) and -1. Then the output will be
+ * array (array(1, -1), array(2, 1), array(-1, 2)). This function solves this
+ * problem in the general case, not just for simple swaps. The unit tests give
+ * more examples.
+ *
+ * Note that, it is the responsibility of the caller to make sure that the
+ * requested rename is legal. For example, if you ask for something impossible
+ * like array(1 => 2, 2 => 2) then the results are undefined. (You will probably
+ * get a unique key violation error from the database later.)
+ *
+ * @param array $newvalues The desired re-ordering.
+ *      E.g. array(1 => 4, 2 => 1, 3 => 3, 4 => 2).
+ * @param int $unusedvalue A value that is not currently used.
+ * @return array A safe way to perform the re-order. An array of two-element
+ *      arrays array($from, $to).
+ *      E.g. array(array(1, -1), array(2, 1), array(4, 2), array(-1, 4)).
+ */
+function decompose_update_into_safe_changes(array $newvalues, $unusedvalue) {
+    $nontrivialmap = array();
+    foreach ($newvalues as $from => $to) {
+        if ($from == $unusedvalue || $to == $unusedvalue) {
+            throw new \coding_exception('Supposedly unused value ' . $unusedvalue . ' is actually used!');
+        }
+        if ($from != $to) {
+            $nontrivialmap[$from] = $to;
+        }
+    }
+
+    if (empty($nontrivialmap)) {
+        return array();
+    }
+
+    // First we deal with all renames that are not part of cycles.
+    // This bit is O(n^2) and it ought to be possible to do better,
+    // but it does not seem worth the effort.
+    $safechanges = array();
+    $nontrivialmapchanged = true;
+    while ($nontrivialmapchanged) {
+        $nontrivialmapchanged = false;
+
+        foreach ($nontrivialmap as $from => $to) {
+            if (array_key_exists($to, $nontrivialmap)) {
+                continue; // Cannot currenly do this rename.
+            }
+            // Is safe to do this rename now.
+            $safechanges[] = array($from, $to);
+            unset($nontrivialmap[$from]);
+            $nontrivialmapchanged = true;
+        }
+    }
+
+    // Are we done?
+    if (empty($nontrivialmap)) {
+        return $safechanges;
+    }
+
+    // Now what is left in $nontrivialmap must be a permutation,
+    // which must be a combination of disjoint cycles. We need to break them.
+    while (!empty($nontrivialmap)) {
+        // Extract the first cycle.
+        reset($nontrivialmap);
+        $current = $cyclestart = key($nontrivialmap);
+        $cycle = array();
+        do {
+            $cycle[] = $current;
+            $next = $nontrivialmap[$current];
+            unset($nontrivialmap[$current]);
+            $current = $next;
+        } while ($current != $cyclestart);
+
+        // Now convert it to a sequence of safe renames by using a temp.
+        $safechanges[] = array($cyclestart, $unusedvalue);
+        $cycle[0] = $unusedvalue;
+        $to = $cyclestart;
+        while ($from = array_pop($cycle)) {
+            $safechanges[] = array($from, $to);
+            $to = $from;
+        }
+    }
+
+    return $safechanges;
 }

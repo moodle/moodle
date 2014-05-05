@@ -231,7 +231,7 @@ $query = "
      LEFT JOIN {user} u ON u.id = tg.userid
                $where
       GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
-               u.id, u.firstname, u.lastname
+               u.id, $allusernames
          $sort";
 
 $totalcount = $DB->count_records_sql("

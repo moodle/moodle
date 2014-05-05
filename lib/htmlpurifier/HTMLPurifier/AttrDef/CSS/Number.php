@@ -7,32 +7,44 @@ class HTMLPurifier_AttrDef_CSS_Number extends HTMLPurifier_AttrDef
 {
 
     /**
-     * Bool indicating whether or not only positive values allowed.
+     * Indicates whether or not only positive values are allowed.
+     * @type bool
      */
     protected $non_negative = false;
 
     /**
-     * @param $non_negative Bool indicating whether negatives are forbidden
+     * @param bool $non_negative indicates whether negatives are forbidden
      */
-    public function __construct($non_negative = false) {
+    public function __construct($non_negative = false)
+    {
         $this->non_negative = $non_negative;
     }
 
     /**
+     * @param string $number
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return string|bool
      * @warning Some contexts do not pass $config, $context. These
      *          variables should not be used without checking HTMLPurifier_Length
      */
-    public function validate($number, $config, $context) {
-
+    public function validate($number, $config, $context)
+    {
         $number = $this->parseCDATA($number);
 
-        if ($number === '') return false;
-        if ($number === '0') return '0';
+        if ($number === '') {
+            return false;
+        }
+        if ($number === '0') {
+            return '0';
+        }
 
         $sign = '';
         switch ($number[0]) {
             case '-':
-                if ($this->non_negative) return false;
+                if ($this->non_negative) {
+                    return false;
+                }
                 $sign = '-';
             case '+':
                 $number = substr($number, 1);
@@ -44,14 +56,20 @@ class HTMLPurifier_AttrDef_CSS_Number extends HTMLPurifier_AttrDef
         }
 
         // Period is the only non-numeric character allowed
-        if (strpos($number, '.') === false) return false;
+        if (strpos($number, '.') === false) {
+            return false;
+        }
 
         list($left, $right) = explode('.', $number, 2);
 
-        if ($left === '' && $right === '') return false;
-        if ($left !== '' && !ctype_digit($left)) return false;
+        if ($left === '' && $right === '') {
+            return false;
+        }
+        if ($left !== '' && !ctype_digit($left)) {
+            return false;
+        }
 
-        $left  = ltrim($left,  '0');
+        $left = ltrim($left, '0');
         $right = rtrim($right, '0');
 
         if ($right === '') {
@@ -59,11 +77,8 @@ class HTMLPurifier_AttrDef_CSS_Number extends HTMLPurifier_AttrDef
         } elseif (!ctype_digit($right)) {
             return false;
         }
-
         return $sign . $left . '.' . $right;
-
     }
-
 }
 
 // vim: et sw=4 sts=4

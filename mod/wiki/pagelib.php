@@ -19,9 +19,9 @@
  * This file contains several classes uses to render the diferent pages
  * of the wiki module
  *
- * @package mod-wiki-2.0
- * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
- * @copyrigth 2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @package mod_wiki
+ * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
  * @author Jordi Piguillem
  * @author Marc Alier
@@ -110,7 +110,10 @@ abstract class page_wiki {
         $PAGE->set_cm($cm);
         $PAGE->set_activity_record($wiki);
         // the search box
-        $PAGE->set_button(wiki_search_form($cm));
+        if (!empty($subwiki->id)) {
+            $search = optional_param('searchstring', null, PARAM_ALPHANUMEXT);
+            $PAGE->set_button(wiki_search_form($cm, $search, $subwiki));
+        }
     }
 
     /**
@@ -119,7 +122,7 @@ abstract class page_wiki {
     function print_header() {
         global $OUTPUT, $PAGE, $CFG, $USER, $SESSION;
 
-        $PAGE->set_heading(format_string($PAGE->course->fullname));
+        $PAGE->set_heading($PAGE->course->fullname);
 
         $this->set_url();
 
@@ -828,6 +831,17 @@ class page_wiki_search extends page_wiki {
         global $PAGE, $CFG;
         $PAGE->set_url($CFG->wwwroot . '/mod/wiki/search.php');
     }
+
+    function print_header() {
+        global $PAGE;
+
+        parent::print_header();
+
+        $wiki = $PAGE->activityrecord;
+        $page = (object)array('title' => $wiki->firstpagetitle);
+        $this->wikioutput->wiki_print_subwiki_selector($wiki, $this->subwiki, $page, 'search');
+    }
+
     function print_content() {
         global $PAGE;
 
@@ -1045,7 +1059,7 @@ class page_wiki_preview extends page_wiki_edit {
             }
             $parseroutput = wiki_parse_content($data->contentformat, $text, $options);
             $this->set_newcontent($text);
-            echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem wiki_info');
+            echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem');
             $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true, 'filter'=>false));
             echo $OUTPUT->box($content, 'generalbox wiki_previewbox');
             $content = $this->newcontent;
@@ -1425,14 +1439,11 @@ class page_wiki_map extends page_wiki {
             echo $this->wikioutput->menu_map($this->page->id, $this->view);
             $this->print_index_content();
             break;
-        case 5:
-            echo $this->wikioutput->menu_map($this->page->id, $this->view);
-            $this->print_page_list_content();
-            break;
         case 6:
             echo $this->wikioutput->menu_map($this->page->id, $this->view);
             $this->print_updated_content();
             break;
+        case 5:
         default:
             echo $this->wikioutput->menu_map($this->page->id, $this->view);
             $this->print_page_list_content();
@@ -1834,11 +1845,15 @@ class page_wiki_restoreversion extends page_wiki {
     }
 
     function print_content() {
-        global $CFG, $PAGE;
+        global $PAGE;
 
-        require_capability('mod/wiki:managewiki', $this->modcontext, NULL, true, 'nomanagewikipermission', 'wiki');
+        $wiki = $PAGE->activityrecord;
+        if (wiki_user_can_edit($this->subwiki, $wiki)) {
+            $this->print_restoreversion();
+        } else {
+            echo get_string('cannoteditpage', 'wiki');
+        }
 
-        $this->print_restoreversion();
     }
 
     function set_url() {
@@ -2031,7 +2046,7 @@ class page_wiki_save extends page_wiki_edit {
 
         if ($save && $data) {
             if (!empty($CFG->usetags)) {
-                tag_set('wiki_pages', $this->page->id, $data->tags);
+                tag_set('wiki_pages', $this->page->id, $data->tags, 'mod_wiki', $this->modcontext->id);
             }
 
             $message = '<p>' . get_string('saving', 'wiki') . '</p>';
@@ -2149,13 +2164,17 @@ class page_wiki_confirmrestore extends page_wiki_save {
         $PAGE->set_url($CFG->wwwroot . '/mod/wiki/viewversion.php', array('pageid' => $this->page->id, 'versionid' => $this->version->id));
     }
 
+    function print_header() {
+        $this->set_url();
+    }
+
     function print_content() {
         global $CFG, $PAGE;
 
-        require_capability('mod/wiki:managewiki', $this->modcontext, NULL, true, 'nomanagewikipermission', 'wiki');
-
         $version = wiki_get_version($this->version->id);
-        if (wiki_restore_page($this->page, $version, $this->modcontext)) {
+        $wiki = $PAGE->activityrecord;
+        if (wiki_user_can_edit($this->subwiki, $wiki) &&
+                wiki_restore_page($this->page, $version, $this->modcontext)) {
             redirect($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $this->page->id, get_string('restoring', 'wiki', $version->version), 3);
         } else {
             print_error('restoreerror', 'wiki', $version->version);

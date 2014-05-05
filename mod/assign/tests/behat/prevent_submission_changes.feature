@@ -6,14 +6,14 @@ Feature: Prevent or allow assignment submission changes
 
   @javascript
   Scenario: Preventing changes and allowing them again
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -30,11 +30,11 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission |
     And I press "Save changes"
     And I press "Edit submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission and he/she edited me |
     And I press "Save changes"
     And I log out
@@ -42,29 +42,30 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Course 1"
     And I follow "Test assignment name"
     When I follow "View/grade all submissions"
-    And I click on "//tr[contains(., 'Student 1')]/descendant::td/descendant::img[@alt='Actions']/parent::a" "xpath_element"
+    And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Prevent submission changes"
     Then I should see "Submission changes not allowed"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And "Edit submission" "button" should not exists
+    And "Edit submission" "button" should not exist
     And I should see "This assignment is not accepting submissions"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
-    And I click on "//tr[contains(., 'Student 1')]/descendant::td/descendant::img[@alt='Actions']/parent::a" "xpath_element"
+    And I click on "Edit" "link" in the "Student 1" "table_row"
     And I follow "Allow submission changes"
+    And I should not see "Submission changes not allowed"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I should not see "This assignment is not accepting submissions"
     And I press "Edit submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission edited again |
     And I press "Save changes"
     And I should see "I'm the student submission edited again"

@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_equation-button",
+  "builds": {
+    "moodle-atto_equation-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

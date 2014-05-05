@@ -141,11 +141,6 @@ class page_requirements_manager {
     protected $M_cfg;
 
     /**
-     * @var array Stores debug backtraces from when JS modules were included in the page
-     */
-    protected $debug_moduleloadstacktraces = array();
-
-    /**
      * @var array list of requested jQuery plugins
      */
     protected $jqueryplugins = array();
@@ -194,6 +189,15 @@ class page_requirements_manager {
         $this->YUI_config->base         = $this->yui3loader->base;
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
+
+        // If we've had to patch any YUI modules between releases, we must override the YUI configuration to include them.
+        // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
+        if (!empty($CFG->yuipatchedmodules) && !empty($CFG->yuipatchlevel)) {
+            $this->YUI_config->define_patched_core_modules($this->yui3loader->local_comboBase,
+                    $CFG->yui3version,
+                    $CFG->yuipatchlevel,
+                    $CFG->yuipatchedmodules);
+        }
 
         $configname = $this->YUI_config->set_config_source('lib/yui/config/yui2.js');
         $this->YUI_config->add_group('yui2', array(
@@ -782,14 +786,6 @@ class page_requirements_manager {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
-        // Don't load this module if we already have, no need to!
-        if ($this->js_module_loaded($module['name'])) {
-            if ($CFG->debugdeveloper) {
-                $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
-            }
-            return;
-        }
-
         $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out(false);
         // Add all needed strings.
         if (!empty($module['strings'])) {
@@ -818,12 +814,6 @@ class page_requirements_manager {
         } else {
             $this->YUI_config->add_module_config($module['name'], $module);
         }
-        if ($CFG->debugdeveloper) {
-            if (!array_key_exists($module['name'], $this->debug_moduleloadstacktraces)) {
-                $this->debug_moduleloadstacktraces[$module['name']] = array();
-            }
-            $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
-        }
     }
 
     /**
@@ -840,14 +830,6 @@ class page_requirements_manager {
         }
         return array_key_exists($modulename, $this->YUI_config->modules) ||
                array_key_exists($modulename, $this->extramodules);
-    }
-
-    /**
-     * Returns the stacktraces from loading js modules.
-     * @return array
-     */
-    public function get_loaded_modules() {
-        return $this->debug_moduleloadstacktraces;
     }
 
     /**
@@ -1243,8 +1225,13 @@ class page_requirements_manager {
             $format = '-debug';
         }
 
+        $rollupversion = $CFG->yui3version;
+        if (!empty($CFG->yuipatchlevel)) {
+            $rollupversion .= '_' . $CFG->yuipatchlevel;
+        }
+
         $baserollups = array(
-            'rollup/' . $CFG->yui3version . "/yui-moodlesimple{$yuiformat}.js",
+            'rollup/' . $rollupversion . "/yui-moodlesimple{$yuiformat}.js",
             'rollup/' . $jsrev . "/mcore{$format}.js",
         );
 
@@ -1772,6 +1759,59 @@ class YUI_config {
             }
         }
         return $modules;
+    }
+
+    /**
+     * Define YUI modules which we have been required to patch between releases.
+     *
+     * We must do this because we aggressively cache content on the browser, and we must also override use of the
+     * external CDN which will serve the true authoritative copy of the code without our patches.
+     *
+     * @param String combobase The local combobase
+     * @param String yuiversion The current YUI version
+     * @param Int patchlevel The patch level we're working to for YUI
+     * @param Array patchedmodules An array containing the names of the patched modules
+     * @return void
+     */
+    public function define_patched_core_modules($combobase, $yuiversion, $patchlevel, $patchedmodules) {
+        // The version we use is suffixed with a patchlevel so that we can get additional revisions between YUI releases.
+        $subversion = $yuiversion . '_' . $patchlevel;
+
+        if ($this->comboBase == $combobase) {
+            // If we are using the local combobase in the loader, we can add a group and still make use of the combo
+            // loader. We just need to specify a different root which includes a slightly different YUI version number
+            // to include our patchlevel.
+            $patterns = array();
+            $modules = array();
+            foreach ($patchedmodules as $modulename) {
+                // We must define the pattern and module here so that the loader uses our group configuration instead of
+                // the standard module definition. We may lose some metadata provided by upstream but this will be
+                // loaded when the module is loaded anyway.
+                $patterns[$modulename] = array(
+                    'group' => 'yui-patched',
+                );
+                $modules[$modulename] = array();
+            }
+
+            // Actually add the patch group here.
+            $this->add_group('yui-patched', array(
+                'combine' => true,
+                'root' => $subversion . '/',
+                'patterns' => $patterns,
+                'modules' => $modules,
+            ));
+
+        } else {
+            // The CDN is in use - we need to instead use the local combobase for this module and override the modules
+            // definition. We cannot use the local base - we must use the combobase because we cannot invalidate the
+            // local base in browser caches.
+            $fullpathbase = $combobase . $subversion . '/';
+            foreach ($patchedmodules as $modulename) {
+                $this->modules[$modulename] = array(
+                    'fullpath' => $fullpathbase . $modulename . '/' . $modulename . '-min.js'
+                );
+            }
+        }
     }
 }
 

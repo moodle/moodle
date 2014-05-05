@@ -22,8 +22,7 @@
 
 /**
  * Block community renderer.
- * @package    blocks
- * @subpackage community
+ * @package   block_community
  * @copyright 2010 Moodle Pty Ltd (http://moodle.com)
  * @author    Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

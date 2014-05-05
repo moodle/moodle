@@ -1,0 +1,10 @@
+{
+    "name": "moodle-gradereport_grader-scrollview",
+    "builds": {
+        "moodle-gradereport_grader-scrollview": {
+            "jsfiles": [
+                "scrollview.js"
+            ]
+        }
+    }
+}

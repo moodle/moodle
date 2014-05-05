@@ -1,5 +1,4 @@
 <?php
-
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // This file is part of Moodle - http://moodle.org/                      //
@@ -20,14 +19,13 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/*
- * @package    blocks
- * @subpackage community
+/**
+ * Form for community search
+ *
+ * @package    block_community
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * Form for community search
  */
 
 require_once($CFG->libdir . '/formslib.php');

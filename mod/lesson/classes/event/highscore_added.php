@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when a highscore is added.
+ * The mod_lesson highscore added event.
  *
  * @package    mod_lesson
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -26,6 +26,22 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_lesson highscore added event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int lessonid: the id of the lesson in the lesson table.
+ *      - string nickname: the user's nickname.
+ * }
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
+
 class highscore_added extends \core\event\base {
 
     /**
@@ -34,7 +50,7 @@ class highscore_added extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lesson_high_scores';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -52,7 +68,7 @@ class highscore_added extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -61,10 +77,8 @@ class highscore_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        $highscore = $this->get_record_snapshot('lesson_high_scores', $this->objectid);
-
-        return 'A new highscore was added to the lesson with the id ' . $highscore->lessonid .
-            ' for user with the id ' . $this->userid;
+        return "The user with the id '$this->userid' added a new highscore to the lesson activity with the course module " .
+            "id '$this->contextinstanceid'.";
     }
 
     /**
@@ -73,9 +87,25 @@ class highscore_added extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        $highscore = $this->get_record_snapshot('lesson_high_scores', $this->objectid);
+        return array($this->courseid, 'lesson', 'update highscores', 'highscores.php?id=' . $this->contextinstanceid,
+            $this->other['nickname'], $this->contextinstanceid);
+    }
 
-        return array($this->courseid, 'lesson', 'update highscores', 'highscores.php?id=' . $this->context->instanceid,
-            $highscore->nickname, $this->context->instanceid);
+    /**
+     * Custom validations.
+     *
+     * @throws \coding_exception when validation fails.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['lessonid'])) {
+            throw new \coding_exception('The \'lessonid\' value must be set in other.');
+        }
+
+        if (!isset($this->other['nickname'])) {
+            throw new \coding_exception('The \'nickname\' value must be set in other.');
+        }
     }
 }

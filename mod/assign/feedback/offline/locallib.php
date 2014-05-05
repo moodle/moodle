@@ -36,6 +36,9 @@ require_once($CFG->dirroot.'/grade/grading/lib.php');
  */
 class assign_feedback_offline extends assign_feedback_plugin {
 
+    /** @var boolean|null $enabledcache Cached lookup of the is_enabled function */
+    private $enabledcache = null;
+
     /**
      * Get the name of the file feedback plugin
      * @return string
@@ -163,7 +166,6 @@ class assign_feedback_offline extends assign_feedback_plugin {
                 $grade->grader = $USER->id;
                 if ($this->assignment->update_grade($grade)) {
                     $this->assignment->notify_grade_modified($grade);
-                    $this->assignment->add_to_log('grade submission', $this->assignment->format_grade_for_log($grade));
                     $updatecount += 1;
                 }
             }
@@ -185,14 +187,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                         $updatecount += 1;
                         $grade = $this->assignment->get_user_grade($record->user->id, true);
                         $this->assignment->notify_grade_modified($grade);
-                        if ($plugin->set_editor_text($field, $newvalue, $grade->id)) {
-                            $logdesc = get_string('feedbackupdate', 'assignfeedback_offline',
-                                                  array('field'=>$description,
-                                                        'student'=>$userdesc,
-                                                        'text'=>$newvalue));
-
-                            $this->assignment->add_to_log('save grading feedback', $logdesc);
-                        }
+                        $plugin->set_editor_text($field, $newvalue, $grade->id);
 
                         // If this is the gradebook comments plugin - post an update to the gradebook.
                         if (($plugin->get_subtype() . '_' . $plugin->get_type()) == $gradebookplugin) {
@@ -373,14 +368,18 @@ class assign_feedback_offline extends assign_feedback_plugin {
      * @return bool
      */
     public function is_enabled() {
-        $gradingmanager = get_grading_manager($this->assignment->get_context(), 'mod_assign', 'submissions');
-        $controller = $gradingmanager->get_active_controller();
-        $active = !empty($controller);
+        if ($this->enabledcache === null) {
+            $gradingmanager = get_grading_manager($this->assignment->get_context(), 'mod_assign', 'submissions');
+            $controller = $gradingmanager->get_active_controller();
+            $active = !empty($controller);
 
-        if ($active) {
-            return false;
+            if ($active) {
+                $this->enabledcache = false;
+            } else {
+                $this->enabledcache = parent::is_enabled();
+            }
         }
-        return parent::is_enabled();
+        return $this->enabledcache;
     }
 
     /**

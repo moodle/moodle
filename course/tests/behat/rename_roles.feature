@@ -6,15 +6,15 @@ Feature: Rename roles within a course
 
   @javascript
   Scenario: Rename roles within a course
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | teacher2 | Teacher | 2 | teacher2@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | teacher |
@@ -22,7 +22,7 @@ Feature: Rename roles within a course
     And I log in as "teacher1"
     And I follow "Course 1"
     When I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
     And I press "Save changes"
@@ -34,7 +34,7 @@ Feature: Rename roles within a course
     And the "roleid" select box should contain "Learner"
     And the "roleid" select box should not contain "Student"
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
     And I press "Save changes"

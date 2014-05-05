@@ -112,16 +112,16 @@ try {
     $html = ob_get_contents();
     ob_end_clean();
 } catch (Exception $e) {
-    die('Error: '.$e->getMessage());
+    throw new coding_exception('Error: '.$e->getMessage());
 }
 
 // Check if the buffer contianed anything if it did ERROR!
 if (trim($html) !== '') {
-    die('Errors were encountered while producing the navigation branch'."\n\n\n".$html);
+    throw new coding_exception('Errors were encountered while producing the navigation branch'."\n\n\n".$html);
 }
 // Check that branch isn't empty... if it is ERROR!
-if (empty($branch) || $branch->nodetype !== navigation_node::NODETYPE_BRANCH) {
-    die('No further information available for this branch');
+if (empty($branch) || ($branch->nodetype !== navigation_node::NODETYPE_BRANCH && !$branch->isexpandable)) {
+    throw new coding_exception('No further information available for this branch');
 }
 
 // Prepare an XML converter for the branch

@@ -1,0 +1,10 @@
+{
+    "name": "moodle-report_loglive-fetchlogs",
+    "builds": {
+        "moodle-report_loglive-fetchlogs": {
+            "jsfiles": [
+                "fetchlogs.js"
+            ]
+        }
+    }
+}

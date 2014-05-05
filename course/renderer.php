@@ -665,7 +665,7 @@ class core_course_renderer extends plugin_renderer_base {
                 // off the JS.
                 $extraclass = '';
                 if (!empty($CFG->enableavailability) &&
-                        condition_info::completion_value_used_as_condition($course, $mod)) {
+                        core_availability\info::completion_value_used($course, $mod->id)) {
                     $extraclass = ' preventjs';
                 }
                 $output .= html_writer::start_tag('form', array('method' => 'post',
@@ -711,11 +711,8 @@ class core_course_renderer extends plugin_renderer_base {
         global $CFG;
         $conditionalhidden = false;
         if (!empty($CFG->enableavailability)) {
-            $conditionalhidden = $mod->availablefrom > time() ||
-                ($mod->availableuntil && $mod->availableuntil < time()) ||
-                count($mod->conditionsgrade) > 0 ||
-                count($mod->conditionscompletion) > 0 ||
-                count($mod->conditionsfield);
+            $info = new \core_availability\info_module($mod);
+            $conditionalhidden = !$info->is_available_for_all();
         }
         return $conditionalhidden;
     }
@@ -736,8 +733,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_name(cm_info $mod, $displayoptions = array()) {
         global $CFG;
         $output = '';
-        if (!$mod->uservisible &&
-                (empty($mod->showavailability) || empty($mod->availableinfo))) {
+        if (!$mod->uservisible && empty($mod->availableinfo)) {
             // nothing to be displayed to the user
             return $output;
         }
@@ -825,8 +821,7 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm_text(cm_info $mod, $displayoptions = array()) {
         $output = '';
-        if (!$mod->uservisible &&
-                (empty($mod->showavailability) || empty($mod->availableinfo))) {
+        if (!$mod->uservisible && empty($mod->availableinfo)) {
             // nothing to be displayed to the user
             return $output;
         }
@@ -876,8 +871,10 @@ class core_course_renderer extends plugin_renderer_base {
         if (!$mod->uservisible) {
             // this is a student who is not allowed to see the module but might be allowed
             // to see availability info (i.e. "Available from ...")
-            if (!empty($mod->showavailability) && !empty($mod->availableinfo)) {
-                $output = html_writer::tag('div', $mod->availableinfo, array('class' => 'availabilityinfo'));
+            if (!empty($mod->availableinfo)) {
+                $formattedinfo = \core_availability\info::format_info(
+                        $mod->availableinfo, $mod->get_course());
+                $output = html_writer::tag('div', $formattedinfo, array('class' => 'availabilityinfo'));
             }
             return $output;
         }
@@ -892,13 +889,12 @@ class core_course_renderer extends plugin_renderer_base {
                 if (!$mod->visible) {
                     $hidinfoclass = 'hide';
                 }
-                $ci = new condition_info($mod);
+                $ci = new \core_availability\info_module($mod);
                 $fullinfo = $ci->get_full_information();
-                if($fullinfo) {
-                    return '<div class="availabilityinfo '.$hidinfoclass.'">'.get_string($mod->showavailability
-                        ? 'userrestriction_visible'
-                        : 'userrestriction_hidden','condition',
-                        $fullinfo).'</div>';
+                if ($fullinfo) {
+                    $formattedinfo = \core_availability\info::format_info(
+                            $fullinfo, $mod->get_course());
+                    return html_writer::div($formattedinfo, 'availabilityinfo ' . $hidinfoclass);
                 }
             }
         }
@@ -954,15 +950,10 @@ class core_course_renderer extends plugin_renderer_base {
         // if:
         // 1) The activity is not visible to users
         // and
-        // 2a) The 'showavailability' option is not set (if that is set,
-        //     we need to display the activity so we can show
-        //     availability info)
-        // or
-        // 2b) The 'availableinfo' is empty, i.e. the activity was
+        // 2) The 'availableinfo' is empty, i.e. the activity was
         //     hidden in a way that leaves no info, such as using the
         //     eye icon.
-        if (!$mod->uservisible &&
-            (empty($mod->showavailability) || empty($mod->availableinfo))) {
+        if (!$mod->uservisible && empty($mod->availableinfo)) {
             return $output;
         }
 
@@ -1509,7 +1500,7 @@ class core_course_renderer extends plugin_renderer_base {
     protected function coursecat_include_js() {
         global $CFG;
         static $jsloaded = false;
-        if (!$jsloaded && $CFG->enableajax) {
+        if (!$jsloaded) {
             // We must only load this module once.
             $this->page->requires->yui_module('moodle-course-categoryexpander',
                     'Y.Moodle.course.categoryexpander.init');
@@ -1589,8 +1580,6 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'with_children';
                 $classes[] = 'collapsed';
             }
-            // Make sure JS file to expand category content is included.
-            $this->coursecat_include_js();
         } else {
             // load category content
             $categorycontent = $this->coursecat_category_content($chelper, $coursecat, $depth);
@@ -1599,6 +1588,10 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'with_children';
             }
         }
+
+        // Make sure JS file to expand category content is included.
+        $this->coursecat_include_js();
+
         $content = html_writer::start_tag('div', array(
             'class' => join(' ', $classes),
             'data-categoryid' => $coursecat->id,

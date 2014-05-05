@@ -6,7 +6,7 @@ Feature: The context of a block can always be returned to it's original state.
 
   @javascript
   Scenario: Add and configure a block to display on every page and revert back
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
@@ -17,7 +17,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I click on "Participants" "link" in the "//li[p/span[contains(normalize-space(string(.)), 'Current course')]]" "xpath_element"
     And I open the "Tags" blocks action menu
     And I follow "Configure Tags block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
     And I follow "Course 1"
@@ -27,14 +27,14 @@ Feature: The context of a block can always be returned to it's original state.
     And I follow "Assignment1"
     And I open the "Tags" blocks action menu
     And I follow "Configure Tags block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any assignment module page |
     And I press "Save changes"
     And I should see "Tags" in the "Tags" "block"
     And I follow "Course 1"
-    And "Tags" "block" should not exists
+    And "Tags" "block" should not exist
     And I click on "Participants" "link" in the "//li[p/span[contains(normalize-space(string(.)), 'Current course')]]" "xpath_element"
-    And "Tags" "block" should not exists
+    And "Tags" "block" should not exist
     And I follow "Course 1"
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Assignment2 |
@@ -43,7 +43,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I should see "Tags" in the "Tags" "block"
     And I open the "Tags" blocks action menu
     And I follow "Configure Tags block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
     And I follow "Course 1"

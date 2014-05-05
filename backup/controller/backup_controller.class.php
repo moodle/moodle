@@ -110,7 +110,7 @@ class backup_controller extends base_controller {
 
         // By default there is no progress reporter. Interfaces that wish to
         // display progress must set it.
-        $this->progress = new core_backup_null_progress();
+        $this->progress = new \core\progress\null();
 
         // Instantiate the output_controller singleton and active it if interactive and inmediate
         $oc = output_controller::get_instance();

@@ -1,0 +1,26 @@
+.atto_image_preview {
+    max-width: 150px;
+    max-height: 150px;
+}
+.atto_image_preview_box {
+    height: 150px;
+    margin-bottom: 1em;
+}
+
+.editor_atto_content img {
+    cursor: pointer;
+}
+
+.atto_image_size {
+    display: inline-block;
+}
+.atto_image_size input[type=checkbox] {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+.atto_image_size input[type=text] {
+    width: 3em;
+}
+.atto_image_size label {
+    display: inline-block;
+}

@@ -9,37 +9,43 @@
     display:none;
 }
 
-.empty-region-side-pre #block-region-side-pre,
-.empty-region-side-post #block-region-side-post {
+.empty-region-side-pre #block-region-side-pre, // Pre region is empty.
+.empty-region-side-post #block-region-side-post, // Post region is empty.
+.jsenabled.docked-region-side-post #block-region-side-post, // All post blocks are docked.
+.jsenabled.docked-region-side-pre #block-region-side-pre { // All pre blocks are docked.
     display:none;
 }
 
-.empty-region-side-post #region-bs-main-and-pre.span9,
-.empty-region-side-pre #region-bs-main-and-post.span9,
-.empty-region-side-post #region-bs-main-and-post.span9 #region-main.span8 {
-    /** LTR with no post area.
-        RTL with no pre area.
-        RTL with no post area. **/
+.content-only #region-main.span9, // Two column layout with no block or all blocks docked.
+.empty-region-side-post #region-bs-main-and-pre.span9, // LTR with no post area.
+.empty-region-side-pre #region-bs-main-and-post.span9, // RTL with no pre area.
+.empty-region-side-post #region-bs-main-and-post.span9 #region-main.span8, // RTL with no post area.
+.jsenabled.docked-region-side-post #region-bs-main-and-pre.span9, // LTR with all post blocks docked.
+.jsenabled.docked-region-side-post #region-bs-main-and-post.span9 #region-main.span8,
+.jsenabled.docked-region-side-pre #region-bs-main-and-post.span9 { // RTL with all pre blocks docked.
     width: 100%;
 }
 
-.empty-region-side-pre #region-bs-main-and-pre.span9 #region-main {
-    /** LTR with no pre area. **/
+.empty-region-side-pre #region-bs-main-and-pre.span9 #region-main, // LTR with no pre area.
+.jsenabled.docked-region-side-pre #region-bs-main-and-pre.span9 #region-main { // LTR with all pre blocks docked.
     float:none;
     width:100%;
 }
 
-.empty-region-side-post.used-region-side-pre #region-main.span8 {
-    /** increase the span size by 1 **/
-    .fluid-span(9);
-}
-.empty-region-side-post.used-region-side-pre #block-region-side-pre.span4 {
-    /** decrease the span size by 1 **/
-    .fluid-span(3);
+.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
+    #region-main.span8 {
+        /** Increase the span size by 1 **/
+        .fluid-span(9);
+    }
+    #block-region-side-pre.span4 {
+        /** Decrease the span size by 1 **/
+        .fluid-span(3);
+    }
 }
 
-.empty-region-side-pre #region-bs-main-and-post.span9 #region-main.span8 {
-    /** RTL with no pre area. **/
+.empty-region-side-pre #region-bs-main-and-post.span9 #region-main.span8, // RTL with no pre area.
+.jsenabled.docked-region-side-pre #region-bs-main-and-post.span9 #region-main.span8 { // RTL with all pre blocks docked.
     float: right;
 }
 
@@ -113,6 +119,9 @@ a.dimmed_text:visited,
 .green,
 .notifysuccess {
     color: @successText;
+}
+.highlight {
+    background: @infoBackground;
 }
 .reportlink {
     text-align: right;
@@ -303,9 +312,6 @@ img.uihint {
 #addmembersform table {
     margin-left: auto;
     margin-right: auto;
-}
-.flexible th {
-    white-space: nowrap;
 }
 table.flexible .emptyrow {
     display: none;
@@ -529,6 +535,13 @@ a.skip:active {
     margin-bottom: -2000px;
     padding-bottom: 2000px;
 }
+.dir-rtl {
+    .loginbox.twocolumns .loginpanel,
+    .loginbox.twocolumns .signuppanel {
+        float:right;
+    }
+}
+
 .loginbox .potentialidp .smallicon {
     vertical-align: text-bottom;
     margin: 0 .3em;
@@ -648,16 +661,6 @@ table.mod_index {
     left: 0;
     right: auto;
     margin: .3em;
-}
-.comment-delete-confirm {
-    background: #eee;
-    padding: 2px;
-    width: 5em;
-    text-align: center;
-}
-.comment-container {
-    float: left;
-    margin: 4px;
 }
 .comment-report-selectall{
     display: none
@@ -822,8 +825,8 @@ table#tag-management-list th {
     position: absolute;
     width: 420px;
     left: 20%;
-    border: 1px solid #404040;
-    background: #fff;
+    border: 1px solid @dropdownBorder;
+    background: @dropdownBackground;
     overflow: hidden;
     z-index: 9050;
 }
@@ -852,7 +855,8 @@ table#tag-management-list th {
     white-space: nowrap;
 }
 #relatedtags-autocomplete li.yui-ac-highlight{
-    background: #FFFFCC;
+    background: @dropdownLinkBackgroundHover;
+    color: @dropdownLinkColorHover;
 }
 h2.tag-heading,
 div#tag-description,
@@ -1639,11 +1643,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     left: 6px;
 }
 /**
-* Chooser Dialogues (moodle-core-chooserdialogue)
-*
-* This CSS belong to the chooser dialogue which should work both with, and
-* without javascript enabled
-*/
+ * Chooser Dialogues (moodle-core-chooserdialogue)
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
 /* Hide the dialog and it's title */
 .chooserdialoguebody,
 .choosertitle {
@@ -1662,6 +1666,12 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding: 0.7em 0;
     text-align: center;
 }
+/* Fixed for safari browser on iPhone4S with ios7.*/
+@media (max-height: 639px) {
+    .ios.safari .choosercontainer #chooseform .submitbuttons {
+        padding: 45px 0;
+    }
+}
 .choosercontainer #chooseform .submitbuttons input {
     min-width: 100px;
     margin: 0 0.5em;
@@ -1672,13 +1682,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     border-bottom: 1px solid #BBBBBB;
 }
 /* Only set these options if we're showing the js container */
-.jsenabled .choosercontainer #chooseform .alloptions {
+.jschooser .choosercontainer #chooseform .alloptions {
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 20.3em;
     .box-shadow(inset 0 0 30px 0px #ccc);
 }
-.dir-rtl.jsenabled .choosercontainer #chooseform .alloptions {
+.dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
     max-width: 18.3em;
 }
 /* Settings for option rows and option subtypes */
@@ -1705,8 +1715,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .dir-rtl .choosercontainer #chooseform .nonoption span.modicon img.icon {
     padding: 0 0.5em 0 0;
 }
-.choosercontainer #chooseform .option span.modicon img.icon,
-.choosercontainer #chooseform .nonoption span.modicon img.icon {
+
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .option span.modicon img.icon,
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .nonoption span.modicon img.icon {
     height: 24px;
     width: 24px;
 }
@@ -1743,8 +1754,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     margin: 0 0.2em 0 0;
 }
 /* The instruction/help area */
-.jsenabled .choosercontainer #chooseform .instruction,
-.jsenabled .choosercontainer #chooseform .typesummary {
+.jschooser .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .typesummary {
    display: none;
     position: absolute;
     top: 0;
@@ -1758,14 +1769,14 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-y: auto;
     line-height: 2em;
 }
-.dir-rtl.jsenabled .choosercontainer #chooseform .instruction,
-.dir-rtl.jsenabled .choosercontainer #chooseform .typesummary {
+.dir-rtl.jschooser .choosercontainer #chooseform .instruction,
+.dir-rtl.jschooser .choosercontainer #chooseform .typesummary {
     left: 0;
     right: 18.5em;
     border-right: 1px solid grey;
 }
 /* Selected option settings */
-.jsenabled .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .instruction,
 .choosercontainer #chooseform .selected .typesummary {
     display: block;
 }
@@ -1877,7 +1888,7 @@ a.criteria-action {
 }
 table.issuedbadgebox {
     width: 750px;
-    background-color: #FFFFFF;
+    background-color: @wellBackground;
 }
 table.badgeissuedimage {
     width: 150px;
@@ -2100,8 +2111,8 @@ img#persona_signin {
         display:block;
         position: absolute;
         text-align: left;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: @dropdownBackground;
+        border: 1px solid @dropdownBorder;
         z-index:1000;
         .border-radius(5px);
         .box-shadow(5px 5px 20px 0 #666);
@@ -2214,4 +2225,17 @@ a.disabled {
     cursor: default;
     font-style: italic;
     color: #808080;
+}
+body.lockscroll {
+  height: 100%;
+  overflow: hidden;
+}
+
+.dir-rtl {
+    // Bootstrap sets right margin to 0. Fail.
+    // They set left margin to 25px so we will copy that.
+    ul, ol {
+        margin-left: 0;
+        margin-right: 25px;
+    }
 }

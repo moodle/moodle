@@ -18,8 +18,7 @@
 /**
  * Page module admin settings and defaults
  *
- * @package    mod
- * @subpackage page
+ * @package mod_page
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,6 +41,8 @@ if ($ADMIN->fulltree) {
     //--- modedit defaults -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('pagemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
+    $settings->add(new admin_setting_configcheckbox('page/printheading',
+        get_string('printheading', 'page'), get_string('printheadingexplain', 'page'), 1));
     $settings->add(new admin_setting_configcheckbox('page/printintro',
         get_string('printintro', 'page'), get_string('printintroexplain', 'page'), 0));
     $settings->add(new admin_setting_configselect('page/display',

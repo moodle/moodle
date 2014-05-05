@@ -18,8 +18,7 @@
 /**
  * Aggregates the grades for submission and grades for assessments
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -53,7 +52,6 @@ if ($settingsdata = $settingsform->get_data()) {
     $workshop->aggregate_submission_grades();           // updates 'grade' in {workshop_submissions}
     $evaluator->update_grading_grades($settingsdata);   // updates 'gradinggrade' in {workshop_assessments}
     $workshop->aggregate_grading_grades();              // updates 'gradinggrade' in {workshop_aggregations}
-    $workshop->log('update aggregate grades');
 }
 
 redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));

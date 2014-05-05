@@ -17,8 +17,7 @@
 /**
  * This page displays the user data from a single attempt
  *
- * @package mod
- * @subpackage scorm
+ * @package mod_scorm
  * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

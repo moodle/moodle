@@ -19,6 +19,7 @@ class HTMLPurifier_ErrorStruct
 
     /**
      * Type of this struct.
+     * @type string
      */
     public $type;
 
@@ -28,11 +29,13 @@ class HTMLPurifier_ErrorStruct
      *  - TOKEN: Instance of HTMLPurifier_Token
      *  - ATTR: array('attr-name', 'value')
      *  - CSSPROP: array('prop-name', 'value')
+     * @type mixed
      */
     public $value;
 
     /**
      * Errors registered for this structure.
+     * @type array
      */
     public $errors = array();
 
@@ -40,10 +43,17 @@ class HTMLPurifier_ErrorStruct
      * Child ErrorStructs that are from this structure. For example, a TOKEN
      * ErrorStruct would contain ATTR ErrorStructs. This is a multi-dimensional
      * array in structure: [TYPE]['identifier']
+     * @type array
      */
     public $children = array();
 
-    public function getChild($type, $id) {
+    /**
+     * @param string $type
+     * @param string $id
+     * @return mixed
+     */
+    public function getChild($type, $id)
+    {
         if (!isset($this->children[$type][$id])) {
             $this->children[$type][$id] = new HTMLPurifier_ErrorStruct();
             $this->children[$type][$id]->type = $type;
@@ -51,10 +61,14 @@ class HTMLPurifier_ErrorStruct
         return $this->children[$type][$id];
     }
 
-    public function addError($severity, $message) {
+    /**
+     * @param int $severity
+     * @param string $message
+     */
+    public function addError($severity, $message)
+    {
         $this->errors[] = array($severity, $message);
     }
-
 }
 
 // vim: et sw=4 sts=4

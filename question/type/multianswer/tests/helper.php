@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/question.php');
  */
 class qtype_multianswer_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('twosubq', 'fourmc', 'numericalzero');
+        return array('twosubq', 'fourmc', 'numericalzero', 'dollarsigns');
     }
 
     /**
@@ -191,6 +191,63 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $qdata->hints = array(
             new question_hint_with_parts(0, 'Hint 1', FORMAT_HTML, 0, 0),
             new question_hint_with_parts(0, 'Hint 2', FORMAT_HTML, 0, 0),
+        );
+
+        return $qdata;
+    }
+
+    /**
+     * Makes a multianswer question onetaining one blank in some text.
+     * This question has no hints.
+     *
+     * @return object the question definition data, as it might be returned from
+     * get_question_options.
+     */
+    public function get_multianswer_question_data_dollarsigns() {
+        $qdata = new stdClass();
+        test_question_maker::initialise_question_data($qdata);
+
+        $qdata->name = 'Multianswer with $s';
+        $qdata->questiontext =
+                        'Which is the right order? {#1}';
+        $qdata->generalfeedback = '';
+
+        $qdata->defaultmark = 1.0;
+        $qdata->qtype = 'multianswer';
+
+        $mc = new stdClass();
+        test_question_maker::initialise_question_data($mc);
+
+        $mc->name = 'Multianswer with $s';
+        $mc->questiontext = '{1:MULTICHOICE:=y,y,$3~$3,y,y}';
+        $mc->generalfeedback = '';
+        $mc->penalty = 0.0;
+        $mc->qtype = 'multichoice';
+
+        $mc->options = new stdClass();
+        $mc->options->layout = 0;
+        $mc->options->single = 1;
+        $mc->options->shuffleanswers = 1;
+        $mc->options->correctfeedback = '';
+        $mc->options->correctfeedbackformat = 1;
+        $mc->options->partiallycorrectfeedback = '';
+        $mc->options->partiallycorrectfeedbackformat = 1;
+        $mc->options->incorrectfeedback = '';
+        $mc->options->incorrectfeedbackformat = 1;
+        $mc->options->answernumbering = 0;
+        $mc->options->shownumcorrect = 0;
+
+        $mc->options->answers = array(
+            23 => new question_answer(23, 'y,y,$3', 0, '', FORMAT_HTML),
+            24 => new question_answer(24, '$3,y,y', 0, '', FORMAT_HTML),
+        );
+
+        $qdata->options = new stdClass();
+        $qdata->options->questions = array(
+            1 => $mc,
+        );
+
+        $qdata->hints = array(
         );
 
         return $qdata;

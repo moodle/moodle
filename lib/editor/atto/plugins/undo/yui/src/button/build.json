@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_undo-button",
+  "builds": {
+    "moodle-atto_undo-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

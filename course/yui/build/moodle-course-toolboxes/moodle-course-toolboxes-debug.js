@@ -296,7 +296,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @protected
      * @method handle_data_action
      * @param {EventFacade} ev The event that was triggered.
-     * @returns {boolean}
+     * @return {boolean}
      */
     handle_data_action: function(ev) {
         // We need to get the anchor element that triggered this event.
@@ -478,22 +478,29 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             confirmstring = M.util.get_string('deletechecktype', 'moodle', plugindata);
         }
 
-        // Confirm element removal
-        if (!confirm(confirmstring)) {
-            return this;
-        }
+        // Create the confirmation dialogue.
+        var confirm = new M.core.confirm({
+            question: confirmstring,
+            modal: true
+        });
 
-        // Actually remove the element
-        element.remove();
-        var data = {
-            'class': 'resource',
-            'action': 'DELETE',
-            'id': Y.Moodle.core_course.util.cm.getId(element)
-        };
-        this.send_request(data);
-        if (M.core.actionmenu && M.core.actionmenu.instance) {
-            M.core.actionmenu.instance.hideMenu();
-        }
+        // If it is confirmed.
+        confirm.on('complete-yes', function() {
+
+            // Actually remove the element.
+            element.remove();
+            var data = {
+                'class': 'resource',
+                'action': 'DELETE',
+                'id': Y.Moodle.core_course.util.cm.getId(element)
+            };
+            this.send_request(data);
+            if (M.core.actionmenu && M.core.actionmenu.instance) {
+                M.core.actionmenu.instance.hideMenu();
+            }
+
+        }, this);
+
         return this;
     },
 
@@ -555,12 +562,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Prevent the default button action
         ev.preventDefault();
 
-        // Return early if the current section is hidden
-        var section = activity.ancestor(M.course.format.get_section_selector(Y));
-        if (section && section.hasClass(CSS.SECTIONHIDDENCLASS)) {
-            return this;
-        }
-
         // Get the element we're working on
         var element = activity;
         var value = this.handle_resource_dim(button, activity, action);
@@ -586,7 +587,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} button The button that triggered the action.
      * @param {Node} activity The activity node that this action will be performed on.
      * @param {String} action 'show' or 'hide'.
-     * @returns {Number} 1 if we changed to visible, 0 if we were hiding.
+     * @return {Number} 1 if we changed to visible, 0 if we were hiding.
      */
     handle_resource_dim: function(button, activity, action) {
         var toggleclass = CSS.DIMCLASS,
@@ -863,26 +864,43 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
     },
 
     /**
-     * Set the visibility of the current resource (identified by the element) to match the hidden parameter (this is not
-     * a toggle).
+     * Set the visibility of the specified resource to match the visible parameter.
      *
-     * Only changes the visibility in the browser (no ajax update).
+     * Note: This is not a toggle function and only changes the visibility
+     * in the browser (no ajax update is performed).
      *
      * @method set_visibility_resource_ui
-     * @param {Object} args An object with 'element' being the A node containing the resource and 'visible' being the
-     * state that the visibility should be set to.
+     * @param {object} args An object containing the required information to trigger a change.
+     * @param {Node} args.element The resource to toggle
+     * @param {Boolean} args.visible The target visibility
      */
     set_visibility_resource_ui: function(args) {
         var element = args.element,
-            shouldbevisible = args.visible,
-            buttonnode = element.one(SELECTOR.SHOW),
-            visible = (buttonnode === null),
-            action = 'show';
-        if (visible) {
-            buttonnode = element.one(SELECTOR.HIDE);
-            action = 'hide';
+            buttonnode = element.one(SELECTOR.HIDE),
+            // By default we assume that the item is visible and we're going to hide it.
+            currentVisibility = true,
+            targetVisibility = false;
+
+        if (!buttonnode) {
+            // If the buttonnode was not found, try to find the HIDE button
+            // and change the target visibility setting to false.
+            buttonnode = element.one(SELECTOR.SHOW);
+            currentVisibility = false;
+            targetVisibility = true;
         }
-        if (visible !== shouldbevisible) {
+
+        if (typeof args.visible !== 'undefined') {
+            // If we were provided with a visibility argument, use that instead.
+            targetVisibility = args.visible;
+        }
+
+        // Only trigger a change if necessary.
+        if (currentVisibility !== targetVisibility) {
+            var action = 'hide';
+            if (targetVisibility) {
+                action = 'show';
+            }
+
             this.handle_resource_dim(buttonnode, element, action);
         }
     }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki version viewed event.
+ * The mod_wiki version viewed event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,15 +26,16 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki version viewed event.
+ * The mod_wiki version viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int versionid id page version.
+ *      - int versionid: id page version.
  * }
  *
  * @package    mod_wiki
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +47,7 @@ class page_version_viewed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'wiki_pages';
     }
 
@@ -65,8 +66,8 @@ class page_version_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed versionid ' . $this->other['versionid'] .
-                ' for page id ' . $this->objectid;
+        return "The user with the id '$this->userid' viewed the version for the page with the id '$this->objectid' for the wiki with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -77,7 +78,7 @@ class page_version_viewed extends \core\event\base {
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'history',
             'viewversion.php?pageid=' . $this->objectid . '&versionid=' . $this->other['versionid'],
-            $this->objectid, $this->context->instanceid));
+            $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -97,6 +98,7 @@ class page_version_viewed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['versionid'])) {
             throw new \coding_exception('The versionid need to be set in $other');
         }

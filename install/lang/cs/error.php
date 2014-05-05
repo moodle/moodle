@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Nelze vytvořit databázi.</p>
+<p>Určená databáze neexistuje a uživatel nemá oprávnění k vytvoření databáze.</p>
+<p>Správce stránek by měl ověřit konfiguraci databáze.</p>';
 $string['cannotcreatelangdir'] = 'Nelze vytvořit adresář pro jazykové soubory';
 $string['cannotcreatetempdir'] = 'Nelze vytvořit dočasný adresář';
 $string['cannotdownloadcomponents'] = 'Nelze stáhnout komponenty';
@@ -39,6 +42,7 @@ $string['cannotsavemd5file'] = 'Nelze uložit soubor MD5';
 $string['cannotsavezipfile'] = 'Nelze uložit soubor ZIP';
 $string['cannotunzipfile'] = 'Nelze dekomprimovat soubor';
 $string['componentisuptodate'] = 'Komponenta je aktuální';
+$string['dmlexceptiononinstall'] = '<p>Došlo k chybě databáze [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Selhala kontrola staženého souboru';
 $string['invalidmd5'] = 'Ověření selhalo - zkuste to znovu';
 $string['missingrequiredfield'] = 'Chybí některé z povinných polí';

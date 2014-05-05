@@ -164,10 +164,10 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
         // Somebody is using just the file name, we need to look inside the file and guess the testcase
         // class name. Let's throw fatal error if there are more testcases in one file.
 
-        PHPUnit_Util_Class::collectStart();
+        $classes = get_declared_classes();
         PHPUnit_Util_Fileloader::checkAndLoad($file);
         $includePathFilename = stream_resolve_include_path($file);
-        $loadedClasses = PHPUnit_Util_Class::collectEnd();
+        $loadedClasses = array_diff(get_declared_classes(), $classes);
 
         $candidates = array();
 

@@ -91,4 +91,22 @@ class mod_forum_observer {
             }
         }
     }
+
+    /**
+     * Observer for \core\event\course_module_created event.
+     *
+     * @param \core\event\course_module_created $event
+     * @return void
+     */
+    public static function course_module_created(\core\event\course_module_created $event) {
+        global $CFG;
+
+        if ($event->other['modulename'] === 'forum') {
+            // Include the forum library to make use of the forum_instance_created function.
+            require_once($CFG->dirroot . '/mod/forum/lib.php');
+
+            $forum = $event->get_record_snapshot('forum', $event->other['instanceid']);
+            forum_instance_created($event->get_context(), $forum);
+        }
+    }
 }

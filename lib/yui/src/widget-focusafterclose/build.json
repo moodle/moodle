@@ -1,0 +1,10 @@
+{
+    "name": "moodle-core-widget-focusafterclose",
+    "builds": {
+        "moodle-core-widget-focusafterclose": {
+            "jsfiles": [
+                "focusafter.js"
+            ]
+        }
+    }
+}

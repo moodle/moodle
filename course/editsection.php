@@ -49,24 +49,32 @@ $mform = course_get_format($course->id)->editsection_form($PAGE->url,
         array('cs' => $sectioninfo, 'editoroptions' => $editoroptions));
 // set current value, make an editable copy of section_info object
 // this will retrieve all format-specific options as well
-$mform->set_data(convert_to_array($sectioninfo));
+$initialdata = convert_to_array($sectioninfo);
+if (!empty($CFG->enableavailability)) {
+    $initialdata['availabilityconditionsjson'] = $sectioninfo->availability;
+}
+$mform->set_data($initialdata);
 
 if ($mform->is_cancelled()){
     // Form cancelled, return to course.
     redirect(course_get_url($course, $section, array('sr' => $sectionreturn)));
 } else if ($data = $mform->get_data()) {
     // Data submitted and validated, update and return to course.
+
+    // For consistency, we set the availability field to 'null' if it is empty.
+    if (!empty($CFG->enableavailability)) {
+        // Renamed field.
+        $data->availability = $data->availabilityconditionsjson;
+        unset($data->availabilityconditionsjson);
+        if ($data->availability === '') {
+            $data->availability = null;
+        }
+    }
     $DB->update_record('course_sections', $data);
     rebuild_course_cache($course->id, true);
     if (isset($data->section)) {
         // Usually edit form does not change relative section number but just in case.
         $sectionnum = $data->section;
-    }
-    if (!empty($CFG->enableavailability)) {
-        // Update grade and completion conditions.
-        $sectioninfo = get_fast_modinfo($course)->get_section_info($sectionnum);
-        condition_info_section::update_section_from_form($sectioninfo, $data);
-        rebuild_course_cache($course->id, true);
     }
     course_get_format($course->id)->update_section_format_options($data);
 

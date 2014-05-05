@@ -38,4 +38,5 @@ require_once(__DIR__  . '/behat_form_select.php');
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_selectyesno extends behat_form_select {}
+class behat_form_selectyesno extends behat_form_select {
+}

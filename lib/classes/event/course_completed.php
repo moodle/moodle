@@ -14,18 +14,52 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course completed event.
+ *
+ * @package    core
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when course completed.
+ * Course completed event class.
  *
- * @package    core_event
+ * @property-read int $relateduserid user who completed the course
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int relateduserid: deprecated since 2.7, please use property relateduserid
+ * }
+ *
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_completed extends base {
+    /**
+     * Create event from course_completion record.
+     * @param \stdClass $completion
+     * @return course_completed
+     */
+    public static function create_from_completion(\stdClass $completion) {
+        $event = self::create(
+            array(
+                'objectid' => $completion->id,
+                'relateduserid' => $completion->userid,
+                'context' => \context_course::instance($completion->course),
+                'courseid' => $completion->course,
+                'other' => array('relateduserid' => $completion->userid), // Deprecated since 2.7, please use property relateduserid.
+            )
+        );
+        $event->add_record_snapshot('course_completions', $completion);
+        return $event;
+    }
 
     /**
      * Initialise required event data properties.
@@ -33,7 +67,7 @@ class course_completed extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_completions';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -51,7 +85,7 @@ class course_completed extends base {
      * @return string
      */
     public function get_description() {
-        return 'Course completed by user '.$this->userid;
+        return "The course with the id '$this->courseid' was completed for the user with the id '$this->relateduserid'.";
     }
 
     /**
@@ -81,4 +115,15 @@ class course_completed extends base {
         return $this->get_record_snapshot('course_completions', $this->objectid);
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        // TODO: MDL-45319 add validation of relateduserid and other['relateduserid'].
+    }
 }

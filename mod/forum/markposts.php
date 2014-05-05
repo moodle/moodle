@@ -18,7 +18,7 @@
 /**
  * Set tracking option for the forum.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2005 mchurch
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -81,9 +81,7 @@ if ($mark == 'read') {
             print_error('invaliddiscussionid', 'forum');
         }
 
-        if (forum_tp_mark_discussion_read($user, $d)) {
-            add_to_log($course->id, "discussion", "mark read", "view.php?f=$forum->id", $d, $cm->id);
-        }
+        forum_tp_mark_discussion_read($user, $d);
     } else {
         // Mark all messages read in current group
         $currentgroup = groups_get_activity_group($cm);
@@ -92,15 +90,12 @@ if ($mark == 'read') {
             // may return 0
             $currentgroup=false;
         }
-        if (forum_tp_mark_forum_read($user, $forum->id,$currentgroup)) {
-            add_to_log($course->id, "forum", "mark read", "view.php?f=$forum->id", $forum->id, $cm->id);
-        }
+        forum_tp_mark_forum_read($user, $forum->id, $currentgroup);
     }
 
 /// FUTURE - Add ability to mark them as unread.
 //    } else { // subscribe
 //        if (forum_tp_start_tracking($forum->id, $user->id)) {
-//            add_to_log($course->id, "forum", "mark unread", "view.php?f=$forum->id", $forum->id, $cm->id);
 //            redirect($returnto, get_string("nowtracking", "forum", $info), 1);
 //        } else {
 //            print_error("Could not start tracking that forum", $_SERVER["HTTP_REFERER"]);

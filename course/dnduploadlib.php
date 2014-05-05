@@ -660,10 +660,6 @@ class dndupload_ajax_processor {
         ));
         $event->trigger();
 
-        add_to_log($this->course->id, $mod->modname, "add",
-                   "view.php?id=$mod->id",
-                   "$instanceid", $mod->id);
-
         $this->send_response($mod);
     }
 

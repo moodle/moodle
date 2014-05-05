@@ -116,7 +116,6 @@ abstract class question_test_helper {
         $dataforformconstructor->formoptions = new stdClass();
         $dataforformconstructor->formoptions->canmove = true;
         $dataforformconstructor->formoptions->cansaveasnew = true;
-        $dataforformconstructor->formoptions->movecontext = false;
         $dataforformconstructor->formoptions->canedit = true;
         $dataforformconstructor->formoptions->repeatelements = true;
         $qtype = question_bank::get_qtype($questiondata->qtype);
@@ -251,7 +250,7 @@ class test_question_maker {
             array($qtype,    $which), $methodtemplate);
 
         if (!method_exists($helper, $method)) {
-            throw new coding_exception('Method ' . $method . ' does not exist on the' .
+            throw new coding_exception('Method ' . $method . ' does not exist on the ' .
                 $qtype . ' question type test helper class.');
         }
 
@@ -404,8 +403,12 @@ class test_question_maker {
         $essay->qtype = question_bank::get_qtype('essay');
 
         $essay->responseformat = 'editor';
+        $essay->responserequired = 1;
         $essay->responsefieldlines = 15;
         $essay->attachments = 0;
+        $essay->attachmentsrequired = 0;
+        $essay->responsetemplate = '';
+        $essay->responsetemplateformat = FORMAT_MOODLE;
         $essay->graderinfo = '';
         $essay->graderinfoformat = FORMAT_MOODLE;
 
@@ -851,11 +854,20 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
                 'Looking for a hidden input with attributes ' . html_writer::attributes($attributes) . ' in ' . $this->currentoutput);
     }
 
-    protected function check_output_contains_lang_string($identifier, $component = '', $a = null) {
+    protected function check_output_contains($string) {
         $this->render();
-        $string = get_string($identifier, $component, $a);
         $this->assertContains($string, $this->currentoutput,
                 'Expected string ' . $string . ' not found in ' . $this->currentoutput);
+    }
+
+    protected function check_output_does_not_contain($string) {
+        $this->render();
+        $this->assertNotContains($string, $this->currentoutput,
+                'String ' . $string . ' unexpectedly found in ' . $this->currentoutput);
+    }
+
+    protected function check_output_contains_lang_string($identifier, $component = '', $a = null) {
+        $this->check_output_contains(get_string($identifier, $component, $a));
     }
 
     protected function get_tag_matcher($tag, $attributes) {

@@ -35,8 +35,7 @@
 /**
  * This page lists all the instances of lti in a particular course
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
@@ -60,6 +59,7 @@ $params = array(
     'context' => context_course::instance($course->id)
 );
 $event = \mod_lti\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $PAGE->set_url('/mod/lti/index.php', array('id' => $course->id));

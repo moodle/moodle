@@ -64,6 +64,7 @@ class core_event_course_module_viewed_testcase extends advanced_testcase {
         $this->assertSame('feedback', $event->objecttable);
         $url = new moodle_url('/mod/feedback/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
 
     }
 

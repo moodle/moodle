@@ -18,8 +18,7 @@
 /**
  * Imports lesson pages
  *
- * @package    mod
- * @subpackage lesson
+ * @package mod_lesson
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
@@ -57,7 +56,7 @@ $mform->set_data($data);
 
     $PAGE->navbar->add($strimportquestions);
     $PAGE->set_title($strimportquestions);
-    $PAGE->set_heading(format_string($course->fullname));
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($lesson->name), 2);
     echo $OUTPUT->heading_with_help($strimportquestions, 'importquestions', 'lesson', '', '', 3);

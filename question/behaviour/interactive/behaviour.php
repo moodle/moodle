@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_interactive extends question_behaviour_with_save {
+class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
     /**
      * Special value used for {@link question_display_options::$readonly when
      * we are showing the try again button to the student during an attempt.

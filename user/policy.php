@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,7 +19,7 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package user
+ * @package core_user
  */
 
 require_once('../config.php');
@@ -49,13 +48,13 @@ if (!empty($SESSION->wantsurl)) {
 }
 
 if (empty($sitepolicy)) {
-    // nothing to agree to, sorry, hopefully we will not get to infinite loop
+    // Nothing to agree to, sorry, hopefully we will not get to infinite loop.
     redirect($return);
 }
 
-if ($agree and confirm_sesskey()) {    // User has agreed
-    if (!isguestuser()) {              // Don't remember guests
-        $DB->set_field('user', 'policyagreed', 1, array('id'=>$USER->id));
+if ($agree and confirm_sesskey()) {    // User has agreed.
+    if (!isguestuser()) {              // Don't remember guests.
+        $DB->set_field('user', 'policyagreed', 1, array('id' => $USER->id));
     }
     $USER->policyagreed = 1;
     unset($SESSION->wantsurl);
@@ -76,19 +75,19 @@ echo $OUTPUT->heading($strpolicyagreement);
 
 $mimetype = mimeinfo('type', $sitepolicy);
 if ($mimetype == 'document/unknown') {
-    //fallback for missing index.php, index.html
+    // Fallback for missing index.php, index.html.
     $mimetype = 'text/html';
 }
 
-// we can not use our popups here, because the url may be arbitrary, see MDL-9823
+// We can not use our popups here, because the url may be arbitrary, see MDL-9823.
 $clicktoopen = '<a href="'.$sitepolicy.'" onclick="this.target=\'_blank\'">'.$strpolicyagreementclick.'</a>';
 
 echo '<div class="noticebox">';
 echo resourcelib_embed_general($sitepolicy, $strpolicyagreement, $clicktoopen, $mimetype);
 echo '</div>';
 
-$formcontinue = new single_button(new moodle_url('policy.php', array('agree'=>1)), get_string('yes'));
-$formcancel = new single_button(new moodle_url($CFG->wwwroot.'/login/logout.php', array('agree'=>0)), get_string('no'));
+$formcontinue = new single_button(new moodle_url('policy.php', array('agree' => 1)), get_string('yes'));
+$formcancel = new single_button(new moodle_url($CFG->wwwroot.'/login/logout.php', array('agree' => 0)), get_string('no'));
 echo $OUTPUT->confirm($strpolicyagree, $formcontinue, $formcancel);
 
 echo $OUTPUT->footer();

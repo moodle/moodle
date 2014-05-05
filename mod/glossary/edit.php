@@ -101,6 +101,9 @@ if ($mform->is_cancelled()){
         $entry->timecreated      = $timenow;
         $entry->sourceglossaryid = 0;
         $entry->teacherentry     = has_capability('mod/glossary:manageentries', $context);
+        $isnewentry              = true;
+    } else {
+        $isnewentry              = false;
     }
 
     $entry->concept          = trim($entry->concept);
@@ -117,25 +120,12 @@ if ($mform->is_cancelled()){
         $entry->approved = 1;
     }
 
-    if (empty($entry->id)) {
-        //new entry
+    if ($isnewentry) {
+        // Add new entry.
         $entry->id = $DB->insert_record('glossary_entries', $entry);
-
-        // Update completion state
-        $completion = new completion_info($course);
-        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries && $entry->approved) {
-            $completion->update_state($cm, COMPLETION_COMPLETE);
-        }
-
-        add_to_log($course->id, "glossary", "add entry",
-                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id", $entry->id, $cm->id);
-
     } else {
-        //existing entry
+        // Update existing entry.
         $DB->update_record('glossary_entries', $entry);
-        add_to_log($course->id, "glossary", "update entry",
-                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id",
-                   $entry->id, $cm->id);
     }
 
     // save and relink embedded images and save attachments
@@ -175,6 +165,38 @@ if ($mform->is_cancelled()){
         }
     }
 
+    // Trigger event and update completion (if entry was created).
+    $eventparams = array(
+        'context' => $context,
+        'objectid' => $entry->id,
+        'other' => array('concept' => $entry->concept)
+    );
+    if ($isnewentry) {
+        $event = \mod_glossary\event\entry_created::create($eventparams);
+    } else {
+        $event = \mod_glossary\event\entry_updated::create($eventparams);
+    }
+    $event->add_record_snapshot('glossary_entries', $entry);
+    $event->trigger();
+    if ($isnewentry) {
+        // Update completion state
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries && $entry->approved) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
+    }
+
+    // Reset caches.
+    if ($isnewentry) {
+        if ($entry->usedynalink and $entry->approved) {
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
+        }
+    } else {
+        // So many things may affect the linking, let's just purge the cache always on edit.
+        \mod_glossary\local\concept_cache::reset_glossary($glossary);
+    }
+
+
     redirect("view.php?id=$cm->id&mode=entry&hook=$entry->id");
 }
 
@@ -182,7 +204,7 @@ if (!empty($id)) {
     $PAGE->navbar->add(get_string('edit'));
 }
 
-$PAGE->set_title(format_string($glossary->name));
+$PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($glossary->name), 2);

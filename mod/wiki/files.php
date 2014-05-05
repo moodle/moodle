@@ -17,8 +17,8 @@
 /**
  * Wiki files management
  *
- * @package mod-wiki-2.0
- * @copyrigth 2011 Dongsheng Cai <dongsheng@moodle.com>
+ * @package mod_wiki
+ * @copyright 2011 Dongsheng Cai <dongsheng@moodle.com>
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -78,7 +78,11 @@ $context = context_module::instance($cm->id);
 
 $PAGE->set_url('/mod/wiki/files.php', array('pageid'=>$pageid));
 require_login($course, true, $cm);
-$PAGE->set_context($context);
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewfiles', 'wiki');
+}
+
 $PAGE->set_title(get_string('wikifiles', 'wiki'));
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(format_string(get_string('wikifiles', 'wiki')));
@@ -95,12 +99,8 @@ echo $renderer->tabs($page, $tabitems, $options);
 
 
 echo $OUTPUT->box_start('generalbox');
-if (has_capability('mod/wiki:viewpage', $context)) {
-    echo $renderer->wiki_print_subwiki_selector($PAGE->activityrecord, $subwiki, $page, 'files');
-    echo $renderer->wiki_files_tree($context, $subwiki);
-} else {
-    echo $OUTPUT->notification(get_string('cannotviewfiles', 'wiki'));
-}
+echo $renderer->wiki_print_subwiki_selector($PAGE->activityrecord, $subwiki, $page, 'files');
+echo $renderer->wiki_files_tree($context, $subwiki);
 echo $OUTPUT->box_end();
 
 if (has_capability('mod/wiki:managefiles', $context)) {

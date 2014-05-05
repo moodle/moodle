@@ -41,12 +41,18 @@ class mod_glossary_generator extends testing_module_generator {
     protected $entrycount = 0;
 
     /**
+     * @var int keep track of how many entries have been created.
+     */
+    protected $categorycount = 0;
+
+    /**
      * To be called from data reset code only,
      * do not use in tests.
      * @return void
      */
     public function reset() {
         $this->entrycount = 0;
+        $this->categorycount = 0;
         parent::reset();
     }
 
@@ -77,7 +83,30 @@ class mod_glossary_generator extends testing_module_generator {
         return parent::create_instance($record, (array)$options);
     }
 
-    public function create_content($glossary, $record = array()) {
+    public function create_category($glossary, $record = array(), $entries = array()) {
+        global $CFG, $DB;
+        $this->categorycount++;
+        $record = (array)$record + array(
+            'name' => 'Glossary category '.$this->categorycount,
+            'usedynalink' => $CFG->glossary_linkbydefault,
+        );
+        $record['glossaryid'] = $glossary->id;
+
+        $id = $DB->insert_record('glossary_categories', $record);
+
+        if ($entries) {
+            foreach ($entries as $entry) {
+                $ce = new stdClass();
+                $ce->categoryid = $id;
+                $ce->entryid = $entry->id;
+                $DB->insert_record('glossary_entries_categories', $ce);
+            }
+        }
+
+        return $DB->get_record('glossary_categories', array('id' => $id), '*', MUST_EXIST);
+    }
+
+    public function create_content($glossary, $record = array(), $aliases = array()) {
         global $DB, $USER, $CFG;
         $this->entrycount++;
         $now = time();
@@ -106,6 +135,16 @@ class mod_glossary_generator extends testing_module_generator {
         }
 
         $id = $DB->insert_record('glossary_entries', $record);
+
+        if ($aliases) {
+            foreach ($aliases as $alias) {
+                $ar = new stdClass();
+                $ar->entryid = $id;
+                $ar->alias = $alias;
+                $DB->insert_record('glossary_alias', $ar);
+            }
+        }
+
         return $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
     }
 }

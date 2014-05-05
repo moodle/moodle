@@ -161,17 +161,7 @@ class completion_completion extends data_object {
         // Save record.
         if ($result = $this->_save()) {
             $data = $this->get_record_data();
-            $event = \core\event\course_completed::create(
-                array(
-                    'objectid' => $data->id,
-                    'userid' => $USER->id,
-                    'context' => context_course::instance($data->course),
-                    'courseid' => $data->course,
-                    'other' => array('relateduserid' => $data->userid)
-                    )
-                );
-            $event->add_record_snapshot('course_completions', $data);
-            $event->trigger();
+            \core\event\course_completed::create_from_completion($data)->trigger();
         }
 
         return $result;

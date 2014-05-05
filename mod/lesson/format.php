@@ -21,8 +21,7 @@
  *
  * Included by import.ph
  *
- * @package    mod
- * @subpackage lesson
+ * @package mod_lesson
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
@@ -300,6 +299,26 @@ class qformat_default {
 
     function set_importcontext($context) {
         $this->importcontext = $context;
+    }
+
+    /**
+     * Handle parsing error
+     *
+     * @param string $message information about error
+     * @param string $text imported text that triggered the error
+     * @param string $questionname imported question name
+     */
+    protected function error($message, $text='', $questionname='') {
+        $importerrorquestion = get_string('importerrorquestion', 'question');
+
+        echo "<div class=\"importerror\">\n";
+        echo "<strong>$importerrorquestion $questionname</strong>";
+        if (!empty($text)) {
+            $text = s($text);
+            echo "<blockquote>$text</blockquote>\n";
+        }
+        echo "<strong>$message</strong>\n";
+        echo "</div>";
     }
 
     function importpreprocess() {

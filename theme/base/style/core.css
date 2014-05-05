@@ -130,7 +130,6 @@ img.uihint {cursor: help;}
 #addmembersform table {margin-left: auto;margin-right: auto;}
 .formtable tbody th,
 .generaltable th.header {vertical-align: top;}
-.flexible th {white-space: nowrap;}
 .cell {vertical-align: top;}
 img.emoticon {vertical-align: middle;width: 15px;height: 15px;}
 form.popupform,
@@ -200,6 +199,7 @@ a.skip:active {position: static;display: block;}
 .navbutton {text-align:right;}
 .breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
 .navbutton {float: right;}
+.navbutton .singlebutton {margin-left: 4px}
 .breadcrumb li,
 .navbutton div,
 .navbutton form {display:inline;}
@@ -457,6 +457,7 @@ input#id_externalurl {direction:ltr;}
 .loginbox.twocolumns .loginpanel {float:left;width:49.5%;border-right: 1px solid;margin-bottom:-2000px;padding-bottom:2000px;}
 .loginbox.twocolumns .signuppanel {float:right;width:50%;margin-bottom:-2000px;padding-bottom:2000px;}
 .loginbox .potentialidp .smallicon { vertical-align: text-bottom; margin: 0 .3em; }
+.dir-rtl .loginbox.twocolumns .loginpanel, .dir-rtl.loginbox.twocolumns .signuppanel {float:right;}
 
 /**
  * Notes
@@ -636,6 +637,163 @@ body.tag .managelink {padding: 5px;}
 .path-backup .backup_log h2 { font-size: 1em; }
 .path-backup .backup_log_contents { border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: scroll; }
 
+/*
+ * CSS for availability options on module and section. This is taken from the
+ * Bootstrap version and tweaked so it works on base.
+ */
+#fitem_id_availabilityconditionsjson .label {
+    background: #999;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #fff;
+}
+#fitem_id_availabilityconditionsjson .label-warning {
+    background: #f89406;
+    position:relative;
+    top: -1px;
+}
+#fitem_id_availabilityconditionsjson .label:empty {
+    display: none;
+}
+#fitem_id_availabilityconditionsjson *[aria-hidden=true] {
+    display: none;
+}
+x#fitem_id_availabilityconditionsjson select,
+x#fitem_id_availabilityconditionsjson input[type=text] {
+    position:relative;
+    top: 4px;
+}
+#fitem_id_availabilityconditionsjson label {
+    display: inline;
+}
+#fitem_id_availabilityconditionsjson .availability-group {
+    margin-right: 8px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-group {
+    margin-right: 0;
+    margin-left: 8px;
+}
+#fitem_id_availabilityconditionsjson .availability-item,
+#fitem_id_availabilityconditionsjson .availability-header {
+    margin-bottom: 6px;
+}
+#fitem_id_availabilityconditionsjson .availability-none {
+    margin-left: 20px;
+    margin-bottom: 4px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-none {
+    margin-right: 20px;
+    margin-left: 0;
+}
+#fitem_id_availabilityconditionsjson .availability-plugincontrols {
+    padding: 4px 0px 4px 4px;
+    background: none repeat scroll 0% 0% #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 8px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-plugincontrols {
+    padding-right: 4px;
+    padding-left: 0px;
+    margin-right: 0;
+    margin-left: 8px;
+}
+#fitem_id_availabilityconditionsjson .availability-eye,
+#fitem_id_availabilityconditionsjson .availability-delete {
+    margin-right: 8px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-eye,
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-delete {
+    margin-left: 8px;
+    margin-right: 0;
+}
+#fitem_id_availabilityconditionsjson .availability-eye[aria-hidden=true] {
+    display: inline;
+    visibility: hidden;
+}
+#fitem_id_availabilityconditionsjson .availability-list > .availability-eye img {
+    vertical-align: top;
+    margin-top: 12px;
+}
+#fitem_id_availabilityconditionsjson .availability-button {
+    margin-left: 15px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-button {
+    margin-right: 15px;
+    margin-left: 0;
+}
+#fitem_id_availabilityconditionsjson .availability-childlist > .availability-inner {
+    display: inline-block;
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+#fitem_id_availabilityconditionsjson .availability-childlist .availability-childlist > .availability-inner {
+    background: white;
+}
+#fitem_id_availabilityconditionsjson .availability-connector {
+    margin-left: 20px;
+    margin-bottom: 6px;
+}
+.dir-rtl #fitem_id_availabilityconditionsjson .availability-connector {
+    margin-right: 20px;
+    margin-left: 0;
+}
+
+.mform .error .availability-field {
+    color: black;
+}
+
+.availability-dialogue.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 2px;
+}
+.availability-dialogue ul {
+    display: block;
+    margin: 0;
+}
+.availability-dialogue li {
+    display: block;
+    list-style-type: none;
+    padding: 0 0 4px;
+    clear: both;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 4px;
+}
+.availability-dialogue ul button {
+    float: left;
+    margin-left: 1em;
+    min-width: 140px;
+    margin-top: 4px;
+}
+.dir-rtl .availability-dialogue ul button {
+    float: right;
+    margin-right: 1em;
+    margin-left: 0;
+}
+.availability-dialogue label {
+    margin-left: 170px;
+    margin-right: 1em;
+    margin-bottom: 0;
+    display: block;
+    line-height: 1.5;
+}
+.dir-rtl .availability-dialogue label {
+    margin-right: 170px;
+    margin-left: 1em;
+}
+.availability-dialogue .availability-buttons button {
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-top: 4px;
+}
+
 /**
  * Web Service
  */
@@ -758,6 +916,7 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .headermenu {float:left;}
 .dir-rtl .breadcrumb {float:right;}
 .dir-rtl .navbutton {float: left;}
+.dir-rtl .navbutton .singlebutton {margin-right: 4px}
 .dir-rtl .breadcrumb ul li { float: right; margin-left: 5px;}
 .dir-rtl .mform .fitem .fitemtitle {float:right;}
 .dir-rtl .loginbox .loginform .form-label {float:right;text-align:left;}
@@ -1238,7 +1397,7 @@ sup {vertical-align: super;}
 }
 
 /* Only set these options if we're showing the js container */
-.jsenabled .choosercontainer #chooseform .alloptions {
+.jschooser .choosercontainer #chooseform .alloptions {
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 20.3em;
@@ -1246,7 +1405,7 @@ sup {vertical-align: super;}
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
-.dir-rtl.jsenabled .choosercontainer #chooseform .alloptions {
+.dir-rtl.jschooser .choosercontainer #chooseform .alloptions {
     max-width: 18.3em;
 }
 
@@ -1277,8 +1436,8 @@ sup {vertical-align: super;}
     padding: 0 0.5em 0 0;
 }
 
-.choosercontainer #chooseform .option span.modicon img.icon,
-.choosercontainer #chooseform .nonoption span.modicon img.icon {
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .option span.modicon img.icon,
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .nonoption span.modicon img.icon {
     height: 24px; width: 24px;
 }
 
@@ -1320,8 +1479,8 @@ sup {vertical-align: super;}
 }
 
 /* The instruction/help area */
-.jsenabled .choosercontainer #chooseform .instruction,
-.jsenabled .choosercontainer #chooseform .typesummary {
+.jschooser .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .typesummary {
     display: none;
     position: absolute;
     top: 0px;
@@ -1336,15 +1495,15 @@ sup {vertical-align: super;}
     line-height: 2em;
 }
 
-.dir-rtl.jsenabled .choosercontainer #chooseform .instruction,
-.dir-rtl.jsenabled .choosercontainer #chooseform .typesummary {
+.dir-rtl.jschooser .choosercontainer #chooseform .instruction,
+.dir-rtl.jschooser .choosercontainer #chooseform .typesummary {
     left: 0px;
     right: 18.5em;
     border-right: 1px solid grey;
 }
 
 /* Selected option settings */
-.jsenabled .choosercontainer #chooseform .instruction,
+.jschooser .choosercontainer #chooseform .instruction,
 .choosercontainer #chooseform .selected .typesummary {
     display: block;
 }
@@ -1372,8 +1531,8 @@ html[dir=rtl] .formrow label.formlabel { float:right; }
 
 html[dir=rtl] .configphp {direction:ltr;text-align:left;}
 
-table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
-table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
+table.flexible > tbody > tr:nth-of-type(odd), table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
+table.flexible > tbody > tr:nth-of-type(even), table.generaltable > tbody > tr:nth-of-type(even) {background-color: #FAFAFA;}
 table.flexible .emptyrow {display: none;}
 
 /* Form element: listing */
@@ -1449,8 +1608,8 @@ body.jsenabled .formlisting {
 
 table.collection th { font-size: inherit !important; border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; text-align: center !important; }
 table.collection td { border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; }
-table.collection .r1 { background-color: #FFFFFF; }
-table.collection .r0 { background-color: #F6F6F6; }
+table.collection > tbody > tr:nth-of-type(even) { background-color: #FFFFFF; }
+table.collection > tbody > tr:nth-of-type(odd) { background-color: #F6F6F6; }
 table.collection ul { margin: 0.5em 0.5em 0.5em 2em; }
 .dir-rtl table.collection ul { margin: 0.5em 2em 0.5em 0.5em; }
 
@@ -1796,4 +1955,88 @@ a:hover .caret {
     -ms-animation: progress-bar-stripes 2s linear infinite;
     -o-animation: progress-bar-stripes 2s linear infinite;
     animation: progress-bar-stripes 2s linear infinite;
+}
+
+body.lockscroll {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Dropdown Menu styling */
+.dropdown-menu {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  text-decoration: none;
+  background-repeat: repeat-x;
+}
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  text-decoration: none;
+  outline: 0;
+}
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  text-decoration: none;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  cursor: default;
+}
+.open {
+  *z-index: 1000;
+}
+.open > .dropdown-menu {
+  display: block;
+}
+
+.editor_atto_menu .moodle-dialogue-content {
+    padding: 0px;
+    border: inherit;
+
+.well {
+  min-height: 20px;
+  padding: 19px;
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+}
+
+.well-small {
+  padding: 9px;
 }

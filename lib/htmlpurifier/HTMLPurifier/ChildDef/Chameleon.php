@@ -14,33 +14,52 @@ class HTMLPurifier_ChildDef_Chameleon extends HTMLPurifier_ChildDef
 
     /**
      * Instance of the definition object to use when inline. Usually stricter.
+     * @type HTMLPurifier_ChildDef_Optional
      */
     public $inline;
 
     /**
      * Instance of the definition object to use when block.
+     * @type HTMLPurifier_ChildDef_Optional
      */
     public $block;
 
+    /**
+     * @type string
+     */
     public $type = 'chameleon';
 
     /**
-     * @param $inline List of elements to allow when inline.
-     * @param $block List of elements to allow when block.
+     * @param array $inline List of elements to allow when inline.
+     * @param array $block List of elements to allow when block.
      */
-    public function __construct($inline, $block) {
+    public function __construct($inline, $block)
+    {
         $this->inline = new HTMLPurifier_ChildDef_Optional($inline);
-        $this->block  = new HTMLPurifier_ChildDef_Optional($block);
+        $this->block = new HTMLPurifier_ChildDef_Optional($block);
         $this->elements = $this->block->elements;
     }
 
-    public function validateChildren($tokens_of_children, $config, $context) {
+    /**
+     * @param HTMLPurifier_Node[] $children
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return bool
+     */
+    public function validateChildren($children, $config, $context)
+    {
         if ($context->get('IsInline') === false) {
             return $this->block->validateChildren(
-                $tokens_of_children, $config, $context);
+                $children,
+                $config,
+                $context
+            );
         } else {
             return $this->inline->validateChildren(
-                $tokens_of_children, $config, $context);
+                $children,
+                $config,
+                $context
+            );
         }
     }
 }

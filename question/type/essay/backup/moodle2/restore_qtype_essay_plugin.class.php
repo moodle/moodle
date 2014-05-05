@@ -58,6 +58,12 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
         if (!isset($data->responsetemplateformat)) {
             $data->responsetemplateformat = FORMAT_HTML;
         }
+        if (!isset($data->responserequired)) {
+            $data->responserequired = 1;
+        }
+        if (!isset($data->attachmentsrequired)) {
+            $data->attachmentsrequired = 0;
+        }
 
         // Detect if the question is created or mapped.
         $questioncreated = $this->get_mappingid('question_created',
@@ -103,8 +109,10 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
             $defaultoptions = new stdClass();
             $defaultoptions->questionid = $q->id;
             $defaultoptions->responseformat = 'editor';
+            $defaultoptions->responserequired = 1;
             $defaultoptions->responsefieldlines = 15;
             $defaultoptions->attachments = 0;
+            $defaultoptions->attachmentsrequired = 0;
             $defaultoptions->graderinfo = '';
             $defaultoptions->graderinfoformat = FORMAT_HTML;
             $defaultoptions->responsetemplate = '';

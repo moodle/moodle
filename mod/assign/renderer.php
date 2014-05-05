@@ -240,6 +240,17 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the header for an individual plugin.
+     *
+     * @param assign_plugin_header $header
+     * @return string
+     */
+    public function render_assign_plugin_header(assign_plugin_header $header) {
+        $o = $header->plugin->view_header();
+        return $o;
+    }
+
+    /**
      * Render a table containing the current status of the grading process.
      *
      * @param assign_grading_summary $summary

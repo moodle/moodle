@@ -17,8 +17,7 @@
 /**
  * Defines the editing form for the randomsamatch question type.
  *
- * @package    qtype
- * @subpackage randomsamatch
+ * @package    qtype_randomsamatch
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
@@ -41,20 +40,37 @@ class qtype_randomsamatch_edit_form extends question_edit_form {
         }
 
         $mform->addElement('select', 'choose',
-                get_string('randomsamatchnumber', 'quiz'), $questionstoselect);
+                get_string('randomsamatchnumber', 'qtype_randomsamatch'), $questionstoselect);
         $mform->setType('feedback', PARAM_RAW);
+
+        $mform->addElement('advcheckbox', 'subcats',
+                get_string('subcats', 'qtype_randomsamatch'), null, null, array(0, 1));
+        $mform->addHelpButton('subcats', 'subcats', 'qtype_randomsamatch');
+        $mform->setDefault('subcats', 1);
 
         $mform->addElement('hidden', 'fraction', 0);
         $mform->setType('fraction', PARAM_RAW);
+
+        $this->add_combined_feedback_fields(true);
+        $this->add_interactive_settings(true, true);
     }
 
     protected function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_combined_feedback($question, true);
+        $question = $this->data_preprocessing_hints($question, true, true);
+
+        if (!empty($question->options)) {
+            $question->choose = $question->options->choose;
+            $question->subcats = $question->options->subcats;
+        }
+
         if (empty($question->name)) {
-            $question->name = get_string('randomsamatch', 'quiz');
+            $question->name = get_string('randomsamatch', 'qtype_randomsamatch');
         }
 
         if (empty($question->questiontext)) {
-            $question->questiontext = get_string('randomsamatchintro', 'quiz');
+            $question->questiontext = get_string('randomsamatchintro', 'qtype_randomsamatch');
         }
         return $question;
     }
@@ -66,12 +82,14 @@ class qtype_randomsamatch_edit_form extends question_edit_form {
     public function validation($data, $files) {
         global $DB;
         $errors = parent::validation($data, $files);
+
         if (isset($data->categorymoveto)) {
             list($category) = explode(',', $data['categorymoveto']);
         } else {
             list($category) = explode(',', $data['category']);
         }
-        $saquestions = question_bank::get_qtype('randomsamatch')->get_sa_candidates($category);
+        $saquestions = question_bank::get_qtype('randomsamatch')->get_available_saquestions_from_category(
+                $category, $data['subcats']);
         $numberavailable = count($saquestions);
         if ($saquestions === false) {
             $a = new stdClass();

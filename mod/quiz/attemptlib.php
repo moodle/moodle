@@ -65,7 +65,6 @@ class quiz {
     protected $cm;
     protected $quiz;
     protected $context;
-    protected $questionids;
 
     // Fields set later if that data is needed.
     protected $questions = null;
@@ -88,12 +87,6 @@ class quiz {
         $this->course = $course;
         if ($getcontext && !empty($cm->id)) {
             $this->context = context_module::instance($cm->id);
-        }
-        $questionids = quiz_questions_in_quiz($this->quiz->questions);
-        if ($questionids) {
-            $this->questionids = explode(',', quiz_questions_in_quiz($this->quiz->questions));
-        } else {
-            $this->questionids = array(); // Which idiot made explode(',', '') = array('')?
         }
     }
 
@@ -132,13 +125,10 @@ class quiz {
      * Load just basic information about all the questions in this quiz.
      */
     public function preload_questions() {
-        if (empty($this->questionids)) {
-            throw new moodle_quiz_exception($this, 'noquestions', $this->edit_url());
-        }
-        $this->questions = question_preload_questions($this->questionids,
-                'qqi.grade AS maxmark, qqi.id AS instance',
-                '{quiz_question_instances} qqi ON qqi.quiz = :quizid AND q.id = qqi.question',
-                array('quizid' => $this->quiz->id));
+        $this->questions = question_preload_questions(null,
+                'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
+                '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid',
+                array('quizid' => $this->quiz->id), 'slot.slot');
     }
 
     /**
@@ -148,8 +138,11 @@ class quiz {
      * @param array $questionids question ids of the questions to load. null for all.
      */
     public function load_questions($questionids = null) {
+        if ($this->questions === null) {
+            throw new coding_exception('You must call preload_questions before calling load_questions.');
+        }
         if (is_null($questionids)) {
-            $questionids = $this->questionids;
+            $questionids = array_keys($this->questions);
         }
         $questionstoprocess = array();
         foreach ($questionids as $id) {
@@ -226,7 +219,10 @@ class quiz {
      * @return whether any questions have been added to this quiz.
      */
     public function has_questions() {
-        return !empty($this->questionids);
+        if ($this->questions === null) {
+            $this->preload_questions();
+        }
+        return !empty($this->questions);
     }
 
     /**
@@ -242,7 +238,7 @@ class quiz {
      */
     public function get_questions($questionids = null) {
         if (is_null($questionids)) {
-            $questionids = $this->questionids;
+            $questionids = array_keys($this->questions);
         }
         $questions = array();
         foreach ($questionids as $id) {
@@ -530,7 +526,7 @@ class quiz_attempt {
         $this->pagelayout = array();
 
         // Break up the layout string into pages.
-        $pagelayouts = explode(',0', quiz_clean_layout($this->attempt->layout, true));
+        $pagelayouts = explode(',0', $this->attempt->layout);
 
         // Strip off any empty last page (normally there is one).
         if (end($pagelayouts) == '') {
@@ -793,13 +789,31 @@ class quiz_attempt {
      * If not, prints an error.
      */
     public function check_review_capability() {
-        if (!$this->has_capability('mod/quiz:viewreports')) {
-            if ($this->get_attempt_state() == mod_quiz_display_options::IMMEDIATELY_AFTER) {
-                $this->require_capability('mod/quiz:attempt');
-            } else {
-                $this->require_capability('mod/quiz:reviewmyattempts');
-            }
+        if ($this->get_attempt_state() == mod_quiz_display_options::IMMEDIATELY_AFTER) {
+            $capability = 'mod/quiz:attempt';
+        } else {
+            $capability = 'mod/quiz:reviewmyattempts';
         }
+
+        // These next tests are in a slighly funny order. The point is that the
+        // common and most performance-critical case is students attempting a quiz
+        // so we want to check that permisison first.
+
+        if ($this->has_capability($capability)) {
+            // User has the permission that lets you do the quiz as a student. Fine.
+            return;
+        }
+
+        if ($this->has_capability('mod/quiz:viewreports') ||
+                $this->has_capability('mod/quiz:preview')) {
+            // User has the permission that lets teachers review. Fine.
+            return;
+        }
+
+        // They should not be here. Trigger the standard no-permission error
+        // but using the name of the student capability.
+        // We know this will fail. We just want the stadard exception thown.
+        $this->require_capability($capability);
     }
 
     /**
@@ -1512,14 +1526,15 @@ class quiz_attempt {
      */
     protected function fire_state_transition_event($eventclass, $timestamp) {
         global $USER;
-
+        $quizrecord = $this->get_quiz();
         $params = array(
             'context' => $this->get_quizobj()->get_context(),
             'courseid' => $this->get_courseid(),
             'objectid' => $this->attempt->id,
             'relateduserid' => $this->attempt->userid,
             'other' => array(
-                'submitterid' => CLI_SCRIPT ? null : $USER->id
+                'submitterid' => CLI_SCRIPT ? null : $USER->id,
+                'quizid' => $quizrecord->id
             )
         );
 

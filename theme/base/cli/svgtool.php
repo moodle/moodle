@@ -73,7 +73,11 @@ Examples:
 
 exit(0);
 
-
+/**
+ * Fixes SVG images for IE9.
+ *
+ * @param string $file
+ */
 function theme_base_svgtool_ie9fix($file) {
     global $CFG;
 
@@ -106,6 +110,11 @@ function theme_base_svgtool_ie9fix($file) {
     file_put_contents($file, $content);
 }
 
+/**
+ * Removes preserveAspectRatio attributes from SVG images.
+ *
+ * @param string $file
+ */
 function theme_base_svgtool_noaspectratio($file) {
     global $CFG;
 
@@ -138,6 +147,14 @@ function theme_base_svgtool_noaspectratio($file) {
     file_put_contents($file, $content);
 }
 
+/**
+ * Recursively works through directories of this theme, finding and fixing SVG images.
+ *
+ * @param string $base
+ * @param string $sub
+ * @param string $filecallback
+ * @param array $blacklist
+ */
 function theme_base_recurse_svgs($base, $sub, $filecallback, $blacklist) {
     if (is_dir("$base/$sub")) {
         $items = new DirectoryIterator("$base/$sub");

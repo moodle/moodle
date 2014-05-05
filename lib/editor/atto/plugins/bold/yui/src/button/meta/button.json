@@ -1,0 +1,7 @@
+{
+    "moodle-atto_bold-button": {
+        "requires": [
+            "moodle-editor_atto-plugin"
+        ]
+    }
+}

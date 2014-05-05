@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a workshop activity is viewed.
+ * The mod_workshop course module viewed event.
  *
  * @package    mod_workshop
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -23,12 +23,17 @@
  */
 
 namespace mod_workshop\event;
+
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once("$CFG->dirroot/mod/workshop/locallib.php");
+
 /**
- * Event for when a workshop activity is viewed.
+ * The mod_workshop course module viewed event class.
  *
  * @package    mod_workshop
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +44,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'workshop';
     }
 
@@ -62,7 +67,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
 
         $workshop = $this->get_record_snapshot('workshop', $this->objectid);
         $course   = $this->get_record_snapshot('course', $this->courseid);
-        $cm       = $this->get_record_snapshot('course_modules', $this->context->instanceid);
+        $cm       = $this->get_record_snapshot('course_modules', $this->contextinstanceid);
         $workshop = new \workshop($workshop, $cm, $course);
         return (object)array('workshop' => $workshop, 'user' => $USER);
     }

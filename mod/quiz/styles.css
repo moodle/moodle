@@ -525,6 +525,10 @@ table.quizreviewsummary td.cell {
     font-weight: normal;
 }
 
+#page-mod-quiz-report tr.lastrowforattempt {
+    border-bottom: lightgrey solid 0.2em;
+}
+
 /** Mod quiz edit **/
 #page-mod-quiz-edit h2.main {
     display: inline;
@@ -532,10 +536,10 @@ table.quizreviewsummary td.cell {
     clear: left;
 }
 
-#categoryquestions .r1 {
+#categoryquestions > tbody > tr:nth-of-type(even) {
     background: #e4e4e4;
 }
-#categoryquestions .r1.highlight {
+#categoryquestions > tbody > tr:nth-of-type(even).highlight {
     background-color: #AAFFAA;
 }
 #categoryquestions .header {
@@ -600,6 +604,7 @@ table#categoryquestions {
     float: left;
     position: relative;
     margin-left: 0.3em;
+    margin-right: 0.3em;
     margin-bottom: 0.2em;
     border-left: thin solid #777;
     line-height: 1.3em;
@@ -694,7 +699,6 @@ table#categoryquestions {
 }
 
 #page-mod-quiz-edit .reorder .questioncontentcontainer {
-    position: relative;
     overflow: hidden;
     white-space: nowrap;
 }
@@ -821,7 +825,7 @@ table#categoryquestions {
     line-height: 1em;
     max-width: 30%;
     position: absolute;
-    right: 50px;
+    right: 60px;
     border-radius: 0.2em;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
@@ -1085,6 +1089,7 @@ bank window's title is prominent enough*/
 #page-mod-quiz-edit .pagecontrols {
     clear: both;
     margin-left: 0.5em;
+    margin-right: 0.5em;
     padding-top: 0.5em;
 }
 #page-mod-quiz-edit .pagecontrols .singlebutton {
@@ -1291,7 +1296,7 @@ bank window's title is prominent enough*/
     float: right;
 }
 #page-mod-quiz-edit.dir-rtl div.question div.content div.qorder {
-    left: 50px;
+    left: 60px;
     right: auto;
 }
 #page-mod-quiz-edit.dir-rtl .reorder div.question div.content {
@@ -1316,4 +1321,9 @@ bank window's title is prominent enough*/
 #page-mod-quiz-edit.dir-rtl div.points input {
     direction: ltr;
     text-align: left;
+}
+#page-mod-quiz-edit.dir-rtl .pagecontrols .singlebutton {
+    float: right;
+    margin-left: 0;
+    margin-right: 1em;
 }

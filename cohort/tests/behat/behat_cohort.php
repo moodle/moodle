@@ -50,7 +50,7 @@ class behat_cohort extends behat_base {
 
         $steps = array(
             new Given('I click on "' . get_string('assign', 'cohort') . '" "link" in the "' . $this->escape($cohortidnumber) . '" "table_row"'),
-            new Given('I select "' . $this->escape($user) . '" from "' . get_string('potusers', 'cohort') . '"'),
+            new Given('I set the field "' . get_string('potusers', 'cohort') . '" to "' . $this->escape($user) . '"'),
             new Given('I press "' . get_string('add') . '"'),
             new Given('I press "' . get_string('backtocohorts', 'cohort') . '"')
         );
@@ -60,14 +60,13 @@ class behat_cohort extends behat_base {
 
             // With JS enabled we should expand a few tree nodes.
             if ($this->running_javascript()) {
+                $parentnodes = get_string('administrationsite') . ' > ' .
+                    get_string('users', 'admin') . ' > ' .
+                    get_string('accounts', 'admin');
                 $steps = array_merge(
                     array(
                         new Given('I am on homepage'),
-                        new Given('I collapse "' . get_string('frontpagesettings', 'admin') . '" node'),
-                        new Given('I expand "' . get_string('administrationsite') . '" node'),
-                        new Given('I expand "' . get_string('users', 'admin') . '" node'),
-                        new Given('I expand "' . get_string('accounts', 'admin') . '" node'),
-                        new Given('I follow "' . get_string('cohorts', 'cohort') . '"')
+                        new Given('I navigate to "' . get_string('cohorts', 'cohort') . '" node in "' . $parentnodes . '"')
                     ),
                     $steps
                 );

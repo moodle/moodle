@@ -527,7 +527,7 @@ function filter_get_all_installed() {
  *
  * @param string $filtername The filter name, for example 'tex'.
  * @param int $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
- * @param int $move 1 means up, 0 means the same, -1 means down
+ * @param int $move -1 means up, 0 means the same, 1 means down
  */
 function filter_set_global_state($filtername, $state, $move = 0) {
     global $DB;

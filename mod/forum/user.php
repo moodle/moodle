@@ -18,7 +18,7 @@
 /**
  * Display user activity reports for a course
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,8 +61,6 @@ if ($page != 0) {
 if ($perpage != 5) {
     $url->param('perpage', $perpage);
 }
-
-add_to_log(($isspecificcourse)?$courseid:SITEID, "forum", "user report", 'user.php?'.$url->get_query_string(), $userid);
 
 $user = $DB->get_record("user", array("id" => $userid), '*', MUST_EXIST);
 $usercontext = context_user::instance($user->id, MUST_EXIST);
@@ -116,6 +114,15 @@ if ($isspecificcourse) {
     // All courses where the user has posted within a forum will be returned.
     $courses = forum_get_courses_user_posted_in($user, $discussionsonly);
 }
+
+
+$params = array(
+    'context' => $PAGE->context,
+    'relateduserid' => $user->id,
+    'other' => array('reportmode' => $mode),
+);
+$event = \mod_forum\event\user_report_viewed::create($params);
+$event->trigger();
 
 // Get the posts by the requested user that the current user can access.
 $result = forum_get_posts_by_user($user, $courses, $isspecificcourse, $discussionsonly, ($page * $perpage), $perpage);

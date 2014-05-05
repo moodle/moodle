@@ -2,13 +2,18 @@ var STAMPPICKER_NAME = "Colourpicker",
     STAMPPICKER;
 
 /**
- * STAMPPICKER
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * This is a drop down list of stamps.
  *
- * @namespace M.assignfeedback_editpdf.stamppicker
- * @class dropdown
+ * @namespace M.assignfeedback_editpdf
+ * @class stamppicker
  * @constructor
- * @extends Y.Base
+ * @extends M.assignfeedback_editpdf.dropdown
  */
 STAMPPICKER = function(config) {
     STAMPPICKER.superclass.constructor.apply(this, [config]);

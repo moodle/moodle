@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   mod-scorm
+ * @package   mod_scorm
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -449,7 +449,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {
-                        $report .= '<img src="'.$OUTPUT->pix_url('spacer', 'scorm').'" alt="" />';
+                        $report .= $OUTPUT->spacer(array("height" => "12", "width" => "13"));
                     }
 
                     if ($sco->launch) {
@@ -712,6 +712,13 @@ function scorm_grade_item_delete($scorm) {
 }
 
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function scorm_get_view_actions() {
@@ -719,6 +726,13 @@ function scorm_get_view_actions() {
 }
 
 /**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function scorm_get_post_actions() {
@@ -1401,27 +1415,49 @@ function scorm_validate_package($file) {
  * @param int $userid the userid of the user.
  * @param string $mode the current mode that has been selected.
  */
-function scorm_check_mode($scorm, $newattempt, &$attempt, $userid, &$mode) {
+function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     global $DB;
+
+    if (($mode == 'browse')) {
+        if ($scorm->hidebrowse == 1) {
+            // Prevent Browse mode if hidebrowse is set.
+            $mode = 'normal';
+        } else {
+            // We don't need to check attempts as browse mode is set.
+            return;
+        }
+    }
+    // Check if the scorm module is incomplete (used to validate user request to start a new attempt).
+    $incomplete = true;
+    $tracks = $DB->get_recordset('scorm_scoes_track', array('scormid' => $scorm->id, 'userid' => $userid,
+        'attempt' => $attempt, 'element' => 'cmi.core.lesson_status'));
+    foreach ($tracks as $track) {
+        if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
+            $incomplete = false;
+        } else {
+            $incomplete = true;
+            break; // Found an incomplete sco, so the result as a whole is incomplete.
+        }
+    }
+    $tracks->close();
+
+    // Validate user request to start a new attempt.
+    if ($incomplete === true) {
+        // The option to start a new attempt should never have been presented. Force false.
+        $newattempt = 'off';
+    } else if (($attempt !== '1') && !empty($scorm->forcenewattempt)) {
+        // A new attempt should be forced for already completed attempts.
+        $newattempt = 'on';
+    }
+
     if (($newattempt == 'on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
         $attempt++;
         $mode = 'normal';
-    } else if ($mode != 'browse') { // Check if review mode should be set.
-        $mode = 'normal'; // Set to normal mode by default.
-
-        // If all tracks == passed, failed or completed then use review mode.
-        $tracks = $DB->get_recordset('scorm_scoes_track', array('scormid' => $scorm->id, 'userid' => $userid,
-            'attempt' => $attempt, 'element' => 'cmi.core.lesson_status'));
-        foreach ($tracks as $track) {
-            if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
-                $mode = 'review';
-            } else { // Found an incomplete sco so exit and use normal mode.
-                $mode = 'normal';
-                break;
-            }
+    } else { // Check if review mode should be set.
+        if ($incomplete === true) {
+            $mode = 'normal';
+        } else {
+            $mode = 'review';
         }
-        $tracks->close();
-    } else if (($mode == 'browse') && ($scorm->hidebrowse == 1)) { // Prevent Browse mode if hidebrowse is set.
-        $mode = 'normal';
     }
 }

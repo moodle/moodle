@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a new note entry viewed.
  *
@@ -26,29 +22,28 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class note_viewed
  *
  * Class for event to be triggered when a note is viewed.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string content hard-coded to notes.
- * }
- *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class notes_viewed extends \core\event\content_viewed {
+class notes_viewed extends base {
 
     /**
      * Set basic properties for the event.
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
@@ -66,7 +61,11 @@ class notes_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return 'Note for user with id "'. $this->relateduserid . '" was viewed by user with id "'. $this->userid . '"';
+        if (!empty($this->relateduserid)) {
+            return "The user with the id '$this->userid' viewed the notes for the user with the id '$this->relateduserid'.";
+        }
+
+        return "The user with the id '$this->userid' viewed the notes for the course with the id '$this->courseid'.";
     }
 
     /**
@@ -74,7 +73,7 @@ class notes_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/note/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
+        return new \moodle_url('/notes/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
     }
 
     /**

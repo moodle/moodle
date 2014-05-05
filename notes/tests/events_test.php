@@ -83,6 +83,7 @@ class core_notes_events_testcase extends advanced_testcase {
         $logurl->set_anchor('note-' . $this->eventnote->id);
         $arr = array($this->eventnote->courseid, 'notes', 'delete', $logurl, 'delete note');
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -113,7 +114,7 @@ class core_notes_events_testcase extends advanced_testcase {
         $logurl->set_anchor('note-' . $note->id);
         $arr = array($note->courseid, 'notes', 'add', $logurl, 'add note');
         $this->assertEventLegacyLogData($arr, $event);
-
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -144,7 +145,34 @@ class core_notes_events_testcase extends advanced_testcase {
         $logurl->set_anchor('note-' . $note->id);
         $arr = array($note->courseid, 'notes', 'update', $logurl, 'update note');
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 
+    /**
+     * Test the notes viewed event.
+     *
+     * It's not possible to use the moodle API to simulate the viewing of notes, so here we
+     * simply create the event and trigger it.
+     */
+    public function test_notes_viewed() {
+        $coursecontext = context_course::instance($this->eventnote->courseid);
+        // Trigger event for notes viewed.
+        $event = \core\event\notes_viewed::create(array(
+            'context' => $coursecontext,
+            'relateduserid' => $this->eventnote->userid
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\notes_viewed', $event);
+        $this->assertEquals($coursecontext, $event->get_context());
+        $expected = array($this->eventnote->courseid, 'notes', 'view', 'index.php?course=' .
+                $this->eventnote->courseid.'&amp;user=' . $this->eventnote->userid, 'view notes');
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }
-

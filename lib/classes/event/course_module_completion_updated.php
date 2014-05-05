@@ -14,14 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course module completion event.
+ *
+ * @package    core
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when course module completion is updated.
+ * Course module completion event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +42,7 @@ class course_module_completion_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_modules_completion';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -51,7 +60,8 @@ class course_module_completion_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Course module completion updated for user ' . $this->userid;
+        return "The course module completion requirements were updated by the user with the id '$this->userid' for the user " .
+            "with the id '$this->relateduserid'.";
     }
 
     /**
@@ -81,4 +91,20 @@ class course_module_completion_updated extends base {
         return $this->get_record_snapshot('course_modules_completion', $this->objectid);
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception in case of a problem.
+     */
+    protected function validate_data() {
+        parent::validate_data();
+        // Make sure the context level is set to module.
+        if ($this->contextlevel !== CONTEXT_MODULE) {
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
+        }
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+    }
 }

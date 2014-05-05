@@ -1889,6 +1889,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($eventdata['other']['picture'], $user->picture);
         $this->assertSame($eventdata['other']['mnethostid'], $user->mnethostid);
         $this->assertEquals($user, $event->get_record_snapshot('user', $event->objectid));
+        $this->assertEventContextNotUsed($event);
 
         // Try invalid params.
         $record = new stdClass();
@@ -2451,24 +2452,21 @@ class core_moodlelib_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
 
-        $this->assertCount(2, $events);
-        $event = $events[0];
-        $this->assertInstanceOf('\core\event\user_updated', $event);
-        $event = $events[1];
+        $this->assertCount(1, $events);
+        $event = reset($events);
         $this->assertInstanceOf('\core\event\user_loggedin', $event);
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals($user->id, $event->objectid);
         $this->assertEquals(context_system::instance()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
 
         $this->assertTimeCurrent($user->firstaccess);
         $this->assertTimeCurrent($user->lastaccess);
-        $this->assertTimeCurrent($user->timemodified);
 
         $this->assertTimeCurrent($USER->firstaccess);
         $this->assertTimeCurrent($USER->lastaccess);
-        $this->assertTimeCurrent($USER->timemodified);
         $this->assertTimeCurrent($USER->currentlogin);
         $this->assertSame(sesskey(), $USER->sesskey);
         $this->assertTimeCurrent($USER->preference['_lastloaded']);
@@ -2504,6 +2502,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedlogdata = array(SITEID, 'user', 'logout', 'view.php?id='.$event->objectid.'&course='.SITEID, $event->objectid, 0,
             $event->objectid);
         $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_email_to_user() {
@@ -2586,6 +2585,7 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->assertEquals(context_user::instance($user->id), $event->get_context());
             $expectedlogdata = array(SITEID, 'user', 'update', 'view.php?id='.$user->id, '');
             $this->assertEventLegacyLogData($expectedlogdata, $event);
+            $this->assertEventContextNotUsed($event);
         }
     }
 
@@ -2686,5 +2686,40 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedarray->picture = 23;
         $expectedarray->imagealt = 'Michael Jordan draining another basket.';
         $this->assertEquals($user, $expectedarray);
+    }
+
+    /**
+     * Test function count_words().
+     */
+    public function test_count_words() {
+        $count = count_words("one two three'four");
+        $this->assertEquals(3, $count);
+
+        $count = count_words('one+two three’four');
+        $this->assertEquals(3, $count);
+
+        $count = count_words('one"two three-four');
+        $this->assertEquals(3, $count);
+
+        $count = count_words('one@two three_four');
+        $this->assertEquals(4, $count);
+
+        $count = count_words('one\two three/four');
+        $this->assertEquals(4, $count);
+
+        $count = count_words(' one ... two &nbsp; three...four ');
+        $this->assertEquals(4, $count);
+
+        $count = count_words('one.2 3,four');
+        $this->assertEquals(4, $count);
+
+        $count = count_words('1³ £2 €3.45 $6,789');
+        $this->assertEquals(4, $count);
+
+        $count = count_words('one—two ブルース カンベッル');
+        $this->assertEquals(4, $count);
+
+        $count = count_words('one…two ブルース … カンベッル');
+        $this->assertEquals(4, $count);
     }
 }

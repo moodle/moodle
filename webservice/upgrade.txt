@@ -3,6 +3,12 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 2.7 ===
+
+* All webservice server.php and simpleserver.php scripts must define('WS_SERVER', true)
+  before including config.php file.
+
+
 === 2.6 ===
 
 * webservice/upload.php

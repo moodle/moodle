@@ -14,31 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a new blog entry is added..
  *
- * @package    core_blog
+ * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class blog_entry_created
  *
  * Class for event to be triggered when a blog entry is created.
  *
- * @package    core_blog
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blog_entry_created extends \core\event\base {
+class blog_entry_created extends base {
 
-    /** @var  \blog_entry A reference to the active blog_entry object. */
-    protected $customobject;
+    /** @var \blog_entry A reference to the active blog_entry object. */
+    protected $blogentry;
 
     /**
      * Set basic properties for the event.
@@ -47,16 +48,29 @@ class blog_entry_created extends \core\event\base {
         $this->context = \context_system::instance();
         $this->data['objecttable'] = 'post';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
-     * Set custom data of the event.
+     * Set blog_entry object to be used by observers.
      *
-     * @param \blog_entry $data A reference to the active blog_entry object.
+     * @param \blog_entry $blogentry A reference to the active blog_entry object.
      */
-    public function set_custom_data(\blog_entry $data) {
-        $this->customobject = $data;
+    public function set_blog_entry(\blog_entry $blogentry) {
+        $this->blogentry = $blogentry;
+    }
+
+    /**
+     * Returns created blog_entry object for event observers.
+     *
+     * @throws \coding_exception
+     * @return \blog_entry
+     */
+    public function get_blog_entry() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('Function get_blog_entry() can not be used on restored events.');
+        }
+        return $this->blogentry;
     }
 
     /**
@@ -65,7 +79,7 @@ class blog_entry_created extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string("evententryadded", "core_blog");
+        return get_string('evententryadded', 'core_blog');
     }
 
     /**
@@ -74,7 +88,7 @@ class blog_entry_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Blog entry id '. $this->objectid. ' was created by userid '. $this->userid;
+        return "The blog entry with the id '$this->objectid' was created by the user with the id '$this->userid'.";
     }
 
     /**
@@ -82,7 +96,7 @@ class blog_entry_created extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/blog/index.php', array('entryid' => $this->objectid, 'userid' => $this->userid));
+        return new \moodle_url('/blog/index.php', array('entryid' => $this->objectid));
     }
 
     /**
@@ -100,16 +114,16 @@ class blog_entry_created extends \core\event\base {
      * @return \blog_entry
      */
     protected function get_legacy_eventdata() {
-        return $this->customobject;
+        return $this->blogentry;
     }
 
     /**
-     * replace add_to_log() statement.
+     * Replace add_to_log() statement.
      *
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
         return array (SITEID, 'blog', 'add', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
-                $this->customobject->subject);
+            $this->blogentry->subject);
     }
 }

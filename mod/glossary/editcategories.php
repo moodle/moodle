@@ -69,16 +69,14 @@ require_capability('mod/glossary:managecategories', $context);
 $strglossaries   = get_string("modulenameplural", "glossary");
 $strglossary     = get_string("modulename", "glossary");
 
-$PAGE->navbar->add($strglossaries, new moodle_url('/mod/glossary/index.php', array('id'=>$course->id)));
-$PAGE->navbar->add(get_string("categories","glossary"));
+$PAGE->navbar->add(get_string("categories","glossary"),
+        new moodle_url('/mod/glossary/editcategories.php', array('id' => $cm->id,'mode' => 'cat')));
 if (!empty($action)) {
     $navaction = get_string($action). " " . core_text::strtolower(get_string("category","glossary"));
     $PAGE->navbar->add($navaction);
 }
-$PAGE->set_title(format_string($glossary->name));
+$PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($glossary->name), 2);
 
 // Prepare format_string/text options
 $fmtoptions = array(
@@ -104,9 +102,21 @@ if ( $hook >0 ) {
             $cat->usedynalink = $usedynalink;
 
             $DB->update_record("glossary_categories", $cat);
-            add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
+            $event = \mod_glossary\event\category_updated::create(array(
+                'context' => $context,
+                'objectid' => $hook
+            ));
+            $cat->glossaryid = $glossary->id;
+            $event->add_record_snapshot('glossary_categories', $cat);
+            $event->add_record_snapshot('glossary', $glossary);
+            $event->trigger();
+
+            // Reset caches.
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
 
         } else {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(format_string($glossary->name), 2);
             echo $OUTPUT->heading(format_string(get_string("edit"). " " . get_string("category","glossary")), 3);
 
             $name = $category->name;
@@ -121,14 +131,21 @@ if ( $hook >0 ) {
             $DB->delete_records("glossary_entries_categories", array("categoryid"=>$hook));
             $DB->delete_records("glossary_categories", array("id"=>$hook));
 
-            echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
-            echo "<div>" . get_string("categorydeleted","glossary") ."</div>";
-            echo $OUTPUT->box_end();
+            $event = \mod_glossary\event\category_deleted::create(array(
+                'context' => $context,
+                'objectid' => $hook
+            ));
+            $event->add_record_snapshot('glossary_categories', $category);
+            $event->add_record_snapshot('glossary', $glossary);
+            $event->trigger();
 
-            add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
+            // Reset caches.
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
 
-            redirect("editcategories.php?id=$cm->id");
+            redirect("editcategories.php?id=$cm->id", get_string("categorydeleted", "glossary"), 2);
         } else {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(format_string($glossary->name), 2);
             echo $OUTPUT->heading(format_string(get_string("delete"). " " . get_string("category","glossary")), 3);
 
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
@@ -173,13 +190,7 @@ if ( $hook >0 ) {
     if ( $confirm ) {
         $dupcategory = $DB->get_records_sql("SELECT * FROM {glossary_categories} WHERE ".$DB->sql_like('name','?', false)." AND glossaryid=?", array($name, $glossary->id));
         if ( $dupcategory ) {
-        echo "<h3 class=\"main\">" . get_string("add"). " " . get_string("category","glossary"). "</h3>";
-
-            echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
-            echo "<div>" . get_string("duplicatecategory","glossary") ."</div>";
-            echo $OUTPUT->box_end();
-
-            redirect("editcategories.php?id=$cm->id&amp;action=add&amp;name=$name");
+            redirect("editcategories.php?id=$cm->id&amp;action=add&amp;name=$name", get_string("duplicatecategory", "glossary"), 2);
 
         } else {
             $action = "";
@@ -189,9 +200,20 @@ if ( $hook >0 ) {
             $cat->glossaryid = $glossary->id;
 
             $cat->id = $DB->insert_record("glossary_categories", $cat);
-            add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
+            $event = \mod_glossary\event\category_created::create(array(
+                'context' => $context,
+                'objectid' => $cat->id
+            ));
+            $event->add_record_snapshot('glossary_categories', $cat);
+            $event->add_record_snapshot('glossary', $glossary);
+            $event->trigger();
+
+            // Reset caches.
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
         }
     } else {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(format_string($glossary->name), 2);
         echo "<h3 class=\"main\">" . get_string("add"). " " . get_string("category","glossary"). "</h3>";
         $name="";
         require "editcategories.html";
@@ -202,6 +224,9 @@ if ( $action ) {
     echo $OUTPUT->footer();
     die;
 }
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($glossary->name), 2);
 
 ?>
 

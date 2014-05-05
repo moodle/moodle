@@ -15,9 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handles displaying and editing the datetime field.
+ * This file contains the datetime profile field class.
  *
  * @package profilefield_datetime
+ * @copyright 2010 Mark Nelson <markn@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ */
+
+/**
+ * Handles displaying and editing the datetime field.
+ *
  * @copyright 2010 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */

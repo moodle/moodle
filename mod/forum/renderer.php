@@ -18,7 +18,7 @@
 /**
  * This file contains a custom renderer class used by the forum module.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
  * A custom renderer class that extends the plugin_renderer_base and
  * is used by the forum module.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
@@ -83,9 +83,14 @@ class mod_forum_renderer extends plugin_renderer_base {
      */
     public function subscriber_overview($users, $forum , $course) {
         $output = '';
+        $modinfo = get_fast_modinfo($course);
         if (!$users || !is_array($users) || count($users)===0) {
             $output .= $this->output->heading(get_string("nosubscribers", "forum"));
+        } else if (!isset($modinfo->instances['forum'][$forum->id])) {
+            $output .= $this->output->heading(get_string("invalidmodule", "error"));
         } else {
+            $cm = $modinfo->instances['forum'][$forum->id];
+            $canviewemail = in_array('email', get_extra_user_fields(context_module::instance($cm->id)));
             $output .= $this->output->heading(get_string("subscribersto","forum", "'".format_string($forum->name)."'"));
             $table = new html_table();
             $table->cellpadding = 5;
@@ -93,7 +98,11 @@ class mod_forum_renderer extends plugin_renderer_base {
             $table->tablealign = 'center';
             $table->data = array();
             foreach ($users as $user) {
-                $table->data[] = array($this->output->user_picture($user, array('courseid'=>$course->id)), fullname($user), $user->email);
+                $info = array($this->output->user_picture($user, array('courseid'=>$course->id)), fullname($user));
+                if ($canviewemail) {
+                    array_push($info, $user->email);
+                }
+                $table->data[] = $info;
             }
             $output .= html_writer::table($table);
         }

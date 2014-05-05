@@ -29,6 +29,13 @@ require_once($CFG->dirroot . '/question/format/blackboard_six/formatbase.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatqti.php');
 require_once($CFG->dirroot . '/question/format/blackboard_six/formatpool.php');
 
+/**
+ * Class to represent a Blackboard file.
+ *
+ * @package    qformat_blackboard_six
+ * @copyright  2005 Michael Penney
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qformat_blackboard_six_file {
     /** @var int type of file being imported, one of the constants FILETYPE_QTI or FILETYPE_POOL. */
     public $filetype;
@@ -38,12 +45,25 @@ class qformat_blackboard_six_file {
     public $filebase = '';
 }
 
+/**
+ * Blackboard Six QTI file importer class.
+ *
+ * @package    qformat_blackboard_six
+ * @copyright  2005 Michael Penney
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qformat_blackboard_six extends qformat_blackboard_six_base {
     /** @var int Blackboard assessment qti files were always imported by the blackboard_six plugin. */
     const FILETYPE_QTI = 1;
     /** @var int Blackboard question pool files were previously handled by the blackboard plugin. */
     const FILETYPE_POOL = 2;
 
+    /**
+     * Return the content of a file given by its path in the tempdir directory.
+     *
+     * @param string $path path to the file inside tempdir
+     * @return mixed contents array or false on failure
+     */
     public function get_filecontent($path) {
         $fullpath = $this->tempdir . '/' . $path;
         if (is_file($fullpath) && is_readable($fullpath)) {
@@ -56,7 +76,8 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
      * Return content of all files containing questions,
      * as an array one element for each file found,
      * For each file, the corresponding element is an array of lines.
-     * @param string filename name of file
+     *
+     * @param string $filename name of file
      * @return mixed contents array or false on failure
      */
     public function readdata($filename) {
@@ -163,6 +184,7 @@ class qformat_blackboard_six extends qformat_blackboard_six_base {
      * Each object is the content of a .dat questions file.
      * This *could* burn memory - but it won't happen that much
      * so fingers crossed!
+     *
      * @param array $lines array of qformat_blackboard_six_file objects for each input file.
      * @return array (of objects) question objects.
      */

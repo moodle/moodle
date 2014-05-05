@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki version restored event.
+ * The mod_wiki version restored event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,15 +26,16 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki version restored event.
+ * The mod_wiki version restored event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int pageid id wiki page.
+ *      - int pageid: id wiki page.
  * }
  *
  * @package    mod_wiki
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +47,7 @@ class page_version_restored extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'wiki_versions';
     }
 
@@ -65,7 +66,8 @@ class page_version_restored extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' restored wiki version for page id ' . $this->other['pageid'];
+        return "The user with the id '$this->userid' restored version '$this->objectid' for the page with the id '{$this->other['pageid']}' " .
+            "for the wiki with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -75,7 +77,7 @@ class page_version_restored extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'restore',
-            'view.php?pageid=' . $this->other['pageid'], $this->other['pageid'], $this->context->instanceid));
+            'view.php?pageid=' . $this->other['pageid'], $this->other['pageid'], $this->contextinstanceid));
     }
 
     /**
@@ -95,6 +97,7 @@ class page_version_restored extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['pageid'])) {
             throw new \coding_exception('The pageid needs to be set in $other');
         }

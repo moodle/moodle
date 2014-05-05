@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package feedback
+ * @package mod_feedback
  */
 
 require_once("../../config.php");
@@ -154,8 +154,8 @@ if ($course->id == SITEID) {
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
 $urlparams = array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id);
 $PAGE->set_url('/mod/feedback/complete.php', $urlparams);
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_title(format_string($feedback->name));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
 
 //ishidden check.
@@ -176,8 +176,8 @@ if ((empty($cm->visible) AND
 
 //check, if the feedback is open (timeopen, timeclose)
 $checktime = time();
-$feedback_is_closed = ($feedback->timeopen > $checktime) OR
-                      ($feedback->timeclose < $checktime AND
+$feedback_is_closed = ($feedback->timeopen > $checktime) ||
+                      ($feedback->timeclose < $checktime &&
                             $feedback->timeclose > 0);
 
 if ($feedback_is_closed) {
@@ -403,22 +403,21 @@ if ($feedback_can_submit) {
         echo $OUTPUT->continue_button($url);
     } else {
         if (isset($savereturn) && $savereturn == 'failed') {
-            echo $OUTPUT->box_start('mform error');
-            echo get_string('saving_failed', 'feedback');
+            echo $OUTPUT->box_start('mform');
+            echo '<span class="error">'.get_string('saving_failed', 'feedback').'</span>';
             echo $OUTPUT->box_end();
         }
 
         if (isset($savereturn) && $savereturn == 'missing') {
-            echo $OUTPUT->box_start('mform error');
-            echo get_string('saving_failed_because_missing_or_false_values', 'feedback');
+            echo $OUTPUT->box_start('mform');
+            echo '<span class="error">'.get_string('saving_failed_because_missing_or_false_values', 'feedback').'</span>';
             echo $OUTPUT->box_end();
         }
 
         //print the items
         if (is_array($feedbackitems)) {
             echo $OUTPUT->box_start('feedback_form');
-            echo '<form action="complete.php" method="post" onsubmit=" ">';
-            echo '<fieldset>';
+            echo '<form action="complete.php" class="mform" method="post" onsubmit=" ">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo $OUTPUT->box_start('feedback_anonymousinfo');
             switch ($feedback->anonymous) {
@@ -441,8 +440,9 @@ if ($feedback_can_submit) {
             $params = array('feedback' => $feedback->id, 'required' => 1);
             $countreq = $DB->count_records('feedback_item', $params);
             if ($countreq > 0) {
-                echo '<span class="feedback_required_mark">(*)';
-                echo get_string('items_are_required', 'feedback');
+                echo '<span class="fdescription required">';
+                echo get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').
+                    '" src="'.$OUTPUT->pix_url('req') .'" class="req" />');
                 echo '</span>';
             }
             echo $OUTPUT->box_start('feedback_items');
@@ -547,7 +547,6 @@ if ($feedback_can_submit) {
                 echo '<input name="savevalues" type="submit" '.$inputvalue.' />';
             }
 
-            echo '</fieldset>';
             echo '</form>';
             echo $OUTPUT->box_end();
 
@@ -562,11 +561,9 @@ if ($feedback_can_submit) {
                 }
             }
             echo '<form '.$action.' method="post" onsubmit=" ">';
-            echo '<fieldset>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="courseid" value="'. $courseid . '" />';
             echo '<button type="submit">'.get_string('cancel').'</button>';
-            echo '</fieldset>';
             echo '</form>';
             echo $OUTPUT->box_end();
             $SESSION->feedback->is_started = true;

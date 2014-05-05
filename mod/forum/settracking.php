@@ -18,7 +18,7 @@
 /**
  * Set tracking option for the forum.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2005 mchurch
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,9 +58,17 @@ if (!forum_tp_can_track_forums($forum)) {
 $info = new stdClass();
 $info->name  = fullname($USER);
 $info->forum = format_string($forum->name);
+
+$eventparams = array(
+    'context' => context_module::instance($cm->id),
+    'relateduserid' => $USER->id,
+    'other' => array('forumid' => $forum->id),
+);
+
 if (forum_tp_is_tracked($forum) ) {
     if (forum_tp_stop_tracking($forum->id)) {
-        add_to_log($course->id, "forum", "stop tracking", "view.php?f=$forum->id", $forum->id, $cm->id);
+        $event = \mod_forum\event\readtracking_disabled::create($eventparams);
+        $event->trigger();
         redirect($returnto, get_string("nownottracking", "forum", $info), 1);
     } else {
         print_error('cannottrack', '', $_SERVER["HTTP_REFERER"]);
@@ -68,7 +76,8 @@ if (forum_tp_is_tracked($forum) ) {
 
 } else { // subscribe
     if (forum_tp_start_tracking($forum->id)) {
-        add_to_log($course->id, "forum", "start tracking", "view.php?f=$forum->id", $forum->id, $cm->id);
+        $event = \mod_forum\event\readtracking_enabled::create($eventparams);
+        $event->trigger();
         redirect($returnto, get_string("nowtracking", "forum", $info), 1);
     } else {
         print_error('cannottrack', '', $_SERVER["HTTP_REFERER"]);

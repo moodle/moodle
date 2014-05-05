@@ -104,6 +104,7 @@ switch($requestmethod) {
                     case 'visible':
                         require_capability('moodle/course:activityvisibility', $modcontext);
                         set_coursemodule_visible($cm->id, $value);
+                        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
                         break;
 
                     case 'duplicate':
@@ -121,6 +122,7 @@ switch($requestmethod) {
                     case 'groupmode':
                         require_capability('moodle/course:manageactivities', $modcontext);
                         set_coursemodule_groupmode($cm->id, $value);
+                        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
                         break;
 
                     case 'indent':
@@ -146,7 +148,7 @@ switch($requestmethod) {
                         }
 
                         $isvisible = moveto_module($cm, $section, $beforemod);
-                        echo json_encode(array('visible' => $isvisible));
+                        echo json_encode(array('visible' => (bool) $isvisible));
                         break;
                     case 'gettitle':
                         require_capability('moodle/course:manageactivities', $modcontext);
@@ -173,6 +175,8 @@ switch($requestmethod) {
 
                         if (!empty($module->name)) {
                             $DB->update_record($cm->modname, $module);
+                            $cm->name = $module->name;
+                            \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
                             rebuild_course_cache($cm->course);
                         } else {
                             $module->name = $cm->name;

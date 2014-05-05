@@ -18,8 +18,7 @@
 /**
  * View, create or edit single example submission
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,8 +56,6 @@ $output = $PAGE->get_renderer('mod_workshop');
 
 if ($id) { // example is specified
     $example = $workshop->get_example_by_id($id);
-    $workshop->log('view example', $workshop->exsubmission_url($example->id), $example->id);
-
 } else { // no example specified - create new one
     require_capability('mod/workshop:manageexamples', $workshop->context);
     $example = new stdclass();
@@ -162,9 +159,7 @@ if ($edit and $canmanage) {
         $formdata->contenttrust       = 0;           // updated later
         if (is_null($example->id)) {
             $example->id = $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
-            $workshop->log('add example', $workshop->exsubmission_url($example->id), $example->id);
         } else {
-            $workshop->log('update example', $workshop->exsubmission_url($example->id), $example->id);
             if (empty($formdata->id) or empty($example->id) or ($formdata->id != $example->id)) {
                 throw new moodle_exception('err_examplesubmissionid', 'workshop');
             }

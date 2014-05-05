@@ -31,7 +31,8 @@ require_once(__DIR__  . '/behat_form_checkbox.php');
  * Radio input form field.
  *
  * Extends behat_form_checkbox as the set_value() behaviour
- * is the same.
+ * is the same and it behaves closer to a checkbox than to
+ * a text field.
  *
  * This form field type can be added to forms as any other
  * moodle form element, but it does not make sense without
@@ -51,9 +52,43 @@ class behat_form_radio extends behat_form_checkbox {
     /**
      * Returns the radio input value attribute.
      *
+     * Here we can not extend behat_form_checkbox because
+     * isChecked() does internally a (bool)getValue() and
+     * it is not good for radio buttons.
+     *
      * @return string The value attribute
      */
     public function get_value() {
-        return $this->field->getValue();
+        return (bool)$this->field->getAttribute('checked');
+    }
+
+    /**
+     * Sets the value of a radio
+     *
+     * Partially overwriting behat_form_checkbox
+     * implementation as when JS is disabled we
+     * can not check() and we should use setValue()
+     *
+     * @param string $value
+     * @return void
+     */
+    public function set_value($value) {
+
+        if ($this->running_javascript()) {
+            parent::set_value($value);
+        } else {
+            // Goutte does not accept a check nor a click in an input[type=radio].
+            $this->field->setValue($this->field->getAttribute('value'));
+        }
+    }
+
+    /**
+     * Returns whether the provided value matches the current value or not.
+     *
+     * @param string $expectedvalue
+     * @return bool
+     */
+    public function matches($expectedvalue = false) {
+        return $this->text_matches($expectedvalue);
     }
 }

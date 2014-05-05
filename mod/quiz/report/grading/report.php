@@ -123,9 +123,9 @@ class quiz_grading_report extends quiz_default_report {
                     $this->currentgroup, '', false);
         }
 
-        $questionsinquiz = quiz_questions_in_quiz($quiz->questions);
+        $hasquestions = quiz_has_questions($quiz->id);
         $counts = null;
-        if ($slot && $questionsinquiz) {
+        if ($slot && $hasquestions) {
             // Make sure there is something to do.
             $statecounts = $this->get_question_state_summary(array($slot));
             foreach ($statecounts as $record) {
@@ -144,7 +144,7 @@ class quiz_grading_report extends quiz_default_report {
         $this->print_header_and_tabs($cm, $course, $quiz, 'grading');
 
         // What sort of page to display?
-        if (!$questionsinquiz) {
+        if (!$hasquestions) {
             echo quiz_no_questions_message($quiz, $cm, $this->context);
 
         } else if (!$slot) {

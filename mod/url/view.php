@@ -18,8 +18,7 @@
 /**
  * URL module main user interface
  *
- * @package    mod
- * @subpackage url
+ * @package    mod_url
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,10 +48,11 @@ require_capability('mod/url:view', $context);
 
 $params = array(
     'context' => $context,
-    'objectid' => $url->id,
-    'courseid' => $course->id
+    'objectid' => $url->id
 );
 $event = \mod_url\event\course_module_viewed::create($params);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('url', $url);
 $event->trigger();
 

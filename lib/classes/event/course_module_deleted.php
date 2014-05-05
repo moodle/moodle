@@ -33,11 +33,12 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string modulename name of module deleted.
- *      @type string instanceid id of module instance.
+ *      - string modulename: name of module deleted.
+ *      - string instanceid: id of module instance.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -49,7 +50,7 @@ class course_module_deleted extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_modules';
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
@@ -67,8 +68,8 @@ class course_module_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return 'The module ' . $this->other['modulename'] . ' with instance id ' . $this->other['instanceid']. ' was deleted by
-                user with id ' . $this->userid;
+        return "The user with the id '$this->userid' deleted the '{$this->other['modulename']}' activity with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -110,11 +111,12 @@ class course_module_deleted extends base {
      * Throw \coding_exception notice in case of any problems.
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->other['modulename'])) {
-            throw new \coding_exception("Field other['modulename'] cannot be empty");
+            throw new \coding_exception('The \'modulename\' value must be set in other.');
         }
         if (!isset($this->other['instanceid'])) {
-            throw new \coding_exception("Field other['instanceid'] cannot be empty");
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
     }
 }

@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library of internal classes and functions for module SCORM
+ *
+ * @package    mod_scorm
+ * @copyright  1999 onwards Roberto Pinna
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once("$CFG->dirroot/mod/scorm/lib.php");
 require_once("$CFG->libdir/filelib.php");
 
@@ -46,7 +54,7 @@ define('TOCFULLURL', 2);
 /// Local Library of functions for module scorm
 
 /**
- * @package   mod-scorm
+ * @package   mod_scorm
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -407,7 +415,7 @@ function scorm_get_scoes($id, $organisation=false) {
     }
 }
 
-function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $value, $forcecompleted=false) {
+function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $value, $forcecompleted=false, $trackdata = null) {
     global $DB, $CFG;
 
     $id = null;
@@ -489,15 +497,25 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
 
     }
 
-    if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
+    $track = null;
+    if ($trackdata !== null) {
+        if (isset($trackdata[$element])) {
+            $track = $trackdata[$element];
+        }
+    } else {
+        $track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
                                                             'scormid' => $scormid,
                                                             'scoid' => $scoid,
                                                             'attempt' => $attempt,
-                                                            'element' => $element))) {
+                                                            'element' => $element));
+    }
+    if ($track) {
         if ($element != 'x.start.time' ) { // Don't update x.start.time - keep the original value.
-            $track->value = $value;
-            $track->timemodified = time();
-            $DB->update_record('scorm_scoes_track', $track);
+            if ($track->value != $value) {
+                $track->value = $value;
+                $track->timemodified = time();
+                $DB->update_record('scorm_scoes_track', $track);
+            }
             $id = $track->id;
         }
     } else {
@@ -822,7 +840,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     $organization = optional_param('organization', '', PARAM_INT);
 
     if ($scorm->displaycoursestructure == 1) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter toc');
+        echo $OUTPUT->box_start('generalbox boxaligncenter toc', 'toc');
         ?>
         <div class="structurehead"><?php print_string('contents', 'scorm') ?></div>
         <?php
@@ -897,7 +915,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
         }
         ?>
               <br />
-              <input type="hidden" name="scoid"/>
+              <input type="hidden" name="scoid" value="<?php echo $scorm->launch ?>" />
               <input type="hidden" name="cm" value="<?php echo $cm->id ?>"/>
               <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
               <input type="submit" value="<?php print_string('enter', 'scorm') ?>" />

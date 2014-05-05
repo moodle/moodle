@@ -1,0 +1,631 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Scheduled and adhoc task management.
+ *
+ * @package    core
+ * @category   task
+ * @copyright  2013 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace core\task;
+
+define('CORE_TASK_TASKS_FILENAME', 'db/tasks.php');
+/**
+ * Collection of task related methods.
+ *
+ * Some locking rules for this class:
+ * All changes to scheduled tasks must be protected with both - the global cron lock and the lock
+ * for the specific scheduled task (in that order). Locks must be released in the reverse order.
+ * @copyright  2013 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class manager {
+
+    /**
+     * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
+     *
+     * @param string $componentname - The name of the component to fetch the tasks for.
+     * @return \core\task\scheduled_task[] - List of scheduled tasks for this component.
+     */
+    public static function load_default_scheduled_tasks_for_component($componentname) {
+        $dir = \core_component::get_component_directory($componentname);
+
+        if (!$dir) {
+            return array();
+        }
+
+        $file = $dir . '/' . CORE_TASK_TASKS_FILENAME;
+        if (!file_exists($file)) {
+            return array();
+        }
+
+        $tasks = null;
+        require_once($file);
+
+        if (!isset($tasks)) {
+            return array();
+        }
+
+        $scheduledtasks = array();
+
+        foreach ($tasks as $task) {
+            $record = (object) $task;
+            $scheduledtask = self::scheduled_task_from_record($record);
+            $scheduledtask->set_component($componentname);
+            $scheduledtasks[] = $scheduledtask;
+        }
+
+        return $scheduledtasks;
+    }
+
+    /**
+     * Update the database to contain a list of scheduled task for a component.
+     * The list of scheduled tasks is taken from @load_scheduled_tasks_for_component.
+     * Will throw exceptions for any errors.
+     *
+     * @param string $componentname - The frankenstyle component name.
+     */
+    public static function reset_scheduled_tasks_for_component($componentname) {
+        global $DB;
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10, 60)) {
+            throw new \moodle_exception('locktimeout');
+        }
+        $tasks = self::load_default_scheduled_tasks_for_component($componentname);
+
+        $tasklocks = array();
+        foreach ($tasks as $task) {
+            $classname = get_class($task);
+            if (strpos($classname, '\\') !== 0) {
+                $classname = '\\' . $classname;
+            }
+
+            if (!$lock = $cronlockfactory->get_lock($classname, 10, 60)) {
+                // Could not get all the locks required - release all locks and fail.
+                foreach ($tasklocks as $tasklock) {
+                    $tasklock->release();
+                }
+                $cronlock->release();
+                throw new \moodle_exception('locktimeout');
+            }
+            $tasklocks[] = $lock;
+        }
+
+        // Got a lock on cron and all the tasks for this component, time to reset the config.
+        $DB->delete_records('task_scheduled', array('component' => $componentname));
+        foreach ($tasks as $task) {
+            $record = self::record_from_scheduled_task($task);
+            $DB->insert_record('task_scheduled', $record);
+        }
+
+        // Release the locks.
+        foreach ($tasklocks as $tasklock) {
+            $tasklock->release();
+        }
+
+        $cronlock->release();
+    }
+
+    /**
+     * Queue an adhoc task to run in the background.
+     *
+     * @param \core\task\adhoc_task $task - The new adhoc task information to store.
+     * @return boolean - True if the config was saved.
+     */
+    public static function queue_adhoc_task(adhoc_task $task) {
+        global $DB;
+
+        $record = self::record_from_adhoc_task($task);
+        // Schedule it immediately.
+        $record->nextruntime = time() - 1;
+        $result = $DB->insert_record('task_adhoc', $record);
+
+        return $result;
+    }
+
+    /**
+     * Change the default configuration for a scheduled task.
+     * The list of scheduled tasks is taken from {@link load_scheduled_tasks_for_component}.
+     *
+     * @param \core\task\scheduled_task $task - The new scheduled task information to store.
+     * @return boolean - True if the config was saved.
+     */
+    public static function configure_scheduled_task(scheduled_task $task) {
+        global $DB;
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10, 60)) {
+            throw new \moodle_exception('locktimeout');
+        }
+
+        $classname = get_class($task);
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        if (!$lock = $cronlockfactory->get_lock($classname, 10, 60)) {
+            $cronlock->release();
+            throw new \moodle_exception('locktimeout');
+        }
+
+        $original = $DB->get_record('task_scheduled', array('classname'=>$classname), 'id', MUST_EXIST);
+
+        $record = self::record_from_scheduled_task($task);
+        $record->id = $original->id;
+        $record->nextruntime = $task->get_next_scheduled_time();
+        $result = $DB->update_record('task_scheduled', $record);
+
+        $lock->release();
+        $cronlock->release();
+        return $result;
+    }
+
+    /**
+     * Utility method to create a DB record from a scheduled task.
+     *
+     * @param \core\task\scheduled_task $task
+     * @return \stdClass
+     */
+    public static function record_from_scheduled_task($task) {
+        $record = new \stdClass();
+        $record->classname = get_class($task);
+        if (strpos($record->classname, '\\') !== 0) {
+            $record->classname = '\\' . $record->classname;
+        }
+        $record->component = $task->get_component();
+        $record->blocking = $task->is_blocking();
+        $record->customised = $task->is_customised();
+        $record->lastruntime = $task->get_last_run_time();
+        $record->nextruntime = $task->get_next_run_time();
+        $record->faildelay = $task->get_fail_delay();
+        $record->hour = $task->get_hour();
+        $record->minute = $task->get_minute();
+        $record->day = $task->get_day();
+        $record->dayofweek = $task->get_day_of_week();
+        $record->month = $task->get_month();
+        $record->disabled = $task->get_disabled();
+
+        return $record;
+    }
+
+    /**
+     * Utility method to create a DB record from an adhoc task.
+     *
+     * @param \core\task\adhoc_task $task
+     * @return \stdClass
+     */
+    public static function record_from_adhoc_task($task) {
+        $record = new \stdClass();
+        $record->classname = get_class($task);
+        if (strpos($record->classname, '\\') !== 0) {
+            $record->classname = '\\' . $record->classname;
+        }
+        $record->id = $task->get_id();
+        $record->component = $task->get_component();
+        $record->blocking = $task->is_blocking();
+        $record->nextruntime = $task->get_next_run_time();
+        $record->faildelay = $task->get_fail_delay();
+        $record->customdata = $task->get_custom_data();
+
+        return $record;
+    }
+
+    /**
+     * Utility method to create an adhoc task from a DB record.
+     *
+     * @param \stdClass $record
+     * @return \core\task\adhoc_task
+     */
+    public static function adhoc_task_from_record($record) {
+        $classname = $record->classname;
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        if (!class_exists($classname)) {
+            return false;
+        }
+        $task = new $classname;
+        if (isset($record->nextruntime)) {
+            $task->set_next_run_time($record->nextruntime);
+        }
+        if (isset($record->id)) {
+            $task->set_id($record->id);
+        }
+        if (isset($record->component)) {
+            $task->set_component($record->component);
+        }
+        $task->set_blocking(!empty($record->blocking));
+        if (isset($record->faildelay)) {
+            $task->set_fail_delay($record->faildelay);
+        }
+        if (isset($record->customdata)) {
+            $task->set_custom_data($record->customdata);
+        }
+
+        return $task;
+    }
+
+    /**
+     * Utility method to create a task from a DB record.
+     *
+     * @param \stdClass $record
+     * @return \core\task\scheduled_task
+     */
+    public static function scheduled_task_from_record($record) {
+        $classname = $record->classname;
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        if (!class_exists($classname)) {
+            return false;
+        }
+        /** @var \core\task\scheduled_task $task */
+        $task = new $classname;
+        if (isset($record->lastruntime)) {
+            $task->set_last_run_time($record->lastruntime);
+        }
+        if (isset($record->nextruntime)) {
+            $task->set_next_run_time($record->nextruntime);
+        }
+        if (isset($record->customised)) {
+            $task->set_customised($record->customised);
+        }
+        if (isset($record->component)) {
+            $task->set_component($record->component);
+        }
+        $task->set_blocking(!empty($record->blocking));
+        if (isset($record->minute)) {
+            $task->set_minute($record->minute);
+        }
+        if (isset($record->hour)) {
+            $task->set_hour($record->hour);
+        }
+        if (isset($record->day)) {
+            $task->set_day($record->day);
+        }
+        if (isset($record->month)) {
+            $task->set_month($record->month);
+        }
+        if (isset($record->dayofweek)) {
+            $task->set_day_of_week($record->dayofweek);
+        }
+        if (isset($record->faildelay)) {
+            $task->set_fail_delay($record->faildelay);
+        }
+        if (isset($record->disabled)) {
+            $task->set_disabled($record->disabled);
+        }
+
+        return $task;
+    }
+
+    /**
+     * Given a component name, will load the list of tasks from the scheduled_tasks table for that component.
+     * Do not execute tasks loaded from this function - they have not been locked.
+     * @param string $componentname - The name of the component to load the tasks for.
+     * @return \core\task\scheduled_task[]
+     */
+    public static function load_scheduled_tasks_for_component($componentname) {
+        global $DB;
+
+        $tasks = array();
+        // We are just reading - so no locks required.
+        $records = $DB->get_records('task_scheduled', array('componentname' => $componentname), 'classname', '*', IGNORE_MISSING);
+        foreach ($records as $record) {
+            $task = self::scheduled_task_from_record($record);
+            $tasks[] = $task;
+        }
+
+        return $tasks;
+    }
+
+    /**
+     * This function load the scheduled task details for a given classname.
+     *
+     * @param string $classname
+     * @return \core\task\scheduled_task or false
+     */
+    public static function get_scheduled_task($classname) {
+        global $DB;
+
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        // We are just reading - so no locks required.
+        $record = $DB->get_record('task_scheduled', array('classname'=>$classname), '*', IGNORE_MISSING);
+        if (!$record) {
+            return false;
+        }
+        return self::scheduled_task_from_record($record);
+    }
+
+    /**
+     * This function load the default scheduled task details for a given classname.
+     *
+     * @param string $classname
+     * @return \core\task\scheduled_task or false
+     */
+    public static function get_default_scheduled_task($classname) {
+        $task = self::get_scheduled_task($classname);
+
+        $componenttasks = self::load_default_scheduled_tasks_for_component($task->get_component());
+
+        foreach ($componenttasks as $componenttask) {
+            if (get_class($componenttask) == get_class($task)) {
+                return $componenttask;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * This function will return a list of all the scheduled tasks that exist in the database.
+     *
+     * @return \core\task\scheduled_task[]
+     */
+    public static function get_all_scheduled_tasks() {
+        global $DB;
+
+        $records = $DB->get_records('task_scheduled', null, 'component, classname', '*', IGNORE_MISSING);
+        $tasks = array();
+
+        foreach ($records as $record) {
+            $task = self::scheduled_task_from_record($record);
+            $tasks[] = $task;
+        }
+
+        return $tasks;
+    }
+
+    /**
+     * This function will dispatch the next adhoc task in the queue. The task will be handed out
+     * with an open lock - possibly on the entire cron process. Make sure you call either
+     * {@link adhoc_task_failed} or {@link adhoc_task_complete} to release the lock and reschedule the task.
+     *
+     * @param int $timestart
+     * @return \core\task\adhoc_task or null if not found
+     */
+    public static function get_next_adhoc_task($timestart) {
+        global $DB;
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            throw new \moodle_exception('locktimeout');
+        }
+
+        $where = '(nextruntime IS NULL OR nextruntime < :timestart1)';
+        $params = array('timestart1' => $timestart);
+        $records = $DB->get_records_select('task_adhoc', $where, $params);
+
+        foreach ($records as $record) {
+
+            if ($lock = $cronlockfactory->get_lock('adhoc_' . $record->id, 10)) {
+                $classname = '\\' . $record->classname;
+                $task = self::adhoc_task_from_record($record);
+
+                $task->set_lock($lock);
+                if (!$task->is_blocking()) {
+                    $cronlock->release();
+                } else {
+                    $task->set_cron_lock($cronlock);
+                }
+                return $task;
+            }
+        }
+
+        // No tasks.
+        $cronlock->release();
+        return null;
+    }
+
+    /**
+     * This function will dispatch the next scheduled task in the queue. The task will be handed out
+     * with an open lock - possibly on the entire cron process. Make sure you call either
+     * {@link scheduled_task_failed} or {@link scheduled_task_complete} to release the lock and reschedule the task.
+     *
+     * @param int $timestart - The start of the cron process - do not repeat any tasks that have been run more recently than this.
+     * @return \core\task\scheduled_task or null
+     */
+    public static function get_next_scheduled_task($timestart) {
+        global $DB;
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            throw new \moodle_exception('locktimeout');
+        }
+
+        $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
+                  AND (nextruntime IS NULL OR nextruntime < :timestart2)
+                  AND disabled = 0";
+        $params = array('timestart1' => $timestart, 'timestart2' => $timestart);
+        $records = $DB->get_records_select('task_scheduled', $where, $params);
+
+        foreach ($records as $record) {
+
+            if ($lock = $cronlockfactory->get_lock(($record->classname), 10)) {
+                $classname = '\\' . $record->classname;
+                $task = self::scheduled_task_from_record($record);
+
+                $task->set_lock($lock);
+                if (!$task->is_blocking()) {
+                    $cronlock->release();
+                } else {
+                    $task->set_cron_lock($cronlock);
+                }
+                return $task;
+            }
+        }
+
+        // No tasks.
+        $cronlock->release();
+        return null;
+    }
+
+    /**
+     * This function indicates that an adhoc task was not completed successfully and should be retried.
+     *
+     * @param \core\task\adhoc_task $task
+     */
+    public static function adhoc_task_failed(adhoc_task $task) {
+        global $DB;
+        $delay = $task->get_fail_delay();
+
+        // Reschedule task with exponential fall off for failing tasks.
+        if (empty($delay)) {
+            $delay = 60;
+        } else {
+            $delay *= 2;
+        }
+
+        // Max of 24 hour delay.
+        if ($delay > 86400) {
+            $delay = 86400;
+        }
+
+        $classname = get_class($task);
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+
+        $task->set_next_run_time(time() + $delay);
+        $task->set_fail_delay($delay);
+        $record = self::record_from_adhoc_task($task);
+        $DB->update_record('task_adhoc', $record);
+
+        if ($task->is_blocking()) {
+            $task->get_cron_lock()->release();
+        }
+        $task->get_lock()->release();
+    }
+
+    /**
+     * This function indicates that an adhoc task was completed successfully.
+     *
+     * @param \core\task\adhoc_task $task
+     */
+    public static function adhoc_task_complete(adhoc_task $task) {
+        global $DB;
+
+        // Delete the adhoc task record - it is finished.
+        $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
+
+        // Reschedule and then release the locks.
+        if ($task->is_blocking()) {
+            $task->get_cron_lock()->release();
+        }
+        $task->get_lock()->release();
+    }
+
+    /**
+     * This function indicates that a scheduled task was not completed successfully and should be retried.
+     *
+     * @param \core\task\scheduled_task $task
+     */
+    public static function scheduled_task_failed(scheduled_task $task) {
+        global $DB;
+
+        $delay = $task->get_fail_delay();
+
+        // Reschedule task with exponential fall off for failing tasks.
+        if (empty($delay)) {
+            $delay = 60;
+        } else {
+            $delay *= 2;
+        }
+
+        // Max of 24 hour delay.
+        if ($delay > 86400) {
+            $delay = 86400;
+        }
+
+        $classname = get_class($task);
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+
+        $record = $DB->get_record('task_scheduled', array('classname' => $classname));
+        $record->nextruntime = time() + $delay;
+        $record->faildelay = $delay;
+        $DB->update_record('task_scheduled', $record);
+
+        if ($task->is_blocking()) {
+            $task->get_cron_lock()->release();
+        }
+        $task->get_lock()->release();
+    }
+
+    /**
+     * This function indicates that a scheduled task was completed successfully and should be rescheduled.
+     *
+     * @param \core\task\scheduled_task $task
+     */
+    public static function scheduled_task_complete(scheduled_task $task) {
+        global $DB;
+
+        $classname = get_class($task);
+        if (strpos($classname, '\\') !== 0) {
+            $classname = '\\' . $classname;
+        }
+        $record = $DB->get_record('task_scheduled', array('classname' => $classname));
+        if ($record) {
+            $record->lastruntime = time();
+            $record->faildelay = 0;
+            $record->nextruntime = $task->get_next_scheduled_time();
+
+            $DB->update_record('task_scheduled', $record);
+        }
+
+        // Reschedule and then release the locks.
+        if ($task->is_blocking()) {
+            $task->get_cron_lock()->release();
+        }
+        $task->get_lock()->release();
+    }
+
+    /**
+     * This function is used to indicate that any long running cron processes should exit at the
+     * next opportunity and restart. This is because something (e.g. DB changes) has changed and
+     * the static caches may be stale.
+     */
+    public static function clear_static_caches() {
+        global $DB;
+        // Do not use get/set config here because the caches cannot be relied on.
+        $record = $DB->get_record('config', array('name'=>'scheduledtaskreset'));
+        if ($record) {
+            $record->value = time();
+            $DB->update_record('config', $record);
+        } else {
+            $record = new \stdClass();
+            $record->name = 'scheduledtaskreset';
+            $record->value = time();
+            $DB->insert_record('config', $record);
+        }
+    }
+
+    /**
+     * Return true if the static caches have been cleared since $starttime.
+     * @param int $starttime The time this process started.
+     * @return boolean True if static caches need resetting.
+     */
+    public static function static_caches_cleared_since($starttime) {
+        global $DB;
+        $record = $DB->get_record('config', array('name'=>'scheduledtaskreset'));
+        return $record && (intval($record->value) > $starttime);
+    }
+}

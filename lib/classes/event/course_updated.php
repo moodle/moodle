@@ -14,21 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course updated event.
+ *
+ * @package    core
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course updated event.
+ * Course updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string shortname shortname of course.
- *      @type string fullname fullname of course.
+ *      - string shortname: shortname of course.
+ *      - string fullname: fullname of course.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +52,7 @@ class course_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'course';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
@@ -61,7 +70,7 @@ class course_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "Course {$this->courseid} was updated by user {$this->userid}";
+        return "The course with the id '$this->courseid' was updated by the user with the id '$this->userid'.";
     }
 
     /**
@@ -70,7 +79,7 @@ class course_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/course/view.php', array('id' => $this->objectid));
+        return new \moodle_url('/course/edit.php', array('id' => $this->objectid));
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_chat course module instance list viewed event.
+ * The mod_chat instance list viewed event.
  *
  * @package    mod_chat
  * @copyright  2013 onwards Ankit Agarwal
@@ -26,9 +26,10 @@ namespace mod_chat\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_chat course module instance list viewed event class.
+ * The mod_chat instance list viewed event class.
  *
  * @package    mod_chat
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

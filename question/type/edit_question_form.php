@@ -121,7 +121,7 @@ abstract class question_edit_form extends question_wizard_form {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     protected function definition() {
-        global $COURSE, $CFG, $DB;
+        global $COURSE, $CFG, $DB, $PAGE;
 
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
@@ -146,12 +146,6 @@ abstract class question_edit_form extends question_wizard_form {
             // Editing question with no permission to move from category.
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
                     array('contexts' => array($this->categorycontext)));
-        } else if ($this->question->formoptions->movecontext) {
-            // Moving question to another context.
-            $mform->addElement('questioncategory', 'categorymoveto',
-                    get_string('category', 'question'),
-                    array('contexts' => $this->contexts->having_cap('moodle/question:add')));
-
         } else {
             // Editing question with permission to move from category or save as new q.
             $currentgrp = array();
@@ -181,7 +175,7 @@ abstract class question_edit_form extends question_wizard_form {
         }
 
         $mform->addElement('text', 'name', get_string('questionname', 'question'),
-                array('size' => 50));
+                array('size' => 50, 'maxlength' => 255));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
@@ -235,39 +229,27 @@ abstract class question_edit_form extends question_wizard_form {
 
         $this->add_hidden_fields();
 
-        $mform->addElement('hidden', 'movecontext');
-        $mform->setType('movecontext', PARAM_BOOL);
-
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);
 
-        $buttonarray = array();
-        if (!empty($this->question->id)) {
-            // Editing / moving question.
-            if ($this->question->formoptions->movecontext) {
-                $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                        get_string('moveq', 'question'));
-            } else if ($this->question->formoptions->canedit) {
-                $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                        get_string('savechanges'));
-            }
-            if ($this->question->formoptions->cansaveasnew) {
-                $buttonarray[] = $mform->createElement('submit', 'makecopy',
-                        get_string('makecopy', 'question'));
-            }
-            $buttonarray[] = $mform->createElement('cancel');
-        } else {
-            // Adding new question.
-            $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                    get_string('savechanges'));
-            $buttonarray[] = $mform->createElement('cancel');
-        }
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('buttonar');
+        $mform->addElement('hidden', 'makecopy');
+        $mform->setType('makecopy', PARAM_INT);
 
-        if ($this->question->formoptions->movecontext) {
-            $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar'));
-        } else if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
+        $buttonarray = array();
+        $buttonarray[] = $mform->createElement('submit', 'updatebutton',
+                             get_string('savechangesandcontinueediting', 'question'));
+        if ($this->can_preview()) {
+            $previewlink = $PAGE->get_renderer('core_question')->question_preview_link(
+                    $this->question->id, $this->context, true);
+            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
+        }
+
+        $mform->addGroup($buttonarray, 'updatebuttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('updatebuttonar');
+
+        $this->add_action_buttons(true, get_string('savechanges'));
+
+        if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
                 $this->question->formoptions->cansaveasnew))) {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
         }
@@ -280,6 +262,15 @@ abstract class question_edit_form extends question_wizard_form {
      */
     protected function definition_inner($mform) {
         // By default, do nothing.
+    }
+
+    /**
+     * Is the question being edited in a state where it can be previewed?
+     * @return bool whether to show the preview link.
+     */
+    protected function can_preview() {
+        return empty($this->question->beingcopied) && !empty($this->question->id) &&
+                $this->question->formoptions->canedit;
     }
 
     /**
@@ -361,7 +352,7 @@ abstract class question_edit_form extends question_wizard_form {
                                 array('rows' => 5), $this->editoroptions);
             $mform->setType($feedbackname, PARAM_RAW);
             // Using setValue() as setDefault() does not work for the editor class.
-            $element->setValue(array('text'=>get_string($feedbackname.'default', 'question')));
+            $element->setValue(array('text' => get_string($feedbackname.'default', 'question')));
 
             if ($withshownumpartscorrect && $feedbackname == 'partiallycorrectfeedback') {
                 $mform->addElement('advcheckbox', 'shownumcorrect',
@@ -586,7 +577,66 @@ abstract class question_edit_form extends question_wizard_form {
             $question->feedback[$key]['format'] = $answer->feedbackformat;
             $key++;
         }
+
+        // Now process extra answer fields.
+        $extraanswerfields = question_bank::get_qtype($question->qtype)->extra_answer_fields();
+        if (is_array($extraanswerfields)) {
+            // Omit table name.
+            array_shift($extraanswerfields);
+            $question = $this->data_preprocessing_extra_answer_fields($question, $extraanswerfields);
+        }
+
         return $question;
+    }
+
+    /**
+     * Perform the necessary preprocessing for the extra answer fields.
+     *
+     * Questions that do something not trivial when editing extra answer fields
+     * will want to override this.
+     * @param object $question the data being passed to the form.
+     * @param array $extraanswerfields extra answer fields (without table name).
+     * @return object $question the modified data.
+     */
+    protected function data_preprocessing_extra_answer_fields($question, $extraanswerfields) {
+        // Setting $question->$field[$key] won't work in PHP, so we need set an array of answer values to $question->$field.
+        // As we may have several extra fields with data for several answers in each, we use an array of arrays.
+        // Index in $extrafieldsdata is an extra answer field name, value - array of it's data for each answer.
+        $extrafieldsdata = array();
+        // First, prepare an array if empty arrays for each extra answer fields data.
+        foreach ($extraanswerfields as $field) {
+            $extrafieldsdata[$field] = array();
+        }
+
+        // Fill arrays with data from $question->options->answers.
+        $key = 0;
+        foreach ($question->options->answers as $answer) {
+            foreach ($extraanswerfields as $field) {
+                // See hack comment in {@link data_preprocessing_answers()}.
+                unset($this->_form->_defaultValues["$field[$key]"]);
+                $extrafieldsdata[$field][$key] = $this->data_preprocessing_extra_answer_field($answer, $field);
+            }
+            $key++;
+        }
+
+        // Set this data in the $question object.
+        foreach ($extraanswerfields as $field) {
+            $question->$field = $extrafieldsdata[$field];
+        }
+        return $question;
+    }
+
+    /**
+     * Perfmorm preprocessing for particular extra answer field.
+     *
+     * Questions with non-trivial DB - form element relationship will
+     * want to override this.
+     * @param object $answer an answer object to get extra field from.
+     * @param string $field extra answer field name.
+     * @return field value to be set to the form.
+     */
+    protected function data_preprocessing_extra_answer_field($answer, $field) {
+        return $answer->$field;
     }
 
     /**

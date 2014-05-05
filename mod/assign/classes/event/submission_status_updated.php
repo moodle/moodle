@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission status updated event.
+ * The mod_assign submission status updated event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,26 +27,44 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission status updated event class.
+ * The mod_assign submission status updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string newstatus status of submission.
+ *      - string newstatus: status of submission.
  * }
  *
  * @package    mod_assign
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submission_status_updated extends \core\event\base {
-
+class submission_status_updated extends base {
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $submission
+     * @return submission_status_updated
      */
-    protected $legacylogdata;
+    public static function create_from_submission(\assign $assign, \stdClass $submission) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $submission->id,
+            'relateduserid' => ($assign->get_instance()->teamsubmission) ? null : $submission->userid,
+            'other' => array(
+                'newstatus' => $submission->status
+            )
+        );
+        /** @var submission_status_updated $event */
+        $event = self::create($data);
+        $event->set_assign($assign);
+        $event->add_record_snapshot('assign_submission', $submission);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -54,16 +72,8 @@ class submission_status_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has updated the status of the submission {$this->objectid} to {$this->other['newstatus']}.";
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
+        return "The user with the id '$this->userid' has updated the status of the submission with the id '$this->objectid' for " .
+            "the assignment with the course module id '$this->contextinstanceid' to the status '{$this->other['newstatus']}'.";
     }
 
     /**
@@ -72,16 +82,7 @@ class submission_status_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_submission_status_updated', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->context->instanceid));
+        return get_string('eventsubmissionstatusupdated', 'mod_assign');
     }
 
     /**
@@ -91,29 +92,33 @@ class submission_status_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign_submission';
     }
 
     /**
-     * Sets the legacy event log data.
+     * Return legacy data for add_to_log().
      *
-     * @param stdClass $legacylogdata legacy log data.
-     * @return void
+     * @return array
      */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+    protected function get_legacy_logdata() {
+        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
+        $user = $this->get_record_snapshot('user', $submission->userid);
+        $logmessage = get_string('reverttodraftforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
+        $this->set_legacy_logdata('revert submission to draft', $logmessage);
+        return parent::get_legacy_logdata();
     }
 
     /**
      * Custom validation.
      *
      * @throws \coding_exception
-     * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
+
         if (!isset($this->other['newstatus'])) {
-            throw new \coding_exception('newstatus must be set in $other.');
+            throw new \coding_exception('The \'newstatus\' value must be set in other.');
         }
     }
 }

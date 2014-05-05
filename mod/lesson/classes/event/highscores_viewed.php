@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when the highscores are viewed.
+ * The mod_lesson highscores viewed.
  *
  * @package    mod_lesson
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -26,6 +26,14 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_lesson highscores viewed class.
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
 class highscores_viewed extends \core\event\base {
 
     /**
@@ -34,7 +42,7 @@ class highscores_viewed extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lesson';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -52,7 +60,7 @@ class highscores_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -61,7 +69,8 @@ class highscores_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The highscores for lesson ' . $this->objectid . ' were viewed by ' . $this->userid;
+        return "The user with the id '$this->userid' viewed the highscores for the lesson activity with the course module " .
+            "id '$this->contextinstanceid'.";
     }
 
     /**
@@ -72,7 +81,7 @@ class highscores_viewed extends \core\event\base {
     protected function get_legacy_logdata() {
         $lesson = $this->get_record_snapshot('lesson', $this->objectid);
 
-        return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->context->instanceid,
-            $lesson->name, $this->context->instanceid);
+        return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->contextinstanceid,
+            $lesson->name, $this->contextinstanceid);
     }
 }

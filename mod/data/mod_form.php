@@ -12,7 +12,7 @@ class mod_data_mod_form extends moodleform_mod {
 
         $mform =& $this->_form;
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
@@ -49,13 +49,17 @@ class mod_data_mod_form extends moodleform_mod {
         // ----------------------------------------------------------------------
         $mform->addElement('header', 'availibilityhdr', get_string('availability'));
 
-        $mform->addElement('date_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'timeavailablefrom', get_string('availablefromdate', 'data'),
+                           array('optional' => true));
 
-        $mform->addElement('date_selector', 'timeavailableto', get_string('availabletodate', 'data'), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'timeavailableto', get_string('availabletodate', 'data'),
+                           array('optional' => true));
 
-        $mform->addElement('date_selector', 'timeviewfrom', get_string('viewfromdate', 'data'), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'timeviewfrom', get_string('viewfromdate', 'data'),
+                           array('optional' => true));
 
-        $mform->addElement('date_selector', 'timeviewto', get_string('viewtodate', 'data'), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'timeviewto', get_string('viewtodate', 'data'),
+                           array('optional' => true));
 
         // ----------------------------------------------------------------------
         if ($CFG->enablerssfeeds && $CFG->data_enablerssfeeds) {

@@ -18,10 +18,9 @@
  * This page allows the teacher to enter a manual grade for a particular question.
  * This page is expected to only be used in a popup window.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  gustav delius 2006
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright gustav delius 2006
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
@@ -42,11 +41,6 @@ if (!$attemptobj->is_finished()) {
 // Check login and permissions.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 $attemptobj->require_capability('mod/quiz:grade');
-
-// Log this action.
-add_to_log($attemptobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?attempt=' .
-        $attemptobj->get_attemptid() . '&slot=' . $slot,
-        $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 // Print the page header.
 $PAGE->set_pagelayout('popup');
@@ -75,6 +69,21 @@ if (data_submitted() && confirm_sesskey()) {
         $transaction = $DB->start_delegated_transaction();
         $attemptobj->process_submitted_actions(time());
         $transaction->allow_commit();
+
+        // Log this action.
+        $params = array(
+            'objectid' => $attemptobj->get_question_attempt($slot)->get_question()->id,
+            'courseid' => $attemptobj->get_courseid(),
+            'context' => context_module::instance($attemptobj->get_cmid()),
+            'other' => array(
+                'quizid' => $attemptobj->get_quizid(),
+                'attemptid' => $attemptobj->get_attemptid(),
+                'slot' => $slot
+            )
+        );
+        $event = \mod_quiz\event\question_manually_graded::create($params);
+        $event->trigger();
+
         echo $output->notification(get_string('changessaved'), 'notifysuccess');
         close_window(2, true);
         die;

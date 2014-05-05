@@ -227,7 +227,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     require_capability('moodle/course:activityvisibility', $modcontext);
 
     set_coursemodule_visible($cm->id, 0);
-
+    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 
 } else if (!empty($show) and confirm_sesskey()) {
@@ -245,6 +245,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
         set_coursemodule_visible($cm->id, 1);
+        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
     }
 
     redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
@@ -261,7 +262,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     require_capability('moodle/course:manageactivities', $modcontext);
 
     set_coursemodule_groupmode($cm->id, $groupmode);
-
+    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 
 } else if (!empty($copy) and confirm_sesskey()) { // value = course module

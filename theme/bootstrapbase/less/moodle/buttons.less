@@ -34,13 +34,20 @@ p.arrow_button {
     }
 }
 #addcontrols {
-    margin-top: 5em;
+    // The margin top is equal the combination of the line-height and margin of a <p>,
+    // because the visual parent is a <p>.
+    margin-top: @baseLineHeight + (@baseLineHeight / 2);
     text-align: center;
     margin-bottom: 3em;
+    label {
+        display: inline;
+    }
 }
 #addcontrols input,
 #removecontrols input {
     .btn-block;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 button,

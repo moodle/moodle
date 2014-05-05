@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,7 +19,7 @@
  * and was introduced as part of the changes occuring in Moodle 2.0
  *
  * @since 2.0
- * @package blocks
+ * @package block_settings
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +29,7 @@
  *
  * Used to produce the settings navigation block new to Moodle 2.0
  *
- * @package blocks
+ * @package block_settings
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

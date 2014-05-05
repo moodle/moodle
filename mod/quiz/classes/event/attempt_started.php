@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz module event class.
+ * The mod_quiz attempt started event.
  *
  * @package    mod_quiz
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -25,9 +25,10 @@ namespace mod_quiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a quiz attempt is started.
+ * The mod_quiz attempt started event class.
  *
  * @package    mod_quiz
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +40,7 @@ class attempt_started extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'quiz_attempts';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -48,8 +49,8 @@ class attempt_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A quiz with the id of ' . $this->other['quizid'] . ' was started by a user with the id ' .
-            $this->relateduserid . '.';
+        return "The user with the id '$this->relateduserid' has started the attempt with the id '$this->objectid' for the " .
+            "quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -82,7 +83,7 @@ class attempt_started extends \core\event\base {
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $attempt = $this->get_record_snapshot('quiz_attempts', $this->objectid);
@@ -94,21 +95,34 @@ class attempt_started extends \core\event\base {
         $legacyeventdata->timestamp = $attempt->timestart;
         $legacyeventdata->userid = $this->relateduserid;
         $legacyeventdata->quizid = $attempt->quiz;
-        $legacyeventdata->cmid = $this->context->instanceid;
+        $legacyeventdata->cmid = $this->contextinstanceid;
         $legacyeventdata->courseid = $this->courseid;
 
         return $legacyeventdata;
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $attempt = $this->get_record_snapshot('quiz_attempts', $this->objectid);
+
+        return array($this->courseid, 'quiz', 'attempt', 'review.php?attempt=' . $this->objectid,
+            $attempt->quiz, $this->contextinstanceid);
+    }
+
+    /**
      * Custom validation.
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

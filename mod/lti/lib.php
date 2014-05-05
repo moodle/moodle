@@ -35,8 +35,7 @@
 /**
  * This file contains a library of functions and constants for the lti module
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
@@ -96,6 +95,10 @@ function lti_add_instance($lti, $mform) {
     $lti->timemodified = $lti->timecreated;
     $lti->servicesalt = uniqid('', true);
 
+    if (empty($lti->typeid) && isset($lti->urlmatchedtypeid)) {
+        $lti->typeid = $lti->urlmatchedtypeid;
+    }
+
     if (!isset($lti->grade)) {
         $lti->grade = 100; // TODO: Why is this harcoded here and default @ DB
     }
@@ -144,6 +147,10 @@ function lti_update_instance($lti, $mform) {
         lti_grade_item_update($lti);
     } else {
         lti_grade_item_delete($lti);
+    }
+
+    if ($lti->typeid == 0 && isset($lti->urlmatchedtypeid)) {
+        $lti->typeid = $lti->urlmatchedtypeid;
     }
 
     return $DB->update_record('lti', $lti);

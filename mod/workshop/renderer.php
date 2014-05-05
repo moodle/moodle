@@ -18,8 +18,7 @@
 /**
  * Workshop module renderering methods are defined here
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -99,7 +98,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $title = html_writer::link($submission->url, $title);
         }
 
-        $o .= $this->output->heading($title, 3);
+        $o .= $this->output->heading($title, 3, 'title');
 
         if (!$anonymous) {
             $author = new stdclass();

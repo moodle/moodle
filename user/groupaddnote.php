@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,18 +19,18 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package user
+ * @package core_user
  */
 
 require_once("../config.php");
 require_once($CFG->dirroot .'/notes/lib.php');
 
-$id    = required_param('id', PARAM_INT);              // course id
-$users = optional_param_array('userid', array(), PARAM_INT); // array of user id
-$content = optional_param('content', '', PARAM_RAW); // note content
-$state = optional_param('state', '', PARAM_ALPHA); // note publish state
+$id    = required_param('id', PARAM_INT);              // Course id.
+$users = optional_param_array('userid', array(), PARAM_INT); // Array of user id.
+$content = optional_param('content', '', PARAM_RAW); // Note content.
+$state = optional_param('state', '', PARAM_ALPHA); // Note publish state.
 
-$url = new moodle_url('/user/groupaddnote.php', array('id'=>$id));
+$url = new moodle_url('/user/groupaddnote.php', array('id' => $id));
 if ($content !== '') {
     $url->param('content', $content);
 }
@@ -40,14 +39,14 @@ if ($state !== '') {
 }
 $PAGE->set_url($url);
 
-if (! $course = $DB->get_record('course', array('id'=>$id))) {
+if (! $course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
 }
 
 $context = context_course::instance($id);
 require_login($course);
 
-// to create notes the current user needs a capability
+// To create notes the current user needs a capability.
 require_capability('moodle/notes:manage', $context);
 
 if (empty($CFG->enablenotes)) {
@@ -61,7 +60,7 @@ if (!empty($users) && !empty($content) && confirm_sesskey()) {
     $note->content = $content;
     $note->publishstate = $state;
     foreach ($users as $k => $v) {
-        if(!$user = $DB->get_record('user', array('id'=>$v))) {
+        if (!$user = $DB->get_record('user', array('id' => $v))) {
             continue;
         }
         $note->id = 0;
@@ -78,22 +77,22 @@ $PAGE->navbar->add($straddnote);
 $PAGE->set_title("$course->shortname: ".get_string('extendenrol'));
 $PAGE->set_heading($course->fullname);
 
-/// Print headers
+// Print headers.
 echo $OUTPUT->header();
 
-// this will contain all available the based On select options, but we'll disable some on them on a per user basis
+// This will contain all available the based On select options, but we'll disable some on them on a per user basis.
 
 echo $OUTPUT->heading($straddnote);
 echo '<form method="post" action="groupaddnote.php" >';
 echo '<div style="width:100%;text-align:center;">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-$state_names = note_get_state_names();
+$statenames = note_get_state_names();
 
-// the first time list hack
+// The first time list hack.
 if (empty($users) and $post = data_submitted()) {
     foreach ($post as $k => $v) {
-        if (preg_match('/^user(\d+)$/',$k,$m)) {
+        if (preg_match('/^user(\d+)$/', $k, $m)) {
             $users[] = $m[1];
         }
     }
@@ -101,7 +100,7 @@ if (empty($users) and $post = data_submitted()) {
 
 $userlist = array();
 foreach ($users as $k => $v) {
-    if (!$user = $DB->get_record('user', array('id'=>$v))) {
+    if (!$user = $DB->get_record('user', array('id' => $v))) {
         continue;
     }
     echo '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />';
@@ -117,7 +116,7 @@ echo '<br /><textarea name="content" rows="5" cols="50" spellcheck="true">' . st
 echo '<p>';
 echo html_writer::label(get_string('publishstate', 'notes'), 'menustate');
 echo $OUTPUT->help_icon('publishstate', 'notes');
-echo html_writer::select($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
+echo html_writer::select($statenames, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
 echo '</p>';
 
 echo '<input type="submit" value="' . get_string('savechanges'). '" /></div></form>';

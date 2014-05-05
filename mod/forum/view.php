@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -106,9 +106,9 @@
 
 /// Print header.
 
-    $PAGE->set_title(format_string($forum->name));
+    $PAGE->set_title($forum->name);
     $PAGE->add_body_class('forumtype-'.$forum->type);
-    $PAGE->set_heading(format_string($course->fullname));
+    $PAGE->set_heading($course->fullname);
 
     echo $OUTPUT->header();
 
@@ -129,12 +129,15 @@
 /// find out current groups mode
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/view.php?id=' . $cm->id);
 
-/// Okay, we can show the discussions. Log the forum view.
-    if ($cm->id) {
-        add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
-    } else {
-        add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
-    }
+    $params = array(
+        'context' => $context,
+        'objectid' => $forum->id
+    );
+    $event = \mod_forum\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('forum', $forum);
+    $event->trigger();
 
     $SESSION->fromdiscussion = qualified_me();   // Return here if we post or set subscription etc
 

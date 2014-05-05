@@ -6,14 +6,14 @@ Feature: Show/hide course sections
 
   @javascript
   Scenario: Show / hide section icon functions correctly
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -59,11 +59,15 @@ Feature: Show/hide course sections
     And section "3" should be hidden
     And I reload the page
     And section "1" should be hidden
+    And all activities in section "1" should be hidden
     And section "2" should be visible
     And section "3" should be hidden
+    And all activities in section "1" should be hidden
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And section "1" should be hidden
+    And all activities in section "1" should be hidden
     And section "2" should be visible
     And section "3" should be hidden
+    And all activities in section "1" should be hidden

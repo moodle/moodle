@@ -18,8 +18,7 @@
 /**
  * Library of functions and constants for module label
  *
- * @package    mod
- * @subpackage label
+ * @package mod_label
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -137,20 +136,6 @@ function label_get_coursemodule_info($coursemodule) {
     } else {
         return null;
     }
-}
-
-/**
- * @return array
- */
-function label_get_view_actions() {
-    return array();
-}
-
-/**
- * @return array
- */
-function label_get_post_actions() {
-    return array();
 }
 
 /**

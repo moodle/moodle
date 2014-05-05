@@ -127,6 +127,7 @@ if ($hassiteconfig
                              'msnid' => new lang_string('msnid'),
                              'firstaccess' => new lang_string('firstaccess'),
                              'lastaccess' => new lang_string('lastaccess'),
+                             'lastip' => new lang_string('lastip'),
                              'mycourses' => new lang_string('mycourses'),
                              'groups' => new lang_string('groups'),
                              'suspended' => new lang_string('suspended', 'auth'),

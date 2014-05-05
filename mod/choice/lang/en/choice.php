@@ -18,7 +18,7 @@
 /**
  * Strings for component 'choice', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   choice
+ * @package   mod_choice
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,9 +30,9 @@ $string['completionsubmit'] = 'Show as complete when user makes a choice';
 $string['displayhorizontal'] = 'Display horizontally';
 $string['displaymode'] = 'Display mode for the options';
 $string['displayvertical'] = 'Display vertically';
-$string['event_answer_created'] = 'Choice made';
-$string['event_answer_updated'] = 'Choice updated';
-$string['event_report_viewed'] = 'Choice report viewed';
+$string['eventanswercreated'] = 'Choice made';
+$string['eventanswerupdated'] = 'Choice updated';
+$string['eventreportviewed'] = 'Choice report viewed';
 $string['expired'] = 'Sorry, this activity closed on {$a} and is no longer available';
 $string['atleastoneoption'] = 'You need to provide at least one possible answer.';
 $string['full'] = '(Full)';

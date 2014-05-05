@@ -65,7 +65,7 @@ $PAGE->set_course($course);
 $PAGE->set_url('/course/completion.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 // Create the settings form instance.
 $form = new course_completion_form('completion.php?id='.$id, array('course' => $course));

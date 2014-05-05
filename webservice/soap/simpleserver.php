@@ -28,10 +28,7 @@
  */
 define('NO_DEBUG_DISPLAY', true);
 
-/**
- * NO_MOODLE_COOKIES - no cookies with web service
- */
-define('NO_MOODLE_COOKIES', true);
+define('WS_SERVER', true);
 
 // Make sure OPcache does not strip comments, we need them for Zend!
 if (ini_get('opcache.enable') and strtolower(ini_get('opcache.enable')) !== 'off') {

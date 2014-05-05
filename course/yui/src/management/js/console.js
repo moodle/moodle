@@ -12,7 +12,7 @@
  * @namespace M.course.management
  * @class Console
  * @constructor
- * @extends Y.Base
+ * @extends Base
  */
 function Console() {
     Console.superclass.constructor.apply(this, arguments);
@@ -243,7 +243,7 @@ Console.prototype = {
      * Initialises all the categories being shown.
      * @method initialiseCategories
      * @private
-     * @returns {boolean}
+     * @return {boolean}
      */
     initialiseCategories : function(listing) {
         var count = 0;
@@ -287,7 +287,7 @@ Console.prototype = {
      * Initialises all the categories being shown.
      * @method initialiseCourses
      * @private
-     * @returns {boolean}
+     * @return {boolean}
      */
     initialiseCourses : function() {
         var category = this.getCategoryById(this.get('activecategoryid')),
@@ -481,7 +481,7 @@ Console.prototype = {
      * Returns the category with the given ID.
      * @method getCategoryById
      * @param {Number} id
-     * @returns {Category|Boolean} The category or false if it can't be found.
+     * @return {Category|Boolean} The category or false if it can't be found.
      */
     getCategoryById : function(id) {
         var i,
@@ -503,7 +503,7 @@ Console.prototype = {
      * Returns the course with the given id.
      * @method getCourseById
      * @param {Number} id
-     * @returns {Course|Boolean} The course or false if not found/
+     * @return {Course|Boolean} The course or false if not found/
      */
     getCourseById : function(id) {
         var i,
@@ -578,6 +578,8 @@ M.course.management.console = null;
 
 /**
  * Initalises the course management console.
+ *
+ * @method M.course.management.init
  * @static
  * @param {Object} config
  */

@@ -61,9 +61,11 @@ if (count($reportlist) < 1) {
 
 // Trigger a report viewed event.
 $event = \mod_scorm\event\report_viewed::create(array(
-    'objectid' => $scorm->id,
     'context' => $contextmodule,
-    'other' => array('mode' => $mode)
+    'other' => array(
+        'scormid' => $scorm->id,
+        'mode' => $mode
+    )
 ));
 $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('scorm', $scorm);

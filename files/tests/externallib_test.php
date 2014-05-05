@@ -223,7 +223,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Insert the information about the file.
         $contentid = $DB->insert_record('data_content', $datacontent);
         // Required information for uploading a file.
-        $context = context_module::instance($module->id);
+        $context = context_module::instance($module->cmid);
         $usercontext = context_user::instance($USER->id);
         $component = 'mod_data';
         $filearea = 'content';
@@ -251,6 +251,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $testfilelisting = core_files_external::get_files($context->id, $component, $filearea, $itemid, '/', $filename);
 
         // With the information that we have provided we should get an object exactly like the one below.
+        $coursecontext = context_course::instance($course->id);
         $testdata = array();
         $testdata['parents'] = array();
         $testdata['parents']['0'] = array('contextid' => 1,
@@ -265,43 +266,43 @@ class core_files_externallib_testcase extends advanced_testcase {
                                           'itemid' => null,
                                           'filepath' => null,
                                           'filename' => 'Miscellaneous');
-        $testdata['parents']['2'] = array('contextid' => 15,
+        $testdata['parents']['2'] = array('contextid' => $coursecontext->id,
                                           'component' => null,
                                           'filearea' => null,
                                           'itemid' => null,
                                           'filepath' => null,
                                           'filename' => 'Test course 1');
-        $testdata['parents']['3'] = array('contextid' => 20,
+        $testdata['parents']['3'] = array('contextid' => $context->id,
                                           'component' => null,
                                           'filearea' => null,
                                           'itemid' => null,
                                           'filepath' => null,
                                           'filename' => 'Mod data upload test (Database)');
-        $testdata['parents']['4'] = array('contextid' => 20,
+        $testdata['parents']['4'] = array('contextid' => $context->id,
                                           'component' => 'mod_data',
                                           'filearea' => 'content',
                                           'itemid' => null,
                                           'filepath' => null,
                                           'filename' => 'Fields');
         $testdata['files'] = array();
-        $testdata['files']['0'] = array('contextid' => 20,
+        $testdata['files']['0'] = array('contextid' => $context->id,
                                         'component' => 'mod_data',
                                         'filearea' => 'content',
-                                        'itemid' => '1',
+                                        'itemid' => $itemid,
                                         'filepath' => '/',
                                         'filename' => 'Simple4.txt',
-                                        'url' => 'http://www.example.com/moodle/pluginfile.php/20/mod_data/content/1/Simple4.txt',
+                                        'url' => 'http://www.example.com/moodle/pluginfile.php/'.$context->id.'/mod_data/content/'.$itemid.'/Simple4.txt',
                                         'isdir' => false,
                                         'timemodified' => $timemodified);
         // Make sure that they are the same.
-        $this->assertEquals($testfilelisting, $testdata);
+        $this->assertEquals($testdata, $testfilelisting);
 
         // Try again but without the context. Minus one signals the function to use other variables to obtain the context.
         $nocontext = -1;
         $modified = 0;
         // Context level and instance ID are used to determine what the context is.
         $contextlevel = 'module';
-        $instanceid = $module->id;
+        $instanceid = $module->cmid;
         $testfilelisting = core_files_external::get_files($nocontext, $component, $filearea, $itemid, '/', $filename, $modified, $contextlevel, $instanceid);
         $this->assertEquals($testfilelisting, $testdata);
     }

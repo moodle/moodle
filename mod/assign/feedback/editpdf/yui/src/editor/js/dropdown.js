@@ -2,13 +2,18 @@ var DROPDOWN_NAME = "Dropdown menu",
     DROPDOWN;
 
 /**
- * DROPDOWN
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * This is a drop down list of buttons triggered (and aligned to) a button.
  *
- * @namespace M.assignfeedback_editpdf.widget.dropdown
+ * @namespace M.assignfeedback_editpdf
  * @class dropdown
  * @constructor
- * @extends Y.Base
+ * @extends M.core.dialogue
  */
 DROPDOWN = function(config) {
     config.draggable = false;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event to be triggered when a lesson is started.
+ * The mod_lesson lesson started event.
  *
  * @package    mod_lesson
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -26,6 +26,14 @@ namespace mod_lesson\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_lesson lesson started event class.
+ *
+ * @package    mod_lesson
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+ */
 class lesson_started extends \core\event\base {
 
     /**
@@ -34,7 +42,7 @@ class lesson_started extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lesson';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -52,7 +60,7 @@ class lesson_started extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/view.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/lesson/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -61,7 +69,7 @@ class lesson_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The lesson ' . $this->objectid . ' was started by the user ' . $this->userid;
+        return "The user with the id '$this->userid' started the lesson with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -70,7 +78,7 @@ class lesson_started extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'lesson', 'start', 'view.php?id=' . $this->context->instanceid,
-            $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'lesson', 'start', 'view.php?id=' . $this->contextinstanceid,
+            $this->objectid, $this->contextinstanceid);
     }
 }

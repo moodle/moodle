@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,8 @@
 /**
  * Manage files in folder in private area.
  *
- * @package   core_files
+ * @package   core_user
+ * @category  files
  * @copyright 2010 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,7 +64,7 @@ $options = array('subdirs' => 1, 'maxbytes' => $maxbytes, 'maxfiles' => -1, 'acc
         'areamaxbytes' => $maxareabytes);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
 
-$mform = new user_files_form(null, array('data'=>$data, 'options'=>$options));
+$mform = new user_files_form(null, array('data' => $data, 'options' => $options));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);

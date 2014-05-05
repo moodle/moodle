@@ -180,6 +180,11 @@ class assign_grading_table extends table_sql implements renderable {
                                  s.status = :submitted) ';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
+            } else if ($filter == ASSIGN_FILTER_NOT_SUBMITTED) {
+                $where .= ' AND (s.timemodified IS NULL OR s.status = :draft OR s.status = :reopened) ';
+                $params['draft'] = ASSIGN_SUBMISSION_STATUS_DRAFT;
+                $params['reopened'] = ASSIGN_SUBMISSION_STATUS_REOPENED;
+
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
                                  s.status = :submitted AND
@@ -198,8 +203,12 @@ class assign_grading_table extends table_sql implements renderable {
                 // Check to see if marker filter is set.
                 $markerfilter = (int)get_user_preferences('assign_markerfilter', '');
                 if (!empty($markerfilter)) {
-                    $where .= ' AND uf.allocatedmarker = :markerid';
-                    $params['markerid'] = $markerfilter;
+                    if ($markerfilter == ASSIGN_MARKER_FILTER_NO_MARKER) {
+                        $where .= ' AND (uf.allocatedmarker IS NULL OR uf.allocatedmarker = 0)';
+                    } else {
+                        $where .= ' AND uf.allocatedmarker = :markerid';
+                        $params['markerid'] = $markerfilter;
+                    }
                 }
             } else { // Only show users allocated to this marker.
                 $where .= ' AND uf.allocatedmarker = :markerid';
@@ -700,7 +709,11 @@ class assign_grading_table extends table_sql implements renderable {
                 $outcomes .= $this->output->container($outcome->name . ': ' . $select, 'outcome');
             } else {
                 $name = $outcome->name . ': ' . $options[$outcome->grades[$row->userid]->grade];
-                $outcomes .= $this->output->container($name, 'outcome');
+                if ($this->is_downloading()) {
+                    $outcomes .= $name;
+                } else {
+                    $outcomes .= $this->output->container($name, 'outcome');
+                }
             }
         }
 
@@ -731,9 +744,9 @@ class assign_grading_table extends table_sql implements renderable {
         if (!$this->is_downloading()) {
             $courseid = $this->assignment->get_course()->id;
             $link= new moodle_url('/user/view.php', array('id' =>$row->id, 'course'=>$courseid));
-            $fullname = $this->output->action_link($link, fullname($row));
+            $fullname = $this->output->action_link($link, $this->assignment->fullname($row));
         } else {
-            $fullname = fullname($row);
+            $fullname = $this->assignment->fullname($row);
         }
 
         if (!$this->assignment->is_active_user($row->id)) {
@@ -753,12 +766,15 @@ class assign_grading_table extends table_sql implements renderable {
      */
     public function col_select(stdClass $row) {
         $selectcol = '<label class="accesshide" for="selectuser_' . $row->userid . '">';
-        $selectcol .= get_string('selectuser', 'assign', fullname($row));
+        $selectcol .= get_string('selectuser', 'assign', $this->assignment->fullname($row));
         $selectcol .= '</label>';
         $selectcol .= '<input type="checkbox"
                               id="selectuser_' . $row->userid . '"
                               name="selectedusers"
                               value="' . $row->userid . '"/>';
+        $selectcol .= '<input type="hidden"
+                              name="grademodified_' . $row->userid . '"
+                              value="' . $row->timemarked . '"/>';
         return $selectcol;
     }
 
@@ -815,11 +831,7 @@ class assign_grading_table extends table_sql implements renderable {
         $gradingdisabled = $this->assignment->grading_disabled($row->id);
 
         if (!$this->is_downloading() && $this->hasgrade) {
-            $name = fullname($row);
-            if ($this->assignment->is_blind_marking()) {
-                $name = get_string('hiddenuser', 'assign') .
-                        $this->assignment->get_uniqueid_for_user($row->userid);
-            }
+            $name = $this->assignment->fullname($row);
             $icon = $this->output->pix_icon('gradefeedback',
                                             get_string('gradeuser', 'assign', $name),
                                             'mod_assign');
@@ -972,15 +984,34 @@ class assign_grading_table extends table_sql implements renderable {
                            'rownum'=>$this->rownum,
                            'action'=>'grade');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $noimage = null;
 
         if (!$row->grade) {
             $description = get_string('grade');
         } else {
             $description = get_string('updategrade', 'assign');
         }
-        $actions[$url->out(false)] = $description;
+        $actions['grade'] = new action_menu_link_secondary(
+            $url,
+            $noimage,
+            $description
+        );
 
-        $submissionsopen = $this->assignment->submissions_open($row->id);
+        // Everything we need is in the row.
+        $submission = $row;
+        $flags = $row;
+        if ($this->assignment->get_instance()->teamsubmission) {
+            // Use the cache for this.
+            $submission = false;
+            $group = false;
+            $this->get_group_and_submission($row->id, $group, $submission, -1);
+        }
+
+        $submissionsopen = $this->assignment->submissions_open($row->id,
+                                                               true,
+                                                               $submission,
+                                                               $flags,
+                                                               $this->gradinginfo);
         $caneditsubmission = $this->assignment->can_edit_submission($row->id, $USER->id);
 
         // Hide for offline assignments.
@@ -998,7 +1029,11 @@ class assign_grading_table extends table_sql implements renderable {
                     $url = new moodle_url('/mod/assign/view.php', $urlparams);
 
                     $description = get_string('preventsubmissionsshort', 'assign');
-                    $actions[$url->out(false)] = $description;
+                    $actions['lock'] = new action_menu_link_secondary(
+                        $url,
+                        $noimage,
+                        $description
+                    );
                 } else {
                     $urlparams = array('id' => $this->assignment->get_course_module()->id,
                                        'userid'=>$row->id,
@@ -1007,7 +1042,11 @@ class assign_grading_table extends table_sql implements renderable {
                                        'page'=>$this->currpage);
                     $url = new moodle_url('/mod/assign/view.php', $urlparams);
                     $description = get_string('allowsubmissionsshort', 'assign');
-                    $actions[$url->out(false)] = $description;
+                    $actions['unlock'] = new action_menu_link_secondary(
+                        $url,
+                        $noimage,
+                        $description
+                    );
                 }
             }
 
@@ -1021,7 +1060,11 @@ class assign_grading_table extends table_sql implements renderable {
                                    'page'=>$this->currpage);
                 $url = new moodle_url('/mod/assign/view.php', $urlparams);
                 $description = get_string('grantextension', 'assign');
-                $actions[$url->out(false)] = $description;
+                $actions['grantextension'] = new action_menu_link_secondary(
+                    $url,
+                    $noimage,
+                    $description
+                );
             }
             if ($submissionsopen &&
                     $USER->id != $row->id &&
@@ -1033,7 +1076,11 @@ class assign_grading_table extends table_sql implements renderable {
                                    'page'=>$this->currpage);
                 $url = new moodle_url('/mod/assign/view.php', $urlparams);
                 $description = get_string('editsubmission', 'assign');
-                $actions[$url->out(false)] = $description;
+                $actions['editsubmission'] = new action_menu_link_secondary(
+                    $url,
+                    $noimage,
+                    $description
+                );
             }
         }
         if ($row->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED &&
@@ -1045,7 +1092,11 @@ class assign_grading_table extends table_sql implements renderable {
                                'page'=>$this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('reverttodraftshort', 'assign');
-            $actions[$url->out(false)] = $description;
+            $actions['reverttodraft'] = new action_menu_link_secondary(
+                $url,
+                $noimage,
+                $description
+            );
         }
         if ($row->status == ASSIGN_SUBMISSION_STATUS_DRAFT &&
                 $this->assignment->get_instance()->submissiondrafts &&
@@ -1059,7 +1110,11 @@ class assign_grading_table extends table_sql implements renderable {
                                'page'=>$this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('submitforgrading', 'assign');
-            $actions[$url->out(false)] = $description;
+            $actions['submitforgrading'] = new action_menu_link_secondary(
+                $url,
+                $noimage,
+                $description
+            );
         }
 
         $ismanual = $this->assignment->get_instance()->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL;
@@ -1076,35 +1131,26 @@ class assign_grading_table extends table_sql implements renderable {
                                'page'=>$this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('addattempt', 'assign');
-            $actions[$url->out(false)] = $description;
+            $actions['addattempt'] = new action_menu_link_secondary(
+                $url,
+                $noimage,
+                $description
+            );
         }
 
-        $edit .= $this->output->container_start(array('yui3-menu', 'actionmenu'), 'actionselect' . $row->id);
-        $edit .= $this->output->container_start(array('yui3-menu-content'));
-        $edit .= html_writer::start_tag('ul');
-        $edit .= html_writer::start_tag('li', array('class'=>'menuicon'));
-
-        $menuicon = $this->output->pix_icon('t/contextmenu', get_string('actions'));
-        $edit .= $this->output->action_link('#menu' . $row->id, $menuicon, null, array('class'=>'yui3-menu-label'));
-        $edit .= $this->output->container_start(array('yui3-menu', 'yui3-loading'), 'menu' . $row->id);
-        $edit .= $this->output->container_start(array('yui3-menu-content'));
-        $edit .= html_writer::start_tag('ul');
-
-        foreach ($actions as $url => $description) {
-            $edit .= html_writer::start_tag('li', array('class'=>'yui3-menuitem'));
-
-            $edit .= $this->output->action_link($url, $description, null, array('class'=>'yui3-menuitem-content'));
-
-            $edit .= html_writer::end_tag('li');
+        $menu = new action_menu();
+        $menu->set_owner_selector('.gradingtable-actionmenu');
+        $menu->set_alignment(action_menu::TL, action_menu::BL);
+        $menu->set_constraint('.gradingtable > .no-overflow');
+        $menu->set_menu_trigger(get_string('edit'));
+        foreach ($actions as $action) {
+            $menu->add($action);
         }
-        $edit .= html_writer::end_tag('ul');
-        $edit .= $this->output->container_end();
-        $edit .= $this->output->container_end();
-        $edit .= html_writer::end_tag('li');
-        $edit .= html_writer::end_tag('ul');
 
-        $edit .= $this->output->container_end();
-        $edit .= $this->output->container_end();
+        // Prioritise the menu ahead of all other actions.
+        $menu->prioritise = true;
+
+        $edit .= $this->output->render($menu);
 
         return $edit;
     }

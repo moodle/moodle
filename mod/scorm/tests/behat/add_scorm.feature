@@ -1,4 +1,4 @@
-@mod @mod_scorm @_only_local @_switch_frame
+@mod @mod_scorm @_file_upload @_switch_frame
 Feature: Add scorm activity
   In order to let students access a scorm package
   As a teacher
@@ -6,14 +6,14 @@ Feature: Add scorm activity
 
   @javascript
   Scenario: Add a scorm activity to a course
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -21,10 +21,10 @@ Feature: Add scorm activity
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "SCORM package" to section "1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Awesome SCORM package |
       | Description | Description |
-    And I upload "mod/scorm/tests/packages/singlescobasic.zip" file to "Package file" filemanager
+    And I upload "mod/scorm/tests/packages/singlesco_scorm12.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
     Then I should see "Awesome SCORM package"
     And I should see "Normal"
@@ -36,7 +36,6 @@ Feature: Add scorm activity
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
-    And I switch to "contentFrame" iframe
-    And I should see "Play of the game"
+    And I should see "Not implemented yet"
     And I switch to the main frame
     And I follow "Course 1"

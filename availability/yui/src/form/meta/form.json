@@ -1,0 +1,12 @@
+{
+  "moodle-core_availability-form": {
+    "requires": [
+        "base",
+        "node",
+        "event",
+        "panel",
+        "moodle-core-notification-dialogue",
+        "json"
+    ]
+  }
+}

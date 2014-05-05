@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod
- * @subpackage forum
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_forum
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -127,18 +126,27 @@ function forum_add_instance($forum, $mform = null) {
         }
     }
 
-    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
-        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email');
-        foreach ($users as $user) {
-            forum_subscribe($user->id, $forum->id);
-        }
-    }
-
     forum_grade_item_update($forum);
 
     return $forum->id;
 }
 
+/**
+ * Handle changes following the creation of a forum instance.
+ * This function is typically called by the course_module_created observer.
+ *
+ * @param object $context the forum context
+ * @param stdClass $forum The forum object
+ * @return void
+ */
+function forum_instance_created($context, $forum) {
+    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
+        $users = forum_get_potential_subscribers($context, 0, 'u.id, u.email');
+        foreach ($users as $user) {
+            forum_subscribe($user->id, $forum->id);
+        }
+    }
+}
 
 /**
  * Given an object containing all the necessary data,
@@ -732,7 +740,11 @@ function forum_cron() {
 
                 $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
-                $postsubject = html_to_text("$shortname: ".format_string($post->subject, true));
+                $a = new stdClass();
+                $a->courseshortname = $shortname;
+                $a->forumname = $cleanforumname;
+                $a->subject = format_string($post->subject, true);
+                $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a));
                 $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
                 $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
 
@@ -773,8 +785,6 @@ function forum_cron() {
                 if (!$mailresult){
                     mtrace("Error: mod/forum/lib.php forum_cron(): Could not send out mail for id $post->id to user $userto->id".
                          " ($userto->email) .. not trying again.");
-                    add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
-                               substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     $errorcount[$post->id]++;
                 } else {
                     $mailcount[$post->id]++;
@@ -1073,9 +1083,8 @@ function forum_cron() {
                 $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname);
 
                 if (!$mailresult) {
-                    mtrace("ERROR!");
-                    echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
-                    add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
+                    mtrace("ERROR: mod/forum/cron.php: Could not send out digest mail to user $userto->id ".
+                        "($userto->email)... not trying again.");
                 } else {
                     mtrace("success.");
                     $usermailcount++;
@@ -3267,7 +3276,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 
     if (!isset($cm->uservisible)) {
-        $cm->uservisible = coursemodule_visible_for_user($cm);
+        $cm->uservisible = \core_availability\info_module::is_user_visible($cm, 0, false);
     }
 
     if ($istracked && is_null($postisread)) {
@@ -3561,7 +3570,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= html_writer::tag('div', implode(' | ', $commandhtml), array('class'=>'commands'));
 
     // Output link to post if required
-    if ($link) {
+    if ($link && forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
         if ($post->replies == 1) {
             $replystring = get_string('repliesone', 'forum', $post->replies);
         } else {
@@ -4346,6 +4355,12 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->mailed     = FORUM_MAILED_PENDING;
     $post->userid     = $USER->id;
     $post->attachment = "";
+    if (!isset($post->totalscore)) {
+        $post->totalscore = 0;
+    }
+    if (!isset($post->mailnow)) {
+        $post->mailnow    = 0;
+    }
 
     $post->id = $DB->insert_record("forum_posts", $post);
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
@@ -4473,6 +4488,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     $discussion->timemodified = $timenow;
     $discussion->usermodified = $post->userid;
     $discussion->userid       = $userid;
+    $discussion->assessed     = 0;
 
     $post->discussion = $DB->insert_record("forum_discussions", $discussion);
 
@@ -4636,8 +4652,8 @@ function forum_trigger_content_uploaded_event($post, $cm, $name) {
         'objectid' => $post->id,
         'other' => array(
             'content' => $post->message,
-            'discussionid' => $post->discussion,
             'pathnamehashes' => array_keys($files),
+            'discussionid' => $post->discussion,
             'triggeredfrom' => $name,
         )
     );
@@ -4818,7 +4834,19 @@ function forum_subscribe($userid, $forumid) {
     $sub->userid  = $userid;
     $sub->forum = $forumid;
 
-    return $DB->insert_record("forum_subscriptions", $sub);
+    $result = $DB->insert_record("forum_subscriptions", $sub);
+
+    $cm = get_coursemodule_from_instance('forum', $forumid);
+    $params = array(
+        'context' => context_module::instance($cm->id),
+        'relateduserid' => $userid,
+        'other' => array('forumid' => $forumid),
+
+    );
+    $event  = \mod_forum\event\subscription_created::create($params);
+    $event->trigger();
+
+    return $result;
 }
 
 /**
@@ -4830,8 +4858,21 @@ function forum_subscribe($userid, $forumid) {
  */
 function forum_unsubscribe($userid, $forumid) {
     global $DB;
-    return ($DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid))
-            && $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid)));
+
+    $DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid));
+    $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid));
+
+    $cm = get_coursemodule_from_instance('forum', $forumid);
+    $params = array(
+        'context' => context_module::instance($cm->id),
+        'relateduserid' => $userid,
+        'other' => array('forumid' => $forumid),
+
+    );
+    $event = \mod_forum\event\subscription_deleted::create($params);
+    $event->trigger();
+
+    return true;
 }
 
 /**
@@ -5443,7 +5484,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
             return false;
         }
     } else {
-        if (!coursemodule_visible_for_user($cm, $user->id)) {
+        if (!\core_availability\info_module::is_user_visible($cm, $user->id, false)) {
             return false;
         }
     }
@@ -7041,6 +7082,13 @@ function forum_discussion_update_last_post($discussionid) {
 
 
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function forum_get_view_actions() {
@@ -7048,6 +7096,13 @@ function forum_get_view_actions() {
 }
 
 /**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function forum_get_post_actions() {
@@ -7775,7 +7830,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
 
 /**
  * Abstract class used by forum subscriber selection controls
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -7835,7 +7890,7 @@ abstract class forum_subscriber_selector_base extends user_selector_base {
 
 /**
  * A user selector control for potential subscribers to the selected forum
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -7964,7 +8019,7 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
 
 /**
  * User selector control for removing subscribed users
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

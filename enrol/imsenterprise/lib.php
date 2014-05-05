@@ -377,24 +377,11 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                         } else {
                             $course->category = $this->get_default_category_id();
                         }
-                        $course->timecreated = time();
                         $course->startdate = time();
                         // Choose a sort order that puts us at the start of the list!
                         $course->sortorder = 0;
-                        $courseid = $DB->insert_record('course', $course);
 
-                        // Setup default enrolment plugins.
-                        $course->id = $courseid;
-                        enrol_course_updated(true, $course, null);
-
-                        // Setup the blocks.
-                        $course = $DB->get_record('course', array('id' => $courseid));
-                        blocks_add_default_course_blocks($course);
-
-                        // Create default 0-section.
-                        course_create_sections_if_missing($course, 0);
-
-                        add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
+                        $course = create_course($course);
 
                         $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
                     }

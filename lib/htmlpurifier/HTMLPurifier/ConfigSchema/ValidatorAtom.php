@@ -8,59 +8,123 @@
  */
 class HTMLPurifier_ConfigSchema_ValidatorAtom
 {
+    /**
+     * @type string
+     */
+    protected $context;
 
-    protected $context, $obj, $member, $contents;
+    /**
+     * @type object
+     */
+    protected $obj;
 
-    public function __construct($context, $obj, $member) {
-        $this->context     = $context;
-        $this->obj         = $obj;
-        $this->member      = $member;
-        $this->contents    =& $obj->$member;
+    /**
+     * @type string
+     */
+    protected $member;
+
+    /**
+     * @type mixed
+     */
+    protected $contents;
+
+    public function __construct($context, $obj, $member)
+    {
+        $this->context = $context;
+        $this->obj = $obj;
+        $this->member = $member;
+        $this->contents =& $obj->$member;
     }
 
-    public function assertIsString() {
-        if (!is_string($this->contents)) $this->error('must be a string');
-        return $this;
-    }
-
-    public function assertIsBool() {
-        if (!is_bool($this->contents)) $this->error('must be a boolean');
-        return $this;
-    }
-
-    public function assertIsArray() {
-        if (!is_array($this->contents)) $this->error('must be an array');
-        return $this;
-    }
-
-    public function assertNotNull() {
-        if ($this->contents === null) $this->error('must not be null');
-        return $this;
-    }
-
-    public function assertAlnum() {
-        $this->assertIsString();
-        if (!ctype_alnum($this->contents)) $this->error('must be alphanumeric');
-        return $this;
-    }
-
-    public function assertNotEmpty() {
-        if (empty($this->contents)) $this->error('must not be empty');
-        return $this;
-    }
-
-    public function assertIsLookup() {
-        $this->assertIsArray();
-        foreach ($this->contents as $v) {
-            if ($v !== true) $this->error('must be a lookup array');
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertIsString()
+    {
+        if (!is_string($this->contents)) {
+            $this->error('must be a string');
         }
         return $this;
     }
 
-    protected function error($msg) {
-        throw new HTMLPurifier_ConfigSchema_Exception(ucfirst($this->member) . ' in ' . $this->context . ' ' . $msg);
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertIsBool()
+    {
+        if (!is_bool($this->contents)) {
+            $this->error('must be a boolean');
+        }
+        return $this;
     }
 
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertIsArray()
+    {
+        if (!is_array($this->contents)) {
+            $this->error('must be an array');
+        }
+        return $this;
+    }
+
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertNotNull()
+    {
+        if ($this->contents === null) {
+            $this->error('must not be null');
+        }
+        return $this;
+    }
+
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertAlnum()
+    {
+        $this->assertIsString();
+        if (!ctype_alnum($this->contents)) {
+            $this->error('must be alphanumeric');
+        }
+        return $this;
+    }
+
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertNotEmpty()
+    {
+        if (empty($this->contents)) {
+            $this->error('must not be empty');
+        }
+        return $this;
+    }
+
+    /**
+     * @return HTMLPurifier_ConfigSchema_ValidatorAtom
+     */
+    public function assertIsLookup()
+    {
+        $this->assertIsArray();
+        foreach ($this->contents as $v) {
+            if ($v !== true) {
+                $this->error('must be a lookup array');
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $msg
+     * @throws HTMLPurifier_ConfigSchema_Exception
+     */
+    protected function error($msg)
+    {
+        throw new HTMLPurifier_ConfigSchema_Exception(ucfirst($this->member) . ' in ' . $this->context . ' ' . $msg);
+    }
 }
 
 // vim: et sw=4 sts=4

@@ -18,7 +18,7 @@
 /**
  * Strings for component 'data', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   data
+ * @package   mod_data
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -119,6 +119,14 @@ $string['editordisable'] = 'Disable editor';
 $string['editorenable'] = 'Enable editor';
 $string['emptyadd'] = 'The Add template is empty, generating a default form...';
 $string['emptyaddform'] = 'You did not fill out any fields!';
+$string['eventfieldcreated'] = 'Field created';
+$string['eventfielddeleted'] = 'Field deleted';
+$string['eventfieldupdated'] = 'Field updated';
+$string['eventrecordcreated'] = 'Record created';
+$string['eventrecorddeleted'] = 'Record deleted';
+$string['eventrecordupdated'] = 'Record updated';
+$string['eventtemplateupdated'] = 'Template updated';
+$string['eventtemplateviewed'] = 'Templates viewed';
 $string['fileencoding'] = 'Encoding';
 $string['entries'] = 'Entries';
 $string['entrieslefttoadd'] = 'You must add {$a->entriesleft} more entry/entries in order to complete this activity';

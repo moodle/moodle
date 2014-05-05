@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
+ * @package    mod_quiz
  * @subpackage backup-moodle2
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -47,7 +47,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'reviewspecificfeedback', 'reviewgeneralfeedback',
             'reviewrightanswer', 'reviewoverallfeedback',
             'questionsperpage', 'navmethod', 'shufflequestions', 'shuffleanswers',
-            'questions', 'sumgrades', 'grade', 'timecreated',
+            'sumgrades', 'grade', 'timecreated',
             'timemodified', 'password', 'subnet', 'browsersecurity',
             'delay1', 'delay2', 'showuserpicture', 'showblocks'));
 
@@ -57,7 +57,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
-            'question', 'grade'));
+            'slot', 'page', 'questionid', 'maxmark'));
 
         $feedbacks = new backup_nested_element('feedbacks');
 
@@ -107,8 +107,8 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define sources.
         $quiz->set_source_table('quiz', array('id' => backup::VAR_ACTIVITYID));
 
-        $qinstance->set_source_table('quiz_question_instances',
-                array('quiz' => backup::VAR_PARENTID));
+        $qinstance->set_source_table('quiz_slots',
+                array('quizid' => backup::VAR_PARENTID));
 
         $feedback->set_source_table('quiz_feedback',
                 array('quizid' => backup::VAR_PARENTID));
@@ -137,7 +137,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $attempt->set_source_alias('attempt', 'attemptnum');
 
         // Define id annotations.
-        $qinstance->annotate_ids('question', 'question');
+        $qinstance->annotate_ids('question', 'questionid');
         $override->annotate_ids('user', 'userid');
         $override->annotate_ids('group', 'groupid');
         $grade->annotate_ids('user', 'userid');

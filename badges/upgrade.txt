@@ -13,3 +13,5 @@ information provided here is intended especially for developers.
   allows to indicate that a badge should be archived instead of fully deleted.
   If this parameter is set to FALSE, a badge will all its information, criteria,
   and awards will be removed from the database.
+* BADGE_BACKPACKURL constant has been moved from badges/lib/backpacklib.php to lib/badgeslib.php, and URI scheme
+  name ('http://') has been removed.

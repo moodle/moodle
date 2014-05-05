@@ -6,15 +6,15 @@ Feature: A teacher can set a wiki to be collaborative or individual
 
   @javascript
   Scenario: Collaborative and individual wikis
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -29,7 +29,7 @@ Feature: A teacher can set a wiki to be collaborative or individual
       | Wiki mode | Collaborative wiki |
     And I follow "Collaborative wiki name"
     And I press "Create page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Collaborative teacher1 edition |
     And I press "Save"
     And I follow "Course 1"
@@ -40,7 +40,7 @@ Feature: A teacher can set a wiki to be collaborative or individual
       | Wiki mode | Individual wiki |
     And I follow "Individual wiki name"
     And I press "Create page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Individual teacher1 edition |
     And I press "Save"
     And I log out
@@ -49,7 +49,7 @@ Feature: A teacher can set a wiki to be collaborative or individual
     When I follow "Collaborative wiki name"
     Then I should see "Collaborative teacher1 edition"
     And I follow "Edit"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Collaborative student1 edition |
     And I press "Save"
     And I should not see "Collaborative teacher1 edition"
@@ -58,7 +58,7 @@ Feature: A teacher can set a wiki to be collaborative or individual
     And I follow "Individual wiki name"
     And I should not see "Individual teacher1 edition"
     And I press "Create page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Individual student1 edition |
     And I press "Save"
     And I log out
@@ -68,7 +68,7 @@ Feature: A teacher can set a wiki to be collaborative or individual
     And I should not see "Individual teacher1 edition"
     And I should not see "Individual student1 edition"
     And I press "Create page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | HTML format | Individual student2 edition |
     And I press "Save"
     And I log out
@@ -80,10 +80,10 @@ Feature: A teacher can set a wiki to be collaborative or individual
     And I follow "Individual wiki name"
     And I should see "Individual teacher1 edition"
     And I should not see "Individual student1 edition"
-    And I select "Student 1" from "uid"
+    And I set the field "uid" to "Student 1"
     And I should see "Individual student1 edition"
     And I should not see "Individual teacher1 edition"
-    And I select "Student 2" from "uid"
+    And I set the field "uid" to "Student 2"
     And I should see "Individual student2 edition"
     And I should not see "Individual teacher1 edition"
 

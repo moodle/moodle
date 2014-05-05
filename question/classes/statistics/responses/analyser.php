@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the code to analyse all the responses to a particular
- * question.
+ * This file contains the code to analyse all the responses to a particular question.
  *
  * @package    core_question
- * @copyright  2013 Open University
+ * @copyright  2014 Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,42 +27,67 @@ namespace core_question\statistics\responses;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * This class can store and compute the analysis of the responses to a particular
- * question.
+ * This class can compute, store and cache the analysis of the responses to a particular question.
  *
- * @copyright 2013 Open University
- * @author    Jamie Pratt <me@jamiep.org>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_question
+ * @copyright  2014 The Open University
+ * @author     James Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class analyser {
+    /**
+     * @var int When analysing responses and breaking down the count of responses per try, how many columns should we break down
+     * tries into? This is set to 5 columns, any response in a try more than try 5 will be counted in the fifth column.
+     */
+    const MAX_TRY_COUNTED = 5;
+
+    /** @var int Time after which responses are automatically reanalysed. */
+    const TIME_TO_CACHE = 900; // 15 minutes.
+
     /** @var object full question data from db. */
     protected $questiondata;
 
     /**
-     * @var analysis_for_question
+     * @var analysis_for_question|analysis_for_question_all_tries
      */
     public $analysis;
 
     /**
-     * @var array Two index array first index is unique for each sub question part, the second index is the 'class' that this sub
-     *          question part can be classified into. This is the return value from {@link \question_type::get_possible_responses()}
+     * @var array Two index array first index is unique string for each sub question part, the second string index is the 'class'
+     * that sub-question part can be classified into.
+     *
+     * This is the return value from {@link \question_type::get_possible_responses()} see that method for fuller documentation.
      */
     public $responseclasses = array();
+
+    /**
+     * @var bool whether to break down response analysis by variant. This only applies to questions that have variants and is
+     *           used to suppress the break down of analysis by variant when there are going to be very many variants.
+     */
+    protected $breakdownbyvariant;
 
     /**
      * Create a new instance of this class for holding/computing the statistics
      * for a particular question.
      *
      * @param object $questiondata the full question data from the database defining this question.
+     * @param string $whichtries   which tries to analyse.
      */
-    public function __construct($questiondata) {
+    public function __construct($questiondata, $whichtries = \question_attempt::LAST_TRY) {
         $this->questiondata = $questiondata;
         $qtypeobj = \question_bank::get_qtype($this->questiondata->qtype);
-        $this->analysis = new analysis_for_question($qtypeobj->get_possible_responses($this->questiondata));
+        if ($whichtries != \question_attempt::ALL_TRIES) {
+            $this->analysis = new analysis_for_question($qtypeobj->get_possible_responses($this->questiondata));
+        } else {
+            $this->analysis = new analysis_for_question_all_tries($qtypeobj->get_possible_responses($this->questiondata));
+        }
 
+        $this->breakdownbyvariant = $qtypeobj->break_down_stats_and_response_analysis_by_variant($this->questiondata);
     }
 
     /**
+     * Does the computed analysis have sub parts?
+     *
      * @return bool whether this analysis has more than one subpart.
      */
     public function has_subparts() {
@@ -71,6 +95,8 @@ class analyser {
     }
 
     /**
+     * Does the computed analysis's sub parts have classes?
+     *
      * @return bool whether this analysis has (a subpart with) more than one response class.
      */
     public function has_response_classes() {
@@ -83,69 +109,66 @@ class analyser {
     }
 
     /**
-     * @return bool whether this analysis has a response class more than one
-     *      different acutal response, or if the actual response is different from
-     *      the model response.
-     */
-    public function has_actual_responses() {
-        foreach ($this->responseclasses as $subpartid => $partclasses) {
-            foreach ($partclasses as $responseclassid => $modelresponse) {
-                $numresponses = count($this->responses[$subpartid][$responseclassid]);
-                if ($numresponses > 1) {
-                    return true;
-                }
-                $actualresponse = key($this->responses[$subpartid][$responseclassid]);
-                if ($numresponses == 1 && $actualresponse != $modelresponse->responseclass) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Analyse all the response data for for all the specified attempts at
-     * this question.
+     * Analyse all the response data for for all the specified attempts at this question.
+     *
      * @param \qubaid_condition $qubaids which attempts to consider.
+     * @param string $whichtries         which tries to analyse. Will be one of
+     *                                   \question_attempt::FIRST_TRY, LAST_TRY or ALL_TRIES.
      * @return analysis_for_question
      */
-    public function calculate($qubaids) {
+    public function calculate($qubaids, $whichtries = \question_attempt::LAST_TRY) {
         // Load data.
         $dm = new \question_engine_data_mapper();
         $questionattempts = $dm->load_attempts_at_question($this->questiondata->id, $qubaids);
 
         // Analyse it.
         foreach ($questionattempts as $qa) {
-            $responseparts = $qa->classify_response();
-            $this->analysis->count_response_parts($responseparts);
+            $responseparts = $qa->classify_response($whichtries);
+            if ($this->breakdownbyvariant) {
+                $this->analysis->count_response_parts($qa->get_variant(), $responseparts);
+            } else {
+                $this->analysis->count_response_parts(1, $responseparts);
+            }
+
         }
-        $this->analysis->cache($qubaids, $this->questiondata->id);
+        $this->analysis->cache($qubaids, $whichtries, $this->questiondata->id);
         return $this->analysis;
     }
-
-    /** @var integer Time after which responses are automatically reanalysed. */
-    const TIME_TO_CACHE = 900; // 15 minutes.
-
 
     /**
      * Retrieve the computed response analysis from the question_response_analysis table.
      *
-     * @param \qubaid_condition $qubaids which attempts to get cached response analysis for.
+     * @param \qubaid_condition $qubaids    load the analysis of which question usages?
+     * @param string            $whichtries load the analysis of which tries?
      * @return analysis_for_question|boolean analysis or false if no cached analysis found.
      */
-    public function load_cached($qubaids) {
+    public function load_cached($qubaids, $whichtries) {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
-        $rows = $DB->get_records_select('question_response_analysis', 'hashcode = ? AND questionid = ? AND timemodified > ?',
-                                        array($qubaids->get_hash_code(), $this->questiondata->id, $timemodified));
-        if (!$rows) {
+        // Variable name 'analyses' is the plural of 'analysis'.
+        $responseanalyses = $DB->get_records_select('question_response_analysis',
+                                            'hashcode = ? AND whichtries = ? AND questionid = ? AND timemodified > ?',
+                                            array($qubaids->get_hash_code(), $whichtries, $this->questiondata->id, $timemodified));
+        if (!$responseanalyses) {
             return false;
         }
 
-        foreach ($rows as $row) {
-            $class = $this->analysis->get_subpart($row->subqid)->get_response_class($row->aid);
-            $class->add_response_and_count($row->response, $row->credit, $row->rcount);
+        $analysisids = array();
+        foreach ($responseanalyses as $responseanalysis) {
+            $analysisforsubpart = $this->analysis->get_analysis_for_subpart($responseanalysis->variant, $responseanalysis->subqid);
+            $class = $analysisforsubpart->get_response_class($responseanalysis->aid);
+            $class->add_response($responseanalysis->response, $responseanalysis->credit);
+            $analysisids[] = $responseanalysis->id;
+        }
+        list($sql, $params) = $DB->get_in_or_equal($analysisids);
+        $counts = $DB->get_records_select('question_response_count', "analysisid {$sql}", $params);
+        foreach ($counts as $count) {
+            $responseanalysis = $responseanalyses[$count->analysisid];
+            $analysisforsubpart = $this->analysis->get_analysis_for_subpart($responseanalysis->variant, $responseanalysis->subqid);
+            $class = $analysisforsubpart->get_response_class($responseanalysis->aid);
+            $class->set_response_count($responseanalysis->response, $count->try, $count->rcount);
+
         }
         return $this->analysis;
     }
@@ -154,15 +177,17 @@ class analyser {
     /**
      * Find time of non-expired analysis in the database.
      *
-     * @param $qubaids \qubaid_condition
+     * @param \qubaid_condition $qubaids    check for the analysis of which question usages?
+     * @param string            $whichtries check for the analysis of which tries?
      * @return integer|boolean Time of cached record that matches this qubaid_condition or false if none found.
      */
-    public function get_last_analysed_time($qubaids) {
+    public function get_last_analysed_time($qubaids, $whichtries) {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
         return $DB->get_field_select('question_response_analysis', 'timemodified',
-                                     'hashcode = ? AND questionid = ? AND timemodified > ?',
-                                     array($qubaids->get_hash_code(), $this->questiondata->id, $timemodified), IGNORE_MULTIPLE);
+                                     'hashcode = ? AND whichtries = ? AND questionid = ? AND timemodified > ?',
+                                     array($qubaids->get_hash_code(), $whichtries, $this->questiondata->id, $timemodified),
+                                     IGNORE_MULTIPLE);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Web service test client.
  *
- * @package   webservice
+ * @package   core_webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @author    Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,10 +34,10 @@ $PAGE->set_context($usercontext);
 $PAGE->set_url('/user/managetoken.php');
 $PAGE->set_title(get_string('securitykeys', 'webservice'));
 $PAGE->set_heading(get_string('securitykeys', 'webservice'));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 $rsstokenboxhtml = $webservicetokenboxhtml = '';
-/// Manage user web service tokens
+// Manage user web service tokens.
 if ( !is_siteadmin($USER->id)
     && !empty($CFG->enablewebservices)
     && has_capability('moodle/webservice:createtoken', $usercontext )) {
@@ -48,23 +47,23 @@ if ( !is_siteadmin($USER->id)
     $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-    $webservice = new webservice(); //load the webservice library
+    $webservice = new webservice(); // Load the webservice library.
     $wsrenderer = $PAGE->get_renderer('core', 'webservice');
 
     if ($action == 'resetwstoken') {
-            $token = $webservice->get_created_by_user_ws_token($USER->id, $tokenid);
-            /// Display confirmation page to Reset the token
-            if (!$confirm) {
-                $resetconfirmation = $wsrenderer->user_reset_token_confirmation($token);
-            } else {
-                /// Delete the token that need to be regenerated
-                $webservice->delete_user_ws_token($tokenid);
-            }
+        $token = $webservice->get_created_by_user_ws_token($USER->id, $tokenid);
+        // Display confirmation page to Reset the token.
+        if (!$confirm) {
+            $resetconfirmation = $wsrenderer->user_reset_token_confirmation($token);
+        } else {
+            // Delete the token that need to be regenerated.
+            $webservice->delete_user_ws_token($tokenid);
+        }
     }
 
-    //no point creating the table is we're just displaying a confirmation screen
+    // No point creating the table is we're just displaying a confirmation screen.
     if (empty($resetconfirmation)) {
-        $webservice->generate_user_ws_tokens($USER->id); //generate all token that need to be generated
+        $webservice->generate_user_ws_tokens($USER->id); // Generate all token that need to be generated.
         $tokens = $webservice->get_user_ws_tokens($USER->id);
         foreach ($tokens as $token) {
             if ($token->restrictedusers) {
@@ -74,12 +73,12 @@ if ( !is_siteadmin($USER->id)
                 }
             }
         }
-        $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id,
-                $CFG->enablewsdocumentation); //display the box for web service token
+        $webservicetokenboxhtml = $wsrenderer->user_webservice_tokens_box($tokens, $USER->id,
+                $CFG->enablewsdocumentation); // Display the box for web service token.
     }
 }
 
-//RSS keys
+// RSS keys.
 if (!empty($CFG->enablerssfeeds)) {
     require_once($CFG->dirroot.'/lib/rsslib.php');
 
@@ -88,8 +87,8 @@ if (!empty($CFG->enablerssfeeds)) {
 
     $rssrenderer = $PAGE->get_renderer('core', 'rss');
 
-    if ($action=='resetrsstoken') {
-        /// Display confirmation page to Reset the token
+    if ($action == 'resetrsstoken') {
+        // Display confirmation page to Reset the token.
         if (!$confirm) {
             $resetconfirmation = $rssrenderer->user_reset_rss_token_confirmation();
         } else {
@@ -98,11 +97,11 @@ if (!empty($CFG->enablerssfeeds)) {
     }
     if (empty($resetconfirmation)) {
         $token = rss_get_token($USER->id);
-        $rsstokenboxhtml = $rssrenderer->user_rss_token_box($token); //display the box for the user's RSS token
+        $rsstokenboxhtml = $rssrenderer->user_rss_token_box($token); // Display the box for the user's RSS token.
     }
 }
 
-// PAGE OUTPUT
+// PAGE OUTPUT.
 echo $OUTPUT->header();
 if (!empty($resetconfirmation)) {
     echo $resetconfirmation;

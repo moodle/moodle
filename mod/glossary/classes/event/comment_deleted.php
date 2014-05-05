@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary comment deleted event.
+ * The mod_glossary comment deleted event.
  *
  * @package    mod_glossary
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,9 +26,10 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary comment deleted event.
+ * The mod_glossary comment deleted event class.
  *
  * @package    mod_glossary
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,7 +40,7 @@ class comment_deleted extends \core\event\comment_deleted {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/glossary/view.php', array('id' => $this->other['itemid']));
+        return new \moodle_url('/mod/glossary/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -48,6 +49,7 @@ class comment_deleted extends \core\event\comment_deleted {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted comment for glossary activity with id ' . $this->other['itemid'];
+        return "The user with the id '$this->userid' deleted the comment with the id '$this->objectid' from the glossary activity " .
+            "with the course module id '$this->contextinstanceid'.";
     }
 }

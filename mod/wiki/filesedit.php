@@ -17,7 +17,7 @@
 /**
  * Manage files in wiki
  *
- * @package   mod-wiki-2.0
+ * @package   mod_wiki
  * @copyright 2011 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -53,6 +53,10 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 require_capability('mod/wiki:managefiles', $context);
 
 if (empty($returnurl)) {

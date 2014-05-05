@@ -17,7 +17,7 @@
 /**
  * Strings for component 'feedback', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   feedback
+ * @package mod_feedback
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -142,7 +142,6 @@ $string['insufficient_responses_help'] = 'There are insufficient responses for t
 To keep the feedback anonymous, a minimum of 2 responses must be done.';
 $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
-$string['items_are_required'] = 'Answers are required to starred questions.';
 $string['label'] = 'Label';
 $string['line_values'] = 'Rating';
 $string['mapcourseinfo'] = 'This is a site-wide feedback that is available to all courses using the feedback block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this feedback.';

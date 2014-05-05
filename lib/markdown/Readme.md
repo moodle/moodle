@@ -1,7 +1,7 @@
 PHP Markdown
 ============
 
-PHP Markdown Lib 1.3 - 11 Apr 2013
+PHP Markdown Lib 1.4.0 - 29 Nov 2013
 
 by Michel Fortin  
 <http://michelf.ca/>
@@ -14,23 +14,21 @@ Introduction
 ------------
 
 This is a library package that includes the PHP Markdown parser and its 
-sibling PHP Markdown Extra which additional features.
+sibling PHP Markdown Extra with additional features.
 
 Markdown is a text-to-HTML conversion tool for web writers. Markdown
 allows you to write using an easy-to-read, easy-to-write plain text
 format, then convert it to structurally valid XHTML (or HTML).
 
-"Markdown" is two things: a plain text markup syntax, and a software 
-tool, written in Perl, that converts the plain text markup to HTML. 
-PHP Markdown is a port to PHP of the original Markdown program by 
-John Gruber.
+"Markdown" is actually two things: a plain text markup syntax, and a 
+software tool, originally written in Perl, that converts the plain text 
+markup to HTML. PHP Markdown is a port to PHP of the original Markdown 
+program by John Gruber.
 
-PHP Markdown can work as a plug-in for WordPress, as a modifier for
-the Smarty templating engine, or as a replacement for Textile
-formatting in any software that supports Textile.
-
-Full documentation of Markdown's syntax is available on John's 
-Markdown page: <http://daringfireball.net/projects/markdown/>
+*	[Full documentation of the Markdown syntax](<http://daringfireball.net/projects/markdown/>)
+	- Daring Fireball (John Gruber)
+*	[Markdown Extra syntax additions](<http://michelf.ca/projects/php-markdown/extra/>)
+	- Michel Fortin
 
 
 Requirement
@@ -51,48 +49,8 @@ Usage
 
 This library package is meant to be used with class autoloading. For autoloading 
 to work, your project needs have setup a PSR-0-compatible autoloader. See the 
-included Readme.php file for a minimal autoloader setup. (If you don't want to 
-use autoloading you can do a classic `require_once` to manually include the 
-files prior use instead.)
-
-With class autoloading in place, putting the 'Michelf' folder in your 
-include path should be enough for this to work:
-
-	use \Michelf\Markdown;
-	$my_html = Markdown::defaultTransform($my_text);
-
-Markdown Extra syntax is also available the same way:
-
-	use \Michelf\MarkdownExtra;
-	$my_html = MarkdownExtra::defaultTransform($my_text);
-
-If you wish to use PHP Markdown with another text filter function 
-built to parse HTML, you should filter the text *after* the `transform`
-function call. This is an example with [PHP SmartyPants][psp]:
-
-	use \Michelf\Markdown, \Michelf\SmartyPants;
-	$my_html = Markdown::defaultTransform($my_text);
-	$my_html = SmartyPants::defaultTransform($my_html);
-
-All these examples are using the static `defaultTransform` static function 
-found inside the parser class. If you want to customize the parser 
-configuration, you can also instantiate it directly and change some 
-configuration variables:
-
-	use \Michelf\MarkdownExtra;
-	$parser = new MarkdownExtra;
-	$parser->fn_id_prefix = "post22-";
-	$my_html = $parser->transform($my_text);
-
-
-Usage
------
-
-This library package is meant to be used with class autoloading. For autoloading 
-to work, your project needs have setup a PSR-0-compatible autoloader. See the 
-included Readme.php file for a minimal autoloader setup. (If you don't want to 
-use autoloading you can do a classic `require_once` to manually include the 
-files prior use instead.)
+included Readme.php file for a minimal autoloader setup. (If you cannot use 
+autoloading, see below.)
 
 With class autoloading in place, putting the 'Michelf' folder in your 
 include path should be enough for this to work:
@@ -125,10 +83,26 @@ configuration variables:
 
 To learn more, see the full list of [configuration variables].
 
- [configuration variables]: http://michelf.ca/project/php-markdown/configuration/
+ [configuration variables]: http://michelf.ca/projects/php-markdown/configuration/
 
 
-Public API and Versionning Policy
+### Usage without an autoloader
+
+If you cannot use class autoloading, you can still use `include` or `require` 
+to access the parser. To load the `\Michelf\Markdown` parser, do it this way:
+
+	require_once 'Michelf/Markdown.inc.php';
+
+Or, if you need the `\Michelf\MarkdownExtra` parser:
+
+	require_once 'Michelf/MarkdownExtra.inc.php';
+
+While the plain `.php` files depend on autoloading to work correctly, using the
+`.inc.php` files instead will eagerly load the dependencies that would be 
+loaded on demand if you were using autoloading.
+
+
+Public API and Versioning Policy
 ---------------------------------
 
 Version numbers are of the form *major*.*minor*.*patch*.
@@ -139,22 +113,22 @@ functions and their configuration variables. The public API is stable for
 a given major version number. It might get additions when the minor version
 number increments.
 
-**Protected members are not considered public API.** This is unconventionnal 
+**Protected members are not considered public API.** This is unconventional 
 and deserves an explanation. Incrementing the major version number every time 
-the underlying implementation of something changes is going to give nonsential 
-version numbers for the vast majority of people who just use the parser. 
-Protected members are meant to create parser subclasses that behave in 
+the underlying implementation of something changes is going to give
+nonessential version numbers for the vast majority of people who just use the
+parser.  Protected members are meant to create parser subclasses that behave in
 different ways. Very few people create parser subclasses. I don't want to 
 discourage it by making everything private, but at the same time I can't 
-guarenty any stable hook between versions if you use protected members.
+guarantee any stable hook between versions if you use protected members.
 
 **Syntax changes** will increment the minor number for new features, and the 
 patch number for small corrections. A *new feature* is something that needs a 
 change in the syntax documentation. Note that since PHP Markdown Lib includes
 two parsers, a syntax change for either of them will increment the minor 
-number. Also note that there is nothigng perfectly backward-compatible with the
+number. Also note that there is nothing perfectly backward-compatible with the
 Markdown syntax: all inputs are always valid, so new features always replace
-something that was previously legal, although generally non-sensial to do.
+something that was previously legal, although generally nonsensical to do.
 
 
 Bugs
@@ -171,17 +145,55 @@ that the backtrack limit is not too low by running `php --info | grep pcre`.
 See Installation and Requirement above for details.
 
 
+Development and Testing
+-----------------------
+
+Pull requests for fixing bugs are welcome. Proposed new features are
+going meticulously reviewed -- taking into account backward compatibility, 
+potential side effects, and future extensibility -- before deciding on
+acceptance or rejection.
+
+If you make a pull request that includes changes to the parser please add 
+tests for what is being changed to [MDTest][] and make a pull request there 
+too.
+
+ [MDTest]: https://github.com/michelf/mdtest/
+
+
 Version History
 ---------------
 
-PHP Markdown Lib 1.3 (11 Apr 2013):
+PHP Markdown Lib 1.4.0 (29 Nov 2013)
+
+*	Added support for the `tel:` URL scheme in automatic links.
+
+		<tel:+1-111-111-1111>
+	
+	It gets converted to this (note the `tel:` prefix becomes invisible):
+	
+		<a href="tel:+1-111-111-1111">+1-111-111-1111</a>
+
+*	Added backtick fenced code blocks to MarkdownExtra, originally from
+	Github-Flavored Markdown.
+
+*	Added an interface called MarkdownInterface implemented by both
+	the Markdown and MarkdownExtra parsers. You can use the interface if
+	you want to create a mockup parser object for unit testing.
+
+*	For those of you who cannot use class autoloading, you can now
+	include `Michelf/Markdown.inc.php` or `Michelf/MarkdownExtra.inc.php` (note 
+	the 	`.inc.php` extension) to automatically include other files required
+	by the parser.
+
+
+PHP Markdown Lib 1.3 (11 Apr 2013)
 
 This is the first release of PHP Markdown Lib. This package requires PHP 
-version 4.3 or later and is designed to work with PSR-0 autoloading and, 
+version 5.3 or later and is designed to work with PSR-0 autoloading and, 
 optionally with Composer. Here is a list of the changes since 
 PHP Markdown Extra 1.2.6:
 
-*	Plugin interface for Wordpress and other systems is no longer present in
+*	Plugin interface for WordPress and other systems is no longer present in
 	the Lib package. The classic package is still available if you need it:
 	<http://michelf.ca/projects/php-markdown/classic/>
 

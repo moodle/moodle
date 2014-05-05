@@ -64,9 +64,13 @@
             <directory suffix="_test.php">grade/tests</directory>
             <directory suffix="_test.php">grade/grading/tests</directory>
         </testsuite>
+        <testsuite name="core_availability">
+            <directory suffix="_test.php">availability/tests</directory>
+        </testsuite>
         <testsuite name="core_backup">
             <directory suffix="_test.php">backup/controller/tests</directory>
             <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
+            <directory suffix="_test.php">backup/moodle2/tests</directory>
             <directory suffix="_test.php">backup/util</directory>
         </testsuite>
         <testsuite name="core_badges">
@@ -108,6 +112,9 @@
         <testsuite name="core_notes">
             <directory suffix="_test.php">notes/tests</directory>
         </testsuite>
+        <testsuite name="core_tag">
+            <directory suffix="_test.php">tag/tests</directory>
+        </testsuite>
         <testsuite name="core_rating">
             <directory suffix="_test.php">rating/tests</directory>
         </testsuite>
@@ -119,6 +126,9 @@
         </testsuite>
         <testsuite name="core_webservice">
             <directory suffix="_test.php">webservice/tests</directory>
+        </testsuite>
+        <testsuite name="core_mnet">
+            <directory suffix="_test.php">mnet/tests</directory>
         </testsuite>
 
         <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->

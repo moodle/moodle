@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign identities revealed event.
+ * The mod_assign identities revealed event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,20 +27,40 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign identities revealed event class.
+ * The mod_assign identities revealed event class.
  *
  * @package    mod_assign
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class identities_revealed extends \core\event\base {
+class identities_revealed extends base {
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @return identities_revealed
      */
-    protected $legacylogdata;
+    public static function create_from_assign(\assign $assign) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id
+        );
+        self::$preventcreatecall = false;
+        /** @var identities_revealed $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->set_assign($assign);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -48,16 +68,8 @@ class identities_revealed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has revealed the identities in assignment {$this->objectid}.";
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
+        return "The user with the id '$this->userid' has revealed the identities in the assignment with the course module " .
+            "id '$this->contextinstanceid'.";
     }
 
     /**
@@ -66,16 +78,7 @@ class identities_revealed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_identities_revealed', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->context->instanceid));
+        return get_string('eventidentitiesrevealed', 'mod_assign');
     }
 
     /**
@@ -85,18 +88,31 @@ class identities_revealed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign';
     }
 
     /**
-     * Sets the legacy event log data.
+     * Return legacy data for add_to_log().
      *
-     * @param stdClass $legacylogdata legacy log data.
-     * @return void
+     * @return array
      */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('reveal identities', get_string('revealidentities', 'assign'));
+        return parent::get_legacy_logdata();
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call identities_revealed::create() directly, use identities_revealed::create_from_assign() instead.');
+        }
+
+        parent::validate_data();
+    }
 }

@@ -1,0 +1,10 @@
+{
+    "name": "moodle-question-preview",
+    "builds": {
+        "moodle-question-preview": {
+            "jsfiles": [
+                "preview.js"
+            ]
+        }
+    }
+}

@@ -17,10 +17,9 @@
 /**
  * Defines message providers (types of message sent) for the quiz module.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 Andrew Davis http://moodle.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2010 Andrew Davis http://moodle.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

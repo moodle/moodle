@@ -18,9 +18,9 @@
 /**
  * This file contains all necessary code to view a wiki page
  *
- * @package mod-wiki-2.0
- * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
- * @copyrigth 2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @package mod_wiki
+ * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
  * @author Jordi Piguillem
  * @author Marc Alier
@@ -271,8 +271,9 @@ if ($id) {
     print_error('incorrectparameters');
 }
 
-$context = context_module::instance($cm->id);
-require_capability('mod/wiki:viewpage', $context);
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 
 // Update 'viewed' state if required by completion system
 require_once($CFG->libdir . '/completionlib.php');
@@ -288,6 +289,7 @@ $wikipage = new page_wiki_view($wiki, $subwiki, $cm);
 $wikipage->set_gid($currentgroup);
 $wikipage->set_page($page);
 
+$context = context_module::instance($cm->id);
 if($pageid) {
     $event = \mod_wiki\event\page_viewed::create(
             array(
@@ -296,7 +298,6 @@ if($pageid) {
                 )
             );
     $event->add_record_snapshot('wiki_pages', $page);
-    $event->trigger();
 } else if($id) {
     $event = \mod_wiki\event\course_module_viewed::create(
             array(
@@ -304,8 +305,6 @@ if($pageid) {
                 'objectid' => $wiki->id
                 )
             );
-    $event->add_record_snapshot('wiki', $wiki);
-    $event->trigger();
 } else if($wid && $title) {
     $event = \mod_wiki\event\page_viewed::create(
             array(
@@ -320,9 +319,11 @@ if($pageid) {
                 )
             );
     $event->add_record_snapshot('wiki_pages', $page);
-    $event->add_record_snapshot('wiki', $wiki);
-    $event->trigger();
 }
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('wiki', $wiki);
+$event->trigger();
 
 $wikipage->print_header();
 $wikipage->print_content();

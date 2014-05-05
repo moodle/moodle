@@ -178,6 +178,28 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
     protected abstract function class_name();
 }
 
+/**
+ * An essay format renderer for essays where the student should not enter
+ * any inline response.
+ *
+ * @copyright  2013 Binghamton University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_essay_format_noinline_renderer extends plugin_renderer_base {
+
+    protected function class_name() {
+        return 'qtype_essay_noinline';
+    }
+
+    public function response_area_read_only($name, $qa, $step, $lines, $context) {
+        return '';
+    }
+
+    public function response_area_input($name, $qa, $step, $lines, $context) {
+        return '';
+    }
+
+}
 
 /**
  * An essay format renderer for essays where the student should use the HTML

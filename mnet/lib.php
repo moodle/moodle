@@ -440,20 +440,44 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
 
     $mnethost = $DB->get_record('mnet_host', array('id'=>$mnet_host_id));
     if ($aclrecord = $DB->get_record('mnet_sso_access_control', array('username'=>$username, 'mnet_host_id'=>$mnet_host_id))) {
-        // update
+        // Update.
         $aclrecord->accessctrl = $accessctrl;
         $DB->update_record('mnet_sso_access_control', $aclrecord);
-        add_to_log(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
-                "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
+
+        // Trigger access control updated event.
+        $params = array(
+            'objectid' => $aclrecord->id,
+            'context' => context_system::instance(),
+            'other' => array(
+                'username' => $username,
+                'hostname' => $mnethost->name,
+                'accessctrl' => $accessctrl
+            )
+        );
+        $event = \core\event\mnet_access_control_updated::create($params);
+        $event->add_record_snapshot('mnet_host', $mnethost);
+        $event->trigger();
     } else {
-        // insert
+        // Insert.
         $aclrecord = new stdClass();
         $aclrecord->username = $username;
         $aclrecord->accessctrl = $accessctrl;
         $aclrecord->mnet_host_id = $mnet_host_id;
-        $id = $DB->insert_record('mnet_sso_access_control', $aclrecord);
-        add_to_log(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
-                "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
+        $aclrecord->id = $DB->insert_record('mnet_sso_access_control', $aclrecord);
+
+        // Trigger access control created event.
+        $params = array(
+            'objectid' => $aclrecord->id,
+            'context' => context_system::instance(),
+            'other' => array(
+                'username' => $username,
+                'hostname' => $mnethost->name,
+                'accessctrl' => $accessctrl
+            )
+        );
+        $event = \core\event\mnet_access_control_created::create($params);
+        $event->add_record_snapshot('mnet_host', $mnethost);
+        $event->trigger();
     }
     return true;
 }

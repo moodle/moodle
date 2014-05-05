@@ -20,7 +20,7 @@
  *
  * @copyright 2005 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package mod-data
+ * @package mod_data
  */
 
 require_once('../../config.php');
@@ -81,8 +81,8 @@ $context = context_module::instance($cm->id);
 if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
     $strdatabases = get_string("modulenameplural", "data");
 
-    $PAGE->set_title(format_string($data->name));
-    $PAGE->set_heading(format_string($course->fullname));
+    $PAGE->set_title($data->name);
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     notice(get_string("activityiscurrentlyhidden"));
 }
@@ -186,7 +186,17 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
             }
         }
 
-        add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
+        // Trigger an event for updating this record.
+        $event = \mod_data\event\record_updated::create(array(
+            'objectid' => $rid,
+            'context' => $context,
+            'courseid' => $course->id,
+            'other' => array(
+                'dataid' => $data->id
+            )
+        ));
+        $event->add_record_snapshot('data', $data);
+        $event->trigger();
 
         redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$rid);
 
@@ -235,8 +245,6 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
                     }
                 }
             }
-
-            add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
 
             if (!empty($datarecord->saveandview)) {
                 redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$recordid);

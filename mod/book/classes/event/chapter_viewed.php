@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_book chapter viewed event.
+ * The mod_book chapter viewed event.
  *
  * @package    mod_book
  * @copyright  2013 Frédéric Massart
@@ -26,13 +26,35 @@ namespace mod_book\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_book chapter viewed event class.
+ * The mod_book chapter viewed event class.
  *
  * @package    mod_book
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class chapter_viewed extends \core\event\content_viewed {
+class chapter_viewed extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \stdClass $book
+     * @param \context_module $context
+     * @param \stdClass $chapter
+     * @return chapter_viewed
+     */
+    public static function create_from_chapter(\stdClass $book, \context_module $context, \stdClass $chapter) {
+        $data = array(
+            'context' => $context,
+            'objectid' => $chapter->id,
+        );
+        /** @var chapter_viewed $event */
+        $event = self::create($data);
+        $event->add_record_snapshot('book', $book);
+        $event->add_record_snapshot('book_chapters', $chapter);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -40,7 +62,8 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has viewed the chapter $this->objectid of book module $this->context->instanceid";
+        return "The chapter with the id '$this->objectid' of the book with the course module id '$this->contextinstanceid'
+            has been viewed by the user with the id '$this->userid'.";
     }
 
     /**
@@ -49,8 +72,8 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'book', 'view chapter', 'view.php?id=' . $this->context->instanceid .
-            '&amp;chapterid=' . $this->objectid, $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'book', 'view chapter', 'view.php?id=' . $this->contextinstanceid .
+            '&amp;chapterid=' . $this->objectid, $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -59,7 +82,7 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_viewed', 'mod_book');
+        return get_string('eventchapterviewed', 'mod_book');
     }
 
     /**
@@ -68,7 +91,7 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/book/view.php', array('id' => $this->context->instanceid, 'chapterid' => $this->objectid));
+        return new \moodle_url('/mod/book/view.php', array('id' => $this->contextinstanceid, 'chapterid' => $this->objectid));
     }
 
     /**
@@ -78,20 +101,7 @@ class chapter_viewed extends \core\event\content_viewed {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'book_chapters';
     }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        // Hack to please the parent class. 'view chapter' was the key used in old add_to_log().
-        $this->data['other']['content'] = 'view chapter';
-        parent::validate_data();
-    }
-
 }

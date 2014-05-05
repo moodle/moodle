@@ -7,8 +7,8 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
 {
 
     /**
-     * Local copy of component validators.
-     *
+     * Local copy of validators
+     * @type HTMLPurifier_AttrDef[]
      * @note If we moved specific CSS property definitions to their own
      *       classes instead of having them be assembled at run time by
      *       CSSDefinition, this wouldn't be necessary.  We'd instantiate
@@ -16,18 +16,28 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
      */
     protected $info = array();
 
-    public function __construct($config) {
+    /**
+     * @param HTMLPurifier_Config $config
+     */
+    public function __construct($config)
+    {
         $def = $config->getCSSDefinition();
-        $this->info['font-style']   = $def->info['font-style'];
+        $this->info['font-style'] = $def->info['font-style'];
         $this->info['font-variant'] = $def->info['font-variant'];
-        $this->info['font-weight']  = $def->info['font-weight'];
-        $this->info['font-size']    = $def->info['font-size'];
-        $this->info['line-height']  = $def->info['line-height'];
-        $this->info['font-family']  = $def->info['font-family'];
+        $this->info['font-weight'] = $def->info['font-weight'];
+        $this->info['font-size'] = $def->info['font-size'];
+        $this->info['line-height'] = $def->info['line-height'];
+        $this->info['font-family'] = $def->info['font-family'];
     }
 
-    public function validate($string, $config, $context) {
-
+    /**
+     * @param string $string
+     * @param HTMLPurifier_Config $config
+     * @param HTMLPurifier_Context $context
+     * @return bool|string
+     */
+    public function validate($string, $config, $context)
+    {
         static $system_fonts = array(
             'caption' => true,
             'icon' => true,
@@ -39,7 +49,9 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
 
         // regular pre-processing
         $string = $this->parseCDATA($string);
-        if ($string === '') return false;
+        if ($string === '') {
+            return false;
+        }
 
         // check if it's one of the keywords
         $lowercase_string = strtolower($string);
@@ -54,15 +66,20 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
         $final = ''; // output
 
         for ($i = 0, $size = count($bits); $i < $size; $i++) {
-            if ($bits[$i] === '') continue;
+            if ($bits[$i] === '') {
+                continue;
+            }
             switch ($stage) {
-
-                // attempting to catch font-style, font-variant or font-weight
-                case 0:
+                case 0: // attempting to catch font-style, font-variant or font-weight
                     foreach ($stage_1 as $validator_name) {
-                        if (isset($caught[$validator_name])) continue;
+                        if (isset($caught[$validator_name])) {
+                            continue;
+                        }
                         $r = $this->info[$validator_name]->validate(
-                                                $bits[$i], $config, $context);
+                            $bits[$i],
+                            $config,
+                            $context
+                        );
                         if ($r !== false) {
                             $final .= $r . ' ';
                             $caught[$validator_name] = true;
@@ -70,15 +87,17 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
                         }
                     }
                     // all three caught, continue on
-                    if (count($caught) >= 3) $stage = 1;
-                    if ($r !== false) break;
-
-                // attempting to catch font-size and perhaps line-height
-                case 1:
+                    if (count($caught) >= 3) {
+                        $stage = 1;
+                    }
+                    if ($r !== false) {
+                        break;
+                    }
+                case 1: // attempting to catch font-size and perhaps line-height
                     $found_slash = false;
                     if (strpos($bits[$i], '/') !== false) {
                         list($font_size, $line_height) =
-                                                    explode('/', $bits[$i]);
+                            explode('/', $bits[$i]);
                         if ($line_height === '') {
                             // ooh, there's a space after the slash!
                             $line_height = false;
@@ -89,14 +108,19 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
                         $line_height = false;
                     }
                     $r = $this->info['font-size']->validate(
-                                              $font_size, $config, $context);
+                        $font_size,
+                        $config,
+                        $context
+                    );
                     if ($r !== false) {
                         $final .= $r;
                         // attempt to catch line-height
                         if ($line_height === false) {
                             // we need to scroll forward
                             for ($j = $i + 1; $j < $size; $j++) {
-                                if ($bits[$j] === '') continue;
+                                if ($bits[$j] === '') {
+                                    continue;
+                                }
                                 if ($bits[$j] === '/') {
                                     if ($found_slash) {
                                         return false;
@@ -116,7 +140,10 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
                         if ($found_slash) {
                             $i = $j;
                             $r = $this->info['line-height']->validate(
-                                              $line_height, $config, $context);
+                                $line_height,
+                                $config,
+                                $context
+                            );
                             if ($r !== false) {
                                 $final .= '/' . $r;
                             }
@@ -126,13 +153,14 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
                         break;
                     }
                     return false;
-
-                // attempting to catch font-family
-                case 2:
+                case 2: // attempting to catch font-family
                     $font_family =
                         implode(' ', array_slice($bits, $i, $size - $i));
                     $r = $this->info['font-family']->validate(
-                                              $font_family, $config, $context);
+                        $font_family,
+                        $config,
+                        $context
+                    );
                     if ($r !== false) {
                         $final .= $r . ' ';
                         // processing completed successfully
@@ -143,7 +171,6 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
         }
         return false;
     }
-
 }
 
 // vim: et sw=4 sts=4

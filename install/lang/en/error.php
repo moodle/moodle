@@ -46,7 +46,8 @@ $string['dmlexceptiononinstall'] = '<p>A database error has occurred [{$a->error
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed';
 $string['invalidmd5'] = 'The check variable was wrong - try again';
 $string['missingrequiredfield'] = 'Some required field is missing';
-$string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';
+$string['remotedownloaderror'] = '<p>The download of the component to your server failed. Please verify proxy settings; the PHP cURL extension is highly recommended.</p>
+<p>You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.</p>';
 $string['wrongdestpath'] = 'Wrong destination path';
 $string['wrongsourcebase'] = 'Wrong source URL base';
 $string['wrongzipfilename'] = 'Wrong ZIP file name';

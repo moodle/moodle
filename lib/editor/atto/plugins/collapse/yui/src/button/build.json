@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_collapse-button",
+  "builds": {
+    "moodle-atto_collapse-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

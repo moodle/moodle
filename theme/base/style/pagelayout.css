@@ -37,7 +37,7 @@ body {margin:auto 0px;width:auto;}
 #page-content #region-main {margin-right:0px;margin-left:400px;overflow:hidden;}
 #page-content #region-pre {float:left;left:200px;overflow:hidden;position:relative;width:200px;margin-left:-50%;}
 #page-content #region-post {float:left;left:0px;overflow:hidden;position:relative;width:200px;}
-#page-content .region-content {overflow:hidden;padding:10px;}
+#page-content .region-content {padding:10px;}
 #page-footer {clear:both;float:left;width:100%;}
 
 /** Only side pre **/
@@ -52,6 +52,12 @@ body {margin:auto 0px;width:auto;}
 .side-post-only #page-content #region-main {margin-left:200px;}
 .side-post-only #page-content #region-pre {width:0px;}
 .has_dock.side-post-only .page-middle #region-main {margin-left:200px;}
+
+/** Moving block when side pre only **/
+.blocks-moving.side-pre-only #page-content #region-post-box {margin-left:-400px;}
+.blocks-moving.side-pre-only #page-content #region-main {margin-left:400px;}
+.blocks-moving.side-pre-only #page-content #region-pre {left:200px;}
+.blocks-moving.side-pre-only #page-content #region-post {width:200px;}
 
 /** Moving block when side-post-only **/
 .blocks-moving.side-post-only #page-content #region-main-box {left:200px;width:200%;}

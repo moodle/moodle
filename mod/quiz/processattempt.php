@@ -23,10 +23,9 @@
  *
  * This code used to be near the top of attempt.php, if you are looking for CVS history.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
@@ -157,13 +156,6 @@ if (!$finishattempt) {
         redirect($nexturl);
     }
 }
-
-// Otherwise, we have been asked to finish attempt, so do that.
-
-// Log the end of this attempt.
-add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
-        'review.php?attempt=' . $attemptobj->get_attemptid(),
-        $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 // Update the quiz attempt record.
 try {

@@ -27,13 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Base class question import format for zip files with images
  *
+ * @package    qformat_blackboard_six
+ * @copyright  2012 Jean-Michel Vedrine
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class qformat_blackboard_six_base extends qformat_based_on_xml {
     /** @var string path to path to root of image tree in unzipped archive. */
     public $filebase = '';
     /** @var string path to the temporary directory. */
     public $tempdir = '';
+
     /**
      * This plugin provide import
      * @return bool true
@@ -84,9 +87,9 @@ class qformat_blackboard_six_base extends qformat_based_on_xml {
     /**
      * Store an image file in a draft filearea
      * @param array $text, if itemid element don't exists it will be created
-     * @param string tempdir path to root of image tree
-     * @param string filepathinsidetempdir path to image in the tree
-     * @param string filename image's name
+     * @param string $tempdir path to root of image tree
+     * @param string $filepathinsidetempdir path to image in the tree
+     * @param string $filename image's name
      * @return string new name of the image as it was stored
      */
     protected function store_file_for_text_field(&$text, $tempdir, $filepathinsidetempdir, $filename) {
@@ -116,7 +119,7 @@ class qformat_blackboard_six_base extends qformat_based_on_xml {
      * store all images in a draft filearea,
      * and return an array with all urls in text recoded,
      * format set to FORMAT_HTML, and itemid set to filearea itemid
-     * @param string text text to parse and recode
+     * @param string $text text to parse and recode
      * @return array with keys text, format, itemid.
      */
     public function text_field($text) {
@@ -143,7 +146,7 @@ class qformat_blackboard_six_base extends qformat_based_on_xml {
 
     /**
      * Same as text_field but text is cleaned.
-     * @param string text text to parse and recode
+     * @param string $text text to parse and recode
      * @return array with keys text, format, itemid.
      */
     public function cleaned_text_field($text) {

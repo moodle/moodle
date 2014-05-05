@@ -47,14 +47,11 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_created::create($params);
+        $event = \mod_book\event\chapter_created::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -65,11 +62,12 @@ class mod_book_events_testcase extends advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_book\event\chapter_created', $event);
-        $this->assertEquals(context_module::instance($book->id), $event->get_context());
+        $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $expected = array($course->id, 'book', 'add chapter', 'view.php?id='.$book->cmid.'&chapterid='.$chapter->id,
             $chapter->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_chapter_updated() {
@@ -79,14 +77,11 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_updated::create($params);
+        $event = \mod_book\event\chapter_updated::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -97,11 +92,12 @@ class mod_book_events_testcase extends advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_book\event\chapter_updated', $event);
-        $this->assertEquals(context_module::instance($book->id), $event->get_context());
+        $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $expected = array($course->id, 'book', 'update chapter', 'view.php?id='.$book->cmid.'&chapterid='.$chapter->id,
             $chapter->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_chapter_deleted() {
@@ -111,16 +107,12 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_deleted::create($params);
-        $event->add_record_snapshot('book_chapters', $chapter);
-        $event->set_legacy_logdata(array('1', 2, false));
+        $event = \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $chapter);
+        $legacy = array($course->id, 'book', 'update', 'view.php?id='.$book->cmid, $book->id, $book->cmid);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -131,10 +123,11 @@ class mod_book_events_testcase extends advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_book\event\chapter_deleted', $event);
-        $this->assertEquals(context_module::instance($book->id), $event->get_context());
+        $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $this->assertEquals($chapter, $event->get_record_snapshot('book_chapters', $chapter->id));
-        $this->assertEventLegacyLogData(array('1', 2, false), $event);
+        $this->assertEventLegacyLogData($legacy, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_instance_list_viewed() {
@@ -159,6 +152,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $expected = array($course->id, 'book', 'view all', 'index.php?id='.$course->id, '');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_viewed() {
@@ -187,6 +181,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEquals($book->id, $event->objectid);
         $expected = array($course->id, 'book', 'view', 'view.php?id=' . $book->cmid, $book->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_chapter_viewed() {
@@ -196,14 +191,11 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_viewed::create($params);
+        $event = \mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -219,6 +211,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'book', 'view chapter', 'view.php?id=' . $book->cmid . '&amp;chapterid=' .
             $chapter->id, $chapter->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

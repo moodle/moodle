@@ -18,10 +18,9 @@
 /**
  * List of file folders in course
  *
- * @package    mod
- * @subpackage folder
- * @copyright  2009 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_folder
+ * @copyright 2009 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
@@ -37,6 +36,7 @@ $params = array(
     'context' => context_course::instance($course->id)
 );
 $event = \mod_folder\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $strfolder       = get_string('modulename', 'folder');

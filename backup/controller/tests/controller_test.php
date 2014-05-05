@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 // Include all the needed stuff
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 /*
  * controller tests (all)
@@ -100,6 +101,70 @@ class core_backup_controller_testcase extends advanced_testcase {
         $bc = new mock_backup_controller(backup::TYPE_1COURSE, $this->courseid, backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $this->userid);
         $this->assertEquals($bc->get_include_files(), 0);
+    }
+
+    /**
+     * Tests the restore_controller.
+     */
+    public function test_restore_controller_is_executing() {
+        global $CFG;
+
+        // Make a backup.
+        check_dir_exists($CFG->tempdir . '/backup');
+        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $this->userid);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // The progress class will get called during restore, so we can use that
+        // to check the executing flag is true.
+        $progress = new core_backup_progress_restore_is_executing();
+
+        // Set up restore.
+        $rc = new restore_controller($backupid, $this->courseid,
+                backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $this->userid,
+                backup::TARGET_EXISTING_ADDING);
+        $this->assertTrue($rc->execute_precheck());
+
+        // Check restore is NOT executing.
+        $this->assertFalse(restore_controller::is_executing());
+
+        // Execute restore.
+        $rc->set_progress($progress);
+        $rc->execute_plan();
+
+        // Check restore is NOT executing afterward either.
+        $this->assertFalse(restore_controller::is_executing());
+        $rc->destroy();
+
+        // During restore, check that executing was true.
+        $this->assertTrue(count($progress->executing) > 0);
+        $alltrue = true;
+        foreach ($progress->executing as $executing) {
+            if (!$executing) {
+                $alltrue = false;
+                break;
+            }
+        }
+        $this->assertTrue($alltrue);
+    }
+}
+
+
+/**
+ * Progress class that records the result of restore_controller::is_executing calls.
+ *
+ * @package core_backup
+ * @copyright 2014 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_backup_progress_restore_is_executing extends \core\progress\base {
+    /** @var array Array of results from calling function */
+    public $executing = array();
+
+    public function update_progress() {
+        $this->executing[] = restore_controller::is_executing();
     }
 }
 

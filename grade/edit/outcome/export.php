@@ -84,9 +84,9 @@ foreach($outcomes as $outcome) {
  * Formats and returns a line of data, in CSV format. This code
  * is from http://au2.php.net/manual/en/function.fputcsv.php#77866
  *
- * @params array-of-string $fields data to be exported
- * @params char $delimiter char to be used to separate fields
- * @params char $enclosure char used to enclose strings that contains newlines, spaces, tabs or the delimiter char itself
+ * @param string[] $fields data to be exported
+ * @param string $delimiter char to be used to separate fields
+ * @param string $enclosure char used to enclose strings that contains newlines, spaces, tabs or the delimiter char itself
  * @returns string one line of csv data
  */
 function format_csv($fields = array(), $delimiter = ';', $enclosure = '"') {

@@ -94,11 +94,7 @@
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
-    $logparam = 'id='. $course->id;
-    $loglabel = 'view';
-    $infoid = $course->id;
     if ($section and $section > 0) {
-        $loglabel = 'view section';
 
         // Get section details and check it exists.
         $modinfo = get_fast_modinfo($course);
@@ -111,10 +107,7 @@
             // correct error message shown.
             require_capability('moodle/course:viewhiddensections', $context);
         }
-        $infoid = $coursesections->id;
-        $logparam .= '&sectionid='. $infoid;
     }
-    add_to_log($course->id, 'course', $loglabel, "view.php?". $logparam, $infoid);
 
     // Fix course format if it is no longer installed
     $course->format = course_get_format($course)->get_format();
@@ -219,10 +212,8 @@
         redirect($CFG->wwwroot .'/');
     }
 
-    $ajaxenabled = ajaxenabled();
-
     $completion = new completion_info($course);
-    if ($completion->is_enabled() && $ajaxenabled) {
+    if ($completion->is_enabled()) {
         $PAGE->requires->string_for_js('completion-title-manual-y', 'completion');
         $PAGE->requires->string_for_js('completion-title-manual-n', 'completion');
         $PAGE->requires->string_for_js('completion-alt-manual-y', 'completion');
@@ -251,7 +242,7 @@
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
-    if ($completion->is_enabled() && $ajaxenabled) {
+    if ($completion->is_enabled()) {
         // This value tracks whether there has been a dynamic change to the page.
         // It is used so that if a user does this - (a) set some tickmarks, (b)
         // go to another page, (c) clicks Back button - the page will
@@ -289,6 +280,16 @@
     // Content wrapper end.
 
     echo html_writer::end_tag('div');
+
+    // Trigger course viewed event.
+    // We don't trust $context here. Course format inclusion above executes in the global space. We can't assume
+    // anything after that point.
+    $eventdata = array('context' => context_course::instance($course->id));
+    if (!empty($section) && (int)$section == $section) {
+        $eventdata['other'] = array('coursesectionid' => $section);
+    }
+    $event = \core\event\course_viewed::create($eventdata);
+    $event->trigger();
 
     // Include course AJAX
     include_course_ajax($course, $modnamesused);

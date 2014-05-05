@@ -6,14 +6,14 @@ Feature: Restrict activity availability through grade conditions
 
   @javascript
   Scenario: Show activity greyed-out to students when grade condition is not satisfied
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | Frist | teacher1@asd.com |
       | student1 | Student | First | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -32,23 +32,24 @@ Feature: Restrict activity availability through grade conditions
     # Adding the page like this because id_availableform_enabled needs to be clicked to trigger the action.
     And I add a "Page" to section "2"
     And I expand all fieldsets
-    And I click on "id_availablefrom_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I click on "Add restriction..." "button"
+    And I click on "Grade" "button" in the "Add restriction..." "dialogue"
+    And I click on "min" "checkbox"
+    And I set the following fields to these values:
       | Name | Test page name |
       | Description | Restricted page, till grades in Grade assignment is at least 20% |
       | Page content | Test page contents |
-      | id_conditiongradegroup_0_conditiongradeitemid | 2 |
-      | id_conditiongradegroup_0_conditiongrademin | 20 |
-      | id_showavailability | 1 |
+      | id | 2 |
+      | minval | 20 |
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
-    Then I should see "Not available until you achieve a required score in Grade assignment"
+    Then I should see "Not available unless: You achieve a required score in Grade assignment"
     And "Test page name" activity should be hidden
     And I follow "Grade assignment"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission |
     And I press "Save changes"
     And I should see "Submitted for grading"
@@ -58,11 +59,11 @@ Feature: Restrict activity availability through grade conditions
     And I follow "Grade assignment"
     And I follow "View/grade all submissions"
     And I click on "Grade Student First" "link" in the "Student First" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And "Test page name" activity should be visible
-    And I should not see "Not available until you achieve a required score in Grade assignment"
+    And I should not see "Not available unless: You achieve a required score in Grade assignment"

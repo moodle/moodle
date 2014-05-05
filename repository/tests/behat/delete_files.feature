@@ -1,10 +1,10 @@
-@core @core_filepicker @_only_local
+@core @core_filepicker @_file_upload
 Feature: Delete files and folders from the file manager
   In order to clean the file manager contents
   As a user
   I need to delete files from file areas
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Delete a file and a folder
     Given I log in as "admin"
     And I expand "My profile" node

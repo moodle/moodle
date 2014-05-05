@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains CSS related class, and function for the CSS optimiser
+ * This file contains CSS related class, and function for the CSS optimiser.
  *
  * Please see the {@link css_optimiser} class for greater detail.
+ *
+ * NOTE: these functions are not expected to be used from any addons.
  *
  * @package core
  * @subpackage cssoptimiser
@@ -27,6 +29,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
+    // This can be also set in config.php file,
+    // it needs to be higher than the time it takes to generate all CSS content.
+    define('THEME_DESIGNER_CACHE_LIFETIME', 10);
+}
+
 /**
  * Stores CSS in a file at the given path.
  *
@@ -34,49 +42,14 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param theme_config $theme The theme that the CSS belongs to.
  * @param string $csspath The path to store the CSS at.
- * @param array $cssfiles The CSS files to store.
+ * @param string $csscontent the complete CSS in one string
  * @param bool $chunk If set to true these files will be chunked to ensure
  *      that no one file contains more than 4095 selectors.
  * @param string $chunkurl If the CSS is be chunked then we need to know the URL
  *      to use for the chunked files.
  */
-function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = false, $chunkurl = null) {
+function css_store_css(theme_config $theme, $csspath, $csscontent, $chunk = false, $chunkurl = null) {
     global $CFG;
-
-    $css = '';
-    foreach ($cssfiles as $file) {
-        $css .= file_get_contents($file)."\n";
-    }
-
-    // Check if both the CSS optimiser is enabled and the theme supports it.
-    if (!empty($CFG->enablecssoptimiser) && $theme->supportscssoptimisation) {
-        // This is an experimental feature introduced in Moodle 2.3
-        // The CSS optimiser organises the CSS in order to reduce the overall number
-        // of rules and styles being sent to the client. It does this by collating
-        // the CSS before it is cached removing excess styles and rules and stripping
-        // out any extraneous content such as comments and empty rules.
-        $optimiser = new css_optimiser;
-        $css = $theme->post_process($css);
-        $css = $optimiser->process($css);
-
-        // If cssoptimisestats is set then stats from the optimisation are collected
-        // and output at the beginning of the CSS.
-        if (!empty($CFG->cssoptimiserstats)) {
-            $css = $optimiser->output_stats_css().$css;
-        }
-    } else {
-        // This is the default behaviour.
-        // The cssoptimise setting was introduced in Moodle 2.3 and will hopefully
-        // in the future be changed from an experimental setting to the default.
-        // The css_minify_css will method will use the Minify library remove
-        // comments, additional whitespace and other minor measures to reduce the
-        // the overall CSS being sent.
-        // However it has the distinct disadvantage of having to minify the CSS
-        // before running the post process functions. Potentially things may break
-        // here if theme designers try to push things with CSS post processing.
-        $css = $theme->post_process($css);
-        $css = core_minify::css($css);
-    }
 
     clearstatcache();
     if (!file_exists(dirname($csspath))) {
@@ -88,11 +61,11 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
     ignore_user_abort(true);
 
     // First up write out the single file for all those using decent browsers.
-    css_write_file($csspath, $css);
+    css_write_file($csspath, $csscontent);
 
     if ($chunk) {
         // If we need to chunk the CSS for browsers that are sub-par.
-        $css = css_chunk_by_selector_count($css, $chunkurl);
+        $css = css_chunk_by_selector_count($csscontent, $chunkurl);
         $files = count($css);
         $count = 1;
         foreach ($css as $content) {
@@ -134,14 +107,29 @@ function css_write_file($filename, $content) {
 /**
  * Takes CSS and chunks it if the number of selectors within it exceeds $maxselectors.
  *
+ * The chunking will not split a group of selectors, or a media query. That means that
+ * if n > $maxselectors and there are n selectors grouped together,
+ * they will not be chunked and you could end up with more selectors than desired.
+ * The same applies for a media query that has more than n selectors.
+ *
+ * Also, as we do not split group of selectors or media queries, the chunking might
+ * not be as optimal as it could be, having files with less selectors than it could
+ * potentially contain.
+ *
+ * String functions used here are not compliant with unicode characters. But that is
+ * not an issue as the syntax of CSS is using ASCII codes. Even if we have unicode
+ * characters in comments, or in the property 'content: ""', it will behave correcly.
+ *
+ * Please note that this strips out the comments if chunking happens.
+ *
  * @param string $css The CSS to chunk.
  * @param string $importurl The URL to use for import statements.
  * @param int $maxselectors The number of selectors to limit a chunk to.
- * @param int $buffer The buffer size to use when chunking. You shouldn't need to reduce this
- *      unless you are lowering the maximum selectors.
+ * @param int $buffer Not used any more.
  * @return array An array of CSS chunks.
  */
 function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $buffer = 50) {
+
     // Check if we need to chunk this CSS file.
     $count = substr_count($css, ',') + substr_count($css, '{');
     if ($count < $maxselectors) {
@@ -149,44 +137,116 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
         return array($css);
     }
 
-    // Chunk time ?!
-    // Split the CSS by array, making sure to save the delimiter in the process.
-    $parts = preg_split('#([,\}])#', $css, null, PREG_SPLIT_DELIM_CAPTURE + PREG_SPLIT_NO_EMPTY);
-    // We need to chunk the array. Each delimiter is stored separately so we multiple by 2.
-    // We also subtract 100 to give us a small buffer just in case.
-    $parts = array_chunk($parts, $maxselectors * 2 - $buffer * 2);
-    $css = array();
-    $partcount = count($parts);
-    foreach ($parts as $key => $chunk) {
-        if (end($chunk) === ',') {
-            // Damn last element was a comma.
-            // Pretty much the only way to deal with this is to take the styles from the end of the
-            // comma separated chain of selectors and apply it to the last selector we have here in place
-            // of the comma.
-            // Unit tests are essential for making sure this works.
-            $styles = false;
-            $i = $key;
-            while ($styles === false && $i < ($partcount - 1)) {
-                $i++;
-                $nextpart = $parts[$i];
-                foreach ($nextpart as $style) {
-                    if (strpos($style, '{') !== false) {
-                        $styles = preg_replace('#^[^\{]+#', '', $style);
-                        break;
-                    }
-                }
+    $chunks = array();                  // The final chunks.
+    $offsets = array();                 // The indexes to chunk at.
+    $offset = 0;                        // The current offset.
+    $selectorcount = 0;                 // The number of selectors since the last split.
+    $lastvalidoffset = 0;               // The last valid index to split at.
+    $lastvalidoffsetselectorcount = 0;  // The number of selectors used at the time were could split.
+    $inrule = 0;                        // The number of rules we are in, should not be greater than 1.
+    $inmedia = false;                   // Whether or not we are in a media query.
+    $mediacoming = false;               // Whether or not we are expeting a media query.
+    $currentoffseterror = null;         // Not null when we have recorded an error for the current split.
+    $offseterrors = array();            // The offsets where we found errors.
+
+    // Remove the comments. Because it's easier, safer and probably a lot of other good reasons.
+    $css = preg_replace('#/\*(.*?)\*/#s', '', $css);
+    $strlen = strlen($css);
+
+    // Walk through the CSS content character by character.
+    for ($i = 1; $i <= $strlen; $i++) {
+        $char = $css[$i - 1];
+        $offset = $i;
+
+        // Is that a media query that I see coming towards us?
+        if ($char === '@') {
+            if (!$inmedia && substr($css, $offset, 5) === 'media') {
+                $mediacoming = true;
             }
-            if ($styles === false) {
-                $styles = '/** Error chunking CSS **/';
-            } else {
-                $styles .= '}';
-            }
-            array_pop($chunk);
-            array_push($chunk, $styles);
         }
-        $css[] = join('', $chunk);
+
+        // So we are entering a rule or a media query...
+        if ($char === '{') {
+            if ($mediacoming) {
+                $inmedia = true;
+                $mediacoming = false;
+            } else {
+                $inrule++;
+                $selectorcount++;
+            }
+        }
+
+        // Let's count the number of selectors, but only if we are not in a rule as they
+        // can contain commas too.
+        if (!$inrule && $char === ',') {
+            $selectorcount++;
+        }
+
+        // We reached the end of something.
+        if ($char === '}') {
+            // Oh, we are in a media query.
+            if ($inmedia) {
+                if (!$inrule) {
+                    // This is the end of the media query.
+                    $inmedia = false;
+                } else {
+                    // We were in a rule, in the media query.
+                    $inrule--;
+                }
+            } else {
+                $inrule--;
+            }
+
+            // We are not in a media query, and there is no pending rule, it is safe to split here.
+            if (!$inmedia && !$inrule) {
+                $lastvalidoffset = $offset;
+                $lastvalidoffsetselectorcount = $selectorcount;
+            }
+        }
+
+        // Alright, this is splitting time...
+        if ($selectorcount > $maxselectors) {
+            if (!$lastvalidoffset) {
+                // We must have reached more selectors into one set than we were allowed. That means that either
+                // the chunk size value is too small, or that we have a gigantic group of selectors, or that a media
+                // query contains more selectors than the chunk size. We have to ignore this because we do not
+                // support split inside a group of selectors or media query.
+                if ($currentoffseterror === null) {
+                    $currentoffseterror = $offset;
+                    $offseterrors[] = $currentoffseterror;
+                }
+            } else {
+                // We identify the offset to split at and reset the number of selectors found from there.
+                $offsets[] = $lastvalidoffset;
+                $selectorcount = $selectorcount - $lastvalidoffsetselectorcount;
+                $lastvalidoffset = 0;
+                $currentoffseterror = null;
+            }
+        }
     }
-    // The array $css now contains CSS split into perfect sized chunks.
+
+    // Report offset errors.
+    if (!empty($offseterrors)) {
+        debugging('Could not find a safe place to split at offset(s): ' . implode(', ', $offseterrors) . '. Those were ignored.',
+            DEBUG_DEVELOPER);
+    }
+
+    // Now that we have got the offets, we can chunk the CSS.
+    $offsetcount = count($offsets);
+    foreach ($offsets as $key => $index) {
+        $start = 0;
+        if ($key > 0) {
+            $start = $offsets[$key - 1];
+        }
+        // From somewhere up to the offset.
+        $chunks[] = substr($css, $start, $index - $start);
+    }
+    // Add the last chunk (if there is one), from the last offset to the end of the string.
+    if (end($offsets) != $strlen) {
+        $chunks[] = substr($css, end($offsets));
+    }
+
+    // The array $chunks now contains CSS split into perfect sized chunks.
     // Import statements can only appear at the very top of a CSS file.
     // Imported sheets are applied in the the order they are imported and
     // are followed by the contents of the CSS.
@@ -197,7 +257,7 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
     // followed by the contents of the final chunk in the actual sheet.
     $importcss = '';
     $slashargs = strpos($importurl, '.php?') === false;
-    $parts = count($css);
+    $parts = count($chunks);
     for ($i = 1; $i < $parts; $i++) {
         if ($slashargs) {
             $importcss .= "@import url({$importurl}/chunk{$i});\n";
@@ -205,10 +265,10 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
             $importcss .= "@import url({$importurl}&chunk={$i});\n";
         }
     }
-    $importcss .= end($css);
-    $css[key($css)] = $importcss;
+    $importcss .= end($chunks);
+    $chunks[key($chunks)] = $importcss;
 
-    return $css;
+    return $chunks;
 }
 
 /**
@@ -237,6 +297,32 @@ function css_send_cached_css($csspath, $etag) {
     }
 
     readfile($csspath);
+    die;
+}
+
+/**
+ * Sends a cached CSS content
+ *
+ * @param string $csscontent The actual CSS markup.
+ * @param string $etag The revision to make sure we utilise any caches.
+ */
+function css_send_cached_css_content($csscontent, $etag) {
+    // 60 days only - the revision may get incremented quite often.
+    $lifetime = 60*60*24*60;
+
+    header('Etag: "'.$etag.'"');
+    header('Content-Disposition: inline; filename="styles.php"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Pragma: ');
+    header('Cache-Control: public, max-age='.$lifetime);
+    header('Accept-Ranges: none');
+    header('Content-Type: text/css; charset=utf-8');
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.strlen($csscontent));
+    }
+
+    echo($csscontent);
     die;
 }
 

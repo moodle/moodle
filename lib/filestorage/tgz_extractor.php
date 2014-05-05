@@ -456,8 +456,10 @@ class tgz_extractor {
                         'Failed to close output file: ' .  $this->currentfile);
             }
 
-            // Update modified time.
-            touch($this->currentfile, $this->currentmtime);
+            // At this point we should touch the file to set its modified
+            // time to $this->currentmtime. However, when extracting to the
+            // temp directory, cron will delete files more than a week old,
+            // so to avoid problems we leave all files at their current time.
         }
 
         if ($this->currentarchivepath === tgz_packer::ARCHIVE_INDEX_FILE) {

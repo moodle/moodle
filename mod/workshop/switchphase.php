@@ -18,8 +18,7 @@
 /**
  * Change the current phase of the workshop
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,7 +47,6 @@ if ($confirm) {
     if (!$workshop->switch_phase($phase)) {
         print_error('errorswitchingphase', 'workshop', $workshop->view_url());
     }
-    $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);
     redirect($workshop->view_url());
 }
 

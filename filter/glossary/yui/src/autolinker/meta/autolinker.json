@@ -7,6 +7,7 @@
         "json-parse",
         "event-delegate",
         "overlay",
+        "moodle-core-event",
         "moodle-core-notification-alert"
     ]
   }

@@ -17,8 +17,7 @@
 /**
  * Strings for component 'assignment_online', language 'en', branch 'master'
  *
- * @package    assignment
- * @subpackage online
+ * @package    assignment_online
  * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

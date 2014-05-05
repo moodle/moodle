@@ -114,14 +114,23 @@ class event_form extends moodleform {
         $mform->addRule('timestart', get_string('required'), 'required');
 
         $mform->addElement('header', 'durationdetails', get_string('eventduration', 'calendar'));
-        $mform->addElement('radio', 'duration', null, get_string('durationnone', 'calendar'), 0);
 
-        $mform->addElement('radio', 'duration', null, get_string('durationuntil', 'calendar'), 1);
-        $mform->addElement('date_time_selector', 'timedurationuntil', '&nbsp;');
-        $mform->disabledIf('timedurationuntil','duration','noteq', 1);
+        $group = array();
+        $group[] =& $mform->createElement('radio', 'duration', null, get_string('durationnone', 'calendar'), 0);
+        $group[] =& $mform->createElement('radio', 'duration', null, get_string('durationuntil', 'calendar'), 1);
+        $group[] =& $mform->createElement('date_time_selector', 'timedurationuntil', '');
+        $group[] =& $mform->createElement('radio', 'duration', null, get_string('durationminutes', 'calendar'), 2);
+        $group[] =& $mform->createElement('text', 'timedurationminutes', null);
 
-        $mform->addElement('radio', 'duration', null, get_string('durationminutes', 'calendar'), 2);
-        $mform->addElement('text', 'timedurationminutes', null);
+        $mform->addGroup($group, 'durationgroup', '', '<br />', false);
+
+        $mform->disabledIf('timedurationuntil',         'duration', 'noteq', 1);
+        $mform->disabledIf('timedurationuntil[day]',    'duration', 'noteq', 1);
+        $mform->disabledIf('timedurationuntil[month]',  'duration', 'noteq', 1);
+        $mform->disabledIf('timedurationuntil[year]',   'duration', 'noteq', 1);
+        $mform->disabledIf('timedurationuntil[hour]',   'duration', 'noteq', 1);
+        $mform->disabledIf('timedurationuntil[minute]', 'duration', 'noteq', 1);
+
         $mform->setType('timedurationminutes', PARAM_INT);
         $mform->disabledIf('timedurationminutes','duration','noteq', 2);
 
@@ -130,7 +139,7 @@ class event_form extends moodleform {
         if ($newevent) {
 
             $mform->addElement('header', 'repeatevents', get_string('repeatedevents', 'calendar'));
-            $mform->addElement('checkbox', 'repeat', get_string('repeatevent', 'calendar'), null, 'repeat');
+            $mform->addElement('checkbox', 'repeat', get_string('repeatevent', 'calendar'), null);
             $mform->addElement('text', 'repeats', get_string('repeatweeksl', 'calendar'), 'maxlength="10" size="10"');
             $mform->setType('repeats', PARAM_INT);
             $mform->setDefault('repeats', 1);

@@ -71,9 +71,14 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_badges_structure_step('course_badges', 'badges.xml'));
         }
 
-        // Review all the module_availability records in backup_ids in order
-        // to match them with existing modules / grade items.
+        // Review all the legacy module_availability records in backup_ids in
+        // order to match them with existing modules / grade items and convert
+        // into the new system.
         $this->add_step(new restore_process_course_modules_availability('process_modules_availability'));
+
+        // Update restored availability data to account for changes in IDs
+        // during backup/restore.
+        $this->add_step(new restore_update_availability('update_availability'));
 
         // Decode all the interlinks
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
@@ -162,7 +167,12 @@ class restore_final_task extends restore_task {
         // rules from other tasks (activities) not belonging to one module instance (cmid = 0), so are restored here
         $rules = array_merge($rules, restore_logs_processor::register_log_rules_for_course());
 
-        // TODO: Other logs like 'calendar', 'upload'... will go here
+        // Calendar rules.
+        $rules[] = new restore_log_rule('calendar', 'add', 'event.php?action=edit&id={event}', '[name]');
+        $rules[] = new restore_log_rule('calendar', 'edit', 'event.php?action=edit&id={event}', '[name]');
+        $rules[] = new restore_log_rule('calendar', 'edit all', 'event.php?action=edit&id={event}', '[name]');
+
+        // TODO: Other logs like 'upload'... will go here
 
         return $rules;
     }

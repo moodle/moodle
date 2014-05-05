@@ -48,10 +48,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
         // Intialise string/icon etc if user is editing and courses > 1
         if ($this->page->user_is_editing() && (count($courses) > 1)) {
             $userediting = true;
-            // If ajaxenabled then include DND JS and replace link with move image.
-            if (ajaxenabled()) {
-                $this->page->requires->js_init_call('M.block_course_overview.add_handles');
-            }
+            $this->page->requires->js_init_call('M.block_course_overview.add_handles');
 
             // Check if course is moving
             $ismovingcourse = optional_param('movecourse', FALSE, PARAM_BOOL);

@@ -1102,6 +1102,22 @@ class html_writer {
     }
 
     /**
+     * Generates a simple image tag with attributes.
+     *
+     * @param string $src The source of image
+     * @param string $alt The alternate text for image
+     * @param array $attributes The tag attributes (array('height' => $max_height, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
+    public static function img($src, $alt, array $attributes = null) {
+        $attributes = (array)$attributes;
+        $attributes['src'] = $src;
+        $attributes['alt'] = $alt;
+
+        return self::empty_tag('img', $attributes);
+    }
+
+    /**
      * Generates random html element id.
      *
      * @staticvar int $counter
@@ -1425,6 +1441,9 @@ class html_writer {
      * If this is not what you want, you should make a full clone of your data before passing them to this
      * method. In most cases this is not an issue at all so we do not clone by default for performance
      * and memory consumption reasons.
+     *
+     * Please do not use .r0/.r1 for css, as they will be removed in Moodle 2.9.
+     * @todo MDL-43902 , remove r0 and r1 from tr classes.
      *
      * @param html_table $table data to be rendered
      * @return string HTML code

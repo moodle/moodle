@@ -17,8 +17,7 @@
 /**
  * Version details
  *
- * @package    block
- * @subpackage private_files
+ * @package    block_private_files
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

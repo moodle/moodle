@@ -53,6 +53,15 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
     /**
+     * Small timeout.
+     *
+     * A reduced timeout for cases where self::TIMEOUT is too much
+     * and a simple $this->getSession()->getPage()->find() could not
+     * be enough.
+     */
+    const REDUCED_TIMEOUT = 2;
+
+    /**
      * The timeout for each Behat step (load page, wait for an element to load...).
      */
     const TIMEOUT = 6;
@@ -88,12 +97,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
      * @param Exception $exception Otherwise we throw exception with generic info
      * @param NodeElement $node Spins around certain DOM node instead of the whole page
+     * @param int $timeout Forces a specific time out (in seconds).
      * @return NodeElement
      */
-    protected function find($selector, $locator, $exception = false, $node = false) {
+    protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
         // Returns the first match.
-        $items = $this->find_all($selector, $locator, $exception, $node);
+        $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
     }
 
@@ -107,9 +117,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
      * @param Exception $exception Otherwise we throw expcetion with generic info
      * @param NodeElement $node Spins around certain DOM node instead of the whole page
+     * @param int $timeout Forces a specific time out (in seconds). If 0 is provided the default timeout will be applied.
      * @return array NodeElements list
      */
-    protected function find_all($selector, $locator, $exception = false, $node = false) {
+    protected function find_all($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
         // Generic info.
         if (!$exception) {
@@ -136,6 +147,17 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         // Pushing $node if required.
         if ($node) {
             $params['node'] = $node;
+        }
+
+        // How much we will be waiting for the element to appear.
+        if (!$timeout) {
+            $timeout = self::TIMEOUT;
+            $microsleep = false;
+        } else {
+            // Spinning each 0.1 seconds if the timeout was forced as we understand
+            // that is a special case and is good to refine the performance as much
+            // as possible.
+            $microsleep = true;
         }
 
         // Waits for the node to appear if it exists, otherwise will timeout and throw the provided exception.
@@ -170,8 +192,9 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 return $context->getSession()->getDriver()->find(implode('|', $unions));
             },
             $params,
-            self::TIMEOUT,
-            $exception
+            $timeout,
+            $exception,
+            $microsleep
         );
     }
 
@@ -254,7 +277,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * The arguments of the closure are mixed, use $args depending on your needs.
      *
      * You can provide an exception to give more accurate feedback to tests writers, otherwise the
-     * closure exception will be used, but you must provide an exception if the closure does not throws
+     * closure exception will be used, but you must provide an exception if the closure does not throw
      * an exception.
      *
      * @throws Exception If it timeouts without receiving something != false from the closure
@@ -554,70 +577,57 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * Ensures that all the page's editors are loaded.
      *
-     * This method is expensive as it waits for .mceEditor CSS
-     * so use with caution and only where there will be editors.
-     *
+     * @deprecated since Moodle 2.7 MDL-44084 - please do not use this function any more.
      * @throws ElementNotFoundException
      * @throws ExpectationException
      * @return void
      */
     protected function ensure_editors_are_loaded() {
+        global $CFG;
 
+        if (empty($CFG->behat_usedeprecated)) {
+            debugging('Function behat_base::ensure_editors_are_loaded() is deprecated. It is no longer required.');
+        }
+        return;
+    }
+
+    /**
+     * Change browser window size.
+     *   - small: 640x480
+     *   - medium: 1024x768
+     *   - large: 2560x1600
+     *
+     * @param string $windowsize size of window.
+     * @throws ExpectationException
+     */
+    protected function resize_window($windowsize) {
+        // Non JS don't support resize window.
         if (!$this->running_javascript()) {
             return;
         }
 
-        // If there are no editors we don't need to wait.
-        try {
-            $this->find('css', '.mceEditor');
-        } catch (ElementNotFoundException $e) {
-            return;
+        switch ($windowsize) {
+            case "small":
+                $width = 640;
+                $height = 480;
+                break;
+            case "medium":
+                $width = 1024;
+                $height = 768;
+                break;
+            case "large":
+                $width = 2560;
+                $height = 1600;
+                break;
+            default:
+                preg_match('/^(\d+x\d+)$/', $windowsize, $matches);
+                if (empty($matches) || (count($matches) != 2)) {
+                    throw new ExpectationException("Invalid screen size, can't resize", $this->getSession());
+                }
+                $size = explode('x', $windowsize);
+                $width = (int) $size[0];
+                $height = (int) $size[1];
         }
-
-        // Exception if it timesout and the element is not appearing.
-        $msg = 'The editors are not completely loaded';
-        $exception = new ExpectationException($msg, $this->getSession());
-
-        // Here we know that there are .mceEditor editors in the page and we will
-        // probably need to interact with them, if we use tinyMCE JS var before
-        // it exists it will throw an exception and we want to catch it until all
-        // the page's editors are ready to interact with them.
-        $this->spin(
-            function($context) {
-
-                // It may return 0 if tinyMCE is loaded but not the instances, so we just loop again.
-                $neditors = $context->getSession()->evaluateScript('return tinyMCE.editors.length;');
-                if ($neditors == 0) {
-                    return false;
-                }
-
-                // It may be there but not ready.
-                $iframeready = $context->getSession()->evaluateScript('
-                    var readyeditors = new Array;
-                    for (editorid in tinyMCE.editors) {
-                        if (tinyMCE.editors[editorid].getDoc().readyState === "complete") {
-                            readyeditors[editorid] = editorid;
-                        }
-                    }
-                    if (tinyMCE.editors.length === readyeditors.length) {
-                        return "complete";
-                    }
-                    return "";
-                ');
-
-                // Now we know that the editors are there.
-                if ($iframeready) {
-                    return true;
-                }
-
-                // Loop again if it is not ready.
-                return false;
-            },
-            false,
-            self::EXTENDED_TIMEOUT,
-            $exception,
-            true
-        );
+        $this->getSession()->getDriver()->resizeWindow($width, $height);
     }
-
 }

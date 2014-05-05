@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['eventreportviewed'] = 'Statistics report viewed';
+$string['eventuserreportviewed'] = 'User statistics report viewed';
 $string['pluginname'] = 'Statistics';
 $string['page-report-stats-x'] = 'Any statistics report';
 $string['page-report-stats-index'] = 'Course statistics report';

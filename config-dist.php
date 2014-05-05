@@ -240,6 +240,14 @@ $CFG->admin = 'admin';
 //      $CFG->session_memcached_acquire_lock_timeout = 120;
 //      $CFG->session_memcached_lock_expire = 7200;       // Ignored if memcached extension <= 2.1.0
 //
+//   Memcache session handler (requires memcached server and memcache extension):
+//      $CFG->session_handler_class = '\core\session\memcache';
+//      $CFG->session_memcache_save_path = '127.0.0.1:11211';
+//      $CFG->session_memcache_acquire_lock_timeout = 120;
+//      ** NOTE: Memcache extension has less features than memcached and may be
+//         less reliable. Use memcached where possible or if you encounter
+//         session problems. **
+//
 // Following setting allows you to alter how frequently is timemodified updated in sessions table.
 //      $CFG->session_update_timemodified_frequency = 20; // In seconds.
 //
@@ -444,6 +452,11 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disableonclickaddoninstall = true;
 //
+// Use the following flag to disable modifications to scheduled tasks
+// whilst still showing the state of tasks.
+//
+//      $CFG->preventscheduledtaskchanges = true;
+//
 // As of version 2.4 Moodle serves icons as SVG images if the users browser appears
 // to support SVG.
 // For those wanting to control the serving of SVG images the following setting can
@@ -469,6 +482,31 @@ $CFG->admin = 'admin';
 // As of version 2.6 Moodle supports admin to set support user. If not set, all mails
 // will be sent to supportemail.
 //      $CFG->supportuserid = -20;
+//
+// Moodle 2.7 introduces a locking api for critical tasks (e.g. cron).
+// The default locking system to use is DB locking for MySQL and Postgres, and File
+// locking for Oracle and SQLServer. If $CFG->preventfilelocking is set, then the default
+// will always be DB locking. It can be manually set to one of the lock
+// factory classes listed below, or one of your own custom classes implementing the
+// \core\lock\lock_factory interface.
+//
+//      $CFG->lock_factory = "auto";
+//
+// The list of available lock factories is:
+//
+// "\\core\\lock\\file_lock_factory" - File locking
+//      Uses lock files stored by default in the dataroot. Whether this
+//      works on clusters depends on the file system used for the dataroot.
+//
+// "\\core\\lock\\db_row_lock_factory" - DB locking based on table rows.
+//
+// "\\core\\lock\\postgres_lock_factory" - DB locking based on postgres advisory locks.
+//
+// Settings used by the lock factories
+//
+// Location for lock files used by the File locking factory. This must exist
+// on a shared file system that supports locking.
+//      $CFG->lock_file_root = $CFG->dataroot . '/lock';
 //
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
@@ -654,9 +692,11 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_additionalfeatures = array('/home/developer/code/wipfeatures');
 //
-// You can make behat save a screenshot when a scenario fails.
+// You can make behat save several dumps when a scenario fails. The dumps currently saved are:
+// * a dump of the DOM in it's state at the time of failure; and
+// * a screenshot (JavaScript is required for the screenshot functionality, so not all browsers support this option)
 // Example:
-//   $CFG->behat_screenshots_path = '/my/path/to/save/screenshots';
+//   $CFG->behat_faildump_path = '/my/path/to/save/failure/dumps';
 //
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR

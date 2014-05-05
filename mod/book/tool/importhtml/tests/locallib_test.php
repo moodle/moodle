@@ -70,6 +70,7 @@ class booktool_importhtml_locallib_testcase extends advanced_testcase {
             $this->assertEquals($context, $event->get_context());
             $chapter = $event->get_record_snapshot('book_chapters', $event->objectid);
             $this->assertNotEmpty($chapter);
+            $this->assertEventContextNotUsed($event);
         }
     }
 

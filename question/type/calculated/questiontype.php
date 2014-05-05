@@ -1705,28 +1705,19 @@ class qtype_calculated extends question_type {
                     }
                     $line++;
                     $text .= "<td align=\"left\" style=\"white-space:nowrap;\">$qu->name</td>";
-                    $nbofquiz = 0;
-                    $nbofattempts= 0;
-                    $usedinquiz = false;
-                    if ($list = $DB->get_records('quiz_question_instances',
-                            array('question' => $qu->id))) {
-                        $usedinquiz = true;
-                        foreach ($list as $key => $li) {
-                            $nbofquiz ++;
-                            if ($att = $DB->get_records('quiz_attempts',
-                                    array('quiz' => $li->quiz, 'preview' => '0'))) {
-                                $nbofattempts+= count($att);
-                            }
-                        }
-                    }
-                    if ($usedinquiz) {
+                    // TODO MDL-43779 should not have quiz-specific code here.
+                    $nbofquiz = $DB->count_records('quiz_slots', array('questionid' => $qu->id));
+                    $nbofattempts = $DB->count_records_sql("
+                            SELECT count(1)
+                              FROM {quiz_slots} slot
+                              JOIN {quiz_attempts} quiza ON quiza.quiz = slot.quizid
+                             WHERE slot.questionid = ?
+                               AND quiza.preview = 0", array($qu->id));
+                    if ($nbofquiz > 0) {
                         $text .= "<td align=\"center\">$nbofquiz</td>";
-                    } else {
-                        $text .= "<td align=\"center\">0</td>";
-                    }
-                    if ($usedinquiz) {
                         $text .= "<td align=\"center\">$nbofattempts";
                     } else {
+                        $text .= "<td align=\"center\">0</td>";
                         $text .= "<td align=\"left\"><br/>";
                     }
 

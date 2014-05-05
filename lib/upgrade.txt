@@ -3,28 +3,74 @@ information provided here is intended especially for developers.
 
 === 2.7 ===
 
+* PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
 
+Events and Logging:
+* Significant changes in Logging API. For upgrading existing events_trigger() and
+  add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
+  For accessing logs from plugins see http://docs.moodle.org/dev/Migrating_log_access_in_reports
+* The validation of the following events is now stricter:
+    - \core\event\course_section_updated
+
 DEPRECATIONS:
+* $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.
+* Update init methods in all event classes - "level" property was renamed to "edulevel", the level property is now deprecated.
 * Abstract class \core\event\course_module_instances_list_viewed is deprecated now, use \core\event\instances_list_viewed instead.
+* Abstract class core\event\content_viewed has been deprecated. Please extend base event or other relevant abstract class.
 * mod_book\event\instances_list_viewed has been deprecated. Please use mod_book\event\course_module_instance_list_viewed instead.
 * mod_chat\event\instances_list_viewed has been deprecated. Please use mod_chat\event\course_module_instance_list_viewed instead.
 * mod_choice\event\instances_list_viewed has been deprecated. Please use mod_choice\event\course_module_instance_list_viewed instead.
 * mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
 * mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
 * The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
+* Conditional availability API has moved and changed. The condition_info class is
+  replaced by \core_availability\info_module, and condition_info_section by
+  \core_availability\info_section. (Code that uses the old classes will generally
+  still work.)
+* coursemodule_visible_for_user() has been deprecated but still works - replaced
+  by a new static function \core_availability\info_module::is_user_visible()
+* cm_info::is_user_access_restricted_by_conditional_access has been deprecated
+  but still works (it has never done what its name suggests, and is
+  unnecessary).
+* cm_info and section_info property showavailability has been deprecated, but
+  still works (with the caveat that this information is now per-user).
+* cm_info and section_info properties availablefrom and availableuntil have been
+  deprecated and always return zero (underlying data doesn't have these values).
+* section_info property groupingid has been deprecated and always returns zero,
+  same deal.
 * Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
   get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
+* The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
+* count_login_failures() has been deprecated, use user_count_login_failures() instead. Refer MDL-42891 for details.
+
+Conditional availability (activities and sections):
+* New conditional availability API in /availability, including new availability
+  condition plugins in /availability/condition. The new API is very similar with
+  regard to checking availability, but any code that modifies availability settings
+  for an activity or section is likely to need substantial changes.
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been
     deprecated and replaced by the modal attribute. This was actually
     changed in Moodle 2.2, but has only been marked as deprecated now. It
     will be removed in Moodle 2.9.
+  * When destroying any type of dialogue based on moodle-core-notification, the relevant content is also removed from
+    the DOM. Previously it was left orphaned.
 
 JavaSript:
     * The findChildNodes global function has been deprecated. Y.all should
       be used instead.
+    * The callback argument to confirm_action and M.util.show_confirm_dialog has been deprecated. If you need to write a
+      confirmation which includes a callback, please use moodle-core-notification-confirmation and attach callbacks to the
+      events provided.
+
+* New locking api and admin settings to configure the system locking type.
+* New "Time spent waiting for the database" performance metric displayed along with the
+  other MDL_PERF vars; the change affects both the error logs and the vars displayed in
+  the page footer.
+* Changes in the tag API. The component and contextid are now saved when assigning tags to an item. Please see
+  tag/upgrade.txt for more information.
 
 === 2.6 ===
 

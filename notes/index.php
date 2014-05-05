@@ -71,10 +71,8 @@ $systemcontext = context_system::instance();   // SYSTEM context
 
 // Trigger event.
 $event = \core\event\notes_viewed::create(array(
-    'courseid' => $courseid,
     'relateduserid' => $userid,
-    'context' => $coursecontext,
-    'other' => array('content' => 'notes')
+    'context' => $coursecontext
 ));
 $event->trigger();
 

@@ -63,6 +63,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $this->assertEquals(context_system::instance(), $event->get_context());
         $this->assertEquals('A function', $event->other['function']);
         $this->assertEventLegacyLogData($fakelogdata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_login_failed() {
@@ -101,6 +102,7 @@ class core_webservice_events_testcase extends advanced_testcase {
             $this->fail('The token cannot be allowed in \core\event\webservice_login_failed');
         } catch (coding_exception $e) {
         }
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_service_created() {
@@ -145,6 +147,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices";
         $expected = array(SITEID, 'webservice', 'add', $returnurl, get_string('addservice', 'webservice', $service));
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_service_updated() {
@@ -189,6 +192,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices";
         $expected = array(SITEID, 'webservice', 'edit', $returnurl, get_string('editservice', 'webservice', $service));
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_service_deleted() {
@@ -233,6 +237,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices";
         $expected = array(SITEID, 'webservice', 'delete', $returnurl, get_string('deleteservice', 'webservice', $service));
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_service_user_added() {
@@ -261,6 +266,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id=' . $params['objectid'],
             'add', '', $params['relateduserid']);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_service_user_removed() {
@@ -289,6 +295,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id=' . $params['objectid'],
             'remove', '', $params['relateduserid']);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_token_created() {
@@ -317,6 +324,7 @@ class core_webservice_events_testcase extends advanced_testcase {
         $this->assertEquals(2, $event->relateduserid);
         $expected = array(SITEID, 'webservice', 'automatically create user token', '' , 'User ID: ' . 2);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_token_sent() {
@@ -346,5 +354,6 @@ class core_webservice_events_testcase extends advanced_testcase {
         $this->assertEquals(1, $event->objectid);
         $expected = array(SITEID, 'webservice', 'sending requested user token', '' , 'User ID: ' . $user->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

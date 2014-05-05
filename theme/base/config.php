@@ -37,8 +37,8 @@ $THEME->name = 'base';
 $THEME->parents = array();
 
 $THEME->sheets = array(
-    'pagelayout',   /** Must come first: Page layout **/
-    'core',         /** Must come second: General styles **/
+    'pagelayout',   // Must come first: Page layout.
+    'core',         // Must come second: General styles.
     'admin',
     'blocks',
     'calendar',
@@ -54,18 +54,18 @@ $THEME->sheets = array(
 $THEME->editor_sheets = array('editor');
 
 $THEME->layouts = array(
-    // Most backwards compatible layout without the blocks - this is the layout used by default
+    // Most backwards compatible layout without the blocks - this is the layout used by default.
     'base' => array(
         'file' => 'general.php',
         'regions' => array(),
     ),
-    // Standard layout with blocks, this is recommended for most pages with general information
+    // Standard layout with blocks, this is recommended for most pages with general information.
     'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
-    // Main course page
+    // Main course page.
     'course' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
@@ -77,7 +77,7 @@ $THEME->layouts = array(
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
-    // part of course, typical for modules - default page layout if $cm specified in require_login()
+    // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
@@ -95,14 +95,14 @@ $THEME->layouts = array(
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
-    // My dashboard page
+    // My dashboard page.
     'mydashboard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
         'options' => array('langmenu'=>true),
     ),
-    // My public page
+    // My public page.
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
@@ -126,7 +126,7 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nocoursefooter'=>true),
     ),
-    // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible
+    // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
     'embedded' => array(
         'file' => 'embedded.php',
         'regions' => array(),
@@ -174,3 +174,7 @@ $THEME->hidefromselector = true;
 /** List of javascript files that need to included on each page */
 $THEME->javascripts = array();
 $THEME->javascripts_footer = array();
+
+// Set this to the method you will use in your layout files for rendering blocks.
+// It should be either blocks (default) or blocks_for_region.
+$THEME->blockrendermethod = 'blocks_for_region';

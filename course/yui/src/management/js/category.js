@@ -76,7 +76,7 @@ Category.prototype = {
     /**
      * Returns the name of the category.
      * @method getName
-     * @returns {String}
+     * @return {String}
      */
     getName : function() {
         return this.get('node').one('a.categoryname').get('innerHTML');
@@ -99,7 +99,7 @@ Category.prototype = {
      * @method handle
      * @param {String} action
      * @param {EventFacade} e
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     handle : function(action, e) {
         var catarg = {categoryid : this.get('categoryid')},
@@ -269,7 +269,7 @@ Category.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     completeMoveCourse : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -323,7 +323,7 @@ Category.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     show : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
@@ -355,7 +355,7 @@ Category.prototype = {
      * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     hide : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),

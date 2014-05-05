@@ -301,18 +301,45 @@ abstract class question_definition {
 
 
     /**
-     * Passed an array of data representing a student response this function transforms the array to a response array as would be
-     * returned from the html form for this question instance.
+     * Takes an array of values representing a student response represented in a way that is understandable by a human and
+     * transforms that to the response as the POST values returned from the HTML form that takes the student response during a
+     * student attempt. Primarily this is used when reading csv values from a file of student responses in order to be able to
+     * simulate the student interaction with a quiz.
      *
-     * In most cases the array will just be returned as is. Some question types will need to transform the keys of the array in
+     * In most cases the array will just be returned as is. Some question types will need to transform the keys of the array,
      * as the meaning of the keys in the html form is deliberately obfuscated so that someone looking at the html does not get an
-     * advantage.
+     * advantage. The values that represent the response might also be changed in order to more meaningful to a human.
+     *
+     * See the examples of question types that have overridden this in core and also see the csv files of simulated student
+     * responses used in unit tests in :
+     * - mod/quiz/tests/fixtures/stepsXX.csv
+     * - mod/quiz/report/responses/tests/fixtures/steps00.csv
+     * - mod/quiz/report/statistics/tests/fixtures/stepsXX.csv
+     *
+     * Also see {@link https://github.com/jamiepratt/moodle-quiz_simulate}, a quiz report plug in for uploading and downloading
+     * student responses as csv files.
      *
      * @param array $simulatedresponse an array of data representing a student response
      * @return array a response array as would be returned from the html form (but without prefixes)
      */
     public function prepare_simulated_post_data($simulatedresponse) {
         return $simulatedresponse;
+    }
+
+    /**
+     * Does the opposite of {@link prepare_simulated_post_data}.
+     *
+     * This takes a student response (the POST values returned from the HTML form that takes the student response during a
+     * student attempt) it then represents it in a way that is understandable by a human.
+     *
+     * Primarily this is used when creating a file of csv from real student responses in order later to be able to
+     * simulate the same student interaction with a quiz later.
+     *
+     * @param string[] $realresponse the response array as was returned from the form during a student attempt (without prefixes).
+     * @return string[] an array of data representing a student response.
+     */
+    public function get_student_response_values_for_simulation($realresponse) {
+        return $realresponse;
     }
 
     /**

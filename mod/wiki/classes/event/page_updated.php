@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki page updated.
+ * The mod_wiki page updated event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,15 +26,16 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki page updated.
+ * The mod_wiki page updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string newcontent updated content.
+ *      - string newcontent: updated content.
  * }
  *
  * @package    mod_wiki
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +47,7 @@ class page_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'wiki_pages';
     }
 
@@ -65,7 +66,8 @@ class page_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed wiki page id ' . $this->objectid;
+        return "The user with the id '$this->userid' updated the page with the id '$this->objectid' for the wiki with " .
+            "the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -75,7 +77,7 @@ class page_updated extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'edit', 'view.php?pageid=' . $this->objectid, $this->objectid,
-            $this->context->instanceid));
+            $this->contextinstanceid));
     }
 
     /**

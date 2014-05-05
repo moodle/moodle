@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_workshop assessable uploaded event.
+ * The mod_workshop assessable uploaded event.
  *
  * @package    mod_workshop
  * @copyright  2013 Frédéric Massart
@@ -27,16 +27,17 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_workshop assessable uploaded event class.
+ * The mod_workshop assessable uploaded event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type array pathnamehashes uploaded files path name hashes.
- *      @type string content string.
+ *      - array pathnamehashes: uploaded files path name hashes.
+ *      - string content: string.
  * }
  *
  * @package    mod_workshop
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,18 +56,19 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has uploaded the submission {$this->objectid}.";
+        return "The user with the id '$this->userid' has uploaded the submission with the id '$this->objectid' " .
+            "to the workshop activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $eventdata = new \stdClass();
         $eventdata->modulename   = 'workshop';
-        $eventdata->cmid         = $this->context->instanceid;
+        $eventdata->cmid         = $this->contextinstanceid;
         $eventdata->itemid       = $this->objectid;
         $eventdata->courseid     = $this->courseid;
         $eventdata->userid       = $this->userid;
@@ -101,7 +103,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_assessable_uploaded', 'mod_workshop');
+        return get_string('eventassessableuploaded', 'mod_workshop');
     }
 
     /**
@@ -111,7 +113,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      */
     public function get_url() {
         return new \moodle_url('/mod/workshop/submission.php',
-            array('cmid' => $this->context->instanceid, 'id' => $this->objectid));
+            array('cmid' => $this->contextinstanceid, 'id' => $this->objectid));
     }
 
     /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core webservice service user removed event.
+ * Web service service user removed event.
  *
  * @package    core
  * @copyright  2013 Frédéric Massart
@@ -26,13 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core webservice service user removed event class.
+ * Web service service user removed event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_service_user_removed extends \core\event\base {
+class webservice_service_user_removed extends base {
 
     /**
      * Returns description of what happened.
@@ -60,7 +61,7 @@ class webservice_service_user_removed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_service_user_removed', 'webservice');
+        return get_string('eventwebserviceserviceuserremoved', 'webservice');
     }
 
     /**
@@ -80,7 +81,7 @@ class webservice_service_user_removed extends \core\event\base {
     protected function init() {
         $this->context = \context_system::instance();
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
 
@@ -90,6 +91,7 @@ class webservice_service_user_removed extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('The relateduserid must be set.');
         }

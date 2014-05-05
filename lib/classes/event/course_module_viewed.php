@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class for event to be triggered when a course module is viewed.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -45,7 +46,7 @@ abstract class course_module_viewed extends base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -54,7 +55,8 @@ abstract class course_module_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid' viewed course module '$this->objecttable' with instance id '$this->objectid'";
+        return "The user with the id '$this->userid' viewed the '{$this->objecttable}' activity with the " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -72,7 +74,7 @@ abstract class course_module_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url("/mod/$this->objecttable/view.php", array('id' => $this->context->instanceid));
+        return new \moodle_url("/mod/$this->objecttable/view.php", array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -81,8 +83,8 @@ abstract class course_module_viewed extends base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, $this->objecttable, 'view', 'view.php?id=' . $this->context->instanceid, $this->objectid,
-                     $this->context->instanceid);
+        return array($this->courseid, $this->objecttable, 'view', 'view.php?id=' . $this->contextinstanceid, $this->objectid,
+                     $this->contextinstanceid);
     }
 
     /**
@@ -92,10 +94,14 @@ abstract class course_module_viewed extends base {
      * @return void
      */
     protected function validate_data() {
+        parent::validate_data();
         // Make sure this class is never used without proper object details.
         if (empty($this->objectid) || empty($this->objecttable)) {
-            throw new \coding_exception('course_module_viewed event must define objectid and object table.');
+            throw new \coding_exception('The course_module_viewed event must define objectid and object table.');
+        }
+        // Make sure the context level is set to module.
+        if ($this->contextlevel != CONTEXT_MODULE) {
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
-
 }

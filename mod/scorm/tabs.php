@@ -19,7 +19,7 @@
  *
  * @author Dan Marsden and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package scorm
+ * @package mod_scorm
  */
 
 if (empty($scorm)) {

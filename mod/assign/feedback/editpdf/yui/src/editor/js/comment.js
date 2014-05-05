@@ -14,13 +14,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class representing a list of comments.
+ * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
  */
 
 /**
- * COMMENT
+ * Class representing a list of comments.
  *
  * @namespace M.assignfeedback_editpdf
  * @class comment

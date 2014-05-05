@@ -38,11 +38,16 @@ require_once($CFG->libdir.'/authlib.php');
 class auth_plugin_manual extends auth_plugin_base {
 
     /**
+     * The name of the component. Used by the configuration.
+     */
+    const COMPONENT_NAME = 'auth_manual';
+
+    /**
      * Constructor.
      */
     function auth_plugin_manual() {
         $this->authtype = 'manual';
-        $this->config = get_config('auth/manual');
+        $this->config = get_config(self::COMPONENT_NAME);
     }
 
     /**
@@ -81,6 +86,7 @@ class auth_plugin_manual extends auth_plugin_base {
      */
     function user_update_password($user, $newpassword) {
         $user = get_complete_user_data('id', $user->id);
+        set_user_preference('auth_manual_passwordupdatetime', time(), $user->id);
         // This will also update the stored hash to the latest algorithm
         // if the existing hash is using an out-of-date algorithm (or the
         // legacy md5 algorithm).
@@ -154,12 +160,55 @@ class auth_plugin_manual extends auth_plugin_base {
     }
 
     /**
+     * Return number of days to user password expires.
+     *
+     * If user password does not expire, it should return 0 or a positive value.
+     * If user password is already expired, it should return negative value.
+     *
+     * @param mixed $username username (with system magic quotes)
+     * @return integer
+     */
+    public function password_expire($username) {
+        $result = 0;
+
+        if (!empty($this->config->expirationtime)) {
+            $user = core_user::get_user_by_username($username, 'id,timecreated');
+            $lastpasswordupdatetime = get_user_preferences('auth_manual_passwordupdatetime', $user->timecreated, $user->id);
+            $expiretime = $lastpasswordupdatetime + $this->config->expirationtime * DAYSECS;
+            $now = time();
+            $result = ($expiretime - $now) / DAYSECS;
+            if ($expiretime > $now) {
+                $result = ceil($result);
+            } else {
+                $result = floor($result);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Processes and stores configuration data for this authentication plugin.
      *
-     * @param array $config
+     * @param stdClass $config
      * @return void
      */
     function process_config($config) {
+        // Set to defaults if undefined.
+        if (!isset($config->expiration)) {
+            $config->expiration = '';
+        }
+        if (!isset($config->expiration_warning)) {
+            $config->expiration_warning = '';
+        }
+        if (!isset($config->expirationtime)) {
+            $config->expirationtime = '';
+        }
+
+        // Save settings.
+        set_config('expiration', $config->expiration, self::COMPONENT_NAME);
+        set_config('expiration_warning', $config->expiration_warning, self::COMPONENT_NAME);
+        set_config('expirationtime', $config->expirationtime, self::COMPONENT_NAME);
         return true;
     }
 

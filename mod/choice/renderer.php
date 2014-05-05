@@ -18,7 +18,7 @@
 /**
  * Moodle renderer used to display special elements of the lesson module
  *
- * @package   Choice
+ * @package   mod_choice
  * @copyright 2010 Rossiani Wijaya
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/

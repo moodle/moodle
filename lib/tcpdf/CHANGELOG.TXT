@@ -1,3 +1,112 @@
+6.0.062 (2014-03-02)
+	- The method startLayer() now accepts the NULL value for the $print parameter to not set the print layer option.
+
+6.0.061 (2014-02-18)
+	- Bug #893 "Parsing error on streamed xref for secured pdf" was fixed.
+
+6.0.060 (2014-02-16)
+	- Bug #891 "Error on parsing hexa fields" was fixed.
+	- Bug #892 "Parsing pdf with trailing space at start" was fixed.
+
+6.0.059 (2014-02-03)
+	- SVG 'use' support was imporved.
+
+6.0.058 (2014-01-31)
+	- Bug #886 "Bugs with SVG using <defs> and <use>" was fixed.
+
+6.0.057 (2014-01-26)
+	- Bug #883 "Parsing error" was fixed.
+
+6.0.056 (2014-01-25)
+	- The automatic cache folder selection now works also with some restricted hosting environments.
+	- CSS text-transform property is now supported (requires the multibyte string library for php) - see examle n. 061 (Thanks to Walter Ferraz).
+	- Bug #884 "Parsing error prev tag looking for" was fixed.
+
+6.0.055 (2014-01-15)
+	- Bug #880 "Error detecting hX tags (h1,h2..)" was fixed
+	- Bug #879 "Thead on the second page inherits style of previous tr" was fixed
+
+6.0.054 (2014-01-13)
+	- Bug #877 "Parenteses causing corrupt text" was fixed.
+
+6.0.053 (2014-01-03)
+	- Bug #876 "Cell padding should not be multiplied with number of lines in getStringHeight" was fixed.
+	- Patch #68 "Empty img src attribute leads to access of uninitialized string offset" was applied.
+
+6.0.052 (2013-12-12)
+	- Bug #871 "Datamatrix coding" was fixed.
+
+6.0.051 (2013-12-02)
+	- cbbox array values in addTTFfont() were converted to integers.
+
+6.0.050 (2013-12-01)
+	- The method getNumLines() was extended to support hyphenation.
+	- The CSS property line-height now supports non percentage values.
+
+6.0.050 (2013-11-27)
+	- A bug related to PNG images was fixed.
+
+6.0.048 (2013-11-24)
+	- SVG vars are now reset in ImageSVG() method.
+
+6.0.047 (2013-11-19)
+	- SVG support was extended to support some nested defs.
+
+6.0.046 (2013-11-17)
+	- preg_replace_callback functions were replaced to improve memory performances.
+
+6.0.045 (2013-11-17)
+	- Bug #862 "Parsing error on flate filter" was fixed.
+
+6.0.044 (2013-11-10)
+	- Bug #857 "Undefined offset error" was fixed.
+	- The uniord method now uses a static cache to improve performances (thanks to Mathieu Masseboeuf for the sugegstion).
+	- Two bugs in the TCPDF_FONTS class were fixed.
+
+6.0.043 (2013-10-29)
+	- Bug #854 "CSS instruction display" was fixed.
+
+6.0.042 (2013-10-25)
+	- Bug #852 "CMYK Colors Bug" was fixed.
+
+6.0.041 (2013-10-21)
+	- Bug #851 "Problem with images in PDF. PHP timing out" was fixed.
+
+6.0.040 (2013-10-20)
+	- Bug #849 "SVG import bug" was fixed.
+
+6.0.039 (2013-10-13)
+	- Bug #843 "Wrong call in parser" was fixed.
+	- Bug #844 "Wrong object type named" was fixed.
+	- Bug #845 "Parsing error on obj ref prefixed by '000000'" was fixed.
+
+6.0.038 (2013-10-06)
+	- Bug #841 "Division by zero warning at writeHTML a <li> tag" was fixed.
+
+6.0.037 (2013-09-30)
+	- Method getAllSpotColors() was added to return all spot colors.
+	- Method colorRegistrationBar() was extended to automatically print all spot colors and support individual spot colors.
+	- The method registrationMarkCMYK() was added to print a registration mark for CMYK colors.
+	- A bug related to page groups was fixed.
+	- Gradient() method now supports CMYK equivalents of spot colors.
+	- Example n. 56 was updated.
+
+6.0.036 (2013-09-29)
+	- Methods for registration bars and crop marks were extended to support registration color (see example n. 56).
+	- New default spot colors were added to tcpdf_colors.php, including the 'All' and 'None' special registration colors.
+
+6.0.035 (2013-09-25)
+	- TCPDF_PARSER class was improved.
+
+6.0.034 (2013-09-24)
+	- Bug #839 "Error in xref parsing in mixed newline chars" was fixed.
+
+6.0.033 (2013-09-23)
+	- Bug fix related to PNG image transparency using GD library.
+
+6.0.032 (2013-09-23)
+	- Bug #838 "Fatal error when imagick cannot handle the image, even though GD is available and can" was fixed.
+
 6.0.031 (2013-09-18)
 	- Bug #836 "Optional EOL marker before endstream" was fixed.
 	- Some additional controls were added to avoid "division by zero" error with badly formatted input.

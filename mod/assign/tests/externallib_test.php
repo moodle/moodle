@@ -66,7 +66,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -163,7 +163,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create the user and give them capabilities.
         $context = context_course::instance($course1->id);
         $roleid = $this->assignUserCapability('moodle/course:view', $context->id);
-        $context = context_module::instance($assign1->id);
+        $context = context_module::instance($assign1->cmid);
         $this->assignUserCapability('mod/assign:view', $context->id, $roleid);
 
         // Create the user enrolment record.
@@ -332,7 +332,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -403,7 +403,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:revealidentities', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -916,7 +916,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $student1 = self::getDataGenerator()->create_user();
         $student2 = self::getDataGenerator()->create_user();
-        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($student1->id,
                                               $course->id,
                                               $studentrole->id);
@@ -945,8 +945,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Now try a grade.
         $feedbackpluginparams = array();
         $feedbackpluginparams['files_filemanager'] = $draftidfile;
-        $feedbackeditorparams = array('text'=>'Yeeha!',
-                                        'format'=>1);
+        $feedbackeditorparams = array('text' => 'Yeeha!',
+                                        'format' => 1);
         $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
         $result = mod_assign_external::save_grade($instance->id,
                                                   $student1->id,
@@ -963,6 +963,296 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $result = mod_assign_external::get_grades(array($instance->id));
 
         $this->assertEquals($result['assignments'][0]['grades'][0]['grade'], '50.0');
+    }
+
+    /**
+     * Test save grades with advanced grading data
+     */
+    public function test_save_grades_with_advanced_grading() {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment and users.
+        $course = self::getDataGenerator()->create_course();
+
+        $teacher = self::getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id,
+                                              $course->id,
+                                              $teacherrole->id);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params['course'] = $course->id;
+        $params['assignfeedback_file_enabled'] = 0;
+        $params['assignfeedback_comments_enabled'] = 0;
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = context_module::instance($cm->id);
+
+        $assign = new assign($context, $cm, $course);
+
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student1->id,
+                                              $course->id,
+                                              $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student2->id,
+                                              $course->id,
+                                              $studentrole->id);
+
+        $this->setUser($teacher);
+
+        $feedbackpluginparams = array();
+        $feedbackpluginparams['files_filemanager'] = 0;
+        $feedbackeditorparams = array('text' => '', 'format' => 1);
+        $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
+
+        // Create advanced grading data.
+        // Create grading area.
+        $gradingarea = array(
+            'contextid' => $context->id,
+            'component' => 'mod_assign',
+            'areaname' => 'submissions',
+            'activemethod' => 'rubric'
+        );
+        $areaid = $DB->insert_record('grading_areas', $gradingarea);
+
+        // Create a rubric grading definition.
+        $rubricdefinition = array (
+            'areaid' => $areaid,
+            'method' => 'rubric',
+            'name' => 'test',
+            'status' => 20,
+            'copiedfromid' => 1,
+            'timecreated' => 1,
+            'usercreated' => $teacher->id,
+            'timemodified' => 1,
+            'usermodified' => $teacher->id,
+            'timecopied' => 0
+        );
+        $definitionid = $DB->insert_record('grading_definitions', $rubricdefinition);
+
+        // Create a criterion with a level.
+        $rubriccriteria = array (
+             'definitionid' => $definitionid,
+             'sortorder' => 1,
+             'description' => 'Demonstrate an understanding of disease control',
+             'descriptionformat' => 0
+        );
+        $criterionid = $DB->insert_record('gradingform_rubric_criteria', $rubriccriteria);
+        $rubriclevel1 = array (
+            'criterionid' => $criterionid,
+            'score' => 50,
+            'definition' => 'pass',
+            'definitionformat' => 0
+        );
+        $rubriclevel2 = array (
+            'criterionid' => $criterionid,
+            'score' => 100,
+            'definition' => 'excellent',
+            'definitionformat' => 0
+        );
+        $rubriclevel3 = array (
+            'criterionid' => $criterionid,
+            'score' => 0,
+            'definition' => 'fail',
+            'definitionformat' => 0
+        );
+        $levelid1 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel1);
+        $levelid2 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel2);
+        $levelid3 = $DB->insert_record('gradingform_rubric_levels', $rubriclevel3);
+
+        // Create the filling.
+        $student1filling = array (
+            'criterionid' => $criterionid,
+            'levelid' => $levelid1,
+            'remark' => 'well done you passed',
+            'remarkformat' => 0
+        );
+
+        $student2filling = array (
+            'criterionid' => $criterionid,
+            'levelid' => $levelid2,
+            'remark' => 'Excellent work',
+            'remarkformat' => 0
+        );
+
+        $student1criteria = array(array('criterionid' => $criterionid, 'fillings' => array($student1filling)));
+        $student1advancedgradingdata = array('rubric' => array('criteria' => $student1criteria));
+
+        $student2criteria = array(array('criterionid' => $criterionid, 'fillings' => array($student2filling)));
+        $student2advancedgradingdata = array('rubric' => array('criteria' => $student2criteria));
+
+        $grades = array();
+        $student1gradeinfo = array();
+        $student1gradeinfo['userid'] = $student1->id;
+        $student1gradeinfo['grade'] = 0; // Ignored since advanced grading is being used.
+        $student1gradeinfo['attemptnumber'] = -1;
+        $student1gradeinfo['addattempt'] = true;
+        $student1gradeinfo['workflowstate'] = 'released';
+        $student1gradeinfo['plugindata'] = $feedbackpluginparams;
+        $student1gradeinfo['advancedgradingdata'] = $student1advancedgradingdata;
+        $grades[] = $student1gradeinfo;
+
+        $student2gradeinfo = array();
+        $student2gradeinfo['userid'] = $student2->id;
+        $student2gradeinfo['grade'] = 0; // Ignored since advanced grading is being used.
+        $student2gradeinfo['attemptnumber'] = -1;
+        $student2gradeinfo['addattempt'] = true;
+        $student2gradeinfo['workflowstate'] = 'released';
+        $student2gradeinfo['plugindata'] = $feedbackpluginparams;
+        $student2gradeinfo['advancedgradingdata'] = $student2advancedgradingdata;
+        $grades[] = $student2gradeinfo;
+
+        $result = mod_assign_external::save_grades($instance->id, false, $grades);
+        // No warnings.
+        $this->assertEquals(0, count($result));
+
+        $student1grade = $DB->get_record('assign_grades',
+                                         array('userid' => $student1->id, 'assignment' => $instance->id),
+                                         '*',
+                                         MUST_EXIST);
+        $this->assertEquals($student1grade->grade, '50.0');
+
+        $student2grade = $DB->get_record('assign_grades',
+                                         array('userid' => $student2->id, 'assignment' => $instance->id),
+                                         '*',
+                                         MUST_EXIST);
+        $this->assertEquals($student2grade->grade, '100.0');
+    }
+
+    /**
+     * Test save grades for a team submission
+     */
+    public function test_save_grades_with_group_submission() {
+        global $DB, $USER, $CFG;
+        require_once($CFG->dirroot . '/group/lib.php');
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment and users.
+        $course = self::getDataGenerator()->create_course();
+
+        $teacher = self::getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id,
+                                              $course->id,
+                                              $teacherrole->id);
+
+        $groupingdata = array();
+        $groupingdata['courseid'] = $course->id;
+        $groupingdata['name'] = 'Group assignment grouping';
+
+        $grouping = self::getDataGenerator()->create_grouping($groupingdata);
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Team 1';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Team 2';
+
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_assign_grouping($grouping->id, $group1->id);
+        groups_assign_grouping($grouping->id, $group2->id);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params['course'] = $course->id;
+        $params['teamsubmission'] = 1;
+        $params['teamsubmissiongroupingid'] = $grouping->id;
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = context_module::instance($cm->id);
+
+        $assign = new assign($context, $cm, $course);
+
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+        $student3 = self::getDataGenerator()->create_user();
+        $student4 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student1->id,
+                                              $course->id,
+                                              $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student2->id,
+                                              $course->id,
+                                              $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student3->id,
+                                              $course->id,
+                                              $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student4->id,
+                                              $course->id,
+                                              $studentrole->id);
+
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $student2->id);
+        groups_add_member($group1->id, $student3->id);
+        groups_add_member($group2->id, $student4->id);
+        $this->setUser($teacher);
+
+        $feedbackpluginparams = array();
+        $feedbackpluginparams['files_filemanager'] = 0;
+        $feedbackeditorparams = array('text' => '', 'format' => 1);
+        $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
+
+        $grades1 = array();
+        $student1gradeinfo = array();
+        $student1gradeinfo['userid'] = $student1->id;
+        $student1gradeinfo['grade'] = 50;
+        $student1gradeinfo['attemptnumber'] = -1;
+        $student1gradeinfo['addattempt'] = true;
+        $student1gradeinfo['workflowstate'] = 'released';
+        $student1gradeinfo['plugindata'] = $feedbackpluginparams;
+        $grades1[] = $student1gradeinfo;
+
+        $student2gradeinfo = array();
+        $student2gradeinfo['userid'] = $student2->id;
+        $student2gradeinfo['grade'] = 75;
+        $student2gradeinfo['attemptnumber'] = -1;
+        $student2gradeinfo['addattempt'] = true;
+        $student2gradeinfo['workflowstate'] = 'released';
+        $student2gradeinfo['plugindata'] = $feedbackpluginparams;
+        $grades1[] = $student2gradeinfo;
+
+        $this->setExpectedException('invalid_parameter_exception');
+        // Expect an exception since 2 grades have been submitted for the same team.
+        $result = mod_assign_external::save_grades($instance->id, true, $grades1);
+
+        $grades2 = array();
+        $student3gradeinfo = array();
+        $student3gradeinfo['userid'] = $student3->id;
+        $student3gradeinfo['grade'] = 50;
+        $student3gradeinfo['attemptnumber'] = -1;
+        $student3gradeinfo['addattempt'] = true;
+        $student3gradeinfo['workflowstate'] = 'released';
+        $student3gradeinfo['plugindata'] = $feedbackpluginparams;
+        $grades2[] = $student3gradeinfo;
+
+        $student4gradeinfo = array();
+        $student4gradeinfo['userid'] = $student4->id;
+        $student4gradeinfo['grade'] = 75;
+        $student4gradeinfo['attemptnumber'] = -1;
+        $student4gradeinfo['addattempt'] = true;
+        $student4gradeinfo['workflowstate'] = 'released';
+        $student4gradeinfo['plugindata'] = $feedbackpluginparams;
+        $grades2[] = $student4gradeinfo;
+        $result = mod_assign_external::save_grades($instance->id, true, $grades2);
+        // There should be no warnings.
+        $this->assertEquals(0, count($result));
+
+        $student3grade = $DB->get_record('assign_grades',
+                                         array('userid' => $student3->id, 'assignment' => $instance->id),
+                                         '*',
+                                         MUST_EXIST);
+        $this->assertEquals($student3grade->grade, '50.0');
+
+        $student4grade = $DB->get_record('assign_grades',
+                                         array('userid' => $student4->id, 'assignment' => $instance->id),
+                                         '*',
+                                         MUST_EXIST);
+        $this->assertEquals($student4grade->grade, '75.0');
     }
 
     /**
@@ -1072,7 +1362,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.

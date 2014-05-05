@@ -26,7 +26,9 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 use Behat\Mink\Session as Session,
-    Behat\Mink\Element\NodeElement as NodeElement;
+    Behat\Mink\Element\NodeElement as NodeElement,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
+    Behat\MinkExtension\Context\RawMinkContext as RawMinkContext;
 
 /**
  * Helper to interact with form fields.
@@ -37,6 +39,35 @@ use Behat\Mink\Session as Session,
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_field_manager {
+
+    /**
+     * Gets an instance of the form field from it's label
+     *
+     * @param string $label
+     * @param RawMinkContext $context
+     * @return behat_form_field
+     */
+    public static function get_form_field_from_label($label, RawMinkContext $context) {
+
+        // There are moodle form elements that are not directly related with
+        // a basic HTML form field, we should also take care of them.
+        try {
+            // The DOM node.
+            $fieldnode = $context->find_field($label);
+        } catch (ElementNotFoundException $fieldexception) {
+
+            // Looking for labels that points to filemanagers.
+            try {
+                $fieldnode = $context->find_filemanager($label);
+            } catch (ElementNotFoundException $filemanagerexception) {
+                // We want the generic 'field' exception.
+                throw $fieldexception;
+            }
+        }
+
+        // The behat field manager.
+        return self::get_form_field($fieldnode, $context->getSession());
+    }
 
     /**
      * Gets an instance of the form field.
@@ -80,9 +111,16 @@ class behat_field_manager {
 
         global $CFG;
 
+        // If the field is not part of a moodleform, we should still try to find out
+        // which field type are we dealing with.
+        if ($type == 'field' &&
+                $guessedtype = self::guess_field_type($fieldnode, $session)) {
+            $type = $guessedtype;
+        }
+
         $classname = 'behat_form_' . $type;
 
-        // Fallsback on the default form field if nothing specific exists.
+        // Fallsback on the type guesser if nothing specific exists.
         $classpath = $CFG->libdir . '/behat/form_field/' . $classname . '.php';
         if (!file_exists($classpath)) {
             $classname = 'behat_form_field';
@@ -92,6 +130,58 @@ class behat_field_manager {
         // Returns the instance.
         require_once($classpath);
         return new $classname($session, $fieldnode);
+    }
+
+    /**
+     * Guesses a basic field type and returns it.
+     *
+     * This method is intended to detect HTML form fields when no
+     * moodleform-specific elements have been detected.
+     *
+     * @param NodeElement $fieldnode
+     * @param Session $session
+     * @return string|bool The field type or false.
+     */
+    public static function guess_field_type(NodeElement $fieldnode, Session $session) {
+
+        // Textareas are considered text based elements.
+        $tagname = strtolower($fieldnode->getTagName());
+        if ($tagname == 'textarea') {
+
+            // If there is an iframe with $id + _ifr there a TinyMCE editor loaded.
+            $xpath = '//div[@id="' . $fieldnode->getAttribute('id') . 'editable"]';
+            if ($session->getPage()->find('xpath', $xpath)) {
+                return 'editor';
+            }
+            return 'textarea';
+
+        } else if ($tagname == 'input') {
+            $type = $fieldnode->getAttribute('type');
+            switch ($type) {
+                case 'text':
+                case 'password':
+                case 'email':
+                case 'file':
+                    return 'text';
+                case 'checkbox':
+                    return 'checkbox';
+                    break;
+                case 'radio':
+                    return 'radio';
+                    break;
+                default:
+                    // Here we return false because all text-based
+                    // fields should be included in the first switch case.
+                    return false;
+            }
+
+        } else if ($tagname == 'select') {
+            // Select tag.
+            return 'select';
+        }
+
+        // We can not provide a closer field type.
+        return false;
     }
 
     /**
@@ -108,7 +198,10 @@ class behat_field_manager {
     protected static function is_moodleform_field(NodeElement $fieldnode) {
 
         // We already waited when getting the NodeElement and we don't want an exception if it's not part of a moodleform.
-        $parentformfound = $fieldnode->find('xpath', "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]/fieldset");
+        $parentformfound = $fieldnode->find('xpath',
+            "/ancestor::fieldset" .
+            "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]"
+        );
 
         return ($parentformfound != false);
     }
@@ -155,6 +248,7 @@ class behat_field_manager {
      * @todo MDL-XXXXX This will be deleted in Moodle 2.8
      * @see behat_field_manager::get_form_field()
      * @param NodeElement $fieldnode
+     * @param string $locator
      * @param Session $session The behat browser session
      * @return behat_form_field
      */
@@ -175,6 +269,7 @@ class behat_field_manager {
      * @todo MDL-XXXXX This will be deleted in Moodle 2.8
      * @see behat_field_manager::get_field_node_type()
      * @param NodeElement $fieldnode The current node.
+     * @param string $locator
      * @param Session $session The behat browser session
      * @return mixed A NodeElement if we continue looking for the element type and String or false when we are done.
      */

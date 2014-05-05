@@ -32,11 +32,12 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string originalusername original username.
- *      @type string loggedinasusername username of logged in as user.
+ *      - string originalusername: original username.
+ *      - string loggedinasusername: username of logged in as user.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,7 +50,7 @@ class user_loggedinas extends base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'user';
     }
 
@@ -68,7 +69,7 @@ class user_loggedinas extends base {
      * @return string
      */
     public function get_description() {
-        return 'Userid ' . $this->userid . ' has logged in as '. $this->relateduserid;
+        return "The user with the id '$this->userid' has logged in as the user with the id '$this->relateduserid'.";
     }
 
     /**

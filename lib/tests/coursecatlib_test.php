@@ -370,16 +370,18 @@ class core_coursecatlib_testcase extends advanced_testcase {
      * Test the countall function
      */
     public function test_count_all() {
-        // There should be just the default category.
-        $this->assertEquals(1, coursecat::count_all());
+        global $DB;
+        // Dont assume there is just one. An add-on might create a category as part of the install.
+        $numcategories = $DB->count_records('course_categories');
+        $this->assertEquals($numcategories, coursecat::count_all());
         $category1 = coursecat::create(array('name' => 'Cat1'));
         $category2 = coursecat::create(array('name' => 'Cat2', 'parent' => $category1->id));
         $category3 = coursecat::create(array('name' => 'Cat3', 'parent' => $category2->id, 'visible' => 0));
-        // Now we've got four.
-        $this->assertEquals(4, coursecat::count_all());
+        // Now we've got three more.
+        $this->assertEquals($numcategories + 3, coursecat::count_all());
         cache_helper::purge_by_event('changesincoursecat');
         // We should still have 4.
-        $this->assertEquals(4, coursecat::count_all());
+        $this->assertEquals($numcategories + 3, coursecat::count_all());
     }
 
     /**

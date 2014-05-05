@@ -62,7 +62,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '0',
-            'questions' => '28698,0,34245,0,34248,0,35005,0,35009,0,35013,0',
             'sumgrades' => '5',
             'grade' => '100',
             'timecreated' => '0',
@@ -86,7 +85,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1238182560',
             'layout' => '28698,0,34245,0,34248,0,35005,0,35009,0,35013,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '34248',
@@ -290,7 +288,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'questionsperpage' => '3',
             'shufflequestions' => '1',
             'shuffleanswers' => '1',
-            'questions' => '101983,101984,101985,0,101986,101987,101988,0,101989,101990,101991,0,101992,101993,101994,0,101995,101996,101997,0',
             'sumgrades' => '15',
             'grade' => '10',
             'timecreated' => '0',
@@ -315,7 +312,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1274178763',
             'layout' => '101989,101985,101994,0,101988,101986,101992,0,101997,101990,101991,0,101984,101995,101987,0,101983,101993,101996,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '101984',
@@ -540,7 +536,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '68646,0,81245,0,81246,0,81247,0,81248,0,81249,0,81250,0,82795,0,82797,0,82798,0,82799,0,82800,0,82801,0,82802,0,82803,0,82804,0,82805,0,82806,0,82807,0',
             'sumgrades' => '18',
             'grade' => '18',
             'timecreated' => '0',
@@ -565,7 +560,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1269508052',
             'layout' => '68646,0,81245,0,81246,0,81247,0,81248,0,81249,0,81250,0,82795,0,82797,0,82798,0,82799,0,82800,0,82801,0,82802,0,82803,0,82804,0,82805,0,82806,0,82807,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '81247',
@@ -808,7 +802,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '6,12,13,15,14,0',
             'sumgrades' => '5.00000',
             'grade' => '10.00000',
             'timecreated' => '0',
@@ -835,7 +828,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1305273672',
             'layout' => '6,12,13,15,14,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '14',

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * assignsubmission_file assessable uploaded event.
+ * The assignsubmission_file assessable uploaded event.
  *
  * @package    assignsubmission_file
  * @copyright  2013 Frédéric Massart
@@ -27,16 +27,10 @@ namespace assignsubmission_file\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * assignsubmission_file assessable uploaded event class.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type array pathnamehashes uploaded files path name hash.
- *      @type string content empty string.
- * }
+ * The assignsubmission_file assessable uploaded event class.
  *
  * @package    assignsubmission_file
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,18 +49,19 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has uploaded a file in submission {$this->objectid}.";
+        return "The user with the id '$this->userid' has uploaded a file to the submission with the id '$this->objectid' " .
+            "in the assignment activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $eventdata = new \stdClass();
         $eventdata->modulename = 'assign';
-        $eventdata->cmid = $this->context->instanceid;
+        $eventdata->cmid = $this->contextinstanceid;
         $eventdata->itemid = $this->objectid;
         $eventdata->courseid = $this->courseid;
         $eventdata->userid = $this->userid;
@@ -93,7 +88,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_assessable_uploaded', 'assignsubmission_file');
+        return get_string('eventassessableuploaded', 'assignsubmission_file');
     }
 
     /**
@@ -102,7 +97,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**

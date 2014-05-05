@@ -6,10 +6,10 @@ Feature: Test we can resort course in the management interface.
 
   # Test resorting courses with
   Scenario Outline: Resort courses.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category 0| idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber | sortorder |
       | CAT1 | Social studies | Senior school | Ext003 | 1 |
       | CAT1 | Applied sciences  | Middle school | Sci001 | 2 |
@@ -39,10 +39,10 @@ Feature: Test we can resort course in the management interface.
 
   @javascript
   Scenario Outline: Resort courses with JavaScript enabled.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category 0| idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber | sortorder |
       | CAT1 | Social studies | Senior school | Ext003 | 1 |
       | CAT1 | Applied sciences  | Middle school | Sci001 | 2 |
@@ -75,10 +75,10 @@ Feature: Test we can resort course in the management interface.
     | "By idnumber"        | "Extended social studies" | "Social studies"          | "Applied sciences" |
 
   Scenario: Test moving courses up and down by one.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |
@@ -112,10 +112,10 @@ Feature: Test we can resort course in the management interface.
   # Like the above test but with JavaScript enabled.
   @javascript
   Scenario: Test using AJAX to move courses up and down by one.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |

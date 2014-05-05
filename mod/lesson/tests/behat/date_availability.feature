@@ -5,14 +5,14 @@ Feature: A teacher can set available from and deadline dates to access a lesson
   I need to set available from and deadline dates
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -25,7 +25,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     Given I add a "Lesson" to section "1"
     And I expand all fieldsets
     And I click on "id_available_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test lesson |
       | available[day] | 1 |
       | available[month] | January |
@@ -35,7 +35,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And I press "Save and display"
     And I follow "Test lesson"
     And I follow "Add a content page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page title | First page name |
       | Page contents | First page contents |
       | Description | The first one |
@@ -52,7 +52,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     Given I add a "Lesson" to section "1"
     And I expand all fieldsets
     And I click on "id_deadline_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test lesson |
       | deadline[day] | 1 |
       | deadline[month] | January |
@@ -62,7 +62,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And I press "Save and display"
     And I follow "Test lesson"
     And I follow "Add a content page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page title | First page name |
       | Page contents | First page contents |
       | Description | The first one |

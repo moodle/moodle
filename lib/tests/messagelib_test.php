@@ -48,6 +48,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $message->fullmessageformat = FORMAT_MARKDOWN;
         $message->fullmessagehtml   = '<p>message body</p>';
         $message->smallmessage      = 'small message';
+        $message->notification      = 0;
 
         // Check message is not sent.
         $sink = $this->redirectEmails();
@@ -134,7 +135,7 @@ class core_messagelib_testcase extends advanced_testcase {
         // however mod_quiz doesn't have a data generator.
         // Instead we're going to use backup notifications and give and take away the capability at various levels.
         $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assign->cmid);
 
         // Create and enrol a teacher.
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
@@ -162,7 +163,7 @@ class core_messagelib_testcase extends advanced_testcase {
         // They should now be able to see the backup message.
         assign_capability('moodle/site:config', CAP_ALLOW, $teacherrole->id, $modulecontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assign->cmid);
         $this->assertTrue(has_capability('moodle/site:config', $modulecontext));
 
         $providers = message_get_providers_for_user($teacher->id);
@@ -173,7 +174,7 @@ class core_messagelib_testcase extends advanced_testcase {
         // They should not be able to see the backup message.
         assign_capability('moodle/site:config', CAP_PROHIBIT, $teacherrole->id, $coursecontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assign->cmid);
         $this->assertFalse(has_capability('moodle/site:config', $modulecontext));
 
         $providers = message_get_providers_for_user($teacher->id);
@@ -218,6 +219,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $message->smallmessage      = 'small message';
         $message->attachment        = $file;
         $message->attachname        = 'emailtest.txt';
+        $message->notification      = 0;
 
         // Make sure we are redirecting emails.
         $sink = $this->redirectEmails();

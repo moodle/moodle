@@ -84,15 +84,14 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
 
     public function test_grading() {
         $question = test_question_maker::make_a_multichoice_single_question();
-        $question->shuffleanswers = false;
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(1, question_state::$gradedright),
-                $question->grade_response(array('answer' => 0)));
+                $question->grade_response($question->prepare_simulated_post_data(array('answer' => 'A'))));
         $this->assertEquals(array(-0.3333333, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => 1)));
+                $question->grade_response($question->prepare_simulated_post_data(array('answer' => 'B'))));
         $this->assertEquals(array(-0.3333333, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => 2)));
+                $question->grade_response($question->prepare_simulated_post_data(array('answer' => 'C'))));
     }
 
     public function test_grading_rounding_three_right() {
@@ -104,7 +103,6 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $mc->generalfeedback = '1, 3 and 5 are the odd numbers.';
         $mc->qtype = question_bank::get_qtype('multichoice');
 
-        $mc->shuffleanswers = 0;
         $mc->answernumbering = 'abc';
 
         test_question_maker::set_standard_combined_feedback_fields($mc);
@@ -120,40 +118,34 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
 
         $mc->start_attempt(new question_attempt_step(), 1);
 
-        list($grade, $state) = $mc->grade_response(
-                array('choice0' => 1, 'choice2' => 1, 'choice4' => 1));
+        list($grade, $state) = $mc->grade_response($mc->prepare_simulated_post_data(array('1' => '1', '3' => '1', '5' => '1')));
         $this->assertEquals(1, $grade, '', 0.000001);
         $this->assertEquals(question_state::$gradedright, $state);
     }
 
     public function test_get_correct_response() {
         $question = test_question_maker::make_a_multichoice_single_question();
-        $question->shuffleanswers = false;
         $question->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEquals(array('answer' => 0),
-                $question->get_correct_response());
+        $this->assertEquals($question->prepare_simulated_post_data(array('answer' => 'A')), $question->get_correct_response());
     }
 
     public function test_summarise_response() {
         $mc = test_question_maker::make_a_multichoice_single_question();
-        $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
 
-        $summary = $mc->summarise_response(array('answer' => 0),
-                test_question_maker::get_a_qa($mc));
+        $summary = $mc->summarise_response($mc->prepare_simulated_post_data(array('answer' => 'A')),
+                                            test_question_maker::get_a_qa($mc));
 
         $this->assertEquals('A', $summary);
     }
 
     public function test_classify_response() {
         $mc = test_question_maker::make_a_multichoice_single_question();
-        $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEquals(array(
-                $mc->id => new question_classified_response(14, 'B', -0.3333333),
-                ), $mc->classify_response(array('answer' => 1)));
+        $this->assertEquals(array($mc->id => new question_classified_response(14, 'B', -0.3333333)),
+                            $mc->classify_response($mc->prepare_simulated_post_data(array('answer' => 'B'))));
 
         $this->assertEquals(array(
                 $mc->id => question_classified_response::no_response(),

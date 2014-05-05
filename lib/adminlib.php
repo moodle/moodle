@@ -166,6 +166,10 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
+    // Delete all tag instances associated with this plugin.
+    require_once($CFG->dirroot . '/tag/lib.php');
+    tag_delete_instances($component);
+
     // Custom plugin uninstall.
     $plugindirectory = core_component::get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
@@ -194,6 +198,9 @@ function uninstall_plugin($type, $name) {
 
     // delete calendar events
     $DB->delete_records('event', array('modulename' => $pluginname));
+
+    // Delete scheduled tasks.
+    $DB->delete_records('task_scheduled', array('component' => $pluginname));
 
     // delete all the logs
     $DB->delete_records('log', array('module' => $pluginname));
@@ -2459,7 +2466,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         $default = $this->get_defaultsetting();
 
         if ($data) {
-            if (file_exists($data) and is_executable($data)) {
+            if (file_exists($data) and !is_dir($data) and is_executable($data)) {
                 $executable = '<span class="pathok">&#x2714;</span>';
             } else {
                 $executable = '<span class="patherror">&#x2718;</span>';
@@ -4789,6 +4796,129 @@ class admin_setting_special_gradeexport extends admin_setting_configmulticheckbo
             }
         }
         return true;
+    }
+}
+
+
+/**
+ * A setting for setting the default grade point value. Must be an integer between 1 and $CFG->gradepointmax.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_special_gradepointdefault extends admin_setting_configtext {
+    /**
+     * Config gradepointmax constructor
+     *
+     * @param string $name Overidden by "gradepointmax"
+     * @param string $visiblename Overridden by "gradepointmax" language string.
+     * @param string $description Overridden by "gradepointmax_help" language string.
+     * @param string $defaultsetting Not used, overridden by 100.
+     * @param mixed $paramtype Overridden by PARAM_INT.
+     * @param int $size Overridden by 5.
+     */
+    public function __construct($name = '', $visiblename = '', $description = '', $defaultsetting = '', $paramtype = PARAM_INT, $size = 5) {
+        $name = 'gradepointdefault';
+        $visiblename = get_string('gradepointdefault', 'grades');
+        $description = get_string('gradepointdefault_help', 'grades');
+        $defaultsetting = 100;
+        $paramtype = PARAM_INT;
+        $size = 5;
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
+    }
+
+    /**
+     * Validate data before storage
+     * @param string $data The submitted data
+     * @return bool|string true if ok, string if error found
+     */
+    public function validate($data) {
+        global $CFG;
+        if (((string)(int)$data === (string)$data && $data > 0 && $data <= $CFG->gradepointmax)) {
+            return true;
+        } else {
+            return get_string('gradepointdefault_validateerror', 'grades');
+        }
+    }
+}
+
+
+/**
+ * A setting for setting the maximum grade value. Must be an integer between 1 and 10000.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_special_gradepointmax extends admin_setting_configtext {
+
+    /**
+     * Config gradepointmax constructor
+     *
+     * @param string $name Overidden by "gradepointmax"
+     * @param string $visiblename Overridden by "gradepointmax" language string.
+     * @param string $description Overridden by "gradepointmax_help" language string.
+     * @param string $defaultsetting Not used, overridden by 100.
+     * @param mixed $paramtype Overridden by PARAM_INT.
+     * @param int $size Overridden by 5.
+     */
+    public function __construct($name = '', $visiblename = '', $description = '', $defaultsetting = '', $paramtype = PARAM_INT, $size = 5) {
+        $name = 'gradepointmax';
+        $visiblename = get_string('gradepointmax', 'grades');
+        $description = get_string('gradepointmax_help', 'grades');
+        $defaultsetting = 100;
+        $paramtype = PARAM_INT;
+        $size = 5;
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
+    }
+
+    /**
+     * Save the selected setting
+     *
+     * @param string $data The selected site
+     * @return string empty string or error message
+     */
+    public function write_setting($data) {
+        if ($data === '') {
+            $data = (int)$this->defaultsetting;
+        } else {
+            $data = $data;
+        }
+        return parent::write_setting($data);
+    }
+
+    /**
+     * Validate data before storage
+     * @param string $data The submitted data
+     * @return bool|string true if ok, string if error found
+     */
+    public function validate($data) {
+        if (((string)(int)$data === (string)$data && $data > 0 && $data <= 10000)) {
+            return true;
+        } else {
+            return get_string('gradepointmax_validateerror', 'grades');
+        }
+    }
+
+    /**
+     * Return an XHTML string for the setting
+     * @param array $data Associative array of value=>xx, forced=>xx, adv=>xx
+     * @param string $query search query to be highlighted
+     * @return string XHTML to display control
+     */
+    public function output_html($data, $query = '') {
+        $default = $this->get_defaultsetting();
+
+        $attr = array(
+            'type' => 'text',
+            'size' => $this->size,
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'value' => s($data),
+            'maxlength' => '5'
+        );
+        $input = html_writer::empty_tag('input', $attr);
+
+        $attr = array('class' => 'form-text defaultsnext');
+        $div = html_writer::tag('div', $input, $attr);
+        return format_admin_setting($this, $this->visiblename, $div, $this->description, true, '', $default, $query);
     }
 }
 
@@ -8137,6 +8267,11 @@ class admin_setting_configcolourpicker extends admin_setting {
     protected $previewconfig = null;
 
     /**
+     * Use default when empty.
+     */
+    protected $usedefaultwhenempty = true;
+
+    /**
      *
      * @param string $name
      * @param string $visiblename
@@ -8144,8 +8279,10 @@ class admin_setting_configcolourpicker extends admin_setting {
      * @param string $defaultsetting
      * @param array $previewconfig Array('selector'=>'.some .css .selector','style'=>'backgroundColor');
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, array $previewconfig=null) {
+    public function __construct($name, $visiblename, $description, $defaultsetting, array $previewconfig = null,
+            $usedefaultwhenempty = true) {
         $this->previewconfig = $previewconfig;
+        $this->usedefaultwhenempty = $usedefaultwhenempty;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
@@ -8236,7 +8373,11 @@ class admin_setting_configcolourpicker extends admin_setting {
         } else if (($data == 'transparent') || ($data == 'currentColor') || ($data == 'inherit')) {
             return $data;
         } else if (empty($data)) {
-            return $this->defaultsetting;
+            if ($this->usedefaultwhenempty){
+                return $this->defaultsetting;
+            } else {
+                return '';
+            }
         } else {
             return false;
         }
@@ -8331,12 +8472,9 @@ class admin_setting_configstoredfile extends admin_setting {
 
         // Let's not deal with validation here, this is for admins only.
         $current = $this->get_setting();
-        if (empty($data)) {
-            // Most probably applying default settings.
-            if ($current === null) {
-                return ($this->config_write($this->name, '') ? '' : get_string('errorsetting', 'admin'));
-            }
-            return '';
+        if (empty($data) && $current === null) {
+            // This will be the case when applying default settings (installation).
+            return ($this->config_write($this->name, '') ? '' : get_string('errorsetting', 'admin'));
         } else if (!is_number($data)) {
             // Draft item id is expected here!
             return get_string('errorsetting', 'admin');
@@ -8357,8 +8495,10 @@ class admin_setting_configstoredfile extends admin_setting {
 
         if ($fs->file_exists($options['context']->id, $component, $this->filearea, $this->itemid, '/', '.')) {
             // Make sure the settings form was not open for more than 4 days and draft areas deleted in the meantime.
+            // But we can safely ignore that if the destination area is empty, so that the user is not prompt
+            // with an error because the draft area does not exist, as he did not use it.
             $usercontext = context_user::instance($USER->id);
-            if (!$fs->file_exists($usercontext->id, 'user', 'draft', $data, '/', '.')) {
+            if (!$fs->file_exists($usercontext->id, 'user', 'draft', $data, '/', '.') && $current !== '') {
                 return get_string('errorsetting', 'admin');
             }
         }
@@ -8506,7 +8646,7 @@ class admin_setting_devicedetectregex extends admin_setting {
     public function output_html($data, $query='') {
         global $OUTPUT;
 
-        $out  = html_writer::start_tag('table', array('border' => 1, 'class' => 'generaltable'));
+        $out  = html_writer::start_tag('table', array('class' => 'generaltable'));
         $out .= html_writer::start_tag('thead');
         $out .= html_writer::start_tag('tr');
         $out .= html_writer::tag('th', get_string('devicedetectregexexpression', 'admin'));

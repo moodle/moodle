@@ -6,13 +6,13 @@ Feature: Add and configure blocks throughout the site
 
   @javascript
   Scenario: Add and configure a block throughtout the site
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | manager1 | Manager | 1 | manager1@asd.com |
-    And the following "system role assigns" exists:
+    And the following "system role assigns" exist:
       | user | course | role |
       | manager1 | Acceptance test site | manager |
     And I log in as "manager1"
@@ -20,7 +20,7 @@ Feature: Add and configure blocks throughout the site
     And I add the "Comments" block
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
     When I follow "Course 1"
@@ -29,7 +29,7 @@ Feature: Add and configure blocks throughout the site
     And I am on homepage
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Default weight | -10 (first) |
     And I press "Save changes"
     And I follow "Course 1"

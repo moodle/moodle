@@ -42,6 +42,7 @@ redirect_if_major_upgrade_required();
 
 // TODO Add sesskey check to edit
 $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
+$reset  = optional_param('reset', null, PARAM_BOOL);
 
 require_login();
 
@@ -53,7 +54,7 @@ if (isguestuser()) {  // Force them to see system default, no editing allowed
         redirect(new moodle_url('/', array('redirect' => 0)));
     }
 
-    $userid = NULL; 
+    $userid = null;
     $USER->editing = $edit = 0;  // Just in case
     $context = context_system::instance();
     $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');  // unlikely :)
@@ -98,7 +99,15 @@ if (!isguestuser()) {   // Skip default home page for guests
 
 // Toggle the editing state and switches
 if ($PAGE->user_allowed_editing()) {
-    if ($edit !== null) {             // Editing state was specified
+    if ($reset !== null) {
+        if (!is_null($userid)) {
+            require_sesskey();
+            if(!$currentpage = my_reset_page($userid, MY_PAGE_PRIVATE)){
+                print_error('reseterror', 'my');
+            }
+            redirect(new moodle_url('/my'));
+        }
+    } else if ($edit !== null) {             // Editing state was specified
         $USER->editing = $edit;       // Change editing state
         if (!$currentpage->userid && $edit) {
             // If we are viewing a system page as ordinary user, and the user turns
@@ -126,6 +135,10 @@ if ($PAGE->user_allowed_editing()) {
     // Add button for editing page
     $params = array('edit' => !$edit);
 
+    $resetbutton = '';
+    $resetstring = get_string('resetpage', 'my');
+    $reseturl = new moodle_url("$CFG->wwwroot/my/index.php", array('edit' => 1, 'reset' => 1));
+
     if (!$currentpage->userid) {
         // viewing a system page -- let the user customise it
         $editstring = get_string('updatemymoodleon');
@@ -134,11 +147,12 @@ if ($PAGE->user_allowed_editing()) {
         $editstring = get_string('updatemymoodleon');
     } else {
         $editstring = get_string('updatemymoodleoff');
+        $resetbutton = $OUTPUT->single_button($reseturl, $resetstring);
     }
 
     $url = new moodle_url("$CFG->wwwroot/my/index.php", $params);
     $button = $OUTPUT->single_button($url, $editstring);
-    $PAGE->set_button($button);
+    $PAGE->set_button($resetbutton . $button);
 
 } else {
     $USER->editing = $edit = 0;
@@ -152,6 +166,6 @@ if ($currentpage->userid == 0) {
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->blocks_for_region('content');
+echo $OUTPUT->custom_block_region('content');
 
 echo $OUTPUT->footer();

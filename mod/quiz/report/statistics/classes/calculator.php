@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace quiz_statistics;
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class to calculate and also manage caching of quiz statistics.
  *
@@ -26,7 +29,19 @@
  * @author     James Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_statistics_calculator {
+class calculator {
+
+    /**
+     * @var \core\progress\base
+     */
+    protected $progress;
+
+    public function __construct(\core\progress\base $progress = null) {
+        if ($progress === null) {
+            $progress = new \core\progress\null();
+        }
+        $this->progress = $progress;
+    }
 
     /**
      * Compute the quiz statistics.
@@ -39,69 +54,70 @@ class quiz_statistics_calculator {
      * @param array $groupstudents     students in this group.
      * @param int   $p                 number of positions (slots).
      * @param float $sumofmarkvariance sum of mark variance, calculated as part of question statistics
-     * @return quiz_statistics_calculated $quizstats The statistics for overall attempt scores.
+     * @return calculated $quizstats The statistics for overall attempt scores.
      */
     public function calculate($quizid, $whichattempts, $groupstudents, $p, $sumofmarkvariance) {
 
+        $this->progress->start_progress('', 3);
 
-
-        $quizstats = new quiz_statistics_calculated($whichattempts);
+        $quizstats = new calculated($whichattempts);
 
         $countsandaverages = $this->attempt_counts_and_averages($quizid, $groupstudents);
+        $this->progress->progress(1);
 
         foreach ($countsandaverages as $propertyname => $value) {
             $quizstats->{$propertyname} = $value;
         }
 
         $s = $quizstats->s();
+        if ($s != 0) {
 
-        if ($s == 0) {
-            return $quizstats;
-        }
+            // Recalculate sql again this time possibly including test for first attempt.
+            list($fromqa, $whereqa, $qaparams) =
+                quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts);
 
-        // Recalculate sql again this time possibly including test for first attempt.
-        list($fromqa, $whereqa, $qaparams) =
-            quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts);
+            $quizstats->median = $this->median($s, $fromqa, $whereqa, $qaparams);
+            $this->progress->progress(2);
 
-        $quizstats->median = $this->median($s, $fromqa, $whereqa, $qaparams);
+            if ($s > 1) {
 
-        if ($s > 1) {
+                $powers = $this->sum_of_powers_of_difference_to_mean($quizstats->avg(), $fromqa, $whereqa, $qaparams);
+                $this->progress->progress(3);
 
-            $powers = $this->sum_of_powers_of_difference_to_mean($quizstats->avg(), $fromqa, $whereqa, $qaparams);
+                $quizstats->standarddeviation = sqrt($powers->power2 / ($s - 1));
 
-            $quizstats->standarddeviation = sqrt($powers->power2 / ($s - 1));
+                // Skewness.
+                if ($s > 2) {
+                    // See http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis.
+                    $m2 = $powers->power2 / $s;
+                    $m3 = $powers->power3 / $s;
+                    $m4 = $powers->power4 / $s;
 
-            // Skewness.
-            if ($s > 2) {
-                // See http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis.
-                $m2 = $powers->power2 / $s;
-                $m3 = $powers->power3 / $s;
-                $m4 = $powers->power4 / $s;
+                    $k2 = $s * $m2 / ($s - 1);
+                    $k3 = $s * $s * $m3 / (($s - 1) * ($s - 2));
+                    if ($k2 != 0) {
+                        $quizstats->skewness = $k3 / (pow($k2, 3 / 2));
 
-                $k2 = $s * $m2 / ($s - 1);
-                $k3 = $s * $s * $m3 / (($s - 1) * ($s - 2));
-                if ($k2 != 0) {
-                    $quizstats->skewness = $k3 / (pow($k2, 3 / 2));
+                        // Kurtosis.
+                        if ($s > 3) {
+                            $k4 = $s * $s * ((($s + 1) * $m4) - (3 * ($s - 1) * $m2 * $m2)) / (($s - 1) * ($s - 2) * ($s - 3));
+                            $quizstats->kurtosis = $k4 / ($k2 * $k2);
+                        }
 
-                    // Kurtosis.
-                    if ($s > 3) {
-                        $k4 = $s * $s * ((($s + 1) * $m4) - (3 * ($s - 1) * $m2 * $m2)) / (($s - 1) * ($s - 2) * ($s - 3));
-                        $quizstats->kurtosis = $k4 / ($k2 * $k2);
+                        if ($p > 1) {
+                            $quizstats->cic = (100 * $p / ($p - 1)) * (1 - ($sumofmarkvariance / $k2));
+                            $quizstats->errorratio = 100 * sqrt(1 - ($quizstats->cic / 100));
+                            $quizstats->standarderror = $quizstats->errorratio *
+                                $quizstats->standarddeviation / 100;
+                        }
                     }
 
-                    if ($p > 1) {
-                        $quizstats->cic = (100 * $p / ($p - 1)) * (1 - ($sumofmarkvariance / $k2));
-                        $quizstats->errorratio = 100 * sqrt(1 - ($quizstats->cic / 100));
-                        $quizstats->standarderror = $quizstats->errorratio *
-                            $quizstats->standarddeviation / 100;
-                    }
                 }
-
             }
+
+            $quizstats->cache(quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts));
         }
-
-        $quizstats->cache(quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts));
-
+        $this->progress->end_progress();
         return $quizstats;
     }
 
@@ -111,8 +127,8 @@ class quiz_statistics_calculator {
     /**
      * Load cached statistics from the database.
      *
-     * @param $qubaids qubaid_condition
-     * @return quiz_statistics_calculated The statistics for overall attempt scores or false if not cached.
+     * @param $qubaids \qubaid_condition
+     * @return calculated The statistics for overall attempt scores or false if not cached.
      */
     public function get_cached($qubaids) {
         global $DB;
@@ -120,7 +136,7 @@ class quiz_statistics_calculator {
         $timemodified = time() - self::TIME_TO_CACHE;
         $fromdb = $DB->get_record_select('quiz_statistics', 'hashcode = ? AND timemodified > ?',
                                          array($qubaids->get_hash_code(), $timemodified));
-        $stats = new quiz_statistics_calculated();
+        $stats = new calculated();
         $stats->populate_from_record($fromdb);
         return $stats;
     }
@@ -128,7 +144,7 @@ class quiz_statistics_calculator {
     /**
      * Find time of non-expired statistics in the database.
      *
-     * @param $qubaids qubaid_condition
+     * @param $qubaids \qubaid_condition
      * @return integer|boolean Time of cached record that matches this qubaid_condition or false is non found.
      */
     public function get_last_calculated_time($qubaids) {
@@ -188,12 +204,12 @@ class quiz_statistics_calculator {
      *                                      #Calculating_MEAN_of_grades_for_all_attempts_by_students
      * @param int $quizid
      * @param array $groupstudents
-     * @return stdClass with properties with count and avg with prefixes firstattempts, highestattempts, etc.
+     * @return \stdClass with properties with count and avg with prefixes firstattempts, highestattempts, etc.
      */
     protected function attempt_counts_and_averages($quizid, $groupstudents) {
         global $DB;
 
-        $attempttotals = new stdClass();
+        $attempttotals = new \stdClass();
         foreach (array_keys(quiz_get_grading_options()) as $which) {
 
             list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $which);

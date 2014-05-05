@@ -321,6 +321,7 @@ class course_edit_form extends moodleform {
                     $options[$grouping->id] = format_string($grouping->name);
                 }
             }
+            core_collator::asort($options);
             $gr_el =& $mform->getElement('defaultgroupingid');
             $gr_el->load($options);
         }

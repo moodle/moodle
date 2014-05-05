@@ -7,7 +7,7 @@
  * @author Kenneth Riba
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package wiki
+ * @package mod_wiki
  */
 $string['addcomment'] = 'Add comment';
 $string['admin'] = 'Administration';

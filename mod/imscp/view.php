@@ -18,8 +18,7 @@
 /**
  * IMS CP module main user interface
  *
- * @package    mod
- * @subpackage imscp
+ * @package mod_imscp
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +45,13 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/imscp:view', $context);
 
-add_to_log($course->id, 'imscp', 'view', 'view.php?id='.$cm->id, $imscp->id, $cm->id);
+$params = array(
+    'context' => $context,
+    'objectid' => $imscp->id
+);
+$event = \mod_imscp\event\course_module_viewed::create($params);
+$event->add_record_snapshot('imscp', $imscp);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 $completion = new completion_info($course);

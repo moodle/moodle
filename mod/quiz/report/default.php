@@ -64,7 +64,7 @@ abstract class quiz_default_report {
         global $PAGE, $OUTPUT;
 
         // Print the page header.
-        $PAGE->set_title(format_string($quiz->name));
+        $PAGE->set_title($quiz->name);
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
         $context = context_module::instance($cm->id);

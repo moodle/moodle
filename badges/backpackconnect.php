@@ -29,6 +29,7 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/badges/lib/backpacklib.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->libdir . '/badgeslib.php');
 
 require_sesskey();
 require_login();
@@ -86,7 +87,7 @@ if (!isset($data->status) || $data->status != 'okay') {
 
 // Make sure email matches a backpack.
 $check = new stdClass();
-$check->backpackurl = BADGE_BACKPACKURL;
+$check->backpackurl = 'http://' . BADGE_BACKPACKURL;
 $check->email = $data->email;
 
 $bp = new OpenBadgesBackpackHandler($check);
@@ -105,7 +106,7 @@ if (isset($request->status) && $request->status == 'missing') {
 $obj = new stdClass();
 $obj->userid = $USER->id;
 $obj->email = $data->email;
-$obj->backpackurl = BADGE_BACKPACKURL;
+$obj->backpackurl = 'http://' . BADGE_BACKPACKURL;
 $obj->backpackuid = $backpackuid;
 $obj->autosync = 0;
 $obj->password = '';

@@ -17,8 +17,7 @@
 /**
  * Version info
  *
- * @package    block
- * @subpackage completion
+ * @package    block_completionstatus
  * @copyright  2009 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

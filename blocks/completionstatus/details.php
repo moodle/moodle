@@ -17,8 +17,7 @@
 /**
  * Block for displaying logged in user's course completion status
  *
- * @package    block
- * @subpackage completion
+ * @package    block_completionstatus
  * @copyright  2009-2012 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -76,7 +75,7 @@ $page = get_string('completionprogressdetails', 'block_completionstatus');
 $title = format_string($course->fullname) . ': ' . $page;
 
 $PAGE->navbar->add($page);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('report');
 $PAGE->set_url('/blocks/completionstatus/details.php', array('course' => $course->id, 'user' => $user->id));
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($title);

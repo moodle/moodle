@@ -129,4 +129,28 @@ class core_userliblib_testcase extends advanced_testcase {
         $expectedlogdata = array(SITEID, 'user', 'add', '/view.php?id='.$event->objectid, fullname($dbuser));
         $this->assertEventLegacyLogData($expectedlogdata, $event);
     }
+
+    /**
+     * Test function user_count_login_failures().
+     */
+    public function test_user_count_login_failures() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertEquals(0, get_user_preferences('login_failed_count_since_success', 0, $user));
+        for ($i = 0; $i < 10; $i++) {
+            login_attempt_failed($user);
+        }
+        $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
+        $count = user_count_login_failures($user); // Reset count.
+        $this->assertEquals(10, $count);
+        $this->assertEquals(0, get_user_preferences('login_failed_count_since_success', 0, $user));
+
+        for ($i = 0; $i < 10; $i++) {
+            login_attempt_failed($user);
+        }
+        $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
+        $count = user_count_login_failures($user, false); // Do not reset count.
+        $this->assertEquals(10, $count);
+        $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
+    }
 }

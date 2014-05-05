@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_book chapter updated event.
+ * The mod_book chapter updated event.
  *
  * @package    mod_book
  * @copyright  2013 Frédéric Massart
@@ -26,13 +26,35 @@ namespace mod_book\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_book chapter updated event class.
+ * The mod_book chapter updated event class.
  *
  * @package    mod_book
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chapter_updated extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \stdClass $book
+     * @param \context_module $context
+     * @param \stdClass $chapter
+     * @return chapter_updated
+     */
+    public static function create_from_chapter(\stdClass $book, \context_module $context, \stdClass $chapter) {
+        $data = array(
+            'context' => $context,
+            'objectid' => $chapter->id,
+        );
+        /** @var chapter_updated $event */
+        $event = self::create($data);
+        $event->add_record_snapshot('book', $book);
+        $event->add_record_snapshot('book_chapters', $chapter);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -40,7 +62,8 @@ class chapter_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The chapter $this->objectid of the book $this->context->instanceid has been updated.";
+        return "The chapter with the id '$this->objectid' of the book with the course module id '$this->contextinstanceid'
+            has been updated by the user with the id '$this->userid'.";
     }
 
     /**
@@ -49,8 +72,8 @@ class chapter_updated extends \core\event\base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'book', 'update chapter', 'view.php?id=' . $this->context->instanceid . '&chapterid=' .
-            $this->objectid, $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'book', 'update chapter', 'view.php?id=' . $this->contextinstanceid . '&chapterid=' .
+            $this->objectid, $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -59,7 +82,7 @@ class chapter_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_updated', 'mod_book');
+        return get_string('eventchapterupdated', 'mod_book');
     }
 
     /**
@@ -69,7 +92,7 @@ class chapter_updated extends \core\event\base {
      */
     public function get_url() {
         return new \moodle_url('/mod/book/view.php', array(
-            'id' => $this->context->instanceid,
+            'id' => $this->contextinstanceid,
             'chapterid' => $this->objectid
         ));
     }
@@ -81,7 +104,7 @@ class chapter_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'book_chapters';
     }
 

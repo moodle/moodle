@@ -5,23 +5,16 @@ Feature: Block appearances
   I need to add and modify block configuration for the page
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | teacher | 1 | teacher1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Appearance" node
-    And I expand "Themes" node
-    And I follow "Theme selector"
-    And I click on "Change theme" "button" in the "Default" "table_row"
-    And I click on "Use theme" "button" in the "Afterburner" "table_row"
-    And I press "Continue"
     And I am on homepage
     And I follow "Course 1"
     And I follow "Turn editing on"
@@ -33,7 +26,7 @@ Feature: Block appearances
       | Name | Test book name |
       | Description | Test book description |
     And I follow "Test book name"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Chapter title | Book title |
       | Content       | Book content test test |
     And I press "Save changes"
@@ -44,7 +37,7 @@ Feature: Block appearances
     And I add the "Comments" block
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
 
@@ -55,7 +48,7 @@ Feature: Block appearances
     And I follow "Course 1"
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any course page |
     And I press "Save changes"
     And I follow "Turn editing off"
@@ -67,7 +60,7 @@ Feature: Block appearances
     When I follow "Test book name"
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Visible | No |
     And I press "Save changes"
     And I follow "Turn editing off"
@@ -77,7 +70,7 @@ Feature: Block appearances
     And I follow "Turn editing on"
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Visible | Yes |
       | Region  | Right |
     And I press "Save changes"

@@ -137,7 +137,8 @@ class cronlib_testcase extends basic_testcase {
             touch($tmpdir.$data->path, $data->time);
         }
 
-        cron_delete_from_temp();
+        $task = new \core\task\file_temp_cleanup_task();
+        $task->execute();
 
         $dir = new RecursiveDirectoryIterator($tmpdir);
         $iter = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::CHILD_FIRST);

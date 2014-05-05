@@ -26,8 +26,7 @@
  * through a confirmation page that redirects the user back with the
  * sesskey.
  *
- * @package    mod
- * @subpackage forum
+ * @package   mod_forum
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -149,7 +148,6 @@ if (forum_is_subscribed($user->id, $forum->id)) {
     }
     require_sesskey();
     if (forum_unsubscribe($user->id, $forum->id)) {
-        add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
         redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
     } else {
         print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
@@ -174,6 +172,5 @@ if (forum_is_subscribed($user->id, $forum->id)) {
     }
     require_sesskey();
     forum_subscribe($user->id, $forum->id);
-    add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
     redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
 }

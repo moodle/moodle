@@ -94,19 +94,19 @@ class core_eventslib_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests events_trigger() function.
+     * Tests events_trigger_legacy() function.
      */
-    public function test_events_trigger__instant() {
-        $this->assertEquals(0, events_trigger('test_instant', 'ok'));
-        $this->assertEquals(0, events_trigger('test_instant', 'ok'));
+    public function test_events_trigger_legacy_instant() {
+        $this->assertEquals(0, events_trigger_legacy('test_instant', 'ok'));
+        $this->assertEquals(0, events_trigger_legacy('test_instant', 'ok'));
         $this->assertEquals(2, eventslib_sample_function_handler('status'));
     }
 
     /**
-     * Tests events_trigger() function.
+     * Tests events_trigger_legacy() function.
      */
     public function test_events_trigger__cron() {
-        $this->assertEquals(0, events_trigger('test_cron', 'ok'));
+        $this->assertEquals(0, events_trigger_legacy('test_cron', 'ok'));
         $this->assertEquals(0, eventslib_sample_handler_class::static_method('status'));
         events_cron('test_cron');
         $this->assertEquals(1, eventslib_sample_handler_class::static_method('status'));
@@ -116,21 +116,21 @@ class core_eventslib_testcase extends advanced_testcase {
      * Tests events_pending_count() function.
      */
     public function test_events_pending_count() {
-        events_trigger('test_cron', 'ok');
-        events_trigger('test_cron', 'ok');
+        events_trigger_legacy('test_cron', 'ok');
+        events_trigger_legacy('test_cron', 'ok');
         events_cron('test_cron');
         $this->assertEquals(0, events_pending_count('test_cron'), 'all messages should be already dequeued: %s');
     }
 
     /**
-     * Tests events_trigger() function when instant handler fails.
+     * Tests events_trigger_legacy() function when instant handler fails.
      */
     public function test_events_trigger__failed_instant() {
         global $CFG;
         $olddebug = $CFG->debug;
 
-        $this->assertEquals(1, events_trigger('test_instant', 'fail'), 'fail first event: %s');
-        $this->assertEquals(1, events_trigger('test_instant', 'ok'), 'this one should fail too: %s');
+        $this->assertEquals(1, events_trigger_legacy('test_instant', 'fail'), 'fail first event: %s');
+        $this->assertEquals(1, events_trigger_legacy('test_instant', 'ok'), 'this one should fail too: %s');
 
         $this->assertEquals(0, events_cron('test_instant'), 'all events should stay in queue: %s');
         $this->assertDebuggingCalled();
@@ -138,18 +138,25 @@ class core_eventslib_testcase extends advanced_testcase {
         $this->assertEquals(2, events_pending_count('test_instant'), 'two events should in queue: %s');
         $this->assertEquals(0, eventslib_sample_function_handler('status'), 'verify no event dispatched yet: %s');
         eventslib_sample_function_handler('ignorefail'); // Ignore "fail" eventdata from now on.
-        $this->assertEquals(1, events_trigger('test_instant', 'ok'), 'this one should go to queue directly: %s');
+        $this->assertEquals(1, events_trigger_legacy('test_instant', 'ok'), 'this one should go to queue directly: %s');
         $this->assertEquals(3, events_pending_count('test_instant'), 'three events should in queue: %s');
         $this->assertEquals(0, eventslib_sample_function_handler('status'), 'verify previous event was not dispatched: %s');
         $this->assertEquals(3, events_cron('test_instant'), 'all events should be dispatched: %s');
         $this->assertEquals(3, eventslib_sample_function_handler('status'), 'verify three events were dispatched: %s');
         $this->assertEquals(0, events_pending_count('test_instant'), 'no events should in queue: %s');
-        $this->assertEquals(0, events_trigger('test_instant', 'ok'), 'this event should be dispatched immediately: %s');
+        $this->assertEquals(0, events_trigger_legacy('test_instant', 'ok'), 'this event should be dispatched immediately: %s');
         $this->assertEquals(4, eventslib_sample_function_handler('status'), 'verify event was dispatched: %s');
         $this->assertEquals(0, events_pending_count('test_instant'), 'no events should in queue: %s');
     }
-}
 
+    /**
+     * Tests events_trigger() function.
+     */
+    public function test_events_trigger_debugging() {
+        $this->assertEquals(0, events_trigger('test_instant', 'ok'));
+        $this->assertDebuggingCalled();
+    }
+}
 
 /**
  * Test handler function.

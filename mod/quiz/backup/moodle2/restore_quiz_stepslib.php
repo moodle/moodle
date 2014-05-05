@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
+ * @package    mod_quiz
  * @subpackage backup-moodle2
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -92,9 +92,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // Needed by {@link process_quiz_attempt_legacy}.
-        $this->oldquizlayout = $data->questions;
-        $data->questions = $this->questions_recode_layout($data->questions);
+        if (property_exists($data, 'questions')) {
+            // Needed by {@link process_quiz_attempt_legacy}, in which case it will be present.
+            $this->oldquizlayout = $data->questions;
+        }
 
         // The setting quiz->attempts can come both in data->attempts and
         // data->attempts_number, handle both. MDL-26229.
@@ -234,13 +235,45 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
 
-        $data->quiz = $this->get_new_parentid('quiz');
+        // Backwards compatibility for old field names (MDL-43670).
+        if (!isset($data->questionid) && isset($data->question)) {
+            $data->questionid = $data->question;
+        }
+        if (!isset($data->maxmark) && isset($data->grade)) {
+            $data->maxmark = $data->grade;
+        }
 
-        $data->question = $this->get_mappingid('question', $data->question);
+        if (!property_exists($data, 'slot')) {
+            $page = 1;
+            $slot = 1;
+            foreach (explode(',', $this->oldquizlayout) as $item) {
+                if ($item == 0) {
+                    $page += 1;
+                    continue;
+                }
+                if ($item == $data->questionid) {
+                    $data->slot = $slot;
+                    $data->page = $page;
+                    break;
+                }
+                $slot += 1;
+            }
+        }
 
-        $DB->insert_record('quiz_question_instances', $data);
+        if (!property_exists($data, 'slot')) {
+            // There was a question_instance in the backup file for a question
+            // that was not acutally in the quiz. Drop it.
+            $this->log('question ' . $data->questionid . ' was associated with quiz ' .
+                    $quiz->id . ' but not actually used. ' .
+                    'The instance has been ignored.', backup::LOG_INFO);
+            return;
+        }
+
+        $data->quizid = $this->get_new_parentid('quiz');
+        $data->questionid = $this->get_mappingid('question', $data->questionid);
+
+        $DB->insert_record('quiz_slots', $data);
     }
 
     protected function process_quiz_feedback($data) {

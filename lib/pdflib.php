@@ -73,13 +73,16 @@ define('K_PATH_CACHE', $CFG->cachedir . '/tcpdf/');
 define('K_PATH_IMAGES', $CFG->dirroot . '/');
 
 /** blank image */
-define('K_BLANK_IMAGE', K_PATH_IMAGES . '/pix/spacer.gif');
+define('K_BLANK_IMAGE', K_PATH_IMAGES . 'pix/spacer.gif');
 
 /** height of cell repect font height */
 define('K_CELL_HEIGHT_RATIO', 1.25);
 
 /** reduction factor for small font */
 define('K_SMALL_RATIO', 2/3);
+
+/** Throw exceptions from errors so they can be caught and recovered from. */
+define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 
 require_once(dirname(__FILE__).'/tcpdf/tcpdf.php');
 

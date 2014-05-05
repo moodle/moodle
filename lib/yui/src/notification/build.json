@@ -9,7 +9,8 @@
     "moodle-core-notification-dialogue": {
       "jsfiles": [
         "shared.js",
-        "dialogue.js"
+        "dialogue.js",
+        "info.js"
       ]
     },
     "moodle-core-notification-alert": {

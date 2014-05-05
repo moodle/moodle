@@ -35,8 +35,7 @@
 /**
  * This file defines the main lti configuration form
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
@@ -118,6 +117,9 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('securetoolurl', PARAM_TEXT);
         $mform->setAdvanced('securetoolurl');
         $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
+
+        $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
+        $mform->setType('urlmatchedtypeid', PARAM_INT);
 
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');

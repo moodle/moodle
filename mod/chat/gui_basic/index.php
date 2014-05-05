@@ -43,11 +43,11 @@ if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
 $context = context_module::instance($cm->id);
 require_login($course, false, $cm);
 require_capability('mod/chat:chat', $context);
-$PAGE->set_pagelayout('base');
+$PAGE->set_pagelayout('popup');
 $PAGE->set_popup_notification_allowed(false);
 
-/// Check to see if groups are being used here
- if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+// Check to see if groups are being used here.
+ if ($groupmode = groups_get_activity_groupmode($cm)) { // Groups are being used.
     if ($groupid = groups_get_activity_group($cm)) {
         if (!$group = groups_get_group($groupid)) {
             print_error('invalidgroupid');

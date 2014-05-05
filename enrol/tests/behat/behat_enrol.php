@@ -52,8 +52,8 @@ class behat_enrol extends behat_base {
         return array(
             new Given('I expand "' . get_string('users', 'admin') . '" node'),
             new Given('I follow "' . get_string('type_enrol_plural', 'plugin') . '"'),
-            new Given('I select "' . $this->escape($enrolmethod) . '" from "' . get_string('addinstance', 'enrol') . '"'),
-            new Given('I fill the moodle form with:', $table),
+            new Given('I set the field "' . get_string('addinstance', 'enrol') . '" to "' . $this->escape($enrolmethod) . '"'),
+            new Given('I set the following fields to these values:', $table),
             new Given('I press "' . get_string('addinstance', 'enrol') . '"')
         );
     }

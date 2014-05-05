@@ -1,0 +1,119 @@
+@availability @availability_grade
+Feature: availability_grade
+  In order to control student access to activities
+  As a teacher
+  I need to set date conditions which prevent student access
+
+  Background:
+    Given the following "courses" exist:
+      | fullname | shortname | format | enablecompletion |
+      | Course 1 | C1        | topics | 1                |
+    And the following "users" exist:
+      | username | email         |
+      | teacher1 | t@example.org |
+      | student1 | s@example.org |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Enable conditional access  | 1 |
+    And I log out
+
+  @javascript
+  Scenario: Test condition
+    # Basic setup.
+    Given I log in as "teacher1"
+    And I follow "Course 1"
+    And I turn editing mode on
+
+    # Add an assignment.
+    And I add a "Assignment" to section "1" and I fill the form with:
+      | Assignment name     | A1 |
+      | Description         | x  |
+      | Online text         | 1  |
+
+    # Add a Page with a grade condition for 'any grade'.
+    And I add a "Page" to section "2"
+    And I set the following fields to these values:
+      | Name         | P2 |
+      | Description  | x  |
+      | Page content | x  |
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Grade" "button" in the "Add restriction..." "dialogue"
+    And I click on ".availability-item .availability-eye img" "css_element"
+    And I set the field "Grade" to "A1"
+    And I press "Save and return to course"
+
+    # Add a Page with a grade condition for 50%.
+    And I add a "Page" to section "3"
+    And I set the following fields to these values:
+      | Name         | P3 |
+      | Description  | x  |
+      | Page content | x  |
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Grade" "button" in the "Add restriction..." "dialogue"
+    And I click on ".availability-item .availability-eye img" "css_element"
+    And I set the field "Grade" to "A1"
+    And I click on "min" "checkbox" in the ".availability-item" "css_element"
+    And I set the field "Minimum grade percentage (inclusive)" to "50"
+    And I press "Save and return to course"
+
+    # Add a Page with a grade condition for 10%.
+    And I add a "Page" to section "4"
+    And I set the following fields to these values:
+      | Name         | P4 |
+      | Description  | x  |
+      | Page content | x  |
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Grade" "button" in the "Add restriction..." "dialogue"
+    And I click on ".availability-item .availability-eye img" "css_element"
+    And I set the field "Grade" to "A1"
+    And I click on "min" "checkbox" in the ".availability-item" "css_element"
+    And I set the field "Minimum grade percentage (inclusive)" to "10"
+    And I press "Save and return to course"
+
+    # Log in as student without a grade yet.
+    When I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+
+    # Do the assignment.
+    And I follow "A1"
+    And I click on "Add submission" "button"
+    And I set the field "Online text" to "Q"
+    And I click on "Save changes" "button"
+    And I follow "C1"
+
+    # None of the pages should appear (check assignment though).
+    Then I should not see "P2" in the "region-main" "region"
+    And I should not see "P3" in the "region-main" "region"
+    And I should not see "P4" in the "region-main" "region"
+    And I should see "A1" in the "region-main" "region"
+
+    # Log back in as teacher.
+    When I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+
+    # Give the assignment 40%.
+    And I follow "A1"
+    And I follow "View/grade all submissions"
+    # Pick the grade link in the row that has s@example.org in it.
+    And I click on "//a[contains(@href, 'action=grade') and ancestor::tr/td[normalize-space(.) = 's@example.org']]/img" "xpath_element"
+    And I set the field "Grade out of 100" to "40"
+    And I click on "Save changes" "button"
+
+    # Log back in as student.
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+
+    # Check pages are visible.
+    Then I should see "P2" in the "region-main" "region"
+    And I should see "P4" in the "region-main" "region"
+    And I should not see "P3" in the "region-main" "region"

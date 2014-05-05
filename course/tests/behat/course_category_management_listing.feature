@@ -6,7 +6,7 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario: Test general look of management interface
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
     And I log in as "admin"
@@ -18,10 +18,10 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario: Test view mode functionality
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category | format |
       | Course 1 | C1 | CAT1 | topics |
 
@@ -71,7 +71,7 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 1" in the "#course-detail .category" "css_element"
 
   Scenario: Test displaying of sub categories
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
@@ -81,7 +81,7 @@ Feature: Course category management interface performs as expected
       | Cat 1-1-2 | CAT3 | CAT6 |
       | Cat 2-1 | CAT2 | CAT7 |
       | Cat 2-1-1 | CAT7 | CAT8 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | CAT1 |
       | Course 2 | C2 | CAT1 |
@@ -141,7 +141,7 @@ Feature: Course category management interface performs as expected
   # to load the categories.
   @javascript @_cross_browser
   Scenario: Test AJAX loading of sub categories
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
@@ -151,7 +151,7 @@ Feature: Course category management interface performs as expected
       | Cat 1-1-2 | CAT3 | CAT6 |
       | Cat 2-1 | CAT2 | CAT7 |
       | Cat 2-1-1 | CAT7 | CAT8 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | CAT1 |
       | Course 2 | C2 | CAT1 |
@@ -236,7 +236,7 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario Outline: Top level categories are displayed correctly when resorted
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | name | idnumber | sortorder |
       | 0 | Social studies | Ext003 | 1 |
       | 0 | Applied sciences | Sci001 | 2 |
@@ -245,8 +245,8 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I select "All categories" from "menuselectsortby"
-    And I select <sortby> from "menuresortcategoriesby"
+    And I set the field "menuselectsortby" to "All categories"
+    And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
     And I should see the "Course categories" management page
@@ -260,7 +260,7 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario Outline: Sub categories are displayed correctly when resorted
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | category | name | idnumber | sortorder |
       | 0 | Master cat  | CAT1 | 1 |
       | CAT1 | Social studies | Ext003 | 1 |
@@ -286,10 +286,10 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario Outline: Test courses are displayed correctly after being resorted.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category 0| idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber | sortorder |
       | CAT1 | Social studies | Senior school | Ext003 | 1 |
       | CAT1 | Applied sciences  | Middle school | Sci001 | 2 |
@@ -319,10 +319,10 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario: Test course pagination
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |
@@ -358,7 +358,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 9" before "Course 10"
     And I should see course listing "Course 10" before "Course 11"
     And I should see course listing "Course 11" before "Course 12"
-    And "#course-listing .listing-pagination" "css_element" should not exists
+    And "#course-listing .listing-pagination" "css_element" should not exist
     And I click on "Per page: 20" "link" in the ".course-listing-actions" "css_element"
     And I should see "5" in the ".courses-per-page" "css_element"
     And I should see "10" in the ".courses-per-page" "css_element"
@@ -379,7 +379,7 @@ Feature: Course category management interface performs as expected
     And I should not see "Course 10"
     And I should not see "Course 11"
     And I should not see "Course 12"
-    And "#course-listing .listing-pagination" "css_element" should exists
+    And "#course-listing .listing-pagination" "css_element" should exist
     And I should see "Showing courses 1 to 5 of 12 courses"
     And I should not see "First" in the "#course-listing .listing-pagination" "css_element"
     And I should not see "Prev" in the "#course-listing .listing-pagination" "css_element"
@@ -403,7 +403,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 9" before "Course 10"
     And I should not see "Course 11"
     And I should not see "Course 12"
-    And "#course-listing .listing-pagination" "css_element" should exists
+    And "#course-listing .listing-pagination" "css_element" should exist
     And I should see "Showing courses 6 to 10 of 12 courses"
     And I should see "First" in the "#course-listing .listing-pagination" "css_element"
     And I should see "Prev" in the "#course-listing .listing-pagination" "css_element"
@@ -427,7 +427,7 @@ Feature: Course category management interface performs as expected
     And I should not see "Course 9" in the "#course-listing" "css_element"
     And I should not see "Course 10" in the "#course-listing" "css_element"
     And I should see course listing "Course 11" before "Course 12"
-    And "#course-listing .listing-pagination" "css_element" should exists
+    And "#course-listing .listing-pagination" "css_element" should exist
     And I should see "Showing courses 11 to 12 of 12 courses"
     And I should see "First" in the "#course-listing .listing-pagination" "css_element"
     And I should see "Prev" in the "#course-listing .listing-pagination" "css_element"
@@ -451,7 +451,7 @@ Feature: Course category management interface performs as expected
     And I should not see "Course 10" in the "#course-listing" "css_element"
     And I should not see "Course 11" in the "#course-listing" "css_element"
     And I should not see "Course 12" in the "#course-listing" "css_element"
-    And "#course-listing .listing-pagination" "css_element" should exists
+    And "#course-listing .listing-pagination" "css_element" should exist
     And I should see "Showing courses 1 to 5 of 12 courses"
     And I should not see "First" in the "#course-listing .listing-pagination" "css_element"
     And I should not see "Prev" in the "#course-listing .listing-pagination" "css_element"
@@ -475,7 +475,7 @@ Feature: Course category management interface performs as expected
     And I should not see "Course 9" in the "#course-listing" "css_element"
     And I should not see "Course 10" in the "#course-listing" "css_element"
     And I should see course listing "Course 11" before "Course 12"
-    And "#course-listing .listing-pagination" "css_element" should exists
+    And "#course-listing .listing-pagination" "css_element" should exist
     And I should see "Showing courses 11 to 12 of 12 courses"
     And I should see "First" in the "#course-listing .listing-pagination" "css_element"
     And I should see "Prev" in the "#course-listing .listing-pagination" "css_element"
@@ -499,7 +499,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 9" before "Course 10"
     And I should not see "Course 11"
     And I should not see "Course 12"
-    And "#course-listing .listing-pagination" "css_element" should exists
+    And "#course-listing .listing-pagination" "css_element" should exist
     And I should see "Showing courses 6 to 10 of 12 courses"
     And I should see "First" in the "#course-listing .listing-pagination" "css_element"
     And I should see "Prev" in the "#course-listing .listing-pagination" "css_element"
@@ -510,10 +510,10 @@ Feature: Course category management interface performs as expected
     And I should see "Last" in the "#course-listing .listing-pagination" "css_element"
 
   Scenario: Test pagination is only shown when required
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |
@@ -534,7 +534,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 2" before "Course 3"
     And I should see course listing "Course 3" before "Course 4"
     And I should see course listing "Course 4" before "Course 5"
-    And "#course-listing .listing-pagination" "css_element" should not exists
+    And "#course-listing .listing-pagination" "css_element" should not exist
     And I click on "5" "link" in the ".course-listing-actions" "css_element"
     # Redirect
     And I should see "Per page: 5" in the ".course-listing-actions" "css_element"
@@ -542,15 +542,15 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 2" before "Course 3"
     And I should see course listing "Course 3" before "Course 4"
     And I should see course listing "Course 4" before "Course 5"
-    And "#course-listing .listing-pagination" "css_element" should not exists
+    And "#course-listing .listing-pagination" "css_element" should not exist
 
   # We need at least 30 courses for this next test.
   @javascript
   Scenario: Test many course pagination
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category 0| idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |
@@ -609,7 +609,7 @@ Feature: Course category management interface performs as expected
     And I should see course listing "Course 19" before "Course 20"
     And I should see course listing "Course 21" before "Course 22"
     And I should see course listing "Course 31" before "Course 32"
-    And "#course-listing .listing-pagination" "css_element" should not exists
+    And "#course-listing .listing-pagination" "css_element" should not exist
     And I click on "Per page: 100" "link" in the ".course-listing-actions" "css_element"
     And I click on "5" "link" in the ".courses-per-page" "css_element"
     # Redirect.
@@ -672,10 +672,10 @@ Feature: Course category management interface performs as expected
     And I should see "Last" in the "#course-listing .listing-pagination" "css_element"
 
   Scenario: Test clicking to edit a course.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
 
@@ -690,7 +690,7 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario: Test AJAX expanded categories stay open.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
@@ -754,7 +754,7 @@ Feature: Course category management interface performs as expected
 
   @javascript
   Scenario: Test category expansion after deletion
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat A (1) | 0 | CAT1 |
       | Cat B (2) | 0 | CAT2 |

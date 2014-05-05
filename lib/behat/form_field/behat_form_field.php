@@ -51,6 +51,12 @@ class behat_form_field {
     protected $field;
 
     /**
+     * @var string The field's locator.
+     */
+    protected $fieldlocator = false;
+
+
+    /**
      * General constructor with the node and the session to interact with.
      *
      * @param Session $session Reference to Mink session to traverse/modify the page DOM.
@@ -69,14 +75,11 @@ class behat_form_field {
      * @return void
      */
     public function set_value($value) {
-
-        // If we are not dealing with a text-based tag try to find the most appropiate
-        // behat_form_* class to deal with it.
-        if ($instance = $this->guess_type()) {
-            $instance->set_value($value);
-        } else {
-            $this->field->setValue($value);
-        }
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        return $instance->set_value($value);
     }
 
     /**
@@ -85,14 +88,28 @@ class behat_form_field {
      * @return string
      */
     public function get_value() {
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        return $instance->get_value();
+    }
 
-        // If we are not dealing with a text-based tag try to find the most appropiate
-        // behat_form_* class to deal with it.
-        if ($instance = $this->guess_type()) {
-            return $instance->get_value();
-        } else {
-            return $this->field->getValue();
-        }
+    /**
+     * Generic match implementation
+     *
+     * Will work well with text-based fields, extension required
+     * for most of the other cases.
+     *
+     * @param string $expectedvalue
+     * @return bool The provided value matches the field value?
+     */
+    public function matches($expectedvalue) {
+        // We delegate to the best guess, if we arrived here
+        // using the generic behat_form_field is because we are
+        // dealing with a fgroup element.
+        $instance = $this->guess_type();
+        return $instance->matches($expectedvalue);
     }
 
     /**
@@ -106,41 +123,17 @@ class behat_form_field {
      * moodle form elements we will need to refactor this simple HTML elements
      * guess method.
      *
-     * @return mixed False if no need for an special behat_form_*, otherwise the behat_form_*
+     * @return behat_form_field
      */
     private function guess_type() {
         global $CFG;
 
-        // Textareas are considered text based elements.
-        $tagname = strtolower($this->field->getTagName());
-        if ($tagname == 'textarea') {
-            return false;
+        // We default to the text-based field if nothing was detected.
+        if (!$type = behat_field_manager::guess_field_type($this->field, $this->session)) {
+            $type = 'text';
         }
 
-        if ($tagname == 'input') {
-            $type = $this->field->getAttribute('type');
-            switch ($type) {
-                case 'text':
-                    return false;
-                case 'checkbox':
-                    $classname = 'behat_form_checkbox';
-                    break;
-                case 'radio':
-                    $classname = 'behat_form_radio';
-                    break;
-                default:
-                    return false;
-            }
-
-        } else if ($tagname == 'select') {
-            // Select tag.
-            $classname = 'behat_form_select';
-
-        } else {
-            // We can not provide a closer field type.
-            return false;
-        }
-
+        $classname = 'behat_form_' . $type;
         $classpath = $CFG->dirroot . '/lib/behat/form_field/' . $classname . '.php';
         require_once($classpath);
         return new $classname($this->session, $this->field);
@@ -169,10 +162,78 @@ class behat_form_field {
             throw new coding_exception('You can only get an internal ID using the selenium driver.');
         }
 
-        return $this->session->
-            getDriver()->
-            getWebDriverSession()->
-            element('xpath', $this->field->getXPath())->
-            getID();
+        return $this->session->getDriver()->getWebDriverSession()->element('xpath', $this->field->getXPath())->getID();
     }
+
+    /**
+     * Checks if the provided text matches the field value.
+     *
+     * @param string $expectedvalue
+     * @return bool
+     */
+    protected function text_matches($expectedvalue) {
+        if (trim($expectedvalue) != trim($this->get_value())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the field locator.
+     *
+     * Defaults to the field label but you can
+     * specify other locators if you are interested.
+     *
+     * Public visibility as in most cases will be hard to
+     * use this method in a generic way, as fields can
+     * be selected using multiple ways (label, id, name...).
+     *
+     * @throws coding_exception
+     * @param string $locatortype
+     * @return string
+     */
+    protected function get_field_locator($locatortype = false) {
+
+        if (!empty($this->fieldlocator)) {
+            return $this->fieldlocator;
+        }
+
+        $fieldid = $this->field->getAttribute('id');
+
+        // Defaults to label.
+        if ($locatortype == 'label' || $locatortype == false) {
+
+            $labelnode = $this->session->getPage()->find('xpath', '//label[@for="' . $fieldid . '"]');
+
+            // Exception only if $locatortype was specified.
+            if (!$labelnode && $locatortype == 'label') {
+                throw new coding_exception('Field with "' . $fieldid . '" id does not have a label.');
+            }
+
+            $this->fieldlocator = $labelnode->getText();
+        }
+
+        // Let's look for the name as a second option (more popular than
+        // id's when pointing to fields).
+        if (($locatortype == 'name' || $locatortype == false) &&
+                empty($this->fieldlocator)) {
+
+            $name = $this->field->getAttribute('name');
+
+            // Exception only if $locatortype was specified.
+            if (!$name && $locatortype == 'name') {
+                throw new coding_exception('Field with "' . $fieldid . '" id does not have a name attribute.');
+            }
+
+            $this->fieldlocator = $name;
+        }
+
+        // Otherwise returns the id if no specific locator type was provided.
+        if (empty($this->fieldlocator)) {
+            $this->fieldlocator = $fieldid;
+        }
+
+        return $this->fieldlocator;
+    }
+
 }

@@ -5,14 +5,14 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
   I need to search the entries list by keyword, alphabet, category, date and author
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -44,7 +44,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Search by keyword and browse by alphabet
-    When I fill in "hook" with "cucumber"
+    When I set the field "hook" to "cucumber"
     And I press "Search"
     Then I should see "Sweet cucumber"
     And I should see "Search: cucumber"
@@ -59,10 +59,10 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
   @javascript
   Scenario: Browse by category
     When I follow "Browse by category"
-    And I select "The ones I like" from "Categories"
+    And I set the field "Categories" to "The ones I like"
     Then I should see "Sweet cucumber"
     And I should not see "Sour eggplants"
-    And I select "All for you" from "Categories"
+    And I set the field "Categories" to "All for you"
     And I should see "Sour eggplants"
     And I should not see "Sweet cucumber"
 

@@ -14,12 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides an in browser PDF editor.
+ *
+ * @module moodle-assignfeedback_editpdf-editor
+ */
+
+/**
  * Class representing a stamp.
  *
  * @namespace M.assignfeedback_editpdf
  * @class annotationstamp
- * @extends annotation
- * @module moodle-assignfeedback_editpdf-editor
+ * @extends M.assignfeedback_editpdf.annotation
  */
 ANNOTATIONSTAMP = function(config) {
     ANNOTATIONSTAMP.superclass.constructor.apply(this, [config]);

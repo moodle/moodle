@@ -49,14 +49,16 @@ class backup_qtype_randomsamatch_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures.
         $randomsamatch = new backup_nested_element('randomsamatch', array('id'), array(
-            'choose'));
+            'choose', 'subcats', 'correctfeedback', 'correctfeedbackformat',
+            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($randomsamatch);
 
         // Set source to populate the data.
-        $randomsamatch->set_source_table('question_randomsamatch',
-                array('question' => backup::VAR_PARENTID));
+        $randomsamatch->set_source_table('qtype_randomsamatch_options',
+                array('questionid' => backup::VAR_PARENTID));
 
         return $plugin;
     }

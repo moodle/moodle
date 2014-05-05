@@ -48,3 +48,10 @@ To add filters, local plugins can now implement the function local_[pluginname]_
    To ensure you are no longer using or defining any deprecated functions,
    search for the regular expression:
    question_rewrite_questiontext_preview_urls|_questiontext_preview_pluginfile|question_send_questiontext_file
+
+3) The argument list for core_question_renderer::mark_summary has changed.
+   Please update your calls. (The most likely scenario for this is if you have
+   overridden core_question_renderer::info in your own renderer.) You need to
+   make a change like:
+   - $this->mark_summary($qa, $options);
+   + $this->mark_summary($qa, $behaviouroutput, $options);

@@ -147,16 +147,17 @@ class core_grade_reportuserlib_testcase extends advanced_testcase {
         }
 
         // Conditional activity tests.
-        $DB->insert_record('course_modules_availability', (object)array(
-            'coursemoduleid'=>$forum1cm->id,
-            'gradeitemid' => 37,
-            'grademin' => 5.5
-        ));
-
-        $cm = (object)array('id' => $forum1cm->id);
-        $test = new condition_info($cm, CONDITION_MISSING_EVERYTHING);
-        $fullcm = $test->get_full_course_module();
-
+        // Note: I have ported this test to the new conditional availability
+        // system, but it does not appear to actually test anything - in fact,
+        // if you remove the code that sets the condition, it still passes
+        // because it apparently is intended to have the same number of rows
+        // even when some are hidden. The  same is true of the
+        // set_coursemodule_visible test above. I don't feel this is a very
+        // good test; somebody with more knowledge of this report might want to
+        // fix it to check that the row actually is being hidden.
+        $DB->set_field('course_modules', 'availability', '{"op":"|","show":false,"c":[' .
+                '{"type":"grade","min":5.5,"id":37}]}', array('id' => $forum1cm->id));
+        get_fast_modinfo($course->id, 0, true);
         foreach ($users as $user) {
 
             $this->setUser($user);

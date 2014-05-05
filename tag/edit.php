@@ -100,7 +100,7 @@ if ($tagnew = $tagform->get_data()) {
         }
     }
 
-    if (!has_capability('moodle/tag:manage', $systemcontext) && !has_capability('moodle/tag:edit', $systemcontext)) {
+    if (!has_capability('moodle/tag:manage', $systemcontext)) {
         unset($tagnew->name);
         unset($tagnew->rawname);
 
@@ -119,29 +119,24 @@ if ($tagnew = $tagform->get_data()) {
 
         $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
 
-        tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
+        if ($tag->description != $tagnew->description) {
+            tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
+        }
 
         $tagnew->timemodified = time();
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
-            // rename tag
-            if(!tag_rename($tag->id, $tagnew->rawname)) {
-                print_error('errorupdatingrecord', 'tag');
+            // Check if we need to rename the tag.
+            if (isset($tagnew->name) && ($tag->name != $tagnew->name)) {
+                // Rename the tag.
+                if (!tag_rename($tag->id, $tagnew->rawname)) {
+                    print_error('errorupdatingrecord', 'tag');
+                }
             }
         }
 
-        //log tag changes activity
-        //if tag name exist from form, renaming is allow.  record log action as rename
-        //otherwise, record log action as update
-        if (isset($tagnew->name) && ($tag->name != $tagnew->name)){
-            add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name . '->'. $tagnew->name);
-
-        } elseif ($tag->description != $tagnew->description) {
-            add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name);
-        }
-
         //updated related tags
-        tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
+        tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)), 'core', $systemcontext->id);
         //print_object($tagnew); die();
 
         redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
@@ -162,8 +157,7 @@ if (!empty($errorstring)) {
 
 $tagform->display();
 
-if (ajaxenabled()) {
-    $PAGE->requires->js('/tag/tag.js');
-    $PAGE->requires->js_function_call('init_tag_autocomplete', null, true);
-}
+$PAGE->requires->js('/tag/tag.js');
+$PAGE->requires->js_function_call('init_tag_autocomplete', null, true);
+
 echo $OUTPUT->footer();

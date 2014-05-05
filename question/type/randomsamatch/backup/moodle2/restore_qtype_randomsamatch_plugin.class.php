@@ -41,7 +41,7 @@ class restore_qtype_randomsamatch_plugin extends restore_qtype_plugin {
 
         $paths = array();
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'randomsamatch';
         $elepath = $this->get_pathfor('/randomsamatch');
         $paths[] = new restore_path_element($elename, $elepath);
@@ -64,14 +64,34 @@ class restore_qtype_randomsamatch_plugin extends restore_qtype_plugin {
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_randomsamatch too.
+        // qtype_randomsamatch_options too.
         if ($questioncreated) {
+            // Fill in some field that were added in 2.1, and so which may be missing
+            // from backups made in older versions of Moodle.
+            if (!isset($data->subcats)) {
+                $data->subcats = 1;
+            }
+            if (!isset($data->correctfeedback)) {
+                $data->correctfeedback = '';
+                $data->correctfeedbackformat = FORMAT_HTML;
+            }
+            if (!isset($data->partiallycorrectfeedback)) {
+                $data->partiallycorrectfeedback = '';
+                $data->partiallycorrectfeedbackformat = FORMAT_HTML;
+            }
+            if (!isset($data->incorrectfeedback)) {
+                $data->incorrectfeedback = '';
+                $data->incorrectfeedbackformat = FORMAT_HTML;
+            }
+            if (!isset($data->shownumcorrect)) {
+                $data->shownumcorrect = 0;
+            }
             // Adjust some columns.
-            $data->question = $newquestionid;
+            $data->questionid = $newquestionid;
             // Insert record.
-            $newitemid = $DB->insert_record('question_randomsamatch', $data);
+            $newitemid = $DB->insert_record('qtype_randomsamatch_options', $data);
             // Create mapping.
-            $this->set_mapping('question_randomsamatch', $oldid, $newitemid);
+            $this->set_mapping('qtype_randomsamatch_options', $oldid, $newitemid);
         }
     }
 
@@ -82,7 +102,7 @@ class restore_qtype_randomsamatch_plugin extends restore_qtype_plugin {
      * answer is one comma separated list of hypen separated pairs
      * containing question->id and question_answers->id
      */
-    public function recode_state_answer($state) {
+    public function recode_legacy_state_answer($state) {
         $answer = $state->answer;
         $resultarr = array();
         foreach (explode(',', $answer) as $pair) {
@@ -94,5 +114,18 @@ class restore_qtype_randomsamatch_plugin extends restore_qtype_plugin {
             $resultarr[] = implode('-', array($newquestionid, $newanswerid));
         }
         return implode(',', $resultarr);
+    }
+
+    /**
+     * Return the contents of this qtype to be processed by the links decoder.
+     */
+    public static function define_decode_contents() {
+
+        $contents = array();
+
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        $contents[] = new restore_decode_content('qtype_randomsamatch_options', $fields, 'qtype_randomsamatch_options');
+
+        return $contents;
     }
 }

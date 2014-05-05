@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_backcolor-button",
+    "builds": {
+        "moodle-atto_backcolor-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}

@@ -39,15 +39,16 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type array pathnamehashes uploaded files path name hashes.
- *      @type string content string.
+ *      - array pathnamehashes: uploaded files path name hashes.
+ *      - string content: the content.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class assessable_uploaded extends \core\event\base {
+abstract class assessable_uploaded extends base {
 
     /**
      * Init method.
@@ -56,7 +57,7 @@ abstract class assessable_uploaded extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -66,12 +67,13 @@ abstract class assessable_uploaded extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
-        if (!$this->context->contextlevel === CONTEXT_MODULE) {
-            throw new \coding_exception('Content level must be CONTEXT_MODULE.');
+        parent::validate_data();
+        if ($this->contextlevel != CONTEXT_MODULE) {
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         } else if (!isset($this->other['pathnamehashes']) || !is_array($this->other['pathnamehashes'])) {
-            throw new \coding_exception('pathnamehashes must be set in $other and must be an array.');
+            throw new \coding_exception('The \'pathnamehashes\' value must be set in other and must be an array.');
         } else if (!isset($this->other['content']) || !is_string($this->other['content'])) {
-            throw new \coding_exception('content must be set in $other and must be a string.');
+            throw new \coding_exception('The \'content\' value must be set in other and must be a string.');
         }
     }
 

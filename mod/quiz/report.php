@@ -17,10 +17,9 @@
 /**
  * This script controls the display of the quiz reports.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -83,9 +82,6 @@ if (!is_readable("report/$mode/report.php")) {
     print_error('reportnotfound', 'quiz', '', $mode);
 }
 
-add_to_log($course->id, 'quiz', 'report', 'report.php?id=' . $cm->id . '&mode=' . $mode,
-        $quiz->id, $cm->id);
-
 // Open the selected quiz report and display it.
 $file = $CFG->dirroot . '/mod/quiz/report/' . $mode . '/report.php';
 if (is_readable($file)) {
@@ -101,3 +97,16 @@ $report->display($quiz, $cm, $course);
 
 // Print footer.
 echo $OUTPUT->footer();
+
+// Log that this report was viewed.
+$params = array(
+    'context' => $context,
+    'other' => array(
+        'quizid' => $quiz->id,
+        'reportname' => $mode
+    )
+);
+$event = \mod_quiz\event\report_viewed::create($params);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('quiz', $quiz);
+$event->trigger();

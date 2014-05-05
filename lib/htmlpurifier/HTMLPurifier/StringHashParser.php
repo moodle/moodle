@@ -28,15 +28,25 @@
 class HTMLPurifier_StringHashParser
 {
 
+    /**
+     * @type string
+     */
     public $default = 'ID';
 
     /**
      * Parses a file that contains a single string-hash.
+     * @param string $file
+     * @return array
      */
-    public function parseFile($file) {
-        if (!file_exists($file)) return false;
+    public function parseFile($file)
+    {
+        if (!file_exists($file)) {
+            return false;
+        }
         $fh = fopen($file, 'r');
-        if (!$fh) return false;
+        if (!$fh) {
+            return false;
+        }
         $ret = $this->parseHandle($fh);
         fclose($fh);
         return $ret;
@@ -44,12 +54,19 @@ class HTMLPurifier_StringHashParser
 
     /**
      * Parses a file that contains multiple string-hashes delimited by '----'
+     * @param string $file
+     * @return array
      */
-    public function parseMultiFile($file) {
-        if (!file_exists($file)) return false;
+    public function parseMultiFile($file)
+    {
+        if (!file_exists($file)) {
+            return false;
+        }
         $ret = array();
         $fh = fopen($file, 'r');
-        if (!$fh) return false;
+        if (!$fh) {
+            return false;
+        }
         while (!feof($fh)) {
             $ret[] = $this->parseHandle($fh);
         }
@@ -62,26 +79,36 @@ class HTMLPurifier_StringHashParser
      * @note While it's possible to simulate in-memory parsing by using
      *       custom stream wrappers, if such a use-case arises we should
      *       factor out the file handle into its own class.
-     * @param $fh File handle with pointer at start of valid string-hash
+     * @param resource $fh File handle with pointer at start of valid string-hash
      *            block.
+     * @return array
      */
-    protected function parseHandle($fh) {
+    protected function parseHandle($fh)
+    {
         $state   = false;
         $single  = false;
         $ret     = array();
         do {
             $line = fgets($fh);
-            if ($line === false) break;
+            if ($line === false) {
+                break;
+            }
             $line = rtrim($line, "\n\r");
-            if (!$state && $line === '') continue;
-            if ($line === '----') break;
+            if (!$state && $line === '') {
+                continue;
+            }
+            if ($line === '----') {
+                break;
+            }
             if (strncmp('--#', $line, 3) === 0) {
                 // Comment
                 continue;
             } elseif (strncmp('--', $line, 2) === 0) {
                 // Multiline declaration
                 $state = trim($line, '- ');
-                if (!isset($ret[$state])) $ret[$state] = '';
+                if (!isset($ret[$state])) {
+                    $ret[$state] = '';
+                }
                 continue;
             } elseif (!$state) {
                 $single = true;
@@ -104,7 +131,6 @@ class HTMLPurifier_StringHashParser
         } while (!feof($fh));
         return $ret;
     }
-
 }
 
 // vim: et sw=4 sts=4

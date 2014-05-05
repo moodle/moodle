@@ -634,8 +634,10 @@ class qformat_webct extends qformat_default {
                 $question = $this->defaultquestion();
                 $question->qtype = 'essay';
                 $question->responseformat = 'editor';
+                $question->responserequired = 1;
                 $question->responsefieldlines = 15;
                 $question->attachments = 0;
+                $question->attachmentsrequired = 0;
                 $question->graderinfo = array(
                         'text' => '',
                         'format' => FORMAT_HTML,

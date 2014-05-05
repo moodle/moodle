@@ -29,7 +29,7 @@
  * attributes and case folding and works only with UTF-8 content. It's one
  * progressive push parser because, intead of loading big crunchs of information
  * in memory, it "publishes" (pushes) small information in a "propietary array format" througt
- * the corresponding @progressive_parser_procesor, that will be the responsibe for
+ * the corresponding @progressive_parser_processor, that will be the responsibe for
  * returning information into handy formats to higher levels.
  *
  * Note that, while this progressive parser is able to process any XML file, it is
@@ -37,7 +37,7 @@
  * the expected behaviour) so information belonging to the same path can be returned in
  * different chunks if there are inner levels/paths in the middle. Be warned!
  *
- * The "propietary array format" that the parser publishes to the @progressive_parser_procesor
+ * The "propietary array format" that the parser publishes to the @progressive_parser_processor
  * is this:
  *    array (
  *        'path' => path where the tags belong to,
@@ -56,7 +56,11 @@ class progressive_parser {
     protected $xml_parser; // PHP's low level XML SAX parser
     protected $file;       // full path to file being progressively parsed | => mutually exclusive
     protected $contents;   // contents being progressively parsed          |
-    protected $procesor;   // progressive_parser_procesor to be used to publish processed information
+
+    /**
+     * @var progressive_parser_processor to be used to publish processed information
+     */
+    protected $processor;
 
     protected $level;      // level of the current tag
     protected $path;       // path of the current tag
@@ -68,7 +72,7 @@ class progressive_parser {
     protected $currtag;    // name/value/attributes of the tag being processed
 
     /**
-     * @var core_backup_progress Progress tracker called for each action
+     * @var \core\progress\base Progress tracker called for each action
      */
     protected $progress;
 
@@ -129,9 +133,9 @@ class progressive_parser {
      *
      * The caller should have already called start_progress on the progress tracker.
      *
-     * @param core_backup_progress $progress Progress tracker
+     * @param \core\progress\base $progress Progress tracker
      */
-    public function set_progress(core_backup_progress $progress) {
+    public function set_progress(\core\progress\base $progress) {
         $this->progress = $progress;
     }
 

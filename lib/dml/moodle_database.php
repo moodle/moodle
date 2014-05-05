@@ -91,6 +91,8 @@ abstract class moodle_database {
     protected $reads = 0;
     /** @var int The database writes (performance counter).*/
     protected $writes = 0;
+    /** @var float Time queries took to finish, seconds with microseconds.*/
+    protected $queriestime = 0;
 
     /** @var int Debug level. */
     protected $debug  = 0;
@@ -459,7 +461,10 @@ abstract class moodle_database {
         $logerrors = !empty($this->dboptions['logerrors']);
         $iserror   = ($error !== false);
 
-        $time = microtime(true) - $this->last_time;
+        $time = $this->query_time();
+
+        // Will be shown or not depending on MDL_PERF values rather than in dboptions['log*].
+        $this->queriestime = $this->queriestime + $time;
 
         if ($logall or ($logslow and ($logslow < ($time+0.00001))) or ($iserror and $logerrors)) {
             $this->loggingquery = true;
@@ -487,6 +492,14 @@ abstract class moodle_database {
             }
             $this->loggingquery = false;
         }
+    }
+
+    /**
+     * Returns the time elapsed since the query started.
+     * @return float Seconds with microseconds
+     */
+    protected function query_time() {
+        return microtime(true) - $this->last_time;
     }
 
     /**
@@ -543,7 +556,7 @@ abstract class moodle_database {
         if (!$this->get_debug()) {
             return;
         }
-        $time = microtime(true) - $this->last_time;
+        $time = $this->query_time();
         $message = "Query took: {$time} seconds.\n";
         if (CLI_SCRIPT) {
             echo $message;
@@ -1079,9 +1092,9 @@ abstract class moodle_database {
 
     /**
      * Do NOT use in code, this is for use by database_manager only!
-     * @param string $sql query
+     * @param string|array $sql query or array of queries
      * @return bool true
-     * @throws dml_exception A DML specific exception is thrown for any errors.
+     * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
     public abstract function change_database_structure($sql);
 
@@ -1594,6 +1607,45 @@ abstract class moodle_database {
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public abstract function insert_record($table, $dataobject, $returnid=true, $bulk=false);
+
+    /**
+     * Insert multiple records into database as fast as possible.
+     *
+     * Order of inserts is maintained, but the operation is not atomic,
+     * use transactions if necessary.
+     *
+     * This method is intended for inserting of large number of small objects,
+     * do not use for huge objects with text or binary fields.
+     *
+     * @since 2.7
+     *
+     * @param string $table  The database table to be inserted into
+     * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
+     * @return void does not return new record ids
+     *
+     * @throws coding_exception if data objects have different structure
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function insert_records($table, $dataobjects) {
+        if (!is_array($dataobjects) and !($dataobjects instanceof Traversable)) {
+            throw new coding_exception('insert_records() passed non-traversable object');
+        }
+
+        $fields = null;
+        // Note: override in driver if there is a faster way.
+        foreach ($dataobjects as $dataobject) {
+            if (!is_array($dataobject) and !is_object($dataobject)) {
+                throw new coding_exception('insert_records() passed invalid record object');
+            }
+            $dataobject = (array)$dataobject;
+            if ($fields === null) {
+                $fields = array_keys($dataobject);
+            } else if ($fields !== array_keys($dataobject)) {
+                throw new coding_exception('All dataobjects in insert_records() must have the same structure!');
+            }
+            $this->insert_record($table, $dataobject, false);
+        }
+    }
 
     /**
      * Import a record into a table, id field is required.
@@ -2465,5 +2517,13 @@ abstract class moodle_database {
      */
     public function perf_get_queries() {
         return $this->writes + $this->reads;
+    }
+
+    /**
+     * Time waiting for the database engine to finish running all queries.
+     * @return float Number of seconds with microseconds
+     */
+    public function perf_get_queries_time() {
+        return $this->queriestime;
     }
 }

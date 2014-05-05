@@ -92,6 +92,16 @@ abstract class question_behaviour_type {
             question_display_options $options) {
         return array();
     }
+
+    /**
+     * Does this question behaviour accept multiple submissions of responses within one attempt eg. multiple tries for the
+     * interactive or adaptive question behaviours.
+     *
+     * @return bool
+     */
+    public function allows_multiple_submitted_responses() {
+        return false;
+    }
 }
 
 

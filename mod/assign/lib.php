@@ -517,7 +517,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
     $show    = array();
     $grader  = array();
 
-    $showrecentsubmissions = get_config('mod_assign', 'showrecentsubmissions');
+    $showrecentsubmissions = get_config('assign', 'showrecentsubmissions');
 
     foreach ($submissions as $submission) {
         if (!array_key_exists($submission->cmid, $modinfo->get_cms())) {
@@ -553,19 +553,14 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
                 continue;
             }
 
-            if (is_null($modinfo->get_groups())) {
-                // Load all my groups and cache it in modinfo.
-                $modinfo->groups = groups_get_user_groups($course->id);
-            }
-
             // This will be slow - show only users that share group with me in this cm.
-            if (empty($modinfo->groups[$cm->id])) {
+            if (!$modinfo->get_groups($cm->groupingid)) {
                 continue;
             }
             $usersgroups =  groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
             if (is_array($usersgroups)) {
                 $usersgroups = array_keys($usersgroups);
-                $intersect = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $intersect = array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid));
                 if (empty($intersect)) {
                     continue;
                 }
@@ -665,17 +660,9 @@ function assign_get_recent_mod_activity(&$activities,
     $accessallgroups = has_capability('moodle/site:accessallgroups', $cmcontext);
     $viewfullnames   = has_capability('moodle/site:viewfullnames', $cmcontext);
 
-    if (is_null($modinfo->get_groups())) {
-        // Load all my groups and cache it in modinfo.
-        $modinfo->groups = groups_get_user_groups($course->id);
-    }
 
-    $showrecentsubmissions = get_config('mod_assign', 'showrecentsubmissions');
+    $showrecentsubmissions = get_config('assign', 'showrecentsubmissions');
     $show = array();
-    $usersgroups = groups_get_all_groups($course->id, $USER->id, $cm->groupingid);
-    if (is_array($usersgroups)) {
-        $usersgroups = array_keys($usersgroups);
-    }
     foreach ($submissions as $submission) {
         if ($submission->userid == $USER->id) {
             $show[] = $submission;
@@ -696,11 +683,13 @@ function assign_get_recent_mod_activity(&$activities,
             }
 
             // This will be slow - show only users that share group with me in this cm.
-            if (empty($modinfo->groups[$cm->id])) {
+            if (!$modinfo->get_groups($cm->groupingid)) {
                 continue;
             }
+            $usersgroups =  groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
             if (is_array($usersgroups)) {
-                $intersect = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $usersgroups = array_keys($usersgroups);
+                $intersect = array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid));
                 if (empty($intersect)) {
                     continue;
                 }
@@ -838,6 +827,11 @@ function assign_scale_used_anywhere($scaleid) {
 /**
  * List the actions that correspond to a view of this module.
  * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function assign_get_view_actions() {
@@ -847,6 +841,11 @@ function assign_get_view_actions() {
 /**
  * List the actions that correspond to a post of this module.
  * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function assign_get_post_actions() {

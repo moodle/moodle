@@ -36,7 +36,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         $this->setUser($user->id);
         $fakepost = (object) array('id' => 123, 'message' => 'Yay!', 'discussion' => 100);
-        $cm = get_coursemodule_from_instance('forum', $forum->cmid);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         $fs = get_file_storage();
         $dummy = (object) array(
@@ -73,6 +73,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $expected->content = $fakepost->message;
         $expected->pathnamehashes = array($fi->get_pathnamehash());
         $this->assertEventLegacyData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_forum_get_courses_user_posted_in() {
@@ -167,39 +168,6 @@ class mod_forum_lib_testcase extends advanced_testcase {
             $this->assertContains($course->id, array($course1->id, $course2->id));
             $this->assertContains($course->shortname, array($course1->shortname, $course2->shortname));
         }
-    }
-
-    /**
-     * Test user_enrolment_deleted observer.
-     */
-    public function test_user_enrolment_deleted_observer() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        $metaplugin = enrol_get_plugin('meta');
-        $user1 = $this->getDataGenerator()->create_user();
-        $course1 = $this->getDataGenerator()->create_course();
-        $course2 = $this->getDataGenerator()->create_course();
-        $student = $DB->get_record('role', array('shortname' => 'student'));
-
-        $e1 = $metaplugin->add_instance($course2, array('customint1' => $course1->id));
-        $enrol1 = $DB->get_record('enrol', array('id' => $e1));
-
-        // Enrol user.
-        $metaplugin->enrol_user($enrol1, $user1->id, $student->id);
-        $this->assertEquals(1, $DB->count_records('user_enrolments'));
-
-        // Unenrol user and capture event.
-        $sink = $this->redirectEvents();
-        $metaplugin->unenrol_user($enrol1, $user1->id);
-        $events = $sink->get_events();
-        $sink->close();
-        $event = array_pop($events);
-
-        $this->assertEquals(0, $DB->count_records('user_enrolments'));
-        $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
-        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
     }
 
     /**
@@ -606,5 +574,119 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->assertEquals(true, isset($result[$forumoff->id]));
         $this->assertEquals(true, isset($result[$forumoptional->id]));
         $this->assertEquals(true, isset($result[$forumforce->id]));
+    }
+
+    /**
+     * Test subscription using automatic subscription on create.
+     */
+    public function test_forum_auto_subscribe_on_create() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $usercount = 5;
+        $course = $this->getDataGenerator()->create_course();
+        $users = array();
+
+        for ($i = 0; $i < $usercount; $i++) {
+            $user = $this->getDataGenerator()->create_user();
+            $users[] = $user;
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE); // Automatic Subscription.
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $result = forum_subscribed_users($course, $forum);
+        $this->assertEquals($usercount, count($result));
+        foreach ($users as $user) {
+            $this->assertTrue(forum_is_subscribed($user->id, $forum));
+        }
+    }
+
+    /**
+     * Test subscription using forced subscription on create.
+     */
+    public function test_forum_forced_subscribe_on_create() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $usercount = 5;
+        $course = $this->getDataGenerator()->create_course();
+        $users = array();
+
+        for ($i = 0; $i < $usercount; $i++) {
+            $user = $this->getDataGenerator()->create_user();
+            $users[] = $user;
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE); // Forced subscription.
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $result = forum_subscribed_users($course, $forum);
+        $this->assertEquals($usercount, count($result));
+        foreach ($users as $user) {
+            $this->assertTrue(forum_is_subscribed($user->id, $forum));
+        }
+    }
+
+    /**
+     * Test subscription using optional subscription on create.
+     */
+    public function test_forum_optional_subscribe_on_create() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $usercount = 5;
+        $course = $this->getDataGenerator()->create_course();
+        $users = array();
+
+        for ($i = 0; $i < $usercount; $i++) {
+            $user = $this->getDataGenerator()->create_user();
+            $users[] = $user;
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE); // Subscription optional.
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $result = forum_subscribed_users($course, $forum);
+        // No subscriptions by default.
+        $this->assertEquals(0, count($result));
+        foreach ($users as $user) {
+            $this->assertFalse(forum_is_subscribed($user->id, $forum));
+        }
+    }
+
+    /**
+     * Test subscription using disallow subscription on create.
+     */
+    public function test_forum_disallow_subscribe_on_create() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $usercount = 5;
+        $course = $this->getDataGenerator()->create_course();
+        $users = array();
+
+        for ($i = 0; $i < $usercount; $i++) {
+            $user = $this->getDataGenerator()->create_user();
+            $users[] = $user;
+            $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        }
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE); // Subscription prevented.
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $result = forum_subscribed_users($course, $forum);
+        // No subscriptions by default.
+        $this->assertEquals(0, count($result));
+        foreach ($users as $user) {
+            $this->assertFalse(forum_is_subscribed($user->id, $forum));
+        }
     }
 }

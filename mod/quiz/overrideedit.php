@@ -17,10 +17,9 @@
 /**
  * This page handles editing and creation of quiz overrides
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 Matt Petro
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2010 Matt Petro
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -156,24 +155,55 @@ if ($mform->is_cancelled()) {
                     $fromform->{$key} = $oldoverride->{$key};
                 }
             }
-            // Delete the old override.
-            $DB->delete_records('quiz_overrides', array('id' => $oldoverride->id));
+            // Set the course module id before calling quiz_delete_override().
+            $quiz->cmid = $cm->id;
+            quiz_delete_override($quiz, $oldoverride->id);
         }
     }
 
+    // Set the common parameters for one of the events we may be triggering.
+    $params = array(
+        'context' => $context,
+        'other' => array(
+            'quizid' => $quiz->id
+        )
+    );
     if (!empty($override->id)) {
         $fromform->id = $override->id;
         $DB->update_record('quiz_overrides', $fromform);
+
+        // Determine which override updated event to fire.
+        $params['objectid'] = $override->id;
+        if (!$groupmode) {
+            $params['relateduserid'] = $fromform->userid;
+            $event = \mod_quiz\event\user_override_updated::create($params);
+        } else {
+            $params['other']['groupid'] = $fromform->groupid;
+            $event = \mod_quiz\event\group_override_updated::create($params);
+        }
+
+        // Trigger the override updated event.
+        $event->trigger();
     } else {
         unset($fromform->id);
         $fromform->id = $DB->insert_record('quiz_overrides', $fromform);
+
+        // Determine which override created event to fire.
+        $params['objectid'] = $fromform->id;
+        if (!$groupmode) {
+            $params['relateduserid'] = $fromform->userid;
+            $event = \mod_quiz\event\user_override_created::create($params);
+        } else {
+            $params['other']['groupid'] = $fromform->groupid;
+            $event = \mod_quiz\event\group_override_created::create($params);
+        }
+
+        // Trigger the override created event.
+        $event->trigger();
     }
 
     quiz_update_open_attempts(array('quizid'=>$quiz->id));
     quiz_update_events($quiz, $fromform);
-
-    add_to_log($cm->course, 'quiz', 'edit override',
-            "overrideedit.php?id=$fromform->id", $quiz->id, $cm->id);
 
     if (!empty($fromform->submitbutton)) {
         redirect($overridelisturl);

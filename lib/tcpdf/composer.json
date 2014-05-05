@@ -1,6 +1,6 @@
 {
 	"name": "tecnick.com/tcpdf",
-	"version": "6.0.031",
+	"version": "6.0.062",
 	"homepage": "http://www.tcpdf.org/",
 	"type": "library",
 	"description": "TCPDF is a PHP class for generating PDF documents.",
@@ -23,7 +23,6 @@
 		"include",
 		"tcpdf.php",
 		"tcpdf_parser.php",
-		"tcpdf_import.php",
 		"tcpdf_barcodes_1d.php",
 		"tcpdf_barcodes_2d.php",
 		"include/tcpdf_colors.php",

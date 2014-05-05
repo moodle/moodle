@@ -14,31 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Role unassigned event.
+ *
+ * @package    core
+ * @since      Moodle 2.6
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Role unassigned event.
+ * Role unassigned event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int id role assigned id.
- *      @type string component name of component.
- *      @type int itemid id of item.
+ *      - int id: role assigned id.
+ *      - string component: name of component.
+ *      - int itemid: id of item.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class role_unassigned extends base {
     protected function init() {
         $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
@@ -56,7 +65,8 @@ class role_unassigned extends base {
      * @return string
      */
     public function get_description() {
-        return 'Role '.$this->objectid.' was unassigned from user '.$this->relateduserid.' in context '.$this->contextid;
+        return "The role with the id '$this->objectid' was unassigned from the user with the id '$this->relateduserid' " .
+            "by the user with the id '$this->userid'.";
     }
 
     /**
@@ -82,7 +92,7 @@ class role_unassigned extends base {
      * @return mixed
      */
     protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
+        return $this->get_record_snapshot('role_assignments', $this->other['id']);
     }
 
     /**

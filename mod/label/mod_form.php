@@ -18,8 +18,7 @@
 /**
  * Add label form
  *
- * @package    mod
- * @subpackage label
+ * @package mod_label
  * @copyright  2006 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

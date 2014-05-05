@@ -37,22 +37,24 @@ defined('MOODLE_INTERNAL') || die();
  *     \mod_chat\event\course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class course_module_instance_list_viewed extends base{
 
-    /** @var string private var to store mod name */
-    private $modname;
+    /** @var string protected var to store mod name */
+    protected $modname;
 
     /**
      * Init method.
      *
+     * @throws \coding_exception
      * @return void
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         if (strstr($this->component, 'mod_') === false) {
             throw new \coding_exception('The event name or namespace is invalid.');
         } else {
@@ -66,8 +68,8 @@ abstract class course_module_instance_list_viewed extends base{
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid' viewed instance list for module '$this->modname' in course with id
-                '$this->courseid'";
+        return "The user with the id '$this->userid' viewed the instance list for the module '$this->modname' in the course " .
+            "with the id '$this->courseid'.";
     }
 
     /**
@@ -105,9 +107,9 @@ abstract class course_module_instance_list_viewed extends base{
      * @return void
      */
     protected function validate_data() {
-        if ($this->context->contextlevel !== CONTEXT_COURSE) {
-            throw new \coding_exception('The context must be a course level context.');
+        parent::validate_data();
+        if ($this->contextlevel != CONTEXT_COURSE) {
+            throw new \coding_exception('Context level must be CONTEXT_COURSE.');
         }
     }
-
 }

@@ -83,7 +83,8 @@ while (count($parts)) {
 
     $version = array_shift($bits);
     if ($version === 'rollup') {
-        $revision = array_shift($bits);
+        $yuipatchedversion = explode('_', array_shift($bits));
+        $revision = $yuipatchedversion[0];
         $rollupname = array_shift($bits);
 
         if (strpos($rollupname, 'yui-moodlesimple') !== false) {
@@ -102,17 +103,13 @@ while (count($parts)) {
                 continue;
             }
 
+            // Allow support for revisions on YUI between official releases.
+            // We can just discard the subrevision since it is only used to invalidate the browser cache.
+            $yuipatchedversion = explode('_', $revision);
+            $yuiversion = $yuipatchedversion[0];
+
             $yuimodules = array(
-                // Include everything from original SimpleYUI,
-                // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules
-                // listed in https://github.com/yui/yui3/blob/v3.12.0/build/simpleyui/simpleyui.js#L21327
                 'yui',
-                'yui-base',
-                'get',
-                'features',
-                'loader-base',
-                'loader-rollup',
-                'loader-yui3',
                 'oop',
                 'event-custom-base',
                 'dom-core',
@@ -193,14 +190,14 @@ while (count($parts)) {
             if ($type === 'js') {
                 $newparts = array();
                 foreach ($yuimodules as $module) {
-                    $newparts[] = $revision . '/' . $module . '/' . $module . $filesuffix;
+                    $newparts[] = $yuiversion . '/' . $module . '/' . $module . $filesuffix;
                 }
                 $newparts[] = 'yuiuseall/yuiuseall';
                 $parts = array_merge($newparts, $parts);
             } else {
                 $newparts = array();
                 foreach ($yuimodules as $module) {
-                    $candidate =  $revision . '/' . $module . '/assets/skins/sam/' . $module . '.css';
+                    $candidate =  $yuiversion . '/' . $module . '/assets/skins/sam/' . $module . '.css';
                     if (!file_exists("$CFG->libdir/yuilib/$candidate")) {
                         continue;
                     }
@@ -217,6 +214,7 @@ while (count($parts)) {
             $yuimodules = array(
                 'core/tooltip/tooltip',
                 'core/popuphelp/popuphelp',
+                'core/widget-focusafterclose/widget-focusafterclose',
                 'core/dock/dock-loader',
                 'core/notification/notification-dialogue',
             );
@@ -306,10 +304,17 @@ while (count($parts)) {
         $filecontent = "var Y = YUI().use('*');";
 
     } else {
-        if ($version != $CFG->yui3version) {
+        // Allow support for revisions on YUI between official releases.
+        // We can just discard the subrevision since it is only used to invalidate the browser cache.
+        $yuipatchedversion = explode('_', $version);
+        $yuiversion = $yuipatchedversion[0];
+        if ($yuiversion != $CFG->yui3version) {
             $content .= "\n// Wrong yui version $part!\n";
             continue;
         }
+        $newpart = explode('/', $part);
+        $newpart[0] = $yuiversion;
+        $part = implode('/', $newpart);
         $contentfile = "$CFG->libdir/yuilib/$part";
     }
     if (!file_exists($contentfile) or !is_file($contentfile)) {

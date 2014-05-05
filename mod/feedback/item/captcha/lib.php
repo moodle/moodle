@@ -120,7 +120,7 @@ class feedback_item_captcha extends feedback_item_base {
      * @return void
      */
     public function print_item_preview($item) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         $align = right_to_left() ? 'right' : 'left';
 
@@ -134,7 +134,8 @@ class feedback_item_captcha extends feedback_item_base {
             }
         }
 
-        $requiredmark = '<span class="feedback_required_mark">*</span>';
+        $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
@@ -154,7 +155,7 @@ class feedback_item_captcha extends feedback_item_base {
      * @return void
      */
     public function print_item_complete($item, $value = '', $highlightrequire = false) {
-        global $SESSION, $CFG, $DB, $USER;
+        global $SESSION, $CFG, $DB, $USER, $OUTPUT;
         require_once($CFG->libdir.'/recaptchalib.php');
 
         $align = right_to_left() ? 'right' : 'left';
@@ -177,11 +178,13 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         if ($falsevalue) {
-            $highlight = 'missingrequire';
+            $highlight = '<br class="error"><span id="id_error_recaptcha_response_field" class="error"> '.
+                get_string('err_required', 'form').'</span><br id="id_error_break_recaptcha_response_field" class="error" >';
         } else {
             $highlight = '';
         }
-        $requiredmark = '<span class="feedback_required_mark">*</span>';
+        $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         if (isset($SESSION->feedback->captchacheck) AND
                 $SESSION->feedback->captchacheck == $USER->sesskey AND
@@ -208,7 +211,7 @@ class feedback_item_captcha extends feedback_item_base {
         $html = html_writer::script(js_writer::set_variable('RecaptchaOptions', $recaptureoptions));
         $html .= '
 
-        <div  class="'.$highlight.'" id="recaptcha_widget" style="display:none">
+        <div id="recaptcha_widget" style="display:none">
 
         <div id="recaptcha_image"></div>
         <div class="recaptcha_only_if_incorrect_sol" style="color:red">'.
@@ -220,6 +223,7 @@ class feedback_item_captcha extends feedback_item_base {
         <span class="recaptcha_only_if_audio">
         <label for="recaptcha_response_field">'.$strenterthenumbersyouhear.'</label>
         </span>
+        <label for="recaptcha_response_field">'.$highlight.'</label>
 
         <input type="text" id="recaptcha_response_field" name="'.$item->typ.'_'.$item->id.'" />
 
@@ -231,9 +235,17 @@ class feedback_item_captcha extends feedback_item_base {
         <a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a>
         </div>
         </div>';
+
+        // Check if we are using SSL.
+        if (strpos($CFG->wwwroot, 'https://') === 0) {
+            $ssl = true;
+        } else {
+            $ssl = false;
+        }
+
         //we have to rename the challengefield
         if (!empty($CFG->recaptchaprivatekey) AND !empty($CFG->recaptchapublickey)) {
-            $captchahtml = recaptcha_get_html($CFG->recaptchapublickey, null);
+            $captchahtml = recaptcha_get_html($CFG->recaptchapublickey, null, $ssl);
             echo $html.$captchahtml;
         }
     }
@@ -260,7 +272,8 @@ class feedback_item_captcha extends feedback_item_base {
             }
         }
 
-        $requiredmark = '<span class="feedback_required_mark">*</span>';
+        $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';

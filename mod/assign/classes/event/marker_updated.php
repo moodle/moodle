@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign marker updated event.
+ * The mod_assign marker updated event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,26 +27,54 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign marker updated event class.
+ * The mod_assign marker updated event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int markerid userid id of marker.
+ *      - int markerid: user id of marker.
  * }
  *
  * @package    mod_assign
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class marker_updated extends \core\event\base {
+class marker_updated extends base {
+    /**
+     * Flag for prevention of direct create() call.
+     * @var bool
+     */
+    protected static $preventcreatecall = true;
 
     /**
-     * Legacy log data.
+     * Create instance of event.
      *
-     * @var array
+     * @since Moodle 2.7
+     *
+     * @param \assign $assign
+     * @param \stdClass $user
+     * @param \stdClass $marker
+     * @return marker_updated
      */
-    protected $legacylogdata;
+    public static function create_from_marker(\assign $assign, \stdClass $user, \stdClass $marker) {
+        $data = array(
+            'context' => $assign->get_context(),
+            'objectid' => $assign->get_instance()->id,
+            'relateduserid' => $user->id,
+            'other' => array(
+                'markerid' => $marker->id,
+            ),
+        );
+        self::$preventcreatecall = false;
+        /** @var marker_updated $event */
+        $event = self::create($data);
+        self::$preventcreatecall = true;
+        $event->set_assign($assign);
+        $event->add_record_snapshot('user', $user);
+        $event->add_record_snapshot('user', $marker);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -54,16 +82,8 @@ class marker_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has set the marker of {$this->relateduserid} to {$this->other['markerid']}.";
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return $this->legacylogdata;
+        return "The user with the id '$this->userid' has set the marker for the user with the id '$this->relateduserid' to " .
+            "'{$this->other['markerid']}' for the assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -72,16 +92,7 @@ class marker_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_marker_updated', 'mod_assign');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->context->instanceid));
+        return get_string('eventmarkerupdated', 'mod_assign');
     }
 
     /**
@@ -91,31 +102,42 @@ class marker_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign';
     }
 
     /**
-     * Sets the legacy event log data.
+     * Return legacy data for add_to_log().
      *
-     * @param stdClass $legacylogdata legacy log data.
-     * @return void
+     * @return array
      */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
+    protected function get_legacy_logdata() {
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $marker = $this->get_record_snapshot('user', $this->other['markerid']);
+        $a = array('id' => $user->id, 'fullname' => fullname($user), 'marker' => fullname($marker));
+        $logmessage = get_string('setmarkerallocationforlog', 'assign', $a);
+        $this->set_legacy_logdata('set marking allocation', $logmessage);
+        return parent::get_legacy_logdata();
     }
 
     /**
      * Custom validation.
      *
      * @throws \coding_exception
-     * @return void
      */
     protected function validate_data() {
+        if (self::$preventcreatecall) {
+            throw new \coding_exception('cannot call marker_updated::create() directly, use marker_updated::create_from_marker() instead.');
+        }
+
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (!isset($this->other['markerid'])) {
-            throw new \coding_exception('markerid must be set in $other.');
-        } else if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set.');
+            throw new \coding_exception('The \'markerid\' value must be set in other.');
         }
     }
 }

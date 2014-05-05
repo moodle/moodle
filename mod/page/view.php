@@ -18,8 +18,7 @@
 /**
  * Page module version information
  *
- * @package    mod
- * @subpackage page
+ * @package mod_page
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -73,14 +72,16 @@ $options = empty($page->displayoptions) ? array() : unserialize($page->displayop
 if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title($course->shortname.': '.$page->name);
-    $PAGE->set_heading(format_string($course->fullname));
+    $PAGE->set_heading($course->fullname);
 } else {
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($page);
 }
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($page->name), 2);
+if (!isset($options['printheading']) || !empty($options['printheading'])) {
+    echo $OUTPUT->heading(format_string($page->name), 2);
+}
 
 if (!empty($options['printintro'])) {
     if (trim(strip_tags($page->intro))) {

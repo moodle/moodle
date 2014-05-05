@@ -18,8 +18,7 @@
 /**
  * List of urls in course
  *
- * @package    mod
- * @subpackage url
+ * @package    mod_url
  * @copyright  2009 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,6 +36,7 @@ $params = array(
     'context' => context_course::instance($course->id)
 );
 $event = \mod_url\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $strurl       = get_string('modulename', 'url');

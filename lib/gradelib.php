@@ -326,7 +326,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 }
 
 /**
- * Returns grading information for given activity, optionally with user grades
+ * Returns grading information for one or more activities, optionally with user grades
  * Manual, course or category items can not be queried.
  *
  * @category grade
@@ -337,7 +337,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
  * @param mixed  $userid_or_ids Either a single user ID, an array of user IDs or null. If user ID or IDs are not supplied returns information about grade_item
  * @return array Array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
-function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
+function grade_get_grades($courseid, $itemtype = null, $itemmodule = null, $iteminstance = null, $userid_or_ids=null) {
     global $CFG;
 
     $return = new stdClass();
@@ -353,14 +353,28 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
         }
     }
 
-    if ($grade_items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
+    $params = array('courseid' => $courseid);
+    if (!empty($itemtype)) {
+        $params['itemtype'] = $itemtype;
+    }
+    if (!empty($itemmodule)) {
+        $params['itemmodule'] = $itemmodule;
+    }
+    if (!empty($iteminstance)) {
+        $params['iteminstance'] = $iteminstance;
+    }
+    if ($grade_items = grade_item::fetch_all($params)) {
         foreach ($grade_items as $grade_item) {
             $decimalpoints = null;
 
             if (empty($grade_item->outcomeid)) {
                 // prepare information about grade item
                 $item = new stdClass();
+                $item->id = $grade_item->id;
                 $item->itemnumber = $grade_item->itemnumber;
+                $item->itemtype  = $grade_item->itemtype;
+                $item->itemmodule = $grade_item->itemmodule;
+                $item->iteminstance = $grade_item->iteminstance;
                 $item->scaleid    = $grade_item->scaleid;
                 $item->name       = $grade_item->get_name();
                 $item->grademin   = $grade_item->grademin;
@@ -459,7 +473,11 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
                 // outcome info
                 $outcome = new stdClass();
+                $outcome->id = $grade_item->id;
                 $outcome->itemnumber = $grade_item->itemnumber;
+                $outcome->itemtype   = $grade_item->itemtype;
+                $outcome->itemmodule = $grade_item->itemmodule;
+                $outcome->iteminstance = $grade_item->iteminstance;
                 $outcome->scaleid    = $grade_outcome->scaleid;
                 $outcome->name       = $grade_outcome->get_name();
                 $outcome->locked     = $grade_item->is_locked();

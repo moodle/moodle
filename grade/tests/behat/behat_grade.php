@@ -44,6 +44,6 @@ class behat_grade extends behat_base {
         $gradelabel = $userfullname . ' ' . $itemname;
         $fieldstr = get_string('useractivitygrade', 'gradereport_grader', $gradelabel);
 
-        return new Given('I fill in "' . $this->escape($fieldstr) . '" with "' . $grade . '"');
+        return new Given('I set the field "' . $this->escape($fieldstr) . '" to "' . $grade . '"');
     }
 }

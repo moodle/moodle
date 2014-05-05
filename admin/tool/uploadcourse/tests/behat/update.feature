@@ -1,23 +1,21 @@
-@tool @tool_uploadcourse @_only_local
+@tool @tool_uploadcourse @_file_upload
 Feature: An admin can update courses using a CSV file
   In order to update courses using a CSV file
   As an admin
   I need to be able to upload a CSV file and navigate through the import process
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Some random name | C1 | 0 |
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Courses" node
-    And I follow "Upload courses"
+    And I navigate to "Upload courses" node in "Site administration > Courses"
 
   @javascript
   Scenario: Updating a course fullname
     Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filemanager
-    And I select "Only update existing courses" from "Upload mode"
-    And I select "Update with CSV data only" from "Update mode"
+    And I set the field "Upload mode" to "Only update existing courses"
+    And I set the field "Update mode" to "Update with CSV data only"
     And I click on "Preview" "button"
     When I click on "Upload courses" "button"
     Then I should see "Course updated"

@@ -26,15 +26,16 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when user enrolment is updated.
+ * Event class for when user enrolment is updated.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string enrol name of enrolment instance.
+ *      - string enrol: name of enrolment instance.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +47,7 @@ class user_enrolment_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'user_enrolments';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
@@ -64,7 +65,8 @@ class user_enrolment_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->relateduserid. ' has updated enrolment for user '.$this->userid.' in course '.$this->courseid;
+        return "The user with the id '$this->userid' updated the enrolment for the user with the id '$this->relateduserid' in " .
+            "the course with the id '$this->courseid'.";
     }
 
     /**
@@ -73,7 +75,7 @@ class user_enrolment_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/enrol/users.php', array('id' => $this->courseid));
+        return new \moodle_url('/enrol/editenrolment.php', array('ue' => $this->objectid));
     }
 
     /**

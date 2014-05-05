@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test
+require_once(__DIR__ . '/fixtures/testable.php');
 
 
 /**
@@ -40,8 +41,11 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     /** setup testing environment */
     protected function setUp() {
         parent::setUp();
-
-        $this->workshop = new testable_workshop();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course));
+        $cm = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
+        $this->workshop = new testable_workshop($workshop, $cm, $course);
     }
 
     protected function tearDown() {
@@ -50,6 +54,8 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_aggregate_submission_grades_process_notgraded() {
+        $this->resetAfterTest(true);
+
         // fixture set-up
         $batch = array();   // batch of a submission's assessments
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => null);
@@ -126,6 +132,8 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_aggregate_submission_grades_process_mean_nochange() {
+        $this->resetAfterTest(true);
+
         // fixture set-up
         $batch = array();   // batch of a submission's assessments
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'weight' => 1, 'grade' => 56.12000);
@@ -167,6 +175,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_aggregate_grading_grades_process_nograding() {
+        $this->resetAfterTest(true);
         // fixture set-up
         $batch = array();
         $batch[] = (object)array('reviewerid'=>2, 'gradinggrade'=>null, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
@@ -205,6 +214,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_aggregate_grading_grades_process_single_grade_uptodate() {
+        $this->resetAfterTest(true);
         // fixture set-up
         $batch = array();
         $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>90.00000, 'gradinggradeover'=>null, 'aggregationid'=>1, 'aggregatedgrade'=>90.00000);
@@ -297,6 +307,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_percent_to_value() {
+        $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = 56.6543;
@@ -307,6 +318,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_percent_to_value_negative() {
+        $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = -7.098;
@@ -317,6 +329,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_percent_to_value_over_hundred() {
+        $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = 121.08;
@@ -327,6 +340,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_lcm() {
+        $this->resetAfterTest(true);
         // fixture setup + exercise SUT + verify in one step
         $this->assertEquals(workshop::lcm(1,4), 4);
         $this->assertEquals(workshop::lcm(2,4), 4);
@@ -336,6 +350,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_lcm_array() {
+        $this->resetAfterTest(true);
         // fixture setup
         $numbers = array(5,3,15);
         // excersise SUT
@@ -345,6 +360,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     }
 
     public function test_prepare_example_assessment() {
+        $this->resetAfterTest(true);
         // fixture setup
         $fakerawrecord = (object)array(
             'id'                => 42,
@@ -374,6 +390,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
     public function test_prepare_example_reference_assessment() {
         global $USER;
+        $this->resetAfterTest(true);
         // fixture setup
         $fakerawrecord = (object)array(
             'id'                => 38,
@@ -399,27 +416,4 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         // excersise SUT
         $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
     }
-}
-
-
-/**
- * Test subclass that makes all the protected methods we want to test public.
- */
-class testable_workshop extends workshop {
-
-    public function __construct() {
-        $this->id       = 16;
-        $this->cm       = new stdclass();
-        $this->course   = new stdclass();
-        $this->context  = new stdclass();
-    }
-
-    public function aggregate_submission_grades_process(array $assessments) {
-        parent::aggregate_submission_grades_process($assessments);
-    }
-
-    public function aggregate_grading_grades_process(array $assessments, $timegraded = null) {
-        parent::aggregate_grading_grades_process($assessments, $timegraded);
-    }
-
 }

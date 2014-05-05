@@ -68,6 +68,11 @@ function message_send($eventdata) {
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
+    // By default a message is a notification. Only personal/private messages aren't notifications.
+    if (!isset($eventdata->notification)) {
+        $eventdata->notification = 1;
+    }
+
     if (is_number($eventdata->userto)) {
         $eventdata->userto = core_user::get_user($eventdata->userto);
     }
@@ -109,12 +114,7 @@ function message_send($eventdata) {
     $savemessage->fullmessageformat = $eventdata->fullmessageformat;
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
-
-    if (!empty($eventdata->notification)) {
-        $savemessage->notification = $eventdata->notification;
-    } else {
-        $savemessage->notification = 0;
-    }
+    $savemessage->notification      = $eventdata->notification;
 
     if (!empty($eventdata->contexturl)) {
         $savemessage->contexturl = $eventdata->contexturl;
@@ -246,6 +246,27 @@ function message_send($eventdata) {
             }
         }
     }
+
+    // We may be sending a message from the 'noreply' address, which means we are not actually sending a
+    // message from a valid user. In this case, we will set the userid to 0.
+    // Check if the userid is valid.
+    if (core_user::is_real_user($eventdata->userfrom->id)) {
+        $userfromid = $eventdata->userfrom->id;
+    } else {
+        $userfromid = 0;
+    }
+
+    // Trigger event for sending a message.
+    $event = \core\event\message_sent::create(array(
+        'userid' => $userfromid,
+        'context'  => context_system::instance(),
+        'relateduserid' => $eventdata->userto->id,
+        'other' => array(
+            'messageid' => $messageid // Can't use this as the objectid as it can either be the id in the 'message_read'
+                                      // or 'message' table.
+        )
+    ));
+    $event->trigger();
 
     return $messageid;
 }

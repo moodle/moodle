@@ -18,10 +18,9 @@
  * This page is the entry page into the quiz UI. Displays information about the
  * quiz to students and teachers, and lets students see their previous attempts.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -71,7 +70,13 @@ $accessmanager = new quiz_access_manager($quizobj, $timenow,
 $quiz = $quizobj->get_quiz();
 
 // Log this request.
-add_to_log($course->id, 'quiz', 'view', 'view.php?id=' . $cm->id, $quiz->id, $cm->id);
+$params = array(
+    'objectid' => $quiz->id,
+    'context' => $context
+);
+$event = \mod_quiz\event\course_module_viewed::create($params);
+$event->add_record_snapshot('quiz', $quiz);
+$event->trigger();
 
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
@@ -184,7 +189,7 @@ if ($quiz->attempts != 1) {
 }
 
 // Determine wheter a start attempt button should be displayed.
-$viewobj->quizhasquestions = (bool) quiz_clean_layout($quiz->questions, true);
+$viewobj->quizhasquestions = $quizobj->has_questions();
 $viewobj->preventmessages = array();
 if (!$viewobj->quizhasquestions) {
     $viewobj->buttontext = '';

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,7 +19,7 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package user
+ * @package core_user
  */
 
 require_once('../config.php');
@@ -31,7 +30,7 @@ require_once($CFG->dirroot.'/user/lib.php');
 $key = required_param('key', PARAM_ALPHANUM);
 $id  = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/user/emailupdate.php', array('id'=>$id, 'key'=>$key));
+$PAGE->set_url('/user/emailupdate.php', array('id' => $id, 'key' => $key));
 $PAGE->set_context(context_system::instance());
 
 if (!$user = $DB->get_record('user', array('id' => $id))) {
@@ -51,12 +50,12 @@ echo $OUTPUT->header();
 if (empty($preferences['newemailattemptsleft'])) {
     redirect("$CFG->wwwroot/user/view.php?id=$user->id");
 
-} elseif ($preferences['newemailattemptsleft'] < 1) {
+} else if ($preferences['newemailattemptsleft'] < 1) {
     cancel_email_update($user->id);
     $stroutofattempts = get_string('auth_outofnewemailupdateattempts', 'auth');
     echo $OUTPUT->box($stroutofattempts, 'center');
 
-} elseif ($key == $preferences['newemailkey']) {
+} else if ($key == $preferences['newemailkey']) {
     $olduser = clone($user);
     cancel_email_update($user->id);
     $user->email = $preferences['newemail'];

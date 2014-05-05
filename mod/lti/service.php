@@ -17,8 +17,7 @@
 /**
  * LTI web service endpoints
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Chris Scribner
@@ -147,15 +146,17 @@ switch ($messagetype) {
         //Fire an event if we get a web service request which we don't support directly.
         //This will allow others to extend the LTI services, which I expect to be a common
         //use case, at least until the spec matures.
-        // Please note that you will have to change $eventdata['other']['body'] into an xml
-        // element in an event observer as done above.
+        $data = new stdClass();
+        $data->body = $rawbody;
+        $data->xml = $xml;
+        $data->messagetype = $messagetype;
+        $data->consumerkey = $consumerkey;
+        $data->sharedsecret = $sharedsecret;
         $eventdata = array();
         $eventdata['other'] = array();
-        $eventdata['other']['body'] = $rawbody;
         $eventdata['other']['messageid'] = lti_parse_message_id($xml);
         $eventdata['other']['messagetype'] = $messagetype;
         $eventdata['other']['consumerkey'] = $consumerkey;
-        $eventdata['other']['sharedsecret'] = $sharedsecret;
 
         // Before firing the event, allow subplugins a chance to handle.
         if (lti_extend_lti_services((object) $eventdata['other'])) {
@@ -169,7 +170,7 @@ switch ($messagetype) {
 
         try {
             $event = \mod_lti\event\unknown_service_api_called::create($eventdata);
-            $event->set_legacy_data($eventdata);
+            $event->set_message_data($data);
             $event->trigger();
         } catch (Exception $e) {
             $lti_web_service_handled = false;

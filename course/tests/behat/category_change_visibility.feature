@@ -9,7 +9,7 @@ Feature: We can change the visibility of categories in the management interface.
 
   # Tests hiding and then showing a single category.
   Scenario: Test making a category hidden and then visible again.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
 
@@ -30,7 +30,7 @@ Feature: We can change the visibility of categories in the management interface.
   # Tests hiding and then showing a single category.
   @javascript
   Scenario: Test using AJAX to make a category hidden and then visible again.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
 
@@ -48,7 +48,7 @@ Feature: We can change the visibility of categories in the management interface.
 
   # Tests hiding and then showing a subcategory.
   Scenario: Test making a subcategory hidden and then visible again.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | CAT1 | CAT2 |
@@ -84,7 +84,7 @@ Feature: We can change the visibility of categories in the management interface.
   # Tests hiding and then showing a subcategory.
   @javascript
   Scenario: Test using AJAX to make a subcategory hidden and then visible again.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | CAT1 | CAT2 |
@@ -110,13 +110,13 @@ Feature: We can change the visibility of categories in the management interface.
 
   # The test below this is identical except with JavaScript enabled.
   Scenario: Test relation between category and course when changing visibility.
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
       | Cat 3 | CAT1 | CAT3 |
       | Cat 4 | CAT1 | CAT4 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |
@@ -185,13 +185,13 @@ Feature: We can change the visibility of categories in the management interface.
   # The test above this is identical except without JavaScript enabled.
   @javascript @_cross_browser
   Scenario: Test the relation between category and course when changing visibility with AJAX
-    Given the following "categories" exists:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
       | Cat 2 | 0 | CAT2 |
       | Cat 3 | CAT1 | CAT3 |
       | Cat 4 | CAT1 | CAT4 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
       | CAT1 | Course 2 | Course 2 | C2 |
@@ -253,12 +253,12 @@ Feature: We can change the visibility of categories in the management interface.
 
     @javascript @_cross_browser
     Scenario: Test courses are hidden when selected category parent is hidden.
-      Given the following "categories" exists:
+      Given the following "categories" exist:
         | name | category | idnumber |
         | Cat 1 | 0 | CAT1 |
         | Cat 2 | CAT1 | CAT2 |
         | Cat 3 | CAT2 | CAT3 |
-      And the following "courses" exists:
+      And the following "courses" exist:
         | category | fullname | shortname | idnumber |
         | CAT3 | Course 1 | Course 1 | C1 |
 

@@ -25,17 +25,16 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * blog_entries_viewed
- *
  * Class for event to be triggered when blog entries are viewed.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int courseid id of associated course.
+ *      - int courseid: id of associated course.
  * }
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +49,7 @@ class blog_entries_viewed extends base {
     protected function init() {
         $this->context = \context_system::instance();
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

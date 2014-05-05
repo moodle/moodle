@@ -20,7 +20,7 @@
  *
  * @copyright 2005 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package mod-data
+ * @package mod_data
  */
 
 require_once('../../config.php');
@@ -73,8 +73,16 @@ if (!$DB->count_records('data_fields', array('dataid'=>$data->id))) {      // Br
     redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
 }
 
-add_to_log($course->id, 'data', 'templates view', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
-
+// Trigger an event for viewing templates.
+$event = \mod_data\event\template_viewed::create(array(
+    'context' => $context,
+    'courseid' => $course->id,
+    'other' => array(
+        'dataid' => $data->id
+    )
+));
+$event->add_record_snapshot('data', $data);
+$event->trigger();
 
 /// Print the page header
 
@@ -136,7 +144,16 @@ if (($mytemplate = data_submitted()) && confirm_sesskey()) {
             if (empty($disableeditor) && empty($enableeditor)) {
                 $DB->update_record('data', $newtemplate);
                 echo $OUTPUT->notification(get_string('templatesaved', 'data'), 'notifysuccess');
-                add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
+
+                // Trigger an event for saving the templates.
+                $event = \mod_data\event\template_updated::create(array(
+                    'context' => $context,
+                    'courseid' => $course->id,
+                    'other' => array(
+                        'dataid' => $data->id,
+                    )
+                ));
+                $event->trigger();
             }
         }
     }

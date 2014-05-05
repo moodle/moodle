@@ -7,6 +7,7 @@ Version history:
 - #582 fixes for metadata events dispatching in playlists and when replaying same audio item, cleanup duration updating once download has completed,
 fixes for clearing the previous cover image display.
 - #611 close the channel and sound on stream not found errors.
+- #614 fixes for auto buffering issues where a sound channel may not be active yet.
 
 3.2.9
 -----

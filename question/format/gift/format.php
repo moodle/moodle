@@ -327,8 +327,10 @@ class qformat_gift extends qformat_default {
 
             case 'essay':
                 $question->responseformat = 'editor';
+                $question->responserequired = 1;
                 $question->responsefieldlines = 15;
                 $question->attachments = 0;
+                $question->attachmentsrequired = 0;
                 $question->graderinfo = array(
                         'text' => '', 'format' => FORMAT_HTML, 'files' => array());
                 $question->responsetemplate = array(

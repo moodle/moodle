@@ -1,6 +1,11 @@
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.7 ===
+* How to migrate reports accessing table 'log':
+  http://docs.moodle.org/dev/Migrating_log_access_in_reports
+* All reports that use logstores must implement a callback report_reportname_supports_logstore($storeinstance) in lib.php of the
+  report. Refer MDL-44596 for details.
 
 === 2.2 ===
 

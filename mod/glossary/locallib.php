@@ -19,7 +19,7 @@
  * Library of functions and constants for module glossary
  * outside of what is required for the core moodle api
  *
- * @package   mod-glossary
+ * @package   mod_glossary
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -211,7 +211,7 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 /**
  * class to export a single glossary entry
  *
- * @package   mod-glossary
+ * @package   mod_glossary
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

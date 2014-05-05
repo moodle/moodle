@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * User removed from a cohort event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,7 +43,7 @@ class cohort_member_removed extends base {
      */
     protected function init() {
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'cohort';
     }
 
@@ -52,7 +53,7 @@ class cohort_member_removed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_cohort_member_removed', 'core_cohort');
+        return get_string('eventcohortmemberremoved', 'core_cohort');
     }
 
     /**
@@ -61,7 +62,8 @@ class cohort_member_removed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->relateduserid.' was removed from cohort '.$this->objectid.' by user '.$this->userid;
+        return "The user with the id '$this->relateduserid' was removed from the cohort with the id '$this->objectid' by the " .
+            "user with the id '$this->userid'.";
     }
 
     /**

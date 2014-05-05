@@ -237,7 +237,13 @@ class restore_gradebook_structure_step extends restore_structure_step {
             $data->timecreated  = $this->apply_date_offset($data->timecreated);
             $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-            $newitemid = $DB->insert_record('grade_grades', $data);
+            $gradeexists = $DB->record_exists('grade_grades', array('userid' => $data->userid, 'itemid' => $data->itemid));
+            if ($gradeexists) {
+                $message = "User id '{$data->userid}' already has a grade entry for grade item id '{$data->itemid}'";
+                $this->log($message, backup::LOG_DEBUG);
+            } else {
+                $newitemid = $DB->insert_record('grade_grades', $data);
+            }
         } else {
             $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
             $this->log($message, backup::LOG_DEBUG);
@@ -532,11 +538,94 @@ class restore_review_pending_block_positions extends restore_execution_step {
     }
 }
 
+
 /**
- * Process all the saved module availability records in backup_ids, matching
- * course modules and grade item id once all them have been already restored.
- * only if all matchings are satisfied the availability condition will be created.
+ * Updates the availability data for course modules and sections.
+ *
+ * Runs after the restore of all course modules, sections, and grade items has
+ * completed. This is necessary in order to update IDs that have changed during
+ * restore.
+ *
+ * @package core_backup
+ * @copyright 2014 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_update_availability extends restore_execution_step {
+
+    protected function define_execution() {
+        global $CFG, $DB;
+
+        // Note: This code runs even if availability is disabled when restoring.
+        // That will ensure that if you later turn availability on for the site,
+        // there will be no incorrect IDs. (It doesn't take long if the restored
+        // data does not contain any availability information.)
+
+        // Get modinfo with all data after resetting cache.
+        rebuild_course_cache($this->get_courseid(), true);
+        $modinfo = get_fast_modinfo($this->get_courseid());
+
+        // Update all sections that were restored.
+        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'course_section');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'newitemid');
+        $sectionsbyid = null;
+        foreach ($rs as $rec) {
+            if (is_null($sectionsbyid)) {
+                $sectionsbyid = array();
+                foreach ($modinfo->get_section_info_all() as $section) {
+                    $sectionsbyid[$section->id] = $section;
+                }
+            }
+            if (!array_key_exists($rec->newitemid, $sectionsbyid)) {
+                // If the section was not fully restored for some reason
+                // (e.g. due to an earlier error), skip it.
+                $this->get_logger()->process('Section not fully restored: id ' .
+                        $rec->newitemid, backup::LOG_WARNING);
+                continue;
+            }
+            $section = $sectionsbyid[$rec->newitemid];
+            if (!is_null($section->availability)) {
+                $info = new \core_availability\info_section($section);
+                $info->update_after_restore($this->get_restoreid(),
+                        $this->get_courseid(), $this->get_logger());
+            }
+        }
+        $rs->close();
+
+        // Update all modules that were restored.
+        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'course_module');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'newitemid');
+        foreach ($rs as $rec) {
+            if (!array_key_exists($rec->newitemid, $modinfo->cms)) {
+                // If the module was not fully restored for some reason
+                // (e.g. due to an earlier error), skip it.
+                $this->get_logger()->process('Module not fully restored: id ' .
+                        $rec->newitemid, backup::LOG_WARNING);
+                continue;
+            }
+            $cm = $modinfo->get_cm($rec->newitemid);
+            if (!is_null($cm->availability)) {
+                $info = new \core_availability\info_module($cm);
+                $info->update_after_restore($this->get_restoreid(),
+                        $this->get_courseid(), $this->get_logger());
+            }
+        }
+        $rs->close();
+    }
+}
+
+
+/**
+ * Process legacy module availability records in backup_ids.
+ *
+ * Matches course modules and grade item id once all them have been already restored.
+ * Only if all matchings are satisfied the availability condition will be created.
  * At the same time, it is required for the site to have that functionality enabled.
+ *
+ * This step is included only to handle legacy backups (2.6 and before). It does not
+ * do anything for newer backups.
+ *
+ * @copyright 2014 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class restore_process_course_modules_availability extends restore_execution_step {
 
@@ -548,34 +637,39 @@ class restore_process_course_modules_availability extends restore_execution_step
             return;
         }
 
-        // Get all the module_availability objects to process
-        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'module_availability');
-        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid, info');
-        // Process availabilities, creating them if everything matches ok
-        foreach($rs as $availrec) {
-            $allmatchesok = true;
-            // Get the complete availabilityobject
-            $availability = backup_controller_dbops::decode_backup_temp_info($availrec->info);
-            // Map the sourcecmid if needed and possible
-            if (!empty($availability->sourcecmid)) {
-                $newcm = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $availability->sourcecmid);
-                if ($newcm) {
-                    $availability->sourcecmid = $newcm->newitemid;
-                } else {
-                    $allmatchesok = false; // Failed matching, we won't create this availability rule
+        // Do both modules and sections.
+        foreach (array('module', 'section') as $table) {
+            // Get all the availability objects to process.
+            $params = array('backupid' => $this->get_restoreid(), 'itemname' => $table . '_availability');
+            $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid, info');
+            // Process availabilities, creating them if everything matches ok.
+            foreach ($rs as $availrec) {
+                $allmatchesok = true;
+                // Get the complete legacy availability object.
+                $availability = backup_controller_dbops::decode_backup_temp_info($availrec->info);
+
+                // Note: This code used to update IDs, but that is now handled by the
+                // current code (after restore) instead of this legacy code.
+
+                // Get showavailability option.
+                $thingid = ($table === 'module') ? $availability->coursemoduleid :
+                        $availability->coursesectionid;
+                $showrec = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                        $table . '_showavailability', $thingid);
+                if (!$showrec) {
+                    // Should not happen.
+                    throw new coding_exception('No matching showavailability record');
                 }
-            }
-            // Map the gradeitemid if needed and possible
-            if (!empty($availability->gradeitemid)) {
-                $newgi = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'grade_item', $availability->gradeitemid);
-                if ($newgi) {
-                    $availability->gradeitemid = $newgi->newitemid;
-                } else {
-                    $allmatchesok = false; // Failed matching, we won't create this availability rule
-                }
-            }
-            if ($allmatchesok) { // Everything ok, create the availability rule
-                $DB->insert_record('course_modules_availability', $availability);
+                $show = $showrec->info->showavailability;
+
+                // The $availability object is now in the format used in the old
+                // system. Interpret this and convert to new system.
+                $currentvalue = $DB->get_field('course_' . $table . 's', 'availability',
+                        array('id' => $thingid), MUST_EXIST);
+                $newvalue = \core_availability\info::add_legacy_availability_condition(
+                        $currentvalue, $availability, $show);
+                $DB->set_field('course_' . $table . 's', 'availability', $newvalue,
+                        array('id' => $thingid));
             }
         }
         $rs->close();
@@ -1159,16 +1253,14 @@ class restore_section_structure_step extends restore_structure_step {
             $section->sequence = '';
             $section->visible = $data->visible;
             if (empty($CFG->enableavailability)) { // Process availability information only if enabled.
-                $section->availablefrom = 0;
-                $section->availableuntil = 0;
-                $section->showavailability = 0;
+                $section->availability = null;
             } else {
-                $section->availablefrom = isset($data->availablefrom) ? $this->apply_date_offset($data->availablefrom) : 0;
-                $section->availableuntil = isset($data->availableuntil) ? $this->apply_date_offset($data->availableuntil) : 0;
-                $section->showavailability = isset($data->showavailability) ? $data->showavailability : 0;
-            }
-            if (!empty($CFG->enablegroupmembersonly)) { // Only if enablegroupmembersonly is enabled
-                $section->groupingid = isset($data->groupingid) ? $this->get_mappingid('grouping', $data->groupingid) : 0;
+                $section->availability = isset($data->availabilityjson) ? $data->availabilityjson : null;
+                // Include legacy [<2.7] availability data if provided.
+                if (is_null($section->availability)) {
+                    $section->availability = \core_availability\info::convert_legacy_fields(
+                            $data, true);
+                }
             }
             $newitemid = $DB->insert_record('course_sections', $section);
             $restorefiles = true;
@@ -1184,15 +1276,9 @@ class restore_section_structure_step extends restore_structure_step {
                 $section->summaryformat = $data->summaryformat;
                 $restorefiles = true;
             }
-            if (empty($secrec->groupingid)) {
-                if (!empty($CFG->enablegroupmembersonly)) { // Only if enablegroupmembersonly is enabled
-                    $section->groupingid = isset($data->groupingid) ? $this->get_mappingid('grouping', $data->groupingid) : 0;
-                }
-            }
 
-            // Don't update available from, available until, or show availability
-            // (I didn't see a useful way to define whether existing or new one should
-            // take precedence).
+            // Don't update availability (I didn't see a useful way to define
+            // whether existing or new one should take precedence).
 
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;
@@ -1204,6 +1290,14 @@ class restore_section_structure_step extends restore_structure_step {
         // set the new course_section id in the task
         $this->task->set_sectionid($newitemid);
 
+        // If there is the legacy showavailability data, store this for later use.
+        // (This data is not present when restoring 'new' backups.)
+        if (isset($data->showavailability)) {
+            // Cache the showavailability flag using the backup_ids data field.
+            restore_dbops::set_backup_ids_record($this->get_restoreid(),
+                    'section_showavailability', $newitemid, 0, null,
+                    (object)array('showavailability' => $data->showavailability));
+        }
 
         // Commented out. We never modify course->numsections as far as that is used
         // by a lot of people to "hide" sections on purpose (so this remains as used to be in Moodle 1.x)
@@ -1217,24 +1311,28 @@ class restore_section_structure_step extends restore_structure_step {
         //}
     }
 
+    /**
+     * Process the legacy availability table record. This table does not exist
+     * in Moodle 2.7+ but we still support restore.
+     *
+     * @param stdClass $data Record data
+     */
     public function process_availability($data) {
-        global $DB;
         $data = (object)$data;
-
+        // Simply going to store the whole availability record now, we'll process
+        // all them later in the final task (once all activities have been restored)
+        // Let's call the low level one to be able to store the whole object.
         $data->coursesectionid = $this->task->get_sectionid();
-
-        // NOTE: Other values in $data need updating, but these (cm,
-        // grade items) have not yet been restored, so are done later.
-
-        $newid = $DB->insert_record('course_sections_availability', $data);
-
-        // We do not need to map between old and new id but storing a mapping
-        // means it gets added to the backup_ids table to record which ones
-        // need updating. The mapping is stored with $newid => $newid for
-        // convenience.
-        $this->set_mapping('course_sections_availability', $newid, $newid);
+        restore_dbops::set_backup_ids_record($this->get_restoreid(),
+                'section_availability', $data->id, 0, null, $data);
     }
 
+    /**
+     * Process the legacy availability fields table record. This table does not
+     * exist in Moodle 2.7+ but we still support restore.
+     *
+     * @param stdClass $data Record data
+     */
     public function process_availability_field($data) {
         global $DB;
         $data = (object)$data;
@@ -1262,7 +1360,24 @@ class restore_section_structure_step extends restore_structure_step {
             $availfield->customfieldid = $customfieldid;
             $availfield->operator = $data->operator;
             $availfield->value = $data->value;
-            $DB->insert_record('course_sections_avail_fields', $availfield);
+
+            // Get showavailability option.
+            $showrec = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                    'section_showavailability', $availfield->coursesectionid);
+            if (!$showrec) {
+                // Should not happen.
+                throw new coding_exception('No matching showavailability record');
+            }
+            $show = $showrec->info->showavailability;
+
+            // The $availfield object is now in the format used in the old
+            // system. Interpret this and convert to new system.
+            $currentvalue = $DB->get_field('course_sections', 'availability',
+                    array('id' => $availfield->coursesectionid), MUST_EXIST);
+            $newvalue = \core_availability\info::add_legacy_availability_field_condition(
+                    $currentvalue, $availfield, $show);
+            $DB->set_field('course_sections', 'availability', $newvalue,
+                    array('id' => $availfield->coursesectionid));
         }
     }
 
@@ -1281,45 +1396,7 @@ class restore_section_structure_step extends restore_structure_step {
         // Add section related files, with 'course_section' itemid to match
         $this->add_related_files('course', 'section', 'course_section');
     }
-
-    public function after_restore() {
-        global $DB;
-
-        $sectionid = $this->get_task()->get_sectionid();
-
-        // Get data object for current section availability (if any).
-        $records = $DB->get_records('course_sections_availability',
-                array('coursesectionid' => $sectionid), 'id, sourcecmid, gradeitemid');
-
-        // If it exists, update mappings.
-        foreach ($records as $data) {
-            // Only update mappings for entries which are created by this restore.
-            // Otherwise, when you restore to an existing course, it will mess up
-            // existing section availability entries.
-            if (!$this->get_mappingid('course_sections_availability', $data->id, false)) {
-                continue;
-            }
-
-            // Update source cmid / grade id to new value.
-            $data->sourcecmid = $this->get_mappingid('course_module', $data->sourcecmid);
-            if (!$data->sourcecmid) {
-                $data->sourcecmid = null;
-            }
-            $data->gradeitemid = $this->get_mappingid('grade_item', $data->gradeitemid);
-            if (!$data->gradeitemid) {
-                $data->gradeitemid = null;
-            }
-
-            // Delete the record if the condition wasn't found, otherwise update it.
-            if ($data->sourcecmid === null && $data->gradeitemid === null) {
-                $DB->delete_records('course_sections_availability', array('id' => $data->id));
-            } else {
-                $DB->update_record('course_sections_availability', $data);
-            }
-        }
-    }
 }
-
 
 /**
  * Structure step that will read the course.xml file, loading it and performing
@@ -1468,7 +1545,8 @@ class restore_course_structure_step extends restore_structure_step {
             // Add the one being restored
             $tags[] = $data->rawname;
             // Send all the tags back to the course
-            tag_set('course', $this->get_courseid(), $tags);
+            tag_set('course', $this->get_courseid(), $tags, 'core',
+                context_course::instance($this->get_courseid())->id);
         }
     }
 
@@ -2833,6 +2911,12 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         }
         // no need to save any grade_letter mapping
     }
+
+    public function after_restore() {
+        // Fix grade item's sortorder after restore, as it might have duplicates.
+        $courseid = $this->get_task()->get_courseid();
+        grade_item::fix_duplicate_sortorder($courseid);
+    }
 }
 
 
@@ -3023,9 +3107,6 @@ class restore_module_structure_step extends restore_structure_step {
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
-        if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly
-            $data->groupmembersonly = 0;
-        }
         if (!grade_verify_idnumber($data->idnumber, $this->get_courseid())) {        // idnumber uniqueness
             $data->idnumber = '';
         }
@@ -3038,12 +3119,7 @@ class restore_module_structure_step extends restore_structure_step {
             $data->completionexpected = $this->apply_date_offset($data->completionexpected);
         }
         if (empty($CFG->enableavailability)) {
-            $data->availablefrom = 0;
-            $data->availableuntil = 0;
-            $data->showavailability = 0;
-        } else {
-            $data->availablefrom = $this->apply_date_offset($data->availablefrom);
-            $data->availableuntil= $this->apply_date_offset($data->availableuntil);
+            $data->availability = null;
         }
         // Backups that did not include showdescription, set it to default 0
         // (this is not totally necessary as it has a db default, but just to
@@ -3052,6 +3128,15 @@ class restore_module_structure_step extends restore_structure_step {
             $data->showdescription = 0;
         }
         $data->instance = 0; // Set to 0 for now, going to create it soon (next step)
+
+        // If there are legacy availablility data fields (and no new format data),
+        // convert the old fields.
+        if (empty($data->availability)) {
+            // If groupmembersonly is disabled on this system, convert the
+            // groupmembersonly option into the new API. Otherwise don't.
+            $data->availability = \core_availability\info::convert_legacy_fields(
+                    $data, false, !$CFG->enablegroupmembersonly);
+        }
 
         // course_module record ready, insert it
         $newitemid = $DB->insert_record('course_modules', $data);
@@ -3070,8 +3155,23 @@ class restore_module_structure_step extends restore_structure_step {
             $sequence = $newitemid;
         }
         $DB->set_field('course_sections', 'sequence', $sequence, array('id' => $data->section));
+
+        // If there is the legacy showavailability data, store this for later use.
+        // (This data is not present when restoring 'new' backups.)
+        if (isset($data->showavailability)) {
+            // Cache the showavailability flag using the backup_ids data field.
+            restore_dbops::set_backup_ids_record($this->get_restoreid(),
+                    'module_showavailability', $newitemid, 0, null,
+                    (object)array('showavailability' => $data->showavailability));
+        }
     }
 
+    /**
+     * Process the legacy availability table record. This table does not exist
+     * in Moodle 2.7+ but we still support restore.
+     *
+     * @param stdClass $data Record data
+     */
     protected function process_availability($data) {
         $data = (object)$data;
         // Simply going to store the whole availability record now, we'll process
@@ -3081,6 +3181,12 @@ class restore_module_structure_step extends restore_structure_step {
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability', $data->id, 0, null, $data);
     }
 
+    /**
+     * Process the legacy availability fields table record. This table does not
+     * exist in Moodle 2.7+ but we still support restore.
+     *
+     * @param stdClass $data Record data
+     */
     protected function process_availability_field($data) {
         global $DB;
         $data = (object)$data;
@@ -3108,8 +3214,24 @@ class restore_module_structure_step extends restore_structure_step {
             $availfield->customfieldid = $customfieldid;
             $availfield->operator = $data->operator;
             $availfield->value = $data->value;
-            // Insert into the database
-            $DB->insert_record('course_modules_avail_fields', $availfield);
+
+            // Get showavailability option.
+            $showrec = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                    'module_showavailability', $availfield->coursemoduleid);
+            if (!$showrec) {
+                // Should not happen.
+                throw new coding_exception('No matching showavailability record');
+            }
+            $show = $showrec->info->showavailability;
+
+            // The $availfieldobject is now in the format used in the old
+            // system. Interpret this and convert to new system.
+            $currentvalue = $DB->get_field('course_modules', 'availability',
+                    array('id' => $availfield->coursemoduleid), MUST_EXIST);
+            $newvalue = \core_availability\info::add_legacy_availability_field_condition(
+                    $currentvalue, $availfield, $show);
+            $DB->set_field('course_modules', 'availability', $newvalue,
+                    array('id' => $availfield->coursemoduleid));
         }
     }
 }
@@ -3273,6 +3395,9 @@ abstract class restore_activity_structure_step extends restore_structure_step {
  */
 class restore_create_categories_and_questions extends restore_structure_step {
 
+    /** @var array $cachecategory store a question category */
+    protected $cachedcategory = null;
+
     protected function define_structure() {
 
         $category = new restore_path_element('question_category', '/question_categories/question_category');
@@ -3378,7 +3503,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // step will be in charge of restoring all the question files
     }
 
-        protected function process_question_hint($data) {
+    protected function process_question_hint($data) {
         global $DB;
 
         $data = (object)$data;
@@ -3442,7 +3567,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
         $newquestion = $this->get_new_parentid('question');
 
         if (!empty($CFG->usetags)) { // if enabled in server
-            // TODO: This is highly inneficient. Each time we add one tag
+            // TODO: This is highly inefficient. Each time we add one tag
             // we fetch all the existing because tag_set() deletes them
             // so everything must be reinserted on each call
             $tags = array();
@@ -3453,8 +3578,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
             }
             // Add the one being restored
             $tags[] = $data->rawname;
+            // Get the category, so we can then later get the context.
+            $categoryid = $this->get_new_parentid('question_category');
+            if (empty($this->cachedcategory) || $this->cachedcategory->id != $categoryid) {
+                $this->cachedcategory = $DB->get_record('question_categories', array('id' => $categoryid));
+            }
             // Send all the tags back to the question
-            tag_set('question', $newquestion, $tags);
+            tag_set('question', $newquestion, $tags, 'core_question', $this->cachedcategory->contextid);
         }
     }
 
@@ -3558,7 +3688,7 @@ class restore_create_question_files extends restore_execution_step {
 
         // Track progress, as this task can take a long time.
         $progress = $this->task->get_progress();
-        $progress->start_progress($this->get_name(), core_backup_progress::INDETERMINATE);
+        $progress->start_progress($this->get_name(), \core\progress\base::INDETERMINATE);
 
         // Let's process only created questions
         $questionsrs = $DB->get_recordset_sql("SELECT bi.itemid, bi.newitemid, bi.parentitemid, q.qtype
@@ -4063,6 +4193,9 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         $data->questionusageid = $this->get_new_parentid($nameprefix . 'question_usage');
         $data->questionid      = $question->newitemid;
+        if (!property_exists($data, 'variant')) {
+            $data->variant = 1;
+        }
         $data->timemodified    = $this->apply_date_offset($data->timemodified);
 
         if (!property_exists($data, 'maxfraction')) {
@@ -4227,7 +4360,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
     /**
      * Process the attempt data defined by {@link add_legacy_question_attempt_data()}.
-     * @param object $data contains all the grouped attempt data ot process.
+     * @param object $data contains all the grouped attempt data to process.
      * @param pbject $quiz data about the activity the attempts belong to. Required
      * fields are (basically this only works for the quiz module):
      *      oldquestions => list of question ids in this activity - using old ids.
@@ -4289,7 +4422,8 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $this->inform_new_usage_id($usage->id);
 
         $data->uniqueid = $usage->id;
-        $upgrader->save_usage($quiz->preferredbehaviour, $data, $qas, $quiz->questions);
+        $upgrader->save_usage($quiz->preferredbehaviour, $data, $qas,
+                 $this->questions_recode_layout($quiz->oldquestions));
     }
 
     protected function find_question_session_and_states($data, $questionid) {

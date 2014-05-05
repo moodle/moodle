@@ -45,7 +45,7 @@ M.mod_assign.init_grading_table = function(Y) {
         if (selectall) {
             selectall.on('change', function(e) {
                 if (e.currentTarget.get('checked')) {
-                    checkboxes = Y.all('td.c0 input');
+                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
                     checkboxes.each(function(node) {
                         rowelement = node.get('parentNode').get('parentNode');
                         node.set('checked', true);
@@ -53,7 +53,7 @@ M.mod_assign.init_grading_table = function(Y) {
                         rowelement.addClass('selectedrow');
                     });
                 } else {
-                    checkboxes = Y.all('td.c0 input');
+                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
                     checkboxes.each(function(node) {
                         rowelement = node.get('parentNode').get('parentNode');
                         node.set('checked', false);
@@ -65,51 +65,40 @@ M.mod_assign.init_grading_table = function(Y) {
         }
 
         var batchform = Y.one('form.gradingbatchoperationsform');
-        batchform.on('submit', function(e) {
-            checkboxes = Y.all('td.c0 input');
-            var selectedusers = [];
-            checkboxes.each(function(node) {
-                if (node.get('checked')) {
-                    selectedusers[selectedusers.length] = node.get('value');
-                }
-            });
+        if (batchform) {
+            batchform.on('submit', function(e) {
+                checkboxes = Y.all('td.c0 input');
+                var selectedusers = [];
+                checkboxes.each(function(node) {
+                    if (node.get('checked')) {
+                        selectedusers[selectedusers.length] = node.get('value');
+                    }
+                });
 
-            operation = Y.one('#id_operation');
-            usersinput = Y.one('input.selectedusers');
-            usersinput.set('value', selectedusers.join(','));
-            if (selectedusers.length == 0) {
-                alert(M.str.assign.nousersselected);
-                e.preventDefault();
-            } else {
-                action = operation.get('value');
-                prefix = 'plugingradingbatchoperation_';
-                if (action.indexOf(prefix) == 0) {
-                    pluginaction = action.substr(prefix.length);
-                    plugin = pluginaction.split('_')[0];
-                    action = pluginaction.substr(plugin.length + 1);
-                    confirmmessage = eval('M.str.assignfeedback_' + plugin + '.batchoperationconfirm' + action);
-                } else {
-                    confirmmessage = eval('M.str.assign.batchoperationconfirm' + operation.get('value'));
-                }
-                if (!confirm(confirmmessage)) {
+                operation = Y.one('#id_operation');
+                usersinput = Y.one('input.selectedusers');
+                usersinput.set('value', selectedusers.join(','));
+                if (selectedusers.length == 0) {
+                    alert(M.str.assign.nousersselected);
                     e.preventDefault();
+                } else {
+                    action = operation.get('value');
+                    prefix = 'plugingradingbatchoperation_';
+                    if (action.indexOf(prefix) == 0) {
+                        pluginaction = action.substr(prefix.length);
+                        plugin = pluginaction.split('_')[0];
+                        action = pluginaction.substr(plugin.length + 1);
+                        confirmmessage = eval('M.str.assignfeedback_' + plugin + '.batchoperationconfirm' + action);
+                    } else {
+                        confirmmessage = eval('M.str.assign.batchoperationconfirm' + operation.get('value'));
+                    }
+                    if (!confirm(confirmmessage)) {
+                        e.preventDefault();
+                    }
                 }
-            }
-        });
-
-        Y.use('node-menunav', function(Y) {
-            var menus = Y.all('.gradingtable .actionmenu');
-
-            menus.each(function(menu) {
-                Y.on("contentready", function() {
-                    this.plug(Y.Plugin.NodeMenuNav, {autoSubmenuDisplay: true});
-                    var submenus = this.all('.yui3-loading');
-                    submenus.each(function (n) {
-                        n.removeClass('yui3-loading');
-                    });
-                }, "#" + menu.getAttribute('id'));
             });
-        });
+        }
+
         var quickgrade = Y.all('.gradingtable .quickgrade');
         quickgrade.each(function(quick) {
             quick.on('change', function(e) {

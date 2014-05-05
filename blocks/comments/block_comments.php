@@ -17,8 +17,7 @@
 /**
  * The comments block
  *
- * @package   block
- * @subpackage comments
+ * @package    block_comments
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

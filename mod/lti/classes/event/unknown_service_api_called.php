@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for an unknown service API call.
+ * The mod_lti unknown service api called event.
  *
  * @package    mod_lti
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -26,34 +26,39 @@ namespace mod_lti\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * The mod_lti unknown service api called event class.
+ *
  * Event for when something happens with an unknown lti service API call.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string body raw body.
- *      @type string messageid id of message.
- *      @type string messagetype type of message.
- *      @type string consumerkey key of consumer.
- *      @type string sharedsecret shared secret key.
- * }
- *
  * @package    mod_lti
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class unknown_service_api_called extends \core\event\base {
 
-    /** Old data to be used for the legacy event. */
-    protected $legacydata;
+    /** @var \stdClass Data to be used by event observers. */
+    protected $eventdata;
 
     /**
-     * Set method for legacy data.
+     * Sets custom data used by event observers.
      *
-     * @param stdClass $data legacy event data.
+     * @param \stdClass $data
      */
-    public function set_legacy_data($data) {
-        $this->legacydata = $data;
+    public function set_message_data(\stdClass $data) {
+        $this->eventdata = $data;
+    }
+
+    /**
+     * Returns custom data for event observers.
+     *
+     * @return \stdClass
+     */
+    public function get_message_data() {
+        if ($this->is_restored()) {
+            throw new \coding_exception('Function get_message_data() can not be used on restored events.');
+        }
+        return $this->eventdata;
     }
 
     /**
@@ -62,7 +67,7 @@ class unknown_service_api_called extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lti';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['context'] = \context_system::instance();
     }
 
@@ -99,7 +104,7 @@ class unknown_service_api_called extends \core\event\base {
      * @return mixed
      */
     protected function get_legacy_eventdata() {
-        return $this->legacydata;
+        return $this->eventdata;
     }
 
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_choice course module instance list viewed event.
+ * The mod_choice instance list viewed event.
  *
  * @package    mod_choice
  * @copyright  2013 Ankit Agarwal
@@ -26,9 +26,10 @@ namespace mod_choice\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_choice course module instance list event class.
+ * The mod_choice instance list viewed event class.
  *
  * @package    mod_choice
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

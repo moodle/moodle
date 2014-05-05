@@ -7,35 +7,42 @@ class HTMLPurifier_ContentSets
 {
 
     /**
-     * List of content set strings (pipe seperators) indexed by name.
+     * List of content set strings (pipe separators) indexed by name.
+     * @type array
      */
     public $info = array();
 
     /**
      * List of content set lookups (element => true) indexed by name.
+     * @type array
      * @note This is in HTMLPurifier_HTMLDefinition->info_content_sets
      */
     public $lookup = array();
 
     /**
-     * Synchronized list of defined content sets (keys of info)
+     * Synchronized list of defined content sets (keys of info).
+     * @type array
      */
     protected $keys = array();
     /**
-     * Synchronized list of defined content values (values of info)
+     * Synchronized list of defined content values (values of info).
+     * @type array
      */
     protected $values = array();
 
     /**
      * Merges in module's content sets, expands identifiers in the content
      * sets and populates the keys, values and lookup member variables.
-     * @param $modules List of HTMLPurifier_HTMLModule
+     * @param HTMLPurifier_HTMLModule[] $modules List of HTMLPurifier_HTMLModule
      */
-    public function __construct($modules) {
-        if (!is_array($modules)) $modules = array($modules);
+    public function __construct($modules)
+    {
+        if (!is_array($modules)) {
+            $modules = array($modules);
+        }
         // populate content_sets based on module hints
         // sorry, no way of overloading
-        foreach ($modules as $module_i => $module) {
+        foreach ($modules as $module) {
             foreach ($module->content_sets as $key => $value) {
                 $temp = $this->convertToLookup($value);
                 if (isset($this->lookup[$key])) {
@@ -70,11 +77,14 @@ class HTMLPurifier_ContentSets
 
     /**
      * Accepts a definition; generates and assigns a ChildDef for it
-     * @param $def HTMLPurifier_ElementDef reference
-     * @param $module Module that defined the ElementDef
+     * @param HTMLPurifier_ElementDef $def HTMLPurifier_ElementDef reference
+     * @param HTMLPurifier_HTMLModule $module Module that defined the ElementDef
      */
-    public function generateChildDef(&$def, $module) {
-        if (!empty($def->child)) return; // already done!
+    public function generateChildDef(&$def, $module)
+    {
+        if (!empty($def->child)) { // already done!
+            return;
+        }
         $content_model = $def->content_model;
         if (is_string($content_model)) {
             // Assume that $this->keys is alphanumeric
@@ -89,7 +99,8 @@ class HTMLPurifier_ContentSets
         $def->child = $this->getChildDef($def, $module);
     }
 
-    public function generateChildDefCallback($matches) {
+    public function generateChildDefCallback($matches)
+    {
         return $this->info[$matches[0]];
     }
 
@@ -98,10 +109,12 @@ class HTMLPurifier_ContentSets
      * member variables in HTMLPurifier_ElementDef
      * @note This will also defer to modules for custom HTMLPurifier_ChildDef
      *       subclasses that need content set expansion
-     * @param $def HTMLPurifier_ElementDef to have ChildDef extracted
+     * @param HTMLPurifier_ElementDef $def HTMLPurifier_ElementDef to have ChildDef extracted
+     * @param HTMLPurifier_HTMLModule $module Module that defined the ElementDef
      * @return HTMLPurifier_ChildDef corresponding to ElementDef
      */
-    public function getChildDef($def, $module) {
+    public function getChildDef($def, $module)
+    {
         $value = $def->content_model;
         if (is_object($value)) {
             trigger_error(
@@ -126,7 +139,9 @@ class HTMLPurifier_ContentSets
         if ($module->defines_child_def) { // save a func call
             $return = $module->getChildDef($def);
         }
-        if ($return !== false) return $return;
+        if ($return !== false) {
+            return $return;
+        }
         // error-out
         trigger_error(
             'Could not determine which ChildDef class to instantiate',
@@ -138,18 +153,18 @@ class HTMLPurifier_ContentSets
     /**
      * Converts a string list of elements separated by pipes into
      * a lookup array.
-     * @param $string List of elements
-     * @return Lookup array of elements
+     * @param string $string List of elements
+     * @return array Lookup array of elements
      */
-    protected function convertToLookup($string) {
+    protected function convertToLookup($string)
+    {
         $array = explode('|', str_replace(' ', '', $string));
         $ret = array();
-        foreach ($array as $i => $k) {
+        foreach ($array as $k) {
             $ret[$k] = true;
         }
         return $ret;
     }
-
 }
 
 // vim: et sw=4 sts=4

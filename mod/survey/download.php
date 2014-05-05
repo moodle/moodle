@@ -19,7 +19,7 @@
  * This file is responsible for producing the downloadable versions of a survey
  * module.
  *
- * @package   mod-survey
+ * @package   mod_survey
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,7 +51,14 @@ if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
     print_error('invalidsurveyid', 'survey');
 }
 
-add_to_log($course->id, "survey", "download", $PAGE->url->out(), "$survey->id", $cm->id);
+$params = array(
+    'objectid' => $survey->id,
+    'context' => $context,
+    'courseid' => $course->id,
+    'other' => array('type' => $type, 'groupid' => $group)
+);
+$event = \mod_survey\event\report_downloaded::create($params);
+$event->trigger();
 
 /// Check to see if groups are being used in this survey
 

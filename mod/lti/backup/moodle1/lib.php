@@ -17,8 +17,7 @@
 /**
  * 1.9 to 2.0 backup format converter. (Also currently used in common cartridge import process)
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Darko Miletic

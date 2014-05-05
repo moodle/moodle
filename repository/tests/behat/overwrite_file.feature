@@ -1,18 +1,18 @@
-@core @core_filepicker @_only_local
+@core @core_filepicker @_file_upload
 Feature: Overwrite file feature
   In order to update an existing file
   As a user
   I need to pick the file with the same name and select to overwrite
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Upload a file in filemanager and overwrite it
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Terry | Teacher | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     When I log in as "teacher1"
@@ -33,7 +33,7 @@ Feature: Overwrite file feature
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test folder |
       | Description | Test folder description |
     And I add "empty.txt" file from "Private files" to "Files" filemanager

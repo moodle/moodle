@@ -293,10 +293,12 @@ class qformat_examview extends qformat_based_on_xml {
         $feedback = trim($this->unxmlise($qrec['answer'][0]['#']));
         $question->graderinfo =  $this->text_field($feedback);
         $question->responsetemplate =  $this->text_field('');
+        $question->responserequired = 1;
         $question->feedback = $feedback;
         $question->responseformat = 'editor';
         $question->responsefieldlines = 15;
         $question->attachments = 0;
+        $question->attachmentsrequired = 0;
         $question->fraction = 0;
         return $question;
     }

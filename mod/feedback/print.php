@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package feedback
+ * @package mod_feedback
  */
 
 require_once("../../config.php");
@@ -56,8 +56,8 @@ $feedback_url = new moodle_url('/mod/feedback/index.php', array('id'=>$course->i
 $PAGE->navbar->add($strfeedbacks, $feedback_url);
 $PAGE->navbar->add(format_string($feedback->name));
 
-$PAGE->set_title(format_string($feedback->name));
-$PAGE->set_heading(format_string($course->fullname));
+$PAGE->set_title($feedback->name);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 /// Print the main part of the page
@@ -78,9 +78,10 @@ if (is_array($feedbackitems)) {
     $params = array('feedback'=>$feedback->id, 'required'=>1);
     $countreq = $DB->count_records('feedback_item', $params);
     if ($countreq > 0) {
-        echo '<span class="feedback_required_mark">(*)';
-        echo get_string('items_are_required', 'feedback');
-        echo '</span>';
+        echo '<div class="fdescription required">';
+        echo get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').
+            '" src="'.$OUTPUT->pix_url('req') .'" class="req" />');
+        echo '</div>';
     }
     //print the inserted items
     $itempos = 0;

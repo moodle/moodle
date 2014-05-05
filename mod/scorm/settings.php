@@ -32,6 +32,9 @@ if ($ADMIN->fulltree) {
         get_string('display', 'scorm'), get_string('displaydesc', 'scorm'),
         array('value' => 0, 'adv' => false), scorm_get_popup_display_array()));
 
+    $settings->add(new admin_setting_configcheckbox('scorm/displayactivityname',
+        get_string('displayactivityname', 'scorm'), get_string('displayactivityname_help', 'scorm'), 1));
+
     $settings->add(new admin_setting_configtext_with_advanced('scorm/framewidth',
         get_string('width', 'scorm'), get_string('framewidth', 'scorm'),
         array('value' => '100', 'adv' => true)));
@@ -119,6 +122,8 @@ if ($ADMIN->fulltree) {
 
     //admin level settings.
     $settings->add(new admin_setting_heading('scorm/adminsettings', get_string('adminsettings', 'scorm'), ''));
+
+    $settings->add(new admin_setting_configcheckbox('scorm/scorm12standard', get_string('scorm12standard', 'scorm'), get_string('scorm12standarddesc', 'scorm'), 1));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternal', get_string('allowtypeexternal', 'scorm'), '', 0));
 

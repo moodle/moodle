@@ -6,14 +6,14 @@ Feature: In a lesson activity, students can navigate through a series of pages i
 
   @javascript
   Scenario: Student navigation with pages and questions
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -24,14 +24,14 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | Name | Test lesson name |
     And I follow "Test lesson name"
     And I follow "Add a content page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page title | First page name |
       | Page contents | First page contents |
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I select "Add a content page" from "qtype"
-    And I fill the moodle form with:
+    And I set the field "qtype" to "Add a content page"
+    And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
       | id_answer_editor_0 | Previous page |
@@ -41,9 +41,9 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I press "Save page"
     And I follow "Expanded"
     And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
-    And I select "Numerical" from "Select a question type"
+    And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page title | Hardest question ever |
       | Page contents | 1 + 1? |
       | id_answer_editor_0 | 2 |
@@ -70,7 +70,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Second page contents"
     And I press "Next page"
     And I should see "1 + 1?"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Your answer | 1 |
     And I press "Submit"
     And I should see "Incorrect answer"
@@ -78,7 +78,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Second page name"
     And I press "Next page"
     And I should see "1 + 1?"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Your answer | 2 |
     And I press "Submit"
     And I should see "Correct answer"

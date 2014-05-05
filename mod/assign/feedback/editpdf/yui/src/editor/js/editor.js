@@ -23,8 +23,8 @@
  * EDITOR
  * This is an in browser PDF editor.
  *
- * @namespace M.assignfeedback_editpdf.editor
- * @class Editor
+ * @namespace M.assignfeedback_editpdf
+ * @class editor
  * @constructor
  * @extends Y.Base
  */
@@ -33,9 +33,9 @@ EDITOR = function() {
 };
 EDITOR.prototype = {
 
-    // Instance variables.
     /**
      * The dialogue used for all action menu displays.
+     *
      * @property type
      * @type M.core.dialogue
      * @protected
@@ -44,23 +44,26 @@ EDITOR.prototype = {
 
     /**
      * The number of pages in the pdf.
-     * @property type
-     * @type int
+     *
+     * @property pagecount
+     * @type Number
      * @protected
      */
     pagecount : 0,
 
     /**
      * The active page in the editor.
-     * @property type
-     * @type int
+     *
+     * @property currentpage
+     * @type Number
      * @protected
      */
     currentpage : 0,
 
     /**
      * A list of page objects. Each page has a list of comments and annotations.
-     * @property type
+     *
+     * @property pages
      * @type array
      * @protected
      */
@@ -68,15 +71,17 @@ EDITOR.prototype = {
 
     /**
      * The yui node for the loading icon.
-     * @property type
-     * @type Y.Node
+     *
+     * @property loadingicon
+     * @type Node
      * @protected
      */
     loadingicon : null,
 
     /**
      * Image object of the current page image.
-     * @property type
+     *
+     * @property pageimage
      * @type Image
      * @protected
      */
@@ -84,14 +89,16 @@ EDITOR.prototype = {
 
     /**
      * YUI Graphic class for drawing shapes.
-     * @property type
-     * @type Y.Graphic
+     *
+     * @property graphic
+     * @type Graphic
      * @protected
      */
     graphic : null,
 
     /**
      * Info about the current edit operation.
+     *
      * @property currentedit
      * @type M.assignfeedback_editpdf.edit
      * @protected
@@ -100,14 +107,16 @@ EDITOR.prototype = {
 
     /**
      * Current drawable.
+     *
      * @property currentdrawable
-     * @type M.assignfeedback_editpdf.drawable (or false)
+     * @type M.assignfeedback_editpdf.drawable|false
      * @protected
      */
     currentdrawable : false,
 
     /**
      * Current drawables.
+     *
      * @property drawables
      * @type array(M.assignfeedback_editpdf.drawable)
      * @protected
@@ -196,7 +205,9 @@ EDITOR.prototype = {
 
             this.currentedit.start = false;
             this.currentedit.end = false;
-            this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+            if (!this.get('readonly')) {
+                this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+            }
         }
     },
 
@@ -288,6 +299,7 @@ EDITOR.prototype = {
                 headerContent: this.get('header'),
                 bodyContent: this.get('body'),
                 footerContent: this.get('footer'),
+                modal: true,
                 width: '840px',
                 visible: false,
                 draggable: true
@@ -452,7 +464,9 @@ EDITOR.prototype = {
         }
 
         // Update the ui.
-        this.quicklist.load();
+        if (this.quicklist) {
+            this.quicklist.load();
+        }
         this.setup_navigation();
         this.setup_toolbar();
         this.change_page();
@@ -1079,24 +1093,12 @@ Y.extend(EDITOR, Y.Base, EDITOR.prototype, {
     }
 });
 
-/**
- * Assignfeedback edit pdf namespace.
- * @static
- * @class assignfeedback_editpdf
- */
 M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
-
-/**
- * Editor namespace
- * @namespace M.assignfeedback_editpdf.editor
- * @class editor
- * @static
- */
 M.assignfeedback_editpdf.editor = M.assignfeedback_editpdf.editor || {};
 
 /**
  * Init function - will create a new instance every time.
- * @method init
+ * @method editor.init
  * @static
  * @param {Object} params
  */

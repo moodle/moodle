@@ -124,22 +124,66 @@ class mysql_sql_generator extends sql_generator {
 
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
-        // Let's inject the extra MySQL tweaks.
-        foreach ($sqlarr as $i=>$sql) {
-            if (strpos($sql, 'CREATE TABLE ') === 0) {
+        // This is a very nasty hack that tries to use just one query per created table
+        // because MySQL is stupidly slow when modifying empty tables.
+        // Note: it is safer to inject everything on new lines because there might be some trailing -- comments.
+        $sqls = array();
+        $prevcreate = null;
+        $matches = null;
+        foreach ($sqlarr as $sql) {
+            if (preg_match('/^CREATE TABLE ([^ ]+)/', $sql, $matches)) {
+                $prevcreate = $matches[1];
+                $sql = preg_replace('/\s*\)\s*$/s', '/*keyblock*/)', $sql);
+                // Let's inject the extra MySQL tweaks here.
                 if ($engine) {
-                    $sqlarr[$i] .= " ENGINE = $engine";
+                    $sql .= "\n ENGINE = $engine";
                 }
                 if ($collation) {
                     if (strpos($collation, 'utf8_') === 0) {
-                        $sqlarr[$i] .= " DEFAULT CHARACTER SET utf8";
+                        $sql .= "\n DEFAULT CHARACTER SET utf8";
                     }
-                    $sqlarr[$i] .= " DEFAULT COLLATE = $collation";
+                    $sql .= "\n DEFAULT COLLATE = $collation";
+                }
+                $sqls[] = $sql;
+                continue;
+            }
+            if ($prevcreate) {
+                if (preg_match('/^ALTER TABLE '.$prevcreate.' COMMENT=(.*)$/s', $sql, $matches)) {
+                    $prev = array_pop($sqls);
+                    $prev .= "\n COMMENT=$matches[1]";
+                    $sqls[] = $prev;
+                    continue;
+                }
+                if (preg_match('/^CREATE INDEX ([^ ]+) ON '.$prevcreate.' (.*)$/s', $sql, $matches)) {
+                    $prev = array_pop($sqls);
+                    if (strpos($prev, '/*keyblock*/')) {
+                        $prev = str_replace('/*keyblock*/', "\n, KEY $matches[1] $matches[2]/*keyblock*/", $prev);
+                        $sqls[] = $prev;
+                        continue;
+                    } else {
+                        $sqls[] = $prev;
+                    }
+                }
+                if (preg_match('/^CREATE UNIQUE INDEX ([^ ]+) ON '.$prevcreate.' (.*)$/s', $sql, $matches)) {
+                    $prev = array_pop($sqls);
+                    if (strpos($prev, '/*keyblock*/')) {
+                        $prev = str_replace('/*keyblock*/', "\n, UNIQUE KEY $matches[1] $matches[2]/*keyblock*/", $prev);
+                        $sqls[] = $prev;
+                        continue;
+                    } else {
+                        $sqls[] = $prev;
+                    }
                 }
             }
+            $prevcreate = null;
+            $sqls[] = $sql;
         }
 
-        return $sqlarr;
+        foreach ($sqls as $key => $sql) {
+            $sqls[$key] = str_replace('/*keyblock*/', "\n", $sql);
+        }
+
+        return $sqls;
     }
 
     /**

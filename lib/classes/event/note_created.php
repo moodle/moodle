@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a new note entry is added.
  *
@@ -25,6 +21,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class note_created
@@ -34,14 +34,15 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string publishstate publish state.
+ *      - string publishstate: the publish state.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class note_created extends \core\event\base {
+class note_created extends base {
 
     /**
      * Set basic properties for the event.
@@ -49,7 +50,7 @@ class note_created extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'post';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
@@ -67,7 +68,8 @@ class note_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Note for user with id "'. $this->relateduserid . '" was created by user with id "' . $this->userid . '"';
+        return "The note with the id '$this->objectid' for the user with the id '$this->relateduserid' was created by the user " .
+            "with the id '$this->userid'.";
     }
 
     /**
@@ -75,7 +77,7 @@ class note_created extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        $logurl = new \moodle_url('/note/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
+        $logurl = new \moodle_url('/notes/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
         $logurl->set_anchor('note-' . $this->objectid);
         return $logurl;
     }

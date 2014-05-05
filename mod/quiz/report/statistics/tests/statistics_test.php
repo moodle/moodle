@@ -30,6 +30,18 @@ require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
+class testable_all_calculated_for_qubaid_condition extends \core_question\statistics\questions\all_calculated_for_qubaid_condition {
+
+    /**
+     * Disabling caching in tests so we are always sure to force the calculation of stats right then and there.
+     *
+     * @param qubaid_condition $qubaids
+     */
+    public function cache($qubaids) {
+
+    }
+}
+
 /**
  * Test helper subclass of question_statistics
  *
@@ -43,6 +55,8 @@ class testable_question_statistics extends \core_question\statistics\questions\c
      */
     protected $lateststeps;
 
+    protected $statscollectionclassname = 'testable_all_calculated_for_qubaid_condition';
+
     public function set_step_data($states) {
         $this->lateststeps = $states;
     }
@@ -53,10 +67,10 @@ class testable_question_statistics extends \core_question\statistics\questions\c
 
     /**
      * @param $qubaids qubaid_condition is ignored in this test
-     * @return array with three items
+     * @return array with two items
      *              - $lateststeps array of latest step data for the question usages
      *              - $summarks    array of total marks for each usage, indexed by usage id
-     *              - $summarksavg the average of the total marks over all the usages     */
+     */
     protected function get_latest_steps($qubaids) {
         $summarks = array();
         $fakeusageid = 0;
@@ -72,8 +86,7 @@ class testable_question_statistics extends \core_question\statistics\questions\c
             $step->questionusageid = $fakeusageid;
         }
 
-        $summarksavg = array_sum($summarks) / count($summarks);
-        return array($this->lateststeps, $summarks, $summarksavg);
+        return array($this->lateststeps, $summarks);
     }
 
     protected function cache_stats($qubaids) {
@@ -87,7 +100,7 @@ class testable_question_statistics extends \core_question\statistics\questions\c
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_question_stats_testcase extends basic_testcase {
-    /** @var qstats object created to test class. */
+    /** @var testable_all_calculated_for_qubaid_condition object created to test class. */
     protected $qstats;
 
     public function test_qstats() {
@@ -100,7 +113,7 @@ class quiz_statistics_question_stats_testcase extends basic_testcase {
         $questions = $this->get_records_from_csv(__DIR__.'/fixtures/mdl_question.csv');
         $calculator = new testable_question_statistics($questions);
         $calculator->set_step_data($steps);
-        list($this->qstats, ) = $calculator->calculate(null);
+        $this->qstats = $calculator->calculate(null);
 
         // Values expected are taken from contrib/tools/quiz_tools/stats.xls.
         $facility = array(0, 0, 0, 0, null, null, null, 41.19318182, 81.36363636,
@@ -128,13 +141,12 @@ class quiz_statistics_question_stats_testcase extends basic_testcase {
     }
 
     public function qstats_q_fields($fieldname, $values, $multiplier=1) {
-        foreach ($this->qstats as $qstat) {
+        foreach ($this->qstats->get_all_slots() as $slot) {
             $value = array_shift($values);
             if ($value !== null) {
-                $this->assertEquals($qstat->{$fieldname} * $multiplier,
-                    $value, '', 1E-6);
+                $this->assertEquals($value, $this->qstats->for_slot($slot)->{$fieldname} * $multiplier, '', 1E-6);
             } else {
-                $this->assertEquals($qstat->{$fieldname} * $multiplier, $value);
+                $this->assertEquals($value, $this->qstats->for_slot($slot)->{$fieldname} * $multiplier);
             }
         }
     }

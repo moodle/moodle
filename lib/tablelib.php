@@ -629,17 +629,42 @@ class flexible_table {
     }
 
     /**
-     * Add a row of data to the table. This function takes an array with
-     * column names as keys.
+     * Add a row of data to the table. This function takes an array or object with
+     * column names as keys or property names.
+     *
      * It ignores any elements with keys that are not defined as columns. It
      * puts in empty strings into the row when there is no element in the passed
      * array corresponding to a column in the table. It puts the row elements in
-     * the proper order.
-     * @param $rowwithkeys array
+     * the proper order (internally row table data is stored by in arrays with
+     * a numerical index corresponding to the column number).
+     *
+     * @param object|array $rowwithkeys array keys or object property names are column names,
+     *                                      as defined in call to define_columns.
      * @param string $classname CSS class name to add to this row's tr tag.
      */
     function add_data_keyed($rowwithkeys, $classname = '') {
         $this->add_data($this->get_row_from_keyed($rowwithkeys), $classname);
+    }
+
+    /**
+     * Add a number of rows to the table at once. And optionally finish output after they have been added.
+     *
+     * @param (object|array|null)[] $rowstoadd Array of rows to add to table, a null value in array adds a separator row. Or a
+     *                                  object or array is added to table. We expect properties for the row array as would be
+     *                                  passed to add_data_keyed.
+     * @param bool     $finish
+     */
+    public function format_and_add_array_of_rows($rowstoadd, $finish = true) {
+        foreach ($rowstoadd as $row) {
+            if (is_null($row)) {
+                $this->add_separator();
+            } else {
+                $this->add_data_keyed($this->format_row($row));
+            }
+        }
+        if ($finish) {
+            $this->finish_output(!$this->is_downloading());
+        }
     }
 
     /**
@@ -715,11 +740,19 @@ class flexible_table {
     }
 
     /**
+     * Call appropriate methods on this table class to perform any processing on values before displaying in table.
+     * Takes raw data from the database and process it into human readable format, perhaps also adding html linking when
+     * displaying table as html, adding a div wrap, etc.
      *
-     * @param array $row row of data from db used to make one row of the table.
+     * See for example col_fullname below which will be called for a column whose name is 'fullname'.
+     *
+     * @param array|object $row row of data from db used to make one row of the table.
      * @return array one row for the table, added using add_data_keyed method.
      */
     function format_row($row) {
+        if (is_array($row)) {
+            $row = (object)$row;
+        }
         $formattedrow = array();
         foreach (array_keys($this->columns) as $column) {
             $colmethodname = 'col_'.$column;
@@ -743,9 +776,13 @@ class flexible_table {
      * then you need to override $this->useridfield to point at the correct
      * field for the user id.
      *
+     * @param object $row the data from the db containing all fields from the
+     *                    users table necessary to construct the full name of the user in
+     *                    current language.
+     * @return string contents of cell in column 'fullname', for this row.
      */
     function col_fullname($row) {
-        global $COURSE, $CFG;
+        global $COURSE;
 
         $name = fullname($row);
         if ($this->download) {
@@ -797,7 +834,7 @@ class flexible_table {
             }
             return format_text($text, $format, $options);
         } else {
-            $eci =& $this->export_class_instance();
+            $eci = $this->export_class_instance();
             return $eci->format_text($text, $format, $options, $courseid);
         }
     }
@@ -978,8 +1015,23 @@ class flexible_table {
 
     /**
      * This function is not part of the public api.
+     *
+     * Please do not use .r0/.r1 for css, as they will be removed in Moodle 2.9.
+     * @todo MDL-43902 , remove r0 and r1 from tr classes.
      */
     function print_row($row, $classname = '') {
+        echo $this->get_row_html($row, $classname);
+    }
+
+    /**
+     * Generate html code for the passed row.
+     *
+     * @param array $row Row data.
+     * @param string $classname classes to add.
+     *
+     * @return string $html html code for the row passed.
+     */
+    public function get_row_html($row, $classname = '') {
         static $suppress_lastrow = NULL;
         $oddeven = $this->currentrow % 2;
         $rowclasses = array('r' . $oddeven);
@@ -989,13 +1041,14 @@ class flexible_table {
         }
 
         $rowid = $this->uniqueid . '_r' . $this->currentrow;
+        $html = '';
 
-        echo html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses), 'id' => $rowid));
+        $html .= html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses), 'id' => $rowid));
 
         // If we have a separator, print it
         if ($row === NULL) {
             $colcount = count($this->columns);
-            echo html_writer::tag('td', html_writer::tag('div', '',
+            $html .= html_writer::tag('td', html_writer::tag('div', '',
                     array('class' => 'tabledivider')), array('colspan' => $colcount));
 
         } else {
@@ -1013,20 +1066,21 @@ class flexible_table {
                     $content = '&nbsp;';
                 }
 
-                echo html_writer::tag('td', $content, array(
+                $html .= html_writer::tag('td', $content, array(
                         'class' => 'cell c' . $index . $this->column_class[$column],
                         'id' => $rowid . '_c' . $index,
                         'style' => $this->make_styles_string($this->column_style[$column])));
             }
         }
 
-        echo html_writer::end_tag('tr');
+        $html .= html_writer::end_tag('tr');
 
         $suppress_enabled = array_sum($this->column_suppress);
         if ($suppress_enabled) {
             $suppress_lastrow = $row;
         }
         $this->currentrow++;
+        return $html;
     }
 
     /**
@@ -1527,9 +1581,9 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
         $filename = $filename.'.'.$this->fileextension;
         $this->define_workbook();
         // format types
-        $this->formatnormal =& $this->workbook->add_format();
+        $this->formatnormal = $this->workbook->add_format();
         $this->formatnormal->set_bold(0);
-        $this->formatheaders =& $this->workbook->add_format();
+        $this->formatheaders = $this->workbook->add_format();
         $this->formatheaders->set_bold(1);
         $this->formatheaders->set_align('center');
         // Sending HTTP headers

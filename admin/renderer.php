@@ -562,11 +562,23 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function cron_overdue_warning($cronoverdue) {
+        global $CFG;
         if (!$cronoverdue) {
             return '';
         }
 
-        return $this->warning(get_string('cronwarning', 'admin') . '&nbsp;' .
+        if (empty($CFG->cronclionly)) {
+            $url = new moodle_url('/admin/cron.php');
+            if (!empty($CFG->cronremotepassword)) {
+                $url = new moodle_url('/admin/cron.php', array('password' => $CFG->cronremotepassword));
+            }
+
+            return $this->warning(get_string('cronwarning', 'admin', $url->out()) . '&nbsp;' .
+                    $this->help_icon('cron', 'admin'));
+        }
+
+        // $CFG->cronclionly is not empty: cron can run only from CLI.
+        return $this->warning(get_string('cronwarningcli', 'admin') . '&nbsp;' .
                 $this->help_icon('cron', 'admin'));
     }
 
@@ -610,10 +622,10 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         $maturitylevel = get_string('maturity' . $maturity, 'admin');
-        return $this->box(
+        return $this->warning(
                     $this->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
                     $this->container($this->doc_link('admin/versions', get_string('morehelp'))),
-                'generalbox maturitywarning');
+                'error');
     }
 
     /*
@@ -628,10 +640,8 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        return $this->box(
-            $this->container(get_string('testsiteupgradewarning', 'admin', $testsite)),
-            'generalbox testsitewarning'
-        );
+        $warning = (get_string('testsiteupgradewarning', 'admin', $testsite));
+        return $this->warning($warning, 'error');
     }
 
     /**
@@ -663,11 +673,16 @@ class core_admin_renderer extends plugin_renderer_base {
             return ''; // No worries.
         }
 
+        $level = 'warning';
+
+        if ($maturity == MATURITY_ALPHA) {
+            $level = 'error';
+        }
+
         $maturitylevel = get_string('maturity' . $maturity, 'admin');
-        return $this->box(
-                    get_string('maturitycoreinfo', 'admin', $maturitylevel) . ' ' .
-                    $this->doc_link('admin/versions', get_string('morehelp')),
-                'generalbox adminwarning maturityinfo maturity'.$maturity);
+        $warningtext = get_string('maturitycoreinfo', 'admin', $maturitylevel);
+        $warningtext .= ' ' . $this->doc_link('admin/versions', get_string('morehelp'));
+        return $this->warning($warningtext, $level);
     }
 
     /**
@@ -682,7 +697,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     protected function available_updates($updates, $fetch) {
 
-        $updateinfo = $this->box_start('generalbox adminwarning availableupdatesinfo');
+        $updateinfo = '';
         $someupdateavailable = false;
         if (is_array($updates)) {
             if (is_array($updates['core'])) {
@@ -719,9 +734,7 @@ class core_admin_renderer extends plugin_renderer_base {
         }
         $updateinfo .= $this->container_end();
 
-        $updateinfo .= $this->box_end();
-
-        return $updateinfo;
+        return $this->warning($updateinfo);
     }
 
     /**

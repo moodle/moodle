@@ -18,7 +18,7 @@
 /**
  * This file adds support to rss feeds generation
  *
- * @package mod_forum
+ * @package   mod_forum
  * @category rss
  * @copyright 2001 Eloy Lafuente (stronk7) http://contiento.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
