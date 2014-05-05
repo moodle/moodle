@@ -73,8 +73,44 @@
     }
 }
 
+.gradingform_rubric.editor {
+    .addlevel, .addcriterion {
+        input {
+            // Fallback for IE8: we use Bootstrap 2's button styles normally, but
+            // IE8 ignores background-image: linear-gradient rules.
+            background: #fff none no-repeat top left;
+        }
+    }
+}
+
+.dir-rtl {
+    #rubric-rubric.gradingform_rubric {
+        #rubric-criteria .criterion {
+            .level {
+                .score {
+                    text-align: right;
+                    float: right;
+                    margin-left: 28px;
+                    margin-right: 0px;
+                }
+                .delete {
+                    float: left;
+                    clear: right;
+                    input {
+                        left: 0;
+                        right: auto;
+                    }
+                }
+            }
+        }
+    }
+}
+
 #rubric-rubric {
     &.gradingform_rubric {
+        // Override max-width rule from core; rubrics with multiple levels can hit
+        // the previously-defined threshold easily.
+        max-width: none;
         #rubric-criteria {
             margin-bottom: 1em;
             @rubricPadding: 6px;
@@ -115,7 +151,7 @@
                             bottom: 0;
                             height: 24px;
                             width: 24px;
-                            margin: 0;
+                            margin: 0px;
                             &:hover {
                                 background-color: #ddd;
                             }
@@ -124,7 +160,13 @@
                 }
                 .scorevalue {
                     input {
-                        width: 20%;
+                        // Should handle at least three chars with room to spare.
+                        width: 2em;
+                        &.hiddenelement,&.pseudotablink {
+                            // Zero out the width if it's still in the block flow for some reason
+                            // when hidden
+                            width: 0;
+                        }
                     }
                 }
                 .addlevel {
