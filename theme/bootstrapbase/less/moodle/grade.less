@@ -26,3 +26,151 @@
         margin-top: 4px;
     }
 }
+
+// Rubrics
+#page-grade-grading-manage {
+    #activemethodselector {
+        label {
+            display: inline-block;
+        }
+        .helptooltip {
+            margin-right: 0.5em;
+        }
+    }
+    .actions {
+        display: block;
+        text-align: center;
+        margin-bottom: 1em;
+        .action {
+            .btn();
+            .btn-large();
+            display: inline-block;
+            position: relative;
+            width: 150px;
+            text-align: center;
+            overflow: hidden;
+            margin: 0.5em;
+            padding: 1em;
+            border: 1px solid #aaa;
+            .action-icon {
+                display: inline-block;
+                position: relative;
+                height: 64px;
+                width: 64px;
+            }
+            .action-text {
+                position: relative;
+                top: 0.4em;
+                font-size: 16px;
+            }
+        }
+    }
+}
+
+#page-grade-grading-form-rubric-edit {
+    .gradingform_rubric_editform .status {
+        font-size: 70%;
+    }
+}
+
+#rubric-rubric {
+    &.gradingform_rubric {
+        #rubric-criteria {
+            margin-bottom: 1em;
+            @rubricPadding: 6px;
+            .criterion {
+                .description {
+                    vertical-align: top;
+                    padding: @rubricPadding;
+                    textarea {
+                        margin-bottom: 0px;
+                        height: 115px;
+                    }
+                }
+                .definition {
+                    textarea {
+                        width: 80%;
+                        margin-bottom: 0px;
+                    }
+                }
+                .score {
+                    position: relative;
+                    float: left;
+                    margin-right: 28px;
+                    input {
+                        margin-bottom: 0px;
+                    }
+                }
+                .level {
+                    vertical-align: top;
+                    padding: @rubricPadding;
+                    .delete {
+                        position: relative;
+                        width: 32px;
+                        float: right;
+                        input {
+                            display: block;
+                            position: absolute;
+                            right: 0;
+                            bottom: 0;
+                            height: 24px;
+                            width: 24px;
+                            margin: 0;
+                            &:hover {
+                                background-color: #ddd;
+                            }
+                        }
+                    }
+                }
+                .scorevalue {
+                    input {
+                        width: 20%;
+                    }
+                }
+                .addlevel {
+                    vertical-align: middle;
+                    input {
+                        .btn();
+                        background-position: 0px 0px;
+                        height: 30px;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+        .addcriterion {
+            margin-left: 5px;
+            .btn();
+            padding: 0;
+            input {
+                margin: 0;
+                color: inherit;
+                text-shadow: inherit;
+                border: 0px none;
+                line-height: inherit;
+                background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
+                padding-left: 26px;
+            }
+            margin-bottom:1em;
+        }
+        .options {
+            clear: both;
+            .option {
+                label {
+                    margin: 0;
+                    padding: 0;
+                    font-size: inherit;
+                    font-weight: normal;
+                    line-height: 2em;
+                    color: inherit;
+                    text-shadow: none;
+                    background-color: transparent;
+                }
+                input {
+                    margin-left: 5px;
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
+}
