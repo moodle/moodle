@@ -68,7 +68,7 @@ class record_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the data record the id '$this->objectid' in the data activity " .
+        return "The user with the id '$this->userid' updated the data record with the id '$this->objectid' in the data activity " .
             "with the course module id '$this->contextinstanceid'.";
     }
 

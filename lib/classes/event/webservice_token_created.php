@@ -47,7 +47,7 @@ class webservice_token_created extends base {
      * @return string
      */
     public function get_description() {
-        return "A web service token has been created for the user $this->relateduserid.";
+        return "The user with the id '$this->userid' created a web service token for the user with the id '$this->relateduserid'.";
     }
 
     /**

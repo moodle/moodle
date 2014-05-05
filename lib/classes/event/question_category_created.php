@@ -60,7 +60,7 @@ class question_category_created extends base {
      * @return string
      */
     public function get_description() {
-        return "A question category with the id of '$this->objectid' was created by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' created the question category with the id '$this->objectid'.";
     }
 
     /**

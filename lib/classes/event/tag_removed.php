@@ -70,7 +70,7 @@ class tag_removed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' removed the tag with the id '{$this->other['tagid']}' to the item type '" .
+        return "The user with the id '$this->userid' removed the tag with the id '{$this->other['tagid']}' from the item type '" .
             s($this->other['itemtype']) . "' with the id '{$this->other['itemid']}'.";
     }
 

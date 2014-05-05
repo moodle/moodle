@@ -69,7 +69,7 @@ class course_category_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The course category with the id '$this->objectid' was created by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' created the course category with the id '$this->objectid'.";
     }
 
     /**

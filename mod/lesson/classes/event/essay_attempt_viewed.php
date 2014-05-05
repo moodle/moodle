@@ -70,9 +70,8 @@ class essay_attempt_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The essay grade for the user with the id '$this->relateduserid' for the attempt with the id " .
-            "'$this->objectid' was viewed by the user with the id '$this->userid' for the lesson activity with the " .
-            "course module id '$this->contextinstanceid'.";
+        return "The user with the id '$this->userid' viewed the essay grade for the user with the id '$this->relateduserid' for " .
+            "the attempt with the id '$this->objectid' for the lesson activity with the course module id '$this->contextinstanceid'.";
     }
 
     /**

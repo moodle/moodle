@@ -99,7 +99,7 @@ class submission_form_viewed extends base {
                 "for the assignment with the course module id '$this->contextinstanceid'.";
         }
 
-        return "The user with the id '$this->userid' viewed their submission for the assignment with the the course " .
+        return "The user with the id '$this->userid' viewed their submission for the assignment with the course " .
             "module id '$this->contextinstanceid'.";
     }
 

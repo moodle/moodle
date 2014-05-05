@@ -68,8 +68,8 @@ class role_assigned extends base {
      * @return string
      */
     public function get_description() {
-        return "The role with the id '$this->objectid' was assigned to the user with the id '$this->relateduserid' " .
-            "by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' assigned the role with the id '$this->objectid' to the user with the id " .
+            "'$this->relateduserid'.";
     }
 
     /**

@@ -67,7 +67,7 @@ class tag_flagged extends base {
      * @return string
      */
     public function get_description() {
-        return "The tag with the id '$this->objectid' was flagged by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' flagged the tag with the id '$this->objectid'.";
     }
 
     /**

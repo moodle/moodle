@@ -60,7 +60,7 @@ class user_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->objectid' was created.";
+        return "The user with the id '$this->userid' created the user with the id '$this->objectid'.";
     }
 
     /**

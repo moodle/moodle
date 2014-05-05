@@ -70,8 +70,8 @@ class blog_association_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The blog entry with the id '{$this->other['blogid']}' was associated with the context '{$this->other['associatetype']}' with " .
-            "the id '{$this->other['associateid']}' by the user with the id '$this->userid'.";
+        return "The user with the id '$this->userid' associated the context '{$this->other['associatetype']}' with the id " .
+            "'{$this->other['associateid']}' to the blog entry with the id '{$this->other['blogid']}'.";
     }
 
     /**
