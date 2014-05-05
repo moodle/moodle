@@ -1193,7 +1193,14 @@ class cm_info implements IteratorAggregate {
         // Make sure dynamic properties are retrieved prior to view properties.
         $this->obtain_dynamic_data();
         $ret = array();
-        foreach (self::$standardproperties as $key => $unused) {
+
+        // Do not iterate over deprecated properties.
+        $props = self::$standardproperties;
+        unset($props['showavailability']);
+        unset($props['availablefrom']);
+        unset($props['availableuntil']);
+
+        foreach ($props as $key => $unused) {
             $ret[$key] = $this->__get($key);
         }
         return new ArrayIterator($ret);
