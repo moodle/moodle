@@ -578,13 +578,16 @@ class core_message_external extends external_api {
     public static function get_messages_parameters() {
         return new external_function_parameters(
             array(
-                'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for any user'),
+                'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for any user', VALUE_REQUIRED),
+                'useridfrom' => new external_value(PARAM_INT,
+                            'the user id who send the message, 0 for any user. -10 or -20 for no-reply or support user',
+                            VALUE_DEFAULT, 0),
                 'type' => new external_value(PARAM_ALPHA,
-                            'type of message to return, expected values are: notifications, conversations, both'),
-                'read' => new external_value(PARAM_BOOL, 'true for retreiving read messages, false for unread'),
-                'useridfrom' => new external_value(PARAM_INT, 'user id who send the message, 0 for any user', VALUE_DEFAULT, 0),
+                            'type of message to return, expected values are: notifications, conversations and both',
+                            VALUE_DEFAULT, 'both'),
+                'read' => new external_value(PARAM_BOOL, 'true for getting read messages, false for unread', VALUE_DEFAULT, true),
                 'newestfirst' => new external_value(PARAM_BOOL,
-                            'true order by newest first, false for oldest first', VALUE_DEFAULT, true),
+                            'true for ordering by newest first, false for oldest first', VALUE_DEFAULT, true),
                 'limitfrom' => new external_value(PARAM_INT, 'limit from', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'limit number', VALUE_DEFAULT, 0)            )
         );
@@ -592,17 +595,17 @@ class core_message_external extends external_api {
 
     /**
      * Get messages function implementation.
-     * @param  int      $useridto       the user id who received the messages
-     * @param  string   $type           type of message tu return, notifications, conversations or both
+     * @param  int      $useridto       the user id who received the message
+     * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
+     * @param  string   $type           type of message tu return, expected values: notifications, conversations and both
      * @param  bool     $read           true for retreiving read messages, false for unread
-     * @param  int      $useridfrom     user id from for filtering
-     * @param  bool     $newestfirst    true order by newest first, false for oldest first
+     * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
      * @param  int      $limitfrom      limit from
      * @param  int      $limitnum       limit num
      * @return external_description
      * @since  2.7
      */
-    public static function get_messages($useridto, $type, $read, $useridfrom = 0,
+    public static function get_messages($useridto, $useridfrom = 0, $type = 'both' , $read = true,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $DB, $USER;
         require_once($CFG->dirroot . "/message/lib.php");
@@ -611,9 +614,9 @@ class core_message_external extends external_api {
 
         $params = array(
             'useridto' => $useridto,
+            'useridfrom' => $useridfrom,
             'type' => $type,
             'read' => $read,
-            'useridfrom' => $useridfrom,
             'newestfirst' => $newestfirst,
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
@@ -625,9 +628,9 @@ class core_message_external extends external_api {
         self::validate_context($context);
 
         $useridto = $params['useridto'];
+        $useridfrom = $params['useridfrom'];
         $type = $params['type'];
         $read = $params['read'];
-        $useridfrom = $params['useridfrom'];
         $newestfirst = $params['newestfirst'];
         $limitfrom = $params['limitfrom'];
         $limitnum = $params['limitnum'];
@@ -641,7 +644,6 @@ class core_message_external extends external_api {
         // Check if private messaging between users is allowed.
         if (empty($CFG->messaging)) {
             // If we are retreiving only conversations, and messaging is disabled, throw an exception.
-            // DOUBT -- check user is admin?
             if ($type == "conversations") {
                 throw new moodle_exception('disabled', 'message');
             }
@@ -657,7 +659,11 @@ class core_message_external extends external_api {
         }
 
         if (!empty($useridto)) {
-            $userto = $DB->get_record('user', array('id' => $useridto), '*', MUST_EXIST);
+            if (core_user::is_real_user($useridto)) {
+                $userto = core_user::get_user($useridto, '*', MUST_EXIST);
+            } else {
+                throw new moodle_exception('invaliduser');
+            }
         }
 
         if (!empty($useridfrom)) {
@@ -671,25 +677,23 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        if ($useridto == $useridfrom) {
-            throw new moodle_exception('invaliduserid');
-        }
-
         // Get messages.
         $messagetable = $read ? '{message_read}' : '{message}';
         $usersql = "";
+        $joinsql = "";
         $params = array('deleted' => 0);
 
         // Empty useridto means that we are going to retrieve messages send by the useridfrom to any user.
         if (empty($useridto)) {
-            $userfields = get_all_user_name_fields(true, 'u', 'userto', 'userto');
-            $joinuserfield = "mr.useridto";
-            $usersql = "mr.useridfrom = :useridfrom";
+            $userfields = get_all_user_name_fields(true, 'u', '', 'userto');
+            $joinsql = "JOIN {user} u ON u.id = mr.useridto";
+            $usersql = "mr.useridfrom = :useridfrom AND u.deleted = :deleted";
             $params['useridfrom'] = $useridfrom;
         } else {
-            $userfields = get_all_user_name_fields(true, 'u', 'userfrom', 'userfrom');
-            $joinuserfield = "mr.useridfrom";
-            $usersql = "mr.useridto = :useridto";
+            $userfields = get_all_user_name_fields(true, 'u', '', 'userfrom');
+            // Left join because useridfrom may be -10 or -20 (no-reply and support users).
+            $joinsql = "LEFT JOIN {user} u ON u.id = mr.useridfrom";
+            $usersql = "mr.useridto = :useridto AND (u.deleted IS NULL OR u.deleted = :deleted)";
             $params['useridto'] = $useridto;
             if (!empty($useridfrom)) {
                 $usersql .= " AND mr.useridfrom = :useridfrom";
@@ -701,7 +705,7 @@ class core_message_external extends external_api {
         $typesql = "";
         if ($type != 'both') {
             $typesql = "AND mr.notification = :notification";
-            $params['notification'] = ($type == 'notification') ? 1 : 0;
+            $params['notification'] = ($type == 'notifications') ? 1 : 0;
         }
 
         // Finally the sort direction.
@@ -709,8 +713,8 @@ class core_message_external extends external_api {
 
         $sql = "SELECT mr.*, $userfields
                   FROM $messagetable mr
-                       JOIN {user} u ON u.id = $joinuserfield
-                 WHERE  $usersql AND u.deleted = :deleted
+                     $joinsql
+                 WHERE  $usersql
                         $typesql
                  ORDER BY mr.timecreated $orderdirection";
 
@@ -737,9 +741,15 @@ class core_message_external extends external_api {
 
                 // We need to get the user from the query.
                 if (empty($userfromfullname)) {
-                    $user = new stdclass();
-                    $user = username_load_fields_from_object($user, $message, 'userfrom');
-                    $message->userfromfullname = fullname($user, $canviewfullname);
+                    // Check for non-reply and support users.
+                    if (core_user::is_real_user($message->useridfrom)) {
+                        $user = new stdclass();
+                        $user = username_load_fields_from_object($user, $message, 'userfrom');
+                        $message->userfromfullname = fullname($user, $canviewfullname);
+                    } else {
+                        $user = core_user::get_user($message->useridfrom);
+                        $message->userfromfullname = fullname($user, $canviewfullname);
+                    }
                 } else {
                     $message->userfromfullname = $userfromfullname;
                 }
@@ -757,7 +767,6 @@ class core_message_external extends external_api {
                     $message->timeread = 0;
                 }
 
-                // DOUBT, getting crazy with formats...
                 $message->text = message_format_message_text($message);
 
                 $messages[$mid] = (array) $message;
@@ -775,7 +784,7 @@ class core_message_external extends external_api {
     /**
      * Get messages return description.
      *
-     * @return external_description
+     * @return external_single_structure
      * @since 2.7
      */
     public static function get_messages_returns() {

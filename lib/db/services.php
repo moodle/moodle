@@ -762,12 +762,12 @@ $functions = array(
     ),
 
     'core_message_get_messages' => array(
-        'classname'   => 'core_message_external',
-        'methodname'  => 'get_messages',
-        'classpath'   => 'message/externallib.php',
-        'description' => 'Retrieve a message list (conversations, notifications or boths)',
-        'type'        => 'read',
-        'capabilities'=> '',
+        'classname'     => 'core_message_external',
+        'methodname'    => 'get_messages',
+        'classpath'     => 'message/externallib.php',
+        'description'   => 'Retrieve a list of messages send or received by a user (conversations, notifications or both)',
+        'type'          => 'read',
+        'capabilities'  => '',
     ),
 
     // === notes related functions ===
