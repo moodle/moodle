@@ -9,6 +9,7 @@ This files describes API changes in the assign code.
 * A new web service function mod_assign_save_grades has been added which allows multiple grades to be processed.
 * The event submission_updated() [mod/assign/classes/event/submission_updated.php] has been altered to now be an abstract class
   for submission events in the submission plug-ins.
+* The subscription_created and subscription_deleted event's objecttables have been changed from 'assign' to 'assign_submission'
 
 === 2.6.1 ===
 

@@ -49,6 +49,7 @@ class subscription_created extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'forum_subscriptions';
     }
 
     /**
