@@ -1814,7 +1814,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $event->courseid);
         $this->assertEquals($coursecontext->id, $event->contextid);
         $this->assertEquals($section->section, $event->other['sectionnum']);
-        $expecteddesc = "The user with the id '{$event->userid}' updated the section with the number '{$event->other['sectionnum']}' for the course with the id '{$event->courseid}'";
+        $expecteddesc = "The user with id '{$event->userid}' updated section number '{$event->other['sectionnum']}' for the course with id '{$event->courseid}'";
         $this->assertEquals($expecteddesc, $event->get_description());
         $url = new moodle_url('/course/editsection.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
