@@ -59,7 +59,7 @@ class role_allow_assign_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the allowed role assignments.";
+        return "The user with the id '$this->userid' updated Allow role assignments.";
     }
 
     /**
