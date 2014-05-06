@@ -66,8 +66,8 @@ class user_enrolment_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' unenrolled the user with the id '$this->relateduserid' from the course with " .
-            "the id '$this->courseid'.";
+        return "The user with id '$this->userid' unenrolled the user with id '$this->relateduserid' from the course with " .
+            "id '$this->courseid'.";
     }
 
     /**

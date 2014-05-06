@@ -50,6 +50,6 @@ class blog_comment_deleted extends comment_deleted {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the comment for the blog with the id '{$this->other['itemid']}'.";
+        return "The user with id '$this->userid' deleted the comment for the blog with id '{$this->other['itemid']}'.";
     }
 }

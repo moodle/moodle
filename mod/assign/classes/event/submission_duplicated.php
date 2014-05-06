@@ -70,7 +70,7 @@ class submission_duplicated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' duplicated their submission with the id '$this->objectid' for the " .
+        return "The user with id '$this->userid' duplicated their submission with id '$this->objectid' for the " .
             "assignment with the course module id '$this->contextinstanceid'.";
     }
 

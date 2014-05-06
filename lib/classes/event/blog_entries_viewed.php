@@ -67,7 +67,7 @@ class blog_entries_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed blog entries.";
+        return "The user with id '$this->userid' viewed blog entries.";
     }
 
     /**

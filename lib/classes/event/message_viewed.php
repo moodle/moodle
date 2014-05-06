@@ -75,7 +75,7 @@ class message_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' read a message from the user with the id '$this->userid'.";
+        return "The user with id '$this->relateduserid' read a message from the user with id '$this->userid'.";
     }
 
     /**

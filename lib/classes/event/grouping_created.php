@@ -41,7 +41,7 @@ class grouping_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the grouping with the id '$this->objectid'.";
+        return "The user with id '$this->userid' created the grouping with id '$this->objectid'.";
     }
 
     /**

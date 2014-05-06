@@ -84,11 +84,11 @@ class user_password_updated extends base {
     public function get_description() {
         if ($this->userid == $this->relateduserid) {
             if ($this->other['forgottenreset']) {
-                return "The user with the id '$this->userid' reset their password.";
+                return "The user with id '$this->userid' reset their password.";
             }
-            return "The user with the id '$this->userid' changed their password.";
+            return "The user with id '$this->userid' changed their password.";
         } else {
-            return "The user with the id '$this->userid' changed the password of the user with the id '$this->relateduserid'.";
+            return "The user with id '$this->userid' changed the password of the user with id '$this->relateduserid'.";
         }
     }
 

@@ -71,8 +71,8 @@ class submission_graded extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has graded the submission '$this->objectid' for the user with the " .
-            "id '$this->relateduserid' for the assignment with the the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has graded the submission '$this->objectid' for the user with " .
+            "id '$this->relateduserid' for the assignment with the course module id '$this->contextinstanceid'.";
     }
 
     /**

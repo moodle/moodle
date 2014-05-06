@@ -91,7 +91,7 @@ class submission_confirmation_form_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the submission confirmation form for the assignment with the " .
+        return "The user with id '$this->userid' viewed the submission confirmation form for the assignment with the " .
             "course module id '$this->contextinstanceid'.";
     }
 

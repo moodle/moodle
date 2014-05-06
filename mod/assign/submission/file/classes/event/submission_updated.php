@@ -56,11 +56,11 @@ class submission_updated extends \mod_assign\event\submission_updated {
      * @return string
      */
     public function get_description() {
-        $descriptionstring = "The user with the id '$this->userid' updated a file submission and uploaded " .
+        $descriptionstring = "The user with id '$this->userid' updated a file submission and uploaded " .
             "'{$this->other['filesubmissioncount']}' file/s in the assignment with the course module id " .
             "'$this->contextinstanceid'";
         if (!empty($this->other['groupid'])) {
-            $descriptionstring .= " for the group with the id '{$this->other['groupid']}'.";
+            $descriptionstring .= " for the group with id '{$this->other['groupid']}'.";
         } else {
             $descriptionstring .= ".";
         }

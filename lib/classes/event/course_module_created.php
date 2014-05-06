@@ -69,7 +69,7 @@ class course_module_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the '{$this->other['modulename']}' activity with the " .
+        return "The user with id '$this->userid' created the '{$this->other['modulename']}' activity with the " .
             "course module id '$this->contextinstanceid'.";
     }
 

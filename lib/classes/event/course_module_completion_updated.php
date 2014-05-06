@@ -60,8 +60,8 @@ class course_module_completion_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The course module completion requirements were updated by the user with the id '$this->userid' for the user " .
-            "with the id '$this->relateduserid'.";
+        return "The course module completion requirements were updated by the user with id '$this->userid' for the user " .
+            "with id '$this->relateduserid'.";
     }
 
     /**

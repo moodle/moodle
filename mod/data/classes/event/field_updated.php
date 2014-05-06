@@ -69,7 +69,7 @@ class field_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the field with the id '$this->objectid' in the data activity " .
+        return "The user with id '$this->userid' updated the field with id '$this->objectid' in the data activity " .
             "with the course module id '$this->contextinstanceid'.";
     }
 

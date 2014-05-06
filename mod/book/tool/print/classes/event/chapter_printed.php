@@ -62,7 +62,7 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has printed the chapter with the id '$this->objectid' of the book with the
+        return "The user with id '$this->userid' has printed the chapter with id '$this->objectid' of the book with the
             course module id '$this->contextinstanceid'.";
     }
 

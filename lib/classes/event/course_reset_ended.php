@@ -47,7 +47,7 @@ class course_reset_ended extends base {
      * @return string
      */
     public function get_description() {
-        return "The reset of the course with the id '$this->courseid' has ended.";
+        return "The reset of the course with id '$this->courseid' has ended.";
     }
 
     /**

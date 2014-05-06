@@ -68,8 +68,8 @@ class attempt_summary_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has viewed the summary for the attempt with the id '$this->objectid' belonging " .
-            "to the user with the id '$this->relateduserid' for the quiz with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has viewed the summary for the attempt with id '$this->objectid' belonging " .
+            "to the user with id '$this->relateduserid' for the quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -56,7 +56,7 @@ class submission_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the submission with the id of '$this->objectid' for the workshop " .
+        return "The user with id '$this->userid' created the submission with id of '$this->objectid' for the workshop " .
             "with the course module id '$this->contextinstanceid'.";
     }
 

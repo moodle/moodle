@@ -66,7 +66,7 @@ class user_report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the user log report for the user with the id '$this->relateduserid'.";
+        return "The user with id '$this->userid' viewed the user log report for the user with id '$this->relateduserid'.";
     }
 
     /**

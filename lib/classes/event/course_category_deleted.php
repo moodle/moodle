@@ -71,7 +71,7 @@ class course_category_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the course category with the id '$this->objectid'.";
+        return "The user with id '$this->userid' deleted the course category with id '$this->objectid'.";
     }
 
     /**

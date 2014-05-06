@@ -65,8 +65,8 @@ class user_override_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the override with the id '$this->objectid' for the quiz with the " .
-            "course module id '$this->contextinstanceid' for the user with the id '{$this->relateduserid}'.";
+        return "The user with id '$this->userid' created the override with id '$this->objectid' for the quiz with the " .
+            "course module id '$this->contextinstanceid' for the user with id '{$this->relateduserid}'.";
     }
 
     /**

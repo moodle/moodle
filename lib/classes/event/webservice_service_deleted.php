@@ -41,7 +41,7 @@ class webservice_service_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the web service with the id '$this->objectid'.";
+        return "The user with id '$this->userid' deleted the web service with id '$this->objectid'.";
     }
 
     /**

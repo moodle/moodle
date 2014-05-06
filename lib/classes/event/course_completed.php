@@ -85,7 +85,7 @@ class course_completed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' completed the course with the id '$this->courseid'.";
+        return "The user with id '$this->relateduserid' completed the course with id '$this->courseid'.";
     }
 
     /**

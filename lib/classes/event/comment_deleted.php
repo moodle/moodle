@@ -70,7 +70,7 @@ abstract class comment_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the comment with the id '$this->objectid' from the '$this->component' " .
+        return "The user with id '$this->userid' deleted the comment with id '$this->objectid' from the '$this->component' " .
             "with the course module id '$this->contextinstanceid'.";
     }
 

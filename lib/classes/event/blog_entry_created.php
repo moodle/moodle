@@ -88,7 +88,7 @@ class blog_entry_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the blog entry with the id '$this->objectid'.";
+        return "The user with id '$this->userid' created the blog entry with id '$this->objectid'.";
     }
 
     /**

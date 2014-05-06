@@ -70,7 +70,7 @@ abstract class comment_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added the comment with the id '$this->objectid' to the '$this->component' " .
+        return "The user with id '$this->userid' added the comment with id '$this->objectid' to the '$this->component' " .
             "with the course module id '$this->contextinstanceid'.";
     }
 

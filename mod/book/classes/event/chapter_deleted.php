@@ -62,7 +62,7 @@ class chapter_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the chapter with the id '$this->objectid' for the book with the " .
+        return "The user with id '$this->userid' deleted the chapter with id '$this->objectid' for the book with the " .
             "course module id '$this->contextinstanceid'.";
     }
 

@@ -41,8 +41,8 @@ class webservice_service_user_added extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added the user with the id '$this->relateduserid' to the web service " .
-            "with the id '$this->objectid'.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to the web service " .
+            "with id '$this->objectid'.";
     }
 
     /**

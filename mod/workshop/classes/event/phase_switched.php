@@ -58,7 +58,7 @@ class phase_switched extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has switched the phase of the workshop with the course module id " .
+        return "The user with id '$this->userid' has switched the phase of the workshop with the course module id " .
             "'$this->contextinstanceid' to '{$this->other['workshopphase']}'.";
     }
 

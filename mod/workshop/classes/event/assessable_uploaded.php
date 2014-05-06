@@ -56,7 +56,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has uploaded the submission with the id '$this->objectid' " .
+        return "The user with id '$this->userid' has uploaded the submission with id '$this->objectid' " .
             "to the workshop activity with the course module id '$this->contextinstanceid'.";
     }
 

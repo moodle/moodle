@@ -48,7 +48,7 @@ class grouping_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the grouping with the id '$this->objectid'.";
+        return "The user with id '$this->userid' deleted the grouping with id '$this->objectid'.";
     }
 
     /**

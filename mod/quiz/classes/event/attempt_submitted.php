@@ -56,7 +56,7 @@ class attempt_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' has submitted the attempt with the id '$this->objectid' for the " .
+        return "The user with id '$this->relateduserid' has submitted the attempt with id '$this->objectid' for the " .
             "quiz with the course module id '$this->contextinstanceid'.";
     }
 

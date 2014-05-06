@@ -61,7 +61,7 @@ class cohort_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the cohort with the id '$this->objectid'.";
+        return "The user with id '$this->userid' updated the cohort with id '$this->objectid'.";
     }
 
     /**

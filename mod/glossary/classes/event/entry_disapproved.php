@@ -58,7 +58,7 @@ class entry_disapproved extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has disapproved the glossary entry with the id '$this->objectid' for " .
+        return "The user with id '$this->userid' has disapproved the glossary entry with id '$this->objectid' for " .
             "the glossary activity with the course module id '$this->contextinstanceid'.";
     }
 

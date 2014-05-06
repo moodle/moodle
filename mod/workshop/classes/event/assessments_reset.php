@@ -57,7 +57,7 @@ class assessments_reset extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has reset the assessments for the workshop with the course module id " .
+        return "The user with id '$this->userid' has reset the assessments for the workshop with the course module id " .
             "'$this->contextinstanceid'.";
     }
 

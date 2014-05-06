@@ -49,7 +49,7 @@ class comment_created extends \core\event\comment_created {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added the comment with the id '$this->objectid' to the submission " .
-            "with the id '{$this->other['itemid']}' for the assignment with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' added the comment with id '$this->objectid' to the submission " .
+            "with id '{$this->other['itemid']}' for the assignment with the course module id '$this->contextinstanceid'.";
     }
 }

@@ -65,7 +65,7 @@ class role_unassigned extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' unassigned the role with the id '$this->objectid' from the user with the " .
+        return "The user with id '$this->userid' unassigned the role with id '$this->objectid' from the user with " .
             "id '$this->relateduserid'.";
     }
 

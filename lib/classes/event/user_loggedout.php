@@ -66,7 +66,7 @@ class user_loggedout extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->objectid' has logged out.";
+        return "The user with id '$this->objectid' has logged out.";
     }
 
     /**

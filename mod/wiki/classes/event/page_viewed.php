@@ -60,7 +60,7 @@ class page_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the page with the id '$this->objectid' for the wiki with " .
+        return "The user with id '$this->userid' viewed the page with id '$this->objectid' for the wiki with " .
             "the course module id '$this->contextinstanceid'.";
     }
 

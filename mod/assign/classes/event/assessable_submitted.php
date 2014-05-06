@@ -77,7 +77,7 @@ class assessable_submitted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has submitted the submission with the id '$this->objectid' " .
+        return "The user with id '$this->userid' has submitted the submission with id '$this->objectid' " .
             "for the assignment with the course module id '$this->contextinstanceid'.";
     }
 

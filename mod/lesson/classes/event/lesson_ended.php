@@ -70,7 +70,7 @@ class lesson_ended extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' ended the lesson with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' ended the lesson with the course module id '$this->contextinstanceid'.";
     }
 
     /**

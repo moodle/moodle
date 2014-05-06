@@ -68,7 +68,7 @@ class user_login_failed extends base {
      * @return string
      */
     public function get_description() {
-        return "Login failed for the username '{$this->other['username']}' for the reason with the id '{$this->other['reason']}'.";
+        return "Login failed for the username '{$this->other['username']}' for the reason with id '{$this->other['reason']}'.";
     }
 
     /**

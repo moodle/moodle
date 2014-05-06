@@ -49,7 +49,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has posted content in the forum post with the id '$this->objectid' " .
+        return "The user with id '$this->userid' has posted content in the forum post with id '$this->objectid' " .
             "in the discussion '{$this->other['discussionid']}' located in the forum with the course module id " .
             "'$this->contextinstanceid'.";
     }

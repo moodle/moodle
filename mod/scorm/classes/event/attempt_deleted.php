@@ -55,7 +55,7 @@ class attempt_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the attempt with the id '{$this->other['attemptid']}' " .
+        return "The user with id '$this->userid' deleted the attempt with id '{$this->other['attemptid']}' " .
             "for the scorm activity with the course module id '$this->contextinstanceid'.";
     }
 

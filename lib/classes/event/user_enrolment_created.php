@@ -65,8 +65,8 @@ class user_enrolment_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' enrolled the user with the id '$this->relateduserid' in the course with " .
-            "the id '$this->courseid'.";
+        return "The user with id '$this->userid' enrolled the user with id '$this->relateduserid' in the course with " .
+            "id '$this->courseid'.";
     }
 
     /**

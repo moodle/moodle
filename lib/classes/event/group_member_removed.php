@@ -41,8 +41,8 @@ class group_member_removed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' removed the user with the id '$this->relateduserid' to the group with " .
-            "the id '$this->objectid'.";
+        return "The user with id '$this->userid' removed the user with id '$this->relateduserid' to the group with " .
+            "id '$this->objectid'.";
     }
 
     /**

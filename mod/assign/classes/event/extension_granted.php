@@ -70,7 +70,7 @@ class extension_granted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has granted an extension for the user with the id '$this->relateduserid' " .
+        return "The user with id '$this->userid' has granted an extension for the user with id '$this->relateduserid' " .
             "for the assignment with the course module id '$this->contextinstanceid'.";
     }
 

@@ -68,8 +68,8 @@ abstract class course_module_instance_list_viewed extends base{
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the instance list for the module '$this->modname' in the course " .
-            "with the id '$this->courseid'.";
+        return "The user with id '$this->userid' viewed the instance list for the module '$this->modname' in the course " .
+            "with id '$this->courseid'.";
     }
 
     /**

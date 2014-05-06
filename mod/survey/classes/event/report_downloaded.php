@@ -67,7 +67,7 @@ class report_downloaded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' downloaded the report for the survey with course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' downloaded the report for the survey with course module id '$this->contextinstanceid'.";
     }
 
     /**

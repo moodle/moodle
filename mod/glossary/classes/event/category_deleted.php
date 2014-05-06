@@ -58,7 +58,7 @@ class category_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the category with the id '$this->objectid' in the " .
+        return "The user with id '$this->userid' deleted the category with id '$this->objectid' in the " .
             "glossary activity with the course module id '$this->contextinstanceid'.";
     }
 

@@ -41,7 +41,7 @@ class webservice_token_sent extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has been sent the web service token with the id '$this->objectid'.";
+        return "The user with id '$this->userid' has been sent the web service token with id '$this->objectid'.";
     }
 
     /**

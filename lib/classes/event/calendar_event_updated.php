@@ -71,7 +71,7 @@ class calendar_event_updated extends base {
      */
     public function get_description() {
         $eventname = s($this->other['name']);
-        return "The user with the id '$this->userid' updated the event '$eventname' with the id '$this->objectid'.";
+        return "The user with id '$this->userid' updated the event '$eventname' with id '$this->objectid'.";
     }
 
     /**

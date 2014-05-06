@@ -60,7 +60,7 @@ class essay_assessed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has marked the essay with the id '{$this->other['attemptid']}' and " .
+        return "The user with id '$this->userid' has marked the essay with id '{$this->other['attemptid']}' and " .
             "recorded a mark '$this->objectid' in the lesson with the course module id '$this->contextinstanceid'.";
     }
 

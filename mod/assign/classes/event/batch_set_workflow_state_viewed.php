@@ -91,7 +91,7 @@ class batch_set_workflow_state_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the batch set workflow for the assignment with the course " .
+        return "The user with id '$this->userid' viewed the batch set workflow for the assignment with the course " .
             "module id '$this->contextinstanceid'.";
     }
 

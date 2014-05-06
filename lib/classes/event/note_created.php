@@ -68,7 +68,7 @@ class note_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the note with the id '$this->objectid' for the user with the id " .
+        return "The user with id '$this->userid' created the note with id '$this->objectid' for the user with id " .
             "'$this->relateduserid'.";
     }
 

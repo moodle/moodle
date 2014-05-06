@@ -69,7 +69,7 @@ class message_contact_unblocked extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' unblocked the user with the id '$this->relateduserid' on their contact list.";
+        return "The user with id '$this->userid' unblocked the user with id '$this->relateduserid' on their contact list.";
     }
 
     /**

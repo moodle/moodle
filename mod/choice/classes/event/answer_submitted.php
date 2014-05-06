@@ -49,7 +49,7 @@ class answer_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' made the choice with the id '$this->objectid' in the choice activity
+        return "The user with id '$this->userid' made the choice with id '$this->objectid' in the choice activity
             with the course module id '$this->contextinstanceid'.";
     }
 

@@ -60,8 +60,8 @@ class post_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has created the post with the id '$this->objectid' in the discussion with " .
-            "the id '{$this->other['discussionid']}' in the forum with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has created the post with id '$this->objectid' in the discussion with " .
+            "id '{$this->other['discussionid']}' in the forum with the course module id '$this->contextinstanceid'.";
     }
 
     /**

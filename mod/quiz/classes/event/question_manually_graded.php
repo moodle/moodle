@@ -67,8 +67,8 @@ class question_manually_graded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' manually graded the question with the id '$this->objectid' for the attempt " .
-            "with the id '{$this->other['attemptid']}' for the quiz with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' manually graded the question with id '$this->objectid' for the attempt " .
+            "with id '{$this->other['attemptid']}' for the quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**

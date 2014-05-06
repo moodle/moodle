@@ -91,7 +91,7 @@ class reveal_identities_confirmation_page_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the confirmation page for revealing identities for the " .
+        return "The user with id '$this->userid' viewed the confirmation page for revealing identities for the " .
             "assignment with the course module id '$this->contextinstanceid'.";
     }
 

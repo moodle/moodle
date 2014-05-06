@@ -49,7 +49,7 @@ class comment_deleted extends \core\event\comment_deleted {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the comment with the id '$this->objectid' from the submission " .
-            "with the id '{$this->other['itemid']}' for the assignment with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' deleted the comment with id '$this->objectid' from the submission " .
+            "with id '{$this->other['itemid']}' for the assignment with the course module id '$this->contextinstanceid'.";
     }
 }

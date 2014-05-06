@@ -70,7 +70,7 @@ class field_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the field with the id '$this->objectid' for the data activity " .
+        return "The user with id '$this->userid' created the field with id '$this->objectid' for the data activity " .
             "with the course module id '$this->contextinstanceid'.";
     }
 

@@ -61,8 +61,8 @@ class cohort_member_added extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added the user with the id '$this->relateduserid' to the cohort with " .
-            "the id '$this->objectid'.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to the cohort with " .
+            "id '$this->objectid'.";
     }
 
     /**

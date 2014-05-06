@@ -60,7 +60,7 @@ class email_failed extends base {
      * @return string
      */
     public function get_description() {
-        return "Failed to send an email from the user with the id '$this->userid' to the user with the id '$this->relateduserid'
+        return "Failed to send an email from the user with id '$this->userid' to the user with id '$this->relateduserid'
             due to the following error: \"{$this->other['errorinfo']}\".";
     }
 

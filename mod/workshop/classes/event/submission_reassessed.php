@@ -60,8 +60,8 @@ class submission_reassessed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' reassessed the submission with the id '$this->objectid' for the user with " .
-            "the id '$this->relateduserid' in the workshop with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' reassessed the submission with id '$this->objectid' for the user with " .
+            "id '$this->relateduserid' in the workshop with the course module id '$this->contextinstanceid'.";
     }
 
     /**

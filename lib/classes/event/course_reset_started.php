@@ -47,7 +47,7 @@ class course_reset_started extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' started the reset of the course with the id '$this->courseid'.";
+        return "The user with id '$this->userid' started the reset of the course with id '$this->courseid'.";
     }
 
     /**

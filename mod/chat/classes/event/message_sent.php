@@ -41,7 +41,7 @@ class message_sent extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' has sent a message in the chat with the course module id
+        return "The user with id '$this->relateduserid' has sent a message in the chat with the course module id
             '$this->contextinstanceid'.";
     }
 

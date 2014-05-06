@@ -66,8 +66,8 @@ class attempt_preview_started extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' has had their attempt with the id '$this->objectid' previewed by " .
-            "the user with the id '$this->userid' for the quiz with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->relateduserid' has had their attempt with id '$this->objectid' previewed by " .
+            "the user with id '$this->userid' for the quiz with the course module id '$this->contextinstanceid'.";
     }
 
     /**

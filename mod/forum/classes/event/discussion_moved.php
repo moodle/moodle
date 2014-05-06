@@ -59,8 +59,8 @@ class discussion_moved extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has moved the discussion with the id '$this->objectid' from the " .
-            "forum with the id '{$this->other['fromforumid']}' to the forum with the id '{$this->other['toforumid']}'.";
+        return "The user with id '$this->userid' has moved the discussion with id '$this->objectid' from the " .
+            "forum with id '{$this->other['fromforumid']}' to the forum with id '{$this->other['toforumid']}'.";
     }
 
     /**

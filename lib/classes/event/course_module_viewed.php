@@ -55,7 +55,7 @@ abstract class course_module_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the '{$this->objecttable}' activity with the " .
+        return "The user with id '$this->userid' viewed the '{$this->objecttable}' activity with the " .
             "course module id '$this->contextinstanceid'.";
     }
 

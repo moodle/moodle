@@ -95,11 +95,11 @@ class submission_form_viewed extends base {
      */
     public function get_description() {
         if ($this->userid != $this->relateduserid) {
-            return "The user with the id '$this->userid' viewed the submission form for the user with the id '$this->relateduserid' " .
+            return "The user with id '$this->userid' viewed the submission form for the user with id '$this->relateduserid' " .
                 "for the assignment with the course module id '$this->contextinstanceid'.";
         }
 
-        return "The user with the id '$this->userid' viewed their submission for the assignment with the course " .
+        return "The user with id '$this->userid' viewed their submission for the assignment with the course " .
             "module id '$this->contextinstanceid'.";
     }
 

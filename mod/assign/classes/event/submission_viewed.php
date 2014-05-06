@@ -88,7 +88,7 @@ class submission_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the submission for the user with the id '$this->relateduserid' for the " .
+        return "The user with id '$this->userid' viewed the submission for the user with id '$this->relateduserid' for the " .
             "assignment with the course module id '$this->contextinstanceid'.";
     }
 

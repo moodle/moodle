@@ -71,7 +71,7 @@ class calendar_event_created extends base {
      */
     public function get_description() {
         $eventname = s($this->other['name']);
-        return "The user with the id '$this->userid' created the event '$eventname' with the id '$this->objectid'.";
+        return "The user with id '$this->userid' created the event '$eventname' with id '$this->objectid'.";
     }
 
     /**

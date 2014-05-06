@@ -66,8 +66,8 @@ class group_override_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the override with the id '$this->objectid' for the quiz with the " .
-            "course module id '$this->contextinstanceid' for the group with the id '{$this->other['groupid']}'.";
+        return "The user with id '$this->userid' deleted the override with id '$this->objectid' for the quiz with the " .
+            "course module id '$this->contextinstanceid' for the group with id '{$this->other['groupid']}'.";
     }
 
     /**

@@ -76,10 +76,10 @@ class message_sent extends base {
     public function get_description() {
         // Check if we are sending from a valid user.
         if (\core_user::is_real_user($this->userid)) {
-            return "The user with the id '$this->userid' sent a message to the user with the id '$this->relateduserid'.";
+            return "The user with id '$this->userid' sent a message to the user with id '$this->relateduserid'.";
         }
 
-        return "A message was sent by the system to the user with the id '$this->relateduserid'.";
+        return "A message was sent by the system to the user with id '$this->relateduserid'.";
     }
 
     /**
