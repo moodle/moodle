@@ -1601,6 +1601,7 @@ $string['searchhelp'] = '<p>You can search for multiple words at once and can re
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
+$string['secondsleft'] = '{$a} secs';
 $string['seconds'] = 'seconds';
 $string['secondstotime172800'] = '2 days';
 $string['secondstotime259200'] = '3 days';

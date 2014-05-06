@@ -2041,3 +2041,8 @@ body.lockscroll {
 .well-small {
   padding: 9px;
 }
+
+.progressbar_container {
+    max-width: 500px;
+    margin: 0 auto;
+}
