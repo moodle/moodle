@@ -198,6 +198,30 @@ class mod_forum_generator extends testing_module_generator {
             $record['modified'] = $time;
         }
 
+        if (!isset($record['mailed'])) {
+            $record['mailed'] = 0;
+        }
+
+        if (!isset($record['messageformat'])) {
+            $record['messageformat'] = 0;
+        }
+
+        if (!isset($record['messagetrust'])) {
+            $record['messagetrust'] = 0;
+        }
+
+        if (!isset($record['attachment'])) {
+            $record['attachment'] = "";
+        }
+
+        if (!isset($record['totalscore'])) {
+            $record['totalscore'] = 0;
+        }
+
+        if (!isset($record['mailnow'])) {
+            $record['mailnow'] = 0;
+        }
+
         $record = (object) $record;
 
         // Add the post.
