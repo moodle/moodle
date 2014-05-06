@@ -46,6 +46,7 @@
             .btn-large();
             display: inline-block;
             position: relative;
+            vertical-align: top;
             width: 150px;
             text-align: center;
             overflow: hidden;
@@ -61,7 +62,7 @@
             .action-text {
                 position: relative;
                 top: 0.4em;
-                font-size: 16px;
+                font-size: 14px;
             }
         }
     }
@@ -95,11 +96,33 @@
                 }
                 .delete {
                     float: left;
-                    clear: right;
                     input {
                         left: 0;
                         right: auto;
                     }
+                }
+            }
+        }
+        .addcriterion {
+            margin-right: 5px;
+            margin-left: 0px;
+
+            input {
+                padding-right: 26px;
+                padding-left: 10px;
+                background-position: right 8px top 8px;
+            }
+        }
+        .options {
+            .option {
+                .value {
+                    margin-left: 0px;
+                    margin-right: 5px;
+                }
+                input {
+                    // margins flipped for RTL.
+                    margin-left: 12px;
+                    margin-right: 5px;
                 }
             }
         }
@@ -108,9 +131,6 @@
 
 #rubric-rubric {
     &.gradingform_rubric {
-        // Override max-width rule from core; rubrics with multiple levels can hit
-        // the previously-defined threshold easily.
-        max-width: none;
         #rubric-criteria {
             margin-bottom: 1em;
             @rubricPadding: 6px;
@@ -143,6 +163,9 @@
                     .delete {
                         position: relative;
                         width: 32px;
+                        height: 32px;
+                        margin-top: -32px;
+                        clear: both;
                         float: right;
                         input {
                             display: block;
@@ -161,6 +184,7 @@
                 .scorevalue {
                     input {
                         // Should handle at least three chars with room to spare.
+                        float: none;
                         width: 2em;
                         &.hiddenelement,&.pseudotablink {
                             // Zero out the width if it's still in the block flow for some reason
