@@ -166,7 +166,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * @return bool
      */
     public static function are_requirements_met() {
-        return class_exists('Mongo');
+        return class_exists('MongoClient') || class_exists('Mongo');
     }
 
     /**
