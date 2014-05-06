@@ -106,6 +106,14 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
     protected $isready = false;
 
     /**
+     * Set to true if the Mongo extension is < version 1.3.
+     * If this is the case we must use the legacy Mongo class instead of MongoClient.
+     * Mongo is backwards compatible, although obviously deprecated.
+     * @var bool
+     */
+    protected $legacymongo = false;
+
+    /**
      * Constructs a new instance of the Mongo store.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
@@ -140,8 +148,13 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $this->extendedmode = $configuration['extendedmode'];
         }
 
+        // Test if the MongoClient class exists, if not we need to switch to legacy classes.
+        $this->legacymongo = (!class_exists('MongoClient'));
+
+        // MongoClient from Mongo 1.3 onwards. Mongo for earlier versions.
+        $class = ($this->legacymongo) ? 'Mongo' : 'MongoClient';
         try {
-            $this->connection = new Mongo($this->server, $this->options);
+            $this->connection = new $class($this->server, $this->options);
             $this->isready = true;
         } catch (MongoConnectionException $e) {
             // We only want to catch MongoConnectionExceptions here.
@@ -193,10 +206,14 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         $this->database = $this->connection->selectDB($this->databasename);
         $this->definitionhash = $definition->generate_definition_hash();
         $this->collection = $this->database->selectCollection($this->definitionhash);
-        $this->collection->ensureIndex(array('key' => 1), array(
-            'safe' => $this->usesafe,
-            'name' => 'idx_key'
-        ));
+
+        $options = array('name' => 'idx_key');
+        if ($this->legacymongo) {
+            $options['safe'] = $this->usesafe;
+        } else {
+            $options['w'] = $this->usesafe ? 1 : 0;
+        }
+        $this->collection->ensureIndex(array('key' => 1), $options);
     }
 
     /**
@@ -301,11 +318,12 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $record = $key;
         }
         $record['data'] = serialize($data);
-        $options = array(
-            'upsert' => true,
-            'safe' => $this->usesafe,
-            'w' => $this->usesafe ? 1 : 0
-        );
+        $options = array('upsert' => true);
+        if ($this->legacymongo) {
+            $options['safe'] = $this->usesafe;
+        } else {
+            $options['w'] = $this->usesafe ? 1 : 0;
+        }
         $this->delete($key);
         $result = $this->collection->insert($record, $options);
         if ($result === true) {
@@ -354,11 +372,12 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         } else {
             $criteria = $key;
         }
-        $options = array(
-            'justOne' => false,
-            'safe' => $this->usesafe,
-            'w' => $this->usesafe ? 1 : 0
-        );
+        $options = array('justOne' => false);
+        if ($this->legacymongo) {
+            $options['safe'] = $this->usesafe;
+        } else {
+            $options['w'] = $this->usesafe ? 1 : 0;
+        }
         $result = $this->collection->remove($criteria, $options);
 
         if ($result === true) {
@@ -483,7 +502,9 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $connection = $this->connection;
         } else {
             try {
-               $connection = new Mongo($this->server, $this->options);
+                // MongoClient from Mongo 1.3 onwards. Mongo for earlier versions.
+                $class = ($this->legacymongo) ? 'Mongo' : 'MongoClient';
+                $connection = new $class($this->server, $this->options);
             } catch (MongoConnectionException $e) {
                 // We only want to catch MongoConnectionExceptions here.
                 // If the server cannot be connected to we cannot clean it.
