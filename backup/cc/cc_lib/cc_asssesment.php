@@ -1955,7 +1955,7 @@ abstract class cc_assesment_helper {
     /**
      *
      * Enter description here ...
-     * @param unknown_type $qdoc
+     * @param XMLGenericDocument $qdoc
      * @param unknown_type $manifest
      * @param cc_assesment_section $section
      * @param unknown_type $rootpath
@@ -1973,8 +1973,10 @@ abstract class cc_assesment_helper {
         pkg_resource_dependencies::instance()->reset();
         $questioncount = 0;
         $questionforexport = 0;
-        $qids = explode(',', $qdoc->nodeValue('/activity/quiz/questions'));
-        foreach ($qids as $value) {
+        $qids = $qdoc->nodeList('//question_instances//questionid');
+        foreach ($qids as $qid) {
+            /** @var DOMNode $qid */
+            $value = $qid->nodeValue;
             if (intval($value) == 0) {
                 continue;
             }
