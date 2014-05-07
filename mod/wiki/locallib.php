@@ -1420,7 +1420,8 @@ function wiki_build_tree($page, $node, &$keys) {
     $content = array();
     static $icon = null;
     if ($icon === null) {
-        $icon = new pix_icon('f/text-24', '');
+        // Substitute the default navigation icon with empty image.
+        $icon = new pix_icon('spacer', '');
     }
     $pages = wiki_get_linked_pages($page->id);
     foreach ($pages as $p) {
