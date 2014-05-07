@@ -106,6 +106,22 @@ Y.extend(EventFilter, Y.Base, {
                     label: M.util.get_string('eventname', 'report_eventlist'),
                     allowHTML: true,
                     sortable: true,
+                    /**
+                     * Custom sort of the fulleventname column.
+                     * This will sort via the event name rather than the event path.
+                     *
+                     * @param {object} eventDataListA Event data record module A.
+                     * @param {object} eventDataListB Event data record module B.
+                     * @param {boolean} desc True sorts list in descending order and false sorts in Ascending order.
+                     * @return {number} order for which the column should be sorted.
+                     * @method sortFn
+                     */
+                    sortFn: function (eventDataListA, eventDataListB, desc) {
+                        var rawEventDataA = eventDataListA.getAttrs().raweventname,
+                            rawEventDataB = eventDataListB.getAttrs().raweventname,
+                            order = (rawEventDataA > rawEventDataB ? 1 : -1);
+                        return desc ? -order : order;
+                    },
                     title: M.util.get_string('eventname', 'report_eventlist')
                 }, {
                     key: "component",
