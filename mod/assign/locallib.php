@@ -3493,9 +3493,8 @@ class assign {
         $users = $submitteddata->selectedusers;
         $userlist = explode(',', $users);
 
-        $formparams = array('cm'=>$this->get_course_module()->id,
-                            'users'=>$userlist,
-                            'context'=>$this->get_context());
+        $formdata = array('id' => $this->get_course_module()->id,
+                          'selectedusers' => $users);
 
         $usershtml = '';
 
@@ -3519,10 +3518,14 @@ class assign {
             $usercount += 1;
         }
 
-        $formparams['usershtml'] = $usershtml;
-        $formparams['markingworkflowstates'] = $this->get_marking_workflow_states_for_current_user();
+        $formparams = array(
+            'userscount' => count($userlist),
+            'usershtml' => $usershtml,
+            'markingworkflowstates' => $this->get_marking_workflow_states_for_current_user()
+        );
 
         $mform = new mod_assign_batch_set_marking_workflow_state_form(null, $formparams);
+        $mform->set_data($formdata);    // Initialises the hidden elements.
         $o .= $this->get_renderer()->header();
         $o .= $this->get_renderer()->render(new assign_form('setworkflowstate', $mform));
         $o .= $this->view_footer();
@@ -3549,9 +3552,8 @@ class assign {
         $users = $submitteddata->selectedusers;
         $userlist = explode(',', $users);
 
-        $formparams = array('cm'=>$this->get_course_module()->id,
-            'users'=>$userlist,
-            'context'=>$this->get_context());
+        $formdata = array('id' => $this->get_course_module()->id,
+                          'selectedusers' => $users);
 
         $usershtml = '';
 
@@ -3575,7 +3577,11 @@ class assign {
             $usercount += 1;
         }
 
-        $formparams['usershtml'] = $usershtml;
+        $formparams = array(
+            'userscount' => count($userlist),
+            'usershtml' => $usershtml,
+        );
+
         $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade');
         $markerlist = array();
         foreach ($markers as $marker) {
@@ -3585,6 +3591,7 @@ class assign {
         $formparams['markers'] = $markerlist;
 
         $mform = new mod_assign_batch_set_allocatedmarker_form(null, $formparams);
+        $mform->set_data($formdata);    // Initialises the hidden elements.
         $o .= $this->get_renderer()->header();
         $o .= $this->get_renderer()->render(new assign_form('setworkflowstate', $mform));
         $o .= $this->view_footer();
@@ -6117,34 +6124,48 @@ class assign {
      * @return void
      */
     protected function process_set_batch_marking_workflow_state() {
-        global $DB;
+        global $CFG, $DB;
 
-        require_sesskey();
+        // Include batch marking workflow form.
+        require_once($CFG->dirroot . '/mod/assign/batchsetmarkingworkflowstateform.php');
 
-        $batchusers = required_param('selectedusers', PARAM_TEXT);
-        $state = required_param('markingworkflowstate', PARAM_ALPHA);
-        $useridlist = explode(',', $batchusers);
+        $formparams = array(
+            'userscount' => 0,  // This form is never re-displayed, so we don't need to
+            'usershtml' => '',  // initialise these parameters with real information.
+            'markingworkflowstates' => $this->get_marking_workflow_states_for_current_user()
+        );
 
-        foreach ($useridlist as $userid) {
-            $flags = $this->get_user_flags($userid, true);
+        $mform = new mod_assign_batch_set_marking_workflow_state_form(null, $formparams);
 
-            $flags->workflowstate = $state;
+        if ($mform->is_cancelled()) {
+            return true;
+        }
 
-            $gradingdisabled = $this->grading_disabled($userid);
+        if ($formdata = $mform->get_data()) {
+            $useridlist = explode(',', $formdata->selectedusers);
+            $state = $formdata->markingworkflowstate;
 
-            // Will not apply update if user does not have permission to assign this workflow state.
-            if (!$gradingdisabled && $this->update_user_flags($flags)) {
-                if ($state == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
-                    // Update Gradebook.
-                    $assign = clone $this->get_instance();
-                    $assign->cmidnumber = $this->get_course_module()->idnumber;
-                    // Set assign gradebook feedback plugin status.
-                    $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
-                    assign_update_grades($assign, $userid);
+            foreach ($useridlist as $userid) {
+                $flags = $this->get_user_flags($userid, true);
+
+                $flags->workflowstate = $state;
+
+                $gradingdisabled = $this->grading_disabled($userid);
+
+                // Will not apply update if user does not have permission to assign this workflow state.
+                if (!$gradingdisabled && $this->update_user_flags($flags)) {
+                    if ($state == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                        // Update Gradebook.
+                        $assign = clone $this->get_instance();
+                        $assign->cmidnumber = $this->get_course_module()->idnumber;
+                        // Set assign gradebook feedback plugin status.
+                        $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
+                        assign_update_grades($assign, $userid);
+                    }
+
+                    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+                    \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $state)->trigger();
                 }
-
-                $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-                \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $state)->trigger();
             }
         }
     }
@@ -6155,32 +6176,50 @@ class assign {
      * @return void
      */
     protected function process_set_batch_marking_allocation() {
-        global $DB;
+        global $CFG, $DB;
 
-        require_sesskey();
-        require_capability('mod/assign:manageallocations', $this->context);
+        // Include batch marking allocation form.
+        require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
 
-        $batchusers = required_param('selectedusers', PARAM_TEXT);
-        $markerid = required_param('allocatedmarker', PARAM_INT);
-        $marker = $DB->get_record('user', array('id' => $markerid), '*', MUST_EXIST);
+        $formparams = array(
+            'userscount' => 0,  // This form is never re-displayed, so we don't need to
+            'usershtml' => ''   // initialise these parameters with real information.
+        );
 
-        $useridlist = explode(',', $batchusers);
+        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade');
+        $markerlist = array();
+        foreach ($markers as $marker) {
+            $markerlist[$marker->id] = fullname($marker);
+        }
 
-        foreach ($useridlist as $userid) {
-            $flags = $this->get_user_flags($userid, true);
-            if ($flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW ||
-                $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW ||
-                $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE ||
-                $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+        $formparams['markers'] = $markerlist;
 
-                continue; // Allocated marker can only be changed in certain workflow states.
-            }
+        $mform = new mod_assign_batch_set_allocatedmarker_form(null, $formparams);
 
-            $flags->allocatedmarker = $marker->id;
+        if ($mform->is_cancelled()) {
+            return true;
+        }
 
-            if ($this->update_user_flags($flags)) {
-                $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-                \mod_assign\event\marker_updated::create_from_marker($this, $user, $marker)->trigger();
+        if ($formdata = $mform->get_data()) {
+            $useridlist = explode(',', $formdata->selectedusers);
+            $marker = $DB->get_record('user', array('id' => $formdata->allocatedmarker), '*', MUST_EXIST);
+
+            foreach ($useridlist as $userid) {
+                $flags = $this->get_user_flags($userid, true);
+                if ($flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW ||
+                    $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW ||
+                    $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE ||
+                    $flags->workflowstate == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+
+                    continue; // Allocated marker can only be changed in certain workflow states.
+                }
+
+                $flags->allocatedmarker = $marker->id;
+
+                if ($this->update_user_flags($flags)) {
+                    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+                    \mod_assign\event\marker_updated::create_from_marker($this, $user, $marker)->trigger();
+                }
             }
         }
     }
