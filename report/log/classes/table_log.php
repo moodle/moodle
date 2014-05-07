@@ -341,6 +341,30 @@ class report_log_table_log extends table_sql {
     }
 
     /**
+     * Helper function which is used by build logs to get course module sql and param.
+     *
+     * @return array sql and param for action.
+     */
+    public function get_cm_sql() {
+        $joins = array();
+        $params = array();
+
+        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
+            // The legacy store doesn't support context level.
+            $joins[] = "cmid = :cmid";
+            $params['cmid'] = $this->filterparams->modid;
+        } else {
+            $joins[] = "contextinstanceid = :contextinstanceid";
+            $joins[] = "contextlevel = :contextmodule";
+            $params['contextinstanceid'] = $this->filterparams->modid;
+            $params['contextmodule'] = CONTEXT_MODULE;
+        }
+
+        $sql = implode(' AND ', $joins);
+        return array($sql, $params);
+    }
+
+    /**
      * Query the reader. Store results in the object for use by build_table.
      *
      * @param int $pagesize size of page for paginated displayed table.
@@ -371,10 +395,9 @@ class report_log_table_log extends table_sql {
         }
 
         if (!empty($this->filterparams->modid)) {
-            $joins[] = "contextinstanceid = :contextinstanceid";
-            $joins[] = "contextlevel = :contextmodule";
-            $params['contextinstanceid'] = $this->filterparams->modid;
-            $params['contextmodule'] = CONTEXT_MODULE;
+            list($actionsql, $actionparams) = $this->get_cm_sql();
+            $joins[] = $actionsql;
+            $params = array_merge($params, $actionparams);
         }
 
         if (!empty($this->filterparams->action) || $useextendeddbindex) {
