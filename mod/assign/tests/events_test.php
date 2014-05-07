@@ -472,6 +472,7 @@ class assign_events_testcase extends mod_assign_base_testcase {
     }
 
     public function test_submission_graded() {
+        $this->editingteachers[0]->ignoresesskey = true;
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -555,6 +556,8 @@ class assign_events_testcase extends mod_assign_base_testcase {
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
+        // Revert to defaults.
+        $this->editingteachers[0]->ignoresesskey = false;
     }
 
     /**
