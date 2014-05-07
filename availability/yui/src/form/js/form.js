@@ -933,13 +933,13 @@ M.core_availability.EyeIcon = function(individual, shown) {
     // Set up button text and icon.
     var suffix = individual ? '_individual' : '_all';
     var setHidden = function() {
-        icon.set('src', iconBase + '/t/show');
+        icon.set('src', iconBase + '/i/show');
         icon.set('alt', M.str.availability['hidden' + suffix]);
         this.span.set('title', M.str.availability['hidden' + suffix] + ' \u2022 ' +
                 M.str.availability.show_verb);
     };
     var setShown = function() {
-        icon.set('src', iconBase + '/t/hide');
+        icon.set('src', iconBase + '/i/hide');
         icon.set('alt', M.str.availability['shown' + suffix]);
         this.span.set('title', M.str.availability['shown' + suffix] + ' \u2022 ' +
                 M.str.availability.hide_verb);
