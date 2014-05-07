@@ -912,7 +912,7 @@ class assign_events_testcase extends mod_assign_base_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $assign->testable_view_batch_set_workflow_state();
+        $assign->testable_view_batch_set_workflow_state($this->students[0]->id);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -939,7 +939,7 @@ class assign_events_testcase extends mod_assign_base_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $assign->testable_view_batch_markingallocation();
+        $assign->testable_view_batch_markingallocation($this->students[0]->id);
         $events = $sink->get_events();
         $event = reset($events);
 
