@@ -1513,8 +1513,10 @@ function wiki_print_upload_table($context, $filearea, $fileitemid, $deleteupload
  */
 function wiki_build_tree($page, $node, &$keys) {
     $content = array();
-    static $icon;
-    $icon = new pix_icon('f/odt', '');
+    static $icon = null;
+    if ($icon === null) {
+        $icon = new pix_icon('f/text-24', '');
+    }
     $pages = wiki_get_linked_pages($page->id);
     foreach ($pages as $p) {
         $key = $page->id . ':' . $p->id;
