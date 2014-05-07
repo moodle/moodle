@@ -113,6 +113,10 @@ class group_member_added extends base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (!isset($this->other['component'])) {
             throw new \coding_exception('The \'component\' value must be set in other, even if empty.');
         }
