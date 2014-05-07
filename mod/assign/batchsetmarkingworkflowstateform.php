@@ -41,7 +41,7 @@ class mod_assign_batch_set_marking_workflow_state_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
         $params = $this->_customdata;
-        $formheader = get_string('batchsetmarkingworkflowstateforusers', 'assign', count($params['users']));
+        $formheader = get_string('batchsetmarkingworkflowstateforusers', 'assign', $params['userscount']);
 
         $mform->addElement('header', 'general', $formheader);
         $mform->addElement('static', 'userslist', get_string('selectedusers', 'assign'), $params['usershtml']);
@@ -49,11 +49,11 @@ class mod_assign_batch_set_marking_workflow_state_form extends moodleform {
         $options = $params['markingworkflowstates'];
         $mform->addElement('select', 'markingworkflowstate', get_string('markingworkflowstate', 'assign'), $options);
 
-        $mform->addElement('hidden', 'id', $params['cm']);
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'action', 'setbatchmarkingworkflowstate');
         $mform->setType('action', PARAM_ALPHA);
-        $mform->addElement('hidden', 'selectedusers', implode(',', $params['users']));
+        $mform->addElement('hidden', 'selectedusers');
         $mform->setType('selectedusers', PARAM_SEQUENCE);
         $this->add_action_buttons(true, get_string('savechanges'));
 
