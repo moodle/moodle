@@ -98,4 +98,19 @@ class user_updated extends base {
     protected function get_legacy_logdata() {
         return array(SITEID, 'user', 'update', 'view.php?id='.$this->objectid, '');
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            debugging('The \'relateduserid\' value must be specified in the event.', DEBUG_DEVELOPER);
+            $this->relateduserid = $this->objectid;
+        }
+    }
 }

@@ -124,6 +124,6 @@ class course_completed extends base {
     protected function validate_data() {
         parent::validate_data();
 
-        // TODO: MDL-45319 add validation of relateduserid and other['relateduserid'].
+        // TODO: MDL-45445 add validation of relateduserid and other['relateduserid'].
     }
 }

@@ -116,6 +116,11 @@ class user_deleted extends base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            debugging('The \'relateduserid\' value must be specified in the event.', DEBUG_DEVELOPER);
+            $this->relateduserid = $this->objectid;
+        }
+
         if (!isset($this->other['username'])) {
             throw new \coding_exception('The \'username\' value must be set in other.');
         }
