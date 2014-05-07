@@ -32,12 +32,13 @@ div.editor_atto_toolbar {
 }
 
 div.editor_atto_toolbar button {
-    padding: 3px 9px;
+    padding: 4px 9px;
     background: none;
     border: 0;
     margin: 0;
     border-radius: 0;
     cursor: pointer;
+    line-height: initial;
  }
 
 div.editor_atto_toolbar button + button {
