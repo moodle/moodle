@@ -115,13 +115,13 @@ class user_enrolment_deleted extends base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['userenrolment'])) {
-            throw new \coding_exception('User enrolment must be set in $other.');
+            throw new \coding_exception('The \'userenrolment\' value must be set in other.');
         }
         if (!isset($this->other['enrol'])) {
-            throw new \coding_exception('Enrolment plugin name must be set in $other.');
+            throw new \coding_exception('The \'enrol\' value must be set in other.');
         }
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('Related user id must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

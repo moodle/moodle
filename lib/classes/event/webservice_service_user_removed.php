@@ -89,12 +89,13 @@ class webservice_service_user_removed extends base {
     /**
      * Custom validation.
      *
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('The relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 

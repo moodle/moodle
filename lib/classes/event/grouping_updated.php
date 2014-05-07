@@ -90,5 +90,4 @@ class grouping_updated extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groupings';
     }
-
 }

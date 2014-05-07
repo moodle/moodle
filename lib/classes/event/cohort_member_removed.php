@@ -87,7 +87,7 @@ class cohort_member_removed extends base {
     /**
      * Return legacy event data.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         $data = new \stdClass();

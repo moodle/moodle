@@ -26,7 +26,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when user profile is deleted.
+ * User deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -116,24 +116,29 @@ class user_deleted extends base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            debugging('The \'relateduserid\' value must be specified in the event.', DEBUG_DEVELOPER);
+            $this->relateduserid = $this->objectid;
+        }
+
         if (!isset($this->other['username'])) {
-            throw new \coding_exception('username must be set in $other.');
+            throw new \coding_exception('The \'username\' value must be set in other.');
         }
 
         if (!isset($this->other['email'])) {
-            throw new \coding_exception('email must be set in $other.');
+            throw new \coding_exception('The \'email\' value must be set in other.');
         }
 
         if (!isset($this->other['idnumber'])) {
-            throw new \coding_exception('idnumber must be set in $other.');
+            throw new \coding_exception('The \'idnumber\' value must be set in other.');
         }
 
         if (!isset($this->other['picture'])) {
-            throw new \coding_exception('picture must be set in $other.');
+            throw new \coding_exception('The \'picture\' value must be set in other.');
         }
 
         if (!isset($this->other['mnethostid'])) {
-            throw new \coding_exception('mnethostid must be set in $other.');
+            throw new \coding_exception('The \'mnethostid\' value must be set in other.');
         }
     }
 }

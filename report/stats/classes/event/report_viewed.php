@@ -110,7 +110,7 @@ class report_viewed extends \core\event\base {
             throw new \coding_exception('The \'mode\' value must be set in other.');
         }
 
-        if (!isset($this->data['relateduserid'])) {
+        if (!isset($this->relateduserid)) {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
