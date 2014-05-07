@@ -14,14 +14,10 @@ Upgrade procedure:
 3/ bump up main version.php
 4/ update ./thirdpartylibs.xml
 5/ execute cli/update_lang_files.php and review changes in lang/en/editor_tinymce.php
-6/ use search/replace to fix oversized zIndexes
-7/ add moodle-has-zindex to the class definition in createColorSplitButton() in tiny_mce_src.js and tiny_mce.js
-
 
 Changes:
 
-1/ zIndex 300000 and 200000 changed to 5003 and 5002 - this prevents collision with YUI,
-   see MDL-35771
+None
 
 TODO:
  * create some new automated script that sends other languages from upstream into AMOS
