@@ -4283,6 +4283,7 @@ function delete_user(stdClass $user) {
     $event = \core\event\user_deleted::create(
             array(
                 'objectid' => $user->id,
+                'relateduserid' => $user->id,
                 'context' => $usercontext,
                 'other' => array(
                     'username' => $user->username,
@@ -4733,8 +4734,9 @@ function update_internal_user_password($user, $password) {
 
         // Trigger event.
         $event = \core\event\user_updated::create(array(
-             'objectid' => $user->id,
-             'context' => context_user::instance($user->id)
+            'objectid' => $user->id,
+            'relateduserid' => $user->id,
+            'context' => context_user::instance($user->id)
         ));
         $event->add_record_snapshot('user', $user);
         $event->trigger();
@@ -5972,6 +5974,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
     // Trigger event.
     $event = \core\event\user_updated::create(array(
         'objectid' => $user->id,
+        'relateduserid' => $user->id,
         'context' => context_user::instance($user->id)
     ));
     $event->add_record_snapshot('user', $user);

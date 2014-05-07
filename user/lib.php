@@ -91,6 +91,7 @@ function user_create_user($user, $updatepassword = true) {
     $event = \core\event\user_created::create(
             array(
                 'objectid' => $newuserid,
+                'relateduserid' => $newuserid,
                 'context' => $usercontext
                 )
             );
@@ -169,6 +170,7 @@ function user_update_user($user, $updatepassword = true) {
     $event = \core\event\user_updated::create(
             array(
                 'objectid' => $user->id,
+                'relateduserid' => $user->id,
                 'context' => context_user::instance($user->id)
                 )
             );
