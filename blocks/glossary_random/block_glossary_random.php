@@ -170,7 +170,11 @@ class block_glossary_random extends block_base {
 
         if (empty($this->config->glossary)) {
             $this->content = new stdClass();
-            $this->content->text   = get_string('notyetconfigured','block_glossary_random');
+            if ($this->user_can_edit()) {
+                $this->content->text = get_string('notyetconfigured','block_glossary_random');
+            } else {
+                $this->content->text = '';
+            }
             $this->content->footer = '';
             return $this->content;
         }
@@ -197,7 +201,11 @@ class block_glossary_random extends block_base {
             $this->instance_config_commit();
 
             $this->content = new stdClass();
-            $this->content->text   = get_string('notyetconfigured','block_glossary_random');
+            if ($this->user_can_edit()) {
+                $this->content->text = get_string('notyetconfigured','block_glossary_random');
+            } else {
+                $this->content->text = '';
+            }
             $this->content->footer = '';
             return $this->content;
         }
