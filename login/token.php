@@ -160,6 +160,8 @@ if (!empty($user)) {
             $token->creatorid = $user->id;
             $token->timecreated = time();
             $token->externalserviceid = $service_record->id;
+            // MDL-43119 Token valid for 3 months (12 weeks).
+            $token->validuntil = $token->timecreated + 12 * WEEKSECS;
             $tokenid = $DB->insert_record('external_tokens', $token);
             add_to_log(SITEID, 'webservice', 'automatically create user token', '' , 'User ID: ' . $user->id);
             $token->id = $tokenid;
