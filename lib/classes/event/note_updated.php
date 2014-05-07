@@ -92,4 +92,18 @@ class note_updated extends base {
         $logurl->set_anchor('note-' . $this->objectid);
         return array($this->courseid, 'notes', 'update', $logurl, 'update note');
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+    }
 }

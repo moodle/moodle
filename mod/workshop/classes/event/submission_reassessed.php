@@ -91,4 +91,18 @@ class submission_reassessed extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/mod/workshop/assessment.php?', array('asid' => $this->objectid));
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+    }
 }
