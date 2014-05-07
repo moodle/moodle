@@ -1674,6 +1674,7 @@ $string['sitefilesused'] = 'Site files used in this course';
 $string['sitehome'] = 'Site home';
 $string['sitelegacyfiles'] = 'Legacy site files';
 $string['sitelogs'] = 'Site logs';
+$string['sitemessage'] = 'Message users';
 $string['sitenews'] = 'Site news';
 $string['sitepages'] = 'Site pages';
 $string['sitepartlist'] = 'You do not have the required permissions to view the participants list';
