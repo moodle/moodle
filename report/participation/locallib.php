@@ -17,7 +17,7 @@
 /**
  * This file contains functions used by the participation reports
  *
- * @package   Report_participation
+ * @package   report_participation
  * @copyright 2014 Rajesh Taneja <rajesh@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
