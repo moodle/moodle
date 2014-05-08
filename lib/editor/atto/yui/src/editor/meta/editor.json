@@ -11,7 +11,8 @@
             "yui-throttle",
             "moodle-core-notification-dialogue",
             "moodle-editor_atto-rangy",
-            "handlebars"
+            "handlebars",
+            "timers"
         ]
     },
     "moodle-editor_atto-plugin": {
