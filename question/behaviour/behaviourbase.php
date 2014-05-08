@@ -304,47 +304,9 @@ abstract class question_behaviour {
                 foreach ($stepswithsubmit as $submittedresponseno => $step) {
                     $classifiedresponses[$submittedresponseno] = $this->question->classify_response($step->get_qt_data());
                 }
-                return $this->remove_repeated_submitted_responses($classifiedresponses);
+                return $classifiedresponses;
             }
         }
-    }
-
-    /**
-     * Filter classified responses for multiple tries to remove identical responses that are not significant.
-     *
-     * In base class we compare last response to preceding responses and remove all identical responses until a different one is
-     * found then for that different response compare to preceding and remove all identical until ...
-     *
-     * @param array[] $classifiedresponses first index is submitted response no and second is sub-part id. Value is of type
-     *                                     question_classified_response. Return value from self::classify_response for ALL_TRIES.
-     * @return array[] return non repeated responses.
-     */
-    protected function remove_repeated_submitted_responses($classifiedresponses) {
-        $submittedresponsenos = array_keys($classifiedresponses);
-        $submittedresponsenos = array_reverse($submittedresponsenos);
-        $lastsubmittedresponseno = array_shift($submittedresponsenos);
-        $nooflastnewresponse = $lastsubmittedresponseno;
-        while (count($submittedresponsenos)) {
-            $precedingresponseno = array_shift($submittedresponsenos);
-            $responsesrepeated = true;
-            if (count($classifiedresponses[$precedingresponseno]) !== count($classifiedresponses[$nooflastnewresponse])) {
-                $responsesrepeated = false;
-            } else {
-                foreach (array_keys($classifiedresponses[$precedingresponseno]) as $subpartid) {
-                    if ($classifiedresponses[$precedingresponseno][$subpartid] !=
-                                        $classifiedresponses[$nooflastnewresponse][$subpartid]) {
-                        $responsesrepeated = false;
-                        break;
-                    }
-                }
-            }
-            if ($responsesrepeated) {
-                unset($classifiedresponses[$precedingresponseno]);
-            } else {
-                $nooflastnewresponse = $precedingresponseno;
-            }
-        }
-        return $classifiedresponses;
     }
 
     /**
