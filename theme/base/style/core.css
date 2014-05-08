@@ -2025,8 +2025,9 @@ body.lockscroll {
 }
 
 .editor_atto_menu .moodle-dialogue-content {
-    padding: 0px;
+    padding: 0;
     border: inherit;
+}
 
 .well {
   min-height: 20px;
