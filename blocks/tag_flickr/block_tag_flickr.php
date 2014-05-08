@@ -96,7 +96,7 @@ class block_tag_flickr extends block_base {
         //pull photos from a specific photoset
         if(!empty($this->config->photoset)){
 
-            $request = 'http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos';
+            $request = 'https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos';
             $request .= '&api_key='.FLICKR_DEV_KEY;
             $request .= '&photoset_id='.$this->config->photoset;
             $request .= '&per_page='.$numberofphotos;
@@ -116,7 +116,7 @@ class block_tag_flickr extends block_base {
         //search for photos tagged with $tagscsv
         else{
 
-            $request = 'http://api.flickr.com/services/rest/?method=flickr.photos.search';
+            $request = 'https://api.flickr.com/services/rest/?method=flickr.photos.search';
             $request .= '&api_key='.FLICKR_DEV_KEY;
             $request .= '&tags='.$tagscsv;
             $request .= '&per_page='.$numberofphotos;
