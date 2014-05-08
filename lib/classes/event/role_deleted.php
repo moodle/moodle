@@ -88,4 +88,18 @@ class role_deleted extends base {
         return array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid=' . $this->objectid,
             $this->other['shortname'], '');
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['shortname'])) {
+            throw new \coding_exception('The \'shortname\' value must be set in other.');
+        }
+    }
 }

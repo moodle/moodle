@@ -89,4 +89,18 @@ class assessment_evaluations_reset extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/mod/workshop/view.php', array('id' => $this->contextinstanceid));
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['workshopid'])) {
+            throw new \coding_exception('The \'workshopid\' value must be set in other.');
+        }
+    }
 }
