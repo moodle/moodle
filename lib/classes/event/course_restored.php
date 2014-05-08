@@ -107,4 +107,34 @@ class course_restored extends base {
             'samesite' => $this->other['samesite'],
         );
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['type'])) {
+            throw new \coding_exception('The \'type\' value must be set in other.');
+        }
+
+        if (!isset($this->other['target'])) {
+            throw new \coding_exception('The \'target\' value must be set in other.');
+        }
+
+        if (!isset($this->other['mode'])) {
+            throw new \coding_exception('The \'mode\' value must be set in other.');
+        }
+
+        if (!isset($this->other['operation'])) {
+            throw new \coding_exception('The \'operation\' value must be set in other.');
+        }
+
+        if (!isset($this->other['samesite'])) {
+            throw new \coding_exception('The \'samesite\' value must be set in other.');
+        }
+    }
 }

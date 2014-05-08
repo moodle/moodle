@@ -103,5 +103,13 @@ class user_loggedinas extends base {
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
+
+        if (!isset($this->other['originalusername'])) {
+            throw new \coding_exception('The \'originalusername\' value must be set in other.');
+        }
+
+        if (!isset($this->other['loggedinasusername'])) {
+            throw new \coding_exception('The \'loggedinasusername\' value must be set in other.');
+        }
     }
 }
