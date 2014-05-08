@@ -631,7 +631,7 @@ abstract class condition_info_base {
      * @return array Associative array from user field constants to display name
      */
     public static function get_condition_user_fields($formatoptions = null) {
-        global $DB;
+        global $DB, $CFG;
 
         $userfields = array(
             'firstname' => get_user_field_name('firstname'),
@@ -655,7 +655,19 @@ abstract class condition_info_base {
 
         // Go through the custom profile fields now
         if ($user_info_fields = $DB->get_records('user_info_field')) {
+            require_once($CFG->dirroot . '/user/profile/lib.php');
             foreach ($user_info_fields as $field) {
+                // This logic is the same as used in profile_user_record function
+                // to exclude some field types from being loaded into the $USER
+                // record.
+                require_once($CFG->dirroot . '/user/profile/field/' .
+                        $field->datatype . '/field.class.php');
+                $newfield = 'profile_field_' . $field->datatype;
+                $formfield = new $newfield();
+                if (!$formfield->is_user_object_data()) {
+                    continue;
+                }
+
                 if ($formatoptions) {
                     $userfields[$field->id] = format_string($field->name, true, $formatoptions);
                 } else {
