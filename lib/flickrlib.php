@@ -38,9 +38,9 @@
 class phpFlickr {
     var $api_key;
     var $secret;
-    var $REST = 'http://api.flickr.com/services/rest/';
-    var $Upload = 'http://api.flickr.com/services/upload/';
-    var $Replace = 'http://api.flickr.com/services/replace/';
+    var $REST = 'https://api.flickr.com/services/rest/';
+    var $Upload = 'https://api.flickr.com/services/upload/';
+    var $Replace = 'https://api.flickr.com/services/replace/';
     var $req;
     var $response;
     var $parsed_response;
