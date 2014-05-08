@@ -573,6 +573,42 @@ function profile_user_record($userid) {
 }
 
 /**
+ * Obtains a list of all available custom profile fields, indexed by id.
+ *
+ * Some profile fields are not included in the user object data (see
+ * profile_user_record function above). Optionally, you can obtain only those
+ * fields that are included in the user object.
+ *
+ * To be clear, this function returns the available fields, and does not
+ * return the field values for a particular user.
+ *
+ * @param bool $onlyinuserobject True if you only want the ones in $USER
+ * @return array Array of field objects from database (indexed by id)
+ * @since Moodle 2.7.1
+ */
+function profile_get_custom_fields($onlyinuserobject = false) {
+    global $DB, $CFG;
+
+    // Get all the fields.
+    $fields = $DB->get_records('user_info_field', null, 'id ASC');
+
+    // If only doing the user object ones, unset the rest.
+    if ($onlyinuserobject) {
+        foreach ($fields as $id => $field) {
+            require_once($CFG->dirroot . '/user/profile/field/' .
+                    $field->datatype . '/field.class.php');
+            $newfield = 'profile_field_' . $field->datatype;
+            $formfield = new $newfield();
+            if (!$formfield->is_user_object_data()) {
+                unset($fields[$id]);
+            }
+        }
+    }
+
+    return $fields;
+}
+
+/**
  * Load custom profile fields into user object
  *
  * Please note originally in 1.9 we were using the custom field names directly,
