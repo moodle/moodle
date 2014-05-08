@@ -6106,7 +6106,7 @@ class assign {
         }
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-        \mod_assign\event\submission_locked::create_from_user($this, $user)->trigger();
+        \mod_assign\event\submission_locked::create_from_submission($this, $submission, $user)->trigger();
         return true;
     }
 
@@ -6231,7 +6231,7 @@ class assign {
         }
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-        \mod_assign\event\submission_unlocked::create_from_user($this, $user)->trigger();
+        \mod_assign\event\submission_unlocked::create_from_submission($this, $submission, $user)->trigger();
         return true;
     }
 
