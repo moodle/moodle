@@ -470,10 +470,19 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
                                               $course->id,
                                               $teacherrole->id);
 
-        // Create a student1 with an online text submission.
+        // Create a student1 and student2 with an online text submission.
         // Simulate a submission.
         $this->setUser($student1);
         $submission = $assign->get_user_submission($student1->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>'Submission text',
+                                         'format'=>FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        $this->setUser($student2);
+        $submission = $assign->get_user_submission($student2->id, true);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
                                          'text'=>'Submission text',
@@ -534,10 +543,19 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
                                               $course->id,
                                               $teacherrole->id);
 
-        // Create a student1 with an online text submission.
+        // Create a student1 and student2 with an online text submission.
         // Simulate a submission.
         $this->setUser($student1);
         $submission = $assign->get_user_submission($student1->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>'Submission text',
+                                         'format'=>FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        $this->setUser($student2);
+        $submission = $assign->get_user_submission($student2->id, true);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
                                          'text'=>'Submission text',
