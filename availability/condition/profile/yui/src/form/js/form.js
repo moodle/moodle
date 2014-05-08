@@ -66,7 +66,7 @@ M.availability_profile.form.getNode = function(json) {
             node.one('select[name=field] > option[value=sf_' + json.sf + ']')) {
         node.one('select[name=field]').set('value', 'sf_' + json.sf);
     } else if (json.cf !== undefined &&
-            node.one('select[name=field] > option[value=cf_' + json.sf + ']')) {
+            node.one('select[name=field] > option[value=cf_' + json.cf + ']')) {
         node.one('select[name=field]').set('value', 'cf_' + json.cf);
     }
     if (json.op !== undefined &&
