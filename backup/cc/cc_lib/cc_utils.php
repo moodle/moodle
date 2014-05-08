@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'xmlbase.php';
+require_once('xmlbase.php');
 
 /**
  *
@@ -32,8 +32,8 @@ require_once 'xmlbase.php';
 abstract class cc_helpers {
 
     /**
-     *
      * Checks extension of the supplied filename
+     *
      * @param string $filename
      */
     public static function is_html($filename) {
@@ -42,7 +42,6 @@ abstract class cc_helpers {
     }
 
     /**
-     *
      * Generates unique identifier
      * @param string $prefix
      * @param string $suffix
@@ -50,17 +49,16 @@ abstract class cc_helpers {
      */
     public static function uuidgen($prefix = '', $suffix = '', $uppercase = true) {
         $uuid = trim(sprintf('%s%04x%04x%s', $prefix, mt_rand(0, 65535), mt_rand(0, 65535), $suffix));
-        $result = $uppercase ? strtoupper($uuid) : strtolower($uuid) ;
+        $result = $uppercase ? strtoupper($uuid) : strtolower($uuid);
         return $result;
     }
 
     /**
-     *
      * Creates new folder with random name
      * @param string $where
      * @param string $prefix
      * @param string $suffix
-     * @return mixed - directory short name or false in case of faliure
+     * @return mixed - directory short name or false in case of failure
      */
     public static function randomdir($where, $prefix = '', $suffix = '') {
         global $CFG;
@@ -145,12 +143,12 @@ abstract class cc_helpers {
             $type       = $mfile->nodeValue('mimetype', $node);
             $depfiles[$filepath.$filename] = array( $location,
                                                     ($mainfile == 1),
-                                                    strtolower(str_replace(' ', '_',$filename)),
+                                                    strtolower(str_replace(' ', '_', $filename)),
                                                     $type,
                                                     $source,
                                                     $author,
                                                     $license,
-                                                    strtolower(str_replace(' ', '_',$filepath)));
+                                                    strtolower(str_replace(' ', '_', $filepath)));
         }
 
         return $depfiles;
@@ -210,23 +208,21 @@ abstract class cc_helpers {
      * @param boolean $allinone
      * @throws RuntimeException
      */
-    public static function handle_static_content(cc_i_manifest &$manifest, $packageroot, $contextid, $outdir, $allinone = true){
-        cc_helpers::add_files($manifest, $packageroot, $outdir, $allinone);
+    public static function handle_static_content(cc_i_manifest &$manifest, $packageroot, $contextid, $outdir, $allinone = true) {
+        self::add_files($manifest, $packageroot, $outdir, $allinone);
         return pkg_static_resources::instance()->get_values();
     }
 
-    public static function handle_resource_content(cc_i_manifest &$manifest, $packageroot, $contextid, $outdir, $allinone = true){
+    public static function handle_resource_content(cc_i_manifest &$manifest, $packageroot, $contextid, $outdir, $allinone = true) {
         $result = array();
-        cc_helpers::add_files($manifest, $packageroot, $outdir, $allinone);
-        $files = cc_helpers::embedded_mapping($packageroot, $contextid);
-        //$rdir = $allinone ? new cc_resource_location($outdir) : null;
+        self::add_files($manifest, $packageroot, $outdir, $allinone);
+        $files = self::embedded_mapping($packageroot, $contextid);
         $rootnode = null;
         $rootvals = null;
         $depfiles = array();
         $depres = array();
         $flocation = null;
         foreach ($files as $virtual => $values) {
-            $clean_filename = $values[2];
             $vals = pkg_static_resources::instance()->get_identifier($virtual);
             $resource = $vals[3];
             $identifier = $resource->identifier;
@@ -250,17 +246,16 @@ abstract class cc_helpers {
         return $result;
     }
 
-    public static function process_linked_files($content, cc_i_manifest &$manifest, $packageroot, $contextid, $outdir, $webcontent = false) {
-        /**
-        - detect all embedded files
-        - locate their physical counterparts in moodle 2 backup
-        - copy all files in the cc package stripping any spaces and using inly lowercase letters
-        - add those files as resources of the type webcontent to the manifest
-        - replace the links to the resourcse using $IMS-CC-FILEBASE$ and their new locations
-        - cc_resource has array of files and array of dependencies
-        - most likely we would need to add all files as independent resources and than
-        attach them all as dependencies to the forum tag
-        */
+    public static function process_linked_files($content, cc_i_manifest &$manifest, $packageroot,
+                                                $contextid, $outdir, $webcontent = false) {
+        // Detect all embedded files
+        // locate their physical counterparts in moodle 2 backup
+        // copy all files in the cc package stripping any spaces and using only lowercase letters
+        // add those files as resources of the type webcontent to the manifest
+        // replace the links to the resource using $IMS-CC-FILEBASE$ and their new locations
+        // cc_resource has array of files and array of dependencies
+        // most likely we would need to add all files as independent resources and than
+        // attach them all as dependencies to the forum tag.
         $lfiles = self::embedded_files($content);
         $text = $content;
         $deps = array();
@@ -271,13 +266,13 @@ abstract class cc_helpers {
                                                  $outdir);
             $replaceprefix = $webcontent ? '' : '$IMS-CC-FILEBASE$';
             foreach ($lfiles as $lfile) {
-                if (array_key_exists($lfile, $files)) {
-                    $filename = str_replace('%2F', '/',rawurlencode($lfile));
+                if (isset($files[$lfile])) {
+                    $filename = str_replace('%2F', '/', rawurlencode($lfile));
                     $content = str_replace('@@PLUGINFILE@@'.$filename,
                                            $replaceprefix.'../'.$files[$lfile][1],
                                            $content);
-                    //for the legacy stuff
-                    $content = str_replace('$@FILEPHP@$'.str_replace('/','$@SLASH@$',$filename),
+                    // For the legacy stuff.
+                    $content = str_replace('$@FILEPHP@$'.str_replace('/', '$@SLASH@$', $filename),
                                            $replaceprefix.'../'.$files[$lfile][1],
                                            $content);
                     $deps[] = $files[$lfile][0];
@@ -380,8 +375,11 @@ class pkg_static_resources {
      */
     private static $instance = null;
 
-    private function __clone() {}
-    private function __construct() {}
+    private function __clone() {
+    }
+
+    private function __construct() {
+    }
 
     /**
      * @return pkg_static_resources
@@ -413,24 +411,20 @@ class pkg_static_resources {
     }
 
     public function get_identifier($location) {
-        $result = false;
-        if (array_key_exists($location, $this->values)) {
-            $result = $this->values[$location];
-        }
-        return $result;
+        return isset($this->values[$location]) ? $this->values[$location] : false;
     }
 
     public function reset() {
         $this->values   = array();
-        $this->finished = false  ;
+        $this->finished = false;
     }
 }
 
 
 class pkg_resource_dependencies {
     /**
-    * @var array
-    */
+     * @var array
+     */
     private $values = array();
 
     /**

@@ -1,31 +1,31 @@
 <?php
 
 /**
-* Provides Common Cartridge v1 converter class
-*
-* @package    core
-* @subpackage backup-convert
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Provides Common Cartridge v1 converter class
+ *
+ * @package    core
+ * @subpackage backup-convert
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once($CFG->dirroot . '/backup/converter/convertlib.php');
-require_once($CFG->dirroot . '/backup/cc/includes/constants.php');
-require_once($CFG->dirroot . '/backup/cc/cc2moodle.php');
-require_once($CFG->dirroot . '/backup/cc/validator.php');
+require_once($CFG->dirroot.'/backup/converter/convertlib.php');
+require_once($CFG->dirroot.'/backup/cc/includes/constants.php');
+require_once($CFG->dirroot.'/backup/cc/cc2moodle.php');
+require_once($CFG->dirroot.'/backup/cc/validator.php');
 
 class imscc1_converter extends base_converter {
 
     /**
-    * Log a message
-    *
-    * @see parent::log()
-    * @param string $message message text
-    * @param int $level message level {@example backup::LOG_WARNING}
-    * @param null|mixed $a additional information
-    * @param null|int $depth the message depth
-    * @param bool $display whether the message should be sent to the output, too
-    */
+     * Log a message
+     *
+     * @see parent::log()
+     * @param string $message message text
+     * @param int $level message level {@example backup::LOG_WARNING}
+     * @param null|mixed $a additional information
+     * @param null|int $depth the message depth
+     * @param bool $display whether the message should be sent to the output, too
+     */
     public function log($message, $level, $a = null, $depth = null, $display = false) {
         parent::log('(imscc1) '.$message, $level, $a, $depth, $display);
     }
@@ -42,12 +42,12 @@ class imscc1_converter extends base_converter {
         $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir;
         $manifest = cc2moodle::get_manifest($filepath);
         if (!empty($manifest)) {
-            // looks promising, lets load some information
+            // Looks promising, lets load some information.
             $handle = fopen($manifest, 'r');
-            $xml_snippet = fread($handle, 500);
+            $xml_snippet = fread($handle, 1024);
             fclose($handle);
 
-            // check if it has the required strings
+            // Check if it has the required strings.
 
             $xml_snippet = strtolower($xml_snippet);
             $xml_snippet = preg_replace('/\s*/m', '', $xml_snippet);
@@ -65,13 +65,13 @@ class imscc1_converter extends base_converter {
 
 
     /**
-    * Returns the basic information about the converter
-    *
-    * The returned array must contain the following keys:
-    * 'from' - the supported source format, eg. backup::FORMAT_MOODLE1
-    * 'to'   - the supported target format, eg. backup::FORMAT_MOODLE
-    * 'cost' - the cost of the conversion, non-negative non-zero integer
-    */
+     * Returns the basic information about the converter
+     *
+     * The returned array must contain the following keys:
+     * 'from' - the supported source format, eg. backup::FORMAT_MOODLE1
+     * 'to'   - the supported target format, eg. backup::FORMAT_MOODLE
+     * 'cost' - the cost of the conversion, non-negative non-zero integer
+     */
     public static function description() {
 
         return array(
@@ -102,7 +102,7 @@ class imscc1_converter extends base_converter {
             throw new imscc1_convert_exception('protected_cc_not_supported');
         }
         $status = $cc2moodle->generate_moodle_xml();
-        //Final cleanup
+        // Final cleanup.
         $xml_error = new libxml_errors_mgr(true);
         $mdoc = new DOMDocument();
         $mdoc->preserveWhiteSpace = false;
@@ -116,7 +116,7 @@ class imscc1_converter extends base_converter {
             $this->log('validation error(s): '.PHP_EOL.error_messages::instance(), backup::LOG_DEBUG, null, 2);
             throw new imscc1_convert_exception(error_messages::instance()->to_string(true));
         }
-        //Move the files to the workdir
+        // Move the files to the workdir.
         rename($manifestdir.'/course_files', $this->get_workdir_path().'/course_files');
     }
 
@@ -124,7 +124,7 @@ class imscc1_converter extends base_converter {
 }
 
 /**
-* Exception thrown by this converter
-*/
+ * Exception thrown by this converter
+ */
 class imscc1_convert_exception extends convert_exception {
 }

@@ -14,17 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once dirname(__FILE__) .'/../xmlbase.php';
-require_once 'cssparser.php';
-require_once 'pathutils.php';
-
-
+require_once(dirname(__FILE__) .'/../xmlbase.php');
+require_once('cssparser.php');
+require_once('pathutils.php');
 
 /**
  *
  * Older version better suited for PHP < 5.2
  * @deprecated
- * @param unknown_type $url
+ * @param mixed $url
  * @return boolean
  */
 function is_url_deprecated($url) {
@@ -51,118 +49,83 @@ function is_url($url) {
     return $result;
 }
 
-function GetDepFiles($manifestroot, $fname,$folder,&$filenames) {
-    $extension      = pathinfo($fname, PATHINFO_EXTENSION);
-    $filenames      = array();
-    $dcx            = new XMLGenericDocument();
-    $result         = true;
-
-    switch ($extension){
-        case 'xml':
-                 $result = @$dcx->loadXMLFile($manifestroot.$folder.$fname);
-                 if (!$result) {
-                    $result = @$dcx->loadXMLFile($manifestroot.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$fname);
-                 }
-                 GetDepFilesXML($manifestroot, $fname,$filenames,$dcx, $folder);
-            break;
-        case 'html':
-        case 'htm':
-                 $result = @$dcx->loadHTMLFile($manifestroot.$folder.$fname);
-                 if (!$result) {
-                    $result = @$dcx->loadHTMLFile($manifestroot.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$fname);
-                 }
-                 GetDepFilesHTML($manifestroot, $fname,$filenames,$dcx, $folder);
-            break;
+function GetDepFiles($manifestroot, $fname, $folder, &$filenames) {
+    static $types = array('xhtml' => true, 'html' => true, 'htm' => true);
+    $extension = strtolower(trim(pathinfo($fname, PATHINFO_EXTENSION)));
+    $filenames = array();
+    if (isset($types[$extension])) {
+        $dcx = new XMLGenericDocument();
+        $filename = $manifestroot.$folder.$fname;
+        if (!file_exists($filename)) {
+            $filename = $manifestroot.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$fname;
+        }
+        if (file_exists($filename)) {
+            $res = $dcx->loadHTMLFile($filename);
+            if ($res) {
+                GetDepFilesHTML($manifestroot, $fname, $filenames, $dcx, $folder);
+            }
+        }
     }
-    return $result;
 }
 
-
-
-function GetDepFilesXML ($manifestroot, $fname,&$filenames,&$dcx, $folder){
-        $nlist = $dcx->nodeList("//img/@src | //attachments/attachment/@href  | //link/@href | //script/@src");
-        $css_obj_array = array();
-        foreach ($nlist as $nl) {
-            $item = $folder.$nl->nodeValue;
-            $path_parts = pathinfo($item);
-            $fname = $path_parts['basename'];
-            $ext   = array_key_exists('extension',$path_parts) ? $path_parts['extension'] : '';
-            if (!is_url($nl->nodeValue)) {
-              //$file =   $folder.$nl->nodeValue; // DEPENDERA SI SE QUIERE Q SEA RELATIVO O ABSOLUTO
-              $file =   $nl->nodeValue;
-              toNativePath($file);
-              $filenames[]=$file;
+function GetDepFilesHTML($manifestroot, $fname, &$filenames, &$dcx, $folder) {
+    $dcx->resetXpath();
+    $nlist         = $dcx->nodeList("//img/@src | //link/@href | //script/@src | //a[not(starts-with(@href,'#'))]/@href");
+    $css_obj_array = array();
+    foreach ($nlist as $nl) {
+        $item       = $folder.$nl->nodeValue;
+        $path_parts = pathinfo($item);
+        $fname      = $path_parts['basename'];
+        $ext        = array_key_exists('extension', $path_parts) ? $path_parts['extension'] : '';
+        if (!is_url($folder.$nl->nodeValue) && !is_url($nl->nodeValue)) {
+            $path = $folder.$nl->nodeValue;
+            $file = fullPath($path, "/");
+            toNativePath($file);
+            if (file_exists($manifestroot.DIRECTORY_SEPARATOR.$file)) {
+                $filenames[$file] = $file;
             }
         }
-        $dcx->registerNS('qti','http://www.imsglobal.org/xsd/imscc/ims_qtiasiv1p2.xsd');
-        $dcx->resetXpath();
-        $nlist = $dcx->nodeList("//qti:mattext | //text");
-        $dcx2 = new XMLGenericDocument();
-        foreach ($nlist as $nl) {
-            if ($dcx2->loadString($nl->nodeValue)){
-                GetDepFilesHTML($manifestroot,$fname,$filenames,$dcx2,$folder);
+        if ($ext == 'css') {
+            $css = new cssparser();
+            $css->Parse($dcx->filePath().$nl->nodeValue);
+            $css_obj_array[$item] = $css;
+        }
+    }
+    $nlist = $dcx->nodeList("//*/@class");
+    foreach ($nlist as $nl) {
+        $item = $folder.$nl->nodeValue;
+        foreach ($css_obj_array as $csskey => $cssobj) {
+            $bimg  = $cssobj->Get($item, "background-image");
+            $limg  = $cssobj->Get($item, "list-style-image");
+            $npath = pathinfo($csskey);
+            if ((!empty($bimg)) && ($bimg != 'none')) {
+                $value             = stripUrl($bimg, $npath['dirname'].'/');
+                $filenames[$value] = $value;
+            } else if ((!empty($limg)) && ($limg != 'none')) {
+                $value             = stripUrl($limg, $npath['dirname'].'/');
+                $filenames[$value] = $value;
             }
         }
-}
-
-
-
-function GetDepFilesHTML ($manifestroot, $fname, &$filenames, &$dcx, $folder){
-        $dcx->resetXpath();
-        $nlist = $dcx->nodeList("//img/@src | //link/@href | //script/@src | //a[not(starts-with(@href,'#'))]/@href");
-        $css_obj_array=array();
-        foreach ($nlist as $nl) {
-            $item = $folder.$nl->nodeValue;
-            $path_parts = pathinfo($item);
-            $fname = $path_parts['basename'];
-            $ext   = array_key_exists('extension',$path_parts) ? $path_parts['extension'] : '';
-            if (!is_url($folder.$nl->nodeValue) && !is_url($nl->nodeValue)) {
-              $path = $folder.$nl->nodeValue;
-              $file = fullPath($path,"/");
-              toNativePath($file);
-              if (file_exists($manifestroot.DIRECTORY_SEPARATOR.$file)) {
-                  $filenames[]= $file;
-              }
-            }
-            if ($ext == 'css') {
-                $css = new cssparser();
-                $css->Parse($dcx->filePath().$nl->nodeValue);
-                $css_obj_array[$item]=$css;
-            }
-        }
-        $nlist = $dcx->nodeList("//*/@class");
-        foreach ($nlist as $nl) {
-            $item = $folder.$nl->nodeValue;
+    }
+    $elems_to_check = array("body", "p", "ul", "h4", "a", "th");
+    $do_we_have_it  = array();
+    foreach ($elems_to_check as $elem) {
+        $do_we_have_it[$elem] = ($dcx->nodeList("//".$elem)->length > 0);
+    }
+    foreach ($elems_to_check as $elem) {
+        if ($do_we_have_it[$elem]) {
             foreach ($css_obj_array as $csskey => $cssobj) {
-                $bimg = $cssobj->Get($item,"background-image");
-                $limg = $cssobj->Get($item,"list-style-image");
+                $sb    = $cssobj->Get($elem, "background-image");
+                $sbl   = $cssobj->Get($elem, "list-style-image");
                 $npath = pathinfo($csskey);
-                if ((!empty($bimg))&& ($bimg != 'none')) {
-                    $filenames[] = stripUrl($bimg,$npath['dirname'].'/');
-                } else
-                if ((!empty($limg))&& ($limg != 'none')) {
-                    $filenames[] = stripUrl($limg,$npath['dirname'].'/');
+                if ((!empty($sb)) && ($sb != 'none')) {
+                    $value             = stripUrl($sb, $npath['dirname'].'/');
+                    $filenames[$value] = $value;
+                } else if ((!empty($sbl)) && ($sbl != 'none')) {
+                    $value             = stripUrl($sbl, $npath['dirname'].'/');
+                    $filenames[$value] = $value;
                 }
             }
         }
-        $elems_to_check = array("body","p","ul","h4","a","th");
-        $do_we_have_it = array();
-        foreach ($elems_to_check as $elem) {
-            $do_we_have_it[$elem]=($dcx->nodeList("//".$elem)->length > 0);
-        }
-        foreach ($elems_to_check as $elem) {
-            if ($do_we_have_it[$elem]) {
-                foreach ($css_obj_array as $csskey => $cssobj) {
-                    $sb = $cssobj->Get($elem, "background-image");
-                    $sbl = $cssobj->Get($elem,"list-style-image");
-                    $npath = pathinfo($csskey);
-                    if ((!empty($sb)) && ($sb != 'none')) {
-                        $filenames[] = stripUrl($sb,$npath['dirname'].'/');
-                    } else
-                    if ((!empty($sbl)) && ($sbl != 'none')) {
-                        $filenames[] = stripUrl($sbl,$npath['dirname'].'/');
-                    }
-                }
-            }
-        }
+    }
 }
