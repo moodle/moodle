@@ -292,14 +292,23 @@ class condition extends \core_availability\condition {
      * Gets data about custom profile fields. Cached statically in current
      * request.
      *
+     * This only includes fields which can be tested by the system (those whose
+     * data is cached in $USER object) - basically doesn't include textarea type
+     * fields.
+     *
      * @return array Array of records indexed by shortname
      */
     public static function get_custom_profile_fields() {
-        global $DB;
+        global $DB, $CFG;
 
         if (self::$customprofilefields === null) {
-            self::$customprofilefields = $DB->get_records('user_info_field', null,
-                    'id ASC', 'shortname, id, name, defaultdata');
+            // Get fields and store them indexed by shortname.
+            require_once($CFG->dirroot . '/user/profile/lib.php');
+            $fields = profile_get_custom_fields(true);
+            self::$customprofilefields = array();
+            foreach ($fields as $field) {
+                self::$customprofilefields[$field->shortname] = $field;
+            }
         }
         return self::$customprofilefields;
     }

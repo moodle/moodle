@@ -318,6 +318,29 @@ class availability_profile_condition_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests what happens with custom fields that are text areas. These should
+     * not be offered in the menu because their data is not included in user
+     * object
+     */
+    public function test_custom_textarea_field() {
+        global $USER, $SITE, $DB;
+        $this->setAdminUser();
+        $info = new \core_availability\mock_info();
+
+        // Add custom textarea type.
+        $DB->insert_record('user_info_field', array(
+                'shortname' => 'longtext', 'name' => 'Long text', 'categoryid' => 1,
+                'datatype' => 'textarea'));
+        $customfield = $DB->get_record('user_info_field',
+                array('shortname' => 'longtext'));
+
+        // The list of fields should include the text field added in setUp(),
+        // but should not include the textarea field added just now.
+        $fields = condition::get_custom_profile_fields();
+        $this->assertEquals(array('frogtype'), array_keys($fields));
+    }
+
+    /**
      * Sets the custom profile field used for testing.
      *
      * @param int $userid User id
