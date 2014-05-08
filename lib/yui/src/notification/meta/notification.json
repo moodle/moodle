@@ -5,6 +5,7 @@
         "node",
         "panel",
         "event-key",
+        "escape",
         "dd-plugin"
     ]
   }
