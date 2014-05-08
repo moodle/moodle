@@ -47,6 +47,11 @@ class mod_forum_generator extends testing_module_generator {
     protected $forumpostcount = 0;
 
     /**
+     * @var int keep track of how many forum subscriptions have been created.
+     */
+    protected $forumsubscriptionscount = 0;
+
+    /**
      * To be called from data reset code only,
      * do not use in tests.
      * @return void
@@ -54,6 +59,7 @@ class mod_forum_generator extends testing_module_generator {
     public function reset() {
         $this->forumdiscussioncount = 0;
         $this->forumpostcount = 0;
+        $this->forumsubscriptionscount = 0;
 
         parent::reset();
     }
@@ -77,6 +83,40 @@ class mod_forum_generator extends testing_module_generator {
         }
 
         return parent::create_instance($record, (array)$options);
+    }
+
+    /**
+     * Function to create a dummy subscription.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the subscription object
+     */
+    public function create_subscription($record = null) {
+        global $DB;
+
+        // Increment the forum subscription count.
+        $this->forumsubscriptionscount++;
+
+        $record = (array)$record;
+
+        if (!isset($record['course'])) {
+            throw new coding_exception('course must be present in phpunit_util::create_subscription() $record');
+        }
+
+        if (!isset($record['forum'])) {
+            throw new coding_exception('forum must be present in phpunit_util::create_subscription() $record');
+        }
+
+        if (!isset($record['userid'])) {
+            throw new coding_exception('userid must be present in phpunit_util::create_subscription() $record');
+        }
+
+        $record = (object)$record;
+
+        // Add the subscription.
+        $record->id = $DB->insert_record('forum_subscriptions', $record);
+
+        return $record;
     }
 
     /**

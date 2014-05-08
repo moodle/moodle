@@ -621,10 +621,19 @@ class mod_forum_events_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
         $context = context_module::instance($forum->cmid);
+
+        // Add a subscription.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $subscription = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_subscription($record);
 
         $params = array(
             'context' => $context,
+            'objectid' => $subscription->id,
             'other' => array('forumid' => $forum->id),
             'relateduserid' => $user->id,
         );
@@ -709,10 +718,19 @@ class mod_forum_events_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
         $context = context_module::instance($forum->cmid);
+
+        // Add a subscription.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $subscription = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_subscription($record);
 
         $params = array(
             'context' => $context,
+            'objectid' => $subscription->id,
             'other' => array('forumid' => $forum->id),
             'relateduserid' => $user->id,
         );
