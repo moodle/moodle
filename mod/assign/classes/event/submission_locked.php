@@ -48,6 +48,7 @@ class submission_locked extends base {
      *
      * @param \assign $assign
      * @param \stdClass $submission
+     * @param \stdClass $user
      * @return submission_locked
      */
     public static function create_from_submission(\assign $assign, \stdClass $submission, \stdClass $user) {
