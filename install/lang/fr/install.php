@@ -34,7 +34,7 @@ $string['admindirname'] = 'Dossier administration';
 $string['availablelangs'] = 'Paquetages de langue disponibles';
 $string['chooselanguagehead'] = 'Choisissez une langue';
 $string['chooselanguagesub'] = 'Veuillez choisir la langue d\'installation. Cette langue sera utilisée comme langue par défaut du site, que vous pourrez modifier ultérieurement.';
-$string['clialreadyconfigured'] = 'Le fichier config.php existe déjà. Veuillez utiliser admin/cli/install_database.php si vous désirez mettre à jour ce site.';
+$string['clialreadyconfigured'] = 'Le fichier config.php existe déjà. Veuillez utiliser admin/cli/install_database.php pour installer Moodle sur ce site.';
 $string['clialreadyinstalled'] = 'Le fichier config.php existe déjà. Veuillez utiliser admin/cli/upgrade.php si vous désirez mettre à jour ce site.';
 $string['cliinstallheader'] = 'Programme d\'installation de Moodle {$a} en ligne de commande';
 $string['databasehost'] = 'Serveur de base de données';
@@ -65,9 +65,15 @@ $string['pathshead'] = 'Confirmer les chemins d\'accès';
 $string['pathsrodataroot'] = 'Le dossier de données n\'est pas accessible en écriture.';
 $string['pathsroparentdataroot'] = 'Le dossier parent ({$a->parent}) n\'est pas accessible en écriture. Le dossier de données ({$a->dataroot}) ne peut pas être créé par l\'installeur.';
 $string['pathssubadmindir'] = 'Quelques rares hébergeurs utilisent « /admin » comme URL spéciale pour l\'accès à un tableau de bord ou d\'autres fonctionnalités. Malheureusement ceci entre en conflit avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger ceci en renommant le dossier admin de votre installation Moodle et en plaçant le nouveau nom choisi dans ce champ. Par exemple, <em>moodleadmin</em>. Ceci modifiera tous les liens de l\'administration de Moodle.';
-$string['pathssubdataroot'] = 'Un emplacement est nécessaire pour permettre à Moodle d\'enregistrer les fichiers déposés. Ce dossier doit être accessible en lecture et <strong>en écriture</strong> par le serveur web (dénomé « nobody » ou « apache » ou encore « www »), mais ne doit pas être accessible directement via le web. L\'installeur va tenter de le créer s\'il n\'existe pas.';
-$string['pathssubdirroot'] = 'Le chemin d\'accès complet au dossier d\'installation de Moodle.';
-$string['pathssubwwwroot'] = 'L\'adresse web complète par laquelle on accédera à Moodle. Il n\'est pas possible d\'accéder à Moodle depuis plusieurs adresses web différentes. Si votre site web possède plusieurs adresses web publiques, vous devez définir des redirections permanentes pour toutes ces adresses, sauf celle qui est indiquée ici. Si votre site est accessible depuis un intranet et internet, indiquez ici l\'adresse publique et configurez le DNS de sorte que les utilisateurs de l\'intranet puissent également utiliser l\'adresse publique.';
+$string['pathssubdataroot'] = '<p>Un dossier dans lequel Moodle stockera tous les fichiers qui seront déposés par les utilisateurs.</p>
+<p>Ce dossier doit être accessible en lecture et en écriture par le serveur web (dénomé « nobody » ou « apache » ou encore « www-data »).</p>
+<p>Il ne doit pas être accessible directement via le web.</p>
+<p>Si ce dossier n\'existe pas encore, Moodle tentera de le créer au cours du processus d\'installation.</p>';
+$string['pathssubdirroot'] = '<p>Le chemin d\'accès complet au dossier contenant le code source de Moodle.</p>';
+$string['pathssubwwwroot'] = '<p>L\'adresse web complète par laquelle on accédera à Moodle, i.e. l\'adresse que les utilisateurs saisiront dans la barre d\'adresse de leur navigateur pour accéder à Moodle.</p>
+<p>Il n\'est pas possible d\'accéder à Moodle depuis plusieurs adresses web différentes. Si votre site web est accessible depuis plusieurs adresses, saisissez ici la plus simple d\'entre elles et définissez des redirections permanentes pour toutes les autres adresses.</p>
+<p>Si votre site est accessible depuis internet et un réseau interne (un intranet), indiquez ici l\'adresse publique.</p>
+<p>Si l\'adresse indiquée actuellement n\'est pas correcte,  veuillez modifier l\'URL dans la barre d\'adresse de votre navigateur et recommencer l\'installation.</p>';
 $string['pathsunsecuredataroot'] = 'L\'emplacement du dossier de données n\'est pas sûr';
 $string['pathswrongadmindir'] = 'Le dossier d\'administration n\'existe pas';
 $string['phpextension'] = 'Extension PHP {$a}';
