@@ -3728,6 +3728,7 @@ class assign {
 
         // Include extension form.
         require_once($CFG->dirroot . '/mod/assign/extensionform.php');
+        require_sesskey();
 
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grantextension', $this->context);
@@ -3774,6 +3775,7 @@ class assign {
 
         // Need grade permission
         require_capability('mod/assign:grade', $this->context);
+        require_sesskey();
 
         // make sure advanced grading is disabled
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
@@ -3977,6 +3979,7 @@ class assign {
 
         // Need submit permission to submit an assignment
         require_capability('mod/assign:grade', $this->context);
+        require_sesskey();
 
         $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id,
                                                                  'contextid'=>$this->context->id,

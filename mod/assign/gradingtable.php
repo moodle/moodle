@@ -560,9 +560,21 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     function col_select(stdClass $row) {
-        return '<label class="accesshide" for="selectuser_' . $row->userid . '">' .
-            get_string('selectuser', 'assign', fullname($row)) . '</label>
-            <input type="checkbox" id="selectuser_' . $row->userid . '" name="selectedusers" value="' . $row->userid . '"/>';
+        $selectcol = '<label class="accesshide" for="selectuser_' . $row->userid . '">';
+        $name = '';
+        if ($this->assignment->is_blind_marking()) {
+            $name = get_string('hiddenuser', 'assign') .
+                    $this->assignment->get_uniqueid_for_user($row->userid);
+        } else {
+            $name = fullname($row);
+        }
+        $selectcol .= get_string('selectuser', 'assign', $name);
+        $selectcol .= '</label>';
+        $selectcol .= '<input type="checkbox"
+                              id="selectuser_' . $row->userid . '"
+                              name="selectedusers"
+                              value="' . $row->userid . '"/>';
+        return $selectcol;
     }
 
     /**
