@@ -30,8 +30,9 @@ defined('MOODLE_INTERNAL') || die();
  * This class keeps track of the various access rules that apply to a particular
  * quiz, with convinient methods for seeing whether access is allowed.
  *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.2
  */
 class quiz_access_manager {
     /** @var quiz the quiz settings object. */
@@ -143,16 +144,33 @@ class quiz_access_manager {
     /**
      * Save any submitted settings when the quiz settings form is submitted.
      *
-     * Note that the standard plugins do not use this mechanism, becuase all their
+     * Note that the standard plugins do not use this mechanism because their
      * settings are stored in the quiz table.
      *
      * @param object $quiz the data from the quiz form, including $quiz->id
-     *      which is the is of the quiz being saved.
+     *      which is the id of the quiz being saved.
      */
     public static function save_settings($quiz) {
 
         foreach (self::get_rule_classes() as $rule) {
             $rule::save_settings($quiz);
+        }
+    }
+
+    /**
+     * Delete any rule-specific settings when the quiz is deleted.
+     *
+     * Note that the standard plugins do not use this mechanism because their
+     * settings are stored in the quiz table.
+     *
+     * @param object $quiz the data from the database, including $quiz->id
+     *      which is the id of the quiz being deleted.
+     * @since Moodle 2.7.1, 2.6.4, 2.5.7
+     */
+    public static function delete_settings($quiz) {
+
+        foreach (self::get_rule_classes() as $rule) {
+            $rule::delete_settings($quiz);
         }
     }
 
