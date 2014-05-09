@@ -47,14 +47,13 @@ class submission_unlocked extends base {
      * @since Moodle 2.7
      *
      * @param \assign $assign
-     * @param \stdClass $submission
      * @param \stdClass $user
      * @return submission_unlocked
      */
-    public static function create_from_submission(\assign $assign, \stdClass $submission, \stdClass $user) {
+    public static function create_from_user(\assign $assign, \stdClass $user) {
         $data = array(
             'context' => $assign->get_context(),
-            'objectid' => $submission->id,
+            'objectid' => $assign->get_instance()->id,
             'relateduserid' => $user->id,
         );
         self::$preventcreatecall = false;
@@ -93,7 +92,7 @@ class submission_unlocked extends base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'assign_submission';
+        $this->data['objecttable'] = 'assign';
     }
 
     /**
@@ -115,7 +114,7 @@ class submission_unlocked extends base {
      */
     protected function validate_data() {
         if (self::$preventcreatecall) {
-            throw new \coding_exception('cannot call submission_unlocked::create() directly, use submission_unlocked::create_from_submission() instead.');
+            throw new \coding_exception('cannot call submission_unlocked::create() directly, use submission_unlocked::create_from_user() instead.');
         }
 
         parent::validate_data();

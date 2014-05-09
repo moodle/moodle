@@ -212,7 +212,6 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance();
         $sink = $this->redirectEvents();
 
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
         $assign->lock_submission($this->students[0]->id);
 
         $events = $sink->get_events();
@@ -447,7 +446,6 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $assign = $this->create_instance();
         $sink = $this->redirectEvents();
 
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
         $assign->unlock_submission($this->students[0]->id);
 
         $events = $sink->get_events();
