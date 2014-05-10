@@ -85,14 +85,4 @@ class webservice_service_updated extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
-
-    /**
-     * Set the legacy event log data.
-     *
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
-    }
-
 }

@@ -98,5 +98,4 @@ class webservice_service_user_added extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
-
 }

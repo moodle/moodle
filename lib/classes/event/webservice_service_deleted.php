@@ -85,5 +85,4 @@ class webservice_service_deleted extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
-
 }

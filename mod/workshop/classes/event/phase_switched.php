@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop phase switched event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopphase: Workshop phase.
+ *      - int workshopphase: Workshop phase.
  * }
  *
  * @package    mod_workshop

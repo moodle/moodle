@@ -77,7 +77,7 @@ class submission_updated extends \mod_assign\event\submission_updated {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['onlinetextwordcount'])) {
-            throw new \coding_exception('Other must contain the key onlinetextwordcount.');
+            throw new \coding_exception('The \'onlinetextwordcount\' value must be set in other.');
         }
     }
 }

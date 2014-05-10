@@ -36,6 +36,12 @@ debugging('core\event\content_viewed has been deprecated. Please extend base eve
  *
  * This class has been deprecated, please extend base event or other relevent abstract class.
  *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string content: name of the content viewed.
+ * }
+ *
  * @package    core
  * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int courseid: id of course.
- *      - string courseshortname: short name of course.
+ *      - string courseshortname: shortname of course.
  *      - string coursefullname: fullname of course.
  * }
  *

@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop submission viewed event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopid: workshop ID.
+ *      - int workshopid: workshop ID.
  * }
  *
  * @package    mod_workshop

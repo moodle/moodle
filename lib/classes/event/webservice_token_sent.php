@@ -73,5 +73,4 @@ class webservice_token_sent extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_tokens';
     }
-
 }

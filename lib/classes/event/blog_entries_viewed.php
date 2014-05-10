@@ -30,7 +30,14 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
+ *      - int entryid: id of the entry.
+ *      - int tagid: id of the tag.
+ *      - int userid: id of the user.
+ *      - int modid: id of the mod.
+ *      - int groupid: id of the group.
  *      - int courseid: id of associated course.
+ *      - string search: the string used to search.
+ *      - int fromstart: the time to search from.
  * }
  *
  * @package    core
