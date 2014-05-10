@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string newcontent: updated content.
+ *      - string newcontent: (optional) updated content.
  * }
  *
  * @package    mod_wiki

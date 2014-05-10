@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - string shortname: shortname of role.
- *      - string description: role description.
- *      - string archetype: role type.
+ *      - string description: (optional) role description.
+ *      - string archetype: (optional) role type.
  * }
  *
  * @package    core

@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int submitterid: id of submitter (null when trigged by CLI script).
- *      - int quizid: the id of the quiz.
+ *      - int quizid: (optional) the id of the quiz.
  * }
  *
  * @package    mod_quiz

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      - int workshopid: workshop ID.
+ *      - int workshopid: (optional) workshop ID.
  * }
  *
  * @package    mod_workshop

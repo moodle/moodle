@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string concept: the concept of deleted entry.
+ *      - string concept: (optional) the concept of deleted entry.
  *      - string mode: (optional) view mode user was in before deleting entry.
  *      - int|string hook: (optional) hook parameter in the previous view mode.
  * }

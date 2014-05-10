@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string concept: the concept of updated entry (after update).
+ *      - string concept: (optional) the concept of updated entry (after update).
  * }
  *
  * @package    mod_glossary

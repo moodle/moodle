@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event properties.
  *
  *      - string loadedcontent: A reference to the content loaded.
- *      - int instanceid: Instance id of the scorm activity.
+ *      - int instanceid: (optional) Instance id of the scorm activity.
  * }
  *
  * @package    mod_scorm

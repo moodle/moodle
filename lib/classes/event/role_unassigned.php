@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  *      - int id: role assigned id.
  *      - string component: name of component.
- *      - int itemid: id of item.
+ *      - int itemid: (optional) id of item.
  * }
  *
  * @package    core

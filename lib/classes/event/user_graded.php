@@ -36,8 +36,8 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about the event.
  *
  *      - int itemid: grade item id.
- *      - bool overridden: Is this grade override?
- *      - float finalgrade: the final grade value.
+ *      - bool overridden: (optional) Is this grade override?
+ *      - float finalgrade: (optional) the final grade value.
  * }
  *
  * @package    core

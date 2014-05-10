@@ -32,9 +32,9 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - int courseid: id of course.
- *      - string courseshortname: shortname of course.
- *      - string coursefullname: fullname of course.
+ *      - int courseid: (optional) id of course.
+ *      - string courseshortname: (optional) shortname of course.
+ *      - string coursefullname: (optional) fullname of course.
  * }
  *
  * @package    core
