@@ -30,9 +30,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop assessment_evaluations reset event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopid: the ID of the workshop.
+ *      - int workshopid: the ID of the workshop.
  * }
  *
  * @package    mod_workshop

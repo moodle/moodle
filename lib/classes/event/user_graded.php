@@ -72,6 +72,7 @@ class user_graded extends base {
     /**
      * Get grade object.
      *
+     * @throws \coding_exception
      * @return \grade_grade
      */
     public function get_grade() {

@@ -29,11 +29,11 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop submission reassessed event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopid: Workshop ID.
- *     - int submissionid: Submission ID.
- *     - float grade: Assessment grade.
+ *      - int workshopid: Workshop ID.
+ *      - int submissionid: Submission ID.
+ *      - float grade: Assessment grade.
  * }
  *
  * @package    mod_workshop

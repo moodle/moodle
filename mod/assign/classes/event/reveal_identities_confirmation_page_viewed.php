@@ -119,7 +119,7 @@ class reveal_identities_confirmation_page_viewed extends base {
         parent::validate_data();
 
         if (!isset($this->other['assignid'])) {
-            throw new \coding_exception('The \'assignid\' must be set in other.');
+            throw new \coding_exception('The \'assignid\' value must be set in other.');
         }
     }
 }
