@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      - string submissiontitle: Submission title.
+ *      - string submissiontitle: (optional) Submission title.
  * }
  *
  * @package    mod_workshop

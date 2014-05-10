@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string publishstate: the publish state.
+ *      - string publishstate: (optional) the publish state.
  * }
  *
  * @package    core
