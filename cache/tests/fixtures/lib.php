@@ -37,6 +37,47 @@ defined('MOODLE_INTERNAL') || die();
 class cache_config_phpunittest extends cache_config_writer {
 
     /**
+     * Returns the expected path to the configuration file.
+     *
+     * We override this function to add handling for $CFG->altcacheconfigpath.
+     * We want to support it so that people can run unit tests against alternative cache setups.
+     * However we don't want to ever make changes to the file at $CFG->altcacheconfigpath so we
+     * always use dataroot and copy the alt file there as required.
+     *
+     * @throws cache_exception
+     * @return string The absolute path
+     */
+    protected static function get_config_file_path() {
+        global $CFG;
+        // We always use this path.
+        $configpath = $CFG->dataroot.'/muc/config.php';
+
+        if (!empty($CFG->altcacheconfigpath)) {
+            $path = $CFG->altcacheconfigpath;
+            if (is_dir($path) && is_writable($path)) {
+                // Its a writable directory, thats fine. Convert it to a file.
+                $path = $CFG->altcacheconfigpath.'/cacheconfig.php';
+            }
+            if (is_readable($path)) {
+                $directory = dirname($configpath);
+                if ($directory !== $CFG->dataroot && !file_exists($directory)) {
+                    $result = make_writable_directory($directory, false);
+                    if (!$result) {
+                        throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Cannot create config directory. Check the permissions on your moodledata directory.');
+                    }
+                }
+                // We don't care that this fails but we should let the developer know.
+                if (!is_readable($configpath) && !@copy($path, $configpath)) {
+                    debugging('Failed to copy alt cache config file to required location');
+                }
+            }
+        }
+
+        // We always use the dataroot location.
+        return $configpath;
+    }
+
+    /**
      * Adds a definition to the stack
      * @param string $area
      * @param array $properties
@@ -56,6 +97,17 @@ class cache_config_phpunittest extends cache_config_writer {
             }
         }
         $this->configdefinitions[$area] = $properties;
+        switch ($properties['mode']) {
+            case cache_store::MODE_APPLICATION:
+                $this->phpunit_add_definition_mapping($area, 'default_application', 0);
+                break;
+            case cache_store::MODE_SESSION:
+                $this->phpunit_add_definition_mapping($area, 'default_session', 0);
+                break;
+            case cache_store::MODE_REQUEST:
+                $this->phpunit_add_definition_mapping($area, 'default_request', 0);
+                break;
+        }
     }
 
     /**

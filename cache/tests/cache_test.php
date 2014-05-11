@@ -62,6 +62,14 @@ class core_cache_testcase extends advanced_testcase {
      * Tests cache configuration
      */
     public function test_cache_config() {
+        global $CFG;
+
+        if (!empty($CFG->altcacheconfigpath)) {
+            // We need to skip this test - it checks the default config structure, but very likely we arn't using the
+            // default config structure here so theres no point in running the test.
+            $this->markTestSkipped('Skipped testing default cache config structure as alt cache path is being used.');
+        }
+
         $instance = cache_config::instance();
         $this->assertInstanceOf('cache_config_phpunittest', $instance);
 
@@ -1074,6 +1082,9 @@ class core_cache_testcase extends advanced_testcase {
      */
     public function test_alt_cache_path() {
         global $CFG;
+        if ($CFG->altcacheconfigpath) {
+            $this->markTestSkipped('Skipped testing alt cache path as it is already being used.');
+        }
         $this->resetAfterTest();
         $CFG->altcacheconfigpath = $CFG->dataroot.'/cache/altcacheconfigpath';
         $instance = cache_config_phpunittest::instance();
@@ -1149,6 +1160,12 @@ class core_cache_testcase extends advanced_testcase {
      */
     public function test_disable() {
         global $CFG;
+
+        if (!empty($CFG->altcacheconfigpath)) {
+            // We can't run this test as it requires us to delete the cache configuration script which we just
+            // cant do with a custom path in play.
+            $this->markTestSkipped('Skipped testing cache disable functionality as alt cache path is being used.');
+        }
 
         $configfile = $CFG->dataroot.'/muc/config.php';
 

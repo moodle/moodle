@@ -325,11 +325,21 @@ class cache_factory {
     public function create_config_instance($writer = false) {
         global $CFG;
 
-        // Check if we need to create a config file with defaults.
-        $needtocreate = !cache_config::config_file_exists();
-
         // The class to use.
         $class = 'cache_config';
+        // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+            require_once($CFG->dirroot.'/cache/locallib.php');
+            require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
+            // We have just a single class for PHP unit tests. We don't care enough about its
+            // performance to do otherwise and having a single method allows us to inject things into it
+            // while testing.
+            $class = 'cache_config_phpunittest';
+        }
+
+        // Check if we need to create a config file with defaults.
+        $needtocreate = !$class::config_file_exists();
+
         if ($writer || $needtocreate) {
             require_once($CFG->dirroot.'/cache/locallib.php');
             $class .= '_writer';
@@ -350,6 +360,7 @@ class cache_factory {
             // Create the default configuration.
             // Update the state, we are now initialising the cache.
             self::set_state(self::STATE_INITIALISING);
+            /** @var cache_config_writer $class */
             $configuration = $class::create_default_configuration();
             if ($configuration !== true) {
                 // Failed to create the default configuration. Disable the cache stores and update the state.
