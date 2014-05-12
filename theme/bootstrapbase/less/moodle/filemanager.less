@@ -91,20 +91,34 @@
     border-right: none;
 }
 .file-picker .fp-repo-items {
-    vertical-align: top;
-    display: inline-block;
-    .ie7-inline-block();
-    margin-left: 181px;
+    float: none;
+    width: auto;
+    margin-left:181px;
+}
+.moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
+    float: left;
+}
+.dir-rtl .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:181px;
+}
+.dir-rtl .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
+    float: right;
 }
 .file-picker .fp-navbar {
     background: #F2F2F2;
     min-height: 22px;
     border-bottom: 1px solid #BBBBBB;
-    padding: 5px 8px;
+    min-height: 40px;
+    overflow: hidden;
 }
 .file-picker .fp-content {
     background: #FFFFFF;
-    clear: both;
+    clear: none;
     overflow: auto;
     width: 678px;
     height: 477px;
