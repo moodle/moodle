@@ -576,7 +576,7 @@ function xmldb_quiz_upgrade($oldversion) {
                 }
 
                 $questionidtoslotrowid = $DB->get_records_menu('quiz_slots',
-                        array('quizid' => $quiz->id), '', 'questionid, id');
+                        array('quizid' => $quiz->id), '', 'id, questionid');
 
                 $problemfound = false;
                 $currentpage = 1;
@@ -596,16 +596,17 @@ function xmldb_quiz_upgrade($oldversion) {
                         continue;
                     }
 
-                    if (array_key_exists($questionid, $questionidtoslotrowid)) {
+                    $key = array_search($questionid, $questionidtoslotrowid);
+                    if ($key !== false) {
                         // Normal case. quiz_slots entry is present.
                         // Just need to add slot and page.
                         $quizslot = new stdClass();
-                        $quizslot->id   = $questionidtoslotrowid[$questionid];
+                        $quizslot->id   = $key;
                         $quizslot->slot = $slot;
                         $quizslot->page = $currentpage;
                         $DB->update_record('quiz_slots', $quizslot);
 
-                        unset($questionidtoslotrowid[$questionid]); // So we can do a sanity check later.
+                        unset($questionidtoslotrowid[$key]); // So we can do a sanity check later.
                         $slot++;
                         continue;
 
@@ -650,11 +651,11 @@ function xmldb_quiz_upgrade($oldversion) {
                 // quiz_slots rows linked to this quiz.
                 if (!empty($questionidtoslotrowid)) {
                     debugging('During upgrade, detected that questions ' .
-                            implode(', ', array_keys($questionidtoslotrowid)) .
+                            implode(', ', array_values($questionidtoslotrowid)) .
                             ' had instances in quiz ' . $quiz->id . ' but were not actually used. ' .
                             'The instances have been removed.', DEBUG_NORMAL);
 
-                    $DB->delete_records_list('quiz_slots', 'id', array_values($questionidtoslotrowid));
+                    $DB->delete_records_list('quiz_slots', 'id', array_keys($questionidtoslotrowid));
                     $problemfound = true;
                 }
 
