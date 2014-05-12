@@ -668,6 +668,9 @@ function xmldb_quiz_upgrade($oldversion) {
                                FROM {quiz_slots}
                               WHERE quizid = ?",
                             array($quiz->id));
+                    if (!$newsumgrades) {
+                        $newsumgrades = 0;
+                    }
                     if (abs($newsumgrades - $quiz->sumgrades) > 0.000005) {
                         debugging('Because of the previously mentioned problems, ' .
                                 'sumgrades for quiz ' . $quiz->id .
