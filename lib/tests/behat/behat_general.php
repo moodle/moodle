@@ -870,9 +870,9 @@ class behat_general extends behat_base {
                     return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
                 },
                 $params,
-                false,
+                self::REDUCED_TIMEOUT,
                 $exception,
-                self::REDUCED_TIMEOUT
+                false
             );
 
             throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
