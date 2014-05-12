@@ -56,16 +56,16 @@ $table = new html_table();
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname, $strentries);
-    $table->align = array ("CENTER", "LEFT", "CENTER");
+    $table->align = array ('center', 'left', 'center');
 } else {
     $table->head  = array ($strname, $strentries);
-    $table->align = array ("LEFT", "CENTER");
+    $table->align = array ('left', 'center');
 }
 
 if ($show_rss = (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
                  $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
     $table->head[] = $strrss;
-    $table->align[] = "CENTER";
+    $table->align[] = 'center';
 }
 
 $currentsection = "";
