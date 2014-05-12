@@ -315,11 +315,11 @@ class block_course_overview_renderer extends plugin_renderer_base {
         $plural = 's';
         if ($msgcount > 0) {
             $output .= get_string('youhavemessages', 'block_course_overview', $msgcount);
-        } else {
-            $output .= get_string('youhavenomessages', 'block_course_overview');
             if ($msgcount == 1) {
                 $plural = '';
             }
+        } else {
+            $output .= get_string('youhavenomessages', 'block_course_overview');
         }
         $output .= html_writer::link(new moodle_url('/message/index.php'), get_string('message'.$plural, 'block_course_overview'));
         $output .= $this->output->box_end();
