@@ -35,7 +35,7 @@ $PAGE->set_context($usercontext);
 $PAGE->set_url('/user/managetoken.php');
 $PAGE->set_title(get_string('securitykeys', 'webservice'));
 $PAGE->set_heading(get_string('securitykeys', 'webservice'));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 $rsstokenboxhtml = $webservicetokenboxhtml = '';
 /// Manage user web service tokens

@@ -1377,6 +1377,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_submission_graded_event() {
+        $this->editingteachers[0]->ignoresesskey = true;
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -1434,6 +1435,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         );
         $this->assertEventLegacyLogData($expected, $event);
         $sink->close();
+        // Revert to defaults.
+        $this->editingteachers[0]->ignoresesskey = false;
     }
 
     public function test_disable_submit_after_cutoff_date() {

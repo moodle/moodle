@@ -253,10 +253,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'display', get_string('display', 'form'));
 
         // Show user picture.
-        $mform->addElement('select', 'showuserpicture', get_string('showuserpicture', 'quiz'), array(
-                QUIZ_SHOWIMAGE_NONE => get_string('shownoimage', 'quiz'),
-                QUIZ_SHOWIMAGE_SMALL => get_string('showsmallimage', 'quiz'),
-                QUIZ_SHOWIMAGE_LARGE => get_string('showlargeimage', 'quiz')));
+        $mform->addElement('select', 'showuserpicture', get_string('showuserpicture', 'quiz'),
+                quiz_get_user_image_options());
         $mform->addHelpButton('showuserpicture', 'showuserpicture', 'quiz');
         $mform->setAdvanced('showuserpicture', $quizconfig->showuserpicture_adv);
         $mform->setDefault('showuserpicture', $quizconfig->showuserpicture);

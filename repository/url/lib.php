@@ -46,7 +46,7 @@ class repository_url extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $this->file_url = optional_param('file', '', PARAM_RAW);
+        $this->file_url = optional_param('file', '', PARAM_URL);
     }
 
     public function check_login() {

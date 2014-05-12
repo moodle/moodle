@@ -2939,5 +2939,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013111801.04);
     }
 
+    if ($oldversion < 2013111802.10) {
+        // Fixing possible wrong MIME type for DigiDoc files.
+        $extensions = array('%.bdoc', '%.cdoc', '%.ddoc');
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($extensions as $extension) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                'application/x-digidoc',
+                $select,
+                array($extension)
+            );
+        }
+        upgrade_main_savepoint(true, 2013111802.10);
+    }
+
     return true;
 }

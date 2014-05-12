@@ -224,8 +224,10 @@ abstract class moodleform_mod extends moodleform {
                 // is changed, maybe someone has completed it now)
                 $mform->getElement('completionunlocked')->setValue(1);
             } else {
-                // Has the element been unlocked?
-                if ($mform->exportValue('unlockcompletion')) {
+                // Has the element been unlocked, either by the button being pressed
+                // in this request, or the field already being set from a previous one?
+                if ($mform->exportValue('unlockcompletion') ||
+                        $mform->exportValue('completionunlocked')) {
                     // Yes, add in warning text and set the hidden variable
                     $mform->insertElementBefore(
                         $mform->createElement('static', 'completedunlocked',
@@ -688,6 +690,11 @@ abstract class moodleform_mod extends moodleform {
                 $mform->disabledIf('completionusegrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
                 $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion');
                 $gotcompletionoptions = true;
+
+                // If using the rating system, there is no grade unless ratings are enabled.
+                if ($this->_features->rating) {
+                    $mform->disabledIf('completionusegrade', 'assessed', 'eq', 0);
+                }
             }
 
             // Automatic completion according to module-specific rules

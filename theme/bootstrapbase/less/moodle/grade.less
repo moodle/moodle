@@ -16,3 +16,217 @@
         margin-bottom: 0;
     }
 }
+
+// Rubrics
+#page-grade-grading-manage {
+    #activemethodselector {
+        label {
+            display: inline-block;
+        }
+        .helptooltip {
+            margin-right: 0.5em;
+        }
+    }
+    .actions {
+        display: block;
+        text-align: center;
+        margin-bottom: 1em;
+        .action {
+            .btn();
+            .btn-large();
+            display: inline-block;
+            position: relative;
+            vertical-align: top;
+            width: 150px;
+            text-align: center;
+            overflow: hidden;
+            margin: 0.5em;
+            padding: 1em;
+            border: 1px solid #aaa;
+            .action-icon {
+                display: inline-block;
+                position: relative;
+                height: 64px;
+                width: 64px;
+            }
+            .action-text {
+                position: relative;
+                top: 0.4em;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+#page-grade-grading-form-rubric-edit {
+    .gradingform_rubric_editform .status {
+        font-size: 70%;
+    }
+}
+
+.gradingform_rubric.editor {
+    .addlevel, .addcriterion {
+        input {
+            // Fallback for IE8: we use Bootstrap 2's button styles normally, but
+            // IE8 ignores background-image: linear-gradient rules.
+            background: #fff none no-repeat top left;
+        }
+    }
+}
+
+.dir-rtl {
+    #rubric-rubric.gradingform_rubric {
+        #rubric-criteria .criterion {
+            .level {
+                .score {
+                    text-align: right;
+                    float: right;
+                    margin-left: 28px;
+                    margin-right: 0px;
+                }
+                .delete {
+                    float: left;
+                    input {
+                        left: 0;
+                        right: auto;
+                    }
+                }
+            }
+        }
+        .addcriterion {
+            margin-right: 5px;
+            margin-left: 0px;
+
+            input {
+                padding-right: 26px;
+                padding-left: 10px;
+                background-position: right 8px top 8px;
+            }
+        }
+        .options {
+            .option {
+                .value {
+                    margin-left: 0px;
+                    margin-right: 5px;
+                }
+                input {
+                    // margins flipped for RTL.
+                    margin-left: 12px;
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}
+
+#rubric-rubric {
+    &.gradingform_rubric {
+        #rubric-criteria {
+            margin-bottom: 1em;
+            @rubricPadding: 6px;
+            .criterion {
+                .description {
+                    vertical-align: top;
+                    padding: @rubricPadding;
+                    textarea {
+                        margin-bottom: 0px;
+                        height: 115px;
+                    }
+                }
+                .definition {
+                    textarea {
+                        width: 80%;
+                        margin-bottom: 0px;
+                    }
+                }
+                .score {
+                    position: relative;
+                    float: left;
+                    margin-right: 28px;
+                    input {
+                        margin-bottom: 0px;
+                    }
+                }
+                .level {
+                    vertical-align: top;
+                    padding: @rubricPadding;
+                    .delete {
+                        position: relative;
+                        width: 32px;
+                        height: 32px;
+                        margin-top: -32px;
+                        clear: both;
+                        float: right;
+                        input {
+                            display: block;
+                            position: absolute;
+                            right: 0;
+                            bottom: 0;
+                            height: 24px;
+                            width: 24px;
+                            margin: 0px;
+                            &:hover {
+                                background-color: #ddd;
+                            }
+                        }
+                    }
+                }
+                .scorevalue {
+                    input {
+                        // Should handle at least three chars with room to spare.
+                        float: none;
+                        width: 2em;
+                        &.hiddenelement,&.pseudotablink {
+                            // Zero out the width if it's still in the block flow for some reason
+                            // when hidden
+                            width: 0;
+                        }
+                    }
+                }
+                .addlevel {
+                    vertical-align: middle;
+                    input {
+                        .btn();
+                        background-position: 0px 0px;
+                        height: 30px;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+        .addcriterion {
+            margin-left: 5px;
+            .btn();
+            padding: 0;
+            input {
+                margin: 0;
+                color: inherit;
+                text-shadow: inherit;
+                border: 0px none;
+                line-height: inherit;
+                background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
+                padding-left: 26px;
+            }
+            margin-bottom: 1em;
+        }
+        .options {
+            clear: both;
+            .option {
+                label {
+                    margin: 0;
+                    padding: 0;
+                    font-size: inherit;
+                    font-weight: normal;
+                    line-height: 2em;
+                    color: inherit;
+                    text-shadow: none;
+                    background-color: transparent;
+                }
+                input {
+                    margin-left: 5px;
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
+}

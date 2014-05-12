@@ -615,7 +615,7 @@ function lti_get_types_for_add_instance() {
     $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id, 'active' => LTI_TOOL_STATE_CONFIGURED));
 
     $types = array();
-    $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => $SITE->id);
+    $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => 0);
 
     foreach ($admintypes as $type) {
         $types[$type->id] = $type;

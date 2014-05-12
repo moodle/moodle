@@ -600,6 +600,7 @@ table#categoryquestions {
     float: left;
     position: relative;
     margin-left: 0.3em;
+    margin-right: 0.3em;
     margin-bottom: 0.2em;
     border-left: thin solid #777;
     line-height: 1.3em;
@@ -1084,6 +1085,7 @@ bank window's title is prominent enough*/
 #page-mod-quiz-edit .pagecontrols {
     clear: both;
     margin-left: 0.5em;
+    margin-right: 0.5em;
     padding-top: 0.5em;
 }
 #page-mod-quiz-edit .pagecontrols .singlebutton {
@@ -1315,4 +1317,9 @@ bank window's title is prominent enough*/
 #page-mod-quiz-edit.dir-rtl div.points input {
     direction: ltr;
     text-align: left;
+}
+#page-mod-quiz-edit.dir-rtl .pagecontrols .singlebutton {
+    float: right;
+    margin-left: 0;
+    margin-right: 1em;
 }

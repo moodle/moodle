@@ -100,7 +100,7 @@ if ($tagnew = $tagform->get_data()) {
         }
     }
 
-    if (!has_capability('moodle/tag:manage', $systemcontext) && !has_capability('moodle/tag:edit', $systemcontext)) {
+    if (!has_capability('moodle/tag:manage', $systemcontext)) {
         unset($tagnew->name);
         unset($tagnew->rawname);
 

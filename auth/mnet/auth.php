@@ -775,10 +775,9 @@ class auth_plugin_mnet extends auth_plugin_base {
                 u.mnethostid = ?
                 AND l.id > ?
                 AND l.course IS NOT NULL
-            ORDER by l.id ASC
-            LIMIT 500";
+             ORDER by l.id ASC";
 
-            $mnethostlogs = $DB->get_records_sql($mnethostlogssql, array($mnethostid, $mnet_request->response['last log id']));
+            $mnethostlogs = $DB->get_records_sql($mnethostlogssql, array($mnethostid, $mnet_request->response['last log id']), 0, 500);
 
             if ($mnethostlogs == false) {
                 continue;
