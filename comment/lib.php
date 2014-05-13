@@ -526,7 +526,7 @@ class comment {
             $c->content     = $u->ccontent;
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
-            $c->strftimeformat = get_string('strftimerecent', 'langconfig');
+            $c->strftimeformat = get_string('strftimerecentfull', 'langconfig');
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
             $c->profileurl = $url->out(true);
             $c->fullname = fullname($u);
