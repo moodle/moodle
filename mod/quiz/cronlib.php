@@ -84,6 +84,9 @@ class mod_quiz_overdue_attempt_updater {
                 mtrace("Error while processing attempt {$attempt->id} at {$attempt->quiz} quiz:");
                 mtrace($e->getMessage());
                 mtrace($e->getTraceAsString());
+                // Close down any currently open transactions, otherwise one error
+                // will stop following DB changes from being committed.
+                $DB->force_transaction_rollback();
             }
         }
 
