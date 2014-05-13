@@ -96,7 +96,11 @@ XPATH
     normalize-space(descendant::div[@class='hd']) = %locator%]
 XPATH
         , 'block' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' '))] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]/descendant::h2[normalize-space(.) = %locator%]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')][@aria-label = %locator% ]
+//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' '))] |
+//div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]
+    /descendant::h2[normalize-space(.) = %locator%]
+    /ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')] |
+//div[contains(concat(' ', normalize-space(@class), ' '), ' block ')][@aria-label = %locator% ]
 XPATH
         , 'region' => <<<XPATH
 //*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
@@ -105,7 +109,8 @@ XPATH
 .//tr[contains(normalize-space(.), %locator%)]
 XPATH
         , 'filemanager' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]/descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
+//div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]
+    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
     );
 
