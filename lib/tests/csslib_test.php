@@ -1235,5 +1235,22 @@ CSS;
         $this->assertCount(2, $chunks);
         $this->assertSame('a,b{}', $chunks[0]);
         $this->assertSame("@import url(styles.php?type=test&chunk=0);\n nav a:hover:after { content: \"↓\"; } b{ color:test;}", $chunks[1]);
+
+        // Test that if there is broken CSS with too many close brace symbols,
+        // media rules after that point are still kept together.
+        $mediarule = '@media (width=480) {a{}b{}}';
+        $css = 'c{}}' . $mediarule . 'd{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2);
+        $this->assertCount(3, $chunks);
+        $this->assertEquals($mediarule, $chunks[1]);
+
+        // Test that this still works even with too many close brace symbols
+        // inside a media query (note: that broken media query may be split
+        // after the break, but any following ones should not be).
+        $brokenmediarule = '@media (width=480) {c{}}d{}}';
+        $css = $brokenmediarule . 'e{}' . $mediarule . 'f{}';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2);
+        $this->assertCount(4, $chunks);
+        $this->assertEquals($mediarule, $chunks[2]);
     }
 }

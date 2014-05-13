@@ -208,6 +208,12 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
                 }
             } else {
                 $inrule--;
+                // Handle stupid broken CSS where there are too many } brackets,
+                // as this can cause it to break (with chunking) where it would
+                // coincidentally have worked otherwise.
+                if ($inrule < 0) {
+                    $inrule = 0;
+                }
             }
 
             // We are not in a media query, and there is no pending rule, it is safe to split here.
