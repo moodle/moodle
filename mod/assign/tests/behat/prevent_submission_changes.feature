@@ -100,26 +100,26 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Test assignment name"
     When I follow "View/grade all submissions"
     And I set the field "selectall" to "1"
-    And I press "Go", confirming the dialog
+    And I click on "Go" "button" confirming the dialogue
     Then I should see "Submission changes not allowed" in the "Student 1" "table_row"
     And I should see "Submission changes not allowed" in the "Student 2" "table_row"
     And I log out
-    When I log in as "student2"
+    And I log in as "student2"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    Then I should not see "Edit submission"
+    And I should not see "Edit submission"
     And I log out
-    When I log in as "teacher1"
+    And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
     And I set the field "selectall" to "1"
     And I set the field "id_operation" to "Unlock submissions"
-    And I press "Go", confirming the dialog
-    Then I should not see "Submission changes not allowed" in the "Student 1" "table_row"
+    And I click on "Go" "button" confirming the dialogue
+    And I should not see "Submission changes not allowed" in the "Student 1" "table_row"
     And I should not see "Submission changes not allowed" in the "Student 2" "table_row"
     And I log out
-    When I log in as "student2"
+    And I log in as "student2"
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I press "Edit submission"
