@@ -61,21 +61,6 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Presses button with specified id|name|title|alt|value, and confirming the alert dialog.
-     *
-     * @When /^I press "(?P<button_string>(?:[^"]|\\")*)", confirming the dialog$/
-     * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $button
-     */
-    public function press_button_confirm_dialog($button) {
-
-        // Ensures the button is present.
-        $buttonnode = $this->find_button($button);
-        $buttonnode->press();
-        $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
-    }
-
-    /**
      * Fills a form with field/value data. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
      * Backport of Moodle 2.7 method to help backporting
