@@ -28,6 +28,9 @@ select {
         white-space: normal;
         vertical-align: top;
     }
+    thead .header.replies {
+        text-align: center;
+    }
     thead .header.lastpost {
         text-align: right;
     }
@@ -257,9 +260,14 @@ div#dock {
 }
 // rtl overrides
 .dir-rtl {
-    .path-mod-forum .forumheaderlist {
+    &.path-mod-forum .forumheaderlist {
         thead .header.lastpost {
             text-align: left;
+        }
+        .discussion {
+            .lastpost {
+                text-align: left;
+            }
         }
     }
 }
