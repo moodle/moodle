@@ -1,0 +1,26 @@
+/* History */
+
+th#excludedheader {
+    white-space: normal;
+}
+
+th#excludedheader p {
+    width: 75px;
+}
+
+table#gradestable th.header.selected {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.path-grade-report-history div.gradeparent {
+    overflow-x: scroll;
+}
+
+.path-grade-report-history .singlebutton div {
+    margin-bottom: 0px;
+}
+
+.path-grade-report-history .singlebutton div input[type="button"] {
+    margin-bottom: 0px;
+}
