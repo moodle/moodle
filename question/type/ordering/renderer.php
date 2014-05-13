@@ -133,12 +133,19 @@ class qtype_ordering_renderer extends qtype_renderer {
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         $result .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => 'sortable'.$question->id));
 
+        // a salt (=random string) to help disguise answer ids
+        if (isset($CFG->passwordsaltmain)) {
+            $salt = $CFG->passwordsaltmain;
+        } else {
+            $salt = complex_random_string();
+        }
+
         // generate ordering items
         foreach ($answerids as $i => $answerid) {
             // the original "id" revealed the correct order of the answers
             // because $answer->fraction holds the correct order number
             // $id = 'ordering_item_'.$answerid.'_'.intval($answers[$answerid]->fraction);
-            $id = 'ordering_item_'.md5($CFG->passwordsaltmain.$answers[$answerid]->answer);
+            $id = 'ordering_item_'.md5($salt.$answers[$answerid]->answer);
             $params = array('class' => 'ui-state-default', 'id' => $id);
             $result .= html_writer::tag('li', $answers[$answerid]->answer, $params);
         }
