@@ -1182,6 +1182,12 @@ CSS;
         $this->assertCount(1, $chunks);
         $this->assertSame('@media (min-width: 980px) { .a,.b{} }', $chunks[0]);
 
+        // Test media queries, with commas.
+        $css = '.a{} @media (min-width: 700px), handheld and (orientation: landscape) { .b{} }';
+        $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2);
+        $this->assertCount(1, $chunks);
+        $this->assertSame($css, $chunks[0]);
+
         // Test special rules.
         $css = 'a,b{ background-image: linear-gradient(to bottom, #ffffff, #cccccc);}d,e{}';
         $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2);
