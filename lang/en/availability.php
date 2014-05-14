@@ -34,6 +34,7 @@ $string['hidden_marker'] = '(hidden otherwise)';
 $string['hidden_individual'] = 'Hidden entirely if user does not meet this condition';
 $string['invalid'] = 'Please set';
 $string['itemheading'] = '{$a->number} {$a->type} restriction';
+$string['item_unknowntype'] = 'These restrictions use a plugin which is no longer available (if it is okay to remove that restriction, delete it below)';
 $string['shown_individual'] = 'Displayed greyed-out if user does not meet this condition';
 $string['hide_verb'] = 'Click to hide';
 $string['show_verb'] = 'Click to show';
