@@ -78,8 +78,9 @@ $assessments_rs = $workshop->grading_strategy_instance()->get_assessments_record
 foreach($assessments_rs as $k => $record) {
     if(array_key_exists($k, $examples) && $record->assessmentweight == 1) {
         $examples[$k]->grades[$record->dimensionid] = $record;
+    } else {
+        $assessments[$record->reviewerid][$k][$record->dimensionid] = $record;
     }
-    $assessments[$record->reviewerid][$k][$record->dimensionid] = $record;
 }
 
 if($teammode) {
@@ -109,7 +110,11 @@ foreach($feedbackset as $record) {
     }
     
     if(isset($examples[$record->submissionid])) {
-        $examples[$record->submissionid]->feedback = $record->feedbackauthor;
+        if($record->weight == 1) {
+            $examples[$record->submissionid]->referencefeedback = $record->feedbackauthor;
+        } else {
+            $examples[$record->submissionid]->feedback[$record->reviewerid] = $record->feedbackauthor;
+        }
     }
 }
 
@@ -213,8 +218,8 @@ foreach($examples as $ex) {
         $total += $ex->grades[$dimid]->grade;
     }
     
-    if(isset($ex->feedback)) {
-        $feedback = trim(strip_tags($ex->feedback));
+    if(isset($ex->referencefeedback)) {
+        $feedback = trim(strip_tags($ex->referencefeedback));
         $feedback = str_replace("\n", "\r", $feedback);
         if (in_array(substr($feedback,0,1), array("-","+","="))) {
             $feedback = " $comment";
@@ -267,6 +272,18 @@ foreach($assessments as $reviewerid => $a) {
             $total += $marks[$dimid]->grade;
         }
         
+        if(!empty($ex->feedback[$reviewerid])) {
+            $feedback = trim(strip_tags($ex->feedback[$reviewerid]));
+            $feedback = str_replace("\n", "\r", $feedback);
+            if (in_array(substr($feedback,0,1), array("-","+","="))) {
+                $feedback = " $comment";
+            }
+            $row['feedback'] = $feedback;
+            if (strlen($feedback) > 1) {
+                $needs_feedback = true;
+            }
+        }
+        
         $row['overallmark'] = $total;
         $row['scaledmark'] = round($examplegrades[$reviewerid][$exid]->grade, 2);
 
@@ -313,7 +330,7 @@ foreach($assessments as $reviewerid => $a) {
             $total += $marks[$dimid]->grade;
         }
         
-        if(!empty($submissions[$submissionid]->feedback)) {
+        if(!empty($submissions[$submissionid]->feedback[$reviewerid])) {
             $feedback = trim(strip_tags($submissions[$submissionid]->feedback[$reviewerid]));
             $feedback = str_replace("\n", "\r", $feedback);
             if (in_array(substr($feedback,0,1), array("-","+","="))) {
