@@ -1607,6 +1607,11 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     // database so that it doesn't cause a DB error. Log a warning so that
     // developers can avoid doing things which are likely to cause this on a
     // routine basis.
+    if (textlib::strlen($action) > 40) {
+        $action = textlib::substr($action, 0, 37) . '...';
+        debugging('Warning: logged very long action', DEBUG_DEVELOPER);
+    }
+
     if(!empty($info) && textlib::strlen($info)>255) {
         $info = textlib::substr($info,0,252).'...';
         debugging('Warning: logged very long info',DEBUG_DEVELOPER);
