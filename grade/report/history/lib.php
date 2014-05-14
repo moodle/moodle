@@ -39,6 +39,7 @@ class grade_report_history extends grade_report {
 
     public $page = 0;
     public $perpage = 50;
+    public $numrows = 0;
 
     /**
      * The id of the grade_item by which this report will be sorted.
@@ -418,6 +419,7 @@ class grade_report_history extends grade_report {
             }
             $lastrow = $row;
         }
+        $this->numrows = count($rows);
         array_unshift($rows, null);
         $rows = array_slice($rows, $this->perpage * $this->page, $this->perpage + 1);
         $fulltable->data += $rows;

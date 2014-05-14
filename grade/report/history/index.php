@@ -93,9 +93,11 @@ if (!empty($filters['datetill'])) {
 }
 
 $report = new grade_report_history($courseid, $gpr, $context, $filters, $page, $sortitemid);
-$numrows = $report->get_history(true);
 
 $report->load_users();
+
+$historytable = $report->get_history_table();
+$numrows = $report->numrows;
 
 $names = array();
 foreach ($report->get_selected_users() as $key => $user) {
@@ -113,7 +115,6 @@ $mform->set_data($filters);
 if ($export) {
     $filename = $COURSE->shortname;
 
-    $report->get_history_table();
     $data = $report->get_table_data();
     csv_export_writer::download_array($filename, $data);
 }
@@ -127,7 +128,7 @@ if (!empty($report->perpage)) {
 }
 
 $mform->display();
-echo $report->get_history_table();
+echo $historytable;
 
 // Prints paging bar at bottom for large pages.
 if (!empty($report->perpage) && $report->perpage >= 20) {
