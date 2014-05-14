@@ -3302,8 +3302,13 @@ class workshop_user_plan implements renderable {
         if ($workshop->useexamples and has_capability('mod/workshop:manageexamples', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('prepareexamples', 'workshop');
-            if ($DB->count_records('workshop_submissions', array('example' => 1, 'workshopid' => $workshop->id)) > 0) {
-                $task->completed = true;
+            $examplescount = $DB->count_records('workshop_submissions', array('example' => 1, 'workshopid' => $workshop->id));
+            if ($examplescount > 0) {
+                $countsql = "SELECT count(*) FROM mdl_workshop_assessments a, mdl_workshop_submissions s WHERE a.submissionid = s.id AND a.weight = 1 AND s.example = 1 AND s.workshopid = :workshopid";
+                $examplesassessed = $DB->count_records_sql($countsql, array('workshopid' => $workshop->id));
+                if ($examplescount <= $examplesassessed) {
+                    $task->completed = true;
+                }
             } elseif ($workshop->phase > workshop::PHASE_SETUP) {
                 $task->completed = false;
             }
