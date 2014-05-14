@@ -100,7 +100,7 @@ if (count($examples)) {
     }
 }
 
-list($select, $params) = $DB->get_in_or_equal(array_keys($examples) + array_keys($submissions));
+list($select, $params) = $DB->get_in_or_equal(array_keys($examples + $submissions));
 $feedbackset = $DB->get_records_select("workshop_assessments", "submissionid $select", $params);
 
 foreach($feedbackset as $record) {
@@ -220,6 +220,9 @@ foreach($examples as $ex) {
             $feedback = " $comment";
         }
         $row['feedback'] = $feedback;
+        if (strlen($feedback) > 1) {
+            $needs_feedback = true;
+        }
     }
     $row['overallmark'] = $total;
     $row['scaledmark'] = round($ex->grade, 2);
