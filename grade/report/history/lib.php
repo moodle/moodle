@@ -382,6 +382,10 @@ class grade_report_history extends grade_report {
             $row->cells[] = $previousgrade;
             $row->cells[] = $record->finalgrade;
             foreach ($extrafields as $field) {
+                // BASE-445 - do not show an additional username column
+                if ($field == 'username') {
+                    continue;
+                }
                 $row->cells[] = $this->users[$record->userid]->$field;
             }
             $namecell = new html_table_cell();
@@ -458,6 +462,10 @@ class grade_report_history extends grade_report {
         }
 
         foreach ($extrafields as $field) {
+            // BASE-445 - do not show an additional username column
+            if ($field == 'username') {
+                continue;
+            }
             $fieldheader = new html_table_cell();
             $fieldheader->attributes['class'] = 'header userfield user' . $field;
             $fieldheader->scope = 'col';
