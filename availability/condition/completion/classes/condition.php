@@ -48,8 +48,8 @@ class condition extends \core_availability\condition {
     /**
      * Constructor.
      *
-     * @param stdClass $structure Data structure from JSON decode
-     * @throws coding_exception If invalid data structure.
+     * @param \stdClass $structure Data structure from JSON decode
+     * @throws \coding_exception If invalid data structure.
      */
     public function __construct($structure) {
         // Get cmid.
@@ -212,7 +212,7 @@ class condition extends \core_availability\condition {
      * Used in course/lib.php because we need to disable the completion JS if
      * a completion value affects a conditional activity.
      *
-     * @param stdClass $course Moodle course object
+     * @param \stdClass $course Moodle course object
      * @param int $cmid Course-module id
      * @return bool True if this is used in a condition, false otherwise
      */

@@ -46,8 +46,8 @@ class condition extends \core_availability\condition {
     /**
      * Constructor.
      *
-     * @param stdClass $structure Data structure from JSON decode
-     * @throws coding_exception If invalid data structure.
+     * @param \stdClass $structure Data structure from JSON decode
+     * @throws \coding_exception If invalid data structure.
      */
     public function __construct($structure) {
         // Get grade item id.

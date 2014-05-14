@@ -180,7 +180,7 @@ abstract class condition extends tree_node {
      *
      * Default implementation returns false.
      *
-     * @param stdClass $course Moodle course object
+     * @param \stdClass $course Moodle course object
      * @param int $cmid ID of activity whose completion value is considered
      * @return boolean True if the availability of something else may rely on it
      */
