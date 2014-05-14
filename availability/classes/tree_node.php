@@ -78,7 +78,7 @@ abstract class tree_node {
     /**
      * Saves tree data back to a structure object.
      *
-     * @return stdClass Structure object (ready to be made into JSON format)
+     * @return \stdClass Structure object (ready to be made into JSON format)
      */
     public abstract function save();
 
@@ -152,11 +152,11 @@ abstract class tree_node {
      * @param \core_availability\info $info Item we're checking
      * @param capability_checker $checker
      * @return array Filtered version of input array
-     * @throws coding_exception If called on a condition that doesn't apply to user lists
+     * @throws \coding_exception If called on a condition that doesn't apply to user lists
      */
     public function filter_user_list(array $users, $not,
             \core_availability\info $info, capability_checker $checker) {
-        throw new coding_exception('Not implemented (do not call unless '.
+        throw new \coding_exception('Not implemented (do not call unless '.
                 'is_applied_to_user_lists is true)');
     }
 }

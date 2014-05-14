@@ -63,7 +63,7 @@ class info_module extends info {
     /**
      * Gets the course-module object. Intended for use by conditions.
      *
-     * @return cm_info Course module
+     * @return \cm_info Course module
      */
     public function get_course_module() {
         return $this->cm;
@@ -130,11 +130,11 @@ class info_module extends info {
      * disabled, and you supply a $cm object with necessary fields, and you
      * don't check course access.
      *
-     * @param int|stdClass|cm_info $cmorid Object or id representing activity
+     * @param int|\stdClass|\cm_info $cmorid Object or id representing activity
      * @param int $userid User id (0 = current user)
      * @param bool $checkcourse If true, checks whether the user has course access
      * @return bool True if the activity is visible to the specified user
-     * @throws moodle_exception If the cmid doesn't exist
+     * @throws \moodle_exception If the cmid doesn't exist
      */
     public static function is_user_visible($cmorid, $userid = 0, $checkcourse = true) {
         global $USER, $DB, $CFG;
