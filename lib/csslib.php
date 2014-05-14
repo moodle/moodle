@@ -176,9 +176,9 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
             }
         }
 
-        // Let's count the number of selectors, but only if we are not in a rule as they
-        // can contain commas too.
-        if (!$inrule && $char === ',') {
+        // Let's count the number of selectors, but only if we are not in a rule, or in
+        // the definition of a media query, as they can contain commas too.
+        if (!$mediacoming && !$inrule && $char === ',') {
             $selectorcount++;
         }
 
