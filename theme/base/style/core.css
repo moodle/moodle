@@ -1525,7 +1525,8 @@ form#installform #id_dbpass, form#installform #id_prefix
 
 html[dir=rtl] .breadcrumb,
 html[dir=rtl] .headermain,
-html[dir=rtl] #page-header {float: right;}
+html[dir=rtl] #page-header,
+html[dir=rtl] #page-content {float: right;}
 
 html[dir=rtl] .formrow label.formlabel { float:right; }
 
