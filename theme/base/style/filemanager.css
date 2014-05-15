@@ -47,6 +47,7 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .dir-rtl #filemenu .yuimenuitemlabel {text-align:right;}
 .dir-rtl .filepicker .yui-layout-unit-left {left:500px;}
 .dir-rtl .filepicker .yui-layout-unit-center {left:0px;}
+.dir-rtl .filepicker.moodle-dialogue-fullscreen .file-picker .fp-repo-items { float:none; }
 
 /**
  * File Manager
@@ -442,4 +443,5 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
     .fp-content .mdl-right {text-align:left;}
     .dir-rtl .fp-content .mdl-right {text-align:right;}
     .fp-repo-items .fp-navbar {border-top:1px solid rgb(187, 187, 187);}
+	.dir-rtl .filepicker.moodle-dialogue-fullscreen .file-picker .fp-repo-items { float:right; }
 }
