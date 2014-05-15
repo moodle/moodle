@@ -438,8 +438,11 @@ class csv_export_writer {
      * @return string       csv data.
      */
     public function print_csv_data($return = false) {
+        if (!$return) {
+            echo "\xEF\xBB\xBF"; // Add utf8 BOM
+        }
         fseek($this->fp, 0);
-        $returnstring = '';
+        $returnstring = "\xEF\xBB\xBF";
         while (($content = fgets($this->fp)) !== false) {
             if (!$return){
                 echo $content;
