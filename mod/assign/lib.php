@@ -918,6 +918,7 @@ function assign_grade_item_update($assign, $grades=null) {
     if (isset($assign->gradefeedbackenabled)) {
         $gradefeedbackenabled = $assign->gradefeedbackenabled;
     } else if ($assign->grade == 0) { // Grade feedback is needed only when grade == 0.
+        require_once($CFG->dirroot . '/mod/assign/locallib.php');
         $mod = get_coursemodule_from_instance('assign', $assign->id, $assign->courseid);
         $cm = context_module::instance($mod->id);
         $assignment = new assign($cm, null, null);
