@@ -3417,7 +3417,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= html_writer::start_tag('div', array('class'=>'options clearfix'));
 
     if (!empty($attachments)) {
-        $output .= html_writer::tag('div', $attachments, array('class'=>'attachments'));
+        $output .= html_writer::tag('div', $attachments, array('class' => 'attachments'));
     }
 
     // Output ratings

@@ -8,11 +8,11 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
     echo '<tr valign="top">';
     echo '<td class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
-    glossary_print_entry_attachment($entry, $cm, 'html', 'right');
     echo '<div class="concept">';
     glossary_print_entry_concept($entry);
     echo '</div> ';
     glossary_print_entry_definition($entry, $glossary, $cm);
+    glossary_print_entry_attachment($entry, $cm, 'html');
     $entry->alias = '';
     echo '</td></tr>';
 

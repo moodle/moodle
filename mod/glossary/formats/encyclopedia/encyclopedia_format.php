@@ -38,16 +38,8 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '<td class="left side" rowspan="2">&nbsp;</td>';
         echo '<td colspan="2" class="entry">';
 
-        if ($entry->attachment) {
-            $entry->course = $course->id;
-            if (strlen($entry->definition)%2) {
-                $align = 'right';
-            } else {
-                $align = 'left';
-            }
-            glossary_print_entry_attachment($entry, $cm, null,$align,false);
-        }
         glossary_print_entry_definition($entry, $glossary, $cm);
+        glossary_print_entry_attachment($entry, $cm, null);
 
         if ($printicons or $aliases) {
             echo '</td></tr>';
