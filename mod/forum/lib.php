@@ -3379,9 +3379,6 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= html_writer::end_tag('div'); //left side
     $output .= html_writer::start_tag('div', array('class'=>'no-overflow'));
     $output .= html_writer::start_tag('div', array('class'=>'content'));
-    if (!empty($attachments)) {
-        $output .= html_writer::tag('div', $attachments, array('class'=>'attachments'));
-    }
 
     $options = new stdClass;
     $options->para    = false;
@@ -3418,6 +3415,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= html_writer::start_tag('div', array('class'=>'row side'));
     $output .= html_writer::tag('div','&nbsp;', array('class'=>'left'));
     $output .= html_writer::start_tag('div', array('class'=>'options clearfix'));
+
+    if (!empty($attachments)) {
+        $output .= html_writer::tag('div', $attachments, array('class'=>'attachments'));
+    }
 
     // Output ratings
     if (!empty($post->rating)) {
