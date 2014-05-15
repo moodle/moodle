@@ -475,5 +475,5 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
     .fp-formset, .fp-forminset {margin:0 10px;width:auto;}
     .fp-formset label, .fp-forminset label {float:none;width:210px;text-align:left;margin:5px 0;}
     .dir-rtl .fp-formset label, .dir-rtl .fp-forminset label {text-align:right;float:none;}
-	.dir-rtl .filepicker.moodle-dialogue-fullscreen .file-picker .fp-repo-items { float:right; }
+    .dir-rtl .filepicker.moodle-dialogue-fullscreen .file-picker .fp-repo-items { float:right; }
 }
