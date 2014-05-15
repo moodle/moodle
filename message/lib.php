@@ -1043,13 +1043,19 @@ function message_add_contact($contactid, $blocked=0) {
         $contact->blocked = $blocked;
         $contact->id = $DB->insert_record('message_contacts', $contact);
 
-        // Trigger event for adding a contact.
-        $event = \core\event\message_contact_added::create(array(
+        $eventparams = array(
             'objectid' => $contact->id,
             'userid' => $contact->userid,
             'relateduserid' => $contact->contactid,
             'context'  => context_user::instance($contact->userid)
-        ));
+        );
+
+        if ($blocked) {
+            $event = \core\event\message_contact_blocked::create($eventparams);
+        } else {
+            $event = \core\event\message_contact_added::create($eventparams);
+        }
+        // Trigger event.
         $event->trigger();
 
         return true;
