@@ -25,7 +25,8 @@ class user_filter_cohort extends user_filter_type {
                      1 => get_string('doesnotcontain','filters'),
                      2 => get_string('isequalto','filters'),
                      3 => get_string('startswith','filters'),
-                     4 => get_string('endswith','filters'));
+                     4 => get_string('endswith','filters'),
+                     5 => get_string('isempty', 'filters'));
     }
 
     /**
@@ -55,10 +56,16 @@ class user_filter_cohort extends user_filter_type {
         $operator = $field.'_op';
 
         if (array_key_exists($operator, $formdata)) {
-            if ($formdata->$field == '') {
+            if ($formdata->$operator != 5 and $formdata->$field == '') {
+                // No data - no change except for empty filter.
                 return false;
             }
-            return array('operator'=>(int)$formdata->$operator, 'value'=>$formdata->$field);
+            // If field value is set then use it, else it's null.
+            $fieldvalue = null;
+            if (isset($formdata->$field)) {
+                $fieldvalue = $formdata->$field;
+            }
+            return array('operator' => (int)$formdata->$operator, 'value' => $fieldvalue);
         }
 
         return false;
@@ -83,13 +90,15 @@ class user_filter_cohort extends user_filter_type {
             return '';
         }
 
+        $not = '';
         switch($operator) {
             case 0: // contains
                 $res = $DB->sql_like('idnumber', ":$name", false, false);
                 $params[$name] = "%$value%";
                 break;
             case 1: // does not contain
-                $res = $DB->sql_like('idnumber', ":$name", false, false, true);
+                $not = 'NOT';
+                $res = $DB->sql_like('idnumber', ":$name", false, false);
                 $params[$name] = "%$value%";
                 break;
             case 2: // equal to
@@ -104,11 +113,16 @@ class user_filter_cohort extends user_filter_type {
                 $res = $DB->sql_like('idnumber', ":$name", false, false);
                 $params[$name] = "%$value";
                 break;
+            case 5: // Empty.
+                $not = 'NOT';
+                $res = '(idnumber IS NOT NULL AND idnumber <> :'.$name.')';
+                $params[$name] = '';
+                break;
             default:
                 return '';
         }
 
-        $sql = "id IN (SELECT userid
+        $sql = "id $not IN (SELECT userid
                          FROM {cohort_members}
                          JOIN {cohort} ON {cohort_members}.cohortid = {cohort}.id
                         WHERE $res)";
@@ -139,6 +153,8 @@ class user_filter_cohort extends user_filter_type {
             case 3: // starts with
             case 4: // ends with
                 return get_string('textlabel', 'filters', $a);
+            case 5: // Empty.
+                return get_string('textlabelnovalue', 'filters', $a);
         }
 
         return '';
