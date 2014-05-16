@@ -47,21 +47,7 @@
         if ($shibbolethauth->user_login($frm->username, $frm->password)
                 && $user = authenticate_user_login($frm->username, $frm->password)) {
 
-            enrol_check_plugins($user);
-            session_set_user($user);
-
-            $USER->loggedin = true;
-            $USER->site     = $CFG->wwwroot; // for added security, store the site in the
-
-            update_user_login_times();
-
-            // Don't show previous shibboleth username on login page
-
-            set_login_session_preferences();
-
-            unset($SESSION->lang);
-            $SESSION->justloggedin = true;
-
+            complete_user_login($user);
             add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
             if (user_not_fully_set_up($USER)) {
