@@ -120,7 +120,7 @@ if (count($acceptedroles) > 1) {
     }
 } else {
     // User has to be an admin or the one with the required role.
-    $users = get_role_users($acceptedroles[0], $context, false, 'u.id', 'u.id ASC');
+    $users = get_role_users($acceptedroles[0], $context, true, 'u.id', 'u.id ASC');
     $usersids = array_keys($users);
     if (!$isadmin && !in_array($USER->id, $usersids)) {
         echo $OUTPUT->header();
