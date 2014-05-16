@@ -745,7 +745,7 @@ class page_requirements_manager {
                                     'requires' => array('node', 'event', 'json', 'core_filepicker'),
                                     'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'),
                                                         array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle'), array('maxbytesforfile', 'moodle'),
-                                                        array('maxareabytesreached', 'moodle')
+                                                        array('maxareabytesreached', 'moodle'), array('serverconnection', 'error'),
                                                     ));
                     break;
             }
