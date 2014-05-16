@@ -3660,5 +3660,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014051200.02);
     }
 
+    if ($oldversion < 2014060300.00) {
+        $gspath = get_config('assignfeedback_editpdf', 'gspath');
+        if ($gspath !== false) {
+            set_config('pathtogs', $gspath);
+            unset_config('gspath', 'assignfeedback_editpdf');
+        }
+        upgrade_main_savepoint(true, 2014060300.00);
+    }
+
     return true;
 }
