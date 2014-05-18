@@ -471,6 +471,33 @@ class core_cache_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the mappingsonly setting.
+     */
+    public function test_definition_mappings_only() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/mappingsonly', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'mappingsonly',
+            'mappingsonly' => true
+        ));
+        $instance->phpunit_add_definition('phpunit/nonmappingsonly', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'nonmappingsonly',
+            'mappingsonly' => false
+        ));
+
+        $cacheonly = cache::make('phpunit', 'mappingsonly');
+        $this->assertInstanceOf('cache_application', $cacheonly);
+        $this->assertEquals('cachestore_dummy', $cacheonly->phpunit_get_store_class());
+
+        $cachenon = cache::make('phpunit', 'nonmappingsonly');
+        $this->assertInstanceOf('cache_application', $cachenon);
+        $this->assertEquals('cachestore_file', $cachenon->phpunit_get_store_class());
+    }
+
+    /**
      * Test a very basic definition.
      */
     public function test_definition() {
