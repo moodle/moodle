@@ -234,24 +234,40 @@ Feature: Set up contextual data for tests
     And I select "Group 2 (1)" from "groups"
     And the "members" select box should contain "Student 2"
 
-  Scenario: Add cohorts with data generator
+  Scenario: Add cohorts and cohort members with data generator
     Given the following "categories" exist:
       | name  | category | idnumber |
       | Cat 1 | 0        | CAT1     |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | student1 | Student | 1 | student1@asd.com |
+      | student2 | Student | 2 | student2@asd.com |
     And the following "cohorts" exist:
       | name            | idnumber |
-      | System cohort 1 | CH01     |
+      | System cohort A | CHSA     |
     And the following "cohorts" exist:
       | name                 | idnumber | contextlevel | reference |
-      | System cohort 2      | CH02     | System       |           |
-      | Cohort in category 1 | CH1      | Category     | CAT1      |
+      | System cohort B      | CHSB     | System       |           |
+      | Cohort in category   | CHC      | Category     | CAT1      |
+      | Empty cohort         | CHE      | Category     | CAT1      |
+    And the following "cohort members" exist:
+      | user     | cohort |
+      | student1 | CHSA   |
+      | student2 | CHSB   |
+      | student1 | CHSB   |
+      | student1 | CHC    |
     When I log in as "admin"
     And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
-    Then I should see "System cohort 1"
-    And I should see "System cohort 2"
+    Then the following should exist in the "cohorts" table:
+      | Name            | Cohort size |
+      | System cohort A | 1           |
+      | System cohort B | 2           |
     And I should not see "Cohort in category"
     And I follow "Courses"
     And I follow "Cat 1"
     And I follow "Cohorts"
-    And I should see "Cohort in category 1"
     And I should not see "System cohort"
+    And the following should exist in the "cohorts" table:
+      | Name               | Cohort size |
+      | Cohort in category | 1           |
+      | Empty cohort       | 0           |

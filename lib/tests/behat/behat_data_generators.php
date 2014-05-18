@@ -130,6 +130,11 @@ class behat_data_generators extends behat_base {
         'cohorts' => array(
             'datagenerator' => 'cohort',
             'required' => array('idnumber')
+        ),
+        'cohort members' => array(
+            'datagenerator' => 'cohort_member',
+            'required' => array('user', 'cohort'),
+            'switchids' => array('user' => 'userid', 'cohort' => 'cohortid')
         )
     );
 
@@ -414,6 +419,16 @@ class behat_data_generators extends behat_base {
     }
 
     /**
+     * Adds members to cohorts
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_cohort_member($data) {
+        cohort_add_member($data['cohortid'], $data['userid']);
+    }
+
+    /**
      * Gets the user id from it's username.
      * @throws Exception
      * @param string $username
@@ -506,6 +521,21 @@ class behat_data_generators extends behat_base {
 
         if (!$id = $DB->get_field('groupings', 'id', array('idnumber' => $idnumber))) {
             throw new Exception('The specified grouping with idnumber "' . $idnumber . '" does not exist');
+        }
+        return $id;
+    }
+
+    /**
+     * Gets the cohort id from it's idnumber.
+     * @throws Exception
+     * @param string $idnumber
+     * @return int
+     */
+    protected function get_cohort_id($idnumber) {
+        global $DB;
+
+        if (!$id = $DB->get_field('cohort', 'id', array('idnumber' => $idnumber))) {
+            throw new Exception('The specified cohort with idnumber "' . $idnumber . '" does not exist');
         }
         return $id;
     }
