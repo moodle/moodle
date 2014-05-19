@@ -370,21 +370,27 @@ function message_get_contacts($user1=null, $user2=null) {
                   ORDER BY u.firstname ASC";
 
     $rs = $DB->get_recordset_sql($strangersql, array($USER->id));
+    // Add user id as array index, so supportuser and noreply user don't get duplicated (if they are real users).
     foreach ($rs as $rd) {
-        $strangers[] = $rd;
+        $strangers[$rd->id] = $rd;
     }
     $rs->close();
 
-    // Add noreply user and support user to the list.
+    // Add noreply user and support user to the list, if they don't exist.
     $supportuser = core_user::get_support_user();
-    $supportuser->messagecount = message_count_unread_messages($USER, $supportuser);
-    if ($supportuser->messagecount > 0) {
-        $strangers[] = $supportuser;
+    if (!isset($strangers[$supportuser->id])) {
+        $supportuser->messagecount = message_count_unread_messages($USER, $supportuser);
+        if ($supportuser->messagecount > 0) {
+            $strangers[$supportuser->id] = $supportuser;
+        }
     }
+
     $noreplyuser = core_user::get_noreply_user();
-    $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
-    if ($noreplyuser->messagecount > 0) {
-        $strangers[] = $noreplyuser;
+    if (!isset($strangers[$noreplyuser->id])) {
+        $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
+        if ($noreplyuser->messagecount > 0) {
+            $strangers[$noreplyuser->id] = $noreplyuser;
+        }
     }
     return array($onlinecontacts, $offlinecontacts, $strangers);
 }
