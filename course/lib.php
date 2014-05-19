@@ -1645,7 +1645,7 @@ function set_coursemodule_visible($id, $visible) {
  * event to the DB.
  *
  * @param int $cmid the course module id
- * @since 2.5
+ * @since Moodle 2.5
  */
 function course_delete_module($cmid) {
     global $CFG, $DB;

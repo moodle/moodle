@@ -973,7 +973,7 @@ function page_doc_link($text='') {
 /**
  * Returns the path to use when constructing a link to the docs.
  *
- * @since 2.5.1 2.6
+ * @since Moodle 2.5.1 2.6
  * @param moodle_page $page
  * @return string
  */

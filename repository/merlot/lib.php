@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access merlot files
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_merlot
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 /**
  * repository_merlot is used to search merlot.org in moodle
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_merlot
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

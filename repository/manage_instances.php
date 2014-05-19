@@ -19,7 +19,7 @@
 /**
  * This file is used to manage repositories
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    core
  * @subpackage repository
  * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>

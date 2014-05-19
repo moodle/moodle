@@ -17,7 +17,7 @@
 /**
  * This file contains the version information for the mahara portfolio plugin
  *
- * @since      2.0
+ * @since      Moodle 2.0
  * @package    portfolio
  * @subpackage mahara
  * @copyright  2009 Penny Leach

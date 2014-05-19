@@ -518,7 +518,7 @@ class auth_plugin_base {
      * authentication method manually is allowed.
      *
      * @return bool
-     * @since 2.6
+     * @since Moodle 2.6
      */
     function can_be_manually_set() {
         // Override if needed.

@@ -309,7 +309,7 @@ class cache_factory {
 
     /**
      * Returns the cache instances that have been used within this request.
-     * @since 2.6
+     * @since Moodle 2.6
      * @return array
      */
     public function get_caches_in_use() {

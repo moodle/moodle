@@ -694,7 +694,7 @@ class external_format_value extends external_value {
  * @param array $format the format to validate
  * @return the validated format
  * @throws coding_exception
- * @since 2.3
+ * @since Moodle 2.3
  */
 function external_validate_format($format) {
     $allowedformats = array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN);

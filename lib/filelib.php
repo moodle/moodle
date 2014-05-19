@@ -541,7 +541,7 @@ function file_get_draft_area_info($draftitemid, $filepath = '/') {
  * @param int $newfilesize the size that would be added to the current area.
  * @param bool $includereferences true to include the size of the references in the area size.
  * @return bool true if the area will/has exceeded its limit.
- * @since 2.4
+ * @since Moodle 2.4
  */
 function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0, $includereferences = false) {
     if ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED) {

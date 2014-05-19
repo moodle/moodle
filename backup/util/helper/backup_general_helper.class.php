@@ -232,7 +232,7 @@ abstract class backup_general_helper extends backup_helper {
      *
      * @param string $filepath absolute path to the MBZ file.
      * @return stdClass containing information.
-     * @since 2.4
+     * @since Moodle 2.4
      */
     public static function get_backup_information_from_mbz($filepath) {
         global $CFG;

@@ -18,7 +18,7 @@
 /**
  * lib.php - Contains Plagiarism base class used by plugins.
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    moodlecore
  * @subpackage plagiarism
  * @copyright  2010 Dan Marsden http://danmarsden.com

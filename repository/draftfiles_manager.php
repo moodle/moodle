@@ -25,7 +25,7 @@
 /**
  * This file is used to manage draft files in non-javascript browsers
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    core
  * @subpackage repository
  * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
