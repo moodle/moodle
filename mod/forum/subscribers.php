@@ -64,8 +64,8 @@ $event->trigger();
 $forumoutput = $PAGE->get_renderer('mod_forum');
 $currentgroup = groups_get_activity_group($cm);
 $options = array('forumid'=>$forum->id, 'currentgroup'=>$currentgroup, 'context'=>$context);
-$existingselector = new forum_existing_subscriber_selector('existingsubscribers', $options);
-$subscriberselector = new forum_potential_subscriber_selector('potentialsubscribers', $options);
+$existingselector = new mod_forum_existing_subscriber_selector('existingsubscribers', $options);
+$subscriberselector = new mod_forum_potential_subscriber_selector('potentialsubscribers', $options);
 $subscriberselector->set_existing_subscribers($existingselector->find_users(''));
 
 if (data_submitted()) {
