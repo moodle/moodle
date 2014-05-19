@@ -17,7 +17,7 @@
 /**
  * Serve question type files
  *
- * @since      2.0
+ * @since      Moodle 2.0
  * @package    qtype_randomsamatch
  * @copyright  2013 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

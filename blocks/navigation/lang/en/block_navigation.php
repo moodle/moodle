@@ -18,7 +18,7 @@
 /**
  * This file contains language strings used in the global navigation block
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package block_navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

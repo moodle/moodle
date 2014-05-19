@@ -344,7 +344,7 @@ interface cache_is_key_aware {
  * Cache stores can choose to implement this interface.
  * In order for a store to be usable as a session cache it must implement this interface.
  *
- * @since 2.4.4
+ * @since Moodle 2.4.4
  */
 interface cache_is_searchable {
     /**

@@ -17,7 +17,7 @@
 /**
  * This file keeps track of upgrades to the html block
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package block_html
  * @copyright 2010 Dongsheng Cai
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

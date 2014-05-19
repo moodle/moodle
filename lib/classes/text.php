@@ -256,7 +256,7 @@ class core_text {
      * @param string $needle The string to find in haystack.
      * @param boolean $part If true, returns the portion before needle, else return the portion after (including needle).
      * @return string|false False when not found.
-     * @since 2.4.6, 2.5.2, 2.6
+     * @since Moodle 2.4.6, 2.5.2, 2.6
      */
     public static function strrchr($haystack, $needle, $part = false) {
 

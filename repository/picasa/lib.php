@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access picasa pictures
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_picasa
  * @copyright  2009 Dan Poltawski <talktodan@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/googleapi.php');
 /**
  * Picasa Repository Plugin
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository
  * @subpackage picasa
  * @copyright  2009 Dan Poltawski

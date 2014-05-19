@@ -189,7 +189,7 @@ class core_message_external extends external_api {
      * Create contacts parameters description.
      *
      * @return external_function_parameters
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function create_contacts_parameters() {
         return new external_function_parameters(
@@ -207,7 +207,7 @@ class core_message_external extends external_api {
      *
      * @param array $userids array of user IDs.
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function create_contacts($userids) {
         $params = array('userids' => $userids);
@@ -231,7 +231,7 @@ class core_message_external extends external_api {
      * Create contacts return description.
      *
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function create_contacts_returns() {
         return new external_warnings();
@@ -241,7 +241,7 @@ class core_message_external extends external_api {
      * Delete contacts parameters description.
      *
      * @return external_function_parameters
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function delete_contacts_parameters() {
         return new external_function_parameters(
@@ -259,7 +259,7 @@ class core_message_external extends external_api {
      *
      * @param array $userids array of user IDs.
      * @return null
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function delete_contacts($userids) {
         $params = array('userids' => $userids);
@@ -276,7 +276,7 @@ class core_message_external extends external_api {
      * Delete contacts return description.
      *
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function delete_contacts_returns() {
         return null;
@@ -286,7 +286,7 @@ class core_message_external extends external_api {
      * Block contacts parameters description.
      *
      * @return external_function_parameters
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function block_contacts_parameters() {
         return new external_function_parameters(
@@ -304,7 +304,7 @@ class core_message_external extends external_api {
      *
      * @param array $userids array of user IDs.
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function block_contacts($userids) {
         $params = array('userids' => $userids);
@@ -328,7 +328,7 @@ class core_message_external extends external_api {
      * Block contacts return description.
      *
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function block_contacts_returns() {
         return new external_warnings();
@@ -338,7 +338,7 @@ class core_message_external extends external_api {
      * Unblock contacts parameters description.
      *
      * @return external_function_parameters
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function unblock_contacts_parameters() {
         return new external_function_parameters(
@@ -356,7 +356,7 @@ class core_message_external extends external_api {
      *
      * @param array $userids array of user IDs.
      * @return null
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function unblock_contacts($userids) {
         $params = array('userids' => $userids);
@@ -373,7 +373,7 @@ class core_message_external extends external_api {
      * Unblock contacts return description.
      *
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function unblock_contacts_returns() {
         return null;
@@ -383,7 +383,7 @@ class core_message_external extends external_api {
      * Get contacts parameters description.
      *
      * @return external_function_parameters
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function get_contacts_parameters() {
         return new external_function_parameters(array());
@@ -394,7 +394,7 @@ class core_message_external extends external_api {
      *
      * @param array $userids array of user IDs.
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function get_contacts() {
         global $CFG;
@@ -427,7 +427,7 @@ class core_message_external extends external_api {
      * Get contacts return description.
      *
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function get_contacts_returns() {
         return new external_single_structure(
@@ -476,7 +476,7 @@ class core_message_external extends external_api {
      * Search contacts parameters description.
      *
      * @return external_function_parameters
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function search_contacts_parameters() {
         return new external_function_parameters(
@@ -494,7 +494,7 @@ class core_message_external extends external_api {
      * @param string $searchtext query string.
      * @param bool $onlymycourses limit the search to the user's courses only.
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function search_contacts($searchtext, $onlymycourses = false) {
         global $CFG, $USER;
@@ -553,7 +553,7 @@ class core_message_external extends external_api {
      * Search contacts return description.
      *
      * @return external_description
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public static function search_contacts_returns() {
         return new external_multiple_structure(

@@ -588,7 +588,7 @@ EOD;
      * @param array|stdClass $record data to use to up set the instance.
      * @param array $options options
      * @return stdClass repository instance record
-     * @since 2.5.1
+     * @since Moodle 2.5.1
      */
     public function create_repository($type, $record=null, array $options = null) {
         $generator = $this->get_plugin_generator('repository_'.$type);
@@ -602,7 +602,7 @@ EOD;
      * @param array|stdClass $record data to use to up set the instance.
      * @param array $options options
      * @return repository_type object
-     * @since 2.5.1
+     * @since Moodle 2.5.1
      */
     public function create_repository_type($type, $record=null, array $options = null) {
         $generator = $this->get_plugin_generator('repository_'.$type);

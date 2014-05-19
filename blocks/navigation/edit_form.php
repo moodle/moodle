@@ -17,7 +17,7 @@
 /**
  * Form for editing global navigation instances.
  *
- * @since     2.0
+ * @since     Moodle 2.0
  * @package   block_navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

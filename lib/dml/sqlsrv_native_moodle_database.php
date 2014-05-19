@@ -1333,7 +1333,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Does this driver support tool_replace?
      *
-     * @since 2.6.1
+     * @since Moodle 2.6.1
      * @return bool
      */
     public function replace_all_text_supported() {

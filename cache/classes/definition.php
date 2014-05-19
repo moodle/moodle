@@ -205,7 +205,7 @@ class cache_definition {
 
     /**
      * Gets set to true if this definition requires searchable stores.
-     * @since 2.4.4
+     * @since Moodle 2.4.4
      * @var bool
      */
     protected $requiresearchable = false;
@@ -734,7 +734,7 @@ class cache_definition {
 
     /**
      * Returns true if this definition requires a searchable cache.
-     * @since 2.4.4
+     * @since Moodle 2.4.4
      * @return bool
      */
     public function require_searchable() {

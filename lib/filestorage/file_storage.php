@@ -199,7 +199,7 @@ class file_storage {
      * @param string $filename the file name.
      * @return string available file name.
      * @throws coding_exception if the file name is invalid.
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public function get_unused_filename($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         global $DB;
@@ -280,7 +280,7 @@ class file_storage {
      * @param int $itemid area item ID.
      * @param string $suggestedpath the suggested file path.
      * @return string available file path
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public function get_unused_dirname($contextid, $component, $filearea, $itemid, $suggestedpath) {
         global $DB;

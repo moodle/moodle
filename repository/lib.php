@@ -17,7 +17,7 @@
 /**
  * This file contains classes used to manage the repository plugins in Moodle
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -659,7 +659,7 @@ abstract class repository implements cacheable_object {
      * Returns the type name of the repository.
      *
      * @return string type name of the repository.
-     * @since  2.5
+     * @since  Moodle 2.5
      */
     public function get_typename() {
         if (empty($this->typename)) {
@@ -1868,7 +1868,7 @@ abstract class repository implements cacheable_object {
      * can be edited.
      *
      * @return bool true if the user can edit the instance.
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public final function can_be_edited_by_user() {
         global $USER;
@@ -1925,7 +1925,7 @@ abstract class repository implements cacheable_object {
      * the user instances will be protected when they need to.
      *
      * @return boolean True when the repository accesses private external data.
-     * @since  2.5
+     * @since  Moodle 2.5
      */
     public function contains_private_data() {
         return true;
@@ -2219,7 +2219,7 @@ abstract class repository implements cacheable_object {
      *
      * @param array $breadcrumb contains each element of the breadcrumb.
      * @return array of breadcrumb elements.
-     * @since 2.3.3
+     * @since Moodle 2.3.3
      */
     protected static function prepare_breadcrumb($breadcrumb) {
         global $OUTPUT;
@@ -2240,7 +2240,7 @@ abstract class repository implements cacheable_object {
      *
      * @param array $list of files and folders.
      * @return array of files and folders.
-     * @since 2.3.3
+     * @since Moodle 2.3.3
      */
     protected static function prepare_list($list) {
         global $OUTPUT;
@@ -2958,7 +2958,7 @@ abstract class repository implements cacheable_object {
 /**
  * Exception class for repository api
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -2969,7 +2969,7 @@ class repository_exception extends moodle_exception {
 /**
  * This is a class used to define a repository instance form
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -3089,7 +3089,7 @@ final class repository_instance_form extends moodleform {
 /**
  * This is a class used to define a repository type setting form
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -18,7 +18,7 @@
 /**
  * This plugin is used to access recent used files
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_recent
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 /**
  * repository_recent class is used to browse recent used files
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_recent
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

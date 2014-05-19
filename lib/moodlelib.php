@@ -2174,7 +2174,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
  * @param string $format strftime format.
  * @param int|float $tz the numerical timezone, typically returned by {@link get_user_timezone_offset()}.
  * @return string the formatted date/time.
- * @since 2.3.3
+ * @since Moodle 2.3.3
  */
 function date_format_string($date, $format, $tz = 99) {
     global $CFG;
