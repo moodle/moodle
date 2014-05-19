@@ -143,7 +143,7 @@ function forum_instance_created($context, $forum) {
     if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
         $users = forum_get_potential_subscribers($context, 0, 'u.id, u.email');
         foreach ($users as $user) {
-            forum_subscribe($user->id, $forum->id);
+            forum_subscribe($user->id, $forum->id, $context);
         }
     }
 }
@@ -241,7 +241,7 @@ function forum_update_instance($forum, $mform) {
     if (($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) && ($oldforum->forcesubscribe <> $forum->forcesubscribe)) {
         $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email', '');
         foreach ($users as $user) {
-            forum_subscribe($user->id, $forum->id);
+            forum_subscribe($user->id, $forum->id, $modcontext);
         }
     }
 
@@ -4819,12 +4819,12 @@ function forum_get_optional_subscribed_forums() {
 /**
  * Adds user to the subscriber list
  *
- * @global object
  * @param int $userid
  * @param int $forumid
+ * @param context_module|null $context Module context, may be omitted if not known or if called for the current module set in page.
  */
-function forum_subscribe($userid, $forumid) {
-    global $DB;
+function forum_subscribe($userid, $forumid, $context = null) {
+    global $DB, $PAGE;
 
     if ($DB->record_exists("forum_subscriptions", array("userid"=>$userid, "forum"=>$forumid))) {
         return true;
@@ -4836,9 +4836,18 @@ function forum_subscribe($userid, $forumid) {
 
     $result = $DB->insert_record("forum_subscriptions", $sub);
 
-    $cm = get_coursemodule_from_instance('forum', $forumid);
+    if (!$context) {
+        // Find out forum context. First try to take current page context to save on DB query.
+        if ($PAGE->cm && $PAGE->cm->modname === 'forum' && $PAGE->cm->instance == $forumid
+                && $PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->context->instanceid == $PAGE->cm->id) {
+            $context = $PAGE->context;
+        } else {
+            $cm = get_coursemodule_from_instance('forum', $forumid);
+            $context = context_module::instance($cm->id);
+        }
+    }
     $params = array(
-        'context' => context_module::instance($cm->id),
+        'context' => $context,
         'objectid' => $result,
         'relateduserid' => $userid,
         'other' => array('forumid' => $forumid),
@@ -4853,21 +4862,30 @@ function forum_subscribe($userid, $forumid) {
 /**
  * Removes user from the subscriber list
  *
- * @global object
  * @param int $userid
  * @param int $forumid
+ * @param context_module|null $context Module context, may be omitted if not known or if called for the current module set in page.
  */
-function forum_unsubscribe($userid, $forumid) {
-    global $DB;
+function forum_unsubscribe($userid, $forumid, $context = null) {
+    global $DB, $PAGE;
 
     $DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid));
 
     if ($forumsubscription = $DB->get_record('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid))) {
         $DB->delete_records('forum_subscriptions', array('id' => $forumsubscription->id));
 
-        $cm = get_coursemodule_from_instance('forum', $forumid);
+        if (!$context) {
+            // Find out forum context. First try to take current page context to save on DB query.
+            if ($PAGE->cm && $PAGE->cm->modname === 'forum' && $PAGE->cm->instance == $forumid
+                    && $PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->context->instanceid == $PAGE->cm->id) {
+                $context = $PAGE->context;
+            } else {
+                $cm = get_coursemodule_from_instance('forum', $forumid);
+                $context = context_module::instance($cm->id);
+            }
+        }
         $params = array(
-            'context' => context_module::instance($cm->id),
+            'context' => $context,
             'objectid' => $forumsubscription->id,
             'relateduserid' => $userid,
             'other' => array('forumid' => $forumid),
