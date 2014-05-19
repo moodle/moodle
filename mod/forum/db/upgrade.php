@@ -112,5 +112,23 @@ function xmldb_forum_upgrade($oldversion) {
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2013110501) {
+
+        // Incorrect values that need to be replaced.
+        $replacements = array(
+            11 => 20,
+            12 => 50,
+            13 => 100
+        );
+
+        // Run the replacements.
+        foreach ($replacements as $old => $new) {
+            $DB->set_field('forum', 'maxattachments', $new, array('maxattachments' => $old));
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2013110501, 'forum');
+    }
+
     return true;
 }
