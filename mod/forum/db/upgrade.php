@@ -136,5 +136,23 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014040400, 'forum');
     }
 
+    if ($oldversion < 2014051201) {
+
+        // Incorrect values that need to be replaced.
+        $replacements = array(
+            11 => 20,
+            12 => 50,
+            13 => 100
+        );
+
+        // Run the replacements.
+        foreach ($replacements as $old => $new) {
+            $DB->set_field('forum', 'maxattachments', $new, array('maxattachments' => $old));
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2014051201, 'forum');
+    }
+
     return true;
 }
