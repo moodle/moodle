@@ -43,16 +43,6 @@ require_once($CFG->dirroot.'/cache/stores/memcached/lib.php');
  */
 class cachestore_memcached_test extends cachestore_tests {
     /**
-     * Prepare to run tests.
-     */
-    public function setUp() {
-        if (defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
-            set_config('testservers', TEST_CACHESTORE_MEMCACHED_TESTSERVERS, 'cachestore_memcached');
-            $this->resetAfterTest();
-        }
-        parent::setUp();
-    }
-    /**
      * Returns the memcached class name
      * @return string
      */
@@ -65,7 +55,7 @@ class cachestore_memcached_test extends cachestore_tests {
      */
     public function test_valid_keys() {
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
-        $instance = cachestore_memcached::initialise_test_instance($definition);
+        $instance = cachestore_memcached::initialise_unit_test_instance($definition);
 
         if (!$instance) { // Something prevented memcached store to be inited (extension, TEST_CACHESTORE_MEMCACHED_TESTSERVERS...).
             $this->markTestSkipped();

@@ -488,6 +488,28 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
     }
 
     /**
+     * Creates a test instance for unit tests if possible.
+     * @param cache_definition $definition
+     * @return bool|cachestore_memcached
+     */
+    public static function initialise_unit_test_instance(cache_definition $definition) {
+        if (!self::are_requirements_met()) {
+            return false;
+        }
+        if (!defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
+            return false;
+        }
+
+        $configuration = array();
+        $configuration['servers'] = explode("\n", TEST_CACHESTORE_MEMCACHED_TESTSERVERS);
+
+        $store = new cachestore_memcached('Test memcached', $configuration);
+        $store->initialise($definition);
+
+        return $store;
+    }
+
+    /**
      * Returns the name of this instance.
      * @return string
      */

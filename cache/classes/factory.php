@@ -126,6 +126,14 @@ class cache_factory {
                 // situation. It will use disabled alternatives where available.
                 require_once($CFG->dirroot.'/cache/disabledlib.php');
                 self::$instance = new cache_factory_disabled();
+            } else if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+                // We're using the regular factory.
+                require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
+                self::$instance = new cache_phpunit_factory();
+                if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
+                    // The cache stores have been disabled.
+                    self::$instance->set_state(self::STATE_STORES_DISABLED);
+                }
             } else {
                 // We're using the regular factory.
                 self::$instance = new cache_factory();
@@ -327,8 +335,10 @@ class cache_factory {
 
         // The class to use.
         $class = 'cache_config';
+        $unittest = defined('PHPUNIT_TEST') && PHPUNIT_TEST;
+
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
-        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+        if ($unittest) {
             require_once($CFG->dirroot.'/cache/locallib.php');
             require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
             // We have just a single class for PHP unit tests. We don't care enough about its
@@ -342,17 +352,9 @@ class cache_factory {
 
         if ($writer || $needtocreate) {
             require_once($CFG->dirroot.'/cache/locallib.php');
-            $class .= '_writer';
-        }
-
-        // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
-        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
-            require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
-            // We have just a single class for PHP unit tests. We don't care enough about its
-            // performance to do otherwise and having a single method allows us to inject things into it
-            // while testing.
-            $class = 'cache_config_phpunittest';
+            if (!$unittest) {
+                $class .= '_writer';
+            }
         }
 
         $error = false;
