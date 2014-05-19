@@ -1,6 +1,27 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 2.8 ===
+ * The following functions have all been marked as deprecated. Many of
+   thes have not been supported in many releases and should not be relied
+   upon:
+     forum_count_unrated_posts
+     forum_tp_count_discussion_read_records
+     forum_get_user_discussions
+     forum_tp_count_forum_posts
+     forum_tp_count_forum_read_records
+     forum_get_open_modes
+     forum_get_child_posts
+     forum_get_discussion_posts
+     forum_get_ratings
+     forum_get_tracking_link
+     forum_tp_count_discussion_unread_posts
+     forum_convert_to_roles
+     forum_tp_get_read_records
+     forum_tp_get_discussion_read_records
+     forum_user_enrolled
+     forum_user_can_view_post
+
 === 2.6 ===
 
 * The file post_form.php should not be included, the class it contained has

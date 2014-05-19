@@ -23,6 +23,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /** Include required files */
+require_once(__DIR__ . '/deprecatedlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
@@ -54,12 +55,6 @@ define('FORUM_TRACKING_OPTIONAL', 1);
  * Treated as FORUM_TRACKING_OPTIONAL if $CFG->forum_allowforcedreadtracking is off.
  */
 define('FORUM_TRACKING_FORCED', 2);
-
-/**
- * FORUM_TRACKING_ON - deprecated alias for FORUM_TRACKING_FORCED.
- * @deprecated since 2.6
- */
-define('FORUM_TRACKING_ON', 2);
 
 define('FORUM_MAILED_PENDING', 0);
 define('FORUM_MAILED_SUCCESS', 1);
@@ -1821,26 +1816,6 @@ function forum_get_post_full($postid) {
 }
 
 /**
- * Gets posts with all info ready for forum_print_post
- * We pass forumid in because we always know it so no need to make a
- * complicated join to find it out.
- *
- * @global object
- * @global object
- * @return mixed array of posts or false
- */
-function forum_get_discussion_posts($discussion, $sort, $forumid) {
-    global $CFG, $DB;
-
-    $allnames = get_all_user_name_fields(true, 'u');
-    return $DB->get_records_sql("SELECT p.*, $forumid AS forum, $allnames, u.email, u.picture, u.imagealt
-                              FROM {forum_posts} p
-                         LEFT JOIN {user} u ON p.userid = u.id
-                             WHERE p.discussion = ?
-                               AND p.parent > 0 $sort", array($discussion));
-}
-
-/**
  * Gets all posts in discussion including top parent.
  *
  * @global object
@@ -1896,28 +1871,6 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
     }
 
     return $posts;
-}
-
-/**
- * Gets posts with all info ready for forum_print_post
- * We pass forumid in because we always know it so no need to make a
- * complicated join to find it out.
- *
- * @global object
- * @global object
- * @param int $parent
- * @param int $forumid
- * @return array
- */
-function forum_get_child_posts($parent, $forumid) {
-    global $CFG, $DB;
-
-    $allnames = get_all_user_name_fields(true, 'u');
-    return $DB->get_records_sql("SELECT p.*, $forumid AS forum, $allnames, u.email, u.picture, u.imagealt
-                              FROM {forum_posts} p
-                         LEFT JOIN {user} u ON p.userid = u.id
-                             WHERE p.parent = ?
-                          ORDER BY p.created ASC", array($parent));
 }
 
 /**
@@ -2161,29 +2114,6 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     $totalcount = $DB->count_records_sql($countsql, $params);
 
     return $DB->get_records_sql($searchsql, $params, $limitfrom, $limitnum);
-}
-
-/**
- * Returns a list of ratings for a particular post - sorted.
- *
- * TODO: Check if this function is actually used anywhere.
- * Up until the fix for MDL-27471 this function wasn't even returning.
- *
- * @param stdClass $context
- * @param int $postid
- * @param string $sort
- * @return array Array of ratings or false
- */
-function forum_get_ratings($context, $postid, $sort = "u.firstname ASC") {
-    $options = new stdClass;
-    $options->context = $context;
-    $options->component = 'mod_forum';
-    $options->ratingarea = 'post';
-    $options->itemid = $postid;
-    $options->sort = "ORDER BY $sort";
-
-    $rm = new rating_manager();
-    return $rm->get_all_ratings_for_item($options);
 }
 
 /**
@@ -2571,49 +2501,6 @@ function forum_count_discussions($forum, $cm, $course) {
 }
 
 /**
- * How many posts by other users are unrated by a given user in the given discussion?
- *
- * TODO: Is this function still used anywhere?
- *
- * @param int $discussionid
- * @param int $userid
- * @return mixed
- */
-function forum_count_unrated_posts($discussionid, $userid) {
-    global $CFG, $DB;
-
-    $sql = "SELECT COUNT(*) as num
-              FROM {forum_posts}
-             WHERE parent > 0
-               AND discussion = :discussionid
-               AND userid <> :userid";
-    $params = array('discussionid' => $discussionid, 'userid' => $userid);
-    $posts = $DB->get_record_sql($sql, $params);
-    if ($posts) {
-        $sql = "SELECT count(*) as num
-                  FROM {forum_posts} p,
-                       {rating} r
-                 WHERE p.discussion = :discussionid AND
-                       p.id = r.itemid AND
-                       r.userid = userid AND
-                       r.component = 'mod_forum' AND
-                       r.ratingarea = 'post'";
-        $rated = $DB->get_record_sql($sql, $params);
-        if ($rated) {
-            if ($posts->num > $rated->num) {
-                return $posts->num - $rated->num;
-            } else {
-                return 0;    // Just in case there was a counting error
-            }
-        } else {
-            return $posts->num;
-        }
-    } else {
-        return 0;
-    }
-}
-
-/**
  * Get all discussions in a forum
  *
  * @global object
@@ -2873,44 +2760,6 @@ function forum_get_discussions_count($cm) {
     return $DB->get_field_sql($sql, $params);
 }
 
-
-/**
- * Get all discussions started by a particular user in a course (or group)
- * This function no longer used ...
- *
- * @todo Remove this function if no longer used
- * @global object
- * @global object
- * @param int $courseid
- * @param int $userid
- * @param int $groupid
- * @return array
- */
-function forum_get_user_discussions($courseid, $userid, $groupid=0) {
-    global $CFG, $DB;
-    $params = array($courseid, $userid);
-    if ($groupid) {
-        $groupselect = " AND d.groupid = ? ";
-        $params[] = $groupid;
-    } else  {
-        $groupselect = "";
-    }
-
-    $allnames = get_all_user_name_fields(true, 'u');
-    return $DB->get_records_sql("SELECT p.*, d.groupid, $allnames, u.email, u.picture, u.imagealt,
-                                   f.type as forumtype, f.name as forumname, f.id as forumid
-                              FROM {forum_discussions} d,
-                                   {forum_posts} p,
-                                   {user} u,
-                                   {forum} f
-                             WHERE d.course = ?
-                               AND p.discussion = d.id
-                               AND p.parent = 0
-                               AND p.userid = u.id
-                               AND u.id = ?
-                               AND d.forum = f.id $groupselect
-                          ORDER BY p.created DESC", $params);
-}
 
 /**
  * Get the list of potential subscribers to a forum.
@@ -3851,26 +3700,6 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     echo "</tr>\n\n";
 
-}
-
-/**
- * This function is now deprecated. Use shorten_text($message, $CFG->forum_shortpost) instead.
- *
- * Given a post object that we already know has a long message
- * this function truncates the message nicely to the first
- * sane place between $CFG->forum_longpost and $CFG->forum_shortpost
- *
- * @deprecated since Moodle 2.6
- * @see shorten_text()
- * @todo finalise deprecation in 2.8 in MDL-40851
- * @global object
- * @param string $message
- * @return string
- */
-function forum_shorten_post($message) {
-   global $CFG;
-   debugging('forum_shorten_post() is deprecated since Moodle 2.6. Please use shorten_text($message, $CFG->forum_shortpost) instead.', DEBUG_DEVELOPER);
-   return shorten_text($message, $CFG->forum_shortpost);
 }
 
 /**
@@ -5012,63 +4841,6 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
     }
 }
 
-
-/**
- * Generate and return the track or no track link for a forum.
- *
- * @global object
- * @global object
- * @global object
- * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
- * @param array $messages
- * @param bool $fakelink
- * @return string
- */
-function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
-    global $CFG, $USER, $PAGE, $OUTPUT;
-
-    static $strnotrackforum, $strtrackforum;
-
-    if (isset($messages['trackforum'])) {
-         $strtrackforum = $messages['trackforum'];
-    }
-    if (isset($messages['notrackforum'])) {
-         $strnotrackforum = $messages['notrackforum'];
-    }
-    if (empty($strtrackforum)) {
-        $strtrackforum = get_string('trackforum', 'forum');
-    }
-    if (empty($strnotrackforum)) {
-        $strnotrackforum = get_string('notrackforum', 'forum');
-    }
-
-    if (forum_tp_is_tracked($forum)) {
-        $linktitle = $strnotrackforum;
-        $linktext = $strnotrackforum;
-    } else {
-        $linktitle = $strtrackforum;
-        $linktext = $strtrackforum;
-    }
-
-    $link = '';
-    if ($fakelink) {
-        $PAGE->requires->js('/mod/forum/forum.js');
-        $PAGE->requires->js_function_call('forum_produce_tracking_link', Array($forum->id, $linktext, $linktitle));
-        // use <noscript> to print button in case javascript is not enabled
-        $link .= '<noscript>';
-    }
-    $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
-    $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
-
-    if ($fakelink) {
-        $link .= '</noscript>';
-    }
-
-    return $link;
-}
-
-
-
 /**
  * Returns true if user created new discussion already
  *
@@ -5308,24 +5080,6 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
         }
         return groups_is_member($discussion->groupid);
     }
-}
-
-/**
- * Checks to see if a user can view a particular post.
- *
- * @deprecated since Moodle 2.4 use forum_user_can_see_post() instead
- *
- * @param object $post
- * @param object $course
- * @param object $cm
- * @param object $forum
- * @param object $discussion
- * @param object $user
- * @return boolean
- */
-function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $user=null){
-    debugging('forum_user_can_view_post() is deprecated. Please use forum_user_can_see_post() instead.', DEBUG_DEVELOPER);
-    return forum_user_can_see_post($forum, $discussion, $post, $user, $cm);
 }
 
 /**
@@ -6255,32 +6009,6 @@ function forum_update_subscriptions_button($courseid, $forumid) {
            "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
-/**
- * This function gets run whenever user is enrolled into course
- *
- * @deprecated deprecating this function as we will be using \mod_forum\observer::role_assigned()
- * @param stdClass $cp
- * @return void
- */
-function forum_user_enrolled($cp) {
-    global $DB;
-
-    // NOTE: this has to be as fast as possible - we do not want to slow down enrolments!
-    //       Originally there used to be 'mod/forum:initialsubscriptions' which was
-    //       introduced because we did not have enrolment information in earlier versions...
-
-    $sql = "SELECT f.id
-              FROM {forum} f
-         LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = :userid)
-             WHERE f.course = :courseid AND f.forcesubscribe = :initial AND fs.id IS NULL";
-    $params = array('courseid'=>$cp->courseid, 'userid'=>$cp->userid, 'initial'=>FORUM_INITIALSUBSCRIBE);
-
-    $forums = $DB->get_records_sql($sql, $params);
-    foreach ($forums as $forum) {
-        forum_subscribe($cp->userid, $forum->id);
-    }
-}
-
 // Functions to do with read tracking.
 
 /**
@@ -6400,60 +6128,6 @@ function forum_tp_add_read_record($userid, $postid) {
 }
 
 /**
- * Returns all records in the 'forum_read' table matching the passed keys, indexed
- * by userid.
- *
- * @global object
- * @param int $userid
- * @param int $postid
- * @param int $discussionid
- * @param int $forumid
- * @return array
- */
-function forum_tp_get_read_records($userid=-1, $postid=-1, $discussionid=-1, $forumid=-1) {
-    global $DB;
-    $select = '';
-    $params = array();
-
-    if ($userid > -1) {
-        if ($select != '') $select .= ' AND ';
-        $select .= 'userid = ?';
-        $params[] = $userid;
-    }
-    if ($postid > -1) {
-        if ($select != '') $select .= ' AND ';
-        $select .= 'postid = ?';
-        $params[] = $postid;
-    }
-    if ($discussionid > -1) {
-        if ($select != '') $select .= ' AND ';
-        $select .= 'discussionid = ?';
-        $params[] = $discussionid;
-    }
-    if ($forumid > -1) {
-        if ($select != '') $select .= ' AND ';
-        $select .= 'forumid = ?';
-        $params[] = $forumid;
-    }
-
-    return $DB->get_records_select('forum_read', $select, $params);
-}
-
-/**
- * Returns all read records for the provided user and discussion, indexed by postid.
- *
- * @global object
- * @param inti $userid
- * @param int $discussionid
- */
-function forum_tp_get_discussion_read_records($userid, $discussionid) {
-    global $DB;
-    $select = 'userid = ? AND discussionid = ?';
-    $fields = 'postid, firstread, lastread';
-    return $DB->get_records_select('forum_read', $select, array($userid, $discussionid), '', $fields);
-}
-
-/**
  * If its an old post, do nothing. If the record exists, the maintenance will clear it up later.
  *
  * @return bool
@@ -6556,109 +6230,6 @@ function forum_tp_is_post_old($post, $time=null) {
         $time = time();
     }
     return ($post->modified < ($time - ($CFG->forum_oldpostdays * 24 * 3600)));
-}
-
-/**
- * Returns the count of records for the provided user and discussion.
- *
- * @global object
- * @global object
- * @param int $userid
- * @param int $discussionid
- * @return bool
- */
-function forum_tp_count_discussion_read_records($userid, $discussionid) {
-    global $CFG, $DB;
-
-    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
-
-    $sql = 'SELECT COUNT(DISTINCT p.id) '.
-           'FROM {forum_discussions} d '.
-           'LEFT JOIN {forum_read} r ON d.id = r.discussionid AND r.userid = ? '.
-           'LEFT JOIN {forum_posts} p ON p.discussion = d.id '.
-                'AND (p.modified < ? OR p.id = r.postid) '.
-           'WHERE d.id = ? ';
-
-    return ($DB->count_records_sql($sql, array($userid, $cutoffdate, $discussionid)));
-}
-
-/**
- * Returns the count of records for the provided user and discussion.
- *
- * @global object
- * @global object
- * @param int $userid
- * @param int $discussionid
- * @return int
- */
-function forum_tp_count_discussion_unread_posts($userid, $discussionid) {
-    global $CFG, $DB;
-
-    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
-
-    $sql = 'SELECT COUNT(p.id) '.
-           'FROM {forum_posts} p '.
-           'LEFT JOIN {forum_read} r ON r.postid = p.id AND r.userid = ? '.
-           'WHERE p.discussion = ? '.
-                'AND p.modified >= ? AND r.id is NULL';
-
-    return $DB->count_records_sql($sql, array($userid, $discussionid, $cutoffdate));
-}
-
-/**
- * Returns the count of posts for the provided forum and [optionally] group.
- * @global object
- * @global object
- * @param int $forumid
- * @param int|bool $groupid
- * @return int
- */
-function forum_tp_count_forum_posts($forumid, $groupid=false) {
-    global $CFG, $DB;
-    $params = array($forumid);
-    $sql = 'SELECT COUNT(*) '.
-           'FROM {forum_posts} fp,{forum_discussions} fd '.
-           'WHERE fd.forum = ? AND fp.discussion = fd.id';
-    if ($groupid !== false) {
-        $sql .= ' AND (fd.groupid = ? OR fd.groupid = -1)';
-        $params[] = $groupid;
-    }
-    $count = $DB->count_records_sql($sql, $params);
-
-
-    return $count;
-}
-
-/**
- * Returns the count of records for the provided user and forum and [optionally] group.
- * @global object
- * @global object
- * @param int $userid
- * @param int $forumid
- * @param int|bool $groupid
- * @return int
- */
-function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
-    global $CFG, $DB;
-
-    $cutoffdate = time() - ($CFG->forum_oldpostdays*24*60*60);
-
-    $groupsel = '';
-    $params = array($userid, $forumid, $cutoffdate);
-    if ($groupid !== false) {
-        $groupsel = "AND (d.groupid = ? OR d.groupid = -1)";
-        $params[] = $groupid;
-    }
-
-    $sql = "SELECT COUNT(p.id)
-              FROM  {forum_posts} p
-                    JOIN {forum_discussions} d ON d.id = p.discussion
-                    LEFT JOIN {forum_read} r   ON (r.postid = p.id AND r.userid= ?)
-              WHERE d.forum = ?
-                    AND (p.modified < $cutoffdate OR (p.modified >= ? AND r.id IS NOT NULL))
-                    $groupsel";
-
-    return $DB->get_field_sql($sql, $params);
 }
 
 /**
@@ -7435,225 +7006,6 @@ function forum_reset_course_form_defaults($course) {
 }
 
 /**
- * Converts a forum to use the Roles System
- *
- * @global object
- * @global object
- * @param object $forum        a forum object with the same attributes as a record
- *                        from the forum database table
- * @param int $forummodid   the id of the forum module, from the modules table
- * @param array $teacherroles array of roles that have archetype teacher
- * @param array $studentroles array of roles that have archetype student
- * @param array $guestroles   array of roles that have archetype guest
- * @param int $cmid         the course_module id for this forum instance
- * @return boolean      forum was converted or not
- */
-function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
-                                $studentroles=array(), $guestroles=array(), $cmid=NULL) {
-
-    global $CFG, $DB, $OUTPUT;
-
-    if (!isset($forum->open) && !isset($forum->assesspublic)) {
-        // We assume that this forum has already been converted to use the
-        // Roles System. Columns forum.open and forum.assesspublic get dropped
-        // once the forum module has been upgraded to use Roles.
-        return false;
-    }
-
-    if ($forum->type == 'teacher') {
-
-        // Teacher forums should be converted to normal forums that
-        // use the Roles System to implement the old behavior.
-        // Note:
-        //   Seems that teacher forums were never backed up in 1.6 since they
-        //   didn't have an entry in the course_modules table.
-        require_once($CFG->dirroot.'/course/lib.php');
-
-        if ($DB->count_records('forum_discussions', array('forum' => $forum->id)) == 0) {
-            // Delete empty teacher forums.
-            $DB->delete_records('forum', array('id' => $forum->id));
-        } else {
-            // Create a course module for the forum and assign it to
-            // section 0 in the course.
-            $mod = new stdClass();
-            $mod->course = $forum->course;
-            $mod->module = $forummodid;
-            $mod->instance = $forum->id;
-            $mod->section = 0;
-            $mod->visible = 0;     // Hide the forum
-            $mod->visibleold = 0;  // Hide the forum
-            $mod->groupmode = 0;
-
-            if (!$cmid = add_course_module($mod)) {
-                print_error('cannotcreateinstanceforteacher', 'forum');
-            } else {
-                $sectionid = course_add_cm_to_section($forum->course, $mod->coursemodule, 0);
-            }
-
-            // Change the forum type to general.
-            $forum->type = 'general';
-            $DB->update_record('forum', $forum);
-
-            $context = context_module::instance($cmid);
-
-            // Create overrides for default student and guest roles (prevent).
-            foreach ($studentroles as $studentrole) {
-                assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:replypost', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:viewrating', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:rate', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:createattachment', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:movediscussions', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:editanypost', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:postwithoutthrottling', CAP_PREVENT, $studentrole->id, $context->id);
-            }
-            foreach ($guestroles as $guestrole) {
-                assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:viewhiddentimedposts', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:replypost', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:viewrating', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:rate', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:createattachment', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:deleteownpost', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:deleteanypost', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:splitdiscussions', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:movediscussions', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:editanypost', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:postwithoutthrottling', CAP_PREVENT, $guestrole->id, $context->id);
-            }
-        }
-    } else {
-        // Non-teacher forum.
-
-        if (empty($cmid)) {
-            // We were not given the course_module id. Try to find it.
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-                echo $OUTPUT->notification('Could not get the course module for the forum');
-                return false;
-            } else {
-                $cmid = $cm->id;
-            }
-        }
-        $context = context_module::instance($cmid);
-
-        // $forum->open defines what students can do:
-        //   0 = No discussions, no replies
-        //   1 = No discussions, but replies are allowed
-        //   2 = Discussions and replies are allowed
-        switch ($forum->open) {
-            case 0:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
-                    assign_capability('mod/forum:replypost', CAP_PREVENT, $studentrole->id, $context->id);
-                }
-                break;
-            case 1:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:startdiscussion', CAP_PREVENT, $studentrole->id, $context->id);
-                    assign_capability('mod/forum:replypost', CAP_ALLOW, $studentrole->id, $context->id);
-                }
-                break;
-            case 2:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:startdiscussion', CAP_ALLOW, $studentrole->id, $context->id);
-                    assign_capability('mod/forum:replypost', CAP_ALLOW, $studentrole->id, $context->id);
-                }
-                break;
-        }
-
-        // $forum->assessed defines whether forum rating is turned
-        // on (1 or 2) and who can rate posts:
-        //   1 = Everyone can rate posts
-        //   2 = Only teachers can rate posts
-        switch ($forum->assessed) {
-            case 1:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:rate', CAP_ALLOW, $studentrole->id, $context->id);
-                }
-                foreach ($teacherroles as $teacherrole) {
-                    assign_capability('mod/forum:rate', CAP_ALLOW, $teacherrole->id, $context->id);
-                }
-                break;
-            case 2:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:rate', CAP_PREVENT, $studentrole->id, $context->id);
-                }
-                foreach ($teacherroles as $teacherrole) {
-                    assign_capability('mod/forum:rate', CAP_ALLOW, $teacherrole->id, $context->id);
-                }
-                break;
-        }
-
-        // $forum->assesspublic defines whether students can see
-        // everybody's ratings:
-        //   0 = Students can only see their own ratings
-        //   1 = Students can see everyone's ratings
-        switch ($forum->assesspublic) {
-            case 0:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:viewanyrating', CAP_PREVENT, $studentrole->id, $context->id);
-                }
-                foreach ($teacherroles as $teacherrole) {
-                    assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $teacherrole->id, $context->id);
-                }
-                break;
-            case 1:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id);
-                }
-                foreach ($teacherroles as $teacherrole) {
-                    assign_capability('mod/forum:viewanyrating', CAP_ALLOW, $teacherrole->id, $context->id);
-                }
-                break;
-        }
-
-        if (empty($cm)) {
-            $cm = $DB->get_record('course_modules', array('id' => $cmid));
-        }
-
-        // $cm->groupmode:
-        // 0 - No groups
-        // 1 - Separate groups
-        // 2 - Visible groups
-        switch ($cm->groupmode) {
-            case 0:
-                break;
-            case 1:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('moodle/site:accessallgroups', CAP_PREVENT, $studentrole->id, $context->id);
-                }
-                foreach ($teacherroles as $teacherrole) {
-                    assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
-                }
-                break;
-            case 2:
-                foreach ($studentroles as $studentrole) {
-                    assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $studentrole->id, $context->id);
-                }
-                foreach ($teacherroles as $teacherrole) {
-                    assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
-                }
-                break;
-        }
-    }
-    return true;
-}
-
-/**
  * Returns array of forum layout modes
  *
  * @return array
@@ -7691,17 +7043,6 @@ function forum_get_forum_types_all() {
                   'single'   => get_string('singleforum', 'forum'),
                   'qanda'    => get_string('qandaforum', 'forum'),
                   'blog'     => get_string('blogforum', 'forum'));
-}
-
-/**
- * Returns array of forum open modes
- *
- * @return array
- */
-function forum_get_open_modes() {
-    return array ('2' => get_string('openmode2', 'forum'),
-                  '1' => get_string('openmode1', 'forum'),
-                  '0' => get_string('openmode0', 'forum') );
 }
 
 /**
