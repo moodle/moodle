@@ -77,7 +77,7 @@ function cron_run() {
             $rs = $DB->get_recordset_sql ("SELECT *
                                              FROM {user}
                                             WHERE confirmed = 0 AND firstaccess > 0
-                                                  AND firstaccess < ?", array($cuttime));
+                                                  AND firstaccess < ? AND deleted = 0", array($cuttime));
             foreach ($rs as $user) {
                 delete_user($user); // we MUST delete user properly first
                 $DB->delete_records('user', array('id'=>$user->id)); // this is a bloody hack, but it might work
