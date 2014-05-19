@@ -162,7 +162,8 @@
     .fluid-span (@columns) {
         .fluid-span-full(@columns, @fluidGridColumnWidth1200, @fluidGridGutterWidth1200);
     }
-    .empty-region-side-post.used-region-side-pre { // Post region is empty and pre region is in use.
+    .empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+    .jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
         #region-main.span8 {
             /** increase the span size by 1 **/
             .fluid-span(9);
@@ -199,7 +200,8 @@
     .fluid-span (@columns) {
         .fluid-span-full(@columns, @fluidGridColumnWidth768, @fluidGridGutterWidth768);
     }
-    .empty-region-side-post.used-region-side-pre { // Post region is empty and pre region is in use.
+    .empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+    .jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
         #region-main.span8 {
             /** increase the span size by 1 **/
             .fluid-span(9);
@@ -503,7 +505,8 @@
     // cases when we have content in the side-pre blockregion but not in the
     // side-post blockregion as there are more specific selectors in
     // core.less which take precedence which break responsiveness.
-    .empty-region-side-post.used-region-side-pre { // Post region is empty and pre region is in use.
+    .empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+    .jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
         #block-region-side-pre.span4,
         #region-main.span8 {
             .fluid-span(12);
