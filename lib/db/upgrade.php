@@ -3612,7 +3612,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014041500.01);
     }
 
-
     if ($oldversion < 2014050100.00) {
         // Fixing possible wrong MIME type for DigiDoc files.
         $extensions = array('%.bdoc', '%.cdoc', '%.ddoc');
@@ -3630,7 +3629,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     // MDL-32543 Make sure that the log table has correct length for action and url fields.
-    if ($oldversion < 2014051200.01) {
+    if ($oldversion < 2014051200.02) {
 
         $table = new xmldb_table('log');
 
@@ -3655,7 +3654,7 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->change_field_precision($table, $field);
         }
 
-        upgrade_main_savepoint(true, 2014051200.01);
+        upgrade_main_savepoint(true, 2014051200.02);
     }
 
     return true;
