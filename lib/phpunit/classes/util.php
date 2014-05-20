@@ -106,6 +106,9 @@ class phpunit_util extends testing_util {
         // Stop any message redirection.
         phpunit_util::stop_phpmailer_redirection();
 
+        // We used to call gc_collect_cycles here to ensure desctructors were called between tests.
+        // This accounted for 25% of the total time running phpunit - so we removed it.
+
         // Show any unhandled debugging messages, the runbare() could already reset it.
         self::display_debugging_messages();
         self::reset_debugging();
