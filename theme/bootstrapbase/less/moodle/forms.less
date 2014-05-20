@@ -468,3 +468,10 @@ fieldset.coursesearchbox label {
         .makeFormsVertical;
     }
 }
+
+/* Revert to the non-fixed width where a textarea has the number of columns
+   specified, or an input has it's size specified. */
+textarea[cols],
+input[size] {
+    width: auto;
+}
