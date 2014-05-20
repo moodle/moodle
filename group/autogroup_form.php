@@ -133,7 +133,7 @@ class autogroup_form extends moodleform {
         $mform->setType('seed', PARAM_INT);
 
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'preview', get_string('preview'), 'xx');
+        $buttonarray[] = &$mform->createElement('submit', 'preview', get_string('preview'));
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('submit'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
