@@ -66,3 +66,37 @@ Feature: View my courses in navigation block
     And I expand "cat33" node
     And I should see "c331" in the "Navigation" "block"
     And I should not see "c332" in the "Navigation" "block"
+
+  @javascript
+  Scenario: I can expand categories and courses as guest
+    Given I set the following administration settings values:
+      | Show my course categories | 1 |
+      | Show all courses          | 1 |
+    And I log out
+    And I expand "Courses" node
+    And I should see "cat1" in the "Navigation" "block"
+    And I should see "cat2" in the "Navigation" "block"
+    And I should see "cat3" in the "Navigation" "block"
+    And I should not see "cat31" in the "Navigation" "block"
+    And I should not see "cat32" in the "Navigation" "block"
+    And I should not see "cat331" in the "Navigation" "block"
+    And I should not see "c1" in the "Navigation" "block"
+    And I should not see "c2" in the "Navigation" "block"
+    And I should not see "c31" in the "Navigation" "block"
+    And I should not see "c32" in the "Navigation" "block"
+    When I expand "cat3" node
+    And I expand "cat31" node
+    And I expand "cat1" node
+    And I should see "c1" in the "Navigation" "block"
+    And I expand "c1" node
+    Then I should not see "
+    And I should see "cat1" in the "Navigation" "block"
+    And I should see "cat2" in the "Navigation" "block"
+    And I should see "cat3" in the "Navigation" "block"
+    And I should see "cat31" in the "Navigation" "block"
+    And I should see "cat32" in the "Navigation" "block"
+    And I should not see "cat331" in the "Navigation" "block"
+    And I should see "c1" in the "Navigation" "block"
+    And I should not see "c2" in the "Navigation" "block"
+    And I should see "c31" in the "Navigation" "block"
+    And I should not see "c32" in the "Navigation" "block"
