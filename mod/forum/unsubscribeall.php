@@ -50,7 +50,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     $forums = forum_get_optional_subscribed_forums();
 
     foreach($forums as $forum) {
-        forum_unsubscribe($USER->id, $forum->id);
+        forum_unsubscribe($USER->id, $forum->id, context_module::instance($forum->cm));
     }
     $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
 

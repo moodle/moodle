@@ -86,8 +86,9 @@ class mod_forum_observer {
         $forums = $DB->get_records_sql($sql, $params);
         foreach ($forums as $forum) {
             // If user doesn't have allowforcesubscribe capability then don't subscribe.
-            if (has_capability('mod/forum:allowforcesubscribe', context_module::instance($forum->cmid), $userid)) {
-                forum_subscribe($userid, $forum->id);
+            $modcontext = context_module::instance($forum->cmid);
+            if (has_capability('mod/forum:allowforcesubscribe', $modcontext, $userid)) {
+                forum_subscribe($userid, $forum->id, $modcontext);
             }
         }
     }
