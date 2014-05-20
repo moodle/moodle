@@ -2547,6 +2547,18 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
+
+        // Test $CFG->emailonlyfromnoreplyaddress.
+        set_config('emailonlyfromnoreplyaddress', 1);
+        $this->assertNotEmpty($CFG->emailonlyfromnoreplyaddress);
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext);
+        unset_config('emailonlyfromnoreplyaddress');
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertEquals($CFG->noreplyaddress, $result[0]->from);
+        $this->assertNotEquals($CFG->noreplyaddress, $result[1]->from);
+        $sink->close();
     }
 
     /**
