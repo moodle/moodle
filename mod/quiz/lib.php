@@ -169,6 +169,8 @@ function quiz_delete_instance($id) {
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
+    quiz_access_manager::delete_settings($quiz);
+
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach ($events as $event) {
         $event = calendar_event::load($event);
