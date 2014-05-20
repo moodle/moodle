@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access box.net repository
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_boxnet
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/boxlib.php');
 /**
  * repository_boxnet class implements box.net client
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_boxnet
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

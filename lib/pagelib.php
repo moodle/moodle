@@ -642,7 +642,7 @@ class moodle_page {
     /**
      * Returns an array of minipulations or false if there are none to make.
      *
-     * @since 2.5.1 2.6
+     * @since Moodle 2.5.1 2.6
      * @return bool|array
      */
     protected function magic_get_blockmanipulations() {
@@ -1906,7 +1906,7 @@ class moodle_page {
     /**
      * Returns the block region having made any required theme manipulations.
      *
-     * @since 2.5.1 2.6
+     * @since Moodle 2.5.1 2.6
      * @param string $region
      * @return string
      */

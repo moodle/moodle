@@ -183,7 +183,7 @@ class moodle_google_curlio extends Google_CurlIO {
      * @param int $constant value of a CURL constant.
      * @return string name of the constant if found, or throws exception.
      * @throws coding_exception when the constant is not found.
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public function get_option_name_from_constant($constant) {
         if (is_null(self::$constants)) {

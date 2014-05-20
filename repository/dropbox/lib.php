@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access user's dropbox files
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_dropbox
  * @copyright  2012 Marina Glancy
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}

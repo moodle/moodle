@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access equella repositories.
  *
- * @since 2.3
+ * @since Moodle 2.3
  * @package    repository_equella
  * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 /**
  * repository_equella class implements equella_client
  *
- * @since 2.3
+ * @since Moodle 2.3
  * @package    repository_equella
  * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

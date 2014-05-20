@@ -31,7 +31,7 @@
  * Please do not forget to use upgrade_set_timeout()
  * before any action that may take longer time to finish.
  *
- * @since 2.5
+ * @since Moodle 2.5
  * @package block_section_links
  * @copyright 2013 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

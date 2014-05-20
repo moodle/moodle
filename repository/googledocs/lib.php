@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access Google Drive.
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_googledocs
  * @copyright  2009 Dan Poltawski <talktodan@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/google/contrib/Google_DriveService.php');
 /**
  * Google Docs Plugin
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_googledocs
  * @copyright  2009 Dan Poltawski <talktodan@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

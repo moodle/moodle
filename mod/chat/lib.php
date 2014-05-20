@@ -663,7 +663,7 @@ function chat_update_chat_times($chatid=0) {
  * @param bool $system False for non-system messages, true for system messages.
  * @param object $cm The course module object, pass it to save a database query when we trigger the event.
  * @return int The message ID.
- * @since 2.6
+ * @since Moodle 2.6
  */
 function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = null) {
     global $DB;

@@ -269,7 +269,7 @@ abstract class format_base {
      * So if 'Return to course' does not make sense in your format your should probably return false.
      *
      * @return boolean
-     * @since 2.6
+     * @since Moodle 2.6
      */
     public function has_view_page() {
         return true;

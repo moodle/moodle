@@ -1999,7 +1999,7 @@ function upgrade_save_orphaned_questions() {
  * @see backup_cron_automated_helper::remove_excess_backups()
  * @link http://tracker.moodle.org/browse/MDL-35116
  * @return void
- * @since 2.4
+ * @since Moodle 2.4
  */
 function upgrade_rename_old_backup_files_using_shortname() {
     global $CFG;
