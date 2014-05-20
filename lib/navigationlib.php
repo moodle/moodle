@@ -2769,6 +2769,12 @@ class global_navigation_for_ajax extends global_navigation {
                 break;
             case self::TYPE_COURSE :
                 $course = $DB->get_record('course', array('id' => $this->instanceid), '*', MUST_EXIST);
+                if (!can_access_course($course)) {
+                    // Thats OK all courses are expandable by default. We don't need to actually expand it we can just
+                    // add the course node and break. This leads to an empty node.
+                    $this->add_course($course);
+                    break;
+                }
                 require_course_login($course, true, null, false, true);
                 $this->page->set_context(context_course::instance($course->id));
                 $coursenode = $this->add_course($course);
