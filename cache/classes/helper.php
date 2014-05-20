@@ -719,7 +719,8 @@ class cache_helper {
             return $stores;
         } else {
             $stores = self::get_cache_stores($definition);
-            if (count($stores) === 0) {
+            // If mappingsonly is set, having 0 stores is ok.
+            if ((count($stores) === 0) && (!$definition->is_for_mappings_only())) {
                 // No suitable stores we found for the definition. We need to come up with a sensible default.
                 // If this has happened we can be sure that the user has mapped custom stores to either the
                 // mode of the definition. The first alternative to try is the system default for the mode.
