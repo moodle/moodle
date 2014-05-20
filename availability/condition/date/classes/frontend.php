@@ -74,7 +74,7 @@ class frontend extends \core_availability\frontend {
      * Given a timestamp, obtains corresponding field values.
      *
      * @param int $time Timestamp
-     * @return stdClass Object with fields for year, month, day, hour, minute
+     * @return \stdClass Object with fields for year, month, day, hour, minute
      */
     public static function get_fields_from_time($time) {
         $calendartype = \core_calendar\type_factory::get_calendar_instance();

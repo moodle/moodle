@@ -46,7 +46,7 @@ abstract class frontend {
      *
      * Default returns true.
      *
-     * @param stdClass $course Course object
+     * @param \stdClass $course Course object
      * @param \cm_info $cm Course-module currently being edited (null if none)
      * @param \section_info $section Section currently being edited (null if none)
      */
@@ -73,7 +73,7 @@ abstract class frontend {
      *
      * Default returns no parameters.
      *
-     * @param stdClass $course Course object
+     * @param \stdClass $course Course object
      * @param \cm_info $cm Course-module currently being edited (null if none)
      * @param \section_info $section Section currently being edited (null if none)
      * @return array Array of parameters for the JavaScript function
@@ -95,7 +95,7 @@ abstract class frontend {
     /**
      * Includes JavaScript for the main system and all plugins.
      *
-     * @param stdClass $course Course object
+     * @param \stdClass $course Course object
      * @param \cm_info $cm Course-module currently being edited (null if none)
      * @param \section_info $section Section currently being edited (null if none)
      */

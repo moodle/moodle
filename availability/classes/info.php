@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class info {
-    /** @var stdClass Course */
+    /** @var \stdClass Course */
     protected $course;
 
     /** @var \course_modinfo Modinfo (available only during some functions) */
@@ -52,10 +52,10 @@ abstract class info {
     /**
      * Constructs with item details.
      *
-     * @param stdClass $course Course object
+     * @param \stdClass $course Course object
      * @param int $visible Value of visible flag (eye icon)
      * @param string $availability Availability definition (JSON format) or null
-     * @throws coding_exception If data is not valid JSON format
+     * @throws \coding_exception If data is not valid JSON format
      */
     public function __construct($course, $visible, $availability) {
         // Set basic values.
@@ -67,7 +67,7 @@ abstract class info {
     /**
      * Obtains the course associated with this availability information.
      *
-     * @return stdClass Moodle course object
+     * @return \stdClass Moodle course object
      */
     public function get_course() {
         return $this->course;
@@ -128,7 +128,7 @@ abstract class info {
      * @param string $availability Availability string in JSON format
      * @param boolean $lax If true, throw exceptions only for invalid structure
      * @return tree Availability tree
-     * @throws coding_exception If data is not valid JSON format
+     * @throws \coding_exception If data is not valid JSON format
      */
     protected function decode_availability($availability, $lax) {
         // Decode JSON data.
@@ -306,7 +306,7 @@ abstract class info {
      *
      * @param string $restoreid Restore identifier
      * @param int $courseid Target course id
-     * @param base_logger $logger Logger for any warnings
+     * @param \base_logger $logger Logger for any warnings
      */
     public function update_after_restore($restoreid, $courseid, \base_logger $logger) {
         $tree = $this->get_availability_tree();
@@ -342,7 +342,7 @@ abstract class info {
      * function does that for the conditional availability data for all
      * modules and sections on the course.
      *
-     * @param int|stdClass $courseorid Course id or object
+     * @param int|\stdClass $courseorid Course id or object
      * @param string $table Table name e.g. 'course_modules'
      * @param int $oldid Previous ID
      * @param int $newid New ID
@@ -407,7 +407,7 @@ abstract class info {
      * groupmembersonly field for modules. This is off by default because
      * we are not yet moving the groupmembersonly option into this new API.
      *
-     * @param stdClass $rec Object possibly containing legacy fields
+     * @param \stdClass $rec Object possibly containing legacy fields
      * @param bool $section True if this is a section
      * @param bool $modgroupmembersonly True if groupmembersonly is converted for mods
      * @return string|null New availability value or null if none
@@ -468,7 +468,7 @@ abstract class info {
      * that it has an AND tree with one or more conditions.
      *
      * @param string|null $availability Current availability conditions
-     * @param stdClass $rec Object containing information from old table
+     * @param \stdClass $rec Object containing information from old table
      * @param bool $show True if 'show' option should be enabled
      * @return string New availability conditions
      */
@@ -501,7 +501,7 @@ abstract class info {
      * that it has an AND tree with one or more conditions.
      *
      * @param string|null $availability Current availability conditions
-     * @param stdClass $rec Object containing information from old table
+     * @param \stdClass $rec Object containing information from old table
      * @param bool $show True if 'show' option should be enabled
      * @return string New availability conditions
      */
@@ -598,8 +598,8 @@ abstract class info {
      * object.
      *
      * @param string $info Info string
-     * @param int|stdClass $courseorid
-     * @return Correctly formatted info string
+     * @param int|\stdClass $courseorid
+     * @return string Correctly formatted info string
      */
     public static function format_info($info, $courseorid) {
         // Don't waste time if there are no special tags.
@@ -624,7 +624,7 @@ abstract class info {
      * JS (using the non-JS version instead, which causes a page reload) if a
      * completion tickbox value may affect a conditional activity.
      *
-     * @param stdClass $course Moodle course object
+     * @param \stdClass $course Moodle course object
      * @param int $cmid Course-module id
      * @return bool True if this is used in a condition, false otherwise
      */

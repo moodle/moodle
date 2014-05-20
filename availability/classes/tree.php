@@ -128,11 +128,11 @@ class tree extends tree_node {
      *    coding_exception (if $lax is false).
      *
      * @see decode_availability
-     * @param stdClass $structure Structure (decoded from JSON)
+     * @param \stdClass $structure Structure (decoded from JSON)
      * @param boolean $lax If true, throw exceptions only for invalid structure
      * @param boolean $root If true, this is the root tree
      * @return tree Availability tree
-     * @throws coding_exception If data is not valid structure
+     * @throws \coding_exception If data is not valid structure
      */
     public function __construct($structure, $lax = false, $root = true) {
         $this->root = $root;
@@ -389,12 +389,12 @@ class tree extends tree_node {
      * for display to staff.
      *
      * @param info $info Information about location of condition tree
-     * @throws coding_exception If you call on a non-root tree
+     * @throws \coding_exception If you call on a non-root tree
      * @return string HTML data (empty string if none)
      */
     public function get_full_information(info $info) {
         if (!$this->root) {
-            throw new coding_exception('Only supported on root item');
+            throw new \coding_exception('Only supported on root item');
         }
         return $this->get_full_information_recursive(false, $info, null, true);
     }
@@ -406,12 +406,12 @@ class tree extends tree_node {
      *
      * @param info $info Information about location of condition tree
      * @param result $result Result object
-     * @throws coding_exception If you call on a non-root tree
+     * @throws \coding_exception If you call on a non-root tree
      * @return string HTML data (empty string if none)
      */
     public function get_result_information(info $info, result $result) {
         if (!$this->root) {
-            throw new coding_exception('Only supported on root item');
+            throw new \coding_exception('Only supported on root item');
         }
         return $this->get_full_information_recursive(false, $info, $result, true);
     }
@@ -530,7 +530,7 @@ class tree extends tree_node {
                 $negative = true;
                 break;
             default:
-                throw new coding_exception('Unknown operator');
+                throw new \coding_exception('Unknown operator');
         }
         switch($this->op) {
             case self::OP_AND:
@@ -542,7 +542,7 @@ class tree extends tree_node {
                 $andoperator = false;
                 break;
             default:
-                throw new coding_exception('Unknown operator');
+                throw new \coding_exception('Unknown operator');
         }
 
         // Select NOT (or not) for children. It flips if this is a 'not' group.
