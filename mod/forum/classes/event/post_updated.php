@@ -61,7 +61,7 @@ class post_updated extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' has updated the post with id '$this->objectid' in the discussion with " .
-            "id '{$this->other['discussionid']}' in the forum with the course module id '$this->contextinstanceid'.";
+            "id '{$this->other['discussionid']}' in the forum with course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -73,7 +73,7 @@ class submission_status_updated extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' has updated the status of the submission with id '$this->objectid' for " .
-            "the assignment with the course module id '$this->contextinstanceid' to the status '{$this->other['newstatus']}'.";
+            "the assignment with course module id '$this->contextinstanceid' to the status '{$this->other['newstatus']}'.";
     }
 
     /**

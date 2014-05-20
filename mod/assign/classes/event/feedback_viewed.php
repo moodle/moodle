@@ -89,7 +89,7 @@ class feedback_viewed extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' viewed the feedback for the user with id '$this->relateduserid' " .
-            "for the assignment with the course module id '$this->contextinstanceid'.";
+            "for the assignment with course module id '$this->contextinstanceid'.";
     }
 
     /**

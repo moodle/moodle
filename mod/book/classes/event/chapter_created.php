@@ -62,7 +62,7 @@ class chapter_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created the chapter with id '$this->objectid' for the book with the " .
+        return "The user with id '$this->userid' created the chapter with id '$this->objectid' for the book with " .
             "course module id '$this->contextinstanceid'.";
     }
 

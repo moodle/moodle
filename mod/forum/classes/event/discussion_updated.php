@@ -59,7 +59,7 @@ class discussion_updated extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' has updated the discussion with id '$this->objectid' in the forum " .
-            "with the course module id '$this->contextinstanceid'.";
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**

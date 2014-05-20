@@ -59,7 +59,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has viewed the report for the choice activity with the course module id
+        return "The user with id '$this->userid' has viewed the report for the choice activity with course module id
             '$this->contextinstanceid'";
     }
 

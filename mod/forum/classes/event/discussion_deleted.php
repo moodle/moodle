@@ -60,7 +60,7 @@ class discussion_deleted extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' has deleted the discussion with id '$this->objectid' in the forum " .
-            "with the course module id '$this->contextinstanceid'.";
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**

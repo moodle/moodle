@@ -60,7 +60,7 @@ class assessment_evaluated extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' has had their assessment attempt evaluated for the workshop with " .
-            "the course module id '$this->contextinstanceid'.";
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

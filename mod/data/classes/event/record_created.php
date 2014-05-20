@@ -69,7 +69,7 @@ class record_created extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' created the data record with id '$this->objectid' for the data activity " .
-            "with the course module id '$this->contextinstanceid'.";
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**

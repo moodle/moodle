@@ -58,7 +58,7 @@ class sco_launched extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' launched the sco with id '$this->objectid' for the scorm with " .
-            "the course module id '$this->contextinstanceid'.";
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

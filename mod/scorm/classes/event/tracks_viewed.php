@@ -58,7 +58,7 @@ class tracks_viewed extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' viewed the tracks for the user with id '$this->relateduserid' " .
-            "for the scorm activity with the course module id '$this->contextinstanceid'.";
+            "for the scorm activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

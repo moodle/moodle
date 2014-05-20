@@ -60,7 +60,7 @@ class submission_assessed extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' assessed the submission with id '$this->objectid' for the user with " .
-            "id '$this->relateduserid' in the workshop with the course module id '$this->contextinstanceid'.";
+            "id '$this->relateduserid' in the workshop with course module id '$this->contextinstanceid'.";
     }
 
     /**

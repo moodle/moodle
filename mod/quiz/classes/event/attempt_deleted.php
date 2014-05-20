@@ -60,7 +60,7 @@ class attempt_deleted extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' deleted the attempt with id '$this->objectid' belonging to the quiz " .
-            "with the course module id '$this->contextinstanceid' for the user with id '$this->relateduserid'.";
+            "with course module id '$this->contextinstanceid' for the user with id '$this->relateduserid'.";
     }
 
     /**

@@ -70,7 +70,7 @@ class field_deleted extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' deleted the field with id '$this->objectid' in the data activity " .
-            "with the course module id '$this->contextinstanceid'.";
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**

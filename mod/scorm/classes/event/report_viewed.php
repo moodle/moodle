@@ -57,7 +57,7 @@ class report_viewed extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '$this->userid' viewed the scorm report '{$this->other['mode']}' for the scorm with " .
-            "the course module id '$this->contextinstanceid'.";
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -93,7 +93,7 @@ class submission_status_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has viewed the submission status page for the assignment with the " .
+        return "The user with id '$this->userid' has viewed the submission status page for the assignment with " .
             "course module id '$this->contextinstanceid'.";
     }
 
