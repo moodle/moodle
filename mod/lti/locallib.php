@@ -280,6 +280,7 @@ function lti_build_request($instance, $typeconfig, $course) {
         $requestparams['lis_person_name_given'] =  $USER->firstname;
         $requestparams['lis_person_name_family'] =  $USER->lastname;
         $requestparams['lis_person_name_full'] =  $USER->firstname." ".$USER->lastname;
+        $requestparams['ext_user_username'] = $USER->username;
     }
 
     if ( $typeconfig['sendemailaddr'] == LTI_SETTING_ALWAYS ||
