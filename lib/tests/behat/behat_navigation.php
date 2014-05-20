@@ -64,7 +64,7 @@ class behat_navigation extends behat_base {
         $hasblocktree = "[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]";
         $hasbranch = "[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]";
         $hascollapsed = "li[contains(concat(' ', normalize-space(@class), ' '), ' collapsed ') or @data-exandable='1']";
-        $notcollapsed = "[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]";
+        $notcollapsed = "li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]";
         $match = "[normalize-space(.)={$nodetextliteral}]";
 
         // Avoid problems with quotes.
@@ -77,11 +77,14 @@ class behat_navigation extends behat_base {
             $iscollapsed = 'li';
         }
 
-        $xpath  = "//ul{$hasblocktree}//li{$notcollapsed}/ul/{$iscollapsed}/p{$isbranch}/a{$match}|";
-        $xpath .= "//ul{$hasblocktree}//li{$notcollapsed}/ul/{$iscollapsed}/p{$isbranch}/span{$match}";
+        // First check root nodes.
+        $xpath  = "//ul{$hasblocktree}/$hascollapsed/p{$isbranch}/span{$match}|";
+        // Next search for the node containing the text within a link.
+        $xpath .= "//ul{$hasblocktree}//{$notcollapsed}/ul/{$iscollapsed}/p{$isbranch}/a{$match}|";
+        // Finally search for the node containing the text within a span.
+        $xpath .= "//ul{$hasblocktree}//{$notcollapsed}/ul/{$iscollapsed}/p{$isbranch}/span{$match}";
 
         $node = $this->find('xpath', $xpath, $exception);
-        $this->ensure_node_is_visible($node);
         return $node;
     }
 
