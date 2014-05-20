@@ -33,6 +33,8 @@ class mod_choice_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'allowupdate', get_string("allowupdate", "choice"));
 
+        $mform->addElement('selectyesno', 'allowmultiple', get_string('allowmultiple', 'choice'));
+
         $mform->addElement('selectyesno', 'limitanswers', get_string('limitanswers', 'choice'));
         $mform->addHelpButton('limitanswers', 'limitanswers', 'choice');
 

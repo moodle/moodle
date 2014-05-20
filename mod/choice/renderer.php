@@ -34,7 +34,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @param bool $vertical
      * @return string
      */
-    public function display_options($options, $coursemoduleid, $vertical = false) {
+    public function display_options($options, $coursemoduleid, $vertical = false, $multiple = false) {
         $layoutclass = 'horizontal';
         if ($vertical) {
             $layoutclass = 'vertical';
@@ -50,8 +50,13 @@ class mod_choice_renderer extends plugin_renderer_base {
         foreach ($options['options'] as $option) {
             $choicecount++;
             $html .= html_writer::start_tag('li', array('class'=>'option'));
-            $option->attributes->name = 'answer';
-            $option->attributes->type = 'radio';
+            if ($multiple) {
+                $option->attributes->name = 'answer[]';
+                $option->attributes->type = 'checkbox';
+            } else {
+                $option->attributes->name = 'answer';
+                $option->attributes->type = 'radio';
+            }
             $option->attributes->id = 'choice_'.$choicecount;
 
             $labeltext = $option->text;
@@ -216,7 +221,8 @@ class mod_choice_renderer extends plugin_renderer_base {
                         $userfullname = fullname($user, $choices->fullnamecapability);
                         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability  && $optionid > 0) {
                             $attemptaction = html_writer::label($userfullname, 'attempt-user'.$user->id, false, array('class' => 'accesshide'));
-                            $attemptaction .= html_writer::checkbox('attemptid[]', $user->id,'', null, array('id' => 'attempt-user'.$user->id));
+                            $attemptaction .= html_writer::checkbox('attemptid[]', $user->answerid, '', null,
+                                    array('id' => 'attempt-user'.$user->id));
                             $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
                         }
                         $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));

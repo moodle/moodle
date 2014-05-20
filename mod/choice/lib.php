@@ -247,10 +247,27 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     global $DB, $CFG;
     require_once($CFG->libdir.'/completionlib.php');
 
-    $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
+    if (empty($formanswer)) {
+        print_error('atleastoneoption', 'choice');
+    }
+
+    if (is_array($formanswer)) {
+        if (!$choice->allowmultiple) {
+            print_error('multiplenotallowederror', 'choice');
+        }
+        $formanswers = $formanswer;
+    } else {
+        $formanswers = array($formanswer);
+    }
+
+    $current = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
     $context = context_module::instance($cm->id);
 
-    $countanswers=0;
+    $countanswers = array();
+    foreach ($formanswers as $val) {
+        $countanswers[$val] = 0;
+    }
+
     if($choice->limitanswers) {
         // Find out whether groups are being used and enabled
         if (groups_get_activity_groupmode($cm) > 0) {
@@ -258,10 +275,15 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         } else {
             $currentgroup = 0;
         }
+
+        list ($insql, $params) = $DB->get_in_or_equal($formanswers, SQL_PARAMS_NAMED);
+
         if($currentgroup) {
             // If groups are being used, retrieve responses only for users in
             // current group
             global $CFG;
+
+            $params['groupid'] = $currentgroup;
             $answers = $DB->get_records_sql("
 SELECT
     ca.*
@@ -269,34 +291,69 @@ FROM
     {choice_answers} ca
     INNER JOIN {groups_members} gm ON ca.userid=gm.userid
 WHERE
-    optionid=?
-    AND gm.groupid=?", array($formanswer, $currentgroup));
+    optionid $insql
+    AND gm.groupid= :groupid", $params);
         } else {
             // Groups are not used, retrieve all answers for this option ID
-            $answers = $DB->get_records("choice_answers", array("optionid" => $formanswer));
+            $answers = $DB->get_records_sql("
+SELECT
+    ca.*
+FROM
+    {choice_answers} ca
+WHERE
+    optionid $insql", $params);
         }
 
         if ($answers) {
             foreach ($answers as $a) { //only return enrolled users.
                 if (is_enrolled($context, $a->userid, 'mod/choice:choose')) {
-                    $countanswers++;
+                    $countanswers[$a->optionid]++;
                 }
             }
         }
-        $maxans = $choice->maxanswers[$formanswer];
+
+        $choicesexceeded = false;
+        foreach ($countanswers as $opt => $count) {
+            if ($count > $choice->maxanswers[$opt]) {
+                $choicesexceeded = true;
+                break;
+            }
+        }
     }
 
-    if (!($choice->limitanswers && ($countanswers >= $maxans) )) {
+    if (!($choice->limitanswers && $choicesexceeded)) {
+        $answersnapshots = array();
         if ($current) {
 
-            $newanswer = $current;
-            $newanswer->optionid = $formanswer;
-            $newanswer->timemodified = time();
-            $DB->update_record("choice_answers", $newanswer);
+            $existingchoices = array();
+            foreach ($current as $c) {
+                if (in_array($c->optionid, $formanswers)) {
+                    $existingchoices[] = $c->optionid;
+                    $newanswer = $c;
+                    $newanswer->timemodified = time();
+                    $DB->update_record("choice_answers", $newanswer);
+                    $answersnapshots[] = $newanswer;
+                } else {
+                    $DB->delete_records('choice_answers', array('id' => $c->id));
+                }
+            }
+
+            // Add new ones.
+            foreach ($formanswers as $f) {
+                if (!in_array($f, $existingchoices)) {
+                    $newanswer = new stdClass();
+                    $newanswer->optionid = $f;
+                    $newanswer->choiceid = $choice->id;
+                    $newanswer->userid = $userid;
+                    $newanswer->timemodified = time();
+                    $newanswer->id = $DB->insert_record("choice_answers", $newanswer);
+                    $answersnapshots[] = $newanswer;
+                }
+            }
 
             $eventdata = array();
             $eventdata['context'] = $context;
-            $eventdata['objectid'] = $newanswer->id;
+            $eventdata['objectid'] = $choice->id;
             $eventdata['userid'] = $userid;
             $eventdata['courseid'] = $course->id;
             $eventdata['other'] = array();
@@ -304,17 +361,24 @@ WHERE
             $eventdata['other']['optionid'] = $formanswer;
 
             $event = \mod_choice\event\answer_updated::create($eventdata);
-            $event->add_record_snapshot('choice_answers', $newanswer);
             $event->add_record_snapshot('course', $course);
             $event->add_record_snapshot('course_modules', $cm);
+            $event->add_record_snapshot('choice', $choice);
+            foreach ($answersnapshots as $record) {
+                $event->add_record_snapshot('choice_answers', $record);
+            }
             $event->trigger();
         } else {
-            $newanswer = new stdClass();
-            $newanswer->choiceid = $choice->id;
-            $newanswer->userid = $userid;
-            $newanswer->optionid = $formanswer;
-            $newanswer->timemodified = time();
-            $newanswer->id = $DB->insert_record("choice_answers", $newanswer);
+
+            foreach ($formanswers as $answer) {
+                $newanswer = new stdClass();
+                $newanswer->choiceid = $choice->id;
+                $newanswer->userid = $userid;
+                $newanswer->optionid = $answer;
+                $newanswer->timemodified = time();
+                $newanswer->id = $DB->insert_record("choice_answers", $newanswer);
+                $answersnapshots[] = $newanswer;
+            }
 
             // Update completion state
             $completion = new completion_info($course);
@@ -324,21 +388,26 @@ WHERE
 
             $eventdata = array();
             $eventdata['context'] = $context;
-            $eventdata['objectid'] = $newanswer->id;
+            $eventdata['objectid'] = $choice->id;
             $eventdata['userid'] = $userid;
             $eventdata['courseid'] = $course->id;
             $eventdata['other'] = array();
             $eventdata['other']['choiceid'] = $choice->id;
-            $eventdata['other']['optionid'] = $formanswer;
+            $eventdata['other']['optionid'] = $formanswers;
 
             $event = \mod_choice\event\answer_submitted::create($eventdata);
-            $event->add_record_snapshot('choice_answers', $newanswer);
             $event->add_record_snapshot('course', $course);
             $event->add_record_snapshot('course_modules', $cm);
+            $event->add_record_snapshot('choice', $choice);
+            foreach ($answersnapshots as $record) {
+                $event->add_record_snapshot('choice_answers', $record);
+            }
             $event->trigger();
         }
     } else {
-        if (!($current->optionid==$formanswer)) { //check to see if current choice already selected - if not display error
+        // Check to see if current choice already selected - if not display error.
+        $currentids = array_keys($current);
+        if (array_diff($currentids, $formanswers) || array_diff($formanswers, $currentids) ) {
             print_error('choicefull', 'choice');
         }
     }
@@ -351,11 +420,13 @@ WHERE
  */
 function choice_show_reportlink($user, $cm) {
     $responsecount =0;
+    $userschosen = array();
     foreach($user as $optionid => $userlist) {
         if ($optionid) {
-            $responsecount += count($userlist);
+            $userschosen = array_merge($userschosen, array_keys($userlist));
         }
     }
+    $responsecount = count(array_unique($userschosen));
 
     echo '<div class="reportlink">';
     echo "<a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
@@ -433,8 +504,8 @@ function choice_delete_responses($attemptids, $choice, $cm, $course) {
 
     $completion = new completion_info($course);
     foreach($attemptids as $attemptid) {
-        if ($todelete = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $attemptid))) {
-            $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $attemptid));
+        if ($todelete = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid))) {
+            $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid));
             // Update completion state
             if ($completion->is_enabled($cm) && $choice->completionsubmit) {
                 $completion->update_state($cm, COMPLETION_INCOMPLETE, $attemptid);
@@ -635,12 +706,17 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 /// Use the responses to move users into the correct column
 
     if ($rawresponses) {
+        $answeredusers = array();
         foreach ($rawresponses as $response) {
             if (isset($allresponses[0][$response->userid])) {   // This person is enrolled and in correct group
                 $allresponses[0][$response->userid]->timemodified = $response->timemodified;
                 $allresponses[$response->optionid][$response->userid] = clone($allresponses[0][$response->userid]);
-                unset($allresponses[0][$response->userid]);   // Remove from unanswered column
+                $allresponses[$response->optionid][$response->userid]->answerid = $response->id;
+                $answeredusers[] = $response->userid;
             }
+        }
+        foreach ($answeredusers as $answereduser) {
+            unset($allresponses[0][$answereduser]);
         }
     }
     return $allresponses;

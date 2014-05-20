@@ -25,6 +25,7 @@
 
 $string['addmorechoices'] = 'Add more choices';
 $string['allowupdate'] = 'Allow choice to be updated';
+$string['allowmultiple'] = 'Allow more than one choice to be selected';
 $string['answered'] = 'Answered';
 $string['completionsubmit'] = 'Show as complete when user makes a choice';
 $string['displayhorizontal'] = 'Display horizontally';
@@ -73,6 +74,7 @@ A choice activity may be used
 $string['modulename_link'] = 'mod/choice/view';
 $string['modulenameplural'] = 'Choices';
 $string['moveselectedusersto'] = 'Move selected users to...';
+$string['multiplenotallowederror'] = 'Multiple answers are not allowed in this choice';
 $string['mustchooseone'] = 'You must choose an answer before saving.  Nothing was saved.';
 $string['noguestchoose'] = 'Sorry, guests are not allowed to make choices.';
 $string['noresultsviewable'] = 'The results are not currently viewable.';
