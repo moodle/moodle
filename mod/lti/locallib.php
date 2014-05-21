@@ -194,13 +194,16 @@ function lti_view($instance) {
 
     $requestparams['launch_presentation_return_url'] = $returnurl;
 
-    $factory    = new \mod_lti\factory();
-    $dispatcher = $factory->build_dispatcher();
-    $event      = new \mod_lti\observer\before_launch_event($instance, $endpoint, $requestparams);
-    $dispatcher->dispatch(\mod_lti\observer\events::BEFORE_LAUNCH, $event);
+    // Allow request params to be updated by sub-plugins.
+    $plugins = core_component::get_plugin_list('ltisource');
+    foreach (array_keys($plugins) as $plugin) {
+        $pluginparams = component_callback('ltisource_'.$plugin, 'before_launch',
+            array($instance, $endpoint, $requestparams), array());
 
-    // Allow params to be updated.
-    $requestparams = $event->params;
+        if (!empty($pluginparams) && is_array($pluginparams)) {
+            $requestparams = array_merge($requestparams, $pluginparams);
+        }
+    }
 
     if (!empty($key) && !empty($secret)) {
         $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
