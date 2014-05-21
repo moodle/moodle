@@ -41,73 +41,74 @@ class cronlib_testcase extends basic_testcase {
         $tmpdir = realpath($CFG->tempdir);
         $time = time();
 
-        $weekstime = $time - strtotime('1 week');
-        $beforeweekstime = $time - strtotime('1 week') - 1;
-        $afterweekstime = $time + strtotime('1 week') + 1;
+        $lastweekstime = strtotime('-1 week');
+        $beforelastweekstime = $lastweekstime - 60;
+        $afterlastweekstime = $lastweekstime + 60;
 
-        $node1 = new stdClass();
-        $node1->path = '/dir1/dir1_1/dir1_2/dir1_3/';
-        $node1->time = 1;
-        $node1->isdir = true;
+        $nodes = array();
+        // Really old directory to remove.
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, 1, false);
 
-        $node2 = new stdClass();
-        $node2->path = '/dir1/dir1_4/';
-        $node2->time = $time;
-        $node2->isdir = true;
+        // New Directory to keep.
+        $nodes[] = $this->generate_test_path('/dir1/dir1_2/', true, $time, true);
 
-        $node3 = new stdClass();
-        $node3->path = '/dir2/';
-        $node3->isdir = true;
-        $node3->time = $time - $weekstime;
+        // Directory exactly 1 week old, keep.
+        $nodes[] = $this->generate_test_path('/dir2/', true, $lastweekstime, true);
 
-        $node4 = new stdClass();
-        $node4->path = '/dir3/';
-        $node4->isdir = true;
-        $node4->time = $time - $afterweekstime;
+        // Directory older than 1 week old, remove.
+        $nodes[] = $this->generate_test_path('/dir3/', true, $beforelastweekstime, false);
 
-        $node5 = new stdClass();
-        $node5->path = '/dir1/dir1_1/dir1_2/file1';
-        $node5->isdir = false;
-        $node5->time = $beforeweekstime;
+        // File older than 1 week old, remove.
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_1', false, $beforelastweekstime, false);
 
-        $node6 = new stdClass();
-        $node6->path = '/dir1/dir1_1/dir1_2/file2';
-        $node6->isdir = false;
-        $node6->time = $time;
+        // New File to keep.
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_2', false, $time, true);
 
-        $node7 = new stdClass();
-        $node7->path = '/dir1/dir1_4/file1';
-        $node7->isdir = false;
-        $node7->time = $time - $afterweekstime;
+        // File older than 1 week old, remove.
+        $nodes[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_1', false, $beforelastweekstime, false);
 
-        $node8 = new stdClass();
-        $node8->path = '/dir1/dir1_4/file2';
-        $node8->isdir = false;
-        $node8->time = $time;
+        // New file to keep.
+        $nodes[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_2', false, $time, true);
 
-        $node9 = new stdClass();
-        $node9->path = '/file1';
-        $node9->isdir = false;
-        $node9->time = $time;
+        // New file to keep.
+        $nodes[] = $this->generate_test_path('/file1', false, $time, true);
 
-        $node10 = new stdClass();
-        $node10->path = '/file2';
-        $node10->isdir = false;
-        $node10->time = $time - $afterweekstime;
+        // File older than 1 week, keep.
+        $nodes[] = $this->generate_test_path('/file2', false, $beforelastweekstime, false);
+
+        // Directory older than 1 week to keep.
+        // Note: Since this directory contains a directory that contains a file that is also older than a week
+        // the directory won't be deleted since it's mtime will be updated when the file is deleted.
+
+        $nodes[] = $this->generate_test_path('/dir4/dir4_1', true, $beforelastweekstime, true);
+
+        $nodes[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/', true, $beforelastweekstime, true);
+
+        // File older than 1 week to remove.
+        $nodes[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/file4_1_1_1', false, $beforelastweekstime, false);
+
+        $expectednodes = array();
+        foreach ($nodes as $node) {
+            if ($node->keep) {
+                $path = $tmpdir;
+                $pelements = preg_split('/\//', $node->path);
+                foreach ($pelements as $pelement) {
+                    if ($pelement === '') {
+                        continue;
+                    }
+                    $path .= DIRECTORY_SEPARATOR . $pelement;
+                    if (!in_array($path, $expectednodes)) {
+                        $expectednodes[] = $path;
+                    }
+                }
+            }
+        }
+        sort($expectednodes);
 
         $data = array(
                 array(
-                    array($node1, $node2, $node3, $node4, $node5, $node6, $node7, $node8, $node9, $node10),
-                    array(
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir1',
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_1',
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_1'.DIRECTORY_SEPARATOR.'dir1_2',
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_1'.DIRECTORY_SEPARATOR.'dir1_2'.DIRECTORY_SEPARATOR.'file2',
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_4',
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_4'.DIRECTORY_SEPARATOR.'file2',
-                        $tmpdir.DIRECTORY_SEPARATOR.'dir2',
-                        $tmpdir.DIRECTORY_SEPARATOR.'file1',
-                    )
+                    $nodes,
+                    $expectednodes
                 ),
                 array(
                     array(),
@@ -116,6 +117,23 @@ class cronlib_testcase extends basic_testcase {
         );
 
         return $data;
+    }
+
+    /**
+     * Function to populate node array.
+     *
+     * @param string $path Path of directory or file
+     * @param boolean $isdir Is the node a directory
+     * @param int $time modified time of the node in epoch
+     * @param boolean $keep Should the node exist after the delete function has run
+     */
+    private function generate_test_path($path, $isdir = false, $time = 0, $keep = false) {
+        $node = new stdClass();
+        $node->path = $path;
+        $node->isdir = $isdir;
+        $node->time = $time;
+        $node->keep = $keep;
+        return $node;
     }
 
     /**
@@ -136,7 +154,13 @@ class cronlib_testcase extends basic_testcase {
             }
             touch($tmpdir.$data->path, $data->time);
         }
-
+        // We need to iterate through again since adding a file to a directory will
+        // update the modified time of the directory.
+        foreach ($nodes as $data) {
+            if ($data->isdir) {
+                touch($tmpdir.$data->path, $data->time);
+            }
+        }
         cron_delete_from_temp();
 
         $dir = new RecursiveDirectoryIterator($tmpdir);

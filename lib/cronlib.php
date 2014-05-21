@@ -806,8 +806,11 @@ function cron_delete_from_temp() {
             // Check if file or directory is older than the given time.
             if ($iter->getMTime() < $time) {
                 if ($iter->isDir() && !$iter->isDot()) {
-                    if (@rmdir($node) === false) {
-                        mtrace("Failed removing directory '$node'.");
+                    // Don't attempt to delete the directory if it isn't empty.
+                    if (!glob($node. DIRECTORY_SEPARATOR . '*')) {
+                        if (@rmdir($node) === false) {
+                            mtrace("Failed removing directory '$node'.");
+                        }
                     }
                 }
                 if ($iter->isFile()) {
