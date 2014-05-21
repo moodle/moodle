@@ -106,6 +106,9 @@ class phpunit_util extends testing_util {
         // Stop any message redirection.
         phpunit_util::stop_phpmailer_redirection();
 
+        // Release memory and indirectly call destroy() methods to release resource handles, etc.
+        gc_collect_cycles();
+
         // Show any unhandled debugging messages, the runbare() could already reset it.
         self::display_debugging_messages();
         self::reset_debugging();
