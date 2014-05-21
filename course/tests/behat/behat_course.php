@@ -122,9 +122,7 @@ class behat_course extends behat_base {
     public function i_go_to_the_courses_management_page() {
         return array(
             new Given('I am on homepage'),
-            new Given('I expand "' . get_string('administrationsite') . '" node'),
-            new Given('I expand "' . get_string('courses', 'admin') . '" node'),
-            new Given('I follow "' . get_string('coursemgmt', 'admin') . '"')
+            new Given('I navigate to "' . get_string('coursemgmt', 'admin') . '" node in "' . get_string('administrationsite') . ' > ' . get_string('courses', 'admin') . '"')
         );
     }
 

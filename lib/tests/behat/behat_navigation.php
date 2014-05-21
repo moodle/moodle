@@ -63,7 +63,7 @@ class behat_navigation extends behat_base {
         $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
         $hasblocktree = "[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]";
         $hasbranch = "[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]";
-        $hascollapsed = "li[contains(concat(' ', normalize-space(@class), ' '), ' collapsed ') or @data-exandable='1']";
+        $hascollapsed = "li[contains(concat(' ', normalize-space(@class), ' '), ' collapsed ') or @data-expandable='1']";
         $notcollapsed = "li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]";
         $match = "[normalize-space(.)={$nodetextliteral}]";
 
