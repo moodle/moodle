@@ -211,6 +211,15 @@ if ($currentpage->userid == 0) {
     $CFG->blockmanagerclass = 'my_syspage_block_manager';
 }
 
+// Trigger a user profile viewed event.
+$event = \core\event\user_profile_viewed::create(array(
+    'objectid' => $user->id,
+    'relateduserid' => $user->id,
+    'context' => $usercontext
+));
+$event->add_record_snapshot('user', $user);
+$event->trigger();
+
 // TODO WORK OUT WHERE THE NAV BAR IS!
 echo $OUTPUT->header();
 echo '<div class="userprofile">';
