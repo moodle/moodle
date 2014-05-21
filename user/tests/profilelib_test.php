@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/user/profile/lib.php');
 
 /**
  * Unit tests for user/profile/lib.php.
@@ -40,7 +39,8 @@ class core_user_profilelib_testcase extends advanced_testcase {
      * with profile_user_record.
      */
     public function test_get_custom_fields() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
@@ -84,5 +84,21 @@ class core_user_profilelib_testcase extends advanced_testcase {
 
         // Check profile_user_record returns same field.
         $this->assertEquals(array('frogname'), array_keys((array)profile_user_record($user->id)));
+    }
+
+    /**
+     * Make sure that all profile fields can be initialised without arguments.
+     */
+    public function test_default_constructor() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/user/profile/definelib.php');
+        $datatypes = profile_list_datatypes();
+        foreach ($datatypes as $datatype => $datatypename) {
+            require_once($CFG->dirroot . '/user/profile/field/' .
+                $datatype . '/field.class.php');
+            $newfield = 'profile_field_' . $datatype;
+            $formfield = new $newfield();
+            $this->assertNotNull($formfield);
+        }
     }
 }
