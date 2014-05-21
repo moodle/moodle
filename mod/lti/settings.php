@@ -48,6 +48,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+/** @var admin_settingpage $settings */
+$modltifolder = new admin_category('modltifolder', new lang_string('pluginname', 'mod_lti'), $module->is_enabled() === false);
+$ADMIN->add('modsettings', $modltifolder);
+
+$ADMIN->add('modltifolder', $settings);
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('ltisource') as $plugin) {
+    /** @var \mod_lti\plugininfo\ltisource $plugin */
+    $plugin->load_settings($ADMIN, 'modltifolder', $hassiteconfig);
+}
+
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
@@ -172,40 +183,16 @@ if ($ADMIN->fulltree) {
 //]]
 </script>
 ";
-    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti') . $OUTPUT->help_icon('main_admin', 'lti'), $template));
+    $settings->add(new admin_setting_heading('lti_types', new lang_string('external_tool_types', 'lti') . $OUTPUT->help_icon('main_admin', 'lti'), $template));
+}
 
-    if (!during_initial_install()) {
-        // Process subplugin settings pages if any.
-        // Every subplugin that wishes to have settings page should provide it's own
-        // settings.php assuming it will be added as a custom settings page.
-        // A type will be passed through subtype parameter.
-        // All such links will be placed in separate category called LTI.
-        $plugins = get_plugin_list('ltisource');
-        if (!empty($plugins)) {
-            $toadd = array();
-            foreach ($plugins as $name => $path) {
-                if (file_exists($path.DIRECTORY_SEPARATOR.'settings.php')) {
-                    $toadd[] = $name;
-                }
-            }
+if (count($modltifolder->children) <= 1) {
+    // No need for a folder, revert to default activity settings page.
+    $ADMIN->prune('modltifolder');
+} else {
+    // Using the folder, update settings name.
+    $settings->visiblename = new lang_string('ltisettings', 'mod_lti');
 
-            if (!empty($toadd)) {
-                $ADMIN->add('modules',
-                    new admin_category('ltisource',
-                        new lang_string('lti', 'lti'),
-                        $module->is_enabled() === false)
-                );
-
-                foreach ($toadd as $name) {
-                    $component = 'ltisource_'.$name;
-                    $ADMIN->add($component,
-                        new admin_externalpage($name,
-                            new lang_string('pluginname', $component),
-                            new moodle_url("/mod/lti/source/{$name}/settings.php",
-                                array('subtype' => $component)))
-                    );
-                }
-            }
-        }
-    }
+    // Tell core we already added the settings structure.
+    $settings = null;
 }

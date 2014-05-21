@@ -223,6 +223,7 @@ $string['lti:grade'] = 'View grades returned by the external tool';
 $string['lti:manage'] = 'Be an Instructor when the tool is launched';
 $string['lti:requesttooladd'] = 'Request a tool is configured site-wide';
 $string['lti:view'] = 'Launch external tool activities';
+$string['ltisettings'] = 'LTI settings';
 $string['lti_administration'] = 'LTI Administration';
 $string['lti_errormsg'] = 'The tool returned the following error message: "{$a}"';
 $string['lti_launch_error'] = 'An error occurred when launching the external tool:';
