@@ -6672,14 +6672,13 @@ class assign {
         // Shuffle the users.
         shuffle($users);
 
-        $record = new stdClass();
-        $record->assignment = $assignid;
         foreach ($users as $user) {
             $record = $DB->get_record('assign_user_mapping',
                                       array('assignment'=>$assignid, 'userid'=>$user->id),
                                      'id');
             if (!$record) {
                 $record = new stdClass();
+                $record->assignment = $assignid;
                 $record->userid = $user->id;
                 $DB->insert_record('assign_user_mapping', $record);
             }
