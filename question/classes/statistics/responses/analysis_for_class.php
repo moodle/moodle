@@ -107,7 +107,7 @@ class analysis_for_class {
             return true;
         } else if (count($this->actualresponses) == 1) {
             $onlyactualresponse = reset($this->actualresponses);
-            return (string)$onlyactualresponse != $this->modelresponse;
+            return !$onlyactualresponse->response_matches($this->modelresponse);
         }
         return false;
     }
