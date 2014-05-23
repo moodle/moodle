@@ -1,6 +1,13 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.6.4 / 2.7.1 ===
+
+* update_internal_user_password() accepts optional boolean $fasthash for fast
+  hashing.
+* user_update_user() and user_create_user() api's accept optional param
+  $triggerevent to avoid respective events to be triggred from the api's.
+
 === 2.5.5 / 2.6.2 / 2.7 ===
 
 * New "Time spent waiting for the database" performance metric displayed along with the

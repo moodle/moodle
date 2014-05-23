@@ -156,6 +156,7 @@ $userform = new user_editadvanced_form(null, array(
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
+    $usercreated = false;
 
     if (empty($usernew->auth)) {
         //user editing self
@@ -182,7 +183,7 @@ if ($usernew = $userform->get_data()) {
         } else {
             $usernew->password = hash_internal_user_password($usernew->newpassword);
         }
-        $usernew->id = user_create_user($usernew, false);
+        $usernew->id = user_create_user($usernew, false, false);
     } else {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
         // Pass a true old $user here.
@@ -190,7 +191,7 @@ if ($usernew = $userform->get_data()) {
             // Auth update failed.
             print_error('cannotupdateuseronexauth', '', '', $user->auth);
         }
-        user_update_user($usernew, false);
+        user_update_user($usernew, false, false);
 
         //set new password if specified
         if (!empty($usernew->newpassword)) {
