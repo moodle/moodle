@@ -29,9 +29,11 @@
  * @throws moodle_exception
  * @param stdClass $user user to create
  * @param bool $updatepassword if true, authentication plugin will update password.
+ * @param bool $triggerevent set false if user_created event should not be triggred.
+ *             This will not affect user_password_updated event triggering.
  * @return int id of the newly created user
  */
-function user_create_user($user, $updatepassword = true) {
+function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     global $CFG, $DB;
 
     // Set the timecreate field to the current time.
@@ -87,15 +89,10 @@ function user_create_user($user, $updatepassword = true) {
         $authplugin->user_update_password($newuser, $userpassword);
     }
 
-    // Trigger event.
-    $event = \core\event\user_created::create(
-            array(
-                'objectid' => $newuserid,
-                'relateduserid' => $newuserid,
-                'context' => $usercontext
-                )
-            );
-    $event->trigger();
+    // Trigger event If required.
+    if ($triggerevent) {
+        \core\event\user_created::create_from_userid($newuserid)->trigger();
+    }
 
     return $newuserid;
 }
@@ -106,8 +103,10 @@ function user_create_user($user, $updatepassword = true) {
  * @throws moodle_exception
  * @param stdClass $user the user to update
  * @param bool $updatepassword if true, authentication plugin will update password.
+ * @param bool $triggerevent set false if user_updated event should not be triggred.
+ *             This will not affect user_password_updated event triggering.
  */
-function user_update_user($user, $updatepassword = true) {
+function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     global $DB;
 
     // Set the timecreate field to the current time.
@@ -165,16 +164,10 @@ function user_update_user($user, $updatepassword = true) {
             }
         }
     }
-
-    // Trigger event.
-    $event = \core\event\user_updated::create(
-            array(
-                'objectid' => $user->id,
-                'relateduserid' => $user->id,
-                'context' => context_user::instance($user->id)
-                )
-            );
-    $event->trigger();
+    // Trigger event if required.
+    if ($triggerevent) {
+        \core\event\user_updated::create_from_userid($user->id)->trigger();
+    }
 }
 
 /**
