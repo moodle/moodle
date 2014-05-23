@@ -1481,6 +1481,15 @@ class page_requirements_manager {
         }
 
         // Add all needed strings.
+        // First add core strings required for some dialogues.
+        $this->strings_for_js(array(
+            'confirm',
+            'yes',
+            'no',
+            'areyousure',
+            'closebuttontitle',
+            'unknownerror',
+        ), 'moodle');
         if (!empty($this->stringsforjs)) {
             $strings = array();
             foreach ($this->stringsforjs as $component=>$v) {
