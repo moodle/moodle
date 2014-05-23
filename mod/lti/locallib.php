@@ -359,7 +359,7 @@ function lti_get_tool_table($tools, $id) {
         ";
 
         foreach ($tools as $type) {
-            $date = userdate($type->timecreated);
+            $date = userdate($type->timecreated, get_string('strftimedatefullshort', 'core_langconfig'));
             $accept = get_string('accept', 'lti');
             $update = get_string('update', 'lti');
             $delete = get_string('delete', 'lti');
