@@ -84,7 +84,7 @@ class analysis_for_actual_response {
     }
 
     public function response_matches($response) {
-        return $response == $this->response;
+        return (string)$response === (string)$this->response;
     }
 
     /**
