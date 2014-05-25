@@ -69,7 +69,7 @@ class user_profile_viewed extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' viewed the profile for the user with id '$this->relateduserid' in the course " .
-            "with id '{$this->other['courseid']}'.";
+            "with id '$this->courseid'.";
     }
 
     /**
@@ -78,7 +78,7 @@ class user_profile_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/user/view.php', array('id' => $this->relateduserid, 'course' => $this->other['courseid']));
+        return new \moodle_url('/user/view.php', array('id' => $this->relateduserid, 'course' => $this->courseid));
     }
 
     /**
@@ -87,7 +87,7 @@ class user_profile_viewed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->other['courseid'], 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
-            $this->other['courseid'], $this->relateduserid);
+        return array($this->courseid, 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
+            $this->courseid, $this->relateduserid);
     }
 }
