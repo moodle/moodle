@@ -414,7 +414,8 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
     public function get_num_selected_choices(array $response) {
         $numselected = 0;
         foreach ($response as $key => $value) {
-            if (!empty($value)) {
+            // Response keys starting with _ are internal values like _order, so ignore them.
+            if (!empty($value) && $key[0] != '_') {
                 $numselected += 1;
             }
         }
