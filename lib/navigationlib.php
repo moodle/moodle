@@ -2228,7 +2228,7 @@ class global_navigation extends navigation_node {
         // Add a node to view the users notes if permitted
         if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $coursecontext)) {
             $url = new moodle_url('/notes/index.php',array('user'=>$user->id));
-            if ($coursecontext->instanceid) {
+            if ($coursecontext->instanceid != SITEID) {
                 $url->param('course', $coursecontext->instanceid);
             }
             $usernode->add(get_string('notes', 'notes'), $url);
