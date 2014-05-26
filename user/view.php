@@ -189,7 +189,7 @@ if ($user->deleted) {
 // OK, security out the way, now we are showing the user.
 // Trigger a user profile viewed event.
 $event = \core\event\user_profile_viewed::create(array(
-    'objectid' => $USER->id,
+    'objectid' => $user->id,
     'relateduserid' => $user->id,
     'courseid' => $course->id,
     'context' => $coursecontext,
