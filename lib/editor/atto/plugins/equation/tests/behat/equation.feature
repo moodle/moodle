@@ -1,0 +1,17 @@
+@atto @atto_equation
+Feature: Atto equation editor
+  To teach maths to students, I need to write equations
+
+  @javascript
+  Scenario: Create an equation
+    Given I log in as "admin"
+    When I follow "Admin User"
+    And I follow "Edit profile"
+    And I click on "Show more buttons" "button"
+    And I click on "Equation editor" "button"
+    And I set the field "Edit equation using" to " = 1 \div 0"
+    And I click on "\infty" "button"
+    And I click on "Save equation" "button"
+    And I click on "Update profile" "button"
+    Then "\infty" "text" should exist
+
