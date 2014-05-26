@@ -38,6 +38,7 @@ class data_field_menu extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
 
+        $options = array();
         $rawoptions = explode("\n",$this->field->param1);
         foreach ($rawoptions as $option) {
             $option = trim($option);
