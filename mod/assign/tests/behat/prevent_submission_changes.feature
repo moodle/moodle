@@ -4,8 +4,7 @@ Feature: Prevent or allow assignment submission changes
   As a teacher
   I need to prevent or allow student submission at any time
 
-  @javascript
-  Scenario: Preventing changes and allowing them again
+  Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
@@ -13,11 +12,16 @@ Feature: Prevent or allow assignment submission changes
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
+      | student2 | Student | 2 | student2@asd.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
+      | student2 | C1 | student |
+
+  @javascript
+  Scenario: Preventing changes and allowing them again
+    Given I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
@@ -69,3 +73,57 @@ Feature: Prevent or allow assignment submission changes
       | Online text | I'm the student submission edited again |
     And I press "Save changes"
     And I should see "I'm the student submission edited again"
+
+  @javascript @_alert
+  Scenario: Preventing changes and allowing them again (batch action)
+    Given the following "activities" exist:
+      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled |
+      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1                                   | 0                             |
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    And I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student submission |
+    And I press "Save changes"
+    And I log out
+    And I log in as "student2"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    And I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student2 submission |
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    When I follow "View/grade all submissions"
+    And I set the field "selectall" to "1"
+    And I click on "Go" "button" confirming the dialogue
+    Then I should see "Submission changes not allowed" in the "Student 1" "table_row"
+    And I should see "Submission changes not allowed" in the "Student 2" "table_row"
+    And I log out
+    And I log in as "student2"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    And I should not see "Edit submission"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    And I follow "View/grade all submissions"
+    And I set the field "selectall" to "1"
+    And I set the field "id_operation" to "Unlock submissions"
+    And I click on "Go" "button" confirming the dialogue
+    And I should not see "Submission changes not allowed" in the "Student 1" "table_row"
+    And I should not see "Submission changes not allowed" in the "Student 2" "table_row"
+    And I log out
+    And I log in as "student2"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    And I press "Edit submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student2 submission and he/she edited me |
+    And I press "Save changes"
+    And I log out
