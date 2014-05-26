@@ -236,4 +236,11 @@ class behat_form_field {
         return $this->fieldlocator;
     }
 
+    /**
+     * Select all the text in the form field.
+     *
+     */
+    public function select_text() {
+        throw new coding_exception('select_text() is not supported for this form field type: ' . get_class($this));
+    }
 }
