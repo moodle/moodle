@@ -20,6 +20,12 @@
 
 $string['cannotemailnontemporarypasswords'] = 'It is insecure to send passwords by email without forcing them to be changed on first login.';
 $string['companycourses'] = 'Other company courses';
+$string['emailfilter'] = 'Email address contains';
+$string['firstnamefilter'] = 'First name contains';
+$string['lastnamefilter'] = 'Last name contains';
 $string['missingaccesstocourse'] = 'You\'re not allowed to that.';
 $string['pluginname'] = 'Iomad';
 $string['setupiomad'] = 'Start setting up iomad';
+$string['show_suspended_users'] = 'Show suspended users?';
+$string['userfilter'] = 'Filter results';
+$string['usersearchfields'] = 'User search fields';

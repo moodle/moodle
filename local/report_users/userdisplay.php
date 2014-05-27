@@ -74,7 +74,12 @@ if (!empty($dodownload)) {
 if (empty($dodownload)) {
     echo "<h2>".get_string('userdetails', 'local_report_users').
           $userinfo->firstname." ".
-          $userinfo->lastname. " (".$userinfo->email.")    </h2>";
+          $userinfo->lastname. " (".$userinfo->email.")";
+          if (!empty($userinfo->suspended)) {
+              echo " - Suspended</h2>";
+          } else {
+              echo "</h2>";
+          }
     if (!empty($courseid)) {
         // Navigation and header.
         echo $OUTPUT->single_button(new moodle_url('userdisplay.php', array('courseid' => $courseid,

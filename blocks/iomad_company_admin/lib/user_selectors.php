@@ -77,10 +77,9 @@ class current_company_managers_user_selector extends company_user_selector_base 
 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
-
         $sql = " FROM {user} u
                 JOIN {company_users} cu ON (u.id = cu.userid AND cu.companyid = :companyid)
-                WHERE $wherecondition ";
+                WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -126,7 +125,7 @@ class potential_company_managers_user_selector extends company_user_selector_bas
 
         $sql = " FROM
 	                {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id AND cu.companyid = :companyid AND cu.managertype = 0)
-                WHERE $wherecondition";
+                WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -170,7 +169,7 @@ class current_company_users_user_selector extends company_user_selector_base {
 
         $sql = " FROM
 	                {user} u INNER JOIN {company_users} cu ON (cu.companyid = :companyid AND cu.userid = u.id )
-                WHERE $wherecondition ";
+                WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -216,7 +215,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
 
         $sql = " FROM
                     {user} u
-                WHERE $wherecondition
+                WHERE $wherecondition AND u.suspended = 0 
                       AND u.id NOT IN (
                         SELECT userid
                         FROM
@@ -273,7 +272,7 @@ class current_company_course_user_selector extends company_user_selector_base {
         $sql = " FROM
 	                {user} u INNER JOIN {company_users} cu
 	                ON cu.userid = u.id AND managertype = 0 $departmentsql
-                WHERE $wherecondition
+                WHERE $wherecondition AND u.suspended = 0 
                     AND cu.companyid = :companyid
                     AND cu.userid IN
                      (SELECT DISTINCT(ue.userid)
@@ -335,7 +334,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
 
         $sql = " FROM
 	                {user} u INNER JOIN {company_users} cu ON cu.userid = u.id
-                WHERE $wherecondition $departmentsql
+                WHERE $wherecondition  AND u.suspended = 0 $departmentsql
                     AND
                     cu.companyid = :companyid
                     AND u.id NOT IN
@@ -410,7 +409,8 @@ class potential_department_user_selector extends user_selector_base {
             return array();
         } else {
             if ($users = $DB->get_records('company_users', array('departmentid' => $this->departmentid,
-                                                                 'managertype' => $this->roletype), null, 'userid')) {
+                                                                 'managertype' => $this->roletype,
+                                                                 'suspended' => 0), null, 'userid')) {
                 // Only return the keys (user ids).
                 return array_keys($users);
             } else {
@@ -466,7 +466,7 @@ class potential_department_user_selector extends user_selector_base {
         $sql = " FROM
                     {user} u
                     INNER JOIN {company_users} du ON du.userid = u.id
-                WHERE $wherecondition
+                WHERE $wherecondition AND u.suspended = 0 
                     $departmentsql
                     $userfilter";
 
@@ -535,7 +535,7 @@ class current_department_user_selector extends user_selector_base {
         if (!isset( $this->departmentid) ) {
             return array();
         } else {
-            if ($users = $DB->get_records('company_users', array('departmentid' => $this->departmentid), null, 'userid')) {
+            if ($users = $DB->get_records('company_users', array('departmentid' => $this->departmentid, 'suspended' => 0), null, 'userid')) {
                 // Only return the keys (user ids).
                 return array_values($users);
             } else {
@@ -557,7 +557,7 @@ class current_department_user_selector extends user_selector_base {
         $sql = " FROM
                     {user} u
                     INNER JOIN {company_users} cu ON cu.userid = u.id
-                WHERE $wherecondition
+                WHERE $wherecondition AND u.suspended = 0 
                     AND cu.managertype = ($this->roletype)
                     AND
                     u.id != ($USER->id)
@@ -757,7 +757,7 @@ class potential_license_user_selector extends user_selector_base {
                     {user} u
                     INNER JOIN {company_users} du ON du.userid = u.id
                     INNER JOIN {department} d ON d.id = du.departmentid
-                WHERE $wherecondition
+                WHERE $wherecondition AND u.suspended = 0 
                     $departmentsql
                     $userfilter";
 
@@ -889,7 +889,7 @@ class current_license_user_selector extends user_selector_base {
 
         $sql = " FROM
                  {user}
-                 WHERE $wherecondition
+                 WHERE $wherecondition AND u.suspended = 0 
                      AND id in (".$userfilter.") ";
 
         $order = ' ORDER BY lastname ASC, firstname ASC';

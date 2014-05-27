@@ -23,6 +23,7 @@ require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
+$showsuspended  = optional_param('showsuspended', 0, PARAM_INT);
 $email  = optional_param('email', 0, PARAM_CLEAN);
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
@@ -63,7 +64,9 @@ if ($search) {
 if ($departmentid) {
     $params['departmentid'] = $departmentid;
 }
-
+if ($showsuspended) {
+    $params['showsuspended'] = $showsuspended;
+}
 
 $systemcontext = context_system::instance();
 require_login(); // Adds to $PAGE, creates $OUTPUT.
@@ -247,10 +250,10 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Make sure we dont display site admins.
         // Set default search to something which cant happen.
-        $sqlsearch = "userid!='-1'";
+        $sqlsearch = "id!='-1'";
         $siteadmins = explode(" ", $CFG->siteadmins);
         foreach ($siteadmins as $siteadmin) {
-            $sqlsearch .= " AND userid!='$siteadmin'";
+            $sqlsearch .= " AND id!='$siteadmin'";
         }
 
         // Get department users.
@@ -264,7 +267,11 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
                     $departmentids .= $departmentuser->userid;
                 }
             }
-            $sqlsearch = " id in ($departmentids) ";
+            if (!empty($showsuspended)) {
+                $sqlsearch .= " AND deleted <> 1 AND id in ($departmentids) ";
+            } else {
+                $sqlsearch .= " AND deleted <> 1 AND suspended = 0 AND id in ($departmentids) ";
+            }
         } else {
             $sqlsearch = "1 = 0";
         }
@@ -327,7 +334,11 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
                     $departmentids .= $departmentuser->userid;
                 }
             }
-            $sqlsearch = " id in ($departmentids) ";
+            if (!empty($showsuspended)) {
+                $sqlsearch .= " AND deleted <> 1 AND id in ($departmentids) ";
+            } else {
+                $sqlsearch .= " AND deleted <> 1 AND suspended = 0 AND id in ($departmentids) ";
+            }
         } else {
             $sqlsearch = "1 = 0";
         }
@@ -396,6 +407,7 @@ if (!empty($userlist)) {
                                           u.city as city,
                                           u.country as country,
                                           u.lastaccess as lastaccess,
+                                          u.suspended as suspended,
                                           d.name as departmentname
                                    FROM {user} u, {department} d, {company_users} cu
                                    WHERE u.deleted <> 1 AND $userlist
@@ -565,6 +577,11 @@ if (!$users) {
             $strlastaccess = get_string('never');
         }
         $fullname = fullname($user, true);
+
+        // Is this a suspended user?
+        if (!empty($user->suspended)) {
+            $fullname .= " (S)";
+        }
 
         $table->data[] = array ("<a href='".$CFG->wwwroot.
                                 "/local/report_users/userdisplay.php?userid=".

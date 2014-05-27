@@ -943,5 +943,30 @@ function xmldb_local_iomad_upgrade($oldversion) {
         // Change the site to force user allowed themes.
         set_config('allowuserthemes', 1);
     }
+
+    if ($oldversion < 2014052700) {
+
+        // Define field suspended to be added to company_users.
+        $table = new xmldb_table('company_users');
+        $field = new xmldb_field('suspended', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'departmentid');
+
+        // Conditionally launch add field suspended.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field suspended to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('suspended', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'profileid');
+
+        // Conditionally launch add field suspended.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2014052700, 'local', 'iomad');
+    }
+
     return $result;
 }

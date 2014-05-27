@@ -268,6 +268,15 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'block/iomad_company_admin:viewsuspendedusers' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'companymanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        )
+    ),
 
 );
 

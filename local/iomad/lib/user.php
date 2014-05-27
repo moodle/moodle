@@ -150,6 +150,79 @@ class company_user {
     }
 
     /**
+     * Removes a user's details from all company assignments and marks them as deleted
+     * @param int userid
+     * @return boolean
+     */
+    public static function delete( $userid ) {
+        global $DB;
+
+        // Get the company details for the user.
+        $company = company::get_company_byuserid($userid);
+        $context = context_system::instance();
+
+        // Check if the user was a company manager.
+        if ($DB->get_records('company_users', array('userid' => $userid, 'managertype' => 1,
+                                                    'companyid' => $company->id))) {
+            $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
+            role_unassign($companymanagerrole->id, $userid, $context->id);
+        }
+        if ($DB->get_records('company_users', array('userid' => $userid, 'managertype' => 2,
+                                                    'companyid' => $company->id))) {
+            $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'departmentmanager'));
+            role_unassign($departmentmanagerrole->id, $userid, $context->id);
+        }
+
+        // Remove the user from the company.
+        $DB->delete_records('company_users', array('userid' => $userid));
+
+        // Deal with the company theme.
+        $DB->set_field('user', 'theme', '', array('id' => $userid));
+
+        // Mark user as deleted.
+        $DB->set_field('user', 'deleted', 1, array('id' => $userid));
+    }
+
+    /**
+     * Suspends a user and keeps the company details as was.
+     * @param int userid
+     * @return boolean
+     */
+    public static function suspend( $userid ) {
+        global $DB;
+
+        // Get the company details for the user.
+        $company = company::get_company_byuserid($userid);
+        $context = context_system::instance();
+
+        // Get the users company record.
+        $DB->set_field('company_users', 'suspended', 1, array('userid' => $userid,
+                                                              'companyid' => $company->id));
+
+        // Mark user as suspended.
+        $DB->set_field('user', 'suspended', 1, array('id' => $userid));
+    }
+
+    /**
+     * Unsuspends a user and keeps the company details as was.
+     * @param int userid
+     * @return boolean
+     */
+    public static function unsuspend( $userid ) {
+        global $DB;
+
+        // Get the company details for the user.
+        $company = company::get_company_byuserid($userid);
+
+        // Get the users company record.
+        $DB->set_field('company_users', 'suspended', 0, array('userid' => $userid,
+                                                              'companyid' => $company->id));
+
+        // Mark user as suspended.
+        $DB->set_field('user', 'suspended', 0, array('id' => $userid));
+    }
+
+    /**
      * Enrol a user in courses
      * @param object $user
      * @param array $courseids
@@ -478,10 +551,10 @@ class iomad_user_filter_form extends moodleform {
 
         $mform =& $this->_form;
         $filtergroup = array();
-        $mform->addElement('header', '', format_string(get_string('usersearchfields', 'local_report_users')));
-        $mform->addElement('text', 'firstname', get_string('firstnamefilter', 'local_report_users'), 'size="20"');
-        $mform->addElement('text', 'lastname', get_string('lastnamefilter', 'local_report_users'), 'size="20"');
-        $mform->addElement('text', 'email', get_string('emailfilter', 'local_report_users'), 'size="20"');
+        $mform->addElement('header', '', format_string(get_string('usersearchfields', 'local_iomad')));
+        $mform->addElement('text', 'firstname', get_string('firstnamefilter', 'local_iomad'), 'size="20"');
+        $mform->addElement('text', 'lastname', get_string('lastnamefilter', 'local_iomad'), 'size="20"');
+        $mform->addElement('text', 'email', get_string('emailfilter', 'local_iomad'), 'size="20"');
         $mform->addElement('hidden', 'departmentid');
         $mform->addElement('hidden', 'eventid');
         $mform->addElement('hidden', 'courseid');
@@ -511,7 +584,13 @@ class iomad_user_filter_form extends moodleform {
                 }
             }
         }
+        //if (has_capability('block/iomad_company_admin:viewsuspendedusers', context_system::instance())) {
+            $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_users', 'local_iomad'));
+        /*} else {
+            $mform->addElement('hidden', 'showsuspended');
+        }*/
+        $mform->setType('showsuspended', PARAM_INT);
 
-        $this->add_action_buttons(false, get_string('userfilter', 'local_report_users'));
+        $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }
 }

@@ -26,7 +26,8 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $participant = optional_param('participant', 0, PARAM_INT);
 $dodownload = optional_param('dodownload', 0, PARAM_INT);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
-$lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
+$lastname      = optional_param('lastname', '', PARAM_CLEAN);
+$showsuspended = optional_param('showsuspended', 0, PARAM_INT);
 $email  = optional_param('email', 0, PARAM_CLEAN);
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
@@ -79,6 +80,9 @@ if ($departmentid) {
 }
 if ($vantage) {
     $params['vantage'] = $vantage;
+}
+if ($showsuspended) {
+    $params['showsuspended'] = $showsuspended;
 }
 
 if ($compfromraw) {
@@ -204,7 +208,7 @@ if (!empty($dodownload)) {
     header("Pragma: public");
 
 }
-$courseinfo = iomad::get_course_summary_info ($departmentid);
+$courseinfo = iomad::get_course_summary_info ($departmentid, 0, $showsuspended);
 
 // Iterate over courses.
 foreach ($courseinfo as $id => $coursedata) {

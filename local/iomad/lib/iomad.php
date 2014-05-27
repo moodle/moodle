@@ -491,8 +491,14 @@ class iomad {
         global $DB, $CFG;
 
         $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name, gg.finalgrade";
-        $sqlsearch = "u.id != '-1'";
+        $sqlsearch = "u.id != '-1' and u.deleted = 0";
         $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";
+
+        // Deal with suspended users.
+        if (empty($params['showsuspended'])) {
+            $sqlsearch .= " AND u.suspended = 0";
+        }
+
         $returnobj = new stdclass();
 
         // Deal with search strings.
@@ -576,7 +582,7 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_course_summary_info($departmentid, $courseid=0) {
+    public static function get_course_summary_info($departmentid, $courseid=0, $showsuspended) {
         global $DB;
 
         // Create a temporary table to hold the userids.
@@ -594,8 +600,14 @@ class iomad {
         // Populate it.
         $alldepartments = company::get_all_subdepartments($departmentid);
         if (count($alldepartments) > 0 ) {
+            // Deal with suspended or not.
+            if (empty($showsuspended)) {
+                $suspendedsql = " AND suspended = 0 ";
+            } else {
+                $suspendedsql = "";
+            }
             $tempcreatesql = "INSERT INTO {".$temptablename."} (userid) SELECT userid from {company_users}
-                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).")";
+                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).") $suspendedsql";
         } else {
             $tempcreatesql = "";
         }

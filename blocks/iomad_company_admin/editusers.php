@@ -20,6 +20,9 @@ require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once('lib.php');
 
 $delete       = optional_param('delete', 0, PARAM_INT);
+$suspend      = optional_param('suspend', 0, PARAM_INT);
+$unsuspend      = optional_param('unsuspend', 0, PARAM_INT);
+$showsuspended  = optional_param('showsuspended', 0, PARAM_INT);
 $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   // Md5 confirmation hash.
 $confirmuser  = optional_param('confirmuser', 0, PARAM_INT);
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
@@ -37,6 +40,15 @@ $params = array();
 
 if ($delete) {
     $params['delete'] = $delete;
+}
+if ($suspend) {
+    $params['suspend'] = $suspend;
+}
+if ($unsuspend) {
+    $params['suspend'] = $unsuspend;
+}
+if ($showsuspended) {
+    $params['showsuspended'] = $showsuspended;
 }
 if ($confirm) {
     $params['confirm'] = $confirm;
@@ -184,6 +196,10 @@ if (!empty($fieldnames)) {
 $stredit   = get_string('edit');
 $strdelete = get_string('delete');
 $strdeletecheck = get_string('deletecheck');
+$strsuspend = get_string('suspend', 'block_iomad_company_admin');
+$strsuspendcheck = get_string('suspendcheck', 'block_iomad_company_admin');
+$strunsuspend = get_string('unsuspend', 'block_iomad_company_admin');
+$strunsuspendcheck = get_string('unsuspendcheck', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallusers');
 $strenrolment = get_string('userenrolments', 'block_iomad_company_admin');
 
@@ -234,11 +250,62 @@ if ($confirmuser and confirm_sesskey()) {
         die;
     } else {
         // Actually delete the user.
-        if (!$DB->delete_records('user', array('id' => $delete))) {
-            print_error('error while deleting user');
-        }
-        // Remove them from the department lists.
-        $DB->delete_records('company_users', array('userid' => $delete));
+        company_user::delete($user->id);
+    }
+
+} else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
+
+    if (!has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+        print_error('nopermissions', 'error', '', 'suspend a user');
+    }
+
+    if (!$user = $DB->get_record('user', array('id' => $suspend))) {
+        print_error('nousers', 'error');
+    }
+
+    if (is_primary_admin($user->id)) {
+        print_error('nopermissions', 'error', '', 'delete the primary admin user');
+    }
+
+    if ($confirm != md5($suspend)) {
+        $fullname = fullname($user, true);
+        echo $OUTPUT->heading(get_string('suspenduser', 'block_iomad_company_admin'). " " . $fullname);
+        $optionsyes = array('suspend' => $suspend, 'confirm' => md5($suspend), 'sesskey' => sesskey());
+        echo $OUTPUT->confirm(get_string('suspendcheckfull', 'block_iomad_company_admin', "'$fullname'"),
+                              new moodle_url('editusers.php', $optionsyes), 'editusers.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Actually suspend the user.
+        company_user::suspend($user->id);
+    }
+
+} else if ($unsuspend and confirm_sesskey()) {
+    // Unsuspends a selected user, after confirmation.
+
+    if (!has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+        print_error('nopermissions', 'error', '', 'suspend a user');
+    }
+
+    if (!$user = $DB->get_record('user', array('id' => $unsuspend))) {
+        print_error('nousers', 'error');
+    }
+
+    if (is_primary_admin($user->id)) {
+        print_error('nopermissions', 'error', '', 'delete the primary admin user');
+    }
+
+    if ($confirm != md5($unsuspend)) {
+        $fullname = fullname($user, true);
+        echo $OUTPUT->heading(get_string('unsuspenduser', 'block_iomad_company_admin'). " " . $fullname);
+        $optionsyes = array('unsuspend' => $unsuspend, 'confirm' => md5($unsuspend), 'sesskey' => sesskey());
+        echo $OUTPUT->confirm(get_string('unsuspendcheckfull', 'block_iomad_company_admin', "'$fullname'"),
+                              new moodle_url('editusers.php', $optionsyes), 'editusers.php');
+        echo $OUTPUT->footer();
+        die;
+    } else {
+        // Actually unsuspend the user.
+        company_user::unsuspend($user->id);
     }
 
 } else if ($acl and confirm_sesskey()) {
@@ -310,10 +377,10 @@ if ($sort == "name") {
 if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     // Make sure we dont display site admins.
     // Set default search to something which cant happen.
-    $sqlsearch = "userid!='-1'";
+    $sqlsearch = "id!='-1'";
     $siteadmins = explode(" ", $CFG->siteadmins);
     foreach ($siteadmins as $siteadmin) {
-        $sqlsearch .= " AND userid!='$siteadmin'";
+        $sqlsearch .= " AND id!='$siteadmin'";
     }
 
     // Get department users.
@@ -327,7 +394,12 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
                 $departmentids .= $departmentuser->userid;
             }
         }
-        $sqlsearch = " id in ($departmentids) ";
+    if (!empty($showsuspended)) {
+        $sqlsearch .= " AND deleted <> 1 AND id in ($departmentids) ";
+    } else {
+        $sqlsearch .= " AND deleted <> 1 AND suspended = 0 AND id in ($departmentids) ";
+    }
+    
     } else {
         $sqlsearch = "1 = 0";
     }
@@ -367,7 +439,11 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
                 $departmentids .= $departmentuser->userid;
             }
         }
-        $sqlsearch = " deleted <> 1 AND id in ($departmentids) ";
+        if (!empty($showsuspended)) {
+            $sqlsearch = " deleted <> 1 AND id in ($departmentids) ";
+        } else {
+            $sqlsearch = " deleted <> 1 AND suspended = 0 AND id in ($departmentids) ";
+        }
     } else {
         $sqlsearch = "1 = 0";
     }
@@ -440,6 +516,7 @@ if (!$users) {
         $fullnamedisplay = "$lastname / $firstname";
     }
 
+    // set up the table.
     $table = new html_table();
     $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, "", "", "");
     $table->align = array ("left", "left", "left", "left", "center", "center", "center");
@@ -450,12 +527,19 @@ if (!$users) {
         }
         if ($user->id == $USER->id) {
             $deletebutton = "";
+            $suspendbutton = "";
         } else {
             if ((has_capability('block/iomad_company_admin:editusers', $systemcontext)
                  or has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
                 $deletebutton = "<a href=\"editusers.php?delete=$user->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
+                if (!empty($user->suspended)) {
+                    $suspendbutton = "<a href=\"editusers.php?unsuspend=$user->id&amp;sesskey=".sesskey()."\">$strunsuspend</a>";
+                } else {
+                    $suspendbutton = "<a href=\"editusers.php?suspend=$user->id&amp;sesskey=".sesskey()."\">$strsuspend</a>";
+                }
             } else {
                 $deletebutton = "";
+                $suspendbutton = "";
             }
         }
         if ((has_capability('block/iomad_company_admin:editusers', $systemcontext)
@@ -482,6 +566,11 @@ if (!$users) {
         }
         $fullname = fullname($user, true);
 
+        // Is this a suspended user?
+        if (!empty($user->suspended)) {
+            $fullname .= " (S)";
+        }
+
         // Get the users department.
         $userdepartment = $DB->get_record_sql("SELECT d.name
                                                FROM {department} d, {company_users} du
@@ -494,6 +583,7 @@ if (!$users) {
                             "$user->department",
                             $strlastaccess,
                             $editbutton,
+                            $suspendbutton,
                             $deletebutton,
                             $enrolmentbutton);
     }
@@ -507,7 +597,7 @@ if (!empty($table)) {
 echo $OUTPUT->footer();
 
 function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                       $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams =null) {
+                       $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {
     global $DB;
 
     $fullname  = $DB->sql_fullname();
