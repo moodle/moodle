@@ -170,6 +170,10 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         // Essay savepoint reached.
         upgrade_plugin_savepoint(true, 2014011301, 'qtype', 'essay');
     }
+
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
 

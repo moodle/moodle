@@ -3628,6 +3628,9 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014050100.00);
     }
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     // MDL-32543 Make sure that the log table has correct length for action and url fields.
     if ($oldversion < 2014051200.02) {
 

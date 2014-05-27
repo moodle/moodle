@@ -483,6 +483,7 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2014010801, 'assign');
     }
+
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
 

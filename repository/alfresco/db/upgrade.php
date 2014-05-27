@@ -53,5 +53,8 @@ function xmldb_repository_alfresco_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014020301, 'repository', 'alfresco');
     }
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -186,5 +186,9 @@ function xmldb_qtype_randomsamatch_upgrade($oldversion) {
         // Record that qtype_randomsamatch savepoint was reached.
         upgrade_plugin_savepoint(true, 2013110503, 'qtype', 'randomsamatch');
     }
+
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
