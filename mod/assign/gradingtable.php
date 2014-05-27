@@ -915,20 +915,21 @@ class assign_grading_table extends table_sql implements renderable {
 
         $instance = $this->assignment->get_instance();
 
+        $due = $instance->duedate;
+        if ($row->extensionduedate) {
+            $due = $row->extensionduedate;
+        }
+
         if ($this->assignment->is_any_submission_plugin_enabled()) {
 
             $o .= $this->output->container(get_string('submissionstatus_' . $row->status, 'assign'),
                                            array('class'=>'submissionstatus' .$row->status));
-            if ($instance->duedate &&
-                    $row->timesubmitted > $instance->duedate) {
-                if (!$row->extensionduedate ||
-                        $row->timesubmitted > $row->extensionduedate) {
-                    $usertime = format_time($row->timesubmitted - $instance->duedate);
-                    $latemessage = get_string('submittedlateshort',
-                                              'assign',
-                                              $usertime);
-                    $o .= $this->output->container($latemessage, 'latesubmission');
-                }
+            if ($due && $row->timesubmitted > $due) {
+                $usertime = format_time($row->timesubmitted - $due);
+                $latemessage = get_string('submittedlateshort',
+                                          'assign',
+                                          $usertime);
+                $o .= $this->output->container($latemessage, 'latesubmission');
             }
             if ($row->locked) {
                 $lockedstr = get_string('submissionslockedshort', 'assign');
@@ -944,10 +945,6 @@ class assign_grading_table extends table_sql implements renderable {
 
             if (!$row->timesubmitted) {
                 $now = time();
-                $due = $instance->duedate;
-                if ($row->extensionduedate) {
-                    $due = $row->extensionduedate;
-                }
                 if ($due && ($now > $due)) {
                     $overduestr = get_string('overdue', 'assign', format_time($now - $due));
                     $o .= $this->output->container($overduestr, 'overduesubmission');
