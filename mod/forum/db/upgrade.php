@@ -136,6 +136,9 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014040400, 'forum');
     }
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     if ($oldversion < 2014051201) {
 
         // Incorrect values that need to be replaced.

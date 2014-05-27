@@ -155,5 +155,8 @@ fontselect,fontsizeselect,wrap,code,search,replace,wrap,nonbreaking,charmap,tabl
     // Put any upgrade step following this.
 
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

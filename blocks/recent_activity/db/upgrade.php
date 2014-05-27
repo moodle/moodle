@@ -81,5 +81,8 @@ function xmldb_block_recent_activity_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2014012000, 'recent_activity');
     }
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
