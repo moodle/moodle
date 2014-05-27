@@ -287,4 +287,55 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
         $event->get_name();
     }
+
+    public function test_user_profile_viewed() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // User profile viewed in course context.
+        $eventparams = array(
+            'objectid' => $user->id,
+            'relateduserid' => $user->id,
+            'courseid' => $course->id,
+            'context' => $coursecontext,
+            'other' => array(
+                'courseid' => $course->id,
+                'courseshortname' => $course->shortname,
+                'coursefullname' => $course->fullname
+            )
+        );
+        $event = \core\event\user_profile_viewed::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
+        $log = array($course->id, 'user', 'view', 'view.php?id=' . $user->id . '&course=' . $course->id, $user->id);
+        $this->assertEventLegacyLogData($log, $event);
+        $this->assertEventContextNotUsed($event);
+
+        // User profile viewed in user context.
+        $usercontext = context_user::instance($user->id);
+        $eventparams['context'] = $usercontext;
+        unset($eventparams['courseid'], $eventparams['other']);
+        $event = \core\event\user_profile_viewed::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
+        $expected = null;
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }
