@@ -162,13 +162,21 @@ class mod_forum_post_form extends moodleform {
             $mform->setConstants(array('timestart'=> 0, 'timeend'=>0));
         }
 
-        if (groups_get_activity_groupmode($cm, $course)) { // hack alert
+        if ($groupmode = groups_get_activity_groupmode($cm, $course)) { // hack alert
             $groupdata = groups_get_activity_allowed_groups($cm);
             $groupcount = count($groupdata);
+            $groupinfo = array();
             $modulecontext = context_module::instance($cm->id);
-            $contextcheck = has_capability('mod/forum:movediscussions', $modulecontext) && empty($post->parent) && $groupcount;
-            if ($contextcheck) {
+
+            // Check whether the user has access to all groups in this forum from the accessallgroups cap.
+            if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $modulecontext)) {
+                // Only allow posting to all groups if the user has access to all groups.
                 $groupinfo = array('0' => get_string('allparticipants'));
+                $groupcount++;
+            }
+
+            $contextcheck = has_capability('mod/forum:movediscussions', $modulecontext) && empty($post->parent) && $groupcount > 1;
+            if ($contextcheck) {
                 foreach ($groupdata as $grouptemp) {
                     $groupinfo[$grouptemp->id] = $grouptemp->name;
                 }
