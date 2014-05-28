@@ -41,51 +41,52 @@ class cronlib_testcase extends basic_testcase {
         $tmpdir = realpath($CFG->tempdir);
         $time = time();
 
-        $lastweekstime = strtotime('-1 week');
+        // Relative time stamps. Did you know data providers get executed during phpunit init?
+        $lastweekstime = -(7 * 24 * 60 * 60);
         $beforelastweekstime = $lastweekstime - 60;
         $afterlastweekstime = $lastweekstime + 60;
 
         $nodes = array();
         // Really old directory to remove.
-        $node[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, 1, false);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, $lastweekstime * 52, false);
 
         // New Directory to keep.
-        $node[] = $this->generate_test_path('/dir1/dir1_2/', true, $time, true);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_2/', true, $time, true);
 
         // Directory exactly 1 week old, keep.
-        $node[] = $this->generate_test_path('/dir2/', true, $lastweekstime, true);
+        $nodes[] = $this->generate_test_path('/dir2/', true, $lastweekstime, true);
 
         // Directory older than 1 week old, remove.
-        $node[] = $this->generate_test_path('/dir3/', true, $beforelastweekstime, false);
+        $nodes[] = $this->generate_test_path('/dir3/', true, $beforelastweekstime, false);
 
         // File older than 1 week old, remove.
-        $node[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_1', false, $beforelastweekstime, false);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_1', false, $beforelastweekstime, false);
 
         // New File to keep.
-        $node[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_2', false, $time, true);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/file1_1_1_2', false, $time, true);
 
         // File older than 1 week old, remove.
-        $node[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_1', false, $beforelastweekstime, false);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_1', false, $beforelastweekstime, false);
 
         // New file to keep.
-        $node[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_2', false, $time, true);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_2/file1_1_2_2', false, $time, true);
 
         // New file to keep.
-        $node[] = $this->generate_test_path('/file1', false, $time, true);
+        $nodes[] = $this->generate_test_path('/file1', false, $time, true);
 
         // File older than 1 week, keep.
-        $node[] = $this->generate_test_path('/file2', false, $beforelastweekstime, false);
+        $nodes[] = $this->generate_test_path('/file2', false, $beforelastweekstime, false);
 
         // Directory older than 1 week to keep.
         // Note: Since this directory contains a directory that contains a file that is also older than a week
         // the directory won't be deleted since it's mtime will be updated when the file is deleted.
 
-        $node[] = $this->generate_test_path('/dir4/dir4_1', true, $beforelastweekstime, true);
+        $nodes[] = $this->generate_test_path('/dir4/dir4_1', true, $beforelastweekstime, true);
 
-        $node[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/', true, $beforelastweekstime, true);
+        $nodes[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/', true, $beforelastweekstime, true);
 
         // File older than 1 week to remove.
-        $node[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/file4_1_1_1', false, $beforelastweekstime, false);
+        $nodes[] = $this->generate_test_path('/dir4/dir4_1/dir4_1_1/file4_1_1_1', false, $beforelastweekstime, false);
 
         $expectednodes = array();
         foreach ($nodes as $node) {
@@ -151,14 +152,11 @@ class cronlib_testcase extends basic_testcase {
             if ($data->isdir) {
                 mkdir($tmpdir.$data->path, $CFG->directorypermissions, true);
             }
-            touch($tmpdir.$data->path, $data->time);
         }
         // We need to iterate through again since adding a file to a directory will
         // update the modified time of the directory.
         foreach ($nodes as $data) {
-            if ($data->isdir) {
-                touch($tmpdir.$data->path, $data->time);
-            }
+            touch($tmpdir.$data->path, time() + $data->time);
         }
 
         $task = new \core\task\file_temp_cleanup_task();
