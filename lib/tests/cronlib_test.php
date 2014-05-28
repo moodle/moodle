@@ -41,13 +41,14 @@ class cronlib_testcase extends basic_testcase {
         $tmpdir = realpath($CFG->tempdir);
         $time = time();
 
-        $lastweekstime = strtotime('-1 week');
+        // Relative time stamps. Did you know data providers get executed during phpunit init?
+        $lastweekstime = -(7 * 24 * 60 * 60);
         $beforelastweekstime = $lastweekstime - 60;
         $afterlastweekstime = $lastweekstime + 60;
 
         $nodes = array();
         // Really old directory to remove.
-        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, 1, false);
+        $nodes[] = $this->generate_test_path('/dir1/dir1_1/dir1_1_1/dir1_1_1_1/', true, $lastweekstime * 52, false);
 
         // New Directory to keep.
         $nodes[] = $this->generate_test_path('/dir1/dir1_2/', true, $time, true);
@@ -152,14 +153,11 @@ class cronlib_testcase extends basic_testcase {
             if ($data->isdir) {
                 mkdir($tmpdir.$data->path, $CFG->directorypermissions, true);
             }
-            touch($tmpdir.$data->path, $data->time);
         }
         // We need to iterate through again since adding a file to a directory will
         // update the modified time of the directory.
         foreach ($nodes as $data) {
-            if ($data->isdir) {
-                touch($tmpdir.$data->path, $data->time);
-            }
+            touch($tmpdir.$data->path, time() + $data->time);
         }
         cron_delete_from_temp();
 
