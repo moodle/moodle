@@ -29,105 +29,105 @@
 <!--All core suites need to be manually added here-->
 
     <testsuites>
-        <testsuite name="core_phpunit">
+        <testsuite name="core_phpunit_testsuite">
             <directory suffix="_test.php">lib/phpunit/tests</directory>
         </testsuite>
-        <testsuite name="core_test">
+        <testsuite name="core_test_testsuite">
             <directory suffix="_test.php">lib/testing/tests</directory>
         </testsuite>
-        <testsuite name="core_ddl">
+        <testsuite name="core_ddl_testsuite">
             <directory suffix="_test.php">lib/ddl/tests</directory>
         </testsuite>
-        <testsuite name="core_dml">
+        <testsuite name="core_dml_testsuite">
             <directory suffix="_test.php">lib/dml/tests</directory>
         </testsuite>
-        <testsuite name="core">
+        <testsuite name="core_testsuite">
             <directory suffix="_test.php">lib/tests</directory>
             <directory suffix="_test.php">lib/ajax/tests</directory>
             <directory>lib/password_compat/tests</directory>
         </testsuite>
-        <testsuite name="core_form">
+        <testsuite name="core_form_testsuite">
             <directory suffix="_test.php">lib/form/tests</directory>
         </testsuite>
-        <testsuite name="core_files">
+        <testsuite name="core_files_testsuite">
             <directory suffix="_test.php">lib/filestorage/tests</directory>
             <directory suffix="_test.php">files/tests</directory>
         </testsuite>
-        <testsuite name="core_role">
+        <testsuite name="core_role_testsuite">
             <directory suffix="_test.php">admin/roles/tests</directory>
         </testsuite>
-        <testsuite name="core_cohort">
+        <testsuite name="core_cohort_testsuite">
             <directory suffix="_test.php">cohort/tests</directory>
         </testsuite>
-        <testsuite name="core_grade">
+        <testsuite name="core_grade_testsuite">
             <directory suffix="_test.php">lib/grade/tests</directory>
             <directory suffix="_test.php">grade/tests</directory>
             <directory suffix="_test.php">grade/grading/tests</directory>
         </testsuite>
-        <testsuite name="core_availability">
+        <testsuite name="core_availability_testsuite">
             <directory suffix="_test.php">availability/tests</directory>
         </testsuite>
-        <testsuite name="core_backup">
+        <testsuite name="core_backup_testsuite">
             <directory suffix="_test.php">backup/controller/tests</directory>
             <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
             <directory suffix="_test.php">backup/moodle2/tests</directory>
             <directory suffix="_test.php">backup/util</directory>
         </testsuite>
-        <testsuite name="core_badges">
+        <testsuite name="core_badges_testsuite">
             <directory suffix="_test.php">badges/tests</directory>
         </testsuite>
-        <testsuite name="core_blog">
+        <testsuite name="core_blog_testsuite">
             <directory suffix="_test.php">blog/tests</directory>
         </testsuite>
-        <testsuite name="core_iplookup">
+        <testsuite name="core_iplookup_testsuite">
             <directory suffix="_test.php">iplookup/tests</directory>
         </testsuite>
-        <testsuite name="core_course">
+        <testsuite name="core_course_testsuite">
             <directory suffix="_test.php">course/tests</directory>
         </testsuite>
-        <testsuite name="core_question">
+        <testsuite name="core_question_testsuite">
             <directory suffix="_test.php">question/engine/tests</directory>
             <directory suffix="_test.php">question/tests</directory>
             <directory suffix="_test.php">question/type/tests</directory>
             <directory suffix="_test.php">question/engine/upgrade/tests</directory>
         </testsuite>
-        <testsuite name="core_cache">
+        <testsuite name="core_cache_testsuite">
             <directory suffix="_test.php">cache/tests</directory>
         </testsuite>
-        <testsuite name="core_calendar">
+        <testsuite name="core_calendar_testsuite">
             <directory suffix="_test.php">calendar/tests</directory>
         </testsuite>
-        <testsuite name="core_enrol">
+        <testsuite name="core_enrol_testsuite">
             <directory suffix="_test.php">enrol/tests</directory>
         </testsuite>
-        <testsuite name="core_group">
+        <testsuite name="core_group_testsuite">
             <directory suffix="_test.php">group/tests</directory>
         </testsuite>
-        <testsuite name="core_external">
+        <testsuite name="core_external_testsuite">
             <directory suffix="_test.php">lib/external/tests</directory>
         </testsuite>
-        <testsuite name="core_message">
+        <testsuite name="core_message_testsuite">
             <directory suffix="_test.php">message/tests</directory>
         </testsuite>
-        <testsuite name="core_notes">
+        <testsuite name="core_notes_testsuite">
             <directory suffix="_test.php">notes/tests</directory>
         </testsuite>
-        <testsuite name="core_tag">
+        <testsuite name="core_tag_testsuite">
             <directory suffix="_test.php">tag/tests</directory>
         </testsuite>
-        <testsuite name="core_rating">
+        <testsuite name="core_rating_testsuite">
             <directory suffix="_test.php">rating/tests</directory>
         </testsuite>
-        <testsuite name="core_repository">
+        <testsuite name="core_repository_testsuite">
             <directory suffix="_test.php">repository/tests</directory>
         </testsuite>
-        <testsuite name="core_user">
+        <testsuite name="core_user_testsuite">
             <directory suffix="_test.php">user/tests</directory>
         </testsuite>
-        <testsuite name="core_webservice">
+        <testsuite name="core_webservice_testsuite">
             <directory suffix="_test.php">webservice/tests</directory>
         </testsuite>
-        <testsuite name="core_mnet">
+        <testsuite name="core_mnet_testsuite">
             <directory suffix="_test.php">mnet/tests</directory>
         </testsuite>
 
