@@ -239,7 +239,7 @@ if (!empty($instanceid) && !empty($roleid)) {
             $params['tilltime'] = $minloginternalreader;
         }
         $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
-                  FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
+                  FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
                   JOIN {user} u ON u.id = ra.userid
              $groupsql
              LEFT JOIN (
@@ -264,7 +264,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     // Get record from sql_internal_reader and merge with records got from legacy log (if needed).
     if (!$onlyuselegacyreader) {
         $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
-                  FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
+                  FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
                   JOIN {user} u ON u.id = ra.userid
              $groupsql
              LEFT JOIN (
