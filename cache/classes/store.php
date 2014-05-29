@@ -340,4 +340,16 @@ abstract class cache_store implements cache_store_interface {
         // Any stores that have an issue with this will need to override the create_clone method.
         return clone($this);
     }
+
+    /**
+     * Can be overridden to return any warnings this store instance should make to the admin.
+     *
+     * This should be used to notify things like configuration conflicts etc.
+     * The warnings returned here will be displayed on the cache configuration screen.
+     *
+     * @return string[] Returns an array of warnings (strings)
+     */
+    public function get_warnings() {
+        return array();
+    }
 }
