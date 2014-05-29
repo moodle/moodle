@@ -52,7 +52,7 @@ $locks = cache_administration_helper::get_lock_summaries();
 
 $title = new lang_string('cacheadmin', 'cache');
 $mform = null;
-$notification = null;
+$notifications = array();
 $notifysuccess = true;
 
 if (!empty($action) && confirm_sesskey()) {
@@ -110,10 +110,10 @@ if (!empty($action) && confirm_sesskey()) {
 
             if (!array_key_exists($store, $stores)) {
                 $notifysuccess = false;
-                $notification = get_string('invalidstore', 'cache');
+                $notifications[] = array(get_string('invalidstore', 'cache'), false);
             } else if ($stores[$store]['mappings'] > 0) {
                 $notifysuccess = false;
-                $notification = get_string('deletestorehasmappings', 'cache');
+                $notifications[] = array(get_string('deletestorehasmappings', 'cache'), false);
             }
 
             if ($notifysuccess) {
@@ -250,10 +250,10 @@ if (!empty($action) && confirm_sesskey()) {
             $confirm = optional_param('confirm', false, PARAM_BOOL);
             if (!array_key_exists($lock, $locks)) {
                 $notifysuccess = false;
-                $notification = get_string('invalidlock', 'cache');
+                $notifications[] = array(get_string('invalidlock', 'cache'), false);
             } else if ($locks[$lock]['uses'] > 0) {
                 $notifysuccess = false;
-                $notification = get_string('deletelockhasuses', 'cache');
+                $notifications[] = array(get_string('deletelockhasuses', 'cache'), false);
             }
             if ($notifysuccess) {
                 if (!$confirm) {
@@ -280,6 +280,16 @@ if (!empty($action) && confirm_sesskey()) {
     }
 }
 
+// Stores can add notices to the cache configuration screen for things like conflicting configurations etc.
+// Here we check each cache to see if it has warnings.
+foreach ($stores as $store) {
+    if (!empty($store['warnings']) && is_array($store['warnings'])) {
+        foreach ($store['warnings'] as $warning) {
+            $notifications[] = array($warning, false);
+        }
+    }
+}
+
 $PAGE->set_title($title);
 $PAGE->set_heading($SITE->fullname);
 /* @var core_cache_renderer $renderer */
@@ -287,10 +297,7 @@ $renderer = $PAGE->get_renderer('core_cache');
 
 echo $renderer->header();
 echo $renderer->heading($title);
-
-if (!is_null($notification)) {
-    echo $renderer->notification($notification, ($notifysuccess)?'notifysuccess' : 'notifyproblem');
-}
+echo $renderer->notififications($notifications);
 
 if ($mform instanceof moodleform) {
     $mform->display();
