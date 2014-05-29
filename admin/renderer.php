@@ -303,12 +303,13 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $buggyiconvnomb warn iconv problems
      * @param array|null $availableupdates array of \core\update\info objects or null
      * @param int|null $availableupdatesfetch timestamp of the most recent updates fetch or null (unknown)
+     * @param string[] $cachewarnings An array containing warnings from the Cache API.
      *
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
-            $buggyiconvnomb, $registered) {
+            $buggyiconvnomb, $registered, array $cachewarnings = array()) {
         global $CFG;
         $output = '';
 
@@ -321,6 +322,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->cron_overdue_warning($cronoverdue);
         $output .= $this->db_problems($dbproblems);
         $output .= $this->maintenance_mode_warning($maintenancemode);
+        $output .= $this->cache_warnings($cachewarnings);
         $output .= $this->registration_warning($registered);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -593,6 +595,19 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return $this->warning($dbproblems);
+    }
+
+    /**
+     * Renders cache warnings if there are any.
+     *
+     * @param string[] $cachewarnings
+     * @return string
+     */
+    public function cache_warnings(array $cachewarnings) {
+        if (!count($cachewarnings)) {
+            return '';
+        }
+        return join("\n", array_map(array($this, 'warning'), $cachewarnings));
     }
 
     /**
