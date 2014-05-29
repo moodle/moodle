@@ -39,7 +39,8 @@ class cronlib_testcase extends basic_testcase {
         global $CFG;
 
         $tmpdir = realpath($CFG->tempdir);
-        $time = time();
+        // This is a relative time.
+        $time = 0;
 
         // Relative time stamps. Did you know data providers get executed during phpunit init?
         $lastweekstime = -(7 * 24 * 60 * 60);
