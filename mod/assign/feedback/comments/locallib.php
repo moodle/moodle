@@ -236,7 +236,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
 
         foreach ($this->assignment->get_submission_plugins() as $plugin) {
             $fields = $plugin->get_editor_fields();
-            if ($plugin->is_enabled() && $plugin->is_visible() && !empty($fields)) {
+            if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission) && !empty($fields)) {
                 foreach ($fields as $key => $description) {
                     $rawtext = strip_pluginfile_content($plugin->get_editor_text($key, $submission->id));
 
@@ -253,8 +253,12 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
+        if ($format === false) {
+            $format = FORMAT_HTML;
+        }
         $data->assignfeedbackcomments_editor['text'] = $text;
         $data->assignfeedbackcomments_editor['format'] = $format;
+
         return true;
     }
 
