@@ -76,6 +76,12 @@ function quiz_remove_question($quiz, $questionid) {
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     $DB->delete_records('quiz_question_instances',
             array('quiz' => $quiz->instance, 'question' => $questionid));
+
+    $qtype = $DB->get_field('question', 'qtype', array('id' => $questionid));
+    if ($qtype === 'random') {
+        // This function automatically checks if the question is in use, and won't delete if it is.
+        question_delete_question($questionid);
+    }
 }
 
 /**
