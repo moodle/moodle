@@ -84,6 +84,13 @@ function quiz_remove_slot($quiz, $slotnumber) {
         $DB->set_field('quiz_slots', 'slot', $i - 1,
                 array('quizid' => $quiz->id, 'slot' => $i));
     }
+
+    $qtype = $DB->get_field('question', 'qtype', array('id' => $slot->questionid));
+    if ($qtype === 'random') {
+        // This function automatically checks if the question is in use, and won't delete if it is.
+        question_delete_question($slot->questionid);
+    }
+
     $trans->allow_commit();
 }
 

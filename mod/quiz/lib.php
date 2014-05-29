@@ -166,7 +166,20 @@ function quiz_delete_instance($id) {
     quiz_delete_all_attempts($quiz);
     quiz_delete_all_overrides($quiz);
 
+    // Look for random questions that may no longer be used when this quiz is gone.
+    $sql = "SELECT q.id
+              FROM {quiz_slots} slot
+              JOIN {question} q ON q.id = slot.questionid
+             WHERE slot.quizid = ? AND q.qtype = ?";
+    $questionids = $DB->get_fieldset_sql($sql, array($quiz->id, 'random'));
+
+    // We need to do this before we try and delete randoms, otherwise they would still be 'in use'.
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
+
+    foreach ($questionids as $questionid) {
+        question_delete_question($questionid);
+    }
+
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     quiz_access_manager::delete_settings($quiz);
