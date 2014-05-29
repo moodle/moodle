@@ -77,6 +77,7 @@ Feature: display_availability
     And I click on "User profile" "button" in the "Add restriction..." "dialogue"
     And I set the field "User profile field" to "Email address"
     And I set the field "Value to compare against" to "email@example.org"
+    And I set the field "Method of comparison" to "is equal to"
     And I press "Save and return to course"
 
     # Add another Page with no restrictions.
