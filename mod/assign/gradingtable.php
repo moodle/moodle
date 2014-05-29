@@ -202,7 +202,8 @@ class assign_grading_table extends table_sql implements renderable {
             }
         }
 
-        if ($this->assignment->get_instance()->markingallocation) {
+        if ($this->assignment->get_instance()->markingworkflow &&
+            $this->assignment->get_instance()->markingallocation) {
             if (has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
                 // Check to see if marker filter is set.
                 $markerfilter = (int)get_user_preferences('assign_markerfilter', '');
@@ -296,7 +297,8 @@ class assign_grading_table extends table_sql implements renderable {
             $headers[] = get_string('submissionteam', 'assign');
         }
         // Allocated marker.
-        if ($this->assignment->get_instance()->markingallocation &&
+        if ($this->assignment->get_instance()->markingworkflow &&
+            $this->assignment->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
             // Add a column for the allocated marker.
             $columns[] = 'allocatedmarker';
@@ -504,7 +506,8 @@ class assign_grading_table extends table_sql implements renderable {
             $name = 'quickgrade_' . $row->id . '_workflowstate';
             $o .= html_writer::select($workflowstates, $name, $workflowstate, array('' => $notmarked));
             // Check if this user is a marker that can't manage allocations and doesn't have the marker column added.
-            if ($this->assignment->get_instance()->markingallocation &&
+            if ($this->assignment->get_instance()->markingworkflow &&
+                $this->assignment->get_instance()->markingallocation &&
                 !has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
 
                 $name = 'quickgrade_' . $row->id . '_allocatedmarker';
