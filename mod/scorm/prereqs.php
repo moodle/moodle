@@ -30,17 +30,17 @@ if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error('coursemisconf');
     }
-    if (! $scorm = $DB->get_record("scorm", array("id"=>$cm->instance))) {
+    if (! $scorm = $DB->get_record("scorm", array("id" => $cm->instance))) {
         print_error('invalidcoursemodule');
     }
 } else if (!empty($a)) {
-    if (! $scorm = $DB->get_record("scorm", array("id"=>$a))) {
+    if (! $scorm = $DB->get_record("scorm", array("id" => $a))) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = $DB->get_record("course", array("id"=>$scorm->course))) {
+    if (! $course = $DB->get_record("course", array("id" => $scorm->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
@@ -50,7 +50,7 @@ if (!empty($id)) {
     print_error('missingparameter');
 }
 
-$PAGE->set_url('/mod/scorm/prereqs.php', array('scoid'=>$scoid, 'attempt'=>$attempt, 'id'=>$cm->id));
+$PAGE->set_url('/mod/scorm/prereqs.php', array('scoid' => $scoid, 'attempt' => $attempt, 'id' => $cm->id));
 
 require_login($course, false, $cm);
 

@@ -21,7 +21,7 @@ if ($ADMIN->fulltree) {
     $yesno = array(0 => get_string('no'),
                    1 => get_string('yes'));
 
-    //default display settings
+    // default display settings
     $settings->add(new admin_setting_heading('scorm/displaysettings', get_string('defaultdisplaysettings', 'scorm'), ''));
 
     $settings->add(new admin_setting_configselect_with_advanced('scorm/displaycoursestructure',
@@ -83,13 +83,13 @@ if ($ADMIN->fulltree) {
         get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'),
         array('value' => 1, 'adv' => false), $yesno));
 
-    //default grade settings
+    // default grade settings
     $settings->add(new admin_setting_heading('scorm/gradesettings', get_string('defaultgradesettings', 'scorm'), ''));
     $settings->add(new admin_setting_configselect('scorm/grademethod',
         get_string('grademethod', 'scorm'), get_string('grademethoddesc', 'scorm'),
         GRADEHIGHEST, scorm_get_grade_method_array()));
 
-    for ($i=0; $i<=100; $i++) {
+    for ($i = 0; $i <= 100; $i++) {
         $grades[$i] = "$i";
     }
 
@@ -98,7 +98,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_heading('scorm/othersettings', get_string('defaultothersettings', 'scorm'), ''));
 
-    //default attempts settings.
+    // default attempts settings.
     $settings->add(new admin_setting_configselect('scorm/maxattempt',
         get_string('maximumattempts', 'scorm'), '', '0', scorm_get_attempts_array()));
 
@@ -120,7 +120,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('scorm/updatefreq',
         get_string('updatefreq', 'scorm'), get_string('updatefreqdesc', 'scorm'), 0, scorm_get_updatefreq_array()));
 
-    //admin level settings.
+    // admin level settings.
     $settings->add(new admin_setting_heading('scorm/adminsettings', get_string('adminsettings', 'scorm'), ''));
 
     $settings->add(new admin_setting_configcheckbox('scorm/scorm12standard', get_string('scorm12standard', 'scorm'), get_string('scorm12standarddesc', 'scorm'), 1));
@@ -129,7 +129,8 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypelocalsync', get_string('allowtypelocalsync', 'scorm'), '', 0));
 
-    $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternalaicc', get_string('allowtypeexternalaicc', 'scorm'), get_string('allowtypeexternalaicc_desc', 'scorm'), 0));
+    $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternalaicc',
+        get_string('allowtypeexternalaicc', 'scorm'), get_string('allowtypeexternalaicc_desc', 'scorm'), 0));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowaicchacp', get_string('allowtypeaicchacp', 'scorm'), get_string('allowtypeaicchacp_desc', 'scorm'), 0));
 

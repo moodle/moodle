@@ -33,8 +33,8 @@ $download = optional_param('download', '', PARAM_RAW);
 $mode = optional_param('mode', '', PARAM_ALPHA); // Report mode
 
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-$scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
 
 $contextmodule = context_module::instance($cm->id);
 $reportlist = scorm_report_list($contextmodule);
@@ -75,14 +75,14 @@ $userdata = null;
 if (!empty($download)) {
     $noheader = true;
 }
-/// Print the page header
+// Print the page header
 if (empty($noheader)) {
     $strreport = get_string('report', 'scorm');
     $strattempt = get_string('attempt', 'scorm');
 
     $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id'=>$cm->id)));
+    $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id' => $cm->id)));
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($scorm->name));

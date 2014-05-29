@@ -31,11 +31,11 @@ if (! $cm = get_coursemodule_from_id('scorm', $id)) {
     print_error('invalidcoursemodule');
 }
 
-if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
+if (! $scorm = $DB->get_record('scorm', array('id' => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
-if (! $course = $DB->get_record('course', array('id'=> $scorm->course))) {
+if (! $course = $DB->get_record('course', array('id' => $scorm->course))) {
     print_error('coursemisconf');
 }
 

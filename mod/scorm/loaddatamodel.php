@@ -34,17 +34,17 @@ $attempt = required_param('attempt', PARAM_INT); // new attempt.
 
 if (!empty($id)) {
     $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-    $scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if (!empty($a)) {
-    $scorm = $DB->get_record('scorm', array('id'=>$a), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$scorm->course), '*', MUST_EXIST);
+    $scorm = $DB->get_record('scorm', array('id' => $a), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $scorm->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id, false, MUST_EXIST);
 } else {
     print_error('missingparameter');
 }
 
-$PAGE->set_url('/mod/scorm/loaddatamodel.php', array('scoid'=>$scoid, 'id'=>$cm->id));
+$PAGE->set_url('/mod/scorm/loaddatamodel.php', array('scoid' => $scoid, 'id' => $cm->id));
 
 require_login($course, false, $cm);
 

@@ -28,17 +28,17 @@ if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id, 0, true)) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error('coursemisconf');
     }
-    if (! $scorm = $DB->get_record("scorm", array("id"=>$cm->instance))) {
+    if (! $scorm = $DB->get_record("scorm", array("id" => $cm->instance))) {
         print_error('invalidcoursemodule');
     }
 } else if (!empty($a)) {
-    if (! $scorm = $DB->get_record("scorm", array("id"=>$a))) {
+    if (! $scorm = $DB->get_record("scorm", array("id" => $a))) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = $DB->get_record("course", array("id"=>$scorm->course))) {
+    if (! $course = $DB->get_record("course", array("id" => $scorm->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id, true)) {
@@ -48,7 +48,7 @@ if (!empty($id)) {
     print_error('missingparameter');
 }
 
-$url = new moodle_url('/mod/scorm/view.php', array('id'=>$cm->id));
+$url = new moodle_url('/mod/scorm/view.php', array('id' => $cm->id));
 if ($organization !== '') {
     $url->param('organization', $organization);
 }
@@ -145,12 +145,12 @@ echo $OUTPUT->heading(format_string($scorm->name));
 
 if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownresponses', $contextmodule)) {
     if ($action == 'delete') {
-        $confirmurl = new moodle_url($PAGE->url, array('action'=>'deleteconfirm'));
+        $confirmurl = new moodle_url($PAGE->url, array('action' => 'deleteconfirm'));
         echo $OUTPUT->confirm(get_string('deleteuserattemptcheck', 'scorm'), $confirmurl, $PAGE->url);
         echo $OUTPUT->footer();
         exit;
     } else if ($action == 'deleteconfirm') {
-        //delete this users attempts.
+        // delete this users attempts.
         $DB->delete_records('scorm_scoes_track', array('userid' => $USER->id, 'scormid' => $scorm->id));
         scorm_update_grades($scorm, $USER->id, true);
         echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
