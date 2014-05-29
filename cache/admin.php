@@ -280,15 +280,7 @@ if (!empty($action) && confirm_sesskey()) {
     }
 }
 
-// Stores can add notices to the cache configuration screen for things like conflicting configurations etc.
-// Here we check each cache to see if it has warnings.
-foreach ($stores as $store) {
-    if (!empty($store['warnings']) && is_array($store['warnings'])) {
-        foreach ($store['warnings'] as $warning) {
-            $notifications[] = array($warning, false);
-        }
-    }
-}
+$notifications = array_merge($notifications, cache_helper::warnings($stores));
 
 $PAGE->set_title($title);
 $PAGE->set_heading($SITE->fullname);
@@ -297,7 +289,7 @@ $renderer = $PAGE->get_renderer('core_cache');
 
 echo $renderer->header();
 echo $renderer->heading($title);
-echo $renderer->notififications($notifications);
+echo $renderer->notifications($notifications);
 
 if ($mform instanceof moodleform) {
     $mform->display();
