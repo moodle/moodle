@@ -372,7 +372,11 @@ abstract class cache_store implements cache_store_interface {
      * This should be used to notify things like configuration conflicts etc.
      * The warnings returned here will be displayed on the cache configuration screen.
      *
-     * @return string[] Returns an array of warnings (strings)
+     * @return array[] Returns an array of arrays with the format:
+     *     $notifications = array(
+     *         array('This is a success message', true),
+     *         array('This is a failure message', false),
+     *     );
      */
     public function get_warnings() {
         return array();

@@ -376,10 +376,16 @@ class core_cache_renderer extends plugin_renderer_base {
     /**
      * Renders an array of notifications for the cache configuration screen.
      *
+     * Takes an array of notifications with the form:
+     * $notifications = array(
+     *     array('This is a success message', true),
+     *     array('This is a failure message', false),
+     * );
+     *
      * @param array $notifications
      * @return string
      */
-    public function notififications(array $notifications = array()) {
+    public function notifications(array $notifications = array()) {
         if (count($notifications) === 0) {
             // There are no notifications to render.
             return '';
