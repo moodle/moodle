@@ -3731,7 +3731,9 @@ class assign {
                                                               $gradingcontrollerpreview,
                                                               $instance->attemptreopenmethod,
                                                               $instance->maxattempts);
-            $o .= $this->get_renderer()->render($submissionstatus);
+            if (has_capability('mod/assign:submit', $this->get_context())) {
+                $o .= $this->get_renderer()->render($submissionstatus);
+            }
 
             require_once($CFG->libdir.'/gradelib.php');
             require_once($CFG->dirroot.'/grade/grading/lib.php');
