@@ -81,21 +81,45 @@ if ($param->moveupcontext || $param->movedowncontext) {
     // The previous line does a redirect().
 }
 
-if ($param->delete && ($questionstomove = $DB->count_records("question", array("category" => $param->delete)))) {
-    if (!$category = $DB->get_record("question_categories", array("id" => $param->delete))) {  // security
-        print_error('nocate', 'question', $thispageurl->out(), $param->delete);
+if ($param->delete) {
+    $questionstomove = $DB->count_records("question", array("category" => $param->delete));
+
+    // First pass, try and remove unused random or hidden questions in the category.
+    if ($questionstomove) {
+        if (!$category = $DB->get_record("question_categories", array("id" => $param->delete))) {  // security
+            print_error('nocate', 'question', $thispageurl->out(), $param->delete);
+        }
+
+        $select = "category = ? AND (qtype = 'random' OR hidden = 1)";
+        $questions = $DB->get_recordset_select("question", $select, array("category" => $param->delete), '', 'id');
+        if ($questions->valid()) {
+            $question = $questions->current();
+            if (question_has_capability_on($question->id, 'edit')) {
+                foreach ($questions as $question) {
+                    question_delete_question($question->id);
+                }
+                $questionstomove = $DB->count_records("question", array("category" => $param->delete));
+            }
+        }
+        $questions->close();
     }
-    $categorycontext = context::instance_by_id($category->contextid);
-    $qcobject->moveform = new question_move_form($thispageurl,
-                array('contexts'=>array($categorycontext), 'currentcat'=>$param->delete));
-    if ($qcobject->moveform->is_cancelled()){
-        redirect($thispageurl);
-    }  elseif ($formdata = $qcobject->moveform->get_data()) {
-        /// 'confirm' is the category to move existing questions to
-        list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
-        $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
-        $thispageurl->remove_params('cat', 'category');
-        redirect($thispageurl);
+
+    // Second pass, if we still have questions to move, setup the form .
+    if ($questionstomove) {
+        $categorycontext = context::instance_by_id($category->contextid);
+        $qcobject->moveform = new question_move_form($thispageurl,
+                    array('contexts'=>array($categorycontext), 'currentcat'=>$param->delete));
+        if ($qcobject->moveform->is_cancelled()){
+            redirect($thispageurl);
+        }  elseif ($formdata = $qcobject->moveform->get_data()) {
+            /// 'confirm' is the category to move existing questions to
+            list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
+            $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
+            $thispageurl->remove_params('cat', 'category');
+            redirect($thispageurl);
+        }
+    } else {
+        $questionstomove = 0;
     }
 } else {
     $questionstomove = 0;
