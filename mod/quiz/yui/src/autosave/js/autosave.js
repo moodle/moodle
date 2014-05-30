@@ -341,7 +341,14 @@ M.mod_quiz.autosave = {
         });
     },
 
-    save_done: function() {
+    save_done: function(transactionid, response) {
+        if (response.responseText !== 'OK') {
+            // Because IIS is useless, Moodle can't send proper HTTP response
+            // codes, so we have to detect failures manually.
+            this.save_failed(transactionid, response);
+            return;
+        }
+
         Y.log('Save completed.');
         this.save_transaction = null;
 
