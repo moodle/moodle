@@ -776,6 +776,33 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014052800) {
+
+        // Define field completionattemptsexhausted to be added to quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('completionattemptsexhausted', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'showblocks');
+
+        // Conditionally launch add field completionattemptsexhausted.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014052800, 'quiz');
+    }
+
+    if ($oldversion < 2014052801) {
+        // Define field completionpass to be added to quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('completionpass', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, 'completionattemptsexhausted');
+
+        // Conditionally launch add field completionpass.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014052801, 'quiz');
+    }
     return true;
 }
 

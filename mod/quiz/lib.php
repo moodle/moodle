@@ -1560,6 +1560,7 @@ function quiz_supports($feature) {
         case FEATURE_GROUPMEMBERSONLY:          return true;
         case FEATURE_MOD_INTRO:                 return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:   return true;
+        case FEATURE_COMPLETION_HAS_RULES:      return true;
         case FEATURE_GRADE_HAS_GRADE:           return true;
         case FEATURE_GRADE_OUTCOMES:            return true;
         case FEATURE_BACKUP_MOODLE2:            return true;
@@ -1789,4 +1790,55 @@ function quiz_get_navigation_options() {
         QUIZ_NAVMETHOD_FREE => get_string('navmethod_free', 'quiz'),
         QUIZ_NAVMETHOD_SEQ  => get_string('navmethod_seq', 'quiz')
     );
+}
+
+
+/**
+ * Obtains the automatic completion state for this quiz on any conditions
+ * in quiz settings, such as if all attempts are used or a certain grade is achieved.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not. (If no conditions, then return
+ *   value depends on comparison type)
+ */
+function quiz_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+    global $CFG;
+
+    $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+    if (!$quiz->completionattemptsexhausted && !$quiz->completionpass) {
+        return $type;
+    }
+
+    // Check if the user has used up all attempts.
+    if ($quiz->completionattemptsexhausted) {
+        $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
+        if ($attempts) {
+            $lastfinishedattempt = end($attempts);
+            $context = context_module::instance($cm->id);
+            $quizobj = quiz::create($quiz->id, $userid);
+            $accessmanager = new quiz_access_manager($quizobj, time(),
+                    has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
+            if ($accessmanager->is_finished(count($attempts), $lastfinishedattempt)) {
+                return true;
+            }
+        }
+    }
+
+    // Check for passing grade.
+    if ($quiz->completionpass) {
+        require_once($CFG->libdir . '/gradelib.php');
+        $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
+                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance));
+        if ($item) {
+            $grades = grade_grade::fetch_users_grades($item, array($userid), false);
+            if (!empty($grades[$userid])) {
+                return $grades[$userid]->is_passed($item);
+            }
+        }
+    }
+    return false;
 }
