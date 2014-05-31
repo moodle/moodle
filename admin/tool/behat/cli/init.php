@@ -40,10 +40,41 @@ define('CACHE_DISABLE_ALL', true);
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
 
+
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'parallel' => 0,
+        'suffix' => '',
+    )
+);
+
+
+$nproc = (int) preg_filter('#.*(\d+).*#', '$1', $options['parallel']);
+$suffixarg = $options['suffix'] ? "--suffix={$options['suffix']} --parallel=$nproc" : '';
+
+
+if ($nproc && !$suffixarg) {
+    foreach ((array)glob(__DIR__."/../../../../behat*") as $dir) {
+        if (file_exists($dir) && is_link($dir) && preg_match('#/behat\d+$#', $dir)) {
+            unlink($dir);
+        }
+    }
+    $cmds = array();
+    for ($i = 1; $i <= $nproc; $i++) {
+        $cmds[] = "php ".__FILE__." --suffix=$i --parallel=$nproc 2>&1";
+    }
+    // This is intensive compared to behat itself so halve the parallelism.
+    foreach (array_chunk($cmds, max(1, floor($nproc/2)), true) as $chunk) {
+        ns_parallel_popen($chunk, true);
+    }
+    exit(0);
+}
+
+
 // Changing the cwd to admin/tool/behat/cli.
 chdir(__DIR__);
 $output = null;
-exec("php util.php --diag", $output, $code);
+exec("php util.php --diag $suffixarg", $output, $code);
 if ($code == 0) {
     echo "Behat test environment already installed\n";
 
@@ -53,7 +84,7 @@ if ($code == 0) {
 
     // Behat and dependencies are installed and we need to install the test site.
     chdir(__DIR__);
-    passthru("php util.php --install", $code);
+    passthru("php util.php --install $suffixarg", $code);
     if ($code != 0) {
         exit($code);
     }
@@ -64,12 +95,12 @@ if ($code == 0) {
 
     // Test site data is outdated.
     chdir(__DIR__);
-    passthru("php util.php --drop", $code);
+    passthru("php util.php --drop $suffixarg", $code);
     if ($code != 0) {
         exit($code);
     }
 
-    passthru("php util.php --install", $code);
+    passthru("php util.php --install $suffixarg", $code);
     if ($code != 0) {
         exit($code);
     }
@@ -81,7 +112,7 @@ if ($code == 0) {
 
     // Returning to admin/tool/behat/cli.
     chdir(__DIR__);
-    passthru("php util.php --install", $code);
+    passthru("php util.php --install $suffixarg", $code);
     if ($code != 0) {
         exit($code);
     }
@@ -93,7 +124,7 @@ if ($code == 0) {
 }
 
 // Enable editing mode according to config.php vars.
-passthru("php util.php --enable", $code);
+passthru("php util.php --enable $suffixarg", $code);
 if ($code != 0) {
     exit($code);
 }

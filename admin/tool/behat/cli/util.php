@@ -40,6 +40,8 @@ list($options, $unrecognized) = cli_get_params(
     array(
         'help'    => false,
         'install' => false,
+        'parallel' => 0,
+        'suffix' => '',
         'drop'    => false,
         'enable'  => false,
         'disable' => false,
@@ -63,6 +65,7 @@ Options:
 --drop     Drops the database tables and the dataroot contents
 --enable   Enables test environment and updates tests list
 --disable  Disables test environment
+--parallel  Run operation for all parallel behat environments.
 --diag     Get behat test environment status code
 
 -h, --help     Print out this help
@@ -78,11 +81,32 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
-// Describe this script.
+
+if (!empty($options['parallel']) && empty($options['suffix'])) {
+    foreach ((array)glob(__DIR__."/../../../../behat*") as $dir) {
+        if (file_exists($dir) && is_dir($dir)) {
+            unlink($dir);
+        }
+    }
+    $cmds = array();
+    $extra = preg_filter('#(.*)\s*--parallel=\d+\s*(.*?)#', '$1 $2', implode(' ', array_slice($argv, 1)));
+    for ($i = 1; $i <= $options['parallel']; $i++) {
+        $cmds[] = "php ".__FILE__." $extra --suffix=$i 2>&1";
+    }
+    // This is intensive compared to behat itself so halve the parallelism.
+    foreach (array_chunk($cmds, min(1, floor($options['parallel']/2)), true) as $chunk) {
+        ns_parallel_popen($chunk, true);
+    }
+    exit(0);
+}
+
+
+// Checking $CFG->behat_* vars and values.
 define('BEHAT_UTIL', true);
 define('CLI_SCRIPT', true);
 define('NO_OUTPUT_BUFFERING', true);
 define('IGNORE_COMPONENT_CACHE', true);
+define('BEHAT_SUFFIX', $options['suffix']);
 
 // Only load CFG from config.php, stop ASAP in lib/setup.php.
 define('ABORT_AFTER_CONFIG', true);

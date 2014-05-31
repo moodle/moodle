@@ -175,3 +175,34 @@ function cli_error($text, $errorcode=1) {
     fwrite(STDERR, "\n");
     die($errorcode);
 }
+
+
+function ns_proc_open($cmd, $die = false) {
+    $desc = array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+        2 => array('pipe', 'w'),
+    );
+    if (!($handle = proc_open($cmd, $desc, $pipes)) && $die) {
+        throw new Exception('Error starting worker');
+    }
+    return array($handle, $pipes);
+}
+
+
+function ns_parallel_popen($cmds, $doexit = false) {
+    $procs = array();
+    foreach ($cmds as $k => $cmd) {
+        $procs[] = popen($cmd, 'r');
+    }
+    $status = false;
+    foreach ($procs as $p) {
+        if (!$p) continue;
+        while ($out = fgets($p)) echo $out;
+        $status |= (bool) pclose($p);
+    }
+    if ($doexit && $status) {
+        exit($status);
+    }
+    return $status;
+}

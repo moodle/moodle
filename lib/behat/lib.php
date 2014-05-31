@@ -273,6 +273,34 @@ function behat_is_test_site() {
 }
 
 /**
+ * Add behat suffix to $CFG vars for parallel testing.
+ **/
+function behat_add_suffix_to_vars($suffix = '') {
+    global $CFG;
+
+    if (empty($suffix)) {
+        if (!empty($CFG->behat_suffix)) {
+            $suffix = $CFG->behat_suffix;
+
+        } else if (defined('BEHAT_SUFFIX') && BEHAT_SUFFIX) {
+            $suffix = BEHAT_SUFFIX;
+        }
+    }
+
+    $CFG->behat_suffix = $suffix;
+
+    if ($suffix) {
+        if (isset($CFG->behat_wwwroot) && !preg_match("#/behat$suffix\$#", $CFG->behat_wwwroot)) {
+            $CFG->behat_wwwroot .= "/behat{$suffix}";
+        }
+        if (!preg_match("#/behat{$suffix}\$#", $CFG->behat_dataroot)) {
+            $CFG->behat_dataroot = dirname($CFG->behat_dataroot)."/behat{$suffix}";
+        }
+        $CFG->behat_prefix = "behat{$suffix}_";
+    }
+}
+
+/**
  * Checks if the URL requested by the user matches the provided argument
  *
  * @param string $url

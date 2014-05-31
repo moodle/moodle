@@ -213,6 +213,22 @@ class behat_util extends testing_util {
         // Updates all the Moodle features and steps definitions.
         behat_config_manager::update_config_file();
 
+        // Create suffix symlink if necessary.
+        global $CFG;
+        if ($CFG->behat_suffix) {
+            $extra = preg_filter('#.*/(.+)$#', '$1', $CFG->behat_wwwroot);
+            $link = $CFG->dirroot.'/'.$extra;
+            if (file_exists($link)) {
+                if (!is_link($link)) {
+                    throw new coding_exception("File exists at link location ($link) but is not a link!");
+                }
+                @unlink($link);
+            }
+            if (!symlink($CFG->dirroot, $link)) {
+                throw new coding_exception("Unable to create behat suffix symlink ($link)");
+            }
+        }
+
         if (self::is_test_mode_enabled()) {
             return;
         }

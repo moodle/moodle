@@ -79,7 +79,10 @@ class behat_config_manager {
                     $featurespaths[$uniquekey] = $path;
                 }
             }
-            $features = array_values($featurespaths);
+            foreach ($featurespaths as $path) {
+                $additional = glob("$path/*.feature");
+                $features = array_merge($features, $additional);
+            }
         }
 
         // Optionally include features from additional directories.
@@ -198,6 +201,29 @@ class behat_config_manager {
         // We require here when we are sure behat dependencies are available.
         require_once($CFG->dirroot . '/vendor/autoload.php');
 
+        $instance = 1;
+        $parallel = 0;
+        foreach ($_SERVER['argv'] as $arg) {
+            if (strpos($arg, '--suffix=') === 0) {
+                $instance = intval(substr($arg, strlen('--suffix=')));
+            }
+            if (empty($parallel)) {
+                $parallel = preg_filter('#--parallel=(\d+)#', '$1', $arg);
+            }
+        }
+
+        // Attempt to split into weighted buckets using timing information, if available.
+        if ($alloc = self::profile_guided_allocate($features, max(1, $parallel), $instance)) {
+            $features = $alloc;
+        } else {
+            // Divide the list of feature files amongst the parallel runners.
+            srand(crc32(floor(time() / 3600 / 24).var_export($features,true)));
+            shuffle($features);
+            // Pull out the features for just this worker.
+            $features = array_chunk($features, ceil(count($features) / max(1, $parallel)));
+            $features = $features[$instance-1];
+        }
+
         // It is possible that it has no value as we don't require a full behat setup to list the step definitions.
         if (empty($CFG->behat_wwwroot)) {
             $CFG->behat_wwwroot = 'http://itwillnotbeused.com';
@@ -240,6 +266,71 @@ class behat_config_manager {
         }
 
         return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
+    }
+
+    /**
+     * Attempt to split feature list into fairish buckets using timing information, if available.
+     * Simply add each one to lightest buckets until all files allocated.
+     * PGA = Profile Guided Allocation. I made it up just now.
+     * CAUTION: workers must agree on allocation, do not be random anywhere!
+     * 
+     * @param array $features Behat feature files array
+     * @param int $nbuckets Number of buckets to divide into
+     * @param int $instance Index number of this instance
+     * @return array Feature files array, sorted into allocations
+     */
+    protected static function profile_guided_allocate($features, $nbuckets, $instance) {
+        $pga = __DIR__.'/../../../behat_pga_default.json';
+        $pga = defined('BEHAT_PGA_DATA') && file_exists(BEHAT_PGA_DATA) ? BEHAT_PGA_DATA : $pga;
+
+        if (defined('BEHAT_PGA_DISABLE') || !file_exists($pga) || !$pga = @json_decode(file_get_contents($pga), true)) {
+            // No data available, fall back to relying on shuffle.
+            return false;
+        }
+
+        arsort($pga); // Ensure most expensive is first.
+
+        $realroot = realpath(__DIR__.'/../../../').'/';
+        $defaultweight = array_sum($pga) / count($pga); // TODO: median is more ideal.
+        $weights = array_fill(0, $nbuckets, 0);
+        $buckets = array_fill(0, $nbuckets, array());
+        $totalweight = 0;
+
+        // Re-key the features list to match pga data.
+        foreach ($features as $k => $file) {
+            $key = str_replace($realroot, '', $file);
+            $features[$key] = $file;
+            unset($features[$k]);
+            if (!isset($pga[$key])) {
+                $pga[$key] = $defaultweight;
+            }
+        }
+
+        // Sort features by known weights; largest ones should be allocated first.
+        $pgaorder = array();
+        foreach ($features as $key => $file) {
+            $pgaorder[$key] = $pga[$key];
+        }
+        arsort($pgaorder);
+
+        // Finally, add each feature one by one to the lightest bucket.
+        foreach ($pgaorder as $key => $weight) {
+            $file = $features[$key];
+            $light_bucket = array_search(min($weights), $weights);
+            $weights[$light_bucket] += $weight;
+            $buckets[$light_bucket][] = $file;
+            $totalweight += $weight;
+        }
+
+        if (!defined('BEHAT_PGA_DISABLE_HISTOGRAM') && $instance == $nbuckets) {
+            echo "Bucket weightings:\n";
+            foreach ($weights as $k => $weight) {
+                echo "$k: ".str_repeat('*', 70 * $nbuckets * $weight / $totalweight)."\n";
+            }
+        }
+
+        // Return the features for this worker.
+        return $buckets[$instance-1];
     }
 
     /**

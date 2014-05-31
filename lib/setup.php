@@ -77,9 +77,34 @@ if (defined('BEHAT_SITE_RUNNING')) {
     // We already switched to behat test site previously.
 
 } else if (!empty($CFG->behat_wwwroot) or !empty($CFG->behat_dataroot) or !empty($CFG->behat_prefix)) {
+    global $argv;
+    $suffix = '';
+
+    if (defined('BEHAT_SUFFIX') && BEHAT_SUFFIX) {
+        $suffix = BEHAT_SUFFIX;
+
+    } else if (!empty($_SERVER['REMOTE_ADDR'])) {
+        if (preg_match('#/behat(.+?)/#', $_SERVER['REQUEST_URI'])) {
+            $afterpath = str_replace(realpath($CFG->dirroot).'/', '', realpath($_SERVER['SCRIPT_FILENAME']));
+            if (!$suffix = preg_filter("#.*/behat(.+?)/$afterpath#", '$1', $_SERVER['SCRIPT_FILENAME'])) {
+                throw new coding_exception("Unable to determine behat suffix [afterpath=$afterpath, scriptfilename={$_SERVER['SCRIPT_FILENAME']}]!");
+            }
+        }
+
+    } else if (defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
+        if ($match = preg_filter('#--suffix=(.+)#', '$1', $argv)) {
+            $suffix = reset($match);
+        }
+        if ($k = array_search('--config', $argv)) {
+            $behatconfig = $argv[$k+1];
+            $suffix = preg_filter("#^{$CFG->behat_dataroot}(.+?)/behat/behat\.yml#", '$1', $behatconfig);
+        }
+    }
+
     // The behat is configured on this server, we need to find out if this is the behat test
     // site based on the URL used for access.
     require_once(__DIR__ . '/../lib/behat/lib.php');
+    behat_add_suffix_to_vars($suffix);
     if (behat_is_test_site()) {
         // Checking the integrity of the provided $CFG->behat_* vars and the
         // selected wwwroot to prevent conflicts with production and phpunit environments.
@@ -89,7 +114,7 @@ if (defined('BEHAT_SITE_RUNNING')) {
         if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
             if ($dh = opendir($CFG->behat_dataroot)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
+                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store' or is_numeric($file)) {
                         continue;
                     }
                     behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');

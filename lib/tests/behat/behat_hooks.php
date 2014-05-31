@@ -153,6 +153,43 @@ class behat_hooks extends behat_base {
         }
     }
 
+    protected static $timings = array();
+
+    /** @BeforeFeature */
+    public static function before_feature($obj) {
+        $file = $obj->getFeature()->getFile();
+        self::$timings[$file] = microtime(true);
+    }
+
+    /** @AfterFeature */
+    public static function teardownFeature($obj) {
+        $file = $obj->getFeature()->getFile();
+        self::$timings[$file] = microtime(true) - self::$timings[$file];
+        // Probably didn't actually run this, don't output it.
+        if (self::$timings[$file] < 1) {
+            unset(self::$timings[$file]);
+        }
+    }
+
+    /** @AfterSuite */
+    public static function tearDown($obj) {
+        global $CFG;
+        if (!defined('BEHAT_FEATURE_TIMING')) {
+            return;
+        }
+        $realroot = realpath(__DIR__.'/../../../').'/';
+        foreach (self::$timings as $k => $v) {
+            $new = str_replace($realroot, '', $k);
+            self::$timings[$new] = round($v, 1);
+            unset(self::$timings[$k]);
+        }
+        if ($existing = @json_decode(file_get_contents(BEHAT_FEATURE_TIMING), true)) {
+            self::$timings = array_merge($existing, self::$timings);
+        }
+        arsort(self::$timings);
+        @file_put_contents(BEHAT_FEATURE_TIMING, json_encode(self::$timings, JSON_PRETTY_PRINT));
+    }
+
     /**
      * Resets the test environment.
      *
