@@ -207,7 +207,6 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
 /**
  * Returns array of forum open modes.
  *
- * @deprecated since 
  * @return array
  * @deprecated since Moodle 1.7 - please do not use this function any more.
  */
