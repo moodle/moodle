@@ -214,7 +214,8 @@ class zip_archive extends file_archive {
             }
             return true;
         }
-
+        
+        set_time_limit(0);  // This could take some time, so make sure it doesn't timeout
         $res = $this->za->close();
         $this->za = null;
         $this->mode = null;
