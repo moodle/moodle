@@ -51,7 +51,7 @@ class submission_reassessed extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'workshop_assessment';
+        $this->data['objecttable'] = 'workshop_assessments';
     }
 
     /**
