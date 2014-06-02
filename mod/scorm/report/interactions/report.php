@@ -222,6 +222,8 @@ class scorm_interactions_report extends scorm_default_report {
                 $table->no_sorting('start');
                 $table->no_sorting('finish');
                 $table->no_sorting('score');
+                $table->no_sorting('checkbox');
+                $table->no_sorting('picture');
 
                 for($id = 0; $id < $questioncount; $id++) {
                     if ($displayoptions['qtext']) {
