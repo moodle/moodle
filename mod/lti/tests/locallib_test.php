@@ -145,4 +145,19 @@ class mod_lti_locallib_testcase extends basic_testcase {
         $this->assertEquals('https://moodle.org', lti_ensure_url_is_https('moodle.org'));
         $this->assertEquals('https://moodle.org', lti_ensure_url_is_https('https://moodle.org'));
     }
+
+    /**
+     * Test lti_get_url_thumbprint against various URLs
+     */
+    public function test_lti_get_url_thumbprint() {
+        // Note: trailing and double slash are expected right now.  Must evaluate if it must be removed at some point.
+        $this->assertEquals('moodle.org/', lti_get_url_thumbprint('http://MOODLE.ORG'));
+        $this->assertEquals('moodle.org/', lti_get_url_thumbprint('http://www.moodle.org'));
+        $this->assertEquals('moodle.org/', lti_get_url_thumbprint('https://www.moodle.org'));
+        $this->assertEquals('moodle.org/', lti_get_url_thumbprint('moodle.org'));
+        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('http://moodle.org/this/is/moodle'));
+        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('https://moodle.org/this/is/moodle'));
+        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle'));
+        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
+    }
 }

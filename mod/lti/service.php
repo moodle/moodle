@@ -34,6 +34,10 @@ use moodle\mod\lti as lti;
 
 $rawbody = file_get_contents("php://input");
 
+if (lti_should_log_request($rawbody)) {
+    lti_log_request($rawbody);
+}
+
 foreach (lti\OAuthUtil::get_headers() as $name => $value) {
     if ($name === 'Authorization') {
         // TODO: Switch to core oauthlib once implemented - MDL-30149
@@ -78,7 +82,12 @@ switch ($messagetype) {
 
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
 
+        if (!lti_accepts_grades($ltiinstance)) {
+            throw new Exception('Tool does not accept grades');
+        }
+
         lti_verify_sourcedid($ltiinstance, $parsed);
+        lti_set_session_user($parsed->userid);
 
         $gradestatus = lti_update_grade($ltiinstance, $parsed->userid, $parsed->launchid, $parsed->gradeval);
 
@@ -97,6 +106,10 @@ switch ($messagetype) {
         $parsed = lti_parse_grade_read_message($xml);
 
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
+
+        if (!lti_accepts_grades($ltiinstance)) {
+            throw new Exception('Tool does not accept grades');
+        }
 
         //Getting the grade requires the context is set
         $context = context_course::instance($ltiinstance->course);
@@ -127,7 +140,12 @@ switch ($messagetype) {
 
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
 
+        if (!lti_accepts_grades($ltiinstance)) {
+            throw new Exception('Tool does not accept grades');
+        }
+
         lti_verify_sourcedid($ltiinstance, $parsed);
+        lti_set_session_user($parsed->userid);
 
         $gradestatus = lti_delete_grade($ltiinstance, $parsed->userid);
 

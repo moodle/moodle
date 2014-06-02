@@ -47,6 +47,7 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
@@ -75,6 +76,9 @@ $PAGE->set_cm($cm, $course); // set's up global $COURSE
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
+require_login($course, true, $cm);
+require_capability('mod/lti:view', $context);
+
 $url = new moodle_url('/mod/lti/view.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
 
@@ -88,8 +92,6 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
 } else {
     $PAGE->set_pagelayout('incourse');
 }
-
-require_login($course);
 
 // Mark viewed by user (if required).
 $completion = new completion_info($course);
@@ -135,31 +137,25 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     $resize = '
         <script type="text/javascript">
         //<![CDATA[
-            YUI().use("yui2-dom", function(Y) {
+            YUI().use("node", "event", function(Y) {
                 //Take scrollbars off the outer document to prevent double scroll bar effect
-                document.body.style.overflow = "hidden";
+                var doc = Y.one("body");
+                doc.setStyle("overflow", "hidden");
 
-                var dom = Y.YUI2.util.Dom;
-                var frame = document.getElementById("contentframe");
-
+                var frame = Y.one("#contentframe");
                 var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
-
                 var lastHeight;
-
-                var resize = function(){
-                    var viewportHeight = dom.getViewportHeight();
-
-                    if(lastHeight !== Math.min(dom.getDocumentHeight(), viewportHeight)){
-
-                        frame.style.height = viewportHeight - dom.getY(frame) - padding + "px";
-
-                        lastHeight = Math.min(dom.getDocumentHeight(), dom.getViewportHeight());
+                var resize = function(e) {
+                    var viewportHeight = doc.get("winHeight");
+                    if(lastHeight !== Math.min(doc.get("docHeight"), viewportHeight)){
+                        frame.setStyle("height", viewportHeight - frame.getY() - padding + "px");
+                        lastHeight = Math.min(doc.get("docHeight"), doc.get("winHeight"));
                     }
                 };
 
                 resize();
 
-                setInterval(resize, 250);
+                Y.on("windowresize", resize);
             });
         //]]
         </script>

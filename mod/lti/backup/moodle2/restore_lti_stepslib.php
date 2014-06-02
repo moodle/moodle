@@ -56,9 +56,13 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
     protected function define_structure() {
 
         $paths = array();
-        $paths[] = new restore_path_element('lti', '/activity/lti');
+        $lti = new restore_path_element('lti', '/activity/lti');
+        $paths[] = $lti;
 
-        // Return the paths wrapped into standard activity structure
+        // Add support for subplugin structure.
+        $this->add_subplugin_structure('ltisource', $lti);
+
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
@@ -78,12 +82,12 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         $newitemid = $DB->insert_record('lti', $data);
 
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
     protected function after_execute() {
-        // Add lti related files, no need to match by itemname (just internally handled context)
+        // Add lti related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_lti', 'intro', null);
     }
 }
