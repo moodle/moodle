@@ -132,8 +132,12 @@ class group_form extends moodleform {
         } else if (!empty($idnumber) && groups_get_group_by_idnumber($COURSE->id, $idnumber)) {
             $errors['idnumber']= get_string('idnumbertaken');
         } else if ($data['enrolmentkey'] != '') {
-            // Prevent the same enrolment key from being used multiple times in course groups.
-            if ($DB->record_exists('groups', array('courseid' => $COURSE->id, 'enrolmentkey' => $data['enrolmentkey']))) {
+            $errmsg = '';
+            if (!empty($CFG->groupenrolmentkeypolicy) && !check_password_policy($data['enrolmentkey'], $errmsg)) {
+                // Enforce password policy.
+                $errors['enrolmentkey'] = $errmsg;
+            } else if ($DB->record_exists('groups', array('courseid' => $COURSE->id, 'enrolmentkey' => $data['enrolmentkey']))) {
+                // Prevent the same enrolment key from being used multiple times in course groups.
                 $errors['enrolmentkey'] = get_string('enrolmentkeyalreadyinuse', 'group');
             }
         }
