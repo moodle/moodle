@@ -1670,35 +1670,6 @@ function forum_update_grades($forum, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Update all grades in gradebook.
- * @global object
- */
-function forum_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {forum} f, {course_modules} cm, {modules} m
-             WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT f.*, cm.idnumber AS cmidnumber, f.course AS courseid
-              FROM {forum} f, {course_modules} cm, {modules} m
-             WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('forumupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $forum) {
-            $i++;
-            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
-            forum_update_grades($forum, 0, false);
-            $pbar->update($i, $count, "Updating Forum grades ($i/$count).");
-        }
-    }
-    $rs->close();
-}
-
-/**
  * Create/update grade item for given forum
  *
  * @category grade

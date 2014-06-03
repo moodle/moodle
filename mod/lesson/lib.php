@@ -409,36 +409,6 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Update all grades in gradebook.
- *
- * @global object
- */
-function lesson_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {lesson} l, {course_modules} cm, {modules} m
-             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT l.*, cm.idnumber AS cmidnumber, l.course AS courseid
-              FROM {lesson} l, {course_modules} cm, {modules} m
-             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('lessonupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $lesson) {
-            $i++;
-            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
-            lesson_update_grades($lesson, 0, false);
-            $pbar->update($i, $count, "Updating Lesson grades ($i/$count).");
-        }
-    }
-    $rs->close();
-}
-
-/**
  * Create grade item for given lesson
  *
  * @category grade
