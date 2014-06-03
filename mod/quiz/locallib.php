@@ -310,6 +310,7 @@ function quiz_attempt_save_started($quizobj, $quba, $attempt) {
 
     // Trigger the event.
     $event->add_record_snapshot('quiz', $quizobj->get_quiz());
+    $event->add_record_snapshot('quiz_attempts', $attempt);
     $event->trigger();
 
     return $attempt;
