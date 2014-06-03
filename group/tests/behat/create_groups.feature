@@ -102,6 +102,11 @@ Feature: Organize students into groups
     When I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |
+      | Enrolment key | badpasswd |
+    And I press "Save changes"
+    And I should see "Passwords must have at least 1 digit(s)"
+    And I set the following fields to these values:
+      | Group name | Group A |
       | Enrolment key | Abcdef-1 |
     And I press "Save changes"
     And I press "Create group"
