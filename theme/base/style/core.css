@@ -976,8 +976,9 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 .mod-indent-12   {width:360px;}
 .mod-indent-13   {width:390px;}
 .mod-indent-14   {width:420px;}
-.mod-indent-15,
-.mod-indent-huge {width:420px;}
+.mod-indent-15   {width:450px;}
+.mod-indent-16,
+.mod-indent-huge {width:480px;}
 
 .dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;text-align: right;}
 .dir-rtl .mform .fitem .felement input[name=email],
