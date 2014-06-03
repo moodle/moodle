@@ -1454,6 +1454,9 @@ function &get_mimetypes_array() {
         'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'unknown'),
 
         'doc'  => array ('type'=>'application/msword', 'icon'=>'document', 'groups'=>array('document')),
+        'bdoc' => array ('type'=>'application/x-digidoc', 'icon'=>'document', 'groups'=>array('archive')),
+        'cdoc' => array ('type'=>'application/x-digidoc', 'icon'=>'document', 'groups'=>array('archive')),
+        'ddoc' => array ('type'=>'application/x-digidoc', 'icon'=>'document', 'groups'=>array('archive')),
         'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'document', 'groups'=>array('document')),
         'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'document'),
         'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'document'),
@@ -1603,6 +1606,7 @@ function &get_mimetypes_array() {
         'webm'  => array ('type'=>'video/webm', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
         'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
         'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
+        'wma'  => array ('type'=>'audio/x-ms-wma', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
 
         'xbk'  => array ('type'=>'application/x-smarttech-notebook', 'icon'=>'archive'),
         'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),

@@ -166,7 +166,7 @@ class block_navigation extends block_base {
             redirect($url);
         }
 
-        $trimmode = self::TRIM_LEFT;
+        $trimmode = self::TRIM_RIGHT;
         $trimlength = 50;
 
         if (!empty($this->config->trimmode)) {

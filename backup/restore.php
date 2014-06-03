@@ -12,7 +12,7 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 navigation_node::override_active_url(new moodle_url('/backup/restorefile.php', array('contextid'=>$contextid)));
 $PAGE->set_url(new moodle_url('/backup/restore.php', array('contextid'=>$contextid)));
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);

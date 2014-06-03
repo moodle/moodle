@@ -632,7 +632,7 @@ class core_renderer extends renderer_base {
                 $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename;
                 if ($withlinks) {
                     $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id,'sesskey'=>sesskey(), 'switchrole'=>0, 'returnurl'=>$this->page->url->out_as_local_url(false)));
-                    $loggedinas .= '('.html_writer::tag('a', get_string('switchrolereturn'), array('href'=>$url)).')';
+                    $loggedinas .= ' ('.html_writer::tag('a', get_string('switchrolereturn'), array('href' => $url)).')';
                 }
             } else {
                 $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username);
@@ -3347,7 +3347,10 @@ class core_renderer_ajax extends core_renderer {
         $e->debuginfo  = NULL;
         $e->reproductionlink = NULL;
         if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
-            $e->reproductionlink = $link;
+            $link = (string) $link;
+            if ($link) {
+                $e->reproductionlink = $link;
+            }
             if (!empty($debuginfo)) {
                 $e->debuginfo = $debuginfo;
             }

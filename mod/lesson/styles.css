@@ -26,6 +26,48 @@
 
 .path-mod-lesson .resourcecontent {text-align: center;}
 
+.path-mod-lesson .answeroption .fcheckbox > span,
+.path-mod-lesson .answeroption .fradio > span {
+    position: relative;
+    float: left;
+}
+
+.path-mod-lesson .answeroption .fcheckbox input,
+.path-mod-lesson .answeroption .fradio input {
+    position: absolute;
+    top: 2px;
+    margin-top: 0px;
+    left: 0;
+}
+
+.path-mod-lesson .answeroption .fcheckbox label,
+.path-mod-lesson .answeroption .fradio label {
+    padding-left: 20px;
+    float: left;
+}
+
+.path-mod-lesson .answeroption .felement label p:last-child {
+    margin-bottom: 0px;
+}
+
+.path-mod-lesson.dir-rtl .answeroption .fcheckbox > span,
+.path-mod-lesson.dir-rtl .answeroption .fradio > span {
+    float: right;
+}
+
+.path-mod-lesson.dir-rtl .answeroption .fcheckbox input,
+.path-mod-lesson.dir-rtl .answeroption .fradio input {
+    left: inherit;
+    right: 0;
+}
+
+.path-mod-lesson.dir-rtl .answeroption .fcheckbox label,
+.path-mod-lesson.dir-rtl .answeroption .fradio label {
+    padding-left: 0;
+    padding-right: 20px;
+    float: right;
+}
+
 /**
  * Style for view.php
  **/

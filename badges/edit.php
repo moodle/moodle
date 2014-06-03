@@ -59,7 +59,7 @@ $currenturl = new moodle_url('/badges/edit.php', array('id' => $badge->id, 'acti
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
 

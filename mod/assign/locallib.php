@@ -1516,14 +1516,18 @@ class assign {
         $timenow   = time();
 
         // Collect all submissions from the past 24 hours that require mailing.
+        // Submissions are excluded if the assignment is hidden in the gradebook.
         $sql = 'SELECT g.id as gradeid, a.course, a.name, a.blindmarking, a.revealidentities,
                        g.*, g.timemodified as lastmodified
                  FROM {assign} a
                  JOIN {assign_grades} g ON g.assignment = a.id
-                 LEFT JOIN {assign_user_flags} uf ON uf.assignment = a.id AND uf.userid = g.userid
-                WHERE g.timemodified >= :yesterday AND
-                      g.timemodified <= :today AND
-                      uf.mailed = 0';
+            LEFT JOIN {assign_user_flags} uf ON uf.assignment = a.id AND uf.userid = g.userid
+                 JOIN {course_modules} cm ON cm.course = a.course
+                 JOIN {modules} md ON md.id = cm.module
+                 JOIN {grade_items} gri ON gri.iteminstance = a.id AND gri.courseid = a.course AND gri.itemmodule = md.name
+                 WHERE g.timemodified >= :yesterday AND
+                       g.timemodified <= :today AND
+                       uf.mailed = 0 AND gri.hidden = 0';
 
         $params = array('yesterday' => $yesterday, 'today' => $timenow);
         $submissions = $DB->get_records_sql($sql, $params);
@@ -4388,6 +4392,7 @@ class assign {
 
         // Include extension form.
         require_once($CFG->dirroot . '/mod/assign/extensionform.php');
+        require_sesskey();
 
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grantextension', $this->context);
@@ -4434,6 +4439,7 @@ class assign {
 
         // Need grade permission.
         require_capability('mod/assign:grade', $this->context);
+        require_sesskey();
 
         // Make sure advanced grading is disabled.
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
@@ -4670,6 +4676,7 @@ class assign {
 
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:grade', $this->context);
+        require_sesskey();
 
         // Is advanced grading enabled?
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
@@ -5983,14 +5990,13 @@ class assign {
         // Shuffle the users.
         shuffle($users);
 
-        $record = new stdClass();
-        $record->assignment = $assignid;
         foreach ($users as $user) {
             $record = $DB->get_record('assign_user_mapping',
                                       array('assignment'=>$assignid, 'userid'=>$user->id),
                                      'id');
             if (!$record) {
                 $record = new stdClass();
+                $record->assignment = $assignid;
                 $record->userid = $user->id;
                 $DB->insert_record('assign_user_mapping', $record);
             }

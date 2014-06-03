@@ -27,6 +27,11 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/behat/locallib.php');
 require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
 
+// This page usually takes an exceedingly long time to load, so we need to
+// increase the time limit. At present it takes about a minute on some
+// systems, but let's allow room for expansion.
+set_time_limit(300);
+
 $filter = optional_param('filter', '', PARAM_ALPHANUMEXT);
 $type = optional_param('type', false, PARAM_ALPHAEXT);
 $component = optional_param('component', '', PARAM_ALPHAEXT);

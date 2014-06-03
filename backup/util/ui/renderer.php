@@ -203,11 +203,11 @@ class core_backup_renderer extends plugin_renderer_base {
      */
     public function backup_details_unknown(moodle_url $nextstageurl) {
 
-        $html  = html_writer::start_tag('div', array('class' => 'unknownformat'));
-        $html .= $this->output->heading(get_string('errorinvalidformat', 'backup'), 2, 'notifyproblem');
-        $html .= html_writer::tag('div', get_string('errorinvalidformatinfo', 'backup'), array('class' => 'notifyproblem'));
+        $html  = html_writer::start_div('unknownformat');
+        $html .= $this->output->heading(get_string('errorinvalidformat', 'backup'), 2);
+        $html .= $this->output->notification(get_string('errorinvalidformatinfo', 'backup'), 'notifyproblem');
         $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
-        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_div();
 
         return $html;
     }

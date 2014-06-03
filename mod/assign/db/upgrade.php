@@ -425,6 +425,15 @@ function xmldb_assign_upgrade($oldversion) {
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2013050101) {
+
+        // Cleanup bad database records where assignid is missing.
+
+        $DB->delete_records('assign_user_mapping', array('assignment'=>0));
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2013050101, 'assign');
+    }
+
     return true;
 }
 

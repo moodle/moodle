@@ -367,6 +367,31 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 
 // imported from quiz.css
+
+#page-mod-quiz-edit .box.generalbox.questionbank {
+    padding: 0.5em;
+}
+
+#page-mod-quiz-edit .questionbank .categorypagingbarcontainer,
+#page-mod-quiz-edit .questionbank .categoryquestionscontainer,
+#page-mod-quiz-edit .questionbank .choosecategory {
+    padding: 0;
+}
+
+#page-mod-quiz-edit .questionbank .choosecategory select {
+    width: 100%;
+}
+
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
+    background: transparent;
+}
+#page-mod-quiz-edit #categoryquestions>thead {
+    background: #FFF;
+}
+#page-mod-quiz-edit #categoryquestions>tbody>tr:nth-of-type(even) {
+    background: #e4e4e4;
+}
+
 #page-mod-quiz-edit .questionbankwindow div.header {
     color: #444;
     text-shadow: none;
@@ -386,6 +411,13 @@ body.path-question-type .fitem_fgroup .accesshide {
     color: @linkColorHover;
 }
 
+#page-mod-quiz-edit .createnewquestion {
+    padding: 0.3em 0;
+    div, input {
+        margin: 0;
+    }
+}
+
 #page-mod-quiz-edit .questionbankwindow div.header .title {
     color: @textColor;
 }
@@ -396,28 +428,29 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 
 #page-mod-quiz-edit .categoryinfo {
-    background-color: @bodyBackground;
+    background-color: transparent;
     border-bottom: none;
 }
 
-#page-mod-quiz-edit div.questionbank .categoryquestionscontainer,
+#page-mod-quiz-edit .createnewquestion .singlebutton input {
+    margin-bottom: 0;
+}
+
 #page-mod-quiz-edit div.questionbank .categorysortopotionscontainer,
-#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer,
 #page-mod-quiz-edit div.questionbank .categoryselectallcontainer {
     padding: 0 0 1.5em 0;
 }
 
 #page-mod-quiz-edit div.questionbank .categorypagingbarcontainer {
-    padding: 1em;
     background-color: transparent;
-    margin: 0 -1.2em;
-    border-top: none;
-    border-bottom: none;
+    margin: 0;
+    border-top: 0;
+    border-bottom: 0;
+    .paging {
+        padding: 0 0.3em;
+    }
 }
 
-#page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
-    margin: 0 -1.2em -1em -1.2em;
-}
 #page-mod-quiz-edit div.question div.content div.questioncontrols {
     background-color: @bodyBackground;
 }
@@ -446,8 +479,30 @@ body.path-question-type .fitem_fgroup .accesshide {
     overflow: hidden;
 }
 
-#page-mod-quiz-edit .modulespecificbuttonscontainer {
-    width: 220px;
+#page-mod-quiz-edit div.questionbank .categoryinfo {
+    padding: 0.3em 0;
+}
+
+#page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer {
+    padding: 0;
+    strong {
+        display: block;
+    }
+    hr, br {
+        display: none;
+    }
+    strong {
+        margin-left: -0.3em;
+    }
+    strong label {
+        margin-left: 0.3em;
+    }
+    input {
+        margin-left: 0;
+    }
+    input + input {
+        margin-left: 5px;
+    }
 }
 
 .questionbankwindow .module {

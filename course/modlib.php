@@ -178,6 +178,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
  */
 function edit_module_post_actions($moduleinfo, $course, $eventname) {
     global $USER, $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 

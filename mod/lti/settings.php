@@ -144,7 +144,7 @@ if ($ADMIN->fulltree) {
                 var configuredColumns = [
                     {key:'name', label:'$typename', sortable:true},
                     {key:'baseURL', label:'$baseurl', sortable:true},
-                    {key:'timecreated', label:'$createdon', sortable:true, formatter:Y.YUI2.widget.DataTable.formatDate},
+                    {key:'timecreated', label:'$createdon', sortable:true},
                     {key:'action', label:'$action'}
                 ];
 
@@ -153,7 +153,7 @@ if ($ADMIN->fulltree) {
                     fields: [
                         {key:'name'},
                         {key:'baseURL'},
-                        {key:'timecreated', parser:'date'},
+                        {key:'timecreated'},
                         {key:'action'}
                     ]
                 };

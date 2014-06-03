@@ -377,7 +377,13 @@ class stored_file {
     * @return void
     */
     public function add_to_curl_request(&$curlrequest, $key) {
-        $curlrequest->_tmp_file_post_params[$key] = '@' . $this->get_content_file_location();
+        if (function_exists('curl_file_create')) {
+            // As of PHP 5.5, the usage of the @filename API for file uploading is deprecated.
+            $value = curl_file_create($this->get_content_file_location());
+        } else {
+            $value = '@' . $this->get_content_file_location();
+        }
+        $curlrequest->_tmp_file_post_params[$key] = $value;
     }
 
     /**

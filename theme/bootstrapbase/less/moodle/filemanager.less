@@ -83,7 +83,7 @@
     .ie7-inline-block();
     border-right: 1px solid #BBBBBB;
     position: absolute;
-    top: 26px;
+    top: 31px;
     bottom: 1px;
 }
 .dir-rtl .file-picker .fp-repo-area {
@@ -91,20 +91,34 @@
     border-right: none;
 }
 .file-picker .fp-repo-items {
-    vertical-align: top;
-    display: inline-block;
-    .ie7-inline-block();
-    margin-left: 181px;
+    float: none;
+    width: auto;
+    margin-left:181px;
+}
+.moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
+    float: left;
+}
+.dir-rtl .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:181px;
+}
+.dir-rtl .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
+    float: right;
 }
 .file-picker .fp-navbar {
     background: #F2F2F2;
     min-height: 22px;
     border-bottom: 1px solid #BBBBBB;
-    padding: 5px 8px;
+    min-height: 40px;
+    overflow: hidden;
 }
 .file-picker .fp-content {
     background: #FFFFFF;
-    clear: both;
+    clear: none;
     overflow: auto;
     width: 678px;
     height: 477px;
@@ -200,8 +214,8 @@
     padding-right: 10px;
 }
 .dir-rtl .fp-toolbar div {
-    width: 100px;
     padding-right: 0px;
+    padding-left: 10px;
 }
 .fp-toolbar img {
     vertical-align: -15%;
@@ -220,16 +234,18 @@
 }
 .fp-viewbar {
     float: right;
-    width: 69px;
+    width: 72px;
     height: 22px;
-    margin-right: 8px;
+    text-align:right;
 }
 .dir-rtl .fp-toolbar img {
     vertical-align: -35%;
+    margin-right: 0px;
+    margin-left: 5px;
 }
 .dir-rtl .fp-viewbar {
     float: left;
-    width: 100px;
+    text-align:left;
 }
 .fp-vb-icons {
     background: url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;
@@ -355,7 +371,6 @@
 .dir-rtl .fp-pathbar span {
     display: inline-block;
     .ie7-inline-block();
-    float: right;
     margin-left: 32px;
 }
 .fp-pathbar .fp-path-folder-name {
@@ -1153,6 +1168,33 @@ a.ygtvspacer:hover {
     text-align: left;
 }
 
+// Alfresco.
+.repository_alfresco {
+    .fp-toolbar {
+        .fp-tb-search {
+            width: auto;
+            height: auto;
+
+            @searchMargin: 0px;
+            input {
+                height: 25px;
+                width: 140px;
+                border-radius: 4px;
+                padding: 2px 6px 1px 28px;
+                background-position: 6px 6px;
+                margin-bottom: @searchMargin;
+            }
+            .alfresco-workplace {
+                width: 160px;
+                margin-bottom: @searchMargin;
+            }
+        }
+    }
+    .fp-clear-left {
+        clear: both;
+    }
+}
+
 // RTL Overrides
 .dir-rtl {
     .filemanager {
@@ -1174,5 +1216,9 @@ a.ygtvspacer:hover {
         .yui-layout-unit-center {
             left: 0;
         }
+    }
+    .repository_alfresco .fp-toolbar .fp-tb-search input {
+        background-position: right 6px;
+        padding: 2px 28px 1px 6px;
     }
 }

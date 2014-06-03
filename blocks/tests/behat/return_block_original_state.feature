@@ -4,7 +4,6 @@ Feature: The context of a block can always be returned to it's original state.
   As an admin
   I need to be able to return the block to original state
 
-  @javascript
   Scenario: Add and configure a block to display on every page and revert back
     Given the following "courses" exists:
       | fullname | shortname | category |
@@ -15,7 +14,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I add the "Tags" block
     Then I should see "Tags" in the "Tags" "block"
     And I click on "Participants" "link" in the "//li[p/span[contains(normalize-space(string(.)), 'Current course')]]" "xpath_element"
-    And I follow "Configure Tags block"
+    And I configure the "Tags" block
     And I fill the moodle form with:
       | Display on page types | Any page |
     And I press "Save changes"
@@ -24,7 +23,7 @@ Feature: The context of a block can always be returned to it's original state.
       | Assignment name | Assignment1 |
       | Description | Description |
     And I follow "Assignment1"
-    And I follow "Configure Tags block"
+    And I configure the "Tags" block
     And I fill the moodle form with:
       | Display on page types | Any assignment module page |
     And I press "Save changes"
@@ -39,7 +38,7 @@ Feature: The context of a block can always be returned to it's original state.
       | Description | Description |
     And I follow "Assignment2"
     And I should see "Tags" in the "Tags" "block"
-    And I follow "Configure Tags block"
+    And I configure the "Tags" block
     And I fill the moodle form with:
       | Display on page types | Any page |
     And I press "Save changes"
