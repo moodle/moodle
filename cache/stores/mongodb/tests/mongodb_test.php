@@ -43,16 +43,6 @@ require_once($CFG->dirroot.'/cache/stores/mongodb/lib.php');
  */
 class cachestore_mongodb_test extends cachestore_tests {
     /**
-     * Prepare to run tests.
-     */
-    public function setUp() {
-        if (defined('TEST_CACHESTORE_MONGODB_TESTSERVER')) {
-            set_config('testserver', TEST_CACHESTORE_MONGODB_TESTSERVER, 'cachestore_mongodb');
-            $this->resetAfterTest();
-        }
-        parent::setUp();
-    }
-    /**
      * Returns the MongoDB class name
      * @return string
      */

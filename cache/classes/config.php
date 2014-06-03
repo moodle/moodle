@@ -100,8 +100,8 @@ class cache_config {
      * @return bool True if it exists
      */
     public static function config_file_exists() {
-        // Allow for late static binding.
-        return file_exists(self::get_config_file_path());
+        // Allow for late static binding by using static.
+        return file_exists(static::get_config_file_path());
     }
 
     /**
@@ -324,7 +324,8 @@ class cache_config {
      */
     protected function include_configuration() {
         $configuration = array();
-        $cachefile = self::get_config_file_path();
+        // We need to allow for late static bindings to allow for class path mudling happending for unit tests.
+        $cachefile = static::get_config_file_path();
 
         if (!file_exists($cachefile)) {
             throw new cache_exception('Default cache config could not be found. It should have already been created by now.');

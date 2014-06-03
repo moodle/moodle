@@ -246,3 +246,23 @@ The following snippet illustates how to configure the three core cache stores th
     define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');
     define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');
     define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');
+
+As of Moodle 2.8 it is also possible to set the default cache stores used when running unit tests.
+You can do this by adding the following define to your config.php file:
+
+    // xxx is one of Memcache, Memecached, mongodb or other cachestore with a test define.
+    define('TEST_CACHE_USING_APPLICATION_STORE', 'xxx');
+
+This allows you to run tests against a defined test store. It uses the defined value to identify a store to test against with a matching TEST_CACHESTORE define.
+Alternatively you can also run unit tests against an actual cache config.
+To do this you must add the following to your config.php file:
+
+    define('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH', true');
+    $CFG->altcacheconfigpath = '/a/temp/directory/yoursite.php'
+
+This tells Moodle to use the config at $CFG->altcacheconfigpath when running unit tests.
+There are a couple of considerations to using this method:
+* By setting $CFG->altcacheconfigpath your site will store the cache config in the specified path, not just the unit test cache config but your site config as well.
+* If you have configured your cache before setting $CFG->altcacheconfigpath you will need to copy it from moodledata/muc/config.php to the destination you specified.
+* This allows you to share a cache config between sites.
+* It also allows you to use unit tests to test your sites cache config.

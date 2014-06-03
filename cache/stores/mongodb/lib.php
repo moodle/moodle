@@ -561,6 +561,30 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         return $store;
     }
 
+
+    /**
+     * Generates an instance of the cache store that can be used for testing.
+     *
+     * @param cache_definition $definition
+     * @return false
+     */
+    public static function initialise_unit_test_instance(cache_definition $definition) {
+        if (!self::are_requirements_met()) {
+            return false;
+        }
+        if (!defined('TEST_CACHESTORE_MONGODB_TESTSERVER')) {
+            return false;
+        }
+
+        $configuration = array();
+        $configuration['servers'] = explode("\n", TEST_CACHESTORE_MONGODB_TESTSERVER);
+
+        $store = new cachestore_mongodb('Test mongodb', $configuration);
+        $store->initialise($definition);
+
+        return $store;
+    }
+
     /**
      * Returns the name of this instance.
      * @return string
