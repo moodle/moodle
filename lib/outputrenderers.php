@@ -2885,7 +2885,7 @@ EOD;
 
         //accessibility: heading for navbar list  (MDL-20446)
         $navbarcontent = html_writer::tag('span', get_string('pagepath'), array('class'=>'accesshide'));
-        $navbarcontent .= html_writer::tag('ul', join('', $htmlblocks), array('role'=>'navigation'));
+        $navbarcontent .= html_writer::tag('nav', html_writer::tag('ul', join('', $htmlblocks)));
         // XHTML
         return $navbarcontent;
     }
