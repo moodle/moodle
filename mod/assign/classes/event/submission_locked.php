@@ -72,7 +72,7 @@ class submission_locked extends base {
      */
     public function get_description() {
         return "The user with id '$this->userid' locked the submission for the user with id '$this->relateduserid' for " .
-            "the assignment with the course module id '$this->contextinstanceid'.";
+            "the assignment with course module id '$this->contextinstanceid'.";
     }
 
     /**

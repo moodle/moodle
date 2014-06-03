@@ -57,7 +57,7 @@ class submission_updated extends \mod_assign\event\submission_updated {
      */
     public function get_description() {
         $descriptionstring = "The user with id '$this->userid' updated an online text submission with " .
-            "'{$this->other['onlinetextwordcount']}' words in the assignment with the course module id " .
+            "'{$this->other['onlinetextwordcount']}' words in the assignment with course module id " .
             "'$this->contextinstanceid'";
         if (!empty($this->other['groupid'])) {
             $descriptionstring .= " for the group with id '{$this->other['groupid']}'.";

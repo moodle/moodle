@@ -59,7 +59,7 @@ class attempt_becameoverdue extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The quiz attempt with id '$this->objectid' belonging to the quiz with the course module id '$this->contextinstanceid' " .
+        return "The quiz attempt with id '$this->objectid' belonging to the quiz with course module id '$this->contextinstanceid' " .
             "for the user with id '$this->relateduserid' became overdue.";
     }
 
