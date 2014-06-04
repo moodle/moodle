@@ -321,9 +321,6 @@ function question_delete_question($questionid) {
         return;
     }
 
-    // Check permissions.
-    question_require_capability_on($question, 'edit');
-
     $dm = new question_engine_data_mapper();
     $dm->delete_previews($questionid);
 
