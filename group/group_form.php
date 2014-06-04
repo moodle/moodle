@@ -132,7 +132,7 @@ class group_form extends moodleform {
         } else if (!empty($idnumber) && groups_get_group_by_idnumber($COURSE->id, $idnumber)) {
             $errors['idnumber']= get_string('idnumbertaken');
         } else if ($data['enrolmentkey'] != '') {
-            // Prevent twice the same enrolment key in course groups.
+            // Prevent the same enrolment key from being used multiple times in course groups.
             if ($DB->record_exists('groups', array('courseid' => $COURSE->id, 'enrolmentkey' => $data['enrolmentkey']))) {
                 $errors['enrolmentkey'] = get_string('enrolmentkeyalreadyinuse', 'group');
             }
