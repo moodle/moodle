@@ -502,21 +502,9 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 define('FORUM_TRACKING_ON', 2);
 
 /**
- * This function is now deprecated. Use shorten_text($message, $CFG->forum_shortpost) instead.
- *
- * Given a post object that we already know has a long message
- * this function truncates the message nicely to the first
- * sane place between $CFG->forum_longpost and $CFG->forum_shortpost
- *
  * @deprecated since Moodle 2.6
  * @see shorten_text()
- * @todo finalise deprecation in 2.8 in MDL-40851
- * @global object
- * @param string $message
- * @return string
  */
 function forum_shorten_post($message) {
-   global $CFG;
-   debugging('forum_shorten_post() is deprecated since Moodle 2.6. Please use shorten_text($message, $CFG->forum_shortpost) instead.', DEBUG_DEVELOPER);
-   return shorten_text($message, $CFG->forum_shortpost);
+    throw new coding_exception('forum_shorten_post() can not be used any more. Please use shorten_text($message, $CFG->forum_shortpost) instead.');
 }
