@@ -324,7 +324,7 @@ if ($user->icq && !isset($hiddenfields['icqnumber'])) {
 
 if ($user->skype && !isset($hiddenfields['skypeid'])) {
     $imurl = 'skype:'.urlencode($user->skype).'?call';
-    $iconurl = new moodle_url('http://mystatus.skype.com/smallicon/'.$user->skype);
+    $iconurl = new moodle_url('http://mystatus.skype.com/smallicon/'.urlencode($user->skype));
     if (strpos($CFG->httpswwwroot, 'https:') === 0) {
         // Bad luck, skype devs are lazy to set up SSL on their servers - see MDL-37233.
         $statusicon = '';
