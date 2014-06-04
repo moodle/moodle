@@ -87,8 +87,6 @@ Feature: View my courses in navigation block
     When I expand "cat3" node
     And I expand "cat31" node
     And I expand "cat1" node
-    And I should see "c1" in the "Navigation" "block"
-    And I expand "c1" node
     Then I should see "cat1" in the "Navigation" "block"
     And I should see "cat2" in the "Navigation" "block"
     And I should see "cat3" in the "Navigation" "block"
