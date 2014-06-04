@@ -360,7 +360,7 @@ if ($action !== false && confirm_sesskey()) {
                 if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
                     $sortcategoriesby = false;
                 }
-                if (!in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                if (!in_array($sortcoursesby, array('idnumber', 'idnumberdesc', 'fullname', 'shortname'))) {
                     $sortcoursesby = false;
                 }
 

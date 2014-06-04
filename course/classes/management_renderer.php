@@ -423,6 +423,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                         'fullname' => get_string('sortcoursesbyfullname'),
                         'shortname' => get_string('sortcoursesbyshortname'),
                         'idnumber' => get_string('sortcoursesbyidnumber'),
+                        'idnumberdesc' => get_string('sortcoursesbyidnumberdesc'),                        
                         'none' => get_string('dontsortcourses')
                     ),
                     'resortcoursesby',
