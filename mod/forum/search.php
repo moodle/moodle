@@ -299,7 +299,7 @@ echo $OUTPUT->footer();
  /**
   * Print a full-sized search form for the specified course.
   *
-  * @param object $course The Course that will be searched.
+  * @param stdClass $course The Course that will be searched.
   * @return void The function prints the form.
   */
 function forum_print_big_search_form($course) {
@@ -446,7 +446,7 @@ function forum_clean_search_terms($words, $prefix='') {
  /**
   * Retrieve a list of the forums that this user can view.
   *
-  * @param object $course The Course to use.
+  * @param stdClass $course The Course to use.
   * @return array A set of formatted forum names stored against the forum id.
   */
 function forum_menu_list($course)  {
