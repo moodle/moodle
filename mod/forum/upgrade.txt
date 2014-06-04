@@ -3,7 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.8 ===
  * The following functions have all been marked as deprecated. Many of
-   thes have not been supported in many releases and should not be relied
+   these have not been supported in many releases and should not be relied
    upon:
      forum_count_unrated_posts
      forum_tp_count_discussion_read_records
