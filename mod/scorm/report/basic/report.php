@@ -391,8 +391,8 @@ class scorm_basic_report extends scorm_default_report {
                         $row[] = $OUTPUT->user_picture($user, array('courseid' => $course->id));
                     }
                     if (!$download) {
-                        $row[] = html_writer::link($CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&amp;course='.$course->id,
-                                                    fullname($scouser));
+                        $url = new moodle_url('/user/view.php', array('id' => $scouser->userid, 'course' => $course->id));
+                        $row[] = html_writer::link($url, fullname($scouser));
                     } else {
                         $row[] = fullname($scouser);
                     }
@@ -406,8 +406,9 @@ class scorm_basic_report extends scorm_default_report {
                         $row[] = '-';
                     } else {
                         if (!$download) {
-                            $row[] = html_writer::link($CFG->wwwroot.'/mod/scorm/report/userreport.php?id='.$cm->id.'&amp;user='.
-                                                        $scouser->userid.'&amp;attempt='.$scouser->attempt, $scouser->attempt);
+                            $url = new moodle_url('/mod/scorm/report/userreport.php', array('id' => $cm->id, 'user' => $scouser->userid,
+                                'attempt' => $scouser->attempt));
+                            $row[] = html_writer::link($url, $scouser->attempt);
                         } else {
                             $row[] = $scouser->attempt;
                         }
@@ -449,12 +450,11 @@ class scorm_basic_report extends scorm_default_report {
                                         $score = $strstatus;
                                     }
                                     if (!$download) {
+                                        $url = new moodle_url('/mod/scorm/report/userreporttracks.php', array('id' => $cm->id,
+                                            'scoid' => $sco->id, 'user' => $scouser->userid, 'attempt' => $scouser->attempt));
                                         $row[] = html_writer::img($OUTPUT->pix_url($trackdata->status, 'scorm'), $strstatus,
-                                                                array('title' => $strstatus)).html_writer::empty_tag('br').
-                                                    html_writer::link($CFG->wwwroot.'/mod/scorm/report/userreporttracks.php?id='.
-                                                                    $cm->id.'&amp;scoid='.$sco->id.'&amp;user='.$scouser->userid.
-                                                                    '&amp;attempt='.$scouser->attempt, $score,
-                                                                    array('title' => get_string('details', 'scorm')));
+                                            array('title' => $strstatus)) . html_writer::empty_tag('br') .
+                                            html_writer::link($url, $score, array('title' => get_string('details', 'scorm')));
                                     } else {
                                         $row[] = $score;
                                     }
