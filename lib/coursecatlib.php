@@ -2448,11 +2448,14 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      */
     public function resort_subcategories($field, $cleanup = true) {
         global $DB;
-        if ($field !== 'name' && $field !== 'idnumber') {
+        $desc = $field === 'idnumberdesc' ? true : false;
+        $field = $field === 'idnumberdesc' || $field === 'idnumber' ? 'id' : $field;
+        if ($field !== 'name' && $field !== 'id') {
             throw new coding_exception('Invalid field requested');
         }
         $children = $this->get_children();
-        core_collator::asort_objects_by_property($children, $field, core_collator::SORT_NATURAL);
+        core_collator::asort_objects_by_property($children, $field, core_collator::SORT_NATURAL);    
+        $children = empty($desc) ? $children : array_reverse($children);
         $i = 1;
         foreach ($children as $cat) {
             $i++;

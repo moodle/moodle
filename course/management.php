@@ -357,7 +357,7 @@ if ($action !== false && confirm_sesskey()) {
                     // They're not sorting anything.
                     break;
                 }
-                if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
+                if (!in_array($sortcategoriesby, array('idnumber', 'idnumberdesc', 'name'))) {
                     $sortcategoriesby = false;
                 }
                 if (!in_array($sortcoursesby, array('idnumber', 'idnumberdesc', 'fullname', 'shortname'))) {
