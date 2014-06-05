@@ -58,10 +58,17 @@ if ($ADMIN->fulltree) {
     $active = get_string('active', 'lti');
     $pending = get_string('pending', 'lti');
     $rejected = get_string('rejected', 'lti');
-    $typename = get_string('typename', 'lti');
-    $baseurl = get_string('baseurl', 'lti');
-    $action = get_string('action', 'lti');
-    $createdon = get_string('createdon', 'lti');
+
+    // Gather strings used for labels in the inline JS.
+    $PAGE->requires->strings_for_js(
+        array(
+            'typename',
+            'baseurl',
+            'action',
+            'createdon'
+        ),
+        'mod_lti'
+    );
 
     $types = lti_filter_get_types(get_site()->id);
 
@@ -141,10 +148,10 @@ if ($ADMIN->fulltree) {
                 var dataSource = new Y.YUI2.util.DataSource(lti_tools);
 
                 var configuredColumns = [
-                    {key:'name', label:'$typename', sortable:true},
-                    {key:'baseURL', label:'$baseurl', sortable:true},
-                    {key:'timecreated', label:'$createdon', sortable:true},
-                    {key:'action', label:'$action'}
+                    {key:'name', label: M.util.get_string('typename', 'mod_lti'), sortable: true},
+                    {key:'baseURL', label: M.util.get_string('baseurl', 'mod_lti'), sortable: true},
+                    {key:'timecreated', label: M.util.get_string('createdon', 'mod_lti'), sortable: true},
+                    {key:'action', label: M.util.get_string('action', 'mod_lti')}
                 ];
 
                 dataSource.responseType = Y.YUI2.util.DataSource.TYPE_HTMLTABLE;
