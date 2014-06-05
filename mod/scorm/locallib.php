@@ -1008,6 +1008,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
     $count = 0;
     $countsub = 0;
     $scormseperator = '_';
+    $return = '';
     if (scorm_version_check($sversion, SCORM_13)) { // Scorm 1.3 elements use a . instead of an _ .
         $scormseperator = '.';
     }
@@ -1032,8 +1033,8 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
             preg_match('/\_(\d+)\./', $element, $matches);
         }
         if (count($matches) > 0 && $current != $matches[1]) {
-            if ($countsub > 0) {
-                echo '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
+            if ($count_sub > 0) {
+                $return .= '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
             }
             $current = $matches[1];
             $count++;
@@ -1042,11 +1043,11 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
             $countsub = 0;
             $end = strpos($element, $matches[1]) + strlen($matches[1]);
             $subelement = substr($element, 0, $end);
-            echo '    '.$subelement." = new Object();\n";
+            $return .= '    '.$subelement." = new Object();\n";
             // now add the children
             foreach ($children as $child) {
-                echo '    '.$subelement.".".$child." = new Object();\n";
-                echo '    '.$subelement.".".$child."._children = ".$child."_children;\n";
+                $return .= '    '.$subelement.".".$child." = new Object();\n";
+                $return .= '    '.$subelement.".".$child."._children = ".$child."_children;\n";
             }
         }
 
@@ -1060,16 +1061,16 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
         }
 
         // Check the sub element type.
-        if (count($matches) > 0 && $currentsubelement != $matches[1]) {
-            if ($countsub > 0) {
-                echo '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
+        if (count($matches) > 0 && $current_subelement != $matches[1]) {
+            if ($count_sub > 0) {
+                $return .= '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
             }
             $currentsubelement = $matches[1];
             $currentsub = '';
             $countsub = 0;
             $end = strpos($element, $matches[1]) + strlen($matches[1]);
             $subelement = substr($element, 0, $end);
-            echo '    '.$subelement." = new Object();\n";
+            $return .= '    '.$subelement." = new Object();\n";
         }
 
         // Now check the subelement subscript.
@@ -1078,17 +1079,18 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
             $countsub++;
             $end = strrpos($element, $matches[2]) + strlen($matches[2]);
             $subelement = substr($element, 0, $end);
-            echo '    '.$subelement." = new Object();\n";
+            $return .= '    '.$subelement." = new Object();\n";
         }
 
-        echo '    '.$element.' = \''.$value."';\n";
+        $return .= '    '.$element.' = \''.$value."';\n";
     }
-    if ($countsub > 0) {
-        echo '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
+    if ($count_sub > 0) {
+        $return .= '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
     }
     if ($count > 0) {
-        echo '    '.$elementname.'._count = '.$count.";\n";
+        $return .= '    '.$element_name.'._count = '.$count.";\n";
     }
+    return $return;
 }
 
 /**
@@ -1934,4 +1936,21 @@ function scorm_check_url($url) {
     }
 
     return true;
+}
+
+// Helper function.
+function scorm_isset($userdata, $param, $ifempty = '') {
+    if (isset($userdata->$param)) {
+        return $userdata->$param;
+    }  else {
+        return $ifempty;
+    }
+}
+
+function scorm_empty($userdata, $param, $ifempty = '', $addslash = false) {
+    if (!empty($userdata->$param)) {
+        return $addslash ? '\''.$userdata->$param.'\'' : $userdata->$param;
+    }  else {
+        return $ifempty;
+    }
 }

@@ -104,13 +104,26 @@ header('Content-Type: text/javascript; charset=UTF-8');
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe.
 if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
+    echo js_writer::set_variable('api_url_static', '/mod/scorm/datamodels/'.$scorm->version.'.js');
 } else {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
+    echo js_writer::set_variable('api_url_static', '/mod/scorm/datamodels/scorm_12.js');
 }
 // Set the start time of this SCO.
 scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, 'x.start.time', time());
 ?>
 
+var pel_scorm_api = document.getElementById('scormapi-parent');
+var el_scorm_api = document.getElementById("external-scormapi-static");
+
+if(el_scorm_api){
+    el_scorm_api.parentNode.removeChild(el_scorm_api);
+}
+el_scorm_api = document.createElement('script');
+el_scorm_api.setAttribute('id','external-scormapi-static');
+el_scorm_api.setAttribute('type','text/javascript');
+pel_scorm_api.appendChild(el_scorm_api);
+document.getElementById('external-scormapi-static').src = M.cfg.wwwroot + api_url_static;
 
 var errorCode = "0";
 function underscore(str) {
