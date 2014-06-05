@@ -409,6 +409,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     array(
                         'name' => get_string('sortcategoriesbyname'),
                         'idnumber' => get_string('sortcategoriesbyidnumber'),
+                        'idnumberdesc' => get_string('sortcategoriesbyidnumberdesc'),
                         'none' => get_string('dontsortcategories')
                     ),
                     'resortcategoriesby',
@@ -423,7 +424,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                         'fullname' => get_string('sortcoursesbyfullname'),
                         'shortname' => get_string('sortcoursesbyshortname'),
                         'idnumber' => get_string('sortcoursesbyidnumber'),
-                        'idnumberdesc' => get_string('sortcoursesbyidnumberdesc'),
+                        'idnumberdesc' => get_string('sortcoursesbyidnumberdesc'), 
                         'none' => get_string('dontsortcourses')
                     ),
                     'resortcoursesby',
