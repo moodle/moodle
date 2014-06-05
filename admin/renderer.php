@@ -1384,7 +1384,7 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('report'),
             get_string('status'),
         );
-        $servertable->colclasses = array('centeralign name', 'centeralign status', 'leftalign report', 'centeralign info');
+        $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'centeralign status');
         $servertable->attributes['class'] = 'admintable environmenttable generaltable';
         $servertable->id = 'serverstatus';
 
