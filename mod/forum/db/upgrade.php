@@ -157,5 +157,33 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014051201, 'forum');
     }
 
+    if ($oldversion < 2014051202) {
+
+        // Define table forum_discussion_subs to be created.
+        $table = new xmldb_table('forum_discussion_subs');
+
+        // Adding fields to table forum_discussion_subs.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('forum', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('discussion', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('preference', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+
+        // Adding keys to table forum_discussion_subs.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('forum', XMLDB_KEY_FOREIGN, array('forum'), 'forum', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('discussion', XMLDB_KEY_FOREIGN, array('discussion'), 'forum_discussions', array('id'));
+        $table->add_key('user_discussions', XMLDB_KEY_UNIQUE, array('userid', 'discussion'));
+
+        // Conditionally launch create table for forum_discussion_subs.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2014051202, 'forum');
+    }
+
     return true;
 }

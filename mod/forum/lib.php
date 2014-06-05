@@ -275,20 +275,17 @@ function forum_delete_instance($id) {
 
     $result = true;
 
+    // Delete digest and subscription preferences.
+    $DB->delete_records('forum_digests', array('forum' => $forum->id));
+    $DB->delete_records('forum_subscriptions', array('forum'=>$forum->id));
+    $DB->delete_records('forum_discussion_subs', array('forum' => $forum->id));
+
     if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id))) {
         foreach ($discussions as $discussion) {
             if (!forum_delete_discussion($discussion, true, $course, $cm, $forum)) {
                 $result = false;
             }
         }
-    }
-
-    if (!$DB->delete_records('forum_digests', array('forum' => $forum->id))) {
-        $result = false;
-    }
-
-    if (!$DB->delete_records('forum_subscriptions', array('forum'=>$forum->id))) {
-        $result = false;
     }
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
@@ -4342,7 +4339,9 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
 
     forum_tp_delete_read_records(-1, -1, $discussion->id);
 
-    if (!$DB->delete_records("forum_discussions", array("id"=>$discussion->id))) {
+    // Discussion subscriptions must be removed before discussions because of key constraints.
+    $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
+    if (!$DB->delete_records("forum_discussions", array("id" => $discussion->id))) {
         $result = false;
     }
 
@@ -6943,7 +6942,8 @@ function forum_reset_userdata($data) {
     // remove all subscriptions unconditionally - even for users still enrolled in course
     if (!empty($data->reset_forum_subscriptions)) {
         $DB->delete_records_select('forum_subscriptions', "forum IN ($allforumssql)", $params);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('resetsubscriptions','forum'), 'error'=>false);
+        $DB->delete_records_select('forum_discussion_subs', "forum IN ($allforumssql)", $params);
+        $status[] = array('component' => $componentstr, 'item' => get_string('resetsubscriptions', 'forum'), 'error' => false);
     }
 
     // remove all tracking prefs unconditionally - even for users still enrolled in course
