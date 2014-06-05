@@ -90,6 +90,7 @@ class mod_forum_post_form extends moodleform {
         $modcontext = $this->_customdata['modcontext'];
         $forum = $this->_customdata['forum'];
         $post = $this->_customdata['post'];
+        $subscribe = $this->_customdata['subscribe'];
         $edit = $this->_customdata['edit'];
         $thresholdwarning = $this->_customdata['thresholdwarning'];
 
@@ -113,26 +114,28 @@ class mod_forum_post_form extends moodleform {
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
 
-        if (isset($forum->id) && \mod_forum\subscriptions::is_forcesubscribed($forum)) {
+        $manageactivities = has_capability('moodle/course:manageactivities', $coursecontext);
+
+        if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
 
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
             $mform->addElement('hidden', 'subscribe');
             $mform->setType('subscribe', PARAM_INT);
-            $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
+            $mform->addHelpButton('subscribemessage', 'forcesubscribed', 'forum');
 
-        } else if (\mod_forum\subscriptions::subscription_disabled($forum) ||
-                has_capability('moodle/course:manageactivities', $coursecontext)) {
-            $options = array();
-            $options[0] = get_string('subscribestop', 'forum');
-            $options[1] = get_string('subscribestart', 'forum');
-
-            $mform->addElement('select', 'subscribe', get_string('subscription', 'forum'), $options);
-            $mform->addHelpButton('subscribe', 'subscription', 'forum');
-        } else if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
+        } else if (\mod_forum\subscriptions::subscription_disabled($forum) && !$manageactivities) {
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
-            $mform->addElement('hidden', 'subscribe');
-            $mform->setType('subscribe', PARAM_INT);
-            $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
+            $mform->addElement('hidden', 'discussionsubscribe');
+            $mform->setType('discussionsubscribe', PARAM_INT);
+            $mform->addHelpButton('subscribemessage', 'disallowsubscription', 'forum');
+
+        } else {
+            $options = array();
+            $options[0] = get_string('discussionsubscribestop', 'forum');
+            $options[1] = get_string('discussionsubscribestart', 'forum');
+
+            $mform->addElement('select', 'discussionsubscribe', get_string('discussionsubscription', 'forum'), $options);
+            $mform->addHelpButton('discussionsubscribe', 'discussionsubscription', 'forum');
         }
 
         if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
@@ -140,7 +143,7 @@ class mod_forum_post_form extends moodleform {
             $mform->addHelpButton('attachments', 'attachment', 'forum');
         }
 
-        if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) { // hack alert
+        if (empty($post->id) && $manageactivities) {
             $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
         }
 
@@ -238,4 +241,3 @@ class mod_forum_post_form extends moodleform {
         return $errors;
     }
 }
-

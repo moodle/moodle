@@ -182,7 +182,19 @@
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($searchform);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($forum->name), 2);
+
+    $headingvalue = format_string($forum->name);
+    if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
+        // Discussion subscription.
+        if (\mod_forum\subscriptions::is_subscribable($forum)) {
+            $headingvalue .= '&nbsp;';
+            $headingvalue .= html_writer::tag('span', forum_get_discussion_subscription_icon($forum, $post->discussion), array(
+                'class' => 'discussionsubscription',
+            ));
+        }
+    }
+    echo $OUTPUT->heading($headingvalue, 2);
+
 
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
@@ -285,7 +297,7 @@
     $canrate = has_capability('mod/forum:rate', $modcontext);
     forum_print_discussion($course, $cm, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
 
+    // Add the subscription toggle JS.
+    $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
+
     echo $OUTPUT->footer();
-
-
-

@@ -3580,8 +3580,62 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
+    if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
+        // Discussion subscription.
+        if (\mod_forum\subscriptions::is_subscribable($forum)) {
+            echo '<td class="discussionsubscription">';
+            echo forum_get_discussion_subscription_icon($forum, $post->discussion);
+            echo '</td>';
+        }
+    }
+
     echo "</tr>\n\n";
 
+}
+
+/**
+ * Return the markup for the discussion subscription toggling icon.
+ *
+ * @param stdClass $forum The forum object.
+ * @param int $discussionid The discussion to create an icon for.
+ * @return string The generated markup.
+ */
+function forum_get_discussion_subscription_icon($forum, $discussionid, $returnurl = null) {
+    global $USER, $OUTPUT, $PAGE;
+
+    if ($returnurl === null && $PAGE->url) {
+        $returnurl = $PAGE->url->out();
+    }
+
+    $o = '';
+    $subscriptionstatus = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussionid);
+    $subscriptionlink = new moodle_url('/mod/forum/subscribe.php', array(
+        'sesskey' => sesskey(),
+        'id' => $forum->id,
+        'd' => $discussionid,
+        'returnurl' => $returnurl,
+    ));
+    if ($subscriptionstatus) {
+        $o .= html_writer::link($subscriptionlink,
+            $OUTPUT->pix_icon('t/subscribed', get_string('clicktounsubscribe', 'forum'), 'mod_forum'),
+            array(
+                'title' => get_string('clicktounsubscribe', 'forum'),
+                'class' => 'discussiontoggle iconsmall',
+                'data-forumid' => $forum->id,
+                'data-discussionid' => $discussionid,
+        ));
+    } else {
+        $o .= html_writer::link($subscriptionlink,
+            $OUTPUT->pix_icon('t/unsubscribed', get_string('clicktosubscribe', 'forum'), 'mod_forum'),
+            array(
+                'title' => get_string('clicktosubscribe', 'forum'),
+                'class' => 'discussiontoggle iconsmall',
+                'data-forumid' => $forum->id,
+                'data-discussionid' => $discussionid,
+        ));
+    }
+
+    return $o;
 }
 
 /**
@@ -4405,11 +4459,12 @@ function forum_count_replies($post, $children=true) {
  * Given a new post, subscribes or unsubscribes as appropriate.
  * Returns some text which describes what happened.
  *
- * @global objec
- * @param object $post
- * @param object $forum
+ * @param object $fromform The submitted form
+ * @param stdClass $forum The forum record
+ * @param stdClass $discussion The forum discussion record
+ * @return string
  */
-function forum_post_subscription($post, $forum) {
+function forum_post_subscription($fromform, $forum, $discussion) {
     global $USER;
 
     if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
@@ -4421,35 +4476,23 @@ function forum_post_subscription($post, $forum) {
             \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum);
         }
         return "";
-
-    } else { // go with the user's choice
-        if (isset($post->subscribe)) {
-            // no change
-            if ((!empty($post->subscribe) && $subscribed)
-                || (empty($post->subscribe) && !$subscribed)) {
-                return "";
-
-            } elseif (!empty($post->subscribe) && !$subscribed) {
-                $action = 'subscribe';
-
-            } elseif (empty($post->subscribe) && $subscribed) {
-                $action = 'unsubscribe';
-            }
-        }
     }
 
     $info = new stdClass();
     $info->name  = fullname($USER);
     $info->forum = format_string($forum->name);
 
-    switch ($action) {
-        case 'subscribe':
-            forum_subscribe($USER->id, $post->forum);
-            return "<p>".get_string("nowsubscribed", "forum", $info)."</p>";
-        case 'unsubscribe':
-            forum_unsubscribe($USER->id, $post->forum);
-            return "<p>".get_string("nownotsubscribed", "forum", $info)."</p>";
+    if ($fromform->discussionsubscribe) {
+        if ($result = \mod_forum\subscriptions::subscribe_user_to_discussion($USER->id, $discussion)) {
+            return html_writer::tag('p', get_string('nowsubscribed', 'forum', $info));
+        }
+    } else {
+        if ($result = \mod_forum\subscriptions::unsubscribe_user_from_discussion($USER->id, $discussion)) {
+            return html_writer::tag('p', get_string('nownotsubscribed', 'forum', $info));
+        }
     }
+
+    return '';
 }
 
 /**
@@ -4967,10 +5010,11 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
  * @param void $unused (originally current group)
  * @param int $page Page mode, page to display (optional).
  * @param int $perpage The maximum number of discussions per page(optional)
+ * @param boolean $subscriptionstatus Whether the user is currently subscribed to the discussion in some fashion.
  *
  */
-function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $displayformat='plain', $sort='',
-                                        $currentgroup=-1, $groupmode=-1, $page=-1, $perpage=100, $cm=NULL) {
+function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $displayformat = 'plain', $sort = '',
+                                        $currentgroup = -1, $groupmode = -1, $page = -1, $perpage = 100, $cm = null) {
     global $CFG, $USER, $OUTPUT;
 
     if (!$cm) {
@@ -5154,6 +5198,11 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
             }
         }
         echo '<th class="header lastpost" scope="col">'.get_string('lastpost', 'forum').'</th>';
+        if (has_capability('mod/forum:viewdiscussion', $context)) {
+            if (\mod_forum\subscriptions::is_subscribable($forum)) {
+                echo '<th class="header discussionsubscription" scope="col">&nbsp;</th>';
+            }
+        }
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';

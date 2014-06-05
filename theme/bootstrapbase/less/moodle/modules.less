@@ -23,27 +23,57 @@ select {
     border: none;
 }
 
-.path-mod-forum .forumheaderlist {
-    thead .header {
-        white-space: normal;
-        vertical-align: top;
-    }
-    thead .header.replies {
-        text-align: center;
-    }
-    thead .header.lastpost {
-        text-align: right;
-    }
-    .discussion {
-        .author, .replies, .lastpost {
+.path-mod-forum {
+    .forumheaderlist {
+        thead .header,
+        tbody .discussion td {
             white-space: normal;
+            vertical-align: top;
+            padding-left: 0.5em;
+            padding-right: 0.5em;
         }
-        .replies {
-            text-align: center;
-        }
-        .topic, .topic.starter, .picture, .author, .replies, .lastpost {
+
+        thead .header {
+            white-space: normal;
             vertical-align: top;
         }
+
+        thead .header.replies {
+            text-align: center;
+        }
+        thead .header.lastpost {
+            text-align: right;
+        }
+        thead .header th,
+        tbody .discussion td{
+            &.discussionsubscription {
+                width: 16px;
+                padding-left: 0.5em;
+                padding-right: 0.5em;
+            }
+        }
+        .discussion {
+            .author, .replies, .lastpost {
+                white-space: normal;
+            }
+            .discussionsubscription,
+            .replies {
+                text-align: center;
+            }
+            .topic,
+            .discussionsubscription,
+            .topic.starter,
+            .picture,
+            .author,
+            .replies,
+            .lastpost {
+                vertical-align: top;
+            }
+        }
+    }
+    .discussiontoggle {
+        display: inline-block;
+        width: 12px;
     }
 }
 

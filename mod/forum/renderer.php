@@ -118,7 +118,7 @@ class mod_forum_renderer extends plugin_renderer_base {
      */
     public function subscribed_users(user_selector_base $existingusers) {
         $output  = $this->output->box_start('subscriberdiv boxaligncenter');
-        $output .= html_writer::tag('p', get_string('forcessubscribe', 'forum'));
+        $output .= html_writer::tag('p', get_string('forcesubscribed', 'forum'));
         $output .= $existingusers->display(true);
         $output .= $this->output->box_end();
         return $output;

@@ -34,10 +34,12 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-$id      = required_param('id', PARAM_INT);             // the forum to subscribe or unsubscribe to
-$mode    = optional_param('mode', null, PARAM_INT);     // the forum's subscription mode
-$user    = optional_param('user', 0, PARAM_INT);        // userid of the user to subscribe, defaults to $USER
-$sesskey = optional_param('sesskey', null, PARAM_RAW);  // sesskey
+$id             = required_param('id', PARAM_INT);             // The forum to set subscription on.
+$mode           = optional_param('mode', null, PARAM_INT);     // The forum's subscription mode.
+$user           = optional_param('user', 0, PARAM_INT);        // The userid of the user to subscribe, defaults to $USER.
+$discussionid   = optional_param('d', null, PARAM_INT);        // The discussionid to subscribe.
+$sesskey        = optional_param('sesskey', null, PARAM_RAW);
+$returnurl      = optional_param('returnurl', null, PARAM_RAW);
 
 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
 if (!is_null($mode)) {
@@ -98,6 +100,10 @@ $returnto = optional_param('backtoindex',0,PARAM_INT)
     ? "index.php?id=".$course->id
     : "view.php?f=$id";
 
+if ($returnurl) {
+    $returnto = $returnurl;
+}
+
 if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context)) {
     require_sesskey();
     switch ($mode) {
@@ -136,7 +142,7 @@ $info = new stdClass();
 $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 
-if (\mod_forum\subscriptions::is_subscribed($user->id, $forum)) {
+if (\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid)) {
     if (is_null($sesskey)) {    // we came here via link in email
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
@@ -147,10 +153,20 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum)) {
         exit;
     }
     require_sesskey();
-    if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum, $context, true)) {
-        redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
+    if ($discussionid === null) {
+        if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum, $context, true)) {
+            redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
+        } else {
+            print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+        }
     } else {
-        print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+        $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
+        if (\mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $discussion, $context)) {
+            $info->name = $discussion->name;
+            redirect($returnto, get_string("discussionnownotsubscribed", "forum", $info), 1);
+        } else {
+            print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+        }
     }
 
 } else {  // subscribe
@@ -170,6 +186,13 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum)) {
         exit;
     }
     require_sesskey();
-    \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context, true);
-    redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
+    if ($discussionid == null) {
+        \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context, true);
+        redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
+    } else {
+        $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
+        $info->name = $discussion->name;
+        \mod_forum\subscriptions::subscribe_user_to_discussion($user->id, $discussion, $context);
+        redirect($returnto, get_string("discussionnowsubscribed", "forum", $info), 1);
+    }
 }
