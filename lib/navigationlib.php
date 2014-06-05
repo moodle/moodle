@@ -979,7 +979,7 @@ class global_navigation extends navigation_node {
     protected $initialised = false;
     /** @var array An array of course information */
     protected $mycourses = array();
-    /** @var array An array for containing  root navigation nodes */
+    /** @var navigation_node[] An array for containing  root navigation nodes */
     protected $rootnodes = array();
     /** @var bool A switch for whether to show empty sections in the navigation */
     protected $showemptysections = true;
@@ -1133,13 +1133,13 @@ class global_navigation extends navigation_node {
             $this->rootnodes['courses']->isexpandable = true;
         }
 
-        if (empty($CFG->navcollapsemycourses)){
-            if ($this->rootnodes['mycourses']->isactive) {
-                $this->load_courses_enrolled();
-            }
-        } else {  
-            $this->rootnodes['mycourses']->collapse = true; 
-            $this->rootnodes['mycourses']->make_inactive(); 
+        // Load the users enrolled courses if they are viewing the My Moodle page AND the admin has not
+        // set that they wish to keep the My Courses branch collapsed by default.
+        if (empty($CFG->navcollapsemycourses) && $this->rootnodes['mycourses']->isactive){
+            $this->load_courses_enrolled();
+        } else {
+            $this->rootnodes['mycourses']->collapse = true;
+            $this->rootnodes['mycourses']->make_inactive();
         }
 
         $canviewcourseprofile = true;
