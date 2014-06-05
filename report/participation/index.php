@@ -253,7 +253,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
     $usernamefields = get_all_user_name_fields(true, 'u');
     $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
-            FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
+            FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
             JOIN {user} u ON u.id = ra.userid
             $groupsql
             LEFT JOIN (
