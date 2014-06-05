@@ -113,7 +113,7 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
             if ($forum->forcesubscribe <> FORUM_INITIALSUBSCRIBE) {
                 $users = \mod_forum\subscriptions::get_potential_subscribers($context, 0, 'u.id, u.email', '');
                 foreach ($users as $user) {
-                    \mod_forum\subscriptions::subscribe_user($user->id, $forum);
+                    \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context);
                 }
             }
             \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
@@ -147,7 +147,7 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum)) {
         exit;
     }
     require_sesskey();
-    if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum)) {
+    if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum, $context, true)) {
         redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
     } else {
         print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
@@ -170,6 +170,6 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum)) {
         exit;
     }
     require_sesskey();
-    \mod_forum\subscriptions::subscribe_user($user->id, $forum);
+    \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context, true);
     redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
 }

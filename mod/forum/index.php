@@ -195,9 +195,9 @@ if (!is_null($subscribe)) {
             $subscribed = \mod_forum\subscriptions::is_subscribed($USER->id, $forum);
             $canmanageactivities = has_capability('moodle/course:manageactivities', $coursecontext, $USER->id);
             if (($canmanageactivities || \mod_forum\subscriptions::is_subscribable($forum)) && $subscribe && !$subscribed && $cansub) {
-                \mod_forum\subscriptions::subscribe_user($USER->id, $forum, $modcontext);
+                \mod_forum\subscriptions::subscribe_user($USER->id, $forum, $modcontext, true);
             } else if (!$subscribe && $subscribed) {
-                \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, $modcontext);
+                \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, $modcontext, true);
             }
         }
     }

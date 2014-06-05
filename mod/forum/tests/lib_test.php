@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/forum/lib.php');
+
 class mod_forum_lib_testcase extends advanced_testcase {
 
     public function setUp() {

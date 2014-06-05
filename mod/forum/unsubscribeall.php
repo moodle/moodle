@@ -50,7 +50,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     $forums = \mod_forum\subscriptions::get_unsubscribable_forums();
 
     foreach($forums as $forum) {
-        \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, context_module::instance($forum->cm));
+        \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, context_module::instance($forum->cm), true);
     }
     $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
 
