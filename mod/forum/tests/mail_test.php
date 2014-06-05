@@ -395,4 +395,160 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->assertTrue($seenrecipient);
     }
 
+    public function test_automatic_with_unsubscribed_discussion() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Unsubscribe the 'author' user from the discussion.
+        \mod_forum\subscriptions::unsubscribe_user_from_discussion($author->id, $discussion);
+
+        // We expect only one user to receive this post.
+        $expected = 1;
+
+        // Run cron and check that the expected number of users received the notification.
+        $messages = $this->helper_run_cron_check_count($post, $expected);
+
+        $seenauthor = false;
+        $seenrecipient = false;
+        foreach ($messages as $message) {
+            // They should both be from our user.
+            $this->assertEquals($author->id, $message->useridfrom);
+
+            if ($message->useridto == $author->id) {
+                $seenauthor = true;
+            } else if ($message->useridto = $recipient->id) {
+                $seenrecipient = true;
+            }
+        }
+
+        // Check we only saw one user.
+        $this->assertFalse($seenauthor);
+        $this->assertTrue($seenrecipient);
+    }
+
+    public function test_optional_with_subscribed_discussion() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Subscribe the 'recipient' user to the discussion.
+        \mod_forum\subscriptions::subscribe_user_to_discussion($recipient->id, $discussion);
+
+        // We expect only one user to receive this post.
+        $expected = 1;
+
+        // Run cron and check that the expected number of users received the notification.
+        $messages = $this->helper_run_cron_check_count($post, $expected);
+
+        $seenauthor = false;
+        $seenrecipient = false;
+        foreach ($messages as $message) {
+            // They should both be from our user.
+            $this->assertEquals($author->id, $message->useridfrom);
+
+            if ($message->useridto == $author->id) {
+                $seenauthor = true;
+            } else if ($message->useridto = $recipient->id) {
+                $seenrecipient = true;
+            }
+        }
+
+        // Check we only saw one user.
+        $this->assertFalse($seenauthor);
+        $this->assertTrue($seenrecipient);
+    }
+
+    public function test_automatic_with_subscribed_discussion_in_unsubscribed_forum() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Unsubscribe the 'author' user from the discussion.
+        \mod_forum\subscriptions::unsubscribe_user($author->id, $forum);
+
+        // Then re-subscribe them to the discussion.
+        \mod_forum\subscriptions::subscribe_user_to_discussion($author->id, $discussion);
+
+        // We expect two users to receive this post.
+        $expected = 2;
+
+        // Run cron and check that the expected number of users received the notification.
+        $messages = $this->helper_run_cron_check_count($post, $expected);
+
+        $seenauthor = false;
+        $seenrecipient = false;
+        foreach ($messages as $message) {
+            // They should both be from our user.
+            $this->assertEquals($author->id, $message->useridfrom);
+
+            if ($message->useridto == $author->id) {
+                $seenauthor = true;
+            } else if ($message->useridto = $recipient->id) {
+                $seenrecipient = true;
+            }
+        }
+
+        // Check we only saw one user.
+        $this->assertTrue($seenauthor);
+        $this->assertTrue($seenrecipient);
+    }
+
+    public function test_optional_with_unsubscribed_discussion_in_subscribed_forum() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Unsubscribe the 'recipient' user from the discussion.
+        \mod_forum\subscriptions::subscribe_user($recipient->id, $forum);
+
+        // Then unsubscribe them from the discussion.
+        \mod_forum\subscriptions::unsubscribe_user_from_discussion($recipient->id, $discussion);
+
+        // We don't expect any users to receive this post.
+        $expected = 0;
+
+        // Run cron and check that the expected number of users received the notification.
+        $messages = $this->helper_run_cron_check_count($post, $expected);
+    }
 }

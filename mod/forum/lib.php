@@ -458,17 +458,16 @@ function forum_cron() {
     $users = array();
     $userscount = 0; // Cached user counter - count($users) in PHP is horribly slow!!!
 
-    // status arrays
+    // Status arrays.
     $mailcount  = array();
     $errorcount = array();
 
     // caches
-    $discussions     = array();
-    $forums          = array();
-    $courses         = array();
-    $coursemodules   = array();
-    $subscribedusers = array();
-
+    $discussions        = array();
+    $forums             = array();
+    $courses            = array();
+    $coursemodules      = array();
+    $subscribedusers    = array();
 
     // Posts older than 2 days will not be mailed.  This is to avoid the problem where
     // cron has not been running for a long time, and then suddenly people are flooded
@@ -506,8 +505,11 @@ function forum_cron() {
             if (!isset($discussions[$discussionid])) {
                 if ($discussion = $DB->get_record('forum_discussions', array('id'=> $post->discussion))) {
                     $discussions[$discussionid] = $discussion;
+                    \mod_forum\subscriptions::fill_subscription_cache($discussion->forum);
+                    \mod_forum\subscriptions::fill_discussion_subscription_cache($discussion->forum);
+
                 } else {
-                    mtrace('Could not find discussion '.$discussionid);
+                    mtrace('Could not find discussion ' . $discussionid);
                     unset($posts[$pid]);
                     continue;
                 }
@@ -542,8 +544,7 @@ function forum_cron() {
                 }
             }
 
-
-            // caching subscribed users of each forum
+            // Caching subscribed users of each forum.
             if (!isset($subscribedusers[$forumid])) {
                 $modcontext = context_module::instance($coursemodules[$forumid]->id);
                 if ($subusers = \mod_forum\subscriptions::fetch_subscribed_users($forums[$forumid], 0, $modcontext, 'u.*', true)) {
@@ -567,7 +568,6 @@ function forum_cron() {
                     unset($postuser);
                 }
             }
-
             $mailcount[$pid] = 0;
             $errorcount[$pid] = 0;
         }
@@ -579,13 +579,12 @@ function forum_cron() {
         $hostname = $urlinfo['host'];
 
         foreach ($users as $userto) {
+            // Terminate if processing of any account takes longer than 2 minutes.
+            core_php_time_limit::raise(120);
 
-            core_php_time_limit::raise(120); // terminate if processing of any account takes longer than 2 minutes
+            mtrace('Processing user ' . $userto->id);
 
-            mtrace('Processing user '.$userto->id);
-
-            // Init user caches - we keep the cache for one cycle only,
-            // otherwise it could consume too much memory.
+            // Init user caches - we keep the cache for one cycle only, otherwise it could consume too much memory.
             if (isset($userto->username)) {
                 $userto = clone($userto);
             } else {
@@ -596,39 +595,46 @@ function forum_cron() {
             $userto->canpost       = array();
             $userto->markposts     = array();
 
-            // set this so that the capabilities are cached, and environment matches receiving user
+            // Setup this user so that the capabilities are cached, and environment matches receiving user.
             cron_setup_user($userto);
 
-            // reset the caches
-            foreach ($coursemodules as $forumid=>$unused) {
+            // Reset the caches.
+            foreach ($coursemodules as $forumid => $unused) {
                 $coursemodules[$forumid]->cache       = new stdClass();
                 $coursemodules[$forumid]->cache->caps = array();
                 unset($coursemodules[$forumid]->uservisible);
             }
 
             foreach ($posts as $pid => $post) {
-
-                // Set up the environment for the post, discussion, forum, course
                 $discussion = $discussions[$post->discussion];
                 $forum      = $forums[$discussion->forum];
                 $course     = $courses[$forum->course];
                 $cm         =& $coursemodules[$forum->id];
 
-                // Do some checks  to see if we can bail out now
-                // Only active enrolled users are in the list of subscribers
-                if (!isset($subscribedusers[$forum->id][$userto->id])) {
-                    continue; // user does not subscribe to this forum
-                }
+                // Do some checks to see if we can bail out now.
 
-                // Don't send email if the forum is Q&A and the user has not posted
-                // Initial topics are still mailed
-                if ($forum->type == 'qanda' && !forum_get_user_posted_time($discussion->id, $userto->id) && $pid != $discussion->firstpost) {
-                    mtrace('Did not email '.$userto->id.' because user has not posted in discussion');
+                // Only active enrolled users are in the list of subscribers.
+                // This does not necessarily mean that the user is subscribed to the forum or to the discussion though.
+                if (!isset($subscribedusers[$forum->id][$userto->id])) {
+                    // The user does not subscribe to this forum.
                     continue;
                 }
 
-                // Get info about the sending user
-                if (array_key_exists($post->userid, $users)) { // we might know him/her already
+                if (!\mod_forum\subscriptions::is_subscribed($userto->id, $forum, $post->discussion)) {
+                    // The user does not subscribe to this forum, or to this specific discussion.
+                    continue;
+                }
+
+                // Don't send email if the forum is Q&A and the user has not posted.
+                // Initial topics are still mailed.
+                if ($forum->type == 'qanda' && !forum_get_user_posted_time($discussion->id, $userto->id) && $pid != $discussion->firstpost) {
+                    mtrace('Did not email ' . $userto->id.' because user has not posted in discussion');
+                    continue;
+                }
+
+                // Get info about the sending user.
+                if (array_key_exists($post->userid, $users)) {
+                    // We might know the user already.
                     $userfrom = $users[$post->userid];
                     if (!isset($userfrom->idnumber)) {
                         // Minimalised user info, fetch full record.
@@ -643,18 +649,17 @@ function forum_cron() {
                         $userscount++;
                         $users[$userfrom->id] = $userfrom;
                     }
-
                 } else {
-                    mtrace('Could not find user '.$post->userid);
+                    mtrace('Could not find user ' . $post->userid . ', author of post ' . $post->id . '. Unable to send message.');
                     continue;
                 }
 
-                //if we want to check that userto and userfrom are not the same person this is probably the spot to do it
+                // Note: If we want to check that userto and userfrom are not the same person this is probably the spot to do it.
 
-                // setup global $COURSE properly - needed for roles and languages
+                // Setup global $COURSE properly - needed for roles and languages.
                 cron_setup_user($userto, $course);
 
-                // Fill caches
+                // Fill caches.
                 if (!isset($userto->viewfullnames[$forum->id])) {
                     $modcontext = context_module::instance($cm->id);
                     $userto->viewfullnames[$forum->id] = has_capability('moodle/site:viewfullnames', $modcontext);
@@ -676,21 +681,23 @@ function forum_cron() {
                     }
                 }
 
-                // Make sure groups allow this user to see this email
-                if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
-                    if (!groups_group_exists($discussion->groupid)) { // Can't find group
-                        continue;                           // Be safe and don't send it to anyone
+                // Make sure groups allow this user to see this email.
+                if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {
+                    // Groups are being used.
+                    if (!groups_group_exists($discussion->groupid)) {
+                        // Can't find group - be safe and don't this message.
+                        continue;
                     }
 
                     if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $modcontext)) {
-                        // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
+                        // Do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS.
                         continue;
                     }
                 }
 
-                // Make sure we're allowed to see it...
-                if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
-                    mtrace('user '.$userto->id. ' can not see '.$post->id);
+                // Make sure we're allowed to see the post.
+                if (!forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
+                    mtrace('User ' . $userto->id .' can not see ' . $post->id . '. Not sending message.');
                     continue;
                 }
 
@@ -700,7 +707,7 @@ function forum_cron() {
                 $maildigest = forum_get_user_maildigest_bulk($digests, $userto, $forum->id);
 
                 if ($maildigest > 0) {
-                    // This user wants the mails to be in digest form
+                    // This user wants the mails to be in digest form.
                     $queue = new stdClass();
                     $queue->userid       = $userto->id;
                     $queue->discussionid = $discussion->id;
@@ -710,23 +717,24 @@ function forum_cron() {
                     continue;
                 }
 
-
-                // Prepare to actually send the post now, and build up the content
+                // Prepare to actually send the post now, and build up the content.
 
                 $cleanforumname = str_replace('"', "'", strip_tags(format_string($forum->name)));
 
-                $userfrom->customheaders = array (  // Headers to make emails easier to track
-                           'Precedence: Bulk',
-                           'List-Id: "'.$cleanforumname.'" <moodleforum'.$forum->id.'@'.$hostname.'>',
-                           'List-Help: '.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id,
-                           'Message-ID: '.forum_get_email_message_id($post->id, $userto->id, $hostname),
-                           'X-Course-Id: '.$course->id,
-                           'X-Course-Name: '.format_string($course->fullname, true)
+                $userfrom->customheaders = array (
+                    // Headers to make emails easier to track.
+                    'Precedence: Bulk',
+                    'List-Id: "'        . $cleanforumname . '" <moodleforum' . $forum->id . '@' . $hostname.'>',
+                    'List-Help: '       . $CFG->wwwroot . '/mod/forum/view.php?f=' . $forum->id,
+                    'Message-ID: '      . forum_get_email_message_id($post->id, $userto->id, $hostname),
+                    'X-Course-Id: '     . $course->id,
+                    'X-Course-Name: '   . format_string($course->fullname, true)
                 );
 
-                if ($post->parent) {  // This post is a reply, so add headers for threading (see MDL-22551)
-                    $userfrom->customheaders[] = 'In-Reply-To: '.forum_get_email_message_id($post->parent, $userto->id, $hostname);
-                    $userfrom->customheaders[] = 'References: '.forum_get_email_message_id($post->parent, $userto->id, $hostname);
+                if ($post->parent) {
+                    // This post is a reply, so add headers for threading (see MDL-22551).
+                    $userfrom->customheaders[] = 'In-Reply-To: ' . forum_get_email_message_id($post->parent, $userto->id, $hostname);
+                    $userfrom->customheaders[] = 'References: '  . forum_get_email_message_id($post->parent, $userto->id, $hostname);
                 }
 
                 $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
@@ -740,19 +748,18 @@ function forum_cron() {
                 $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
 
                 // Send the post now!
-
                 mtrace('Sending ', '');
 
                 $eventdata = new stdClass();
-                $eventdata->component        = 'mod_forum';
-                $eventdata->name             = 'posts';
-                $eventdata->userfrom         = $userfrom;
-                $eventdata->userto           = $userto;
-                $eventdata->subject          = $postsubject;
-                $eventdata->fullmessage      = $posttext;
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml  = $posthtml;
-                $eventdata->notification = 1;
+                $eventdata->component           = 'mod_forum';
+                $eventdata->name                = 'posts';
+                $eventdata->userfrom            = $userfrom;
+                $eventdata->userto              = $userto;
+                $eventdata->subject             = $postsubject;
+                $eventdata->fullmessage         = $posttext;
+                $eventdata->fullmessageformat   = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml     = $posthtml;
+                $eventdata->notification        = 1;
 
                 // If forum_replytouser is not set then send mail using the noreplyaddress.
                 if (empty($CFG->forum_replytouser)) {
@@ -763,33 +770,35 @@ function forum_cron() {
                 }
 
                 $smallmessagestrings = new stdClass();
-                $smallmessagestrings->user = fullname($userfrom);
-                $smallmessagestrings->forumname = "$shortname: ".format_string($forum->name,true).": ".$discussion->name;
-                $smallmessagestrings->message = $post->message;
-                //make sure strings are in message recipients language
+                $smallmessagestrings->user          = fullname($userfrom);
+                $smallmessagestrings->forumname     = "$shortname: " . format_string($forum->name, true) . ": " . $discussion->name;
+                $smallmessagestrings->message       = $post->message;
+
+                // Make sure strings are in message recipients language.
                 $eventdata->smallmessage = get_string_manager()->get_string('smallmessage', 'forum', $smallmessagestrings, $userto->lang);
 
-                $eventdata->contexturl = "{$CFG->wwwroot}/mod/forum/discuss.php?d={$discussion->id}#p{$post->id}";
+                $contexturl = new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id), 'p' . $post->id);
+                $eventdata->contexturl = $contexturl->out();
                 $eventdata->contexturlname = $discussion->name;
 
                 $mailresult = message_send($eventdata);
-                if (!$mailresult){
+                if (!$mailresult) {
                     mtrace("Error: mod/forum/lib.php forum_cron(): Could not send out mail for id $post->id to user $userto->id".
-                         " ($userto->email) .. not trying again.");
+                            " ($userto->email) .. not trying again.");
                     $errorcount[$post->id]++;
                 } else {
                     $mailcount[$post->id]++;
 
-                // Mark post as read if forum_usermarksread is set off
+                    // Mark post as read if forum_usermarksread is set off.
                     if (!$CFG->forum_usermarksread) {
                         $userto->markposts[$post->id] = $post->id;
                     }
                 }
 
-                mtrace('post '.$post->id. ': '.$post->subject);
+                mtrace('post ' . $post->id . ': ' . $post->subject);
             }
 
-            // mark processed posts as read
+            // Mark processed posts as read.
             forum_tp_mark_posts_read($userto, $userto->markposts);
             unset($userto);
         }
@@ -1105,7 +1114,6 @@ function forum_cron() {
     } else {
         set_config('forum_lastreadclean', time());
     }
-
 
     return true;
 }
