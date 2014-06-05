@@ -4710,9 +4710,13 @@ function hash_internal_user_password($password, $fasthash = false) {
  *
  * @param stdClass $user User object (password property may be updated).
  * @param string $password Plain text password.
+ * @param bool $fasthash If true, use a low cost factor when generating the hash
+ *                       This is much faster to generate but makes the hash
+ *                       less secure. It is used when lots of hashes need to
+ *                       be generated quickly.
  * @return bool Always returns true.
  */
-function update_internal_user_password($user, $password) {
+function update_internal_user_password($user, $password, $fasthash = false) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/password_compat/lib/password.php');
 
@@ -4721,25 +4725,26 @@ function update_internal_user_password($user, $password) {
     if ($authplugin->prevent_local_passwords()) {
         $hashedpassword = AUTH_PASSWORD_NOT_CACHED;
     } else {
-        $hashedpassword = hash_internal_user_password($password);
+        $hashedpassword = hash_internal_user_password($password, $fasthash);
     }
 
     // If verification fails then it means the password has changed.
-    $passwordchanged = !password_verify($password, $user->password);
-    $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+    if (isset($user->password)) {
+        // While creating new user, password in unset in $user object, to avoid
+        // saving it with user_create()
+        $passwordchanged = !password_verify($password, $user->password);
+        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+    } else {
+        $passwordchanged = true;
+    }
 
     if ($passwordchanged || $algorithmchanged) {
         $DB->set_field('user', 'password',  $hashedpassword, array('id' => $user->id));
         $user->password = $hashedpassword;
 
         // Trigger event.
-        $event = \core\event\user_updated::create(array(
-            'objectid' => $user->id,
-            'relateduserid' => $user->id,
-            'context' => context_user::instance($user->id)
-        ));
-        $event->add_record_snapshot('user', $user);
-        $event->trigger();
+        $user = $DB->get_record('user', array('id' => $user->id));
+        \core\event\user_password_updated::create_from_user($user)->trigger();
     }
 
     return true;
@@ -5969,18 +5974,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
 
     $newpassword = generate_password();
 
-    $hashedpassword = hash_internal_user_password($newpassword, $fasthash);
-    $DB->set_field('user', 'password', $hashedpassword, array('id' => $user->id));
-    $user->password = $hashedpassword;
-
-    // Trigger event.
-    $event = \core\event\user_updated::create(array(
-        'objectid' => $user->id,
-        'relateduserid' => $user->id,
-        'context' => context_user::instance($user->id)
-    ));
-    $event->add_record_snapshot('user', $user);
-    $event->trigger();
+    update_internal_user_password($user, $newpassword, $fasthash);
 
     $a = new stdClass();
     $a->firstname   = fullname($user, true);
