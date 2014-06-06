@@ -2406,8 +2406,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     public function resort_subcategories($field, $cleanup = true) {
         global $DB;
         $desc = $field === 'idnumberdesc' ? true : false;
-        $field = $field === 'idnumberdesc' || $field === 'idnumber' ? 'id' : $field;
-        if ($field !== 'name' && $field !== 'id') {
+        $field = $field === 'idnumberdesc' ? 'idnumber' : $field;
+        if ($field !== 'name' && $field !== 'idnumber') {
             throw new coding_exception('Invalid field requested');
         }
         $children = $this->get_children();
@@ -2441,7 +2441,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     /**
      * Resort the courses within this category by the given field.
      *
-     * @param string $field One of fullname, shortname or idnumber
+     * @param string $field One of fullname, shortname, idnumber or idnumberdesc
      * @param bool $cleanup
      * @return bool True for success.
      * @throws coding_exception
@@ -2452,7 +2452,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         if ($field === 'idnumberdesc') {
             $field = "idnumber";
             $desc = array(
-                'sortiddesc' => "c.id DESC,",
+                'sortdesc' => " DESC",
                 'counter' => 1
             );
         }
@@ -2468,7 +2468,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
              LEFT JOIN {context} ctx ON ctx.instanceid = c.id
                  WHERE ctx.contextlevel = :ctxlevel AND
                        c.category = :categoryid
-              ORDER BY ".(empty($desc) ? '' : $desc['sortiddesc'])." c.{$field}, c.sortorder";
+              ORDER BY c.{$field}".(empty($desc) ? '' : $desc['sortdesc']).", c.sortorder";
         $params = array(
             'ctxlevel' => CONTEXT_COURSE,
             'categoryid' => $this->id
