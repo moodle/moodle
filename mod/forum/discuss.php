@@ -59,9 +59,13 @@
         rss_add_http_header($modcontext, 'mod_forum', $forum, $rsstitle);
     }
 
-/// move discussion if requested
+    // Move discussion if requested.
     if ($move > 0 and confirm_sesskey()) {
         $return = $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
+
+        if (!$forumto = $DB->get_record('forum', array('id' => $move))) {
+            print_error('cannotmovetonotexist', 'forum', $return);
+        }
 
         require_capability('mod/forum:movediscussions', $modcontext);
 
@@ -94,8 +98,48 @@
         if (!forum_move_attachments($discussion, $forum->id, $forumto->id)) {
             echo $OUTPUT->notification("Errors occurred while moving attachment directories - check your file permissions");
         }
+        // For each subscribed user in this forum and discussion, copy over per-discussion subscriptions if required.
+        $discussiongroup = $discussion->groupid == -1 ? 0 : $discussion->groupid;
+        $potentialsubscribers = \mod_forum\subscriptions::get_potential_subscribers(
+            $modcontext,
+            $discussiongroup,
+            'u.id'
+        );
+
+        // Pre-seed the subscribed_discussion caches.
+        // Firstly for the forum being moved to.
+        \mod_forum\subscriptions::fill_subscription_cache($forumto->id);
+        // And also for the discussion being moved.
+        \mod_forum\subscriptions::fill_subscription_cache($forum->id);
+        $subscriptionchanges = array();
+        foreach ($potentialsubscribers as $subuser) {
+            $userid = $subuser->id;
+            $targetsubscription = \mod_forum\subscriptions::is_subscribed($userid, $forumto);
+            if (\mod_forum\subscriptions::is_subscribed($userid, $forum, $discussion->id)) {
+                if (!$targetsubscription) {
+                    $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+                }
+            } else {
+                if ($targetsubscription) {
+                    $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_UNSUBSCRIBED;
+                }
+            }
+        }
+
         $DB->set_field('forum_discussions', 'forum', $forumto->id, array('id' => $discussion->id));
         $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
+
+        // Delete the existing per-discussion subscriptions and replace them with the newly calculated ones.
+        $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
+        $newdiscussion = clone $discussion;
+        $newdiscussion->forum = $forumto->id;
+        foreach ($subscriptionchanges as $userid => $preference) {
+            if ($preference === \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED) {
+                \mod_forum\subscriptions::subscribe_user_to_discussion($userid, $newdiscussion, $destinationctx);
+            } else {
+                \mod_forum\subscriptions::unsubscribe_user_from_discussion($userid, $newdiscussion, $destinationctx);
+            }
+        }
 
         $params = array(
             'context' => $destinationctx,
