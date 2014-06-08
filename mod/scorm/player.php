@@ -165,6 +165,13 @@ $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => false,
                                                        'popupoptions' => $scorm->options), true);
 $PAGE->requires->js('/mod/scorm/request.js', true);
 $PAGE->requires->js('/lib/cookies.js', true);
+
+if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js')) {
+    $PAGE->requires->js('/mod/scorm/datamodels/'.$scorm->version.'.js', true);
+} else {
+    $PAGE->requires->js('/mod/scorm/datamodels/scorm_12.js', true);
+}
+
 echo $OUTPUT->header();
 if (!empty($scorm->displayactivityname)) {
     echo $OUTPUT->heading(format_string($scorm->name));

@@ -92,3 +92,5 @@ if ($count > 0) {
 }
 
 echo js_writer::set_variable('cmiobj', $cmiobj);
+
+echo 'var API = new AICCapi();';

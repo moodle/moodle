@@ -89,6 +89,8 @@ $cmiint = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.inte
 echo js_writer::set_variable('cmiobj', $cmiobj);
 echo js_writer::set_variable('cmiint', $cmiint);
 
+echo 'var API = new SCORMapi1_2();';
+
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');

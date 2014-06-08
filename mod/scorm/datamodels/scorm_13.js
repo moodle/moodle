@@ -12,9 +12,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
-var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
-var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
 
 // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
 //var cmi = new Object();
@@ -23,6 +20,11 @@ var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt=
 // SCORM 1.3 API Implementation
 //
 function SCORMapi1_3() {
+
+    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+    var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
+    var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+  
     // Standard Data Type Definition
 
     // language key has to be checked for language dependent strings
@@ -1225,5 +1227,3 @@ function SCORMapi1_3() {
     this.GetDiagnostic = GetDiagnostic;
     this.version = '1.0';
 }
-
-var API_1484_11 = new SCORMapi1_3();

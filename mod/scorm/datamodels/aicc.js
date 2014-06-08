@@ -13,14 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
-var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
-var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
-
 //
 // SCORM 1.2 API Implementation
 //
 function AICCapi() {
+
+    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+    var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
+    var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+    
     // Standard Data Type Definition
     CMIString256 = '^.{0,255}$';
     CMIString4096 = '^.{0,4096}$';
@@ -528,5 +529,3 @@ function AICCapi() {
     this.LMSGetErrorString = LMSGetErrorString;
     this.LMSGetDiagnostic = LMSGetDiagnostic;
 }
-
-var API = new AICCapi();

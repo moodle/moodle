@@ -81,6 +81,8 @@ echo js_writer::set_variable('cmiint', $cmiint);
 echo js_writer::set_variable('cmicommentsuser', $cmicommentsuser);
 echo js_writer::set_variable('cmicommentslms', $cmicommentslms);
 
+echo 'var API_1484_11 = new SCORMapi1_3();';
+
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
