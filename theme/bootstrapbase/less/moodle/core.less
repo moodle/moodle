@@ -1246,52 +1246,22 @@ body.tag .managelink {
   float:left;
   padding-top:20px
 }
-.mod-indent-1 {
-    width: 30px;
+
+/* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+@mod-indent-size: 30px;
+@mod-indent-levels: 16;
+.mod-indent-generate(@n, @i: 1) when (@i =< @n) {
+    .mod-indent-@{i} {
+        width: (@i * @mod-indent-size);
+    }
+    .mod-indent-generate(@n, (@i + 1));
 }
-.mod-indent-2 {
-    width: 60px;
+.mod-indent-generate(@n, @i: 1) when (@i = @n) {
+    .mod-indent-huge {
+        width: (@i * @mod-indent-size);
+    }
 }
-.mod-indent-3 {
-    width: 90px;
-}
-.mod-indent-4 {
-    width: 120px;
-}
-.mod-indent-5 {
-    width: 150px;
-}
-.mod-indent-6 {
-    width: 180px;
-}
-.mod-indent-7 {
-    width: 210px;
-}
-.mod-indent-8 {
-    width: 240px;
-}
-.mod-indent-9 {
-    width: 270px;
-}
-.mod-indent-10 {
-    width: 300px;
-}
-.mod-indent-11 {
-    width: 330px;
-}
-.mod-indent-12 {
-    width: 360px;
-}
-.mod-indent-13 {
-    width: 390px;
-}
-.mod-indent-14 {
-    width: 420px;
-}
-.mod-indent-15,
-.mod-indent-huge {
-    width: 420px;
-}
+.mod-indent-generate(@mod-indent-levels);
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
