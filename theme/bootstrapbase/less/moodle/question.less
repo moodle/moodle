@@ -456,9 +456,22 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 #page-mod-quiz-edit div.question div.content div.points {
     margin-top: -0.5em;
-    padding-bottom: 0.5em;
+    padding-bottom: 0em;
     border: none;
     background-color: @bodyBackground;
+    position: static;
+    width: 12.1em;
+    float: right;
+    margin-right: 60px;
+}
+#page-mod-quiz-edit.dir-rtl div.question div.content div.points {
+    float: left;
+    margin-left: 60px;
+    margin-right: 0px;
+
+}
+#page-mod-quiz-edit div.question div.content div.points br {
+    display: none;
 }
 #page-mod-quiz-edit div.question div.content div.points label {
     display: inline-block;
