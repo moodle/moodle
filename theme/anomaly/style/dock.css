@@ -10,7 +10,7 @@ body.has_dock {
     top: 0;
     left: 0;
     height: 100%;
-    z-index: 11000;
+    z-index: 5000;
     background-color: #C8C9C7;
     border-right: 0 none;
 }

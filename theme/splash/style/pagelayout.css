@@ -762,7 +762,7 @@ table.quizreviewsummary {
     top:0px;
     left:0px;
     height:100%;
-    z-index:11000;
+    z-index:5000;
 }
 #dock.nothingdocked {
     visibility: hidden;

@@ -7,7 +7,7 @@ Docking Module
     top: 0;
     left: 0;
     height: 100%;
-    z-index:11000;
+    z-index:5000;
     }
 #dock.nothingdocked {
     visibility: hidden;
@@ -71,7 +71,7 @@ Docked Item Panel
 #dockeditempanel {
     width: 180px;
     position: relative;
-    z-index: 12000;
+    z-index: 5001;
     left: 100%;
 }
 #dockeditempanel.dockitempanel_hidden {
