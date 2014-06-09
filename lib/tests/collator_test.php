@@ -199,6 +199,48 @@ class core_collator_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the sorting of an array of arrays by key.
+     */
+    public function test_asort_array_of_arrays_by_key() {
+        $array = array(
+            'a' => array('name' => 'bravo'),
+            'b' => array('name' => 'charlie'),
+            'c' => array('name' => 'alpha')
+        );
+        $this->assertSame(array('a', 'b', 'c'), array_keys($array));
+        $this->assertTrue(core_collator::asort_array_of_arrays_by_key($array, 'name'));
+        $this->assertSame(array('c', 'a', 'b'), array_keys($array));
+
+        $array = array(
+            'a' => array('name' => 'b'),
+            'b' => array('name' => 1),
+            'c' => array('name' => 0)
+        );
+        $this->assertSame(array('a', 'b', 'c'), array_keys($array));
+        $this->assertTrue(core_collator::asort_array_of_arrays_by_key($array, 'name'));
+        $this->assertSame(array('c', 'b', 'a'), array_keys($array));
+
+        $array = array(
+            'a' => array('name' => 'áb'),
+            'b' => array('name' => 'ab'),
+            1   => array('name' => 'aa'),
+            'd' => array('name' => 'cc'),
+            0   => array('name' => 'Áb')
+        );
+        $this->assertSame(array('a', 'b', 1, 'd', 0), array_keys($array));
+        $this->assertTrue(core_collator::asort_array_of_arrays_by_key($array, 'name'));
+        $this->assertSame(array(1, 'b', 'a', 0, 'd'), array_keys($array));
+        $this->assertSame(array(
+            1   => array('name' => 'aa'),
+            'b' => array('name' => 'ab'),
+            'a' => array('name' => 'áb'),
+            0   => array('name' => 'Áb'),
+            'd' => array('name' => 'cc')
+        ), $array);
+
+    }
+
+    /**
      * Returns an array of sorted names.
      * @param array $objects
      * @param string $methodproperty
