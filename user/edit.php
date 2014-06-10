@@ -220,7 +220,7 @@ if ($usernew = $userform->get_data()) {
     }
 
     // Update user with new profile data.
-    user_update_user($usernew, false);
+    user_update_user($usernew, false, false);
 
     // Update preferences.
     useredit_update_user_preference($usernew);
@@ -243,6 +243,9 @@ if ($usernew = $userform->get_data()) {
 
     // Save custom profile fields data.
     profile_save_data($usernew);
+
+    // Trigger event.
+    \core\event\user_updated::create_from_userid($user->id)->trigger();
 
     // If email was changed and confirmation is required, send confirmation email now to the new address.
     if ($emailchanged && $CFG->emailchangeconfirmation) {
