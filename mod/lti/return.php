@@ -28,7 +28,7 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 $courseid = required_param('course', PARAM_INT);
-$instanceid = required_param('instanceid', PARAM_INT);
+$instanceid = optional_param('instanceid', 0, PARAM_INT);
 
 $errormsg = optional_param('lti_errormsg', '', PARAM_RAW);
 $unsigned = optional_param('unsigned', '0', PARAM_INT);
@@ -36,9 +36,14 @@ $unsigned = optional_param('unsigned', '0', PARAM_INT);
 $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$lti = $DB->get_record('lti', array('id' => $instanceid), '*', MUST_EXIST);
-$cm = get_coursemodule_from_instance('lti', $lti->id, $lti->course, false, MUST_EXIST);
-$context = context_module::instance($cm->id);
+$lti = null;
+$context = null;
+if (!empty($instanceid)) {
+    $lti = $DB->get_record('lti', array('id' => $instanceid), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('lti', $lti->id, $lti->course, false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+}
+
 
 require_login($course);
 
@@ -58,7 +63,9 @@ if (!empty($errormsg)) {
     }
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
+    if (!empty($lti) and !empty($context)) {
+        echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
+    }
 
     echo get_string('lti_launch_error', 'lti');
 
@@ -73,12 +80,13 @@ if (!empty($errormsg)) {
         $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php', array('course' => $courseid, 'action' => 'add'));
         $links->course_tool_editor = $coursetooleditor->out(false);
 
-        $adminrequesturl = new moodle_url('/mod/lti/request_tool.php', array('instanceid' => $instanceid));
-        $links->admin_request_url = $adminrequesturl->out(false);
-
         echo get_string('lti_launch_error_unsigned_help', 'lti', $links);
 
-        echo get_string('lti_launch_error_tool_request', 'lti', $links);
+        if (!empty($lti)) {
+            $adminrequesturl = new moodle_url('/mod/lti/request_tool.php', array('instanceid' => $lti->id));
+            $links->admin_request_url = $adminrequesturl->out(false);
+            echo get_string('lti_launch_error_tool_request', 'lti', $links);
+        }
     }
 
     echo $OUTPUT->footer();
