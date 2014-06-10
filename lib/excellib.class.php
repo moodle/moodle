@@ -48,7 +48,7 @@ class MoodleExcelWorkbook {
      * Constructs one Moodle Workbook.
      *
      * @param string $filename The name of the file
-     * @param string $type file format type 'Excel5' or 'Excel2007'
+     * @param string $type file format type used to be 'Excel5 or Excel2007' but now only 'Excel2007'
      */
     public function __construct($filename, $type = 'Excel2007') {
         global $CFG;
@@ -60,7 +60,8 @@ class MoodleExcelWorkbook {
         $this->filename = $filename;
 
         if (strtolower($type) === 'excel5') {
-            $this->type = 'Excel5';
+            debugging('Excel5 is no longer supported, using Excel2007 instead');
+            $this->type = 'Excel2007';
         } else {
             $this->type = 'Excel2007';
         }
@@ -102,13 +103,8 @@ class MoodleExcelWorkbook {
 
         $filename = preg_replace('/\.xlsx?$/i', '', $this->filename);
 
-        if ($this->type === 'Excel5') {
-            $mimetype = 'application/vnd.ms-excel';
-            $filename = $filename.'.xls';
-        } else {
-            $mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            $filename = $filename.'.xlsx';
-        }
+        $mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        $filename = $filename.'.xlsx';
 
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
             header('Cache-Control: max-age=10');

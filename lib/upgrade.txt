@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.8 ===
+
+* lib/excelllib.class.php has been updated. The class MoodleExcelWorkbook will now only produce excel 2007 files.
+
 === 2.7 ===
 
 * PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
