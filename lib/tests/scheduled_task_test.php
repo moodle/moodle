@@ -90,6 +90,28 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $testclass->set_disabled(true);
         $nexttime = $testclass->get_next_scheduled_time();
         $this->assertEquals($nexttenminutes, $nexttime, 'Next scheduled time is in 10 minutes.');
+
+        // Test hourly job executed on Sundays only.
+        $testclass = new \core\task\scheduled_test_task();
+        $testclass->set_minute('0');
+        $testclass->set_day_of_week('7');
+
+        $nexttime = $testclass->get_next_scheduled_time();
+
+        $this->assertEquals(7, date('N', $nexttime));
+        $this->assertEquals(0, date('i', $nexttime));
+
+        // Test monthly job
+        $testclass = new \core\task\scheduled_test_task();
+        $testclass->set_minute('32');
+        $testclass->set_hour('0');
+        $testclass->set_day('1');
+
+        $nexttime = $testclass->get_next_scheduled_time();
+
+        $this->assertEquals(32, date('i', $nexttime));
+        $this->assertEquals(0, date('G', $nexttime));
+        $this->assertEquals(1, date('j', $nexttime));
     }
 
     public function test_timezones() {
