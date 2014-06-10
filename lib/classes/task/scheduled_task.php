@@ -340,7 +340,7 @@ abstract class scheduled_task extends task_base {
         // otherwise - choose the soonest (see man 5 cron).
         if ($this->dayofweek == '*') {
             $daysincrement = $daysincrementbymonth;
-        } else if ($this->dayofmonth == '*') {
+        } else if ($this->day == '*') {
             $daysincrement = $daysincrementbyweek;
         } else {
             // Take the smaller increment of days by month or week.
