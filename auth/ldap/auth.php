@@ -551,7 +551,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_error('auth_ldap_create_error', 'auth_ldap');
         }
 
-        $user->id = user_create_user($user, false);
+        $user->id = user_create_user($user, false, false);
 
         // Save any custom profile field information
         profile_save_data($user);
@@ -563,6 +563,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         update_internal_user_password($user, $plainslashedpassword);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
+
+        \core\event\user_created::create_from_userid($user->id)->trigger();
 
         if (! send_confirmation_email($user)) {
             print_error('noemail', 'auth_ldap');
@@ -1027,7 +1029,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                         }
                     }
                 }
-                user_update_user($newuser, false);
+                user_update_user($newuser, false, false);
             }
         } else {
             return false;
