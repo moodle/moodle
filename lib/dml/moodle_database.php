@@ -2386,6 +2386,7 @@ abstract class moodle_database {
 
         if (empty($this->transactions)) {
             \core\event\manager::database_transaction_commited();
+            \core\message\manager::database_transaction_commited();
         }
     }
 
@@ -2433,6 +2434,7 @@ abstract class moodle_database {
             // finally top most level rolled back
             $this->force_rollback = false;
             \core\event\manager::database_transaction_rolledback();
+            \core\message\manager::database_transaction_rolledback();
         }
         throw $e;
     }

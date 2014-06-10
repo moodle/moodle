@@ -183,6 +183,535 @@ class core_messagelib_testcase extends advanced_testcase {
         // $this->assertFalse($this->message_type_present('moodle', 'backup', $providers));
     }
 
+    public function test_send_message_redirection() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Test basic message redirection.
+        $message = new stdClass();
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = $user1;
+        $message->userto = $user2;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $sink = $this->redirectMessages();
+        $this->setCurrentTimeStart();
+        $messageid = message_send($message);
+        $savedmessages = $sink->get_messages();
+        $this->assertCount(1, $savedmessages);
+        $savedmessage = reset($savedmessages);
+        $this->assertEquals($messageid, $savedmessage->id);
+        $this->assertEquals($user1->id, $savedmessage->useridfrom);
+        $this->assertEquals($user2->id, $savedmessage->useridto);
+        $this->assertEquals($message->fullmessage, $savedmessage->fullmessage);
+        $this->assertEquals($message->fullmessageformat, $savedmessage->fullmessageformat);
+        $this->assertEquals($message->fullmessagehtml, $savedmessage->fullmessagehtml);
+        $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
+        $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
+        $this->assertEquals($message->notification, $savedmessage->notification);
+        $this->assertNull($savedmessage->contexturl);
+        $this->assertNull($savedmessage->contexturlname);
+        $this->assertTimeCurrent($savedmessage->timecreated);
+        $record = $DB->get_record('message_read', array('id' => $savedmessage->id), '*', MUST_EXIST);
+        $this->assertEquals($record, $savedmessage);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message', array()));
+        $DB->delete_records('message_read', array());
+
+        $message = new stdClass();
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = $user1->id;
+        $message->userto = $user2->id;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+        $message->contexturl = new moodle_url('/');
+        $message->contexturlname = 'front';
+        $sink = $this->redirectMessages();
+        $messageid = message_send($message);
+        $savedmessages = $sink->get_messages();
+        $this->assertCount(1, $savedmessages);
+        $savedmessage = reset($savedmessages);
+        $this->assertEquals($messageid, $savedmessage->id);
+        $this->assertEquals($user1->id, $savedmessage->useridfrom);
+        $this->assertEquals($user2->id, $savedmessage->useridto);
+        $this->assertEquals($message->fullmessage, $savedmessage->fullmessage);
+        $this->assertEquals($message->fullmessageformat, $savedmessage->fullmessageformat);
+        $this->assertEquals($message->fullmessagehtml, $savedmessage->fullmessagehtml);
+        $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
+        $this->assertEquals($message->smallmessage, $savedmessage->smallmessage);
+        $this->assertEquals($message->notification, $savedmessage->notification);
+        $this->assertEquals($message->contexturl->out(), $savedmessage->contexturl);
+        $this->assertEquals($message->contexturlname, $savedmessage->contexturlname);
+        $this->assertTimeCurrent($savedmessage->timecreated);
+        $record = $DB->get_record('message_read', array('id' => $savedmessage->id), '*', MUST_EXIST);
+        $this->assertEquals($record, $savedmessage);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message', array()));
+        $DB->delete_records('message_read', array());
+
+        // Test phpunit problem detection.
+
+        $message = new stdClass();
+        $message->component = 'xxxxx';
+        $message->name = 'instantmessage';
+        $message->userfrom = $user1;
+        $message->userto = $user2;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $sink = $this->redirectMessages();
+        try {
+            message_send($message);
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+        $this->assertCount(0, $sink->get_messages());
+
+        $message->component = 'moodle';
+        $message->name = 'xxx';
+        $sink = $this->redirectMessages();
+        try {
+            message_send($message);
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+        $this->assertCount(0, $sink->get_messages());
+        $sink->close();
+        $this->assertFalse($DB->record_exists('message', array()));
+        $this->assertFalse($DB->record_exists('message_read', array()));
+
+        // Invalid users.
+
+        $message = new stdClass();
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = $user1;
+        $message->userto = -1;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $messageid = message_send($message);
+        $this->assertFalse($messageid);
+        $this->assertDebuggingCalled('Attempt to send msg to unknown user');
+
+        $message = new stdClass();
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = -1;
+        $message->userto = $user2;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $messageid = message_send($message);
+        $this->assertFalse($messageid);
+        $this->assertDebuggingCalled('Attempt to send msg from unknown user');
+
+        $message = new stdClass();
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = $user1;
+        $message->userto = core_user::NOREPLY_USER;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $messageid = message_send($message);
+        $this->assertFalse($messageid);
+        $this->assertDebuggingCalled('Attempt to send msg to internal (noreply) user');
+
+        // Some debugging hints for devs.
+
+        unset($user2->emailstop);
+        $message = new stdClass();
+        $message->component = 'moodle';
+        $message->name = 'instantmessage';
+        $message->userfrom = $user1;
+        $message->userto = $user2;
+        $message->subject = 'message subject 1';
+        $message->fullmessage = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml = '<p>message body</p>';
+        $message->smallmessage = 'small message';
+        $message->notification = '0';
+
+        $sink = $this->redirectMessages();
+        $messageid = message_send($message);
+        $savedmessages = $sink->get_messages();
+        $this->assertCount(1, $savedmessages);
+        $savedmessage = reset($savedmessages);
+        $this->assertEquals($messageid, $savedmessage->id);
+        $this->assertEquals($user1->id, $savedmessage->useridfrom);
+        $this->assertEquals($user2->id, $savedmessage->useridto);
+        $this->assertDebuggingCalled('Necessary properties missing in userto object, fetching full record');
+        $sink->clear();
+        $user2->emailstop = '0';
+    }
+
+    public function test_send_message() {
+        global $DB, $CFG;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        unset_config('noemailever');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Test basic email redirection.
+        $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
+        $this->assertFileExists("$CFG->dirroot/message/output/popup/version.php");
+
+        $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email' AND name <> 'popup'");
+        get_message_processors(true, true);
+
+        $eventsink = $this->redirectEvents();
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'none', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_read', array()));
+        $DB->delete_records('message', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $eventsink->clear();
+
+        $CFG->messaging = 0;
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message_read', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message', array()));
+        $DB->delete_records('message_read', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $eventsink->clear();
+
+        $CFG->messaging = 1;
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '1';
+
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message_read', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message', array()));
+        $DB->delete_records('message_read', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $eventsink->clear();
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $user2->emailstop = '1';
+
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_read', array()));
+        $DB->delete_records('message', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $eventsink->clear();
+        $user2->emailstop = '0';
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+        $savedmessage = $DB->get_record('message_read', array('id' => $messageid), '*', MUST_EXIST);
+        $this->assertSame($user1->email, $email->from);
+        $this->assertSame($user2->email, $email->to);
+        $this->assertSame($message->subject, $email->subject);
+        $this->assertNotEmpty($email->header);
+        $this->assertNotEmpty($email->body);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message', array()));
+        $DB->delete_records('message_read', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $eventsink->clear();
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email,popup', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
+        $working = $DB->get_record('message_working', array('unreadmessageid' => $messageid), '*', MUST_EXIST);
+        $this->assertSame($user1->email, $email->from);
+        $this->assertSame($user2->email, $email->to);
+        $this->assertSame($message->subject, $email->subject);
+        $this->assertNotEmpty($email->header);
+        $this->assertNotEmpty($email->body);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_read', array()));
+        $DB->delete_records('message', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $eventsink->clear();
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'popup', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
+        $working = $DB->get_record('message_working', array('unreadmessageid' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_read', array()));
+        $DB->delete_records('message', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $eventsink->clear();
+
+        $this->assertFalse($DB->is_transaction_started());
+        $transaction = $DB->start_delegated_transaction();
+        if (!$DB->is_transaction_started()) {
+            $this->markTestSkipped('Databases that do not support transactions should not be used at all!');
+        }
+        $transaction->allow_commit();
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'none', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $transaction = $DB->start_delegated_transaction();
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_read', array()));
+        $DB->delete_records('message', array());
+        $events = $eventsink->get_events();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $eventsink->clear();
+        $transaction->allow_commit();
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        $transaction = $DB->start_delegated_transaction();
+        $sink = $this->redirectEmails();
+        $messageid = message_send($message);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $savedmessage = $DB->get_record('message', array('id' => $messageid), '*', MUST_EXIST);
+        $sink->clear();
+        $this->assertFalse($DB->record_exists('message_read', array()));
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+        $transaction->allow_commit();
+        $events = $eventsink->get_events();
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $eventsink->clear();
+
+        $transaction = $DB->start_delegated_transaction();
+        message_send($message);
+        message_send($message);
+        $this->assertCount(2, $DB->get_records('message'));
+        $this->assertCount(1, $DB->get_records('message_read'));
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+        $transaction->allow_commit();
+        $events = $eventsink->get_events();
+        $this->assertCount(4, $events);
+        $this->assertInstanceOf('\core\event\message_sent', $events[0]);
+        $this->assertInstanceOf('\core\event\message_viewed', $events[1]);
+        $this->assertInstanceOf('\core\event\message_sent', $events[2]);
+        $this->assertInstanceOf('\core\event\message_viewed', $events[3]);
+        $eventsink->clear();
+        $DB->delete_records('message', array());
+        $DB->delete_records('message_read', array());
+
+        $transaction = $DB->start_delegated_transaction();
+        message_send($message);
+        message_send($message);
+        $this->assertCount(2, $DB->get_records('message'));
+        $this->assertCount(0, $DB->get_records('message_read'));
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+        try {
+            $transaction->rollback(new Exception('ignore'));
+        } catch (Exception $e) {
+            $this->assertSame('ignore', $e->getMessage());
+        }
+        $events = $eventsink->get_events();
+        $this->assertCount(0, $events);
+        $this->assertCount(0, $DB->get_records('message'));
+        $this->assertCount(0, $DB->get_records('message_read'));
+        message_send($message);
+        $this->assertCount(0, $DB->get_records('message'));
+        $this->assertCount(1, $DB->get_records('message_read'));
+        $events = $eventsink->get_events();
+        $this->assertCount(2, $events);
+        $sink->clear();
+        $DB->delete_records('message_read', array());
+    }
+
     public function test_message_attachment_send() {
         global $CFG;
         $this->preventResetByRollback();
