@@ -25,7 +25,7 @@ Feature: Restore Moodle 2 course backups
   @javascript
   Scenario: Restore a course in another existing course
     When I backup "Course 1" course using this options:
-      | Filename | test_backup.mbz |
+      | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
     Then I should see "Course 2"
     And I should see "Community finder" in the "Community finder" "block"
@@ -34,9 +34,9 @@ Feature: Restore Moodle 2 course backups
   @javascript
   Scenario: Restore a course in a new course
     When I backup "Course 1" course using this options:
-      | Filename | test_backup.mbz |
+      | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into a new course using this options:
-      | Course name | Course 1 restored in a new course |
+      | Schema | Course name | Course 1 restored in a new course |
     Then I should see "Course 1 restored in a new course"
     And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
@@ -50,12 +50,12 @@ Feature: Restore Moodle 2 course backups
   @javascript
   Scenario: Restore a backup into the same course
     When I backup "Course 3" course using this options:
-      | Filename | test_backup.mbz |
+      | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
-      | setting_section_section_3_included | 0 |
-      | setting_section_section_3_userinfo | 0 |
-      | setting_section_section_5_included | 0 |
-      | setting_section_section_5_userinfo | 0 |
+      | Schema | setting_section_section_3_included | 0 |
+      | Schema | setting_section_section_3_userinfo | 0 |
+      | Schema | setting_section_section_5_included | 0 |
+      | Schema | setting_section_section_5_userinfo | 0 |
     Then I should see "Course 2"
     And I should see "Test assign name"
     And I should not see "Test database name"
@@ -63,15 +63,15 @@ Feature: Restore Moodle 2 course backups
   @javascript
   Scenario: Restore a backup into the same course removing it's contents before that
     When I backup "Course 1" course using this options:
-      | Filename | test_backup.mbz |
+      | Confirmation | Filename | test_backup.mbz |
     And I follow "Course 1"
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum post backup name |
       | Description | Test forum post backup description |
     And I follow "Restore"
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
-      | setting_section_section_5_userinfo | 0 |
-      | setting_section_section_5_included | 0 |
+      | Schema | setting_section_section_8_userinfo | 0 |
+      | Schema | setting_section_section_8_included | 0 |
     Then I should see "Course 1"
     And I should not see "Section 3"
     And I should not see "Test forum post backup name"
@@ -81,7 +81,7 @@ Feature: Restore Moodle 2 course backups
   @javascript
   Scenario: Restore a backup into a new course changing the course format afterwards
     Given I backup "Course 1" course using this options:
-      | Filename | test_backup.mbz |
+      | Confirmation | Filename | test_backup.mbz |
     When I restore "test_backup.mbz" backup into a new course using this options:
     Then I should see "Topic 1"
     And I should see "Test forum name"
@@ -117,9 +117,9 @@ Feature: Restore Moodle 2 course backups
     And I hide section "3"
     And I hide section "7"
     When I backup "Course 1" course using this options:
-      | Filename | test_backup.mbz |
+      | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
-      | Overwrite course configuration | Yes |
+      | Schema | Overwrite course configuration | Yes |
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     Then the field "id_format" matches value "Topics format"
