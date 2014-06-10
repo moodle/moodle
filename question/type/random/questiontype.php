@@ -151,6 +151,11 @@ class qtype_random extends question_type {
 
     public function save_question($question, $form) {
         $form->name = '';
+        if ($form->questiontext) {
+            $form->questiontext = '1';
+        } else {
+            $form->questiontext = '0';
+        }
         $form->questiontextformat = FORMAT_MOODLE;
         $form->tags = array();
 
