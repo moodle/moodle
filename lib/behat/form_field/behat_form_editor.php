@@ -80,6 +80,10 @@ editor.set("value", "' . $value . '");
     var e = document.getElementById("'.$editorid.'editable"),
         r = rangy.createRange(),
         s = rangy.getSelection();
+
+    while ((e.firstChild !== null) && (e.firstChild.nodeType != document.TEXT_NODE)) {
+        e = e.firstChild;
+    }
     e.focus();
     r.selectNodeContents(e);
     s.setSingleRange(r);
