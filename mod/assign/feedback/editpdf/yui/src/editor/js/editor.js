@@ -346,7 +346,8 @@ EDITOR.prototype = {
                 action : 'loadallpages',
                 userid : this.get('userid'),
                 attemptnumber : this.get('attemptnumber'),
-                assignmentid : this.get('assignmentid')
+                assignmentid : this.get('assignmentid'),
+                readonly : this.get('readonly') ? 1 : 0
             },
             on: {
                 success: function(tid, response) {

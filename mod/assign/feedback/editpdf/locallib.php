@@ -137,7 +137,8 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         // Retrieve total number of pages.
         $pagetotal = document_services::page_number_for_attempt($this->assignment->get_instance()->id,
                 $userid,
-                $attempt);
+                $attempt,
+                $readonly);
 
         $widget = new assignfeedback_editpdf_widget($this->assignment->get_instance()->id,
                                                     $userid,
