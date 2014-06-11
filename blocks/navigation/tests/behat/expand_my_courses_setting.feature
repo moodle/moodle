@@ -1,5 +1,5 @@
 @block @block_navigation
-Feature: Test collapse my courses navigation setting
+Feature: Test expand my courses navigation setting
   As a student
   I visit my My Moodle page and observe the the My Courses branch
 
@@ -27,10 +27,11 @@ Feature: Test collapse my courses navigation setting
     And I should see "c2" in the "Navigation" "block"
     And I should not see "c3" in the "Navigation" "block"
 
-  Scenario: The My Courses branch is collapsed when collapse my courses is on
+  @javascript
+  Scenario: The My Courses branch is collapsed when expand my courses is off
     Given I log in as "admin"
     And I set the following administration settings values:
-      | Keep My Courses collapsed initially | 1 |
+      | Expand My Courses initially on My Moodle page | 0 |
     And I log out
     Given I log in as "student1"
     And I follow "My home"
@@ -39,10 +40,10 @@ Feature: Test collapse my courses navigation setting
     And I should not see "c3" in the "Navigation" "block"
 
   @javascript
-  Scenario: My Courses can be expanded on the My Moodle page when collapse my courses is on
+  Scenario: My Courses can be expanded on the My Moodle page when expand my courses is off
     Given I log in as "admin"
     And I set the following administration settings values:
-      | Keep My Courses collapsed initially | 1 |
+      | Expand My Courses initially on My Moodle page | 0 |
     And I log out
     Given I log in as "student1"
     And I follow "My home"

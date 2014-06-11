@@ -1135,7 +1135,7 @@ class global_navigation extends navigation_node {
 
         // Load the users enrolled courses if they are viewing the My Moodle page AND the admin has not
         // set that they wish to keep the My Courses branch collapsed by default.
-        if (empty($CFG->navcollapsemycourses) && $this->rootnodes['mycourses']->isactive){
+        if (!empty($CFG->navexpandmycourses) && $this->rootnodes['mycourses']->isactive){
             $this->load_courses_enrolled();
         } else {
             $this->rootnodes['mycourses']->collapse = true;
