@@ -5,8 +5,7 @@ Feature: Atto accessibility checker
   @javascript
   Scenario: Images with no alt
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>Some plain text</p><img src='/broken-image'/><p>Some more text</p>"
     When I click on "Show more buttons" "button"
     And I click on "Accessibility checker" "button"
@@ -15,8 +14,7 @@ Feature: Atto accessibility checker
   @javascript
   Scenario: Low contrast
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p style='color: #7c7cff; background-color: #ffffff;'>Hard to read</p>"
     When I click on "Show more buttons" "button"
     And I click on "Accessibility checker" "button"
