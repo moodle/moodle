@@ -339,7 +339,10 @@ class question_type {
         $question->length = $this->actual_number_of_questions($question);
         $question->penalty = isset($form->penalty) ? $form->penalty : 0;
 
-        if (empty($form->questiontext['text'])) {
+        // The trim call below has the effect of casting any strange values received,
+        // like null or false, to an appropriate string, so we only need to test for
+        // missing values. Be careful not to break the value '0' here.
+        if (!isset($form->questiontext['text'])) {
             $question->questiontext = '';
         } else {
             $question->questiontext = trim($form->questiontext['text']);
