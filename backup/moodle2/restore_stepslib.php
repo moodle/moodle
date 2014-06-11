@@ -3578,7 +3578,7 @@ class restore_create_question_files extends restore_execution_step {
         // Parentitemids of question_createds in backup_ids_temp are the category it is in.
         // MUST use a recordset, as there is no unique key in the first (or any) column.
         $catqtypes = $DB->get_recordset_sql("SELECT DISTINCT bi.parentitemid AS categoryid, q.qtype as qtype
-                                               FROM {backup_ids_temp} AS bi
+                                               FROM {backup_ids_temp} bi
                                                JOIN {question} AS q ON q.id = bi.newitemid
                                               WHERE bi.backupid = ?
                                                 AND bi.itemname = 'question_created'
