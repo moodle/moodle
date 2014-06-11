@@ -5,8 +5,7 @@ Feature: Atto equation editor
   @javascript
   Scenario: Create an equation
     Given I log in as "admin"
-    When I follow "Admin User"
-    And I follow "Edit profile"
+    When I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>Equation test</p>"
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"

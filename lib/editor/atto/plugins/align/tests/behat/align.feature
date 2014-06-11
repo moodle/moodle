@@ -5,8 +5,7 @@ Feature: Atto align text
   @javascript
   Scenario: Right align some text
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>Fascism</p>"
     And I set the field "Text editor" to "Plain text area"
     And I click on "Show more buttons" "button"
@@ -19,8 +18,7 @@ Feature: Atto align text
   @javascript
   Scenario: Left align some text
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>Communism</p>"
     And I set the field "Text editor" to "Plain text area"
     And I click on "Show more buttons" "button"
@@ -34,8 +32,7 @@ Feature: Atto align text
   @javascript
   Scenario: Center align some text
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>United Future</p>"
     And I set the field "Text editor" to "Plain text area"
     And I click on "Show more buttons" "button"

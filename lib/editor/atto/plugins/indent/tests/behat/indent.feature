@@ -5,8 +5,7 @@ Feature: Indent text in Atto
   @javascript
   Scenario: Indent
     Given I log in as "admin"
-    When I follow "Admin User"
-    And I follow "Edit profile"
+    When I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>I need some space.</p>"
     And I set the field "Text editor" to "Plain text area"
     And I select the text in the "Description" Atto editor
@@ -19,8 +18,7 @@ Feature: Indent text in Atto
   @javascript
   Scenario: Indent and outdent
     Given I log in as "admin"
-    When I follow "Admin User"
-    And I follow "Edit profile"
+    When I navigate to "Edit profile" node in "My profile settings"
     And I set the field "Description" to "<p>I need some space.</p>"
     And I set the field "Text editor" to "Plain text area"
     And I select the text in the "Description" Atto editor

@@ -5,8 +5,7 @@ Feature: Atto collapse button
   @javascript
   Scenario: Toggle toolbar
     Given I log in as "admin"
-    And I follow "Admin User"
-    And I follow "Edit profile"
+    And I navigate to "Edit profile" node in "My profile settings"
     When I click on "Show more buttons" "button"
     Then "Equation editor" "button" should be visible
     And I click on "Show fewer buttons" "button"
