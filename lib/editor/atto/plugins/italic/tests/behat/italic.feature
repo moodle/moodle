@@ -9,7 +9,7 @@ Feature: Atto italic button
     And I follow "Edit profile"
     And I set the field "Description" to "Tower of Pisa"
     And I set the field "Text editor" to "Plain text area"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     When I click on "Italic" "button"
     And I press "Update profile"
     And I follow "Edit profile"
@@ -22,7 +22,7 @@ Feature: Atto italic button
     And I follow "Edit profile"
     And I set the field "Description" to "GHD - for hair"
     And I set the field "Text editor" to "Plain text area"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     When I click on "Italic" "button"
     And I click on "Italic" "button"
     And I press "Update profile"

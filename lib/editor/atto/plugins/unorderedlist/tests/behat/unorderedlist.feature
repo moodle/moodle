@@ -9,7 +9,7 @@ Feature: Atto unordered list button
     And I follow "Edit profile"
     And I set the field "Description" to "Things, dogs, clogs, they're awesome<br/> Rocks, clocks, and socks, they're awesome<br/> Figs, and wigs, and twigs, that's awesome<br/> Everything you see or think or say is awesome"
     And I set the field "Text editor" to "Plain text area"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     When I click on "Unordered list" "button"
     And I press "Update profile"
     And I follow "Edit profile"

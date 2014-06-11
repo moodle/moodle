@@ -9,7 +9,7 @@ Feature: Atto charmap button
     And I follow "Edit profile"
     And I set the field "Text editor" to "Plain text area"
     And I set the field "Description" to "<p>1980 Mullet</p>"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     When I click on "Show more buttons" "button"
     And I click on "Insert character" "button"
     And I click on "copyright sign" "button"

@@ -10,7 +10,7 @@ Feature: Atto clear button
     And I set the field "Text editor" to "Plain text area"
     And I set the field "Description" to "<p><i>Pisa</i></p>"
     When I click on "Show more buttons" "button"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     And I click on "Clear formatting" "button"
     And I press "Update profile"
     And I follow "Edit profile"

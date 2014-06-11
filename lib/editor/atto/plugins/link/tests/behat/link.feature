@@ -12,7 +12,7 @@ Feature: Add links to Atto
     And I follow "Edit profile"
     And I set the field "Text editor" to "Plain text area"
     And I set the field "Description" to "Super cool"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     And I click on "Link" "button"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link"

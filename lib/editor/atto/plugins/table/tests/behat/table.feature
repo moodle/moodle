@@ -11,7 +11,7 @@ Feature: Atto tables
     And I follow "Add a new entry"
     And I set the field "Entry title" to "How to make a table"
     And I set the field "Blog entry body" to "Table test"
-    And I select the text in the "Blog entry body" field
+    And I select the text in the "Blog entry body" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Table" "button"
     And I set the field "Caption" to "Dinner"
@@ -28,7 +28,7 @@ Feature: Atto tables
     And I follow "Add a new entry"
     And I set the field "Entry title" to "How to make a table"
     And I set the field "Blog entry body" to "<table><tr><td>Cell</td></tr></table>"
-    And I select the text in the "Blog entry body" field
+    And I select the text in the "Blog entry body" Atto editor
     And I click on "Show more buttons" "button"
     And I click on "Table" "button"
     And I click on "Edit table" "link"

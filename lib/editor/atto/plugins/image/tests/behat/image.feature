@@ -11,7 +11,7 @@ Feature: Add images to Atto
     When I follow "Admin User"
     And I follow "Edit profile"
     And I set the field "Description" to "<p>Image test</p>"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     And I click on "Image" "button"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link"
@@ -23,7 +23,7 @@ Feature: Add images to Atto
     And I click on "Save image" "button"
     And I click on "Update profile" "button"
     And I follow "Edit profile"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     And I click on "Image" "button"
     Then the field "Describe this image" matches value "It's the Moodle"
 
