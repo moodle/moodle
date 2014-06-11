@@ -109,7 +109,7 @@ class restore_qtype_random_plugin extends restore_qtype_plugin {
                  WHERE qtype = 'random'
                    AND " . $DB->sql_compare_text('questiontext') . " = ?
                    AND id IN (SELECT bi.newitemid
-                                FROM {backup_ids_temp} AS bi
+                                FROM {backup_ids_temp} bi
                                WHERE bi.backupid = ?
                                  AND bi.itemname = 'question_created')";
 
