@@ -156,18 +156,6 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Select all the text in a field.
-     *
-     * @Given /^I select the text in the "([^"]*)" field$/
-     * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $field
-     * @return void
-     */
-    public function i_select_the_text_in_the_field($field) {
-        $this->select_text($field);
-    }
-
-    /**
      * Checks, the field matches the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
@@ -342,23 +330,6 @@ class behat_forms extends behat_base {
                 );
             }
         }
-    }
-
-    /**
-     * Call select_text on the field.
-     *
-     * Internal API method, a generic *I select the text in the "FIELD" field*
-     * is based on it.
-     *
-     * @param string $fieldlocator The pointer to the field, it will depend on the field type.
-     * @return void
-     */
-    protected function select_text($fieldlocator) {
-
-        // We delegate to behat_form_field class, it will
-        // guess the type properly.
-        $field = behat_field_manager::get_form_field_from_label($fieldlocator, $this);
-        $field->select_text();
     }
 
     /**

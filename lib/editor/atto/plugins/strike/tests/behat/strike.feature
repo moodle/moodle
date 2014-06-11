@@ -9,7 +9,7 @@ Feature: Atto strike button
     And I follow "Edit profile"
     And I set the field "Description" to "MUA"
     And I set the field "Text editor" to "Plain text area"
-    And I select the text in the "Description" field
+    And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Strike through" "button"
     And I press "Update profile"
