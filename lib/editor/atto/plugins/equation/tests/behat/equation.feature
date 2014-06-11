@@ -7,6 +7,8 @@ Feature: Atto equation editor
     Given I log in as "admin"
     When I follow "Admin User"
     And I follow "Edit profile"
+    And I set the field "Description" to "<p>Equation test</p>"
+    And I select the text in the "Description" field
     And I click on "Show more buttons" "button"
     And I click on "Equation editor" "button"
     And I set the field "Edit equation using" to " = 1 \div 0"

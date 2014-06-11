@@ -10,6 +10,8 @@ Feature: Add images to Atto
     And I click on "Save changes" "button"
     When I follow "Admin User"
     And I follow "Edit profile"
+    And I set the field "Description" to "<p>Image test</p>"
+    And I select the text in the "Description" field
     And I click on "Image" "button"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link"
