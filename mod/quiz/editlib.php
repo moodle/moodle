@@ -824,7 +824,7 @@ function quiz_print_singlequestion($question, $returnurl, $quiz) {
  * @param object $quiz The quiz in the context of which the question is being displayed
  * @param bool $quiz_qbanktool Indicate to this function if the question bank window open
  */
-function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktool) {
+function quiz_print_randomquestion($question, $pageurl, $quiz, $quiz_qbanktool) {
     global $DB, $OUTPUT;
     echo '<div class="quiz_randomquestion">';
 
@@ -882,8 +882,8 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
 
         // Then list them.
         echo '<ul>';
-        foreach ($questionstoshow as $question) {
-            echo '<li>' . quiz_question_tostring($question, true) . '</li>';
+        foreach ($questionstoshow as $subquestion) {
+            echo '<li>' . quiz_question_tostring($subquestion, true) . '</li>';
         }
 
         // Finally display the total number.
