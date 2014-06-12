@@ -1403,7 +1403,8 @@ function scorm_format_duration($duration) {
 function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='normal', $attempt='', $play=false, $organizationsco=null) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
-    $modestr = '';
+    // Always pass the mode even if empty as that is what is done elsewhere and the urls have to match.
+    $modestr = '&mode=';
     if ($mode != 'normal') {
         $modestr = '&mode='.$mode;
     }
