@@ -40,8 +40,9 @@ require_once($CFG->dirroot . '/tag/lib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
-$userid = optional_param('id', 0, PARAM_INT);
-$edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
+$userid         = optional_param('id', 0, PARAM_INT);
+$edit           = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
+$showallcourses = optional_param('showallcourses', 0, PARAM_INT);
 
 $PAGE->set_url('/user/profile.php', array('id'=>$userid));
 
@@ -369,11 +370,13 @@ if (!isset($hiddenfields['mycourses'])) {
                     }
                     $class = 'class="dimmed"';
                 }
-                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >" . $ccontext->get_context_name(false) . "</a>, ";
+                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}" .
+                        ($showallcourses ? "&amp;showallcourses=1" : "") . "\" $class >" .
+                        $ccontext->get_context_name(false) . "</a>, ";
             }
             $shown++;
-            if($shown==20) {
-                $courselisting.= "...";
+            if(!$showallcourses && $shown==20) {
+                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/profile.php?id={$user->id}&amp;showallcourses=1\">...</a>";
                 break;
             }
         }
