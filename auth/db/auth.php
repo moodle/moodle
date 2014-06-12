@@ -260,6 +260,8 @@ class auth_plugin_db extends auth_plugin_base {
     function sync_users(progress_trace $trace, $do_updates=false) {
         global $CFG, $DB;
 
+        require_once($CFG->dirroot . '/user/lib.php');
+
         // List external users.
         $userlist = $this->get_userlist();
 
@@ -289,7 +291,6 @@ class auth_plugin_db extends auth_plugin_base {
             $remove_users = $DB->get_records_sql($sql, $params);
 
             if (!empty($remove_users)) {
-                require_once($CFG->dirroot.'/user/lib.php');
                 $trace->output(get_string('auth_dbuserstoremove','auth_db', count($remove_users)));
 
                 foreach ($remove_users as $user) {
@@ -381,9 +382,14 @@ class auth_plugin_db extends auth_plugin_base {
             foreach($add_users as $user) {
                 $username = $user;
                 if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
-                    if ($old_user = $DB->get_record('user', array('username'=>$username, 'deleted'=>0, 'suspended'=>1, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype))) {
-                        $DB->set_field('user', 'suspended', 0, array('id'=>$old_user->id));
-                        $trace->output(get_string('auth_dbreviveduser', 'auth_db', array('name'=>$username, 'id'=>$old_user->id)), 1);
+                    if ($olduser = $DB->get_record('user', array('username' => $username, 'deleted' => 0, 'suspended' => 1,
+                            'mnethostid' => $CFG->mnet_localhost_id, 'auth' => $this->authtype))) {
+                        $updateuser = new stdClass();
+                        $updateuser->id = $olduser->id;
+                        $updateuser->suspended = 0;
+                        user_update_user($updateuser);
+                        $trace->output(get_string('auth_dbreviveduser', 'auth_db', array('name' => $username,
+                            'id' => $olduser->id)), 1);
                         continue;
                     }
                 }
@@ -399,17 +405,12 @@ class auth_plugin_db extends auth_plugin_base {
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
-                if (empty($user->calendartype)) {
-                    $user->calendartype = $CFG->calendartype;
-                }
-                $user->timecreated = time();
-                $user->timemodified = $user->timecreated;
                 if ($collision = $DB->get_record_select('user', "username = :username AND mnethostid = :mnethostid AND auth <> :auth", array('username'=>$user->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype), 'id,username,auth')) {
                     $trace->output(get_string('auth_dbinsertuserduplicate', 'auth_db', array('username'=>$user->username, 'auth'=>$collision->auth)), 1);
                     continue;
                 }
                 try {
-                    $id = $DB->insert_record ('user', $user); // it is truly a new user
+                    $id = user_create_user($user, false); // It is truly a new user.
                     $trace->output(get_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)), 1);
                 } catch (moodle_exception $e) {
                     $trace->output(get_string('auth_dbinsertusererror', 'auth_db', $user->username), 1);
@@ -521,8 +522,10 @@ class auth_plugin_db extends auth_plugin_base {
 
         // Ensure userid is not overwritten.
         $userid = $user->id;
-        $updated = false;
+        $needsupdate = false;
 
+        $updateuser = new stdClass();
+        $updateuser->id = $userid;
         if ($newinfo = $this->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
 
@@ -539,14 +542,15 @@ class auth_plugin_db extends auth_plugin_base {
 
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
                     if (isset($user->{$key}) and $user->{$key} != $value) { // Only update if it's changed.
-                        $DB->set_field('user', $key, $value, array('id'=>$userid));
-                        $updated = true;
+                        $needsupdate = true;
+                        $updateuser->$key = $value;
                     }
                 }
             }
         }
-        if ($updated) {
-            $DB->set_field('user', 'timemodified', time(), array('id'=>$userid));
+        if ($needsupdate) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            user_update_user($updateuser);
         }
         return $DB->get_record('user', array('id'=>$userid, 'deleted'=>0));
     }
