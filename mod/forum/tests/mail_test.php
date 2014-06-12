@@ -32,6 +32,10 @@ class mod_forum_mail_testcase extends advanced_testcase {
     protected $helper;
 
     public function setUp() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+
         global $CFG;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
@@ -62,6 +66,10 @@ class mod_forum_mail_testcase extends advanced_testcase {
     }
 
     public function tearDown() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+
         $this->helper->messagesink->clear();
         $this->helper->messagesink->close();
 
@@ -316,7 +324,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         list($author, $recipient) = $this->helper_create_users($course, 2);
 
         // Unsubscribe the 'author' user from the forum.
-        forum_unsubscribe($author->id, $forum->id);
+        \mod_forum\subscriptions::unsubscribe_user($author->id, $forum);
 
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
@@ -358,7 +366,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         list($author, $recipient) = $this->helper_create_users($course, 2);
 
         // Subscribe the 'recipient' user from the forum.
-        forum_subscribe($recipient->id, $forum->id);
+        \mod_forum\subscriptions::subscribe_user($recipient->id, $forum);
 
         // Post a discussion to the forum.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);

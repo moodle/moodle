@@ -113,28 +113,27 @@ class mod_forum_post_form extends moodleform {
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
 
-        if (isset($forum->id) && forum_is_forcesubscribed($forum)) {
+        if (isset($forum->id) && \mod_forum\subscriptions::is_forcesubscribed($forum)) {
 
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
             $mform->addElement('hidden', 'subscribe');
             $mform->setType('subscribe', PARAM_INT);
             $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
 
-        } else if (isset($forum->forcesubscribe)&& $forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE ||
-                   has_capability('moodle/course:manageactivities', $coursecontext)) {
+        } else if (\mod_forum\subscriptions::subscription_disabled($forum) ||
+                has_capability('moodle/course:manageactivities', $coursecontext)) {
+            $options = array();
+            $options[0] = get_string('subscribestop', 'forum');
+            $options[1] = get_string('subscribestart', 'forum');
 
-                $options = array();
-                $options[0] = get_string('subscribestop', 'forum');
-                $options[1] = get_string('subscribestart', 'forum');
-
-                $mform->addElement('select', 'subscribe', get_string('subscription', 'forum'), $options);
-                $mform->addHelpButton('subscribe', 'subscription', 'forum');
-            } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
-                $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
-                $mform->addElement('hidden', 'subscribe');
-                $mform->setType('subscribe', PARAM_INT);
-                $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
-            }
+            $mform->addElement('select', 'subscribe', get_string('subscription', 'forum'), $options);
+            $mform->addHelpButton('subscribe', 'subscription', 'forum');
+        } else if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
+            $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
+            $mform->addElement('hidden', 'subscribe');
+            $mform->setType('subscribe', PARAM_INT);
+            $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
+        }
 
         if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
             $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'), null, self::attachment_options($forum));

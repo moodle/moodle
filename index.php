@@ -184,8 +184,8 @@
                     if (isloggedin()) {
                         $SESSION->fromdiscussion = $CFG->wwwroot;
                         $subtext = '';
-                        if (forum_is_subscribed($USER->id, $newsforum)) {
-                            if (!forum_is_forcesubscribed($newsforum)) {
+                        if (\mod_forum\subscriptions::is_subscribed($USER->id, $newsforum)) {
+                            if (!\mod_forum\subscriptions::is_forcesubscribed($newsforum)) {
                                 $subtext = get_string('unsubscribe', 'forum');
                             }
                         } else {

@@ -467,7 +467,7 @@ function forum_user_enrolled($cp) {
 
     $forums = $DB->get_records_sql($sql, $params);
     foreach ($forums as $forum) {
-        forum_subscribe($cp->userid, $forum->id);
+        \mod_forum\subscriptions::subscribe_user($cp->userid, $forum);
     }
 }
 
@@ -507,4 +507,201 @@ define('FORUM_TRACKING_ON', 2);
  */
 function forum_shorten_post($message) {
     throw new coding_exception('forum_shorten_post() can not be used any more. Please use shorten_text($message, $CFG->forum_shortpost) instead.');
+}
+
+// Deprecated in 2.8.
+
+/**
+ * @global object
+ * @param int $userid
+ * @param object $forum
+ * @return bool
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::is_subscribed() instead
+ */
+function forum_is_subscribed($userid, $forum) {
+    global $DB;
+    debugging("forum_is_subscribed() has been deprecated, please use \\mod_forum\\subscriptions::is_subscribed() instead.",
+            DEBUG_DEVELOPER);
+
+    // Note: The new function does not take an integer form of forum.
+    if (is_numeric($forum)) {
+        $forum = $DB->get_record('forum', array('id' => $forum));
+    }
+
+    return mod_forum\subscriptions::is_subscribed($userid, $forum);
+}
+
+/**
+ * Adds user to the subscriber list
+ *
+ * @param int $userid
+ * @param int $forumid
+ * @param context_module|null $context Module context, may be omitted if not known or if called for the current module set in page.
+ * @param boolean $userrequest Whether the user requested this change themselves. This has an effect on whether
+ * discussion subscriptions are removed too.
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::subscribe_user() instead
+ */
+function forum_subscribe($userid, $forumid, $context = null, $userrequest = false) {
+    global $DB;
+    debugging("forum_subscribe() has been deprecated, please use \\mod_forum\\subscriptions::subscribe_user() instead.",
+            DEBUG_DEVELOPER);
+
+    // Note: The new function does not take an integer form of forum.
+    $forum = $DB->get_record('forum', array('id' => $forumid));
+    \mod_forum\subscriptions::subscribe_user($userid, $forum, $context, $userrequest);
+}
+
+/**
+ * Removes user from the subscriber list
+ *
+ * @param int $userid
+ * @param int $forumid
+ * @param context_module|null $context Module context, may be omitted if not known or if called for the current module set in page.
+ * @param boolean $userrequest Whether the user requested this change themselves. This has an effect on whether
+ * discussion subscriptions are removed too.
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::unsubscribe_user() instead
+ */
+function forum_unsubscribe($userid, $forumid, $context = null, $userrequest = false) {
+    global $DB;
+    debugging("forum_unsubscribe() has been deprecated, please use \\mod_forum\\subscriptions::unsubscribe_user() instead.",
+            DEBUG_DEVELOPER);
+
+    // Note: The new function does not take an integer form of forum.
+    $forum = $DB->get_record('forum', array('id' => $forumid));
+    \mod_forum\subscriptions::unsubscribe_user($userid, $forum, $context, $userrequest);
+}
+
+/**
+ * Returns list of user objects that are subscribed to this forum.
+ *
+ * @param stdClass $course the course
+ * @param stdClass $forum the forum
+ * @param int $groupid group id, or 0 for all.
+ * @param context_module $context the forum context, to save re-fetching it where possible.
+ * @param string $fields requested user fields (with "u." table prefix)
+ * @param boolean $considerdiscussions Whether to take discussion subscriptions and unsubscriptions into consideration.
+ * @return array list of users.
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::fetch_subscribed_users() instead
+  */
+function forum_subscribed_users($course, $forum, $groupid = 0, $context = null, $fields = null) {
+    debugging("forum_subscribed_users() has been deprecated, please use \\mod_forum\\subscriptions::fetch_subscribed_users() instead.",
+            DEBUG_DEVELOPER);
+
+    \mod_forum\subscriptions::fetch_subscribed_users($forum, $groupid, $context, $fields);
+}
+
+/**
+ * Determine whether the forum is force subscribed.
+ *
+ * @param object $forum
+ * @return bool
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::is_forcesubscribed() instead
+ */
+function forum_is_forcesubscribed($forum) {
+    debugging("forum_is_forcesubscribed() has been deprecated, please use \\mod_forum\\subscriptions::is_forcesubscribed() instead.",
+            DEBUG_DEVELOPER);
+
+    global $DB;
+    if (!isset($forum->forcesubscribe)) {
+       $forum = $DB->get_field('forum', 'forcesubscribe', array('id' => $forum));
+    }
+
+    return \mod_forum\subscriptions::is_forcesubscribed($forum);
+}
+
+/**
+ * Set the subscription mode for a forum.
+ *
+ * @param int $forumid
+ * @param mixed $value
+ * @return bool
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::set_subscription_mode() instead
+ */
+function forum_forcesubscribe($forumid, $value = 1) {
+    debugging("forum_forcesubscribe() has been deprecated, please use \\mod_forum\\subscriptions::set_subscription_mode() instead.",
+            DEBUG_DEVELOPER);
+
+    return \mod_forum\subscriptions::set_subscription_mode($forumid, $value);
+}
+
+/**
+ * Get the current subscription mode for the forum.
+ *
+ * @param int|stdClass $forumid
+ * @param mixed $value
+ * @return bool
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::get_subscription_mode() instead
+ */
+function forum_get_forcesubscribed($forum) {
+    debugging("forum_get_forcesubscribed() has been deprecated, please use \\mod_forum\\subscriptions::get_subscription_mode() instead.",
+            DEBUG_DEVELOPER);
+
+    global $DB;
+    if (!isset($forum->forcesubscribe)) {
+       $forum = $DB->get_field('forum', 'forcesubscribe', array('id' => $forum));
+    }
+
+    return \mod_forum\subscriptions::get_subscription_mode($forumid, $value);
+}
+
+/**
+ * Get a list of forums in the specified course in which a user can change
+ * their subscription preferences.
+ *
+ * @param stdClass $course The course from which to find subscribable forums.
+ * @return array
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::is_subscribed in combination wtih
+ * \mod_forum\subscriptions::fill_subscription_cache_for_course instead.
+ */
+function forum_get_subscribed_forums($course) {
+    debugging("forum_get_subscribed_forums() has been deprecated, please see " .
+              "\\mod_forum\\subscriptions::is_subscribed::() " .
+              " and \\mod_forum\\subscriptions::fill_subscription_cache_for_course instead.",
+              DEBUG_DEVELOPER);
+
+    global $USER, $CFG, $DB;
+    $sql = "SELECT f.id
+              FROM {forum} f
+                   LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = ?)
+             WHERE f.course = ?
+                   AND f.forcesubscribe <> ".FORUM_DISALLOWSUBSCRIBE."
+                   AND (f.forcesubscribe = ".FORUM_FORCESUBSCRIBE." OR fs.id IS NOT NULL)";
+    if ($subscribed = $DB->get_records_sql($sql, array($USER->id, $course->id))) {
+        foreach ($subscribed as $s) {
+            $subscribed[$s->id] = $s->id;
+        }
+        return $subscribed;
+    } else {
+        return array();
+    }
+}
+
+/**
+ * Returns an array of forums that the current user is subscribed to and is allowed to unsubscribe from
+ *
+ * @return array An array of unsubscribable forums
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::get_unsubscribable_forums() instead
+ */
+function forum_get_optional_subscribed_forums() {
+    debugging("forum_get_optional_subscribed_forums() has been deprecated, please use \\mod_forum\\subscriptions::get_unsubscribable_forums() instead.",
+            DEBUG_DEVELOPER);
+
+    return \mod_forum\subscriptions::get_unsubscribable_forums();
+}
+
+/**
+ * Get the list of potential subscribers to a forum.
+ *
+ * @param object $forumcontext the forum context.
+ * @param integer $groupid the id of a group, or 0 for all groups.
+ * @param string $fields the list of fields to return for each user. As for get_users_by_capability.
+ * @param string $sort sort order. As for get_users_by_capability.
+ * @return array list of users.
+ * @deprecated since Moodle 2.8 use \mod_forum\subscriptions::get_potential_subscribers() instead
+ */
+function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort = '') {
+    debugging("forum_get_potential_subscribers() has been deprecated, please use \\mod_forum\\subscriptions::get_potential_subscribers() instead.",
+            DEBUG_DEVELOPER);
+
+    \mod_forum\subscriptions::get_potential_subscribers($forumcontext, $groupid, $fields, $sort);
 }

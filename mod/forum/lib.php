@@ -135,9 +135,9 @@ function forum_add_instance($forum, $mform = null) {
  */
 function forum_instance_created($context, $forum) {
     if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) {
-        $users = forum_get_potential_subscribers($context, 0, 'u.id, u.email');
+        $users = \mod_forum\subscriptions::get_potential_subscribers($context, 0, 'u.id, u.email');
         foreach ($users as $user) {
-            forum_subscribe($user->id, $forum->id, $context);
+            \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context);
         }
     }
 }
@@ -233,9 +233,9 @@ function forum_update_instance($forum, $mform) {
 
     $modcontext = context_module::instance($forum->coursemodule);
     if (($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) && ($oldforum->forcesubscribe <> $forum->forcesubscribe)) {
-        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email', '');
+        $users = \mod_forum\subscriptions::get_potential_subscribers($modcontext, 0, 'u.id, u.email', '');
         foreach ($users as $user) {
-            forum_subscribe($user->id, $forum->id, $modcontext);
+            \mod_forum\subscriptions::subscribe_user($user->id, $forum, $modcontext);
         }
     }
 
@@ -546,7 +546,7 @@ function forum_cron() {
             // caching subscribed users of each forum
             if (!isset($subscribedusers[$forumid])) {
                 $modcontext = context_module::instance($coursemodules[$forumid]->id);
-                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, $modcontext, "u.*")) {
+                if ($subusers = \mod_forum\subscriptions::fetch_subscribed_users($forums[$forumid], 0, $modcontext, 'u.*')) {
                     foreach ($subusers as $postuser) {
                         // this user is subscribed to this forum
                         $subscribedusers[$forumid][$postuser->id] = $postuser->id;
@@ -960,7 +960,7 @@ function forum_cron() {
                     }
 
                     $strforums      = get_string('forums', 'forum');
-                    $canunsubscribe = ! forum_is_forcesubscribed($forum);
+                    $canunsubscribe = ! \mod_forum\subscriptions::is_forcesubscribed($forum);
                     $canreply       = $userto->canpost[$discussion->id];
                     $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
@@ -1151,7 +1151,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
 
     $strforums = get_string('forums', 'forum');
 
-    $canunsubscribe = ! forum_is_forcesubscribed($forum);
+    $canunsubscribe = ! \mod_forum\subscriptions::is_forcesubscribed($forum);
 
     $posttext = '';
 
@@ -1225,7 +1225,7 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     }
 
     $strforums = get_string('forums', 'forum');
-    $canunsubscribe = ! forum_is_forcesubscribed($forum);
+    $canunsubscribe = ! \mod_forum\subscriptions::is_forcesubscribed($forum);
     $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
     $posthtml = '<head>';
@@ -2726,99 +2726,6 @@ function forum_get_discussions_count($cm) {
 
     return $DB->get_field_sql($sql, $params);
 }
-
-
-/**
- * Get the list of potential subscribers to a forum.
- *
- * @param object $forumcontext the forum context.
- * @param integer $groupid the id of a group, or 0 for all groups.
- * @param string $fields the list of fields to return for each user. As for get_users_by_capability.
- * @param string $sort sort order. As for get_users_by_capability.
- * @return array list of users.
- */
-function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort = '') {
-    global $DB;
-
-    // only active enrolled users or everybody on the frontpage
-    list($esql, $params) = get_enrolled_sql($forumcontext, 'mod/forum:allowforcesubscribe', $groupid, true);
-    if (!$sort) {
-        list($sort, $sortparams) = users_order_by_sql('u');
-        $params = array_merge($params, $sortparams);
-    }
-
-    $sql = "SELECT $fields
-              FROM {user} u
-              JOIN ($esql) je ON je.id = u.id
-          ORDER BY $sort";
-
-    return $DB->get_records_sql($sql, $params);
-}
-
-/**
- * Returns list of user objects that are subscribed to this forum
- *
- * @global object
- * @global object
- * @param object $course the course
- * @param forum $forum the forum
- * @param integer $groupid group id, or 0 for all.
- * @param object $context the forum context, to save re-fetching it where possible.
- * @param string $fields requested user fields (with "u." table prefix)
- * @return array list of users.
- */
-function forum_subscribed_users($course, $forum, $groupid=0, $context = null, $fields = null) {
-    global $CFG, $DB;
-
-    $allnames = get_all_user_name_fields(true, 'u');
-    if (empty($fields)) {
-        $fields ="u.id,
-                  u.username,
-                  $allnames,
-                  u.maildisplay,
-                  u.mailformat,
-                  u.maildigest,
-                  u.imagealt,
-                  u.email,
-                  u.emailstop,
-                  u.city,
-                  u.country,
-                  u.lastaccess,
-                  u.lastlogin,
-                  u.picture,
-                  u.timezone,
-                  u.theme,
-                  u.lang,
-                  u.trackforums,
-                  u.mnethostid";
-    }
-
-    if (empty($context)) {
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
-        $context = context_module::instance($cm->id);
-    }
-
-    if (forum_is_forcesubscribed($forum)) {
-        $results = forum_get_potential_subscribers($context, $groupid, $fields, "u.email ASC");
-
-    } else {
-        // only active enrolled users or everybody on the frontpage
-        list($esql, $params) = get_enrolled_sql($context, '', $groupid, true);
-        $params['forumid'] = $forum->id;
-        $results = $DB->get_records_sql("SELECT $fields
-                                           FROM {user} u
-                                           JOIN ($esql) je ON je.id = u.id
-                                           JOIN {forum_subscriptions} s ON s.userid = u.id
-                                          WHERE s.forum = :forumid
-                                       ORDER BY u.email ASC", $params);
-    }
-
-    // Guest user should never be subscribed to a forum.
-    unset($results[$CFG->siteguest]);
-
-    return $results;
-}
-
 
 
 // OTHER FUNCTIONS ///////////////////////////////////////////////////////////
@@ -4486,219 +4393,6 @@ function forum_count_replies($post, $children=true) {
     return $count;
 }
 
-
-/**
- * @global object
- * @param int $forumid
- * @param mixed $value
- * @return bool
- */
-function forum_forcesubscribe($forumid, $value=1) {
-    global $DB;
-    return $DB->set_field("forum", "forcesubscribe", $value, array("id" => $forumid));
-}
-
-/**
- * @global object
- * @param object $forum
- * @return bool
- */
-function forum_is_forcesubscribed($forum) {
-    global $DB;
-    if (isset($forum->forcesubscribe)) {    // then we use that
-        return ($forum->forcesubscribe == FORUM_FORCESUBSCRIBE);
-    } else {   // Check the database
-       return ($DB->get_field('forum', 'forcesubscribe', array('id' => $forum)) == FORUM_FORCESUBSCRIBE);
-    }
-}
-
-function forum_get_forcesubscribed($forum) {
-    global $DB;
-    if (isset($forum->forcesubscribe)) {    // then we use that
-        return $forum->forcesubscribe;
-    } else {   // Check the database
-        return $DB->get_field('forum', 'forcesubscribe', array('id' => $forum));
-    }
-}
-
-/**
- * @global object
- * @param int $userid
- * @param object $forum
- * @return bool
- */
-function forum_is_subscribed($userid, $forum) {
-    global $DB;
-    if (is_numeric($forum)) {
-        $forum = $DB->get_record('forum', array('id' => $forum));
-    }
-    // If forum is force subscribed and has allowforcesubscribe, then user is subscribed.
-    $cm = get_coursemodule_from_instance('forum', $forum->id);
-    if (forum_is_forcesubscribed($forum) && $cm &&
-            has_capability('mod/forum:allowforcesubscribe', context_module::instance($cm->id), $userid)) {
-        return true;
-    }
-    return $DB->record_exists("forum_subscriptions", array("userid" => $userid, "forum" => $forum->id));
-}
-
-function forum_get_subscribed_forums($course) {
-    global $USER, $CFG, $DB;
-    $sql = "SELECT f.id
-              FROM {forum} f
-                   LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = ?)
-             WHERE f.course = ?
-                   AND f.forcesubscribe <> ".FORUM_DISALLOWSUBSCRIBE."
-                   AND (f.forcesubscribe = ".FORUM_FORCESUBSCRIBE." OR fs.id IS NOT NULL)";
-    if ($subscribed = $DB->get_records_sql($sql, array($USER->id, $course->id))) {
-        foreach ($subscribed as $s) {
-            $subscribed[$s->id] = $s->id;
-        }
-        return $subscribed;
-    } else {
-        return array();
-    }
-}
-
-/**
- * Returns an array of forums that the current user is subscribed to and is allowed to unsubscribe from
- *
- * @return array An array of unsubscribable forums
- */
-function forum_get_optional_subscribed_forums() {
-    global $USER, $DB;
-
-    // Get courses that $USER is enrolled in and can see
-    $courses = enrol_get_my_courses();
-    if (empty($courses)) {
-        return array();
-    }
-
-    $courseids = array();
-    foreach($courses as $course) {
-        $courseids[] = $course->id;
-    }
-    list($coursesql, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'c');
-
-    // get all forums from the user's courses that they are subscribed to and which are not set to forced
-    $sql = "SELECT f.id, cm.id as cm, cm.visible
-              FROM {forum} f
-                   JOIN {course_modules} cm ON cm.instance = f.id
-                   JOIN {modules} m ON m.name = :modulename AND m.id = cm.module
-                   LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = :userid)
-             WHERE f.forcesubscribe <> :forcesubscribe AND fs.id IS NOT NULL
-                   AND cm.course $coursesql";
-    $params = array_merge($courseparams, array('modulename'=>'forum', 'userid'=>$USER->id, 'forcesubscribe'=>FORUM_FORCESUBSCRIBE));
-    if (!$forums = $DB->get_records_sql($sql, $params)) {
-        return array();
-    }
-
-    $unsubscribableforums = array(); // Array to return
-
-    foreach($forums as $forum) {
-
-        if (empty($forum->visible)) {
-            // the forum is hidden
-            $context = context_module::instance($forum->cm);
-            if (!has_capability('moodle/course:viewhiddenactivities', $context)) {
-                // the user can't see the hidden forum
-                continue;
-            }
-        }
-
-        // subscribe.php only requires 'mod/forum:managesubscriptions' when
-        // unsubscribing a user other than yourself so we don't require it here either
-
-        // A check for whether the forum has subscription set to forced is built into the SQL above
-
-        $unsubscribableforums[] = $forum;
-    }
-
-    return $unsubscribableforums;
-}
-
-/**
- * Adds user to the subscriber list
- *
- * @param int $userid
- * @param int $forumid
- * @param context_module|null $context Module context, may be omitted if not known or if called for the current module set in page.
- */
-function forum_subscribe($userid, $forumid, $context = null) {
-    global $DB, $PAGE;
-
-    if ($DB->record_exists("forum_subscriptions", array("userid"=>$userid, "forum"=>$forumid))) {
-        return true;
-    }
-
-    $sub = new stdClass();
-    $sub->userid  = $userid;
-    $sub->forum = $forumid;
-
-    $result = $DB->insert_record("forum_subscriptions", $sub);
-
-    if (!$context) {
-        // Find out forum context. First try to take current page context to save on DB query.
-        if ($PAGE->cm && $PAGE->cm->modname === 'forum' && $PAGE->cm->instance == $forumid
-                && $PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->context->instanceid == $PAGE->cm->id) {
-            $context = $PAGE->context;
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forumid);
-            $context = context_module::instance($cm->id);
-        }
-    }
-    $params = array(
-        'context' => $context,
-        'objectid' => $result,
-        'relateduserid' => $userid,
-        'other' => array('forumid' => $forumid),
-
-    );
-    $event  = \mod_forum\event\subscription_created::create($params);
-    $event->trigger();
-
-    return $result;
-}
-
-/**
- * Removes user from the subscriber list
- *
- * @param int $userid
- * @param int $forumid
- * @param context_module|null $context Module context, may be omitted if not known or if called for the current module set in page.
- */
-function forum_unsubscribe($userid, $forumid, $context = null) {
-    global $DB, $PAGE;
-
-    $DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid));
-
-    if ($forumsubscription = $DB->get_record('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid))) {
-        $DB->delete_records('forum_subscriptions', array('id' => $forumsubscription->id));
-
-        if (!$context) {
-            // Find out forum context. First try to take current page context to save on DB query.
-            if ($PAGE->cm && $PAGE->cm->modname === 'forum' && $PAGE->cm->instance == $forumid
-                    && $PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->context->instanceid == $PAGE->cm->id) {
-                $context = $PAGE->context;
-            } else {
-                $cm = get_coursemodule_from_instance('forum', $forumid);
-                $context = context_module::instance($cm->id);
-            }
-        }
-        $params = array(
-            'context' => $context,
-            'objectid' => $forumsubscription->id,
-            'relateduserid' => $userid,
-            'other' => array('forumid' => $forumid),
-
-        );
-        $event = \mod_forum\event\subscription_deleted::create($params);
-        $event->add_record_snapshot('forum_subscriptions', $forumsubscription);
-        $event->trigger();
-    }
-
-    return true;
-}
-
 /**
  * Given a new post, subscribes or unsubscribes as appropriate.
  * Returns some text which describes what happened.
@@ -4708,22 +4402,17 @@ function forum_unsubscribe($userid, $forumid, $context = null) {
  * @param object $forum
  */
 function forum_post_subscription($post, $forum) {
-
     global $USER;
 
-    $action = '';
-    $subscribed = forum_is_subscribed($USER->id, $forum);
-
-    if ($forum->forcesubscribe == FORUM_FORCESUBSCRIBE) { // database ignored
+    if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
         return "";
-
-    } elseif (($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE)
-        && !has_capability('moodle/course:manageactivities', context_course::instance($forum->course), $USER->id)) {
-        if ($subscribed) {
-            $action = 'unsubscribe'; // sanity check, following MDL-14558
-        } else {
-            return "";
+    } else if (\mod_forum\subscriptions::subscription_disabled($forum)) {
+        $subscribed = \mod_forum\subscriptions::is_subscribed($USER->id, $forum);
+        if ($subscribed && !has_capability('moodle/course:manageactivities', context_course::instance($forum->course), $USER->id)) {
+            // This user should not be subscribed to the forum.
+            \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum);
         }
+        return "";
 
     } else { // go with the user's choice
         if (isset($post->subscribe)) {
@@ -4781,9 +4470,10 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
     );
     $messages = $messages + $defaultmessages;
 
-    if (forum_is_forcesubscribed($forum)) {
+    if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
         return $messages['forcesubscribed'];
-    } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !has_capability('mod/forum:managesubscriptions', $context)) {
+    } else if (\mod_forum\subscriptions::subscription_disabled($forum) &&
+            !has_capability('mod/forum:managesubscriptions', $context)) {
         return $messages['cantsubscribe'];
     } else if ($cantaccessagroup) {
         return $messages['cantaccessgroup'];
@@ -4791,11 +4481,8 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
         if (!is_enrolled($context, $USER, '', true)) {
             return '';
         }
-        if (is_null($subscribed_forums)) {
-            $subscribed = forum_is_subscribed($USER->id, $forum);
-        } else {
-            $subscribed = !empty($subscribed_forums[$forum->id]);
-        }
+
+        $subscribed = \mod_forum\subscriptions::is_subscribed($USER->id, $forum);
         if ($subscribed) {
             $linktext = $messages['subscribed'];
             $linktitle = get_string('subscribestop', 'forum');
@@ -7065,8 +6752,9 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     $activeenrolled = is_enrolled($PAGE->cm->context, $USER, '', true);
 
     $canmanage  = has_capability('mod/forum:managesubscriptions', $PAGE->cm->context);
-    $subscriptionmode = forum_get_forcesubscribed($forumobject);
-    $cansubscribe = ($activeenrolled && $subscriptionmode != FORUM_FORCESUBSCRIBE && ($subscriptionmode != FORUM_DISALLOWSUBSCRIBE || $canmanage));
+    $subscriptionmode = \mod_forum\subscriptions::get_subscription_mode($forumobject);
+    $cansubscribe = $activeenrolled && !\mod_forum\subscriptions::is_forcesubscribed($forumobject) &&
+            (!\mod_forum\subscriptions::subscription_disabled($forumobject) || $canmanage);
 
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
@@ -7114,7 +6802,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     }
 
     if ($cansubscribe) {
-        if (forum_is_subscribed($USER->id, $forumobject)) {
+        if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject)) {
             $linktext = get_string('unsubscribe', 'forum');
         } else {
             $linktext = get_string('subscribe', 'forum');
@@ -7717,4 +7405,31 @@ function forum_get_user_digest_options($user = null) {
     ksort($digestoptions);
 
     return $digestoptions;
+}
+
+/**
+ * Determine the current context if one was not already specified.
+ *
+ * If a context of type context_module is specified, it is immediately
+ * returned and not checked.
+ *
+ * @param int $forumid The ID of the forum
+ * @param context_module $context The current context.
+ * @return context_module The context determined
+ */
+function forum_get_context($forumid, $context = null) {
+    global $PAGE;
+
+    if (!$context || !($context instanceof context_module)) {
+        // Find out forum context. First try to take current page context to save on DB query.
+        if ($PAGE->cm && $PAGE->cm->modname === 'forum' && $PAGE->cm->instance == $forumid
+                && $PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->context->instanceid == $PAGE->cm->id) {
+            $context = $PAGE->context;
+        } else {
+            $cm = get_coursemodule_from_instance('forum', $forumid);
+            $context = \context_module::instance($cm->id);
+        }
+    }
+
+    return $context;
 }

@@ -79,14 +79,14 @@ if (data_submitted()) {
     if ($subscribe) {
         $users = $subscriberselector->get_selected_users();
         foreach ($users as $user) {
-            if (!forum_subscribe($user->id, $id)) {
+            if (!\mod_forum\subscriptions::subscribe_user($user->id, $forum)) {
                 print_error('cannotaddsubscriber', 'forum', '', $user->id);
             }
         }
     } else if ($unsubscribe) {
         $users = $existingselector->get_selected_users();
         foreach ($users as $user) {
-            if (!forum_unsubscribe($user->id, $id)) {
+            if (!\mod_forum\subscriptions::unsubscribe_user($user->id, $forum)) {
                 print_error('cannotremovesubscriber', 'forum', '', $user->id);
             }
         }
@@ -111,8 +111,9 @@ if (has_capability('mod/forum:managesubscriptions', $context)) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('forum', 'forum').' '.$strsubscribers);
 if (empty($USER->subscriptionsediting)) {
-    echo $forumoutput->subscriber_overview(forum_subscribed_users($course, $forum, $currentgroup, $context), $forum, $course);
-} else if (forum_is_forcesubscribed($forum)) {
+    $subscribers = \mod_forum\subscriptions::fetch_subscribed_users($forum, $currentgroup, $context);
+    echo $forumoutput->subscriber_overview($subscribers, $forum, $course);
+} else if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
     $subscriberselector->set_force_subscribed(true);
     echo $forumoutput->subscribed_users($subscriberselector);
 } else {

@@ -47,10 +47,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($strunsubscribeall);
 
 if (data_submitted() and $confirm and confirm_sesskey()) {
-    $forums = forum_get_optional_subscribed_forums();
+    $forums = \mod_forum\subscriptions::get_unsubscribable_forums();
 
     foreach($forums as $forum) {
-        forum_unsubscribe($USER->id, $forum->id, context_module::instance($forum->cm));
+        \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, context_module::instance($forum->cm));
     }
     $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
 
@@ -60,7 +60,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     die;
 
 } else {
-    $a = count(forum_get_optional_subscribed_forums());
+    $a = count(\mod_forum\subscriptions::get_unsubscribable_forums());
 
     if ($a) {
         $msg = get_string('unsubscribeallconfirm', 'forum', $a);

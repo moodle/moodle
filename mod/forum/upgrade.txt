@@ -21,6 +21,17 @@ information provided here is intended especially for developers.
      forum_tp_get_discussion_read_records
      forum_user_enrolled
      forum_user_can_view_post
+ * The following functions have been deprecated and replaced. Please see the phpdoc for each on the new function to use instead:
+   * forum_is_subscribed
+   * forum_subscribe
+   * forum_unsubscribe
+   * forum_subscribed_users
+   * forum_is_forcesubscribed
+   * forum_forcesubscribe
+   * forum_get_forcesubscribed
+   * forum_get_subscribed_forums
+   * forum_get_optional_subscribed_forums
+   * forum_get_potential_subscribers
 
 === 2.6 ===
 

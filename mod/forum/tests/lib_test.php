@@ -26,6 +26,18 @@ defined('MOODLE_INTERNAL') || die();
 
 class mod_forum_lib_testcase extends advanced_testcase {
 
+    public function setUp() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+    }
+
+    public function tearDown() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+    }
+
     public function test_forum_trigger_content_uploaded_event() {
         $this->resetAfterTest();
 
@@ -597,10 +609,10 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE); // Automatic Subscription.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         $this->assertEquals($usercount, count($result));
         foreach ($users as $user) {
-            $this->assertTrue(forum_is_subscribed($user->id, $forum));
+            $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
     }
 
@@ -625,10 +637,10 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE); // Forced subscription.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         $this->assertEquals($usercount, count($result));
         foreach ($users as $user) {
-            $this->assertTrue(forum_is_subscribed($user->id, $forum));
+            $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
     }
 
@@ -653,11 +665,11 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE); // Subscription optional.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         // No subscriptions by default.
         $this->assertEquals(0, count($result));
         foreach ($users as $user) {
-            $this->assertFalse(forum_is_subscribed($user->id, $forum));
+            $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
     }
 
@@ -682,11 +694,95 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE); // Subscription prevented.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         // No subscriptions by default.
         $this->assertEquals(0, count($result));
         foreach ($users as $user) {
-            $this->assertFalse(forum_is_subscribed($user->id, $forum));
+            $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
+    }
+
+    /**
+     * Test that context fetching returns the appropriate context.
+     */
+    public function test_forum_get_context() {
+        global $DB, $PAGE;
+
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+        $forumcm = get_coursemodule_from_instance('forum', $forum->id);
+        $forumcontext = \context_module::instance($forumcm->id);
+
+        // First check that specifying the context results in the correct context being returned.
+        // Do this before we set up the page object and we should return from the coursemodule record.
+        // There should be no DB queries here because the context type was correct.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $forumcontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(0, $aftercount - $startcount);
+
+        // And a context which is not the correct type.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $coursecontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+
+        // Now do not specify a context at all.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+
+        // Set up the default page event to use the forum.
+        $PAGE = new moodle_page();
+        $PAGE->set_context($forumcontext);
+        $PAGE->set_cm($forumcm, $course, $forum);
+
+        // Now specify a context which is not a context_module.
+        // There should be no DB queries here because we use the PAGE.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $coursecontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(0, $aftercount - $startcount);
+
+        // Now do not specify a context at all.
+        // There should be no DB queries here because we use the PAGE.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(0, $aftercount - $startcount);
+
+        // Now specify the page context of the course instead..
+        $PAGE = new moodle_page();
+        $PAGE->set_context($coursecontext);
+
+        // Now specify a context which is not a context_module.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $coursecontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+
+        // Now do not specify a context at all.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
     }
 }

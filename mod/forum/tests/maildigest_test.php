@@ -30,6 +30,18 @@ global $CFG;
 
 class mod_forum_maildigest_testcase extends advanced_testcase {
 
+    public function setUp() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+    }
+
+    public function tearDown() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+    }
+
     public function test_mod_forum_set_maildigest() {
         global $USER, $DB;
 

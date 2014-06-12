@@ -71,7 +71,7 @@ if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
 } else {
     $groupmode = $course->groupmode;
 }
-if ($groupmode && !forum_is_subscribed($user->id, $forum) && !has_capability('moodle/site:accessallgroups', $context)) {
+if ($groupmode && !\mod_forum\subscriptions::is_subscribed($user->id, $forum) && !has_capability('moodle/site:accessallgroups', $context)) {
     if (!groups_get_all_groups($course->id, $USER->id)) {
         print_error('cannotsubscribe', 'forum');
     }
@@ -102,25 +102,25 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
     require_sesskey();
     switch ($mode) {
         case FORUM_CHOOSESUBSCRIBE : // 0
-            forum_forcesubscribe($forum->id, FORUM_CHOOSESUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_CHOOSESUBSCRIBE);
             redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
             break;
         case FORUM_FORCESUBSCRIBE : // 1
-            forum_forcesubscribe($forum->id, FORUM_FORCESUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
             redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
             break;
         case FORUM_INITIALSUBSCRIBE : // 2
             if ($forum->forcesubscribe <> FORUM_INITIALSUBSCRIBE) {
-                $users = forum_get_potential_subscribers($context, 0, 'u.id, u.email', '');
+                $users = \mod_forum\subscriptions::get_potential_subscribers($context, 0, 'u.id, u.email', '');
                 foreach ($users as $user) {
-                    forum_subscribe($user->id, $forum->id);
+                    \mod_forum\subscriptions::subscribe_user($user->id, $forum);
                 }
             }
-            forum_forcesubscribe($forum->id, FORUM_INITIALSUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
             redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
             break;
         case FORUM_DISALLOWSUBSCRIBE : // 3
-            forum_forcesubscribe($forum->id, FORUM_DISALLOWSUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_DISALLOWSUBSCRIBE);
             redirect($returnto, get_string("noonecansubscribenow", "forum"), 1);
             break;
         default:
@@ -128,7 +128,7 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
     }
 }
 
-if (forum_is_forcesubscribed($forum)) {
+if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
     redirect($returnto, get_string("everyoneisnowsubscribed", "forum"), 1);
 }
 
@@ -136,7 +136,7 @@ $info = new stdClass();
 $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 
-if (forum_is_subscribed($user->id, $forum->id)) {
+if (\mod_forum\subscriptions::is_subscribed($user->id, $forum)) {
     if (is_null($sesskey)) {    // we came here via link in email
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
@@ -147,15 +147,14 @@ if (forum_is_subscribed($user->id, $forum->id)) {
         exit;
     }
     require_sesskey();
-    if (forum_unsubscribe($user->id, $forum->id)) {
+    if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum)) {
         redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
     } else {
         print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
     }
 
 } else {  // subscribe
-    if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE &&
-                !has_capability('mod/forum:managesubscriptions', $context)) {
+    if (\mod_forum\subscriptions::subscription_disabled($forum) && !has_capability('mod/forum:managesubscriptions', $context)) {
         print_error('disallowsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
     }
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
@@ -171,6 +170,6 @@ if (forum_is_subscribed($user->id, $forum->id)) {
         exit;
     }
     require_sesskey();
-    forum_subscribe($user->id, $forum->id);
+    \mod_forum\subscriptions::subscribe_user($user->id, $forum);
     redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
 }
