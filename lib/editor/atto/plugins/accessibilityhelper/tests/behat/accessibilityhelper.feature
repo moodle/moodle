@@ -1,4 +1,4 @@
-@atto @atto_accessibilityhelper
+@editor @editor_atto @atto @atto_accessibilityhelper
 Feature: Atto accessibility helper
   To use a screen reader effectively in Atto, I may need additional information about the text
 

@@ -1,4 +1,4 @@
-@atto @atto_html
+@editor @editor_atto @atto @atto_html
 Feature: Atto edit HTML
   To write advanced HTML, I need to edit the HTML source code
 

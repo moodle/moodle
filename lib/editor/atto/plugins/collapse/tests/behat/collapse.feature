@@ -1,4 +1,4 @@
-@atto @atto_collapse
+@editor @editor_atto @atto @atto_collapse
 Feature: Atto collapse button
   To access all the tools in Atto, I need to toggle the toolbar
 

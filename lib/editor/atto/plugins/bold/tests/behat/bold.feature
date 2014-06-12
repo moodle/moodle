@@ -1,4 +1,4 @@
-@atto @atto_bold @_bug_phantomjs
+@editor @editor_atto @atto @atto_bold @_bug_phantomjs
 Feature: Atto bold button
   To format text in Atto, I need to use the bold button.
 

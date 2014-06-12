@@ -1,4 +1,4 @@
-@atto @atto_strike @_bug_phantomjs
+@editor @editor_atto @atto @atto_strike @_bug_phantomjs
 Feature: Atto strike button
   To format text in Atto, I need to use the strike button.
 

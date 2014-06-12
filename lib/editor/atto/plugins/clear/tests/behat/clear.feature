@@ -1,4 +1,4 @@
-@atto @atto_clear @_bug_phantomjs
+@editor @editor_atto @atto @atto_clear @_bug_phantomjs
 Feature: Atto clear button
   To format text in Atto, I need to remove formatting
 

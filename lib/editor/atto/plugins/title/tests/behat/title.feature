@@ -1,4 +1,4 @@
-@atto @atto_title
+@editor @editor_atto @atto @atto_title
 Feature: Atto title
   To format text in Atto, I need to add headings
 

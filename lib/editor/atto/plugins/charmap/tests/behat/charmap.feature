@@ -1,4 +1,4 @@
-@atto @atto_charmap
+@editor @editor_atto @atto @atto_charmap
 Feature: Atto charmap button
   To format text in Atto, I need to add symbols
 
