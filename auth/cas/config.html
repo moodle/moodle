@@ -33,6 +33,9 @@ if (!isset ($config->certificate_check)) {
 if (!isset ($config->certificate_path)) {
     $config->certificate_path = '';
 }
+if (!isset ($config->curl_ssl_version)) {
+    $config->curl_ssl_version = '';
+}
 if (!isset($config->logout_return_url)) {
     $config->logout_return_url = '';
 }
@@ -214,6 +217,16 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
     <td>
         <?php print_string('auth_cas_certificate_path', 'auth_cas') ?>
+    </td>
+</tr>
+<tr valign="top" class="required">
+    <td align="right"><label for="curl_ssl_version"><?php print_string('auth_cas_curl_ssl_version_key', 'auth_cas') ?>: </label></td>
+    <td>
+        <input name="curl_ssl_version" id="curl_ssl_version" type="text" size="3" value="<?php echo $config->curl_ssl_version ?>" />
+        <?php if (isset($err['curl_ssl_version'])) echo $OUTPUT->error_text($err['curl_ssl_version']); ?>
+    </td>
+    <td>
+        <?php print_string('auth_cas_curl_ssl_version', 'auth_cas') ?>
     </td>
 </tr>
 <tr valign="top" class="required">
