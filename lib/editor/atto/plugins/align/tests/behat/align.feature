@@ -1,4 +1,4 @@
-@atto @atto_align
+@editor @editor_atto @atto @atto_align
 Feature: Atto align text
   To format text in Atto, I need to use the align buttons.
 

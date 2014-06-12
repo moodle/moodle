@@ -1,4 +1,4 @@
-@atto @atto_underline @_bug_phantomjs
+@editor @editor_atto @atto @atto_underline @_bug_phantomjs
 Feature: Atto underline button
   To format text in Atto, I need to use the underline button.
 

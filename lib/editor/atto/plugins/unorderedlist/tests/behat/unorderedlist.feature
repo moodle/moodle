@@ -1,4 +1,4 @@
-@atto @atto_unorderedlist @_bug_phantomjs
+@editor @editor_atto @atto @atto_unorderedlist @_bug_phantomjs
 Feature: Atto unordered list button
   To format text in Atto, I need to use the unordered list button.
 

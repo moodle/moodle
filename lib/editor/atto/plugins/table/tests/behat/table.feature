@@ -1,4 +1,4 @@
-@atto @atto_table @_bug_phantomjs
+@editor @editor_atto @atto @atto_table @_bug_phantomjs
 Feature: Atto tables
   To format text in Atto, I need to create tables
 

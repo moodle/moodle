@@ -1,4 +1,4 @@
-@atto @atto_subscript @_bug_phantomjs
+@editor @editor_atto @atto @atto_subscript @_bug_phantomjs
 Feature: Atto subscript button
   To format text in Atto, I need to use the subscript button.
 

@@ -1,4 +1,4 @@
-@atto @atto_link @_file_upload
+@editor @editor_atto @atto @atto_link @_file_upload
 Feature: Add links to Atto
   To write rich text - I need to add links.
 

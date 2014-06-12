@@ -1,4 +1,4 @@
-@atto @atto_indent
+@editor @editor_atto @atto @atto_indent
 Feature: Indent text in Atto
   To write rich text - I need to indent and outdent things.
 

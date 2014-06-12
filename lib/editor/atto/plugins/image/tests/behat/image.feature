@@ -1,4 +1,4 @@
-@atto @atto_image @_file_upload
+@editor @editor_atto @atto @atto_image @_file_upload
 Feature: Add images to Atto
   To write rich text - I need to add images.
 

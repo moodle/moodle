@@ -1,4 +1,4 @@
-@atto @atto_italic @_bug_phantomjs
+@editor @editor_atto @atto @atto_italic @_bug_phantomjs
 Feature: Atto italic button
   To format text in Atto, I need to use the italic button.
 

@@ -1,4 +1,4 @@
-@atto @atto_accessibilitychecker
+@editor @editor_atto @atto @atto_accessibilitychecker
 Feature: Atto accessibility checker
   To write accessible text in Atto, I need to check for accessibility warnings.
 

@@ -1,4 +1,4 @@
-@atto @atto_superscript @_bug_phantomjs
+@editor @editor_atto @atto @atto_superscript @_bug_phantomjs
 Feature: Atto superscript button
   To format text in Atto, I need to use the superscript button.
 
