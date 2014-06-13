@@ -67,7 +67,7 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
         restore_controller_dbops::drop_restore_temp_tables($this->get_restoreid()); // Drop ids temp table
         $progress = $this->task->get_progress();
         $progress->start_progress('Deleting backup dir');
-        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60), $progress);              // Delete > 4 hours temp dirs
+        backup_helper::delete_old_backup_dirs(strtotime('-1 week'), $progress);      // Delete > 1 week old temp dirs.
         if (empty($CFG->keeptempdirectoriesonbackup)) { // Conditionally
             backup_helper::delete_backup_dir($this->task->get_tempdir(), $progress); // Empty restore dir
         }
@@ -3676,13 +3676,16 @@ class restore_move_module_questions_categories extends restore_execution_step {
  * Execution step that will create all the question/answers/qtype-specific files for the restored
  * questions. It must be executed after {@link restore_move_module_questions_categories}
  * because only then each question is in its final category and only then the
- * context can be determined
- *
- * TODO: Improve this. Instead of looping over each question, it can be reduced to
- *       be done by contexts (this will save a huge ammount of queries)
+ * contexts can be determined.
  */
 class restore_create_question_files extends restore_execution_step {
 
+    /** @var array Question-type specific component items cache. */
+    private $qtypecomponentscache = array();
+
+    /**
+     * Preform the restore_create_question_files step.
+     */
     protected function define_execution() {
         global $DB;
 
@@ -3690,60 +3693,93 @@ class restore_create_question_files extends restore_execution_step {
         $progress = $this->task->get_progress();
         $progress->start_progress($this->get_name(), \core\progress\base::INDETERMINATE);
 
-        // Let's process only created questions
-        $questionsrs = $DB->get_recordset_sql("SELECT bi.itemid, bi.newitemid, bi.parentitemid, q.qtype
+        // Parentitemids of question_createds in backup_ids_temp are the category it is in.
+        // MUST use a recordset, as there is no unique key in the first (or any) column.
+        $catqtypes = $DB->get_recordset_sql("SELECT DISTINCT bi.parentitemid AS categoryid, q.qtype as qtype
                                                FROM {backup_ids_temp} bi
                                                JOIN {question} q ON q.id = bi.newitemid
                                               WHERE bi.backupid = ?
-                                                AND bi.itemname = 'question_created'", array($this->get_restoreid()));
-        foreach ($questionsrs as $question) {
-            // Report progress for each question.
-            $progress->progress();
+                                                AND bi.itemname = 'question_created'
+                                           ORDER BY categoryid ASC", array($this->get_restoreid()));
 
-            // Get question_category mapping, it contains the target context for the question
-            if (!$qcatmapping = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'question_category', $question->parentitemid)) {
-                // Something went really wrong, cannot find the question_category for the question
-                debugging('Error fetching target context for question', DEBUG_DEVELOPER);
-                continue;
-            }
-            // Calculate source and target contexts
-            $oldctxid = $qcatmapping->info->contextid;
-            $newctxid = $qcatmapping->parentitemid;
+        $currentcatid = -1;
+        foreach ($catqtypes as $categoryid => $row) {
+            $qtype = $row->qtype;
 
-            // Add common question files (question and question_answer ones)
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'questiontext',
-                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'generalfeedback',
-                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answer',
-                    $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answerfeedback',
-                    $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'hint',
-                    $oldctxid, $this->task->get_userid(), 'question_hint', null, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'correctfeedback',
-                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'partiallycorrectfeedback',
-                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
-            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'incorrectfeedback',
-                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
+            // Check if we are in a new category.
+            if ($currentcatid !== $categoryid) {
+                // Report progress for each category.
+                $progress->progress();
 
-            // Add qtype dependent files
-            $components = backup_qtype_plugin::get_components_and_fileareas($question->qtype);
-            foreach ($components as $component => $fileareas) {
-                foreach ($fileareas as $filearea => $mapping) {
-                    // Use itemid only if mapping is question_created
-                    $itemid = ($mapping == 'question_created') ? $question->itemid : null;
-                    restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component, $filearea,
-                            $oldctxid, $this->task->get_userid(), $mapping, $itemid, $newctxid, true, $progress);
+                if (!$qcatmapping = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                        'question_category', $categoryid)) {
+                    // Something went really wrong, cannot find the question_category for the question_created records.
+                    debugging('Error fetching target context for question', DEBUG_DEVELOPER);
+                    continue;
                 }
+
+                // Calculate source and target contexts.
+                $oldctxid = $qcatmapping->info->contextid;
+                $newctxid = $qcatmapping->parentitemid;
+
+                $this->send_common_files($oldctxid, $newctxid, $progress);
+                $currentcatid = $categoryid;
             }
+
+            $this->send_qtype_files($qtype, $oldctxid, $newctxid, $progress);
         }
-        $questionsrs->close();
+        $catqtypes->close();
         $progress->end_progress();
     }
-}
 
+    /**
+     * Send the common question files to a new context.
+     *
+     * @param int             $oldctxid Old context id.
+     * @param int             $newctxid New context id.
+     * @param \core\progress  $progress Progress object to use.
+     */
+    private function send_common_files($oldctxid, $newctxid, $progress) {
+        // Add common question files (question and question_answer ones).
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'questiontext',
+                $oldctxid, $this->task->get_userid(), 'question_created', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'generalfeedback',
+                $oldctxid, $this->task->get_userid(), 'question_created', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answer',
+                $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answerfeedback',
+                $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'hint',
+                $oldctxid, $this->task->get_userid(), 'question_hint', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'correctfeedback',
+                $oldctxid, $this->task->get_userid(), 'question_created', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'partiallycorrectfeedback',
+                $oldctxid, $this->task->get_userid(), 'question_created', null, $newctxid, true, $progress);
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'incorrectfeedback',
+                $oldctxid, $this->task->get_userid(), 'question_created', null, $newctxid, true, $progress);
+    }
+
+    /**
+     * Send the question type specific files to a new context.
+     *
+     * @param text            $qtype The qtype name to send.
+     * @param int             $oldctxid Old context id.
+     * @param int             $newctxid New context id.
+     * @param \core\progress  $progress Progress object to use.
+     */
+    private function send_qtype_files($qtype, $oldctxid, $newctxid, $progress) {
+        if (!isset($this->qtypecomponentscache[$qtype])) {
+            $this->qtypecomponentscache[$qtype] = backup_qtype_plugin::get_components_and_fileareas($qtype);
+        }
+        $components = $this->qtypecomponentscache[$qtype];
+        foreach ($components as $component => $fileareas) {
+            foreach ($fileareas as $filearea => $mapping) {
+                restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component, $filearea,
+                        $oldctxid, $this->task->get_userid(), $mapping, null, $newctxid, true, $progress);
+            }
+        }
+    }
+}
 
 /**
  * Try to restore aliases and references to external files.

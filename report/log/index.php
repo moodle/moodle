@@ -131,8 +131,6 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
 
-\core\session\manager::write_close();
-
 if (empty($course) || ($course->id == $SITE->id)) {
     admin_externalpage_setup('reportlog', '', null, '', array('pagelayout' => 'report'));
     $PAGE->set_title($SITE->shortname .': '. $strlogs);
@@ -171,6 +169,7 @@ if (empty($readers)) {
             }
             echo $output->render($reportlog);
         } else {
+            \core\session\manager::write_close();
             $reportlog->download();
             exit();
         }
