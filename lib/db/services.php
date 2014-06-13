@@ -825,6 +825,13 @@ $functions = array(
         'type'        => 'read'
     ),
 
+    'core_grading_save_definitions' => array(
+        'classname'   => 'core_grading_external',
+        'methodname'  => 'save_definitions',
+        'description' => 'Save grading definitions',
+        'type'        => 'write'
+    ),
+
     'core_grading_get_gradingform_instances' => array(
         'classname'   => 'core_grading_external',
         'methodname'  => 'get_gradingform_instances',

@@ -226,6 +226,7 @@ class core_grading_external extends external_api {
                 'cmid'    => new external_value(PARAM_INT, 'course module id'),
                 'contextid'  => new external_value(PARAM_INT, 'context id'),
                 'component' => new external_value(PARAM_TEXT, 'component name'),
+                'areaname' => new external_value(PARAM_TEXT, 'area name'),
                 'activemethod' => new external_value(PARAM_TEXT, 'active method', VALUE_OPTIONAL),
                 'definitions'  => new external_multiple_structure(self::definition(), 'definitions')
             )
@@ -240,11 +241,11 @@ class core_grading_external extends external_api {
     private static function definition() {
         global $CFG;
         $definition = array();
-        $definition['id']                = new external_value(PARAM_INT, 'definition id');
+        $definition['id']                = new external_value(PARAM_INT, 'definition id', VALUE_OPTIONAL);
         $definition['method']            = new external_value(PARAM_TEXT, 'method');
         $definition['name']              = new external_value(PARAM_TEXT, 'name');
-        $definition['description']       = new external_value(PARAM_RAW, 'description');
-        $definition['descriptionformat'] = new external_format_value('description');
+        $definition['description']       = new external_value(PARAM_RAW, 'description', VALUE_OPTIONAL);
+        $definition['descriptionformat'] = new external_format_value('description', VALUE_OPTIONAL);
         $definition['status']            = new external_value(PARAM_INT, 'status');
         $definition['copiedfromid']      = new external_value(PARAM_INT, 'copied from id', VALUE_OPTIONAL);
         $definition['timecreated']       = new external_value(PARAM_INT, 'creation time');
@@ -440,6 +441,142 @@ class core_grading_external extends external_api {
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    /**
+     * Describes the parameters for save_definitions
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.8
+     */
+    public static function save_definitions_parameters() {
+        return new external_function_parameters(
+            array(
+                'areas' => new external_multiple_structure(self::grading_area(), 'areas with definitions to save')
+            )
+        );
+    }
+
+    /**
+     * Saves the areas and definitions
+     * @param array $areas array of areas containing definitions to be saved
+     * @return null
+     * @throws invalid_parameter_exception
+     * @since Moodle 2.8
+     */
+    public static function save_definitions($areas) {
+        $params = self::validate_parameters(self::save_definitions_parameters(),
+                                            array('areas' => $areas));
+
+        foreach ($params['areas'] as $area) {
+
+            $context = context::instance_by_id($area['contextid']);
+            require_capability('moodle/grade:managegradingforms', $context);
+            $gradingmanager = get_grading_manager($context, $area['component'], $area['areaname']);
+            $gradingmanager->set_active_method($area['activemethod']);
+            $availablemethods = $gradingmanager->get_available_methods();
+
+            foreach ($area['definitions'] as $definition) {
+                if (array_key_exists($definition['method'], $availablemethods)) {
+                    $controller = $gradingmanager->get_controller($definition['method']);
+                    $controller->update_definition(self::create_definition_object($definition));
+                } else {
+                    throw new invalid_parameter_exception('Unknown Grading method: '. $definition['method']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Describes the return value for save_definitions
+     *
+     * @return external_single_structure
+     * @since Moodle 2.8
+     */
+    public static function save_definitions_returns() {
+        return null;
+    }
+
+    /**
+     * Creates a definition stdClass object using the values from the definition
+     * array that is passed in as a parameter
+     * 
+     * @param array $definition
+     * @return stdClass definition object
+     * @since Moodle 2.8
+     */
+    private static function create_definition_object($definition) {
+        global $CFG;
+
+        $method = $definition['method'];
+        $definitionobject = new stdClass();
+        foreach ($definition as $key => $value) {
+            if (!is_array($value)) {
+                $definitionobject->$key = $value;
+            }
+        }
+        $text = '';
+        $format = FORMAT_MOODLE;
+        if (isset($definition['description'])) {
+            $text = $definition['description'];
+            if (isset($definition['descriptionformat'])) {
+                $format = $definition['descriptionformat'];
+            }
+        }
+        $definitionobject->description_editor = array('text' => $text, 'format' => $format);
+
+        require_once("$CFG->libdir/filelib.php");
+        require_once($CFG->dirroot.'/grade/grading/form/'.$method.'/lib.php');
+        $details  = call_user_func('gradingform_'.$method.'_controller::get_external_definition_details');
+        $methodarray = array();
+        foreach (array_keys($details) as $definitionkey) {
+            $items = array();
+            $idnumber = 1;
+            foreach ($definition[$method][$definitionkey] as $item) {
+                $processeditem = self::set_new_ids($item, $idnumber);
+                $items[$processeditem['id']] = $processeditem;
+                $idnumber++;
+            }
+            $definitionobjectkey = substr($definitionkey, strlen($method.'_'));
+            $methodarray[$definitionobjectkey] = $items;
+            $definitionobject->$method = $methodarray;
+        }
+
+        return $definitionobject;
+    }
+
+    /**
+     * Recursively iterates through arrays. Any array without an id key-value combination
+     * is assumed to be an array of values to be inserted and an id key-value is added with
+     * the value matching the regex '/^NEWID\d+$/' that is expected by each grading form implementation.
+     * 
+     * @param array $arraytoset the array to be processed
+     * @param int $startnumber the starting number for the new id numbers
+     * @return array with missing id keys added for all arrays
+     * @since Moodle 2.8
+     */
+    private static function set_new_ids($arraytoset, $startnumber) {
+        $result = array();
+        $foundid = false;
+        $number = $startnumber;
+        foreach ($arraytoset as $key1 => $value1) {
+            if (is_array($value1)) {
+                foreach ($value1 as $key2 => $value2) {
+                    $processedvalue = self::set_new_ids($value2, $number);
+                    $result[$key1][$processedvalue['id']] = $processedvalue;
+                    $number++;
+                }
+            } else {
+                $result[$key1] = $value1;
+            }
+            if ($key1 === 'id') {
+                $foundid = true;
+            }
+        }
+        if (!$foundid) {
+            $result['id'] = 'NEWID'.$number;
+        }
+        return $result;
     }
 
 }

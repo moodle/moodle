@@ -298,4 +298,344 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($levelid, $criteria[$criterionid]['levelid']);
         $this->assertEquals('excellent work', $criteria[$criterionid]['remark']);
     }
+
+    /**
+     * 
+     * Test save_definitions for rubric grading method
+     */
+    public function test_save_definitions_rubric() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment.
+        $course = self::getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params['course'] = $course->id;
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = context_module::instance($cm->id);
+        $coursecontext = context_course::instance($course->id);
+
+        // Create the teacher.
+        $teacher = self::getDataGenerator()->create_user();
+        $USER->id = $teacher->id;
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->assignUserCapability('moodle/grade:managegradingforms', $context->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id,
+                                              $course->id,
+                                              $teacherrole->id);
+
+        // The grading area to insert.
+        $gradingarea = array(
+            'cmid' => $cm->id,
+            'contextid' => $context->id,
+            'component' => 'mod_assign',
+            'areaname'  => 'submissions',
+            'activemethod' => 'rubric'
+        );
+
+        // The rubric definition to insert.
+        $rubricdefinition = array(
+            'method' => 'rubric',
+            'name' => 'test',
+            'description' => '',
+            'status' => 20,
+            'copiedfromid' => 1,
+            'timecreated' => 1,
+            'usercreated' => $teacher->id,
+            'timemodified' => 1,
+            'usermodified' => $teacher->id,
+            'timecopied' => 0
+        );
+
+        // The criterion to insert.
+        $rubriccriteria1 = array (
+             'sortorder' => 1,
+             'description' => 'Demonstrate an understanding of disease control',
+             'descriptionformat' => 0
+        );
+
+        // 3 levels for the criterion.
+        $rubriclevel1 = array (
+            'score' => 50,
+            'definition' => 'pass',
+            'definitionformat' => 0
+        );
+        $rubriclevel2 = array (
+            'score' => 100,
+            'definition' => 'excellent',
+            'definitionformat' => 0
+        );
+        $rubriclevel3 = array (
+            'score' => 0,
+            'definition' => 'fail',
+            'definitionformat' => 0
+        );
+
+        $rubriccriteria1['levels'] = array($rubriclevel1, $rubriclevel2, $rubriclevel3);
+        $rubricdefinition['rubric'] = array('rubric_criteria' => array($rubriccriteria1));
+        $gradingarea['definitions'] = array($rubricdefinition);
+
+        $results = core_grading_external::save_definitions(array($gradingarea));
+
+        $area = $DB->get_record('grading_areas',
+                                array('contextid' => $context->id, 'component' => 'mod_assign', 'areaname' => 'submissions'),
+                                '*', MUST_EXIST);
+        $this->assertEquals($area->activemethod, 'rubric');
+
+        $definition = $DB->get_record('grading_definitions', array('areaid' => $area->id, 'method' => 'rubric'), '*', MUST_EXIST);
+        $this->assertEquals($rubricdefinition['name'], $definition->name);
+
+        $criterion1 = $DB->get_record('gradingform_rubric_criteria', array('definitionid' => $definition->id), '*', MUST_EXIST);
+        $levels = $DB->get_records('gradingform_rubric_levels', array('criterionid' => $criterion1->id));
+        $validlevelcount = 0;
+        $expectedvalue = true;
+        foreach ($levels as $level) {
+            if ($level->score == 0) {
+                $this->assertEquals('fail', $level->definition);
+                $validlevelcount++;
+            } else if ($level->score == 50) {
+                $this->assertEquals('pass', $level->definition);
+                $validlevelcount++;
+            } else if ($level->score == 100) {
+                $this->assertEquals('excellent', $level->definition);
+                $excellentlevelid = $level->id;
+                $validlevelcount++;
+            } else {
+                $expectedvalue = false;
+            }
+        }
+        $this->assertEquals(3, $validlevelcount);
+        $this->assertTrue($expectedvalue, 'A level with an unexpected score was found');
+
+        // Test add a new level and modify an existing.
+        // Test add a new criteria and modify an existing.
+        // Test modify a definition.
+
+        // The rubric definition to update.
+        $rubricdefinition = array(
+            'id' => $definition->id,
+            'method' => 'rubric',
+            'name' => 'test changed',
+            'description' => '',
+            'status' => 20,
+            'copiedfromid' => 1,
+            'timecreated' => 1,
+            'usercreated' => $teacher->id,
+            'timemodified' => 1,
+            'usermodified' => $teacher->id,
+            'timecopied' => 0
+        );
+
+        // A criterion to update.
+        $rubriccriteria1 = array (
+             'id' => $criterion1->id,
+             'sortorder' => 1,
+             'description' => 'Demonstrate an understanding of rabies control',
+             'descriptionformat' => 0
+        );
+
+        // A new criterion to add.
+        $rubriccriteria2 = array (
+             'sortorder' => 2,
+             'description' => 'Demonstrate an understanding of anthrax control',
+             'descriptionformat' => 0
+        );
+
+        // A level to update.
+        $rubriclevel2 = array (
+            'id' => $excellentlevelid,
+            'score' => 75,
+            'definition' => 'excellent',
+            'definitionformat' => 0
+        );
+
+        // A level to insert.
+        $rubriclevel4 = array (
+            'score' => 100,
+            'definition' => 'superb',
+            'definitionformat' => 0
+        );
+
+        $rubriccriteria1['levels'] = array($rubriclevel1, $rubriclevel2, $rubriclevel3, $rubriclevel4);
+        $rubricdefinition['rubric'] = array('rubric_criteria' => array($rubriccriteria1, $rubriccriteria2));
+        $gradingarea['definitions'] = array($rubricdefinition);
+
+        $results = core_grading_external::save_definitions(array($gradingarea));
+
+        // Test definition name change.
+        $definition = $DB->get_record('grading_definitions', array('id' => $definition->id), '*', MUST_EXIST);
+        $this->assertEquals('test changed', $definition->name);
+
+        // Test criteria description change.
+        $modifiedcriteria = $DB->get_record('gradingform_rubric_criteria', array('id' => $criterion1->id), '*', MUST_EXIST);
+        $this->assertEquals('Demonstrate an understanding of rabies control', $modifiedcriteria->description);
+
+        // Test new criteria added.
+        $newcriteria = $DB->get_record('gradingform_rubric_criteria',
+                                       array('definitionid' => $definition->id, 'sortorder' => 2), '*', MUST_EXIST);
+        $this->assertEquals('Demonstrate an understanding of anthrax control', $newcriteria->description);
+
+        // Test excellent level score change from 100 to 75.
+        $modifiedlevel = $DB->get_record('gradingform_rubric_levels', array('id' => $excellentlevelid), '*', MUST_EXIST);
+        $this->assertEquals(75, $modifiedlevel->score);
+
+        // Test new superb level added.
+        $newlevel = $DB->get_record('gradingform_rubric_levels',
+                                       array('criterionid' => $criterion1->id, 'score' => 100), '*', MUST_EXIST);
+        $this->assertEquals('superb', $newlevel->definition);
+
+        // Test remove a level
+        // Test remove a criterion
+        // The rubric definition with the removed criterion and levels.
+        $rubricdefinition = array(
+            'id' => $definition->id,
+            'method' => 'rubric',
+            'name' => 'test changed',
+            'description' => '',
+            'status' => 20,
+            'copiedfromid' => 1,
+            'timecreated' => 1,
+            'usercreated' => $teacher->id,
+            'timemodified' => 1,
+            'usermodified' => $teacher->id,
+            'timecopied' => 0
+        );
+
+        $rubriccriteria1 = array (
+             'id' => $criterion1->id,
+             'sortorder' => 1,
+             'description' => 'Demonstrate an understanding of rabies control',
+             'descriptionformat' => 0
+        );
+
+        $rubriclevel1 = array (
+            'score' => 0,
+            'definition' => 'fail',
+            'definitionformat' => 0
+        );
+        $rubriclevel2 = array (
+            'score' => 100,
+            'definition' => 'pass',
+            'definitionformat' => 0
+        );
+
+        $rubriccriteria1['levels'] = array($rubriclevel1, $rubriclevel2);
+        $rubricdefinition['rubric'] = array('rubric_criteria' => array($rubriccriteria1));
+        $gradingarea['definitions'] = array($rubricdefinition);
+
+        $results = core_grading_external::save_definitions(array($gradingarea));
+
+        // Only 1 criterion should now exist.
+        $this->assertEquals(1, $DB->count_records('gradingform_rubric_criteria', array('definitionid' => $definition->id)));
+        $criterion1 = $DB->get_record('gradingform_rubric_criteria', array('definitionid' => $definition->id), '*', MUST_EXIST);
+        $this->assertEquals('Demonstrate an understanding of rabies control', $criterion1->description);
+        // This criterion should only have 2 levels.
+        $this->assertEquals(2, $DB->count_records('gradingform_rubric_levels', array('criterionid' => $criterion1->id)));
+
+        $gradingarea['activemethod'] = 'invalid';
+        $this->setExpectedException('moodle_exception');
+        $results = core_grading_external::save_definitions(array($gradingarea));
+    }
+
+    /**
+     * 
+     * Tests save_definitions for the marking guide grading method
+     */
+    public function test_save_definitions_marking_guide() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment.
+        $course = self::getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params['course'] = $course->id;
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = context_module::instance($cm->id);
+        $coursecontext = context_course::instance($course->id);
+
+        // Create the teacher.
+        $teacher = self::getDataGenerator()->create_user();
+        $USER->id = $teacher->id;
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->assignUserCapability('moodle/grade:managegradingforms', $context->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id,
+                                              $course->id,
+                                              $teacherrole->id);
+
+        // Test insert a grading area with guide definition, criteria and comments.
+        $gradingarea = array(
+            'cmid' => $cm->id,
+            'contextid' => $context->id,
+            'component' => 'mod_assign',
+            'areaname'  => 'submissions',
+            'activemethod' => 'guide'
+        );
+
+        $guidedefinition = array(
+            'method' => 'guide',
+            'name' => 'test',
+            'description' => '',
+            'status' => 20,
+            'copiedfromid' => 1,
+            'timecreated' => 1,
+            'usercreated' => $teacher->id,
+            'timemodified' => 1,
+            'usermodified' => $teacher->id,
+            'timecopied' => 0
+        );
+
+        $guidecomment = array(
+             'sortorder' => 1,
+             'description' => 'Students need to show that they understand the control of zoonoses',
+             'descriptionformat' => 0
+        );
+        $guidecriteria1 = array (
+             'sortorder' => 1,
+             'shortname' => 'Rabies Control',
+             'description' => 'Understand rabies control techniques',
+             'descriptionformat' => 0,
+             'descriptionmarkers' => 'Student must demonstrate that they understand rabies control',
+             'descriptionmarkersformat' => 0,
+             'maxscore' => 50
+        );
+        $guidecriteria2 = array (
+             'sortorder' => 2,
+             'shortname' => 'Anthrax Control',
+             'description' => 'Understand anthrax control',
+             'descriptionformat' => 0,
+             'descriptionmarkers' => 'Student must demonstrate that they understand anthrax control',
+             'descriptionmarkersformat' => 0,
+             'maxscore' => 50
+        );
+
+        $guidedefinition['guide'] = array('guide_criteria' => array($guidecriteria1, $guidecriteria2),
+                                          'guide_comments' => array($guidecomment));
+        $gradingarea['definitions'] = array($guidedefinition);
+
+        $results = core_grading_external::save_definitions(array($gradingarea));
+        $area = $DB->get_record('grading_areas',
+                                array('contextid' => $context->id, 'component' => 'mod_assign', 'areaname' => 'submissions'),
+                                '*', MUST_EXIST);
+        $this->assertEquals($area->activemethod, 'guide');
+
+        $definition = $DB->get_record('grading_definitions', array('areaid' => $area->id, 'method' => 'guide'), '*', MUST_EXIST);
+        $this->assertEquals($guidedefinition['name'], $definition->name);
+        $this->assertEquals(2, $DB->count_records('gradingform_guide_criteria', array('definitionid' => $definition->id)));
+        $this->assertEquals(1, $DB->count_records('gradingform_guide_comments', array('definitionid' => $definition->id)));
+
+        // Test removal of a criteria.
+        $guidedefinition['guide'] = array('guide_criteria' => array($guidecriteria1),
+                                          'guide_comments' => array($guidecomment));
+        $gradingarea['definitions'] = array($guidedefinition);
+        $results = core_grading_external::save_definitions(array($gradingarea));
+        $this->assertEquals(1, $DB->count_records('gradingform_guide_criteria', array('definitionid' => $definition->id)));
+
+        // Test an invalid method in the definition.
+        $guidedefinition['method'] = 'invalid';
+        $gradingarea['definitions'] = array($guidedefinition);
+        $this->setExpectedException('invalid_parameter_exception');
+        $results = core_grading_external::save_definitions(array($gradingarea));
+    }
 }

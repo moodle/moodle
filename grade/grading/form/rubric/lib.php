@@ -668,15 +668,15 @@ class gradingform_rubric_controller extends gradingform_controller {
         $rubric_criteria = new external_multiple_structure(
             new external_single_structure(
                 array(
-                   'id'   => new external_value(PARAM_INT, 'criterion id'),
-                   'sortorder' => new external_value(PARAM_INT, 'sortorder'),
+                   'id'   => new external_value(PARAM_INT, 'criterion id', VALUE_OPTIONAL),
+                   'sortorder' => new external_value(PARAM_INT, 'sortorder', VALUE_OPTIONAL),
                    'description' => new external_value(PARAM_RAW, 'description', VALUE_OPTIONAL),
                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
                    'levels' => new external_multiple_structure(
                                    new external_single_structure(
                                        array(
-                                        'id' => new external_value(PARAM_INT, 'level id'),
-                                        'score' => new external_value(PARAM_FLOAT, 'score'),
+                                        'id' => new external_value(PARAM_INT, 'level id', VALUE_OPTIONAL),
+                                        'score' => new external_value(PARAM_FLOAT, 'score', VALUE_OPTIONAL),
                                         'definition' => new external_value(PARAM_RAW, 'definition', VALUE_OPTIONAL),
                                         'definitionformat' => new external_format_value('definition', VALUE_OPTIONAL)
                                        )
