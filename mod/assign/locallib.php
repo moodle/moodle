@@ -5971,7 +5971,16 @@ class assign {
             }
         }
         $mform->addElement('selectyesno', 'sendstudentnotifications', get_string('sendstudentnotifications', 'assign'));
-        $mform->setDefault('sendstudentnotifications', $this->get_instance()->sendstudentnotifications);
+        // Get assignment visibility information for student.
+        $modinfo = get_fast_modinfo($settings->course, $userid);
+        $cm = $modinfo->get_cm($this->get_course_module()->id);
+        // Don't allow notification to be sent if student can't access assignment.
+        if (!$cm->uservisible) {
+            $mform->setDefault('sendstudentnotifications', 0);
+            $mform->freeze('sendstudentnotifications');
+        } else {
+            $mform->setDefault('sendstudentnotifications', $this->get_instance()->sendstudentnotifications);
+        }
 
         $mform->addElement('hidden', 'action', 'submitgrade');
         $mform->setType('action', PARAM_ALPHA);
