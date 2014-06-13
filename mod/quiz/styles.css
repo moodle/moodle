@@ -1269,7 +1269,6 @@ bank window's title is prominent enough*/
 }
 #page-mod-quiz-edit.dir-rtl div.editq div.question div.content {
     float: right;
-    height: 40px;
 }
 #page-mod-quiz-edit.dir-rtl div.question div.content div.points {
     left: 60px;
