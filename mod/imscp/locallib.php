@@ -105,9 +105,11 @@ function imscp_parse_structure($imscp, $context) {
  */
 function imscp_parse_manifestfile($manifestfilecontents) {
     $doc = new DOMDocument();
+    $oldentities = libxml_disable_entity_loader(true);
     if (!$doc->loadXML($manifestfilecontents, LIBXML_NONET)) {
         return null;
     }
+    libxml_disable_entity_loader($oldentities);
 
     // we put this fake URL as base in order to detect path changes caused by xml:base attributes
     $doc->documentURI = 'http://grrr/';
