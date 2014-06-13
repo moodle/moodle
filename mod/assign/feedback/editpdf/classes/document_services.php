@@ -438,8 +438,10 @@ class document_services {
         if (!empty($files)) {
             $first = reset($files);
             if (!$readonly && $first->get_timemodified() < $submission->timemodified) {
-                // Image files are stale - regenerate them, except in readonly mode.
+                // Image files are stale, we need to regenerate them, except in readonly mode.
+                // We also need to remove the draft annotations and comments associated with this attempt.
                 $fs->delete_area_files($contextid, $component, $filearea, $itemid);
+                page_editor::delete_draft_content($itemid);
                 $files = array();
             } else {
 
