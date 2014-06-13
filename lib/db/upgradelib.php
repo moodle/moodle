@@ -348,3 +348,23 @@ function upgrade_course_modules_sequences() {
 
     // Note that we don't need to reset course cache here because it is reset automatically after upgrade.
 }
+
+/**
+ * Updates the mime-types for files that exist in the database, based on their
+ * file extension.
+ *
+ * @param array $filetypes Array with file extension as the key, and mimetype as the value
+ */
+function upgrade_mimetypes($filetypes) {
+    global $DB;
+    $select = $DB->sql_like('filename', '?', false);
+    foreach ($filetypes as $extension=>$mimetype) {
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            $mimetype,
+            $select,
+            array($extension)
+        );
+    }
+}

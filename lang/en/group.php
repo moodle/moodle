@@ -61,6 +61,7 @@ $string['enrolmentkey'] = 'Enrolment key';
 $string['enrolmentkey_help'] = 'An enrolment key enables access to the course to be restricted to only those who know the key. If a group enrolment key is specified, then not only will entering that key let the user into the course, but it will also automatically make them a member of this group.
 
 Note: Group enrolment keys must be enabled in the self enrolment settings and an enrolment key for the course must also be specified.';
+$string['enrolmentkeyalreadyinuse'] = 'This enrolment key is already used for another group.';
 $string['erroraddremoveuser'] = 'Error adding/removing user {$a} to group';
 $string['erroreditgroup'] = 'Error creating/updating group {$a}';
 $string['erroreditgrouping'] = 'Error creating/updating grouping {$a}';

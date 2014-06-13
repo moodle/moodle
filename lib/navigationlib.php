@@ -1001,6 +1001,8 @@ class global_navigation extends navigation_node {
     protected $expansionlimit = 0;
     /** @var int userid to allow parent to see child's profile page navigation */
     protected $useridtouseforparentchecks = 0;
+    /** @var cache_session A cache that stores information on expanded courses */
+    protected $cacheexpandcourse = null;
 
     /** Used when loading categories to load all top level categories [parent = 0] **/
     const LOAD_ROOT_CATEGORIES = 0;
@@ -1166,6 +1168,14 @@ class global_navigation extends navigation_node {
 
                 // Not enrolled, can't view, and hasn't switched roles
                 if (!can_access_course($course)) {
+                    if ($coursenode->isexpandable === true) {
+                        // Obviously the situation has changed, update the cache and adjust the node.
+                        // This occurs if the user access to a course has been revoked (one way or another) after
+                        // initially logging in for this session.
+                        $this->get_expand_course_cache()->set($course->id, 1);
+                        $coursenode->isexpandable = true;
+                        $coursenode->nodetype = self::NODETYPE_BRANCH;
+                    }
                     // Very ugly hack - do not force "parents" to enrol into course their child is enrolled in,
                     // this hack has been propagated from user/view.php to display the navigation node. (MDL-25805)
                     if (!$this->current_user_is_parent_role()) {
@@ -1173,6 +1183,15 @@ class global_navigation extends navigation_node {
                         $canviewcourseprofile = false;
                         break;
                     }
+                }
+
+                if ($coursenode->isexpandable === false) {
+                    // Obviously the situation has changed, update the cache and adjust the node.
+                    // This occurs if the user has been granted access to a course (one way or another) after initially
+                    // logging in for this session.
+                    $this->get_expand_course_cache()->set($course->id, 1);
+                    $coursenode->isexpandable = true;
+                    $coursenode->nodetype = self::NODETYPE_BRANCH;
                 }
 
                 // Add the essentials such as reports etc...
@@ -2373,6 +2392,8 @@ class global_navigation extends navigation_node {
         // This is the name that will be shown for the course.
         $coursename = empty($CFG->navshowfullcoursenames) ? $shortname : $fullname;
 
+        // Can the user expand the course to see its content.
+        $canexpandcourse = true;
         if ($issite) {
             $parent = $this;
             $url = null;
@@ -2392,6 +2413,8 @@ class global_navigation extends navigation_node {
         } else {
             $parent = $this->rootnodes['courses'];
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
+            // They can only expand the course if they can access it.
+            $canexpandcourse = $this->can_expand_course($course);
             if (!empty($course->category) && $this->show_categories($coursetype == self::COURSE_MY)) {
                 if (!$this->is_category_fully_loaded($course->category)) {
                     // We need to load the category structure for this course
@@ -2408,16 +2431,62 @@ class global_navigation extends navigation_node {
         }
 
         $coursenode = $parent->add($coursename, $url, self::TYPE_COURSE, $shortname, $course->id);
-        $coursenode->nodetype = self::NODETYPE_BRANCH;
         $coursenode->hidden = (!$course->visible);
         // We need to decode &amp;'s here as they will have been added by format_string above and attributes will be encoded again
         // later.
         $coursenode->title(str_replace('&amp;', '&', $fullname));
+        if ($canexpandcourse) {
+            // This course can be expanded by the user, make it a branch to make the system aware that its expandable by ajax.
+            $coursenode->nodetype = self::NODETYPE_BRANCH;
+            $coursenode->isexpandable = true;
+        } else {
+            $coursenode->nodetype = self::NODETYPE_LEAF;
+            $coursenode->isexpandable = false;
+        }
         if (!$forcegeneric) {
             $this->addedcourses[$course->id] = $coursenode;
         }
 
         return $coursenode;
+    }
+
+    /**
+     * Returns a cache instance to use for the expand course cache.
+     * @return cache_session
+     */
+    protected function get_expand_course_cache() {
+        if ($this->cacheexpandcourse === null) {
+            $this->cacheexpandcourse = cache::make('core', 'navigation_expandcourse');
+        }
+        return $this->cacheexpandcourse;
+    }
+
+    /**
+     * Checks if a user can expand a course in the navigation.
+     *
+     * We use a cache here because in order to be accurate we need to call can_access_course which is a costly function.
+     * Because this functionality is basic + non-essential and because we lack good event triggering this cache
+     * permits stale data.
+     * In the situation the user is granted access to a course after we've initialised this session cache the cache
+     * will be stale.
+     * It is brought up to date in only one of two ways.
+     *   1. The user logs out and in again.
+     *   2. The user browses to the course they've just being given access to.
+     *
+     * Really all this controls is whether the node is shown as expandable or not. It is uber un-important.
+     *
+     * @param stdClass $course
+     * @return bool
+     */
+    protected function can_expand_course($course) {
+        $cache = $this->get_expand_course_cache();
+        $canexpand = $cache->get($course->id);
+        if ($canexpand === false) {
+            $canexpand = isloggedin() && can_access_course($course);
+            $canexpand = (int)$canexpand;
+            $cache->set($course->id, $canexpand);
+        }
+        return ($canexpand === 1);
     }
 
     /**
