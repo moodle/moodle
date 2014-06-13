@@ -2477,4 +2477,26 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expectedlegacydata, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test duplicate_module()
+     */
+    public function test_duplicate_module() {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $res = self::getDataGenerator()->create_module('resource', array('course' => $course));
+        $cm = get_coursemodule_from_id('resource', $res->cmid, 0, false, MUST_EXIST);
+
+        $newcm = duplicate_module($course, $cm);
+
+        // Make sure they are the same, except obvious id changes.
+        foreach ($cm as $prop => $value) {
+            if ($prop == 'id' || $prop == 'url' || $prop == 'instance' || $prop == 'added') {
+                // Ignore obviously different properties.
+                continue;
+            }
+            $this->assertEquals($value, $newcm->$prop);
+        }
+    }
 }
