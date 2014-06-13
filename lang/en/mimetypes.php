@@ -67,6 +67,7 @@ $string['group:archive'] = 'Archive files';
 $string['group:audio'] = 'Audio files';
 $string['group:document'] = 'Document files';
 $string['group:html_audio'] = 'Audio files natively supported by browsers';
+$string['group:html_track'] = 'HTML track files';
 $string['group:html_video'] = 'Video files natively supported by browsers';
 $string['group:image'] = 'Image files';
 $string['group:presentation'] = 'Presentation files';
