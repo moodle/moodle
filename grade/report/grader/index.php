@@ -125,6 +125,14 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('pluginname', 'gradereport_grader');
 
+$event = \gradereport_grader\event\report_viewed::create(
+    array(
+        'context' => $context,
+        'courseid' => $courseid,
+    )
+);
+$event->trigger();
+
 // Print header
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 

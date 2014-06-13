@@ -251,6 +251,12 @@ class course_module_viewed_noinit extends \core\event\course_module_viewed {
 }
 
 /**
+ * Event for testing core\event\grade_report_viewed.
+ */
+class grade_report_viewed extends \core\event\grade_report_viewed {
+}
+
+/**
  * Event to test context used in event functions
  */
 class context_used_in_event extends \core\event\base {
