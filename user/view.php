@@ -326,8 +326,13 @@ if (!isset($hiddenfields['mycourses'])) {
                         }
                         $class = 'class="dimmed"';
                     }
-                    $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}" .
-                            ($showallcourses ? "&amp;showallcourses=1" : "") . "\" $class >" . $cfullname . "</a>, ";
+                    $params = array('id' => $user->id, 'course' => $mycourse->id);
+                    if ($showallcourses) {
+                        $params['showallcourses'] = 1;
+                    }
+                    $url = new moodle_url('/user/view.php', $params);
+                    $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), array('class' => $class));
+                    $courselisting .= ', ';
                 } else {
                     $courselisting .= $cfullname . ", ";
                     $PAGE->navbar->add($cfullname);
@@ -335,8 +340,8 @@ if (!isset($hiddenfields['mycourses'])) {
             }
             $shown++;
             if (!$showallcourses && $shown >= 20) {
-                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}" .
-                "&amp;course=$courseid&amp;showallcourses=1\">...</a>";
+                $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid, 'showallcourses' => 1));
+                $courselisting .= html_writer::link($url, '...');
                 break;
             }
         }
