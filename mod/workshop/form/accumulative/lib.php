@@ -105,6 +105,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
     public function __construct(workshop $workshop) {
         $this->workshop         = $workshop;
         $this->dimensions       = $this->load_fields();
+        $this->config           = $this->load_config();
         $this->descriptionopts  = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => -1);
     }
 
@@ -120,6 +121,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         require_once(dirname(__FILE__) . '/edit_form.php');
 
         $fields             = $this->prepare_form_fields($this->dimensions);
+        $fields->config_algorithm = $this->config->additive;
         $nodimensions       = count($this->dimensions);
         $norepeatsdefault   = max($nodimensions + self::ADDDIMS, self::MINDIMS);
         $norepeats          = optional_param('norepeats', $norepeatsdefault, PARAM_INT);    // number of dimensions
@@ -167,9 +169,20 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $workshopid = $data->workshopid;
         $norepeats  = $data->norepeats;
 
+        $additive     = $data->config_algorithm;
+
         $data       = $this->prepare_database_fields($data);
         $records    = $data->accumulative;  // records to be saved into {workshopform_accumulative}
         $todelete   = array();              // dimension ids to be deleted
+
+        if ($DB->record_exists('workshopform_accum_config', array('workshopid' => $this->workshop->id))) {
+            $DB->set_field('workshopform_accum_config', 'additive', $additive, array('workshopid' => $this->workshop->id));
+        } else {
+            $record = new stdclass();
+            $record->workshopid = $this->workshop->id;
+            $record->layout     = $layout;
+            $DB->insert_record('workshopform_accum_config', $record, false);
+        }
 
         for ($i=0; $i < $norepeats; $i++) {
             $record = $records[$i];
@@ -386,8 +399,9 @@ class workshop_accumulative_strategy implements workshop_strategy {
      */
     public static function delete_instance($workshopid) {
         global $DB;
-
+        
         $DB->delete_records('workshopform_accumulative', array('workshopid' => $workshopid));
+        $DB->delete_records('workshopform_accum_config', array('workshopid' => $workshopid));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -409,6 +423,15 @@ class workshop_accumulative_strategy implements workshop_strategy {
         $params = array('workshopid' => $this->workshop->id);
 
         return $DB->get_records_sql($sql, $params);
+    }
+    
+    protected function load_config() {
+        global $DB;
+
+        if (!$config = $DB->get_record('workshopform_accum_config', array('workshopid' => $this->workshop->id), 'additive')) {
+            $config = (object)array('additive' => 0);
+        }
+        return $config;
     }
 
     /**
@@ -542,15 +565,23 @@ class workshop_accumulative_strategy implements workshop_strategy {
                 // does not influence the final grade
                 continue;
             }
-            if ($dimension->grade < 0) {
-                // this is a scale
-                $scaleid    = -$dimension->grade;
-                $sumgrades  += $this->scale_to_grade($scaleid, $grade->grade) * $dimension->weight * 100;
-                $sumweights += $dimension->weight;
+            
+            if ($this->config->additive) {
+                if ($dimension->grade >= 0) {
+                    $sumgrades  += $grade->grade * $dimension->weight * 100;
+                    $sumweights += $dimension->weight * $dimension->grade;
+                } // todo - handle scales
             } else {
-                // regular grade
-                $sumgrades  += ($grade->grade / $dimension->grade) * $dimension->weight * 100;
-                $sumweights += $dimension->weight;
+                if ($dimension->grade < 0) {
+                    // this is a scale
+                    $scaleid    = -$dimension->grade;
+                    $sumgrades  += $this->scale_to_grade($scaleid, $grade->grade) * $dimension->weight * 100;
+                    $sumweights += $dimension->weight;
+                } else {
+                    // regular grade
+                    $sumgrades  += ($grade->grade / $dimension->grade) * $dimension->weight * 100;
+                    $sumweights += $dimension->weight;
+                }
             }
         }
 

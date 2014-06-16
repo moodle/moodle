@@ -47,3 +47,8 @@ $string['scalename4'] = 'Excellent/Very poor (4 point)';
 $string['scalename5'] = 'Excellent/Very poor (5 point)';
 $string['scalename6'] = 'Excellent/Very poor (7 point)';
 $string['verypoor'] = 'Very poor';
+
+$string['configuration'] = 'Configuration';
+$string['algomean'] = 'Mean';
+$string['algoadditive'] = 'Additive';
+$string['algorithm'] = 'Accumulation algorithm';

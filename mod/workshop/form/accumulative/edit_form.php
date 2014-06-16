@@ -72,6 +72,16 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         $mform->addElement('submit', 'noadddims', get_string('addmoredimensions', 'workshopform_accumulative',
                 workshop_accumulative_strategy::ADDDIMS));
         $mform->closeHeaderBefore('noadddims');
+        
+        $mform->addElement('header', 'configheader', get_string('configuration', 'workshopform_accumulative'));
+        $algos = array();
+        $algos[] = $mform->createElement('radio', 'config_algorithm', '',
+                get_string('algomean', 'workshopform_accumulative'), 0);
+        $algos[] = $mform->createElement('radio', 'config_algorithm', '',
+                get_string('algoadditive', 'workshopform_accumulative'), 1);
+        $mform->addGroup($algos, 'algos', get_string('algorithm', 'workshopform_accumulative'), array('<br />'), false);
+        $mform->setDefault('config_algorithm', 'mean');
+        
         $this->set_data($current);
     }
 }

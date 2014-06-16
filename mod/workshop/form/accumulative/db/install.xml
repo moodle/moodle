@@ -19,5 +19,16 @@
         <KEY NAME="workshop_fk" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="workshopform_accum_config" COMMENT="Configuration table for the Accumulative grading strategy">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of workshop this configuartion applies for"/>
+        <FIELD NAME="additive" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, the dimension grades are added, not averaged"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="uqfk_workshop" TYPE="unique" FIELDS="workshopid"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>
