@@ -183,7 +183,6 @@ if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
 $transaction = $DB->start_delegated_transaction();
 
 $attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
-quiz_fire_attempt_started_event($attempt, $quizobj);
 
 $transaction->allow_commit();
 

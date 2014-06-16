@@ -1,5 +1,12 @@
 This files describes API changes in the quiz code.
 
+=== 2.7.1 ===
+
+* The function quiz_fire_attempt_started_event has been removed. This function
+  should not have been used outside the quiz, but if you were using it, you should
+  trigger the event outside this function. Note that the appropriate start event is
+  fired automatically by the quiz_attempt_save_started function.
+
 === 2.7 ===
 
 * The old quiz.questions database column (comma-separated list of question ids)
