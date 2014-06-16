@@ -16,7 +16,6 @@ class course_reset_form extends moodleform {
         $mform->addElement('date_selector', 'reset_start_date', get_string('startdate'), array('optional'=>true));
         $mform->addHelpButton('reset_start_date', 'startdate');
         $mform->addElement('checkbox', 'reset_events', get_string('deleteevents', 'calendar'));
-        $mform->addElement('checkbox', 'reset_logs', get_string('deletelogs'));
         $mform->addElement('checkbox', 'reset_notes', get_string('deletenotes', 'notes'));
         $mform->addElement('checkbox', 'reset_comments', get_string('deleteallcomments', 'moodle'));
         $mform->addElement('checkbox', 'reset_completion', get_string('deletecompletiondata', 'completion'));
@@ -105,7 +104,7 @@ class course_reset_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $defaults = array ('reset_events'=>1, 'reset_logs'=>1, 'reset_roles_local'=>1, 'reset_gradebook_grades'=>1, 'reset_notes'=>1);
+        $defaults = array ('reset_events'=>1, 'reset_roles_local'=>1, 'reset_gradebook_grades'=>1, 'reset_notes'=>1);
 
         // Set student as default in unenrol user list, if role with student archetype exist.
         if ($studentrole = get_archetype_roles('student')) {
