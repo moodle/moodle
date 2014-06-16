@@ -178,6 +178,9 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             $html = $renderer->render($widget);
             $mform->addElement('static', 'editpdf', get_string('editpdf', 'assignfeedback_editpdf'), $html);
             $mform->addHelpButton('editpdf', 'editpdf', 'assignfeedback_editpdf');
+            $mform->addElement('hidden', 'editpdf_source_userid', $userid);
+            $mform->setType('editpdf_source_userid', PARAM_INT);
+            $mform->setConstant('editpdf_source_userid', $userid);
         }
     }
 
@@ -189,6 +192,11 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return bool
      */
     public function save(stdClass $grade, stdClass $data) {
+        $sourceuserid = $data->editpdf_source_userid;
+        // Copy drafts annotations and comments if current user is different to sourceuserid.
+        if ($sourceuserid != $grade->userid) {
+            page_editor::copy_drafts_from_to($this->assignment, $grade, $sourceuserid);
+        }
         if (page_editor::has_annotations_or_comments($grade->id, true)) {
             document_services::generate_feedback_document($this->assignment, $grade->userid, $grade->attemptnumber);
         }
