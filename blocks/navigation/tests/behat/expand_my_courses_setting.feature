@@ -1,0 +1,56 @@
+@block @block_navigation
+Feature: Test expand my courses navigation setting
+  As a student
+  I visit my My Moodle page and observe the the My Courses branch
+
+  Background:
+    Given the following "users" exist:
+      | username | firstname | lastname | email |
+      | student1 | Student | 1 | student1@asd.com |
+    And the following "categories" exist:
+      | name  | category | idnumber |
+      | cat1  | 0        | cat1     |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course1  | c1        | cat1     |
+      | Course2  | c2        | cat1     |
+      | Course3  | c3        | cat1     |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | student1 | c1     | student |
+      | student1 | c2    | student |
+
+  Scenario: The My Courses branch is expanded on the My Moodle page by default
+    When I log in as "student1"
+    And I follow "My home"
+    Then I should see "c1" in the "Navigation" "block"
+    And I should see "c2" in the "Navigation" "block"
+    And I should not see "c3" in the "Navigation" "block"
+
+  @javascript
+  Scenario: The My Courses branch is collapsed when expand my courses is off
+    Given I log in as "admin"
+    And I set the following administration settings values:
+      | Expand My Courses initially on My Moodle page | 0 |
+    And I log out
+    Given I log in as "student1"
+    And I follow "My home"
+    Then I should not see "c1" in the "Navigation" "block"
+    And I should not see "c2" in the "Navigation" "block"
+    And I should not see "c3" in the "Navigation" "block"
+
+  @javascript
+  Scenario: My Courses can be expanded on the My Moodle page when expand my courses is off
+    Given I log in as "admin"
+    And I set the following administration settings values:
+      | Expand My Courses initially on My Moodle page | 0 |
+    And I log out
+    Given I log in as "student1"
+    And I follow "My home"
+    And I should not see "c1" in the "Navigation" "block"
+    And I should not see "c2" in the "Navigation" "block"
+    And I should not see "c3" in the "Navigation" "block"
+    And I expand "My courses" node
+    Then I should see "c1" in the "Navigation" "block"
+    And I should see "c2" in the "Navigation" "block"
+    And I should not see "c3" in the "Navigation" "block"

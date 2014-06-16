@@ -122,6 +122,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $temp->add(new admin_setting_configcheckbox('navshowcategories', new lang_string('navshowcategories', 'admin'), new lang_string('confignavshowcategories', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('navshowmycoursecategories', new lang_string('navshowmycoursecategories', 'admin'), new lang_string('navshowmycoursecategories_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('navshowallcourses', new lang_string('navshowallcourses', 'admin'), new lang_string('confignavshowallcourses', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('navexpandmycourses', new lang_string('navexpandmycourses', 'admin'), new lang_string('navexpandmycourses_desc', 'admin'), 1));
     $sortoptions = array(
         'sortorder' => new lang_string('sort_sortorder', 'admin'),
         'fullname' => new lang_string('sort_fullname', 'admin'),
