@@ -6275,12 +6275,14 @@ class assign {
 
 
     /**
-     * Save outcomes submitted from grading form
+     * Save outcomes submitted from grading form.
      *
      * @param int $userid
      * @param stdClass $formdata
+     * @param int $sourceuserid The user ID under which the outcome data is accessible. This is relevant
+     *                          for an outcome set to a user but applied to an entire group.
      */
-    protected function process_outcomes($userid, $formdata) {
+    protected function process_outcomes($userid, $formdata, $sourceuserid = null) {
         global $CFG, $USER;
 
         if (empty($CFG->enableoutcomes)) {
@@ -6302,9 +6304,10 @@ class assign {
         if (!empty($gradinginfo->outcomes)) {
             foreach ($gradinginfo->outcomes as $index => $oldoutcome) {
                 $name = 'outcome_'.$index;
-                if (isset($formdata->{$name}[$userid]) &&
-                        $oldoutcome->grades[$userid]->grade != $formdata->{$name}[$userid]) {
-                    $data[$index] = $formdata->{$name}[$userid];
+                $sourceuserid = $sourceuserid !== null ? $sourceuserid : $userid;
+                if (isset($formdata->{$name}[$sourceuserid]) &&
+                        $oldoutcome->grades[$userid]->grade != $formdata->{$name}[$sourceuserid]) {
+                    $data[$index] = $formdata->{$name}[$sourceuserid];
                 }
             }
         }
@@ -6351,7 +6354,7 @@ class assign {
             foreach ($members as $member) {
                 // User may exist in multple groups (which should put them in the default group).
                 $this->apply_grade_to_user($data, $member->id, $data->attemptnumber);
-                $this->process_outcomes($member->id, $data);
+                $this->process_outcomes($member->id, $data, $userid);
             }
         } else {
             $this->apply_grade_to_user($data, $userid, $data->attemptnumber);
