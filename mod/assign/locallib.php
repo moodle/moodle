@@ -3685,10 +3685,9 @@ class assign {
         }
 
         if ($this->can_view_submission($user->id)) {
-            $showedit = has_capability('mod/assign:submit', $this->context) &&
-                        $this->submissions_open($user->id) &&
+            $showedit = $showlinks &&
                         ($this->is_any_submission_plugin_enabled()) &&
-                        $showlinks;
+                        $this->can_edit_submission($user->id);
 
             $gradelocked = ($flags && $flags->locked) || $this->grading_disabled($user->id, false);
 
