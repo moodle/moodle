@@ -144,7 +144,7 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
             $e->setLabel(get_string('import'.$this->get_ui()->get_name().'stage'.$this->get_stage().'action', 'backup'));
         } else {
             $elements = $form->get_element('buttonar')->getElements();
-            foreach ($elements as &$element) {
+            foreach ($elements as $element) {
                 if ($element->getName()=='submitbutton') {
                     $element->setValue(get_string('import'.$this->get_ui()->get_name().'stage'.$this->get_stage().'action', 'backup'));
                 }

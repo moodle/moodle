@@ -968,9 +968,11 @@ function get_current_group($courseid, $full = false) {
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @return void, always throws moodle_exception
  */
+/*
 function error($message, $link='') {
     throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a deprecated function, please call print_error() instead of error()');
 }
+*/
 
 
 /**

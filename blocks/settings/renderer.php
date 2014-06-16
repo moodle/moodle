@@ -26,7 +26,7 @@ class block_settings_renderer extends plugin_renderer_base {
 
     public function settings_tree(settings_navigation $navigation) {
         $count = 0;
-        foreach ($navigation->children as &$child) {
+        foreach ($navigation->children as $child) {
             $child->preceedwithhr = ($count!==0);
             $count++;
         }

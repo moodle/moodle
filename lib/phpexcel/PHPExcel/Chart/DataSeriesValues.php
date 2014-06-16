@@ -289,10 +289,11 @@ class PHPExcel_Chart_DataSeriesValues
 			);
 			if ($flatten) {
 				$this->_dataValues = PHPExcel_Calculation_Functions::flattenArray($newDataValues);
-				foreach($this->_dataValues as &$dataValue) {
+				foreach($this->_dataValues as $dataValuesIndex => $dataValue) {
 					if ((!empty($dataValue)) && ($dataValue[0] == '#')) {
 						$dataValue = 0.0;
-					}
+                        $this->_dataValues[$dataValuesIndex] = $dataValue;
+                    }
 				}
 				unset($dataValue);
 			} else {

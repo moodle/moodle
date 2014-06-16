@@ -364,7 +364,7 @@ class Zend_Amf_Parse_Amf3_Serializer extends Zend_Amf_Parse_Serializer
         $this->writeString($this->_strEmpty);
 
         // Write the numeric array to ouput stream
-        foreach($numeric as &$value) {
+        foreach($numeric as $value) {
             $this->writeTypeMarker($value);
         }
         return $this;

@@ -201,8 +201,9 @@ class Zend_Service_Delicious
         $response = $this->makeRequest(self::PATH_BUNDLES);
 
         $bundles = self::_xmlResponseToArray($response, 'bundles', 'bundle', 'name', 'tags');
-        foreach ($bundles as &$tags) {
+        foreach ($bundles as $bundlesIndex => $tags) {
             $tags = explode(' ', $tags);
+            $bundles[$bundlesIndex] = $tags;
         }
         return $bundles;
     }

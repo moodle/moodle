@@ -447,7 +447,7 @@ class format_singleactivity extends format_base {
             $node->isactive = $node->isactive || $activitynode->isactive;
             $node->icon = null;
             if ($activitynode->children->count()) {
-                foreach ($activitynode->children as &$child) {
+                foreach ($activitynode->children as $child) {
                     $child->remove();
                     $node->add_node($child);
                 }

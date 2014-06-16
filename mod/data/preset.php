@@ -59,7 +59,7 @@ $data->instance   = $cm->instance;
 
 $presets = data_get_available_presets($context);
 $strdelete = get_string('deleted', 'data');
-foreach ($presets as &$preset) {
+foreach ($presets as $preset) {
     if (!empty($preset->userid)) {
         $namefields = get_all_user_name_fields(true);
         $presetuser = $DB->get_record('user', array('id' => $preset->userid), 'id, ' . $namefields, MUST_EXIST);

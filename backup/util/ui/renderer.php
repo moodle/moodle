@@ -42,7 +42,7 @@ class core_backup_renderer extends plugin_renderer_base {
      * @return string
      */
     public function progress_bar(array $items) {
-        foreach ($items as &$item) {
+        foreach ($items as $item) {
             $text = $item['text'];
             unset($item['text']);
             if (array_key_exists('link', $item)) {
