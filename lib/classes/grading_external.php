@@ -500,7 +500,7 @@ class core_grading_external extends external_api {
     /**
      * Creates a definition stdClass object using the values from the definition
      * array that is passed in as a parameter
-     * 
+     *
      * @param array $definition
      * @return stdClass definition object
      * @since Moodle 2.8
@@ -549,7 +549,7 @@ class core_grading_external extends external_api {
      * Recursively iterates through arrays. Any array without an id key-value combination
      * is assumed to be an array of values to be inserted and an id key-value is added with
      * the value matching the regex '/^NEWID\d+$/' that is expected by each grading form implementation.
-     * 
+     *
      * @param array $arraytoset the array to be processed
      * @param int $startnumber the starting number for the new id numbers
      * @return array with missing id keys added for all arrays

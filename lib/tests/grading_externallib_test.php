@@ -300,7 +300,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * 
+     *
      * Test save_definitions for rubric grading method
      */
     public function test_save_definitions_rubric() {
@@ -539,7 +539,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * 
+     *
      * Tests save_definitions for the marking guide grading method
      */
     public function test_save_definitions_marking_guide() {
