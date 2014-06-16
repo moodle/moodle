@@ -50,34 +50,31 @@ class behat_backup extends behat_base {
      * @param TableNode $options Backup options or false if no options provided
      */
     public function i_backup_course_using_this_options($backupcourse, $options = false) {
-
         // We can not use other steps here as we don't know where the provided data
         // table elements are used, and we need to catch exceptions contantly.
 
         // Go to homepage.
         $this->getSession()->visit($this->locate_path('/'));
-        $this->wait();
 
         // Click the course link.
         $this->find_link($backupcourse)->click();
-        $this->wait();
 
         // Click the backup link.
         $this->find_link(get_string('backup'))->click();
         $this->wait();
 
         // Initial settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
         $this->find_button(get_string('backupstage1action', 'backup'))->press();
         $this->wait();
 
         // Schema settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Schema"));
         $this->find_button(get_string('backupstage2action', 'backup'))->press();
         $this->wait();
 
         // Confirmation and review, backup filename can also be specified.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Confirmation"));
         $this->find_button(get_string('backupstage4action', 'backup'))->press();
 
         // Waiting for it to finish.
@@ -132,12 +129,12 @@ class behat_backup extends behat_base {
         $this->wait();
 
         // Initial settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
         $this->find_button(get_string('importbackupstage1action', 'backup'))->press();
         $this->wait();
 
         // Schema settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Schema"));
         $this->find_button(get_string('importbackupstage2action', 'backup'))->press();
         $this->wait();
 
@@ -303,12 +300,12 @@ class behat_backup extends behat_base {
         // table elements are used, and we need to catch exceptions contantly.
 
         // Settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Settings"));
         $this->find_button(get_string('restorestage4action', 'backup'))->press();
         $this->wait();
 
         // Schema.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Schema"));
         $this->find_button(get_string('restorestage8action', 'backup'))->press();
         $this->wait();
 
@@ -341,22 +338,45 @@ class behat_backup extends behat_base {
             return;
         }
 
-        // Wait for the page to be loaded and the JS ready.
-        $this->wait();
-
         // If we find any of the provided options in the current form we should set the value.
         $datahash = $options->getRowsHash();
         foreach ($datahash as $locator => $value) {
-
-            try {
-                $field = behat_field_manager::get_form_field_from_label($locator, $this);
-                $field->set_value($value);
-
-            } catch (ElementNotFoundException $e) {
-                // Next provided option then, this one should be part of another page's fields.
-            }
+            $field = behat_field_manager::get_form_field_from_label($locator, $this);
+            $field->set_value($value);
         }
     }
+
+    /**
+     * Get the options specific to this step of the backup/restore process.
+     *
+     * @param TableNode $options The options table to filter
+     * @param string $step The name of the step
+     * @return TableNode The filtered options table
+     * @throws ExpectationException
+     */
+    protected function get_step_options($options, $step) {
+        // Nothing to fill if no options are provided.
+        if (!$options) {
+            return;
+        }
+
+        $pageoptions = clone $options;
+
+        $rows = $options->getRows();
+        $newrows = array();
+        foreach ($rows as $k => $data) {
+            if (count($data) !== 3) {
+                // Not enough information to guess the page.
+                throw new ExpectationException("The backup/restore step must be specified for all backup options");
+            } else if ($data[0] == $step) {
+                unset($data[0]);
+                $newrows[] = $data;
+            }
+        }
+        $pageoptions->setRows($newrows);
+        return $pageoptions;
+    }
+
 
     /**
      * Waits until the DOM and the page Javascript code is ready.
