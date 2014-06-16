@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('company.php');
+require_once($CFG->dirroot.'/lib/formslib.php');
 
 class iomad {
 
@@ -54,9 +55,12 @@ class iomad {
      *
      **/
     public static function is_company_user () {
-        global $USER, $DB;
+        global $USER, $DB, $SESSION;
 
-        if ($usercompany = $DB->get_record('company_users', array('userid' => $USER->id))) {
+        if (!empty($SESSION->currenteditingcompany)) {
+            return $SESSION->currenteditingcompany;
+        } else if ($usercompanies = $DB->get_records('company_users', array('userid' => $USER->id))) {
+            $usercompany = array_pop($usercompanies);
             return $usercompany->companyid;
         } else {
             return false;
@@ -665,7 +669,7 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0) {
+    public static function get_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
         global $DB;
 
         $completiondata = new stdclass();
@@ -691,6 +695,20 @@ class iomad {
             $tempcreatesql = "";
         }
         $DB->execute($tempcreatesql);
+
+        // Deal with completion types.
+        if (!empty($completiontype)) {
+            if ($completiontype == 1) {
+                $completionsql = " AND cc.timeenrolled > 0 AND cc.timestarted = 0 ";
+            } else if ($completiontype == 2 ) {
+                $completionsql = " AND cc.timestarted > 0 AND cc.timecompleted IS NULL ";
+            } else if ($completiontype == 3 ) {
+                $completionsql = " AND cc.timecompleted IS NOT NULL  ";
+            }
+        } else {
+            $completionsql = "";
+        }
+                
 
         // Get the user details.
         if ($vantagefield = $DB->get_record('user_info_field', array('shortname' => 'VANTAGE'))) {
@@ -719,6 +737,7 @@ class iomad {
                     AND gg.userid = u.id
                     AND uid.userid = u.id
                     AND uid.fieldid = $vantagefield->id
+                    $completionsql
                     $searchinfo->sqlsort ";
         } else {
             $countsql = "SELECT u.id ";
@@ -742,6 +761,7 @@ class iomad {
                     AND du.userid = u.id
                     AND d.id = du.departmentid
                     AND gg.userid = u.id
+                    $completionsql
                     $searchinfo->sqlsort ";
 
         }
@@ -755,5 +775,68 @@ class iomad {
         $returnobj->users = $users;
         $returnobj->totalcount = $numusers;
         return $returnobj;
+    }
+
+    public static function get_companies_listing($sort='name', $dir='ASC', $page=0, $recordsperpage=0,
+                           $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {
+        global $DB;
+    
+        $params = array();
+    
+        if (!empty($search)) {
+            $search = trim($search);
+            $select .= " AND (". $DB->sql_like("name", ':search1', false, false).
+                       " OR ". $DB->sql_like('city', ':search2', false, false).
+                       " OR country = :search3)";
+            $params['search1'] = "%$search%";
+            $params['search2'] = "%$search%";
+            $params['search3'] = "$search";
+        }
+    
+        if ($extraselect) {
+            $select = $extraselect;
+            $params = $params + (array)$extraparams;
+        }
+    
+        if ($sort) {
+            $sort = " ORDER BY $sort $dir";
+        }
+    
+        // Warning: will return UNCONFIRMED USERS!
+        return $DB->get_records_sql("SELECT *
+                                     FROM {company}
+                                     WHERE $select $sort",
+                                     $params, $page, $recordsperpage);
+    }
+}
+
+/**
+ * User Filter form used on the Iomad pages.
+ *
+ */
+class iomad_company_filter_form extends moodleform {
+    protected $companyid;
+
+    public function definition() {
+        global $CFG, $DB, $USER, $SESSION;
+
+        $mform =& $this->_form;
+        $filtergroup = array();
+        $mform->addElement('header', '', format_string(get_string('companysearchfields', 'local_iomad')));
+        $mform->addElement('text', 'name', get_string('companynamefilter', 'local_iomad'), 'size="20"');
+        $mform->addElement('text', 'city', get_string('companycityfilter', 'local_iomad'), 'size="20"');
+        $mform->addElement('text', 'country', get_string('companycountryfilter', 'local_iomad'), 'size="20"');
+        $mform->setType('name', PARAM_CLEAN);
+        $mform->setType('city', PARAM_CLEAN);
+        $mform->setType('country', PARAM_CLEAN);
+
+        //if (has_capability('block/iomad_company_admin:suspendedcompanies', context_system::instance())) {
+            $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_companies', 'local_iomad'));
+        /*} else {
+            $mform->addElement('hidden', 'showsuspended');
+        }*/
+        $mform->setType('showsuspended', PARAM_INT);
+
+        $this->add_action_buttons(false, get_string('companyfilter', 'local_iomad'));
     }
 }

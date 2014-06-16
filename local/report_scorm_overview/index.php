@@ -50,7 +50,8 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
+if (has_capability('block/iomad_company_admin:edit_all_departments', $context) ||
+    !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);

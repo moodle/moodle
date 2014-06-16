@@ -27,12 +27,13 @@ class company_managers_form extends moodleform {
     protected $subhierarchieslist = null;
     protected $companydepartment = 0;
 
-    public function __construct($actionurl, $context, $companyid, $deptid, $roleid) {
+    public function __construct($actionurl, $context, $companyid, $deptid, $roleid, $showothermanagers) {
         global $USER;
         $this->selectedcompany = $companyid;
         $this->context = $context;
         $this->departmentid = $deptid;
         $this->roletype = $roleid;
+        $this->showothermanagers = $showothermanagers;
 
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
@@ -55,7 +56,8 @@ class company_managers_form extends moodleform {
                          'departmentid' => $departmentid,
                          'roletype' => $this->roletype,
                          'subdepartments' => $this->subhierarchieslist,
-                         'parentdepartmentid' => $parentlevel);
+                         'parentdepartmentid' => $parentlevel,
+                         'showothermanagers' => $this->showothermanagers);
         $this->potentialusers = new potential_department_user_selector('potentialmanagers', $options);
         $this->currentusers = new current_department_user_selector('currentmanagers', $options);
 
@@ -80,7 +82,20 @@ class company_managers_form extends moodleform {
         $mform->addElement('header', 'header', get_string('company_managers_for',
                                                           'block_iomad_company_admin', $company->get_name()));
         $mform->addElement('select', 'deptid', get_string('department', 'block_iomad_company_admin'), $this->subhierarchieslist);
+        $mform->addHelpButton('deptid', 'department', 'block_iomad_company_admin');
+
         $mform->addElement('select', 'managertype', get_string('managertype', 'block_iomad_company_admin'), $managertypes);
+        $mform->addHelpButton('managertype', 'managertype', 'block_iomad_company_admin');
+
+        if (has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+            // This user can add other managers to this company.
+            $mform->addElement('selectyesno', 'showothermanagers', get_string('showothermanagers', 'block_iomad_company_admin'));
+            $mform->disabledIf('showothermanagers', 'managertype', 'neq', '1');
+            $mform->addHelpButton('showothermanagers', 'showothermanagers', 'block_iomad_company_admin');
+        } else {
+            $mform->addElement('hidden', 'showothermanagers', 0);
+        } 
+
         $mform->addElement('submit', 'updateselection', get_string('updatedepartmentusersselection', 'block_iomad_company_admin'));
 
         if (count($this->potentialusers->find_users('')) || count($this->currentusers->find_users(''))) {
@@ -124,7 +139,7 @@ class company_managers_form extends moodleform {
     }
 
     public function process($departmentid, $roletype) {
-        global $DB;
+        global $DB, $USER;
 
         $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
         $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanager'));
@@ -234,9 +249,44 @@ class company_managers_form extends moodleform {
                                 }
                                 $userrecord->managertype = $roletype;
                                 $DB->update_record('company_users', $userrecord);
+                            } else if ($roletype == 1 &&
+                                       $DB->get_records_sql('SELECT id FROM {company_users}
+                                                            WHERE
+                                                            userid = :userid
+                                                            AND managertype = :roletype
+                                                            AND companyid != :companyid', array('userid' => $adduser->id,
+                                                                              'roletype' => 1,
+                                                                              'companyid' => $this->selectedcompany))) {
+                                // We have a company manager from another company.
+                                // We need to add another record.
+                                $company = new company($this->selectedcompany);
+                                $company->assign_user_to_company($adduser->id);
+                                $DB->set_field('company_users', 'managertype', 1, array('userid' => $adduser->id, 'companyid' => $this->selectedcompany));
+                                // Deal with company courses.
+                                if ($companycourses = $DB->get_records('company_course',
+                                                                        array('companyid' => $this->selectedcompany))) {
+                                    foreach ($companycourses as $companycourse) {
+                                        if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
+                                            if ($DB->record_exists('company_created_courses',
+                                                                    array('companyid' => $companycourse->companyid,
+                                                                          'courseid' => $companycourse->courseid))) {
+                                                company_user::enrol($adduser,
+                                                                    array($companycourse->courseid),
+                                                                    $companycourse->companyid,
+                                                                    $companycourseeditorrole->id);
+                                            } else {
+                                                company_user::enrol($adduser,
+                                                                    array($companycourse->courseid),
+                                                                    $companycourse->companyid,
+                                                                    $companycoursenoneditorrole->id);
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {                                 
+                                // Assign the user to department as staff.
+                                company::assign_user_to_department($departmentid, $adduser->id);
                             }
-                            // Assign the user to department as staff.
-                            company::assign_user_to_department($departmentid, $adduser->id);
                         } else {
                             // Assign the user to department as staff.
                             company::assign_user_to_department($departmentid, $adduser->id);
@@ -259,10 +309,22 @@ class company_managers_form extends moodleform {
                     foreach ($userstounassign as $removeuser) {
                         $userrecord = $DB->get_record('company_users', array('companyid' => $this->selectedcompany,
                                                                     'userid' => $removeuser->id));
-                        $userrecord->managertype = 0;
-                        $DB->update_record('company_users', $userrecord);
-                        role_unassign($companymanagerrole->id, $removeuser->id, $this->context->id);
-                        role_unassign($departmentmanagerrole->id, $removeuser->id, $this->context->id);
+                        // Is this a manager from another company?
+                        if ($DB->get_records_sql("SELECT id FROM {company_users}
+                                                  WHERE userid = :userid
+                                                  AND companyid != :companyid
+                                                  AND managertype = 1",
+                                                  array('userid' => $removeuser->id,
+                                                        'companyid' => $this->selectedcompany))) {
+                            // Remove the user from this company.
+                            $DB->delete_records('company_users', (array) $userrecord);
+                        } else {
+                            // Remove the manager status from the user.
+                            $userrecord->managertype = 0;
+                            $DB->update_record('company_users', $userrecord);
+                            role_unassign($companymanagerrole->id, $removeuser->id, $this->context->id);
+                            role_unassign($departmentmanagerrole->id, $removeuser->id, $this->context->id);
+                        }
                         // Remove their capabilities from the company courses.
                         if ($companycourses = $DB->get_records('company_course', array('companyid' => $this->selectedcompany))) {
                             foreach ($companycourses as $companycourse) {
@@ -291,6 +353,12 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $roleid = optional_param('managertype', 0, PARAM_INTEGER);
+$showothermanagers = optional_param('showothermanagers', 0, PARAM_BOOL);
+
+// If we are not handling company manager role types we are not picking other company managers.
+if ($roleid != 1) {
+    $showothermanagers = false;
+}
 
 $context = context_system::instance();
 require_login();
@@ -317,7 +385,7 @@ if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
 // Set up the allocation form.
-$managersform = new company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid);
+$managersform = new company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid, $showothermanagers);
 
 // Change the department for the form.
 if ($departmentid != 0) {

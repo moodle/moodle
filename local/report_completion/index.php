@@ -39,6 +39,7 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $vantage      = optional_param('profile_field_VANTAGE', '', PARAM_CLEAN);
 $compfromraw = optional_param_array('compfrom', null, PARAM_INT);
 $comptoraw = optional_param_array('compto', null, PARAM_INT);
+$completiontype = optional_param('completiontype', 0, PARAM_INT);
 
 // Check permissions.
 require_login($SITE);
@@ -127,7 +128,8 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance()) ||
+    !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);
@@ -154,6 +156,18 @@ $select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $de
 $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
+
+// Get the appropriate list of departments.
+$selectparams = $params;
+$selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
+$completiontypelist = array('0' => get_string('all'),
+                            '1' => get_string('notstartedusers', 'local_report_completion'),
+                            '2' => get_string('inprogressusers', 'local_report_completion'),
+                            '3' => get_string('completedusers', 'local_report_completion'));
+$select = new single_select($selecturl, 'completiontype', $completiontypelist, $completiontype);
+$select->label = get_string('choosecompletiontype', 'block_iomad_company_admin');
+$select->formid = 'choosecompletiontype';
+$completiontypeselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_completiontype_selector'));
 
 if (!(has_capability('block/iomad_company_admin:editusers', $context) or
       has_capability('block/iomad_company_admin:editallusers', $context))) {
@@ -222,13 +236,17 @@ foreach ($courseinfo as $id => $coursedata) {
 }
 if (empty($dodownload)) {
     echo html_writer::table($coursecomptable);
+    if (!empty($courseid)) {
+        echo $completiontypeselectoutput;
+    }
 }
+
 if (!empty($courseid)) {
     // Get the course completion information.
     if (empty($dodownload)) {
         if (empty($idlist['0'])) {
             // Only want the data for the page we are on.
-            $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage);
+            $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype);
             $coursedata = $coursedataobj->users;
             $totalcount = $coursedataobj->totalcount;
         }

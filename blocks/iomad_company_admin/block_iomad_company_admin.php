@@ -231,9 +231,11 @@ class block_iomad_company_admin extends block_base {
     public function company_selector() {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
-        // Only display if you have the correct capability.
+        // Only display if you have the correct capability, or you are not in more than one company.
         if (!has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
-            return;
+            if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
+                return;
+            }
         }
 
         $content = '';
@@ -245,8 +247,7 @@ class block_iomad_company_admin extends block_base {
         //  Check users session and profile settings to get the current editing company.
         if (!empty($SESSION->currenteditingcompany)) {
             $selectedcompany = $SESSION->currenteditingcompany;
-        } else if (!empty($USER->profile->company)) {
-            $usercompany = company::by_userid($USER->id);
+        } else if ($usercompany = company::by_userid($USER->id)) {
             $selectedcompany = $usercompany->id;
         } else {
             $selectedcompany = "";

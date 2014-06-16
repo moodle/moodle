@@ -277,6 +277,14 @@ $capabilities = array(
             'clientadministrator' => CAP_ALLOW
         )
     ),
+    'block/iomad_company_admin:suspendcompanies' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        )
+    ),
 
 );
 

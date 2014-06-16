@@ -34,10 +34,15 @@ class company {
      *
      **/
     public static function by_userid($userid) {
-        global $DB;
+        global $DB, $SESSION;
 
-        $company = $DB->get_record('company_users', array('userid' => $userid), 'companyid', MUST_EXIST);
-        return new company($company->companyid);
+        if (!empty($SESSION->currenteditingcompany)) {
+            return new company($SESSION->currenteditingcompany);
+        } else {
+            $companies = $DB->get_records('company_users', array('userid' => $userid), 'companyid');
+            $company = array_pop($companies);
+            return new company($company->companyid);
+        }
     }
 
     /**
@@ -157,12 +162,25 @@ class company {
      *
      **/
     public static function get_companies_select() {
-        global $DB;
+        global $DB, $USER;
 
-        $companies = $DB->get_recordset('company', null, 'name', '*');
+        // Is this an admin, or a normal user?
+        if (has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+            $companies = $DB->get_recordset('company', null, 'name', '*');
+        } else {
+            $companies = $DB->get_recordset_sql("SELECT * FROM {company}
+                                                 WHERE id IN (
+                                                   SELECT companyid FROM {company_users}
+                                                   WHERE userid = :userid )
+                                                 ORDER BY name", array('userid' => $USER->id));
+        }
         $companyselect = array();
         foreach ($companies as $company) {
-            $companyselect[$company->id] = $company->name;
+            if (empty($company->suspended)) {
+                $companyselect[$company->id] = $company->name;
+            } else {
+                $companyselect[$company->id] = $company->name . '(S)';
+            }
         }
         return $companyselect;
     }
@@ -1457,5 +1475,35 @@ class company {
                 $DB->update_record('user', $user);
             }
         }
+    }
+
+    /**
+     * Suspends or Unsuspends a company and all of their users.
+     *
+     * Parameters -
+     *              $theme = string;
+     *
+     **/
+    public function suspend($suspend) {
+        global $DB;
+
+        // Get the company users.
+        $users = $this->get_all_user_ids();
+
+        // Update their theme.
+        foreach ($users as $userid) {
+            if ($user = $DB->get_record('user', array('id' => $userid))) {
+                if (! $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id, 'suspended' => 1))) {
+                    $user->suspended  = $suspend;
+                    $DB->update_record('user', $user);
+                }
+                if (!empty($suspend)) {
+                    \core\session\manager::kill_user_sessions($user->id);
+                }
+            }
+        }
+
+        // Set the suspend field for the company.
+        $DB->set_field('company', 'suspended', $suspend, array('id' => $this->id));
     }
 }

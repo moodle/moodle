@@ -382,6 +382,7 @@ class potential_department_user_selector extends user_selector_base {
     protected $departmentid;
     protected $roletype;
     protected $parentdepartmentid;
+    protected $showothermanagers;
 
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
@@ -389,6 +390,7 @@ class potential_department_user_selector extends user_selector_base {
         $this->roletype = $options['roletype'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
+        $this->showothermanagers = $options['showothermanagers'];
         parent::__construct($name, $options);
     }
 
@@ -399,6 +401,7 @@ class potential_department_user_selector extends user_selector_base {
         $options['roletype'] = $this->roletype;
         $options['subdepartments'] = $this->subdepartments;
         $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['showothermanagers'] = $this->showothermanagers;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         return $options;
     }
@@ -415,6 +418,20 @@ class potential_department_user_selector extends user_selector_base {
                 return array_keys($users);
             } else {
                 return array();
+            }
+        }
+    }
+
+    protected function process_other_company_managers(&$userlist) {
+        global $DB;
+        foreach ($userlist as $id => $user) {
+            $sql = "SELECT c.name FROM {company} c
+                    INNER JOIN {company_users} cu ON c.id = cu.companyid
+                    WHERE
+                    cu.userid = $id
+                    AND c.id != :companyid";
+            if ($company = $DB->get_record_sql($sql, array('companyid' => $this->companyid))) {
+                $userlist[$id]->email = $user->email." - ".$company->name;
             }
         }
     }
@@ -472,13 +489,32 @@ class potential_department_user_selector extends user_selector_base {
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
+        // Are we also looking for other managers?
+        if (!empty($this->showothermanagers)) {
+            $othermanagersql = " FROM {user} u
+                                INNER JOIN {company_users} du on du.userid = u.id
+                                WHERE $wherecondition
+                                AND u.suspended = 0
+                                AND du.managertype = 1
+                                AND du.companyid != " . $this->companyid."
+                                AND du.userid NOT IN (
+                                  SELECT userid FROM {company_users}
+                                  WHERE managertype = 1
+                                  AND companyid = " . $this->companyid . ")";
+        } else {
+            $othermanagersql = " FROM {user} u where 1 = 2";
+        }
+
+
         if (!$this->is_validating()) {
-            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params) 
+                                     + $DB->count_records_sql($countfields . $othermanagersql, $params);
             if ($potentialmemberscount > company_user_selector_base::MAX_USERS_PER_PAGE) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params)
+                          + $DB->get_records_sql($fields . $othermanagersql . $order, $params);
 
         if (empty($availableusers)) {
             return array();
@@ -497,6 +533,9 @@ class potential_department_user_selector extends user_selector_base {
                 $groupname = get_string('potusers', 'block_iomad_company_admin');
             }
         }
+
+        // Process user names.
+        $this->process_other_company_managers($availableusers);
 
         return array($groupname => $availableusers);
     }

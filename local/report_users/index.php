@@ -165,7 +165,8 @@ if (!empty($fieldnames)) {
 $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext)) {
+if (has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
+    !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);
@@ -325,6 +326,7 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Get users company association.
         $departmentusers = company::get_recursive_department_users($departmentid);
+        $sqlsearch = "id!='-1'";
         if ( count($departmentusers) > 0 ) {
             $departmentids = "";
             foreach ($departmentusers as $departmentuser) {
@@ -412,7 +414,8 @@ if (!empty($userlist)) {
                                    FROM {user} u, {department} d, {company_users} cu
                                    WHERE u.deleted <> 1 AND $userlist
                                    AND cu.userid = u.id AND cu.departmentid = d.id
-                                   $dbsort", array(), $page * $perpage, $perpage);
+                                   AND cu.companyid = :companyid
+                                   $dbsort GROUP BY u.id, d.name", array('companyid' => $company->id), $page * $perpage, $perpage);
 } else {
     $users = array();
 }

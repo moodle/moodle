@@ -201,6 +201,9 @@ class company_user {
 
         // Mark user as suspended.
         $DB->set_field('user', 'suspended', 1, array('id' => $userid));
+
+        // Log the user out.
+        \core\session\manager::kill_user_sessions($userid);
     }
 
     /**
