@@ -339,5 +339,5 @@ class page_editor {
         }
 
         return true;
-    }    
+    }
 }
