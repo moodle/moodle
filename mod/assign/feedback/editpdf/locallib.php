@@ -192,10 +192,13 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return bool
      */
     public function save(stdClass $grade, stdClass $data) {
-        $sourceuserid = $data->editpdf_source_userid;
-        // Copy drafts annotations and comments if current user is different to sourceuserid.
-        if ($sourceuserid != $grade->userid) {
-            page_editor::copy_drafts_from_to($this->assignment, $grade, $sourceuserid);
+        // Source user id is only added to the form if there was a pdf.
+        if (!empty($data->editpdf_source_userid)) {
+            $sourceuserid = $data->editpdf_source_userid;
+            // Copy drafts annotations and comments if current user is different to sourceuserid.
+            if ($sourceuserid != $grade->userid) {
+                page_editor::copy_drafts_from_to($this->assignment, $grade, $sourceuserid);
+            }
         }
         if (page_editor::has_annotations_or_comments($grade->id, true)) {
             document_services::generate_feedback_document($this->assignment, $grade->userid, $grade->attemptnumber);
