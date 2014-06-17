@@ -220,9 +220,9 @@ if ($usernew = $userform->get_data()) {
         if (!message_set_default_message_preferences($usernew)) {
             print_error('cannotsavemessageprefs', 'message');
         }
-        events_trigger('user_created', $usernew);
+        core\event\user_created::create_from_user($usernew)->trigger();
     } else {
-        events_trigger('user_updated', $usernew);
+        core\event\user_updated::create_from_user($usernew)->trigger();
     }
 
     if ($user->id == $USER->id) {
