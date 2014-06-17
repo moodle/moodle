@@ -180,6 +180,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             $mform->addHelpButton('editpdf', 'editpdf', 'assignfeedback_editpdf');
             $mform->addElement('hidden', 'editpdf_source_userid', $userid);
             $mform->setType('editpdf_source_userid', PARAM_INT);
+            $mform->setConstant('editpdf_source_userid', $userid);
         }
     }
 
