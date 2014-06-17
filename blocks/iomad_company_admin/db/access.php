@@ -273,8 +273,6 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
-            'companymanager' => CAP_ALLOW,
-            'clientadministrator' => CAP_ALLOW
         )
     ),
     'block/iomad_company_admin:suspendcompanies' => array(
@@ -282,7 +280,6 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
-            'clientadministrator' => CAP_ALLOW
         )
     ),
 
