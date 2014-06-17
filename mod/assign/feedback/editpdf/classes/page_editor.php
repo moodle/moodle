@@ -308,4 +308,36 @@ class page_editor {
 
         return $DB->delete_records('assignfeedback_editpdf_annot', array('id'=>$annotationid));
     }
+
+    /**
+     * This function copies annotations and comments from the source user
+     * to the current group member being processed when using applytoall.
+     * @param int|\assign $assignment
+     * @param stdClass $grade
+     * @param int $sourceuserid
+     * @return bool
+     */
+    public static function copy_drafts_from_to($assignment, $grade, $sourceuserid) {
+        global $DB;
+
+        // Delete any existing annotations and comments from current user.
+        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $grade->id));
+        $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid' => $grade->id));
+        // Get gradeid, annotations and comments from sourceuserid.
+        $sourceusergrade = $assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
+        $annotations = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+        $comments = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+
+        // Add annotations and comments to current user to generate feedback file.
+        foreach ($annotations as $annotation) {
+            $annotation->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_annot', $annotation);
+        }
+        foreach ($comments as $comment) {
+            $comment->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_cmnt', $comment);
+        }
+
+        return true;
+    }
 }
