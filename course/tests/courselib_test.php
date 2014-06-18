@@ -1950,7 +1950,7 @@ class core_course_courselib_testcase extends advanced_testcase {
      * Tests for event related to course module creation.
      */
     public function test_course_module_created_event() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
         $this->resetAfterTest();
 
         // Create an assign module.
@@ -1958,9 +1958,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $modinfo = $this->create_specific_module_test('assign');
         $events = $sink->get_events();
         $event = array_pop($events);
-        $sink->close();
 
-        $cm = $DB->get_record('course_modules', array('id' => $modinfo->coursemodule), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_id('assign', $modinfo->coursemodule, 0, false, MUST_EXIST);
         $mod = $DB->get_record('assign', array('id' => $modinfo->instance), '*', MUST_EXIST);
 
         // Validate event data.
@@ -1988,6 +1987,27 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
 
+        // Let us see if duplicating an activity results in a nice course module created event.
+        $sink->clear();
+        $course = get_course($mod->course);
+
+        // Discard error logs.
+        $oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log");
+        $newcmhtml = mod_duplicate_activity($course, $cm);
+        ini_set('error_log', $oldlog);
+
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+
+        // Validate event data.
+        $this->assertInstanceOf('\core\event\course_module_created', $event);
+        $this->assertEquals($newcmhtml->cmid, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals($course->id, $event->courseid);
+        $url = new moodle_url('/mod/assign/view.php', array('id' => $newcmhtml->cmid));
+        $this->assertEquals($url, $event->get_url());
     }
 
     /**
