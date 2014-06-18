@@ -423,6 +423,7 @@ class repository_boxnet extends repository {
      * @return boolean
      */
     public function sync_reference(stored_file $file) {
+        global $CFG;
         if ($file->get_referencelastsync() + DAYSECS > time()) {
             // Synchronise not more often than once a day.
             return false;
