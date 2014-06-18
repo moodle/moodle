@@ -36,14 +36,31 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
         $page = new moodle_page();
         $page->requires->string_for_js('course', 'moodle', 1);
         $page->requires->string_for_js('course', 'moodle', 1);
-        try {
-            $page->requires->string_for_js('course', 'moodle', 2);
-            $this->fail('Exception expected when the same string with different $a requested');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('coding_exception', $e);
-        }
+        $this->setExpectedException('coding_exception');
+        $page->requires->string_for_js('course', 'moodle', 2);
 
         // Note: we can not switch languages in phpunit yet,
         //       it would be nice to test that the strings are actually fetched in the footer.
     }
+
+    public function test_one_time_output_normal_case() {
+        $page = new moodle_page();
+        $this->assertTrue($page->requires->should_create_one_time_item_now('test_item'));
+        $this->assertFalse($page->requires->should_create_one_time_item_now('test_item'));
+    }
+
+    public function test_one_time_output_repeat_output_throws() {
+        $page = new moodle_page();
+        $page->requires->set_one_time_item_created('test_item');
+        $this->setExpectedException('coding_exception');
+        $page->requires->set_one_time_item_created('test_item');
+    }
+
+    public function test_one_time_output_different_pages_independent() {
+        $firstpage = new moodle_page();
+        $secondpage = new moodle_page();
+        $this->assertTrue($firstpage->requires->should_create_one_time_item_now('test_item'));
+        $this->assertTrue($secondpage->requires->should_create_one_time_item_now('test_item'));
+    }
+
 }
