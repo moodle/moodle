@@ -41,7 +41,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 $bname = $badge->name;
                 $imageurl = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/', 'f1', false);
             } else {
-                $bname = $badge->assertion->badge->name;
+                $bname = s($badge->assertion->badge->name);
                 $imageurl = $badge->imageUrl;
             }
 
@@ -381,20 +381,20 @@ class core_badges_renderer extends plugin_renderer_base {
         $issuer = $assertion->badge->issuer;
         $userinfo = $ibadge->recipient;
         $table = new html_table();
-        $today_date = date('Y-m-d');
-        $today = strtotime($today_date);
-        $expiration = isset($assertion->badge->expire) ? strtotime($assertion->badge->expire) : $today + 86400;
+        $today = strtotime(date('Y-m-d'));
 
         $output = '';
         $output .= html_writer::start_tag('div', array('id' => 'badge'));
         $output .= html_writer::start_tag('div', array('id' => 'badge-image'));
-        if ($expiration < $today) {
-            $output .= $this->output->pix_icon('i/expired',
-                    get_string('expireddate', 'badges', $assertion->badge->expire),
-                    'moodle',
-                    array('class' => 'expireimage'));
-        } else {
-            $output .= html_writer::empty_tag('img', array('src' => $issued->imageUrl));
+        $output .= html_writer::empty_tag('img', array('src' => $issued->imageUrl));
+        if (isset($assertion->expires)) {
+            $expiration = !strtotime($assertion->expires) ? s($assertion->expires) : strtotime($assertion->expires);
+            if ($expiration < $today) {
+                $output .= $this->output->pix_icon('i/expired',
+                        get_string('expireddate', 'badges', userdate($expiration)),
+                        'moodle',
+                        array('class' => 'expireimage'));
+            }
         }
         $output .= html_writer::end_tag('div');
 
@@ -419,7 +419,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $output .= $this->output->heading(get_string('issuerdetails', 'badges'), 3);
         $dl = array();
-        $dl[get_string('issuername', 'badges')] = $issuer->name;
+        $dl[get_string('issuername', 'badges')] = s($issuer->name);
         $dl[get_string('issuerurl', 'badges')] = html_writer::tag('a', $issuer->origin, array('href' => $issuer->origin));
 
         if (isset($issuer->contact)) {
@@ -429,25 +429,26 @@ class core_badges_renderer extends plugin_renderer_base {
 
         $output .= $this->output->heading(get_string('badgedetails', 'badges'), 3);
         $dl = array();
-        $dl[get_string('name')] = $assertion->badge->name;
-        $dl[get_string('description', 'badges')] = $assertion->badge->description;
-        $dl[get_string('bcriteria', 'badges')] = html_writer::tag('a', $assertion->badge->criteria, array('href' => $assertion->badge->criteria));
+        $dl[get_string('name')] = s($assertion->badge->name);
+        $dl[get_string('description', 'badges')] = s($assertion->badge->description);
+        $dl[get_string('bcriteria', 'badges')] = html_writer::tag('a', s($assertion->badge->criteria), array('href' => $assertion->badge->criteria));
         $output .= $this->definition_list($dl);
 
         $output .= $this->output->heading(get_string('issuancedetails', 'badges'), 3);
         $dl = array();
         if (isset($assertion->issued_on)) {
-            $dl[get_string('dateawarded', 'badges')] = $assertion->issued_on;
+            $issuedate = !strtotime($assertion->issued_on) ? s($assertion->issued_on) : strtotime($assertion->issued_on);
+            $dl[get_string('dateawarded', 'badges')] = userdate($issuedate);
         }
-        if (isset($assertion->badge->expire)) {
+        if (isset($assertion->expires)) {
             if ($expiration < $today) {
-                $dl[get_string('expirydate', 'badges')] = $assertion->badge->expire . get_string('warnexpired', 'badges');
+                $dl[get_string('expirydate', 'badges')] = userdate($expiration) . get_string('warnexpired', 'badges');
             } else {
-                $dl[get_string('expirydate', 'badges')] = $assertion->badge->expire;
+                $dl[get_string('expirydate', 'badges')] = userdate($expiration);
             }
         }
         if (isset($assertion->evidence)) {
-            $dl[get_string('evidence', 'badges')] = html_writer::tag('a', $assertion->evidence, array('href' => $assertion->evidence));
+            $dl[get_string('evidence', 'badges')] = html_writer::tag('a', s($assertion->evidence), array('href' => $assertion->evidence));
         }
         $output .= $this->definition_list($dl);
         $output .= html_writer::end_tag('div');
