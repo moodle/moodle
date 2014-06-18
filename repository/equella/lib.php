@@ -191,7 +191,7 @@ class repository_equella extends repository {
     }
 
     public function sync_reference(stored_file $file) {
-        global $USER;
+        global $USER, $CFG;
         if ($file->get_referencelastsync() + DAYSECS > time() || !$this->connection_result()) {
             // Synchronise not more often than once a day.
             // if we had several unsuccessfull attempts to connect to server - do not try any more.
