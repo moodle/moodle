@@ -236,6 +236,22 @@ div#dock {
     width: 100%;
 }
 
+// Dropdown styling.
+.dropdown-menu {
+    > li > a {
+        padding: 3px 20px 3px 8px;
+    }
+}
+.dir-rtl .dropdown-menu {
+    > li > a {
+        padding: 3px 8px 3px 20px;
+    }
+}
+.dir-rtl .dropdown-submenu > .dropdown-menu {
+  .border-radius(6px 0px 6px 6px);
+}
+
+
 // Survey module
 
 .path-mod-survey {
@@ -260,4 +276,11 @@ div#dock {
             }
         }
     }
+}
+
+.nav .caret {
+    margin-left: 4px;
+}
+.dir-rtl .nav .caret {
+    margin-right: 4px;
 }
