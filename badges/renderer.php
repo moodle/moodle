@@ -41,7 +41,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 $bname = $badge->name;
                 $imageurl = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/', 'f1', false);
             } else {
-                $bname = $badge->assertion->badge->name;
+                $bname = s($badge->assertion->badge->name);
                 $imageurl = $badge->imageUrl;
             }
 
@@ -420,47 +420,48 @@ class core_badges_renderer extends plugin_renderer_base {
         }
 
         $datatable->data[] = array($this->output->heading(get_string('issuerdetails', 'badges'), 3), '');
-        $datatable->data[] = array(get_string('issuername', 'badges'), $issuer->name);
+        $datatable->data[] = array(get_string('issuername', 'badges'), s($issuer->name));
         $datatable->data[] = array(get_string('issuerurl', 'badges'),
-                html_writer::tag('a', $issuer->origin, array('href' => $issuer->origin)));
+                html_writer::tag('a', s($issuer->origin), array('href' => $issuer->origin)));
         if (isset($issuer->contact)) {
             $datatable->data[] = array(get_string('contact', 'badges'), obfuscate_mailto($issuer->contact));
         }
         $datatable->data[] = array($this->output->heading(get_string('badgedetails', 'badges'), 3), '');
-        $datatable->data[] = array(get_string('name'), $assertion->badge->name);
-        $datatable->data[] = array(get_string('description', 'badges'), $assertion->badge->description);
+        $datatable->data[] = array(get_string('name'), s($assertion->badge->name));
+        $datatable->data[] = array(get_string('description', 'badges'), s($assertion->badge->description));
         $datatable->data[] = array(get_string('bcriteria', 'badges'),
-                html_writer::tag('a', $assertion->badge->criteria, array('href' => $assertion->badge->criteria)));
+                html_writer::tag('a', s($assertion->badge->criteria), array('href' => $assertion->badge->criteria)));
         $datatable->data[] = array($this->output->heading(get_string('issuancedetails', 'badges'), 3), '');
         if (isset($assertion->issued_on)) {
-            $datatable->data[] = array(get_string('dateawarded', 'badges'), $assertion->issued_on);
+            $issuedate = !strtotime($assertion->issued_on) ? s($assertion->issued_on) : strtotime($assertion->issued_on);
+            $datatable->data[] = array(get_string('dateawarded', 'badges'), userdate($issuedate));
         }
-        if (isset($assertion->badge->expire)) {
+        if (isset($assertion->expires)) {
             $today_date = date('Y-m-d');
             $today = strtotime($today_date);
-            $expiration = strtotime($assertion->badge->expire);
+            $expiration = !strtotime($assertion->expires) ? s($assertion->expires) : strtotime($assertion->expires);
             if ($expiration < $today) {
-                $cell = new html_table_cell($assertion->badge->expire . get_string('warnexpired', 'badges'));
+                $cell = new html_table_cell(userdate($expiration) . get_string('warnexpired', 'badges'));
                 $cell->attributes = array('class' => 'notifyproblem warning');
                 $datatable->data[] = array(get_string('expirydate', 'badges'), $cell);
 
                 $image = html_writer::start_tag('div', array('class' => 'badge'));
-                $image .= html_writer::empty_tag('img', array('src' => $issued['badge']['image']));
+                $image .= html_writer::empty_tag('img', array('src' => $issued->imageUrl));
                 $image .= html_writer::start_tag('span', array('class' => 'expired'))
                             . $this->output->pix_icon('i/expired',
-                                get_string('expireddate', 'badges', $assertion->badge->expire),
+                                get_string('expireddate', 'badges', userdate($expiration)),
                                 'moodle',
                                 array('class' => 'expireimage'))
                             . html_writer::end_tag('span');
                 $image .= html_writer::end_tag('div');
                 $imagetable->data[0] = array($image);
             } else {
-                $datatable->data[] = array(get_string('expirydate', 'badges'), $assertion->badge->expire);
+                $datatable->data[] = array(get_string('expirydate', 'badges'), userdate($expiration));
             }
         }
         if (isset($assertion->evidence)) {
             $datatable->data[] = array(get_string('evidence', 'badges'),
-                html_writer::tag('a', $assertion->evidence, array('href' => $assertion->evidence)));
+                html_writer::tag('a', s($assertion->evidence), array('href' => $assertion->evidence)));
         }
         $table->attributes = array('class' => 'generalbox boxaligncenter issuedbadgebox');
         $table->data[] = array(html_writer::table($imagetable), html_writer::table($datatable));
