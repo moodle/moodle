@@ -180,7 +180,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
         } else {
             $record = new stdclass();
             $record->workshopid = $this->workshop->id;
-            $record->layout     = $layout;
+            $record->additive   = $additive;
             $DB->insert_record('workshopform_accum_config', $record, false);
         }
 
