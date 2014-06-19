@@ -39,8 +39,10 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  */
 class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
-    public function test_assign_print_overview() {
-        global $DB;
+    protected function setUp() {
+        parent::setUp();
+
+        // Add additional default data (some real attempts and stuff).
         $this->setUser($this->editingteachers[0]);
         $this->create_instance();
         $assign = $this->create_instance(array('duedate' => time(),
@@ -49,10 +51,8 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
                                                'submissiondrafts' => 1,
                                                'assignsubmission_onlinetext_enabled' => 1));
 
-        $courses = $DB->get_records('course', array('id' => $this->course->id));
-
-        $this->setUser($this->students[0]);
         // Add a submission.
+        $this->setUser($this->students[0]);
         $submission = $assign->get_user_submission($this->students[0]->id, true);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
@@ -99,6 +99,12 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         // And now submit it for marking (again).
         $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
         $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+    }
+
+    public function test_assign_print_overview() {
+        global $DB;
+        $courses = $DB->get_records('course', array('id' => $this->course->id));
+
 
         // Check the overview as the different users.
         $this->setUser($this->students[0]);
