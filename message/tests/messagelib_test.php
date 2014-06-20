@@ -62,6 +62,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * @param stdClass $userfrom user object of the one sending the message.
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
+     * @return int the id of the message
      */
     protected function send_fake_message($userfrom, $userto, $message = 'Hello world!') {
         global $DB;
@@ -72,7 +73,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->timecreated = time();
-        $insert = $DB->insert_record('message', $record);
+
+        return $DB->insert_record('message', $record);
     }
 
     /**
@@ -357,5 +359,109 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertEquals(false, message_search(array('Message'), true, true, ''));
         $this->assertEquals(false, message_search(array('Message'), true, true, 2));
         $this->assertCount(5, message_search(array('Message'), true, true, SITEID));
+    }
+
+    /**
+     * Test message_get_recent_conversations.
+     */
+    public function test_message_get_recent_conversations() {
+        global $DB, $USER;
+
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        // Create user's to send messages to/from.
+        $user1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'user1'));
+        $user2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'user2'));
+
+        // Add a few messages that have been read and some that are unread.
+        $m1 = $this->send_fake_message($USER, $user1, 'Message 1'); // An unread message.
+        $m2 = $this->send_fake_message($user1, $USER, 'Message 2'); // An unread message.
+        $m3 = $this->send_fake_message($USER, $user1, 'Message 3'); // An unread message.
+        $m4 = message_post_message($USER, $user2, 'Message 4', FORMAT_PLAIN);
+        $m5 = message_post_message($user2, $USER, 'Message 5', FORMAT_PLAIN);
+        $m6 = message_post_message($USER, $user2, 'Message 6', FORMAT_PLAIN);
+
+        // We want to alter the timecreated values so we can ensure message_get_recent_conversations orders
+        // by timecreated, not the max id, to begin with. However, we also want more than one message to have
+        // the same timecreated value to ensure that when this happens we retrieve the one with the maximum id.
+
+        // Store the current time.
+        $time = time();
+
+        // Set the first and second unread messages to have the same timecreated value.
+        $updatemessage = new stdClass();
+        $updatemessage->id = $m1;
+        $updatemessage->timecreated = $time;
+        $DB->update_record('message', $updatemessage);
+
+        $updatemessage->id = $m2;
+        $updatemessage->timecreated = $time;
+        $DB->update_record('message', $updatemessage);
+
+        // Set the third unread message to have a timecreated value of 0.
+        $updatemessage->id = $m3;
+        $updatemessage->timecreated = 0;
+        $DB->update_record('message', $updatemessage);
+
+        // Set the first and second read messages to have the same timecreated value.
+        $updatemessage->id = $m4;
+        $updatemessage->timecreated = $time + 1;
+        $DB->update_record('message', $updatemessage);
+
+        $updatemessage->id = $m5;
+        $updatemessage->timecreated = $time + 1;
+        $DB->update_record('message', $updatemessage);
+
+        // Set the third read message to have a timecreated value of 0.
+        $updatemessage->id = $m6;
+        $updatemessage->timecreated = 0;
+        $DB->update_record('message_read', $updatemessage);
+
+        // Get the recent conversations for the current user.
+        $conversations = message_get_recent_conversations($USER);
+
+        // Confirm that we have received the messages with the maximum timecreated, rather than the max id.
+        $this->assertEquals('Message 2', $conversations[0]->fullmessage);
+        $this->assertEquals('Message 5', $conversations[1]->smallmessage);
+    }
+
+    /**
+     * Test message_get_recent_notifications.
+     */
+    public function test_message_get_recent_notifications() {
+        global $DB, $USER;
+
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        // Create a user to send messages from.
+        $user1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'user1'));
+
+        // Add two messages - will mark them as notifications later.
+        $m1 = message_post_message($user1, $USER, 'Message 1', FORMAT_PLAIN);
+        $m2 = message_post_message($user1, $USER, 'Message 2', FORMAT_PLAIN);
+
+        // Mark the second message as a notification.
+        $updatemessage = new stdClass();
+        $updatemessage->id = $m2;
+        $updatemessage->notification = 1;
+        $DB->update_record('message_read', $updatemessage);
+
+        // Mark the first message as a notification and change the timecreated to 0.
+        $updatemessage->id = $m1;
+        $updatemessage->notification = 1;
+        $updatemessage->timecreated = 0;
+        $DB->update_record('message_read', $updatemessage);
+
+        $notifications = message_get_recent_notifications($USER);
+
+        // Get the messages.
+        $firstmessage = array_shift($notifications);
+        $secondmessage = array_shift($notifications);
+
+        // Confirm that we have received the notifications with the maximum timecreated, rather than the max id.
+        $this->assertEquals('Message 2', $firstmessage->smallmessage);
+        $this->assertEquals('Message 1', $secondmessage->smallmessage);
     }
 }
