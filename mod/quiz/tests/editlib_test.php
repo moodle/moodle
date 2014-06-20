@@ -72,8 +72,8 @@ class mod_quiz_editlib_testcase extends advanced_testcase {
         $randomq = $DB->get_record('question', array('qtype' => 'random'));
 
         $slotssql = "SELECT qs.*, q.qtype AS qtype
-                       FROM {quiz_slots} AS qs
-                       JOIN {question} AS q ON qs.questionid = q.id
+                       FROM {quiz_slots} qs
+                       JOIN {question} q ON qs.questionid = q.id
                       WHERE qs.quizid = ?
                    ORDER BY qs.slot";
         $slots = $DB->get_records_sql($slotssql, array($quiz->id));
