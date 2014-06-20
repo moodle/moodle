@@ -167,12 +167,27 @@ class auth_plugin_cas extends auth_plugin_ldap {
      *
      */
     function prelogout_hook() {
-        global $CFG;
+        global $CFG, $USER, $DB;
 
-        if (!empty($this->config->logoutcas)) {
+        if (!empty($this->config->logoutcas) && $USER->auth == $this->authtype) {
             $backurl = $CFG->wwwroot;
             $this->connectCAS();
-            phpCAS::logoutWithURL($backurl);
+            // Note: Hack to stable versions to trigger the event before it redirect to CAS logout.
+            $sid = session_id();
+            $event = \core\event\user_loggedout::create(
+                array(
+                    'userid' => $USER->id,
+                    'objectid' => $USER->id,
+                    'other' => array('sessionid' => $sid),
+                )
+            );
+            if ($session = $DB->get_record('sessions', array('sid' => $sid))) {
+                $event->add_record_snapshot('sessions', $session);
+            }
+            \core\session\manager::terminate_current();
+            $event->trigger();
+
+            phpCAS::logoutWithRedirectService($backurl);
         }
     }
 
