@@ -177,3 +177,15 @@
         return ($recs && !empty($recs));
     }
 
+    /**
+     * Given a database object, deletes all cached RSS files associated with it.
+     *
+     * @param stdClass $data
+     */
+    function data_rss_delete_file($data) {
+        global $CFG;
+        require_once("$CFG->libdir/rsslib.php");
+
+        rss_delete_file('mod_data', $data);
+    }
+
