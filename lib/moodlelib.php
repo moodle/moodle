@@ -3162,10 +3162,11 @@ function require_logout() {
     }
 
     // Execute hooks before action.
+    $authplugins = array();
     $authsequence = get_enabled_auth_plugins();
     foreach ($authsequence as $authname) {
-        $authplugin = get_auth_plugin($authname);
-        $authplugin->prelogout_hook();
+        $authplugins[$authname] = get_auth_plugin($authname);
+        $authplugins[$authname]->prelogout_hook();
     }
 
     // Store info that gets removed during logout.
@@ -3181,11 +3182,19 @@ function require_logout() {
         $event->add_record_snapshot('sessions', $session);
     }
 
+    // Clone of $USER object to be used by auth plugins.
+    $user = fullclone($USER);
+
     // Delete session record and drop $_SESSION content.
     \core\session\manager::terminate_current();
 
     // Trigger event AFTER action.
     $event->trigger();
+
+    // Hook to execute auth plugins redirection after event trigger.
+    foreach ($authplugins as $authplugin) {
+        $authplugin->postlogout_hook($user);
+    }
 }
 
 /**
