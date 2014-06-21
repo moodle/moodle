@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Veritabanı oluşturulamıyor.</p>
+<p>Belirtilen veritabanı yok ve verilen kullanıcının veritabanı oluşturmak için izni yok.</p>
+<p>Site yöneticisi veritabanı yapılandırmasını doğrulamalı.</p>';
 $string['cannotcreatelangdir'] = 'Dil dizini oluşturulamıyor';
 $string['cannotcreatetempdir'] = 'Geçici dizin oluşturulamıyor';
 $string['cannotdownloadcomponents'] = 'Bileşenler indirilemedi';
@@ -39,6 +42,7 @@ $string['cannotsavemd5file'] = 'md5 dosyası kaydedilemedi';
 $string['cannotsavezipfile'] = 'ZIP dosyası kaydedilemedi';
 $string['cannotunzipfile'] = 'Dosya arşivi açılamadı';
 $string['componentisuptodate'] = 'Bileşen güncel';
+$string['dmlexceptiononinstall'] = '<p>Bir veritabanı hatası oluştu [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'İndirilen dosya kontrolü hatası';
 $string['invalidmd5'] = 'Kontrol değişkeni yanlış - yeniden deneyin';
 $string['missingrequiredfield'] = 'Gerekli alanlardan bazıları eksik';
