@@ -246,3 +246,7 @@ The following snippet illustates how to configure the three core cache stores th
     define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');
     define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');
     define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');
+
+Please be aware that if you are using Memcache or Memcached it is recommended to use dedicated Memcached servers.
+When caches get purged the memcached servers you have configured get purged, any data stored within them whether it belongs to Moodle or not will be removed.
+If you are using Memcached for sessions as well as caching/testing and caches get purged your sessions will be removed prematurely and users will be need to start again.
