@@ -266,3 +266,7 @@ There are a couple of considerations to using this method:
 * If you have configured your cache before setting $CFG->altcacheconfigpath you will need to copy it from moodledata/muc/config.php to the destination you specified.
 * This allows you to share a cache config between sites.
 * It also allows you to use unit tests to test your sites cache config.
+
+Please be aware that if you are using Memcache or Memcached it is recommended to use dedicated Memcached servers.
+When caches get purged the memcached servers you have configured get purged, any data stored within them whether it belongs to Moodle or not will be removed.
+If you are using Memcached for sessions as well as caching/testing and caches get purged your sessions will be removed prematurely and users will be need to start again.
