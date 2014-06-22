@@ -368,9 +368,16 @@ class quiz_access_manager {
      * @return mod_quiz_preflight_check_form the form.
      */
     public function get_preflight_check_form(moodle_url $url, $attemptid) {
+        // This form normally wants POST submissins. However, it also needs to
+        // accept GET submissions. Since formslib is strict, we have to detect
+        // which case we are in, and set the form property appropriately.
+        $method = 'post';
+        if (!empty($_GET['_qf__mod_quiz_preflight_check_form'])) {
+            $method = 'get';
+        }
         return new mod_quiz_preflight_check_form($url->out_omit_querystring(),
                 array('rules' => $this->rules, 'quizobj' => $this->quizobj,
-                      'attemptid' => $attemptid, 'hidden' => $url->params()));
+                      'attemptid' => $attemptid, 'hidden' => $url->params()), $method);
     }
 
     /**

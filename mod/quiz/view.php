@@ -93,6 +93,7 @@ $viewobj->canreviewmine = $canreviewmine;
 $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
+$unfinishedattemptid = null;
 if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
     $attempts[] = $unfinishedattempt;
 
@@ -105,6 +106,7 @@ if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id))
     if (!$unfinished) {
         $lastfinishedattempt = $unfinishedattempt;
     }
+    $unfinishedattemptid = $unfinishedattempt->id;
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
 $numattempts = count($attempts);
@@ -177,7 +179,11 @@ $viewobj->canedit = has_capability('mod/quiz:manage', $context);
 $viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
 $viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
 $viewobj->startattempturl = $quizobj->start_attempt_url();
-$viewobj->startattemptwarning = $quizobj->confirm_start_attempt_message($unfinished);
+
+if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
+    $viewobj->preflightcheckform = $accessmanager->get_preflight_check_form(
+            $viewobj->startattempturl, $unfinishedattemptid);
+}
 $viewobj->popuprequired = $accessmanager->attempt_must_be_in_popup();
 $viewobj->popupoptions = $accessmanager->get_popup_options();
 

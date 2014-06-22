@@ -38,6 +38,7 @@ class mod_quiz_preflight_check_form extends moodleform {
 
     protected function definition() {
         $mform = $this->_form;
+        $this->_form->updateAttributes(array('id' => 'mod_quiz_preflight_form'));
 
         foreach ($this->_customdata['hidden'] as $name => $value) {
             if ($name === 'sesskey') {
@@ -54,7 +55,8 @@ class mod_quiz_preflight_check_form extends moodleform {
             }
         }
 
-        $this->add_action_buttons(true, get_string('continue'));
+        $this->add_action_buttons(true, get_string('startattempt', 'quiz'));
+        $mform->setDisableShortforms();
     }
 
     public function validation($data, $files) {
