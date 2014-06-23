@@ -771,10 +771,6 @@ if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 7200;
 }
 \core\session\manager::start();
-if (!PHPUNIT_TEST and !defined('BEHAT_TEST')) {
-    $SESSION =& $_SESSION['SESSION'];
-    $USER    =& $_SESSION['USER'];
-}
 
 // Initialise some variables that are supposed to be set in config.php only.
 if (!isset($CFG->filelifetime)) {
