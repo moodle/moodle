@@ -240,6 +240,11 @@ $CFG->admin = 'admin';
 //      $CFG->session_memcached_acquire_lock_timeout = 120;
 //      $CFG->session_memcached_lock_expire = 7200;       // Ignored if memcached extension <= 2.1.0
 //
+// Please be aware that when selecting either Memcached or Memcache for sessions that it is advised to use a dedicated
+// memcache server. The memcache and memcached extensions do not provide isolated environments for individual uses.
+// Using the same server for other purposes (MUC for example) can lead to sessions being prematurely removed should
+// the other uses of the server purge the cache.
+//
 // Following setting allows you to alter how frequently is timemodified updated in sessions table.
 //      $CFG->session_update_timemodified_frequency = 20; // In seconds.
 //
