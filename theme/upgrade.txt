@@ -22,6 +22,9 @@ Removed themes:
   If you wish to keep your theme and its settings, download it from moodle.org and put it back in
   the theme/ directory BEFORE UPGRADING.
 
+Notes:
+* z-index on #dock has been adjusted from 11000 to 5000 to prevent overlapping issues with fullscreen TinyMCE in Base theme.
+
 === 2.6 ===
 
 Removed themes:
