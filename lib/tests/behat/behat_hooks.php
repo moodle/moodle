@@ -189,9 +189,7 @@ class behat_hooks extends behat_base {
         }
 
         // Reset $SESSION.
-        $_SESSION = array();
-        $SESSION = new stdClass();
-        $_SESSION['SESSION'] =& $SESSION;
+        \core\session\manager::init_empty_session();
 
         behat_util::reset_database();
         behat_util::reset_dataroot();

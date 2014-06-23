@@ -189,14 +189,9 @@ class phpunit_util extends testing_util {
         $FULLME = null;
         $ME = null;
         $SCRIPT = null;
-        $SESSION = new stdClass();
-        $_SESSION['SESSION'] =& $SESSION;
 
-        // set fresh new not-logged-in user
-        $user = new stdClass();
-        $user->id = 0;
-        $user->mnethostid = $CFG->mnet_localhost_id;
-        \core\session\manager::set_user($user);
+        // Empty sessison and set fresh new not-logged-in user.
+        \core\session\manager::init_empty_session();
 
         // reset all static caches
         \core\event\manager::phpunit_reset();
