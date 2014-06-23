@@ -526,10 +526,11 @@ class quiz_overview_report extends quiz_attempts_report {
      */
     protected function has_regraded_questions($from, $where, $params) {
         global $DB;
-        $qubaids = new qubaid_join($from, 'uniqueid', $where, $params);
-        return $DB->record_exists_select('quiz_overview_regrades',
-                'questionusageid ' . $qubaids->usage_id_in(),
-                $qubaids->usage_id_in_params());
+        return $DB->record_exists_sql("
+                SELECT 1
+                  FROM {$from}
+                  JOIN {quiz_overview_regrades} qor ON qor.questionusageid = quiza.uniqueid
+                 WHERE {$where}", $params);
     }
 
     /**
