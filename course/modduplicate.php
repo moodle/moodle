@@ -120,6 +120,10 @@ if ($newcmid) {
     $newcm = get_coursemodule_from_id('', $newcmid, $course->id, true, MUST_EXIST);
     moveto_module($newcm, $section, $cm);
     moveto_module($cm, $section, $newcm);
+
+    // Trigger course module created event. We can trigger the event only if we know the newcmid.
+    $event = \core\event\course_module_created::create_from_cm($newcm);
+    $event->trigger();
 }
 
 $rc->destroy();

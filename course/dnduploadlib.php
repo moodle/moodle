@@ -696,16 +696,7 @@ class dndupload_ajax_processor {
         $mod = $info->get_cm($this->cm->id);
 
         // Trigger course module created event.
-        $event = \core\event\course_module_created::create(array(
-            'courseid' => $this->course->id,
-            'context'  => context_module::instance($mod->id),
-            'objectid' => $mod->id,
-            'other'    => array(
-                'modulename' => $mod->modname,
-                'name'       => $mod->name,
-                'instanceid' => $instanceid
-            )
-        ));
+        $event = \core\event\course_module_created::create_from_cm($mod);
         $event->trigger();
 
         add_to_log($this->course->id, $mod->modname, "add",
