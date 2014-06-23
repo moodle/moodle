@@ -1,6 +1,12 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.6.3 ===
+
+Notes:
+* z-index on #dock has been adjusted from 11000 to 5000 to prevent overlapping issues with fullscreen TinyMCE in all affected themes.
+* z-index on #page-header has also been adjusted from 99999 to 5000 on Overlay.
+
 === 2.6 ===
 
 Removed themes:
