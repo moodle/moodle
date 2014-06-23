@@ -47,7 +47,7 @@ class backup_dbops_testcase extends advanced_testcase {
         $page = $this->getDataGenerator()->create_module('page', array('course'=>$course->id), array('section'=>3));
         $coursemodule = $DB->get_record('course_modules', array('id'=>$page->cmid));
 
-        $this->moduleid  = $coursemodule->id;
+        $this->moduleid  = $page->cmid;
         $this->sectionid = $DB->get_field("course_sections", 'id', array("section"=>$coursemodule->section, "course"=>$course->id));
         $this->courseid  = $coursemodule->course;
         $this->userid = 2; // admin
@@ -180,7 +180,7 @@ class backup_dbops_testcase extends advanced_testcase {
         $this->assertEquals(backup_controller_dbops::backup_includes_files($bc->get_backupid()), 0);
 
         // A MODE_SAMESITE controller - should not include files
-        $bc = new mock_backup_controller4dbops(backup::TYPE_1COURSE, $this->moduleid, backup::FORMAT_MOODLE,
+        $bc = new mock_backup_controller4dbops(backup::TYPE_1COURSE, $this->courseid, backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $this->userid);
         $this->assertEquals(backup_controller_dbops::backup_includes_files($bc->get_backupid()), 0);
     }

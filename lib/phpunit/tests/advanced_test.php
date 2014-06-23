@@ -142,10 +142,11 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('user_preferences'));
         $originaldisplayid = $DB->insert_record('user_preferences', array('userid'=>2, 'name'=> 'phpunittest', 'value'=>'x'));
-        $this->assertEquals(1, $originaldisplayid);
+        $this->assertEquals(1, $DB->count_records('user_preferences'));
 
+        $numcourses = $DB->count_records('course');
         $course = $this->getDataGenerator()->create_course();
-        $this->assertEquals(2, $course->id);
+        $this->assertEquals($numcourses + 1, $DB->count_records('course'));
 
         $this->assertEquals(2, $DB->count_records('user'));
         $DB->delete_records('user', array('id'=>1));
@@ -155,8 +156,10 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->assertEquals(1, $DB->count_records('course')); // Only frontpage in new site.
         $this->assertEquals(0, $DB->count_records('context_temp')); // Only frontpage in new site.
+
+        $numcourses = $DB->count_records('course');
         $course = $this->getDataGenerator()->create_course();
-        $this->assertEquals(2, $course->id);
+        $this->assertEquals($numcourses + 1, $DB->count_records('course'));
 
         $displayid = $DB->insert_record('user_preferences', array('userid'=>2, 'name'=> 'phpunittest', 'value'=>'x'));
         $this->assertEquals($originaldisplayid, $displayid);
@@ -164,20 +167,23 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('user'));
         $DB->delete_records('user', array('id'=>2));
         $user = $this->getDataGenerator()->create_user();
-        $this->assertEquals(3, $user->id);
+        $this->assertEquals(2, $DB->count_records('user'));
+        $this->assertGreaterThan(2, $user->id);
 
         $this->resetAllData();
 
+        $numcourses = $DB->count_records('course');
         $course = $this->getDataGenerator()->create_course();
-        $this->assertEquals(2, $course->id);
+        $this->assertEquals($numcourses + 1, $DB->count_records('course'));
 
         $this->assertEquals(2, $DB->count_records('user'));
         $DB->delete_records('user', array('id'=>2));
 
         $this->resetAllData();
 
+        $numcourses = $DB->count_records('course');
         $course = $this->getDataGenerator()->create_course();
-        $this->assertEquals(2, $course->id);
+        $this->assertEquals($numcourses + 1, $DB->count_records('course'));
 
         $this->assertEquals(2, $DB->count_records('user'));
     }

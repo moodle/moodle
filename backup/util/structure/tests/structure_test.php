@@ -35,8 +35,22 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  */
 class backup_structure_testcase extends advanced_testcase {
 
-    protected $forumid;   // To store the inserted forum->id
-    protected $contextid; // Official contextid for these tests
+    /** @var int Store the inserted forum->id for use in test functions */
+    protected $forumid;
+    /** @var int Store the inserted discussion1->id for use in test functions */
+    protected $discussionid1;
+    /** @var int Store the inserted discussion2->id for use in test functions */
+    protected $discussionid2;
+    /** @var int Store the inserted post1->id for use in test functions */
+    protected $postid1;
+    /** @var int Store the inserted post2->id for use in test functions */
+    protected $postid2;
+    /** @var int Store the inserted post3->id for use in test functions */
+    protected $postid3;
+    /** @var int Store the inserted post4->id for use in test functions */
+    protected $postid4;
+    /** @var int Official contextid for these tests */
+    protected $contextid;
 
 
     protected function setUp() {
@@ -72,30 +86,30 @@ class backup_structure_testcase extends advanced_testcase {
 
         // Create two discussions
         $discussion1 = (object)array('course' => 1, 'forum' => $this->forumid, 'name' => 'd1', 'userid' => 100, 'groupid' => 200);
-        $d1id = $DB->insert_record('forum_discussions', $discussion1);
+        $this->discussionid1 = $DB->insert_record('forum_discussions', $discussion1);
         $discussion2 = (object)array('course' => 1, 'forum' => $this->forumid, 'name' => 'd2', 'userid' => 101, 'groupid' => 201);
-        $d2id = $DB->insert_record('forum_discussions', $discussion2);
+        $this->discussionid2 = $DB->insert_record('forum_discussions', $discussion2);
 
         // Create four posts
-        $post1 = (object)array('discussion' => $d1id, 'userid' => 100, 'subject' => 'p1', 'message' => 'm1');
-        $p1id = $DB->insert_record('forum_posts', $post1);
-        $post2 = (object)array('discussion' => $d1id, 'parent' => $p1id, 'userid' => 102, 'subject' => 'p2', 'message' => 'm2');
-        $p2id = $DB->insert_record('forum_posts', $post2);
-        $post3 = (object)array('discussion' => $d1id, 'parent' => $p2id, 'userid' => 103, 'subject' => 'p3', 'message' => 'm3');
-        $p3id = $DB->insert_record('forum_posts', $post3);
-        $post4 = (object)array('discussion' => $d2id, 'userid' => 101, 'subject' => 'p4', 'message' => 'm4');
-        $p4id = $DB->insert_record('forum_posts', $post4);
+        $post1 = (object)array('discussion' => $this->discussionid1, 'userid' => 100, 'subject' => 'p1', 'message' => 'm1');
+        $this->postid1 = $DB->insert_record('forum_posts', $post1);
+        $post2 = (object)array('discussion' => $this->discussionid1, 'parent' => $this->postid1, 'userid' => 102, 'subject' => 'p2', 'message' => 'm2');
+        $this->postid2 = $DB->insert_record('forum_posts', $post2);
+        $post3 = (object)array('discussion' => $this->discussionid1, 'parent' => $this->postid2, 'userid' => 103, 'subject' => 'p3', 'message' => 'm3');
+        $this->postid3 = $DB->insert_record('forum_posts', $post3);
+        $post4 = (object)array('discussion' => $this->discussionid2, 'userid' => 101, 'subject' => 'p4', 'message' => 'm4');
+        $this->postid4 = $DB->insert_record('forum_posts', $post4);
         // With two related file
         $f1_post1 = (object)array(
             'contenthash' => 'testp1', 'contextid' => $this->contextid, 'component'=>'mod_forum',
-            'filearea' => 'post', 'filename' => 'tp1', 'itemid' => $p1id,
+            'filearea' => 'post', 'filename' => 'tp1', 'itemid' => $this->postid1,
             'filesize' => 123, 'timecreated' => 0, 'timemodified' => 0,
             'pathnamehash' => 'testp1'
         );
         $DB->insert_record('files', $f1_post1);
         $f1_post2 = (object)array(
             'contenthash' => 'testp2', 'contextid' => $this->contextid, 'component'=>'mod_forum',
-            'filearea' => 'attachment', 'filename' => 'tp2', 'itemid' => $p2id,
+            'filearea' => 'attachment', 'filename' => 'tp2', 'itemid' => $this->postid2,
             'filesize' => 123, 'timecreated' => 0, 'timemodified' => 0,
             'pathnamehash' => 'testp2'
         );
@@ -103,16 +117,16 @@ class backup_structure_testcase extends advanced_testcase {
 
         // Create two ratings
         $rating1 = (object)array(
-            'contextid' => $this->contextid, 'userid' => 104, 'itemid' => $p1id, 'rating' => 2,
+            'contextid' => $this->contextid, 'userid' => 104, 'itemid' => $this->postid1, 'rating' => 2,
             'scaleid' => -1, 'timecreated' => time(), 'timemodified' => time());
         $r1id = $DB->insert_record('rating', $rating1);
         $rating2 = (object)array(
-            'contextid' => $this->contextid, 'userid' => 105, 'itemid' => $p1id, 'rating' => 3,
+            'contextid' => $this->contextid, 'userid' => 105, 'itemid' => $this->postid1, 'rating' => 3,
             'scaleid' => -1, 'timecreated' => time(), 'timemodified' => time());
         $r2id = $DB->insert_record('rating', $rating2);
 
         // Create 1 reads
-        $read1 = (object)array('userid' => 102, 'forumid' => $this->forumid, 'discussionid' => $d2id, 'postid' => $p4id);
+        $read1 = (object)array('userid' => 102, 'forumid' => $this->forumid, 'discussionid' => $this->discussionid2, 'postid' => $this->postid4);
         $DB->insert_record('forum_read', $read1);
     }
 
@@ -195,11 +209,11 @@ class backup_structure_testcase extends advanced_testcase {
 
         // Let's add 1 optigroup with 4 elements
         $alternative1 = new backup_optigroup_element('alternative1',
-            array('name', 'value'), '../../id', 1);
+            array('name', 'value'), '../../id', $this->postid1);
         $alternative2 = new backup_optigroup_element('alternative2',
-            array('name', 'value'), backup::VAR_PARENTID, 2);
+            array('name', 'value'), backup::VAR_PARENTID, $this->postid2);
         $alternative3 = new backup_optigroup_element('alternative3',
-            array('name', 'value'), '/forum/discussions/discussion/posts/post/id', 3);
+            array('name', 'value'), '/forum/discussions/discussion/posts/post/id', $this->postid3);
         $alternative4 = new backup_optigroup_element('alternative4',
             array('forumtype', 'forumname')); // Alternative without conditions
         // Create the optigroup, adding one element
@@ -239,7 +253,7 @@ class backup_structure_testcase extends advanced_testcase {
             array(backup::VAR_PARENTID)
         );
 
-        $read->set_source_table('forum_read', array('id' => '../../id'));
+        $read->set_source_table('forum_read', array('forumid' => '../../id'));
 
         $inventeds->set_source_array(array((object)array('reason' => 'I love Moodle', 'version' => '1.0'),
             (object)array('reason' => 'I love Moodle', 'version' => '2.0'))); // 2 object array
@@ -334,83 +348,83 @@ class backup_structure_testcase extends advanced_testcase {
                     $ratarr[$node->nodeName] = $node->nodeValue;
                 }
             }
-            $this->assertEquals($ratarr['userid'], $DB->get_field('rating', 'userid', array('id' => $ratarr['id'])));
-            $this->assertEquals($ratarr['itemid'], $DB->get_field('rating', 'itemid', array('id' => $ratarr['id'])));
-            $this->assertEquals($ratarr['post_rating'], $DB->get_field('rating', 'rating', array('id' => $ratarr['id'])));
+            $this->assertEquals($DB->get_field('rating', 'userid', array('id' => $ratarr['id'])), $ratarr['userid']);
+            $this->assertEquals($DB->get_field('rating', 'itemid', array('id' => $ratarr['id'])), $ratarr['itemid']);
+            $this->assertEquals($DB->get_field('rating', 'rating', array('id' => $ratarr['id'])), $ratarr['post_rating']);
         }
 
         // Check forum has "blockeperiod" with value 0 (was declared by object instead of name)
         $query = '/forum[blockperiod="0"]';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check forum is missing "completiondiscussions" (as we are using mock_skip_final_element)
         $query = '/forum/completiondiscussions';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 0);
+        $this->assertEquals(0, $result->length);
 
         // Check forum has "completionreplies" with value "original was 0, now changed" (because of mock_modify_final_element)
         $query = '/forum[completionreplies="original was 0, now changed"]';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check forum has "completionposts" with value "intercepted!" (because of mock_final_element_interceptor)
         $query = '/forum[completionposts="intercepted!"]';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check there isn't any alternative2 tag, as far as it hasn't source defined
         $query = '//alternative2';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 0);
+        $this->assertEquals(0, $result->length);
 
         // Check there are 4 "field1" elements
         $query = '/forum/discussions/discussion/posts/post//field1';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 4);
+        $this->assertEquals(4, $result->length);
 
         // Check first post has one name element with value "alternative1"
-        $query = '/forum/discussions/discussion/posts/post[@id="1"][name="alternative1"]';
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid1.'"][name="alternative1"]';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check there are two "dupetest1" elements
         $query = '/forum/discussions/discussion/posts/post//dupetest1';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 2);
+        $this->assertEquals(2, $result->length);
 
         // Check second post has one name element with value "dupetest2"
-        $query = '/forum/discussions/discussion/posts/post[@id="2"]/dupetest2';
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid2.'"]/dupetest2';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check element "dupetest2" of second post has one field1 element with value "2"
-        $query = '/forum/discussions/discussion/posts/post[@id="2"]/dupetest2[field1="2"]';
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid2.'"]/dupetest2[field1="2"]';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check forth post has no name element
-        $query = '/forum/discussions/discussion/posts/post[@id="4"]/name';
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid4.'"]/name';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 0);
+        $this->assertEquals(0, $result->length);
 
         // Check 1st, 2nd and 3rd posts have no forumtype element
-        $query = '/forum/discussions/discussion/posts/post[@id="1"]/forumtype';
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid1.'"]/forumtype';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 0);
-        $query = '/forum/discussions/discussion/posts/post[@id="2"]/forumtype';
+        $this->assertEquals(0, $result->length);
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid2.'"]/forumtype';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 0);
-        $query = '/forum/discussions/discussion/posts/post[@id="3"]/forumtype';
+        $this->assertEquals(0, $result->length);
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid3.'"]/forumtype';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 0);
+        $this->assertEquals(0, $result->length);
 
         // Check 4th post has one forumtype element with value "general"
         // (because it doesn't matches alternatives 1, 2, 3, then alternative 4,
         // the one without conditions is being applied)
-        $query = '/forum/discussions/discussion/posts/post[@id="4"][forumtype="general"]';
+        $query = '/forum/discussions/discussion/posts/post[@id="'.$this->postid4.'"][forumtype="general"]';
         $result = $xpath->query($query);
-        $this->assertEquals($result->length, 1);
+        $this->assertEquals(1, $result->length);
 
         // Check annotations information against DB
         // Count records in original tables

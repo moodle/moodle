@@ -75,6 +75,10 @@ abstract class testing_util {
     private static $originaldatafilesjsonadded = false;
 
     /**
+     * @var int next sequence value for a single test cycle.
+     */
+    protected static $sequencenextstartingid = null;
+    /**
      * Return the name of the JSON file containing the init filenames.
      *
      * @static
@@ -410,6 +414,27 @@ abstract class testing_util {
     }
 
     /**
+     * Determine the next unique starting id sequences.
+     *
+     * @static
+     * @param array $records The records to use to determine the starting value for the table.
+     * @return int The value the sequence should be set to.
+     */
+    private static function get_next_sequence_starting_value($records) {
+        $id = self::$sequencenextstartingid;
+
+        // If there are records, calculate the minimum id we can use.
+        // It must be bigger than the last record's id.
+        if (!empty($records)) {
+            $lastrecord = end($records);
+            $id = max($id, $lastrecord->id + 1);
+        }
+
+        self::$sequencenextstartingid = $id + 1000;
+        return $id;
+    }
+
+    /**
      * Reset all database sequences to initial values.
      *
      * @static
@@ -428,18 +453,20 @@ abstract class testing_util {
             return;
         }
 
+        // If all starting Id's are the same, it's difficult to detect coding and testing
+        // errors that use the incorrect id in tests.  The classic case is cmid vs instance id.
+        // To reduce the chance of the coding error, we start sequences at different values where possible.
+        // In a attempt to avoid tables with existing id's we start at a high number.
+        // Reset the value each time all database sequences are reset.
+        self::$sequencenextstartingid = 100000;
+
         $dbfamily = $DB->get_dbfamily();
         if ($dbfamily === 'postgres') {
             $queries = array();
             $prefix = $DB->get_prefix();
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
-                    if (empty($records)) {
-                        $nextid = 1;
-                    } else {
-                        $lastrecord = end($records);
-                        $nextid = $lastrecord->id + 1;
-                    }
+                    $nextid = self::get_next_sequence_starting_value($records);
                     $queries[] = "ALTER SEQUENCE {$prefix}{$table}_id_seq RESTART WITH $nextid";
                 }
             }
@@ -467,12 +494,7 @@ abstract class testing_util {
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (isset($sequences[$table])) {
-                        if (empty($records)) {
-                            $nextid = 1;
-                        } else {
-                            $lastrecord = end($records);
-                            $nextid = $lastrecord->id + 1;
-                        }
+                        $nextid = self::get_next_sequence_starting_value($records);
                         if ($sequences[$table] != $nextid) {
                             $DB->change_database_structure("ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid");
                         }
@@ -501,12 +523,7 @@ abstract class testing_util {
 
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
-                    $lastrecord = end($records);
-                    if ($lastrecord) {
-                        $nextid = $lastrecord->id + 1;
-                    } else {
-                        $nextid = 1;
-                    }
+                    $nextid = self::get_next_sequence_starting_value($records);
                     if (!isset($current[$table])) {
                         $DB->get_manager()->reset_sequence($table);
                     } else if ($nextid == $current[$table]) {
@@ -522,6 +539,7 @@ abstract class testing_util {
 
         } else {
             // note: does mssql support any kind of faster reset?
+            // This also implies mssql will not use unique sequence values.
             if (is_null($empties)) {
                 $empties = self::guess_unmodified_empty_tables();
             }

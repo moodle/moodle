@@ -1025,7 +1025,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
         $params = array(
-            'context' => context_module::instance($forum->id),
+            'context' => context_module::instance($forum->cmid),
             'other' => array('reportmode' => 'posts'),
             'relateduserid' => $user->id,
         );

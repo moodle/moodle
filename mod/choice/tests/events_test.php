@@ -78,7 +78,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_choice\event\answer_submitted', $events[0]);
         $this->assertEquals($user->id, $events[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $events[0]->get_context());
-        $this->assertEquals(1, $events[0]->other['choiceid']);
+        $this->assertEquals($this->choice->id, $events[0]->other['choiceid']);
         $this->assertEquals(3, $events[0]->other['optionid']);
         $expected = array($this->course->id, "choice", "choose", 'view.php?id=' . $this->cm->id, $this->choice->id, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $events[0]);
@@ -129,7 +129,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_choice\event\answer_updated', $events[0]);
         $this->assertEquals($user->id, $events[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $events[0]->get_context());
-        $this->assertEquals(1, $events[0]->other['choiceid']);
+        $this->assertEquals($this->choice->id, $events[0]->other['choiceid']);
         $this->assertEquals(3, $events[0]->other['optionid']);
         $expected = array($this->course->id, "choice", "choose again", 'view.php?id=' . $this->cm->id,
                 $this->choice->id, $this->cm->id);
