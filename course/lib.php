@@ -3418,10 +3418,12 @@ function update_module($moduleinfo) {
 }
 
 /**
- * Duplicate a module on the course.
+ * Duplicate a module on the course for ajax.
  *
+ * @see mod_duplicate_module()
  * @param object $course The course
  * @param object $cm The course module to duplicate
+ * @param int $sr The section to link back to (used for creating the links)
  * @throws moodle_exception if the plugin doesn't support duplication
  * @return Object containing:
  * - fullcontent: The HTML markup for the created CM
@@ -3429,8 +3431,42 @@ function update_module($moduleinfo) {
  * - redirect: Whether to trigger a redirect following this change
  */
 function mod_duplicate_activity($course, $cm, $sr = null) {
-    global $CFG, $USER, $PAGE, $DB;
+    global $PAGE;
 
+    $newcm = duplicate_module($course, $cm);
+
+    $resp = new stdClass();
+    if ($newcm) {
+        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $completioninfo = new completion_info($course);
+        $modulehtml = $courserenderer->course_section_cm($course, $completioninfo,
+                $newcm, null, array());
+
+        $resp->fullcontent = $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sr);
+        $resp->cmid = $newcm->id;
+    } else {
+        // Trigger a redirect.
+        $resp->redirect = true;
+    }
+    return $resp;
+}
+
+/**
+ * Api to duplicate a module.
+ *
+ * @param object $course course object.
+ * @param object $cm course module object to be duplicated.
+ * @since Moodle 2.8
+ *
+ * @throws Exception
+ * @throws coding_exception
+ * @throws moodle_exception
+ * @throws restore_controller_exception
+ *
+ * @return cm_info|null cminfo object if we sucessfully duplicated the mod and found the new cm.
+ */
+function duplicate_module($course, $cm) {
+    global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
     require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
     require_once($CFG->libdir . '/filelib.php');
@@ -3440,10 +3476,10 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
     $a->modname = format_string($cm->name);
 
     if (!plugin_supports('mod', $cm->modname, FEATURE_BACKUP_MOODLE2)) {
-        throw new moodle_exception('duplicatenosupport', 'error');
+        throw new moodle_exception('duplicatenosupport', 'error', '', $a);
     }
 
-    // backup the activity
+    // Backup the activity.
 
     $bc = new backup_controller(backup::TYPE_1ACTIVITY, $cm->id, backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
@@ -3455,7 +3491,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
 
     $bc->destroy();
 
-    // restore the backup immediately
+    // Restore the backup immediately.
 
     $rc = new restore_controller($backupid, $course->id,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_CURRENT_ADDING);
@@ -3472,25 +3508,22 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
 
     $rc->execute_plan();
 
-    // now a bit hacky part follows - we try to get the cmid of the newly
-    // restored copy of the module
+    // Now a bit hacky part follows - we try to get the cmid of the newly
+    // restored copy of the module.
     $newcmid = null;
     $tasks = $rc->get_plan()->get_tasks();
     foreach ($tasks as $task) {
-        error_log("Looking at a task");
         if (is_subclass_of($task, 'restore_activity_task')) {
-            error_log("Looking at a restore_activity_task task");
             if ($task->get_old_contextid() == $cmcontext->id) {
-                error_log("Contexts match");
                 $newcmid = $task->get_moduleid();
                 break;
             }
         }
     }
 
-    // if we know the cmid of the new course module, let us move it
+    // If we know the cmid of the new course module, let us move it
     // right below the original one. otherwise it will stay at the
-    // end of the section
+    // end of the section.
     if ($newcmid) {
         $info = get_fast_modinfo($course);
         $newcm = $info->get_cm($newcmid);
@@ -3506,20 +3539,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
         fulldelete($backupbasepath);
     }
 
-    $resp = new stdClass();
-    if ($newcm) {
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        $completioninfo = new completion_info($course);
-        $modulehtml = $courserenderer->course_section_cm($course, $completioninfo,
-                $newcm, null, array());
-
-        $resp->fullcontent = $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sr);
-        $resp->cmid = $newcm->id;
-    } else {
-        // Trigger a redirect
-        $resp->redirect = true;
-    }
-    return $resp;
+    return isset($newcm) ? $newcm : null;
 }
 
 /**

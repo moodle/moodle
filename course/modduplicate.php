@@ -28,9 +28,6 @@
  */
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
-require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
-require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-require_once($CFG->libdir . '/filelib.php');
 
 $cmid           = required_param('cmid', PARAM_INT);
 $courseid       = required_param('course', PARAM_INT);
@@ -56,85 +53,20 @@ $PAGE->set_pagelayout('incourse');
 
 $output = $PAGE->get_renderer('core', 'backup');
 
+// Duplicate the module.
+$newcm = duplicate_module($course, $cm);
+
+echo $output->header();
+
 $a          = new stdClass();
 $a->modtype = get_string('modulename', $cm->modname);
 $a->modname = format_string($cm->name);
 
-if (!plugin_supports('mod', $cm->modname, FEATURE_BACKUP_MOODLE2)) {
-    $url = course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn));
-    print_error('duplicatenosupport', 'error', $url, $a);
-}
-
-// backup the activity
-
-$bc = new backup_controller(backup::TYPE_1ACTIVITY, $cm->id, backup::FORMAT_MOODLE,
-        backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
-
-$backupid       = $bc->get_backupid();
-$backupbasepath = $bc->get_plan()->get_basepath();
-
-$bc->execute_plan();
-
-$bc->destroy();
-
-// restore the backup immediately
-
-$rc = new restore_controller($backupid, $courseid,
-        backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_CURRENT_ADDING);
-
-if (!$rc->execute_precheck()) {
-    $precheckresults = $rc->get_precheck_results();
-    if (is_array($precheckresults) && !empty($precheckresults['errors'])) {
-        if (empty($CFG->keeptempdirectoriesonbackup)) {
-            fulldelete($backupbasepath);
-        }
-
-        echo $output->header();
-        echo $output->precheck_notices($precheckresults);
-        $url = course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn));
-        echo $output->continue_button($url);
-        echo $output->footer();
-        die();
-    }
-}
-
-$rc->execute_plan();
-
-// now a bit hacky part follows - we try to get the cmid of the newly
-// restored copy of the module
-$newcmid = null;
-$tasks = $rc->get_plan()->get_tasks();
-foreach ($tasks as $task) {
-    if (is_subclass_of($task, 'restore_activity_task')) {
-        if ($task->get_old_contextid() == $cmcontext->id) {
-            $newcmid = $task->get_moduleid();
-            break;
-        }
-    }
-}
-
-// if we know the cmid of the new course module, let us move it
-// right below the original one. otherwise it will stay at the
-// end of the section
-if ($newcmid) {
-    $newcm = get_coursemodule_from_id('', $newcmid, $course->id, true, MUST_EXIST);
-    moveto_module($newcm, $section, $cm);
-    moveto_module($cm, $section, $newcm);
-}
-
-$rc->destroy();
-
-if (empty($CFG->keeptempdirectoriesonbackup)) {
-    fulldelete($backupbasepath);
-}
-
-echo $output->header();
-
-if ($newcmid) {
+if (!empty($newcm)) {
     echo $output->confirm(
         get_string('duplicatesuccess', 'core', $a),
         new single_button(
-            new moodle_url('/course/modedit.php', array('update' => $newcmid, 'sr' => $sectionreturn)),
+            new moodle_url('/course/modedit.php', array('update' => $newcm->id, 'sr' => $sectionreturn)),
             get_string('duplicatecontedit'),
             'get'),
         new single_button(
