@@ -61,8 +61,11 @@ class backup_assignfeedback_editpdf_subplugin extends backup_subplugin {
         $subpluginelementfiles->set_source_sql('SELECT id AS gradeid from {assign_grades} where id = :gradeid', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementannotation->set_source_table('assignfeedback_editpdf_annot', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementcomment->set_source_table('assignfeedback_editpdf_cmnt', array('gradeid' => backup::VAR_PARENTID));
-        // We only need to backup the files in the final pdf area - all the others can be regenerated.
-        $subpluginelementfiles->annotate_files('assignfeedback_editpdf', 'download', 'gradeid');
+        // We only need to backup the files in the final pdf area, and the readonly page images - the others can be regenerated.
+        $subpluginelementfiles->annotate_files('assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA, 'gradeid');
+        $subpluginelementfiles->annotate_files('assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA, 'gradeid');
         $subpluginelementfiles->annotate_files('assignfeedback_editpdf', 'stamps', 'gradeid');
         return $subplugin;
     }
