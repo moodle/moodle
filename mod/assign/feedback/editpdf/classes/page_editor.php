@@ -340,4 +340,21 @@ class page_editor {
 
         return true;
     }
+
+    /**
+     * Delete the draft annotations and comments.
+     *
+     * This is intended to be used when the version of the PDF has changed and the annotations
+     * might not be relevant any more, therefore we should delete them.
+     *
+     * @param int $gradeid The grade ID.
+     * @return bool
+     */
+    public static function delete_draft_content($gradeid) {
+        global $DB;
+        $conditions = array('gradeid' => $gradeid, 'draft' => 1);
+        $result = $DB->delete_records('assignfeedback_editpdf_annot', $conditions);
+        $result = $result && $DB->delete_records('assignfeedback_editpdf_cmnt', $conditions);
+        return $result;
+    }
 }
