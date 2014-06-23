@@ -76,6 +76,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
+        $this->assertSame($GLOBALS['USER'], $USER);
 
         $user = $DB->get_record('user', array('id'=>2));
         $this->assertNotEmpty($user);
@@ -83,26 +84,31 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(2, $USER->id);
         $this->assertEquals(2, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);
+        $this->assertSame($GLOBALS['USER'], $USER);
 
         $USER->id = 3;
         $this->assertEquals(3, $USER->id);
         $this->assertEquals(3, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);
+        $this->assertSame($GLOBALS['USER'], $USER);
 
         \core\session\manager::set_user($user);
         $this->assertEquals(2, $USER->id);
         $this->assertEquals(2, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);
+        $this->assertSame($GLOBALS['USER'], $USER);
 
         $USER = $DB->get_record('user', array('id'=>1));
         $this->assertNotEmpty($USER);
         $this->assertEquals(1, $USER->id);
         $this->assertEquals(1, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);
+        $this->assertSame($GLOBALS['USER'], $USER);
 
         $this->setUser(null);
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
+        $this->assertSame($GLOBALS['USER'], $USER);
     }
 
     public function test_set_admin_user() {
