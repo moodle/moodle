@@ -3497,6 +3497,10 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
         $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
         moveto_module($newcm, $section, $cm);
         moveto_module($cm, $section, $newcm);
+
+        // Trigger course module created event. We can trigger the event only if we know the newcmid.
+        $event = \core\event\course_module_created::create_from_cm($newcm);
+        $event->trigger();
     }
     rebuild_course_cache($cm->course);
 
