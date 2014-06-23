@@ -4704,9 +4704,13 @@ function update_internal_user_password($user, $password) {
         $passwordchanged = ($user->password !== $hashedpassword);
         $algorithmchanged = false;
     } else {
-        // If verification fails then it means the password has changed.
-        $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        if (isset($user->password)) {
+            // If verification fails then it means the password has changed.
+            $passwordchanged = !password_verify($password, $user->password);
+            $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        } else {
+            $passwordchanged = true;
+        }
     }
 
     if ($passwordchanged || $algorithmchanged) {
