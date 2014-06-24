@@ -1975,6 +1975,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $event->courseid);
         $url = new moodle_url('/mod/assign/view.php', array('id' => $newcmhtml->cmid));
         $this->assertEquals($url, $event->get_url());
+
+        // Clear the time limit, otherwise PHPUnit complains.
+        set_time_limit(0);
     }
 
     /**
