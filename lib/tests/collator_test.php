@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_collator_testcase extends basic_testcase {
+class core_collator_testcase extends advanced_testcase {
 
     /**
      * @var string The initial lang, stored because we change it during testing
@@ -244,6 +244,7 @@ class core_collator_testcase extends basic_testcase {
     public function test_legacy_collatorlib() {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = collatorlib::asort($arr);
+        $this->assertDebuggingCalled(null, null, 'This fails if any other test uses the deprecated collatorlib class.');
         $this->assertSame(array('aa', 'ab', 'cc'), array_values($arr));
         $this->assertSame(array(1, 'b', 0), array_keys($arr));
         $this->assertTrue($result);

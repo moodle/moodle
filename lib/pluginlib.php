@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,7 @@
  * Moodle. It is mainly used by the plugins management admin page and the
  * plugins check page during the upgrade.
  *
+ * @todo MDL-46122 This file will be removed in 2.9
  * @package    core
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,21 +29,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
-/**
- * @deprecated since 2.6 - use core_plugin_manager instead.
- */
-class plugin_manager extends core_plugin_manager {
-    // BC only.
-    public static function instance() {
-        return core_plugin_manager::instance();
-    }
-}
-
-/**
- * @deprecated since 2.6 - use \core\plugininfo\base instead.
- */
-class plugininfo_base extends \core\plugininfo\base {
-    // BC only.
-}
-
+debugging('lib/pluginlib.php has been deprecated, the classes that used to exist are now autoloaded. Please removed ' .
+          'any calls to include or require this file.', DEBUG_DEVELOPER);
