@@ -83,4 +83,18 @@ class essay_attempt_viewed extends \core\event\base {
         return array($this->courseid, 'lesson', 'view grade', 'essay.php?id=' . $this->contextinstanceid . '&mode=grade&attemptid='
             . $this->objectid, get_string('manualgrading', 'lesson'), $this->contextinstanceid);
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+    }
 }

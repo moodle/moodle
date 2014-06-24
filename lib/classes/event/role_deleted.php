@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - string shortname: shortname of role.
- *      - string description: role description.
- *      - string archetype: role type.
+ *      - string description: (optional) role description.
+ *      - string archetype: (optional) role type.
  * }
  *
  * @package    core
@@ -87,5 +87,19 @@ class role_deleted extends base {
     protected function get_legacy_logdata() {
         return array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid=' . $this->objectid,
             $this->other['shortname'], '');
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['shortname'])) {
+            throw new \coding_exception('The \'shortname\' value must be set in other.');
+        }
     }
 }

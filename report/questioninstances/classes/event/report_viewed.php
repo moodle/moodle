@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      -string requestedqtype: Requested question type.
+ *      - string requestedqtype: Requested question type.
  * }
  *
  * @package    report_questioninstances

@@ -70,6 +70,7 @@ class notes_viewed extends base {
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {

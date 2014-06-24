@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string username name of user.
- *      - int reason failure reason.
+ *      - string username: name of user.
+ *      - int reason: failure reason.
  * }
  *
  * @package    core

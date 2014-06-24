@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string courseshortname: the short name of course.
- *      - string coursefullname: the full name of course.
+ *      - string courseshortname: (optional) the short name of course.
+ *      - string coursefullname: (optional) the full name of course.
  * }
  *
  * @package    core

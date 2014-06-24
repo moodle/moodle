@@ -122,4 +122,18 @@ class course_category_deleted extends base {
     protected function get_legacy_logdata() {
         return array(SITEID, 'category', 'delete', 'index.php', $this->other['name'] . '(ID ' . $this->objectid . ')');
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['name'])) {
+            throw new \coding_exception('The \'name\' value must be set in other.');
+        }
+    }
 }

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int choiceid: id of choice.
- *      - int optionid: id of option.
+ *      - int optionid: (optional) id of option.
  * }
  *
  * @package    mod_choice

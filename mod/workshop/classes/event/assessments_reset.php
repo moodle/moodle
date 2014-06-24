@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop submission assessments reset event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopid: the ID of the workshop.
+ *      - int workshopid: the ID of the workshop.
  * }
  *
  * @package    mod_workshop
@@ -87,5 +87,19 @@ class assessments_reset extends \core\event\base {
      */
     public function get_url() {
         return new \moodle_url('/mod/workshop/view.php', array('id' => $this->contextinstanceid));
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['workshopid'])) {
+            throw new \coding_exception('The \'workshopid\' value must be set in other.');
+        }
     }
 }

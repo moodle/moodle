@@ -97,6 +97,10 @@ class report_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (empty($this->other['scormid'])) {
+            throw new \coding_exception('The \'scormid\' value must be set in other.');
+        }
+
         if (empty($this->other['mode'])) {
             throw new \coding_exception('The \'mode\' value must be set in other.');
         }

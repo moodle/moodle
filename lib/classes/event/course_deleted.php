@@ -32,9 +32,9 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string shortname: shortname of course.
  *      - string fullname: fullname of course.
- *      - string idnumber: id number of course.
+ *      - string shortname: (optional) shortname of course.
+ *      - string idnumber: (optional) id number of course.
  * }
  *
  * @package    core
@@ -99,5 +99,19 @@ class course_deleted extends base {
      */
     protected function get_legacy_logdata() {
         return array(SITEID, 'course', 'delete', 'view.php?id=' . $this->objectid, $this->other['fullname']  . '(ID ' . $this->objectid . ')');
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['fullname'])) {
+            throw new \coding_exception('The \'fullname\' value must be set in other.');
+        }
     }
 }

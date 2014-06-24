@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string publishstate: the publish state.
+ *      - string publishstate: (optional) the publish state.
  * }
  *
  * @package    core
@@ -81,5 +81,19 @@ class note_deleted extends base {
         $logurl = new \moodle_url('index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
         $logurl->set_anchor('note-' . $this->objectid);
         return array($this->courseid, 'notes', 'delete', $logurl, 'delete note');
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }

@@ -90,4 +90,18 @@ class course_content_deleted extends base {
 
         return $course;
     }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['options'])) {
+            throw new \coding_exception('The \'options\' value must be set in other.');
+        }
+    }
 }
