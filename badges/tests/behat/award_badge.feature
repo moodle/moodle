@@ -85,7 +85,7 @@ Feature: Award badges
       | student2 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -142,7 +142,7 @@ Feature: Award badges
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -203,7 +203,7 @@ Feature: Award badges
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
