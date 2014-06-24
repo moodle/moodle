@@ -47,19 +47,21 @@ class core_component {
     /** @var array list plugin types that support subplugins, do not add more here unless absolutely necessary */
     protected static $supportsubplugins = array('mod', 'editor', 'tool', 'local');
 
-    /** @var null cache of plugin types */
+    /** @var array cache of plugin types */
     protected static $plugintypes = null;
-    /** @var null cache of plugin locations */
+    /** @var array cache of plugin locations */
     protected static $plugins = null;
-    /** @var null cache of core subsystems */
+    /** @var array cache of core subsystems */
     protected static $subsystems = null;
-    /** @var null subplugin type parents */
+    /** @var array subplugin type parents */
     protected static $parents = null;
-    /** @var null subplugins */
+    /** @var array subplugins */
     protected static $subplugins = null;
-    /** @var null list of all known classes that can be autoloaded */
+    /** @var array list of all known classes that can be autoloaded */
     protected static $classmap = null;
-    /** @var null list of some known files that can be included. */
+    /** @var array list of all classes that have been renamed to be autoloaded */
+    protected static $classmaprenames = null;
+    /** @var array list of some known files that can be included. */
     protected static $filemap = null;
     /** @var int|float core version. */
     protected static $version = null;
@@ -90,6 +92,13 @@ class core_component {
             global $CFG;
             // Function include would be faster, but for BC it is better to include only once.
             include_once(self::$classmap[$classname]);
+            return;
+        }
+        if (isset(self::$classmaprenames[$classname]) && isset(self::$classmap[self::$classmaprenames[$classname]])) {
+            $newclassname = self::$classmaprenames[$classname];
+            $debugging = "Class '%s' has been renamed for the autoloader and is now deprecated. Please use '%s' instead.";
+            debugging(sprintf($debugging, $classname, $newclassname), DEBUG_DEVELOPER);
+            class_alias($newclassname, $classname);
             return;
         }
     }
@@ -125,13 +134,14 @@ class core_component {
                 }
                 $cache = array();
                 include($cachefile);
-                self::$plugintypes = $cache['plugintypes'];
-                self::$plugins     = $cache['plugins'];
-                self::$subsystems  = $cache['subsystems'];
-                self::$parents     = $cache['parents'];
-                self::$subplugins  = $cache['subplugins'];
-                self::$classmap    = $cache['classmap'];
-                self::$filemap     = $cache['filemap'];
+                self::$plugintypes      = $cache['plugintypes'];
+                self::$plugins          = $cache['plugins'];
+                self::$subsystems       = $cache['subsystems'];
+                self::$parents          = $cache['parents'];
+                self::$subplugins       = $cache['subplugins'];
+                self::$classmap         = $cache['classmap'];
+                self::$classmaprenames  = $cache['classmaprenames'];
+                self::$filemap          = $cache['filemap'];
                 return;
             }
 
@@ -164,13 +174,14 @@ class core_component {
                     // $CFG->dirroot was changed.
                 } else {
                     // The cache looks ok, let's use it.
-                    self::$plugintypes = $cache['plugintypes'];
-                    self::$plugins     = $cache['plugins'];
-                    self::$subsystems  = $cache['subsystems'];
-                    self::$parents     = $cache['parents'];
-                    self::$subplugins  = $cache['subplugins'];
-                    self::$classmap    = $cache['classmap'];
-                    self::$filemap     = $cache['filemap'];
+                    self::$plugintypes      = $cache['plugintypes'];
+                    self::$plugins          = $cache['plugins'];
+                    self::$subsystems       = $cache['subsystems'];
+                    self::$parents          = $cache['parents'];
+                    self::$subplugins       = $cache['subplugins'];
+                    self::$classmap         = $cache['classmap'];
+                    self::$classmaprenames  = $cache['classmaprenames'];
+                    self::$filemap          = $cache['filemap'];
                     return;
                 }
                 // Note: we do not verify $CFG->admin here intentionally,
@@ -249,14 +260,15 @@ class core_component {
         }
 
         $cache = array(
-            'subsystems'  => self::$subsystems,
-            'plugintypes' => self::$plugintypes,
-            'plugins'     => self::$plugins,
-            'parents'     => self::$parents,
-            'subplugins'  => self::$subplugins,
-            'classmap'    => self::$classmap,
-            'filemap'     => self::$filemap,
-            'version'     => self::$version,
+            'subsystems'        => self::$subsystems,
+            'plugintypes'       => self::$plugintypes,
+            'plugins'           => self::$plugins,
+            'parents'           => self::$parents,
+            'subplugins'        => self::$subplugins,
+            'classmap'          => self::$classmap,
+            'classmaprenames'   => self::$classmaprenames,
+            'filemap'           => self::$filemap,
+            'version'           => self::$version,
         );
 
         return '<?php
@@ -278,6 +290,7 @@ $cache = '.var_export($cache, true).';
         }
 
         self::fill_classmap_cache();
+        self::fill_classmap_renames_cache();
         self::fill_filemap_cache();
         self::fetch_core_version();
     }
@@ -578,12 +591,7 @@ $cache = '.var_export($cache, true).';
                 self::load_classes($plugintype.'_'.$pluginname, "$fulldir/classes");
             }
         }
-
-        // Note: Add extra deprecated legacy classes here as necessary.
-        self::$classmap['textlib'] = "$CFG->dirroot/lib/classes/text.php";
-        self::$classmap['collatorlib'] = "$CFG->dirroot/lib/classes/collator.php";
     }
-
 
     /**
      * Fills up the cache defining what plugins have certain files.
@@ -1023,5 +1031,48 @@ $cache = '.var_export($cache, true).';
      */
     public static function is_core_subsystem($subsystemname) {
         return isset(self::$subsystems[$subsystemname]);
+    }
+
+    /**
+     * Records all class renames that have been made to facilitate autoloading.
+     */
+    protected static function fill_classmap_renames_cache() {
+        global $CFG;
+
+        self::$classmaprenames = array();
+
+        self::load_renamed_classes("$CFG->dirroot/lib/");
+
+        foreach (self::$subsystems as $subsystem => $fulldir) {
+            self::load_renamed_classes($fulldir);
+        }
+
+        foreach (self::$plugins as $plugintype => $plugins) {
+            foreach ($plugins as $pluginname => $fulldir) {
+                self::load_renamed_classes($fulldir);
+            }
+        }
+    }
+
+    /**
+     * Loads the db/renamedclasses.php file from the given directory.
+     *
+     * The renamedclasses.php should contain a key => value array ($renamedclasses) where the key is old class name,
+     * and the value is the new class name.
+     * It is only included when we are populating the component cache. After that is not needed.
+     *
+     * @param string $fulldir
+     */
+    protected static function load_renamed_classes($fulldir) {
+        $file = $fulldir . '/db/renamedclasses.php';
+        if (is_readable($file)) {
+            $renamedclasses = null;
+            require($file);
+            if (is_array($renamedclasses)) {
+                foreach ($renamedclasses as $oldclass => $newclass) {
+                    self::$classmaprenames[(string)$oldclass] = (string)$newclass;
+                }
+            }
+        }
     }
 }

@@ -350,6 +350,7 @@ class core_text_testcase extends advanced_testcase {
 
     public function test_deprecated_textlib() {
         $this->assertSame(textlib::strtolower('HUH'), core_text::strtolower('HUH'));
+        $this->assertDebuggingCalled(null, null, 'This fails if any other test uses the deprecated textlib class.');
     }
 
     /**

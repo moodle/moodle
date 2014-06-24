@@ -307,10 +307,3 @@ class core_collator {
         return true;
     }
 }
-
-/**
- * Legacy collatorlib.
- * @deprecated since 2.6, use core_collator:: instead.
- */
-class collatorlib extends core_collator {
-}

@@ -696,21 +696,3 @@ class core_text {
         return implode(' ', $words);
     }
 }
-
-/**
- * Legacy tectlib.
- * @deprecated since 2.6, use core_text:: instead.
- */
-class textlib extends core_text {
-    /**
-     * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
-     *
-     * @param array $arr array to be sorted (reference)
-     * @param int $sortflag One of Collator::SORT_REGULAR, Collator::SORT_NUMERIC, Collator::SORT_STRING
-     * @return void modifies parameter
-     */
-    public static function asort(array &$arr, $sortflag = null) {
-        debugging('textlib::asort has been superseeded by collatorlib::asort please upgrade your code to use that', DEBUG_DEVELOPER);
-        collatorlib::asort($arr, $sortflag);
-    }
-}
