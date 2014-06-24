@@ -162,7 +162,7 @@ if ($PAGE->user_allowed_editing()) {
             // If we are viewing a system page as ordinary user, and the user turns
             // editing on, copy the system pages as new user pages, and get the
             // new page record.
-            if (!$currentpage = my_copy_page($USER->id, MY_PAGE_PUBLIC, 'user-profile')) {
+            if (!$currentpage = my_copy_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
                 print_error('mymoodlesetup');
             }
             $PAGE->set_context($usercontext);
@@ -181,11 +181,11 @@ if ($PAGE->user_allowed_editing()) {
     }
 
     // Add button for editing page.
-    $params = array('edit' => !$edit);
+    $params = array('edit' => !$edit, 'id' => $userid);
 
     $resetbutton = '';
     $resetstring = get_string('resetpage', 'my');
-    $reseturl = new moodle_url("$CFG->wwwroot/user/profile.php", array('edit' => 1, 'reset' => 1));
+    $reseturl = new moodle_url("$CFG->wwwroot/user/profile.php", array('edit' => 1, 'reset' => 1, 'id' => $userid));
 
     if (!$currentpage->userid) {
         // Viewing a system page -- let the user customise it.
@@ -422,7 +422,7 @@ if (!isset($hiddenfields['lastaccess'])) {
 
 if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
     if ($user->lastip) {
-        $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $USER->id));
+        $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $user->id));
         $ipstring = html_writer::link($iplookupurl, $user->lastip);
     } else {
         $ipstring = get_string("none");
