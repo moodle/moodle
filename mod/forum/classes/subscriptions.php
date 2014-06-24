@@ -436,7 +436,7 @@ class subscriptions {
                         WHERE u.id IN (
                             SELECT u2.id FROM
                             {user} u2
-                            JOIN ($esql) je ON je.id = u.id
+                            JOIN ($esql) je ON je.id = u2.id
                             LEFT JOIN {forum_subscriptions} s ON s.userid = u2.id
                             LEFT JOIN {forum_discussion_subs} ds ON ds.userid = u2.id
                             WHERE
