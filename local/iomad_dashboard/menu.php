@@ -30,6 +30,16 @@ class iomad_admin_menu {
         }
 
         $returnarray = array(
+            'managecompanies' => array(
+                'category' => 'CompanyAdmin',
+                'tab' => 1,
+                'name' => get_string('managecompanies', 'block_iomad_company_admin'),
+                'url' => 'editcompanies.php',
+                'cap' => 'block/iomad_company_admin:company_add',
+                'icondefault' => 'editcompany',
+                'icon' => 'fa-building',
+                'iconsmall' => 'fa-gear'
+            ),
             'editcompany' => array(
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
