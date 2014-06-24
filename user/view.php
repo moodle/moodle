@@ -28,8 +28,9 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-$id        = optional_param('id', 0, PARAM_INT);   // user id
-$courseid  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+$id             = optional_param('id', 0, PARAM_INT);   // User id.
+$courseid       = optional_param('course', SITEID, PARAM_INT);   // Course id (defaults to Site).
+$showallcourses = optional_param('showallcourses', 0, PARAM_INT);
 
 if (empty($id)) {            // See your own profile by default
     require_login();
@@ -324,16 +325,22 @@ if (!isset($hiddenfields['mycourses'])) {
                         }
                         $class = 'class="dimmed"';
                     }
-                    $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
-                        . $cfullname . "</a>, ";
+                    $params = array('id' => $user->id, 'course' => $mycourse->id);
+                    if ($showallcourses) {
+                        $params['showallcourses'] = 1;
+                    }
+                    $url = new moodle_url('/user/view.php', $params);
+                    $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), array('class' => $class));
+                    $courselisting .= ', ';
                 } else {
                     $courselisting .= $cfullname . ", ";
                     $PAGE->navbar->add($cfullname);
                 }
             }
             $shown++;
-            if ($shown >= 20) {
-                $courselisting .= "...";
+            if (!$showallcourses && $shown >= 20) {
+                $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid, 'showallcourses' => 1));
+                $courselisting .= html_writer::link($url, '...', array('title' => get_string('viewmore')));
                 break;
             }
         }
