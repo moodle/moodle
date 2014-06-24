@@ -106,7 +106,6 @@ $string['evaluationmethod_help'] = 'The grading evaluation method determines how
 $string['evaluationsettings'] = 'Grading evaluation settings';
 $string['eventassessableuploaded'] = 'A submission has been uploaded.';
 $string['eventassessmentevaluationsreset'] = 'Assessment evaluations reset';
-$string['eventassessableuploaded'] = 'Assessable uploaded';
 $string['eventassessmentevaluated'] = 'Assessment evaluated';
 $string['eventassessmentreevaluated'] = 'Assessment re-evaluated';
 $string['eventsubmissionassessed'] = 'Submission assessed';
