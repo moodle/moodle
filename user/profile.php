@@ -381,7 +381,7 @@ if (!isset($hiddenfields['mycourses'])) {
             $shown++;
             if(!$showallcourses && $shown==20) {
                 $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
-                $courselisting .= html_writer::link($url, '...');
+                $courselisting .= html_writer::link($url, '...', array('title' => get_string('viewmore')));
                 break;
             }
         }
