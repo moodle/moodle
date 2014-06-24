@@ -113,6 +113,9 @@ class response_deleted extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
         if (!isset($this->other['anonymous'])) {
             throw new \coding_exception('The \'anonymous\' value must be set in other.');
         }

@@ -36,8 +36,8 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about the event.
  *
  *      - int itemid: grade item id.
- *      - bool overridden: Is this grade override?
- *      - float finalgrade: the final grade value.
+ *      - bool overridden: (optional) Is this grade override?
+ *      - float finalgrade: (optional) the final grade value.
  * }
  *
  * @package    core
@@ -72,6 +72,7 @@ class user_graded extends base {
     /**
      * Get grade object.
      *
+     * @throws \coding_exception
      * @return \grade_grade
      */
     public function get_grade() {
@@ -136,5 +137,23 @@ class user_graded extends base {
         $url = '/report/grader/index.php?id=' . $this->courseid;
 
         return array($this->courseid, 'grade', 'update', $url, $info);
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception when validation does not pass.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['itemid'])) {
+            throw new \coding_exception('The \'itemid\' value must be set in other.');
+        }
     }
 }

@@ -30,6 +30,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Mnet access control updated event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string username: the username of the user.
+ *      - string hostname: the name of the host the user came from.
+ *      - string accessctrl: the access control value.
+ * }
+ *
  * @package    core
  * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>

@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class recent_activity_viewed extends \core\event\base {
+class recent_activity_viewed extends base {
 
     /**
      * Init method.

@@ -14,8 +14,32 @@ Events and Logging:
 * Significant changes in Logging API. For upgrading existing events_trigger() and
   add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
   For accessing logs from plugins see http://docs.moodle.org/dev/Migrating_log_access_in_reports
-* The validation of the following events is now stricter:
-    - \core\event\course_section_updated
+* The validation of the following events is now stricter (see MDL-45445):
+    - \core\event\blog_entry_created
+    - \core\event\blog_entry_deleted
+    - \core\event\blog_entry_updated
+    - \core\event\cohort_member_added
+    - \core\event\cohort_member_removed
+    - \core\event\course_category_deleted
+    - \core\event\course_completed
+    - \core\event\course_content_deleted
+    - \core\event\course_created
+    - \core\event\course_deleted
+    - \core\event\course_restored
+    - \core\event\course_section_updated (see MDL-45229)
+    - \core\event\email_failed
+    - \core\event\group_member_added
+    - \core\event\group_member_removed
+    - \core\event\note_created
+    - \core\event\note_deleted
+    - \core\event\note_updated
+    - \core\event\role_assigned
+    - \core\event\role_deleted
+    - \core\event\role_unassigned
+    - \core\event\user_graded
+    - \core\event\user_loggedinas
+    - \core\event\user_profile_viewed
+    - \core\event\webservice_token_created
 
 DEPRECATIONS:
 * $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.

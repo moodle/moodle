@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop phase switched event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopphase: Workshop phase.
+ *      - int workshopphase: Workshop phase.
  * }
  *
  * @package    mod_workshop
@@ -88,5 +88,19 @@ class phase_switched extends \core\event\base {
      */
     public function get_url() {
         return new \moodle_url('/mod/workshop/view.php', array('id' => $this->contextinstanceid));
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['workshopphase'])) {
+            throw new \coding_exception('The \'workshopphase\' value must be set in other.');
+        }
     }
 }

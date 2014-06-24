@@ -29,10 +29,10 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop submission assessed event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopid: Workshop ID.
- *     - int submissionid: Submission ID.
+ *      - int submissionid: Submission ID.
+ *      - int workshopid: (optional) Workshop ID.
  * }
  *
  * @package    mod_workshop
@@ -89,5 +89,23 @@ class submission_assessed extends \core\event\base {
      */
     public function get_url() {
         return new \moodle_url('/mod/workshop/assessment.php', array('asid' => $this->objectid));
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['submissionid'])) {
+            throw new \coding_exception('The \'submissionid\' value must be set in other.');
+        }
     }
 }

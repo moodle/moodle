@@ -103,6 +103,10 @@ class interactions_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (empty($this->other['attemptid'])) {
             throw new \coding_exception('The \'attemptid\' must be set in other.');
         }

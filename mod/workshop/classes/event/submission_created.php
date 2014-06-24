@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop submission created event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - string submissiontitle: Submission title.
+ *      - string submissiontitle: (optional) Submission title.
  * }
  *
  * @package    mod_workshop

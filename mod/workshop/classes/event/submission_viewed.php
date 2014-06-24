@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
  * The mod_workshop submission viewed event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     - int workshopid: workshop ID.
+ *      - int workshopid: (optional) workshop ID.
  * }
  *
  * @package    mod_workshop
@@ -87,5 +87,19 @@ class submission_viewed extends \core\event\base {
         return array($this->courseid, 'workshop', 'view submission',
             'submission.php?cmid=' . $this->contextinstanceid . '&id=' . $this->objectid,
             $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }
