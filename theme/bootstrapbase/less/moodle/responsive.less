@@ -394,23 +394,25 @@
     .dropdown-menu {
         right:0;
         left:auto;
+        margin-right: 0px;
     }
-    .navbar .nav>li>.dropdown-menu:before {
+    .navbar .nav > li > .dropdown-menu:before {
         right:9px;
         left:auto;
     }
-    .navbar .nav>li>.dropdown-menu:after {
+    .navbar .nav > li > .dropdown-menu:after {
         right: 10px;
         left:auto;
     }
-    .dropdown-submenu>a:after {
-        margin-right: -10px;
-        margin-left: 0;
+    .dropdown-submenu > a:after {
+        margin-right: 0;
+        margin-left: -10px;
+        float: left;
         border-right-color: #ccc;
         border-left-color: transparent;
         border-width: 5px 5px 5px 0px;
     }
-    .dropdown-submenu>.dropdown-menu {
+    .dropdown-submenu > .dropdown-menu {
         right:100%;
         left:auto;
     }
