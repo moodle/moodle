@@ -1645,6 +1645,7 @@ body.jsenabled .formlisting {
 }
 #badge-image .singlebutton {
     padding-top: 5px;
+    margin-left: 20px;
 }
 #badge-overview dl,
 #badge-details dl {
