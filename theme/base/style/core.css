@@ -833,6 +833,26 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 #custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {background-image:url([[pix:theme|horizontal-menu-submenu-indicator]]);}
 
 /**
+ * Dividers.
+ */
+.yui3-menu.yui3-menu-horizontal .yui3-menuitem.divider {
+    overflow: hidden;
+    width: 0;
+    height: 24px;
+    border-left: 1px solid #ddd;
+}
+.yui3-menu .yui3-menu .yui3-menuitem.divider {
+    width: auto;
+    height: 0;
+    margin: 4px 1px;
+    border-left: 0px none;
+    border-top: 1px solid #ddd;
+}
+.yui3-menu .yui3-menuitem.divider a {
+    visibility: invisible;
+}
+
+/**
  * Smart Select Element
  */
 .smartselect {position:absolute;}
