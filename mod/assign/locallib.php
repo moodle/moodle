@@ -4989,6 +4989,10 @@ class assign {
             $users[$userid] = $record;
         }
 
+        if (empty($users)) {
+            return get_string('nousersselected', 'assign');
+        }
+
         list($userids, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
         $params['assignid1'] = $this->get_instance()->id;
         $params['assignid2'] = $this->get_instance()->id;
