@@ -19,7 +19,12 @@
  */
 
 $string['cannotemailnontemporarypasswords'] = 'It is insecure to send passwords by email without forcing them to be changed on first login.';
+$string['companycityfilter'] = 'Company location contains';
+$string['companycountryfilter'] = 'Company country contains';
 $string['companycourses'] = 'Other company courses';
+$string['companyfilter'] = 'Filter results';
+$string['companynamefilter'] = 'Company name contains'; 
+$string['companysearchfields'] = 'Company search fields';
 $string['emailfilter'] = 'Email address contains';
 $string['firstnamefilter'] = 'First name contains';
 $string['lastnamefilter'] = 'Last name contains';
@@ -29,3 +34,4 @@ $string['setupiomad'] = 'Start setting up iomad';
 $string['show_suspended_users'] = 'Show suspended users?';
 $string['userfilter'] = 'Filter results';
 $string['usersearchfields'] = 'User search fields';
+$string['show_suspended_companies'] = 'Show suspended companies?';
