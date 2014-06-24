@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.8 ===
+
+* All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
+  rules for mod_assign in a theme may need to be updated.
+
 === 2.7 ===
 
 * CSS related functions in theme class and csslib.php were refactored, addons that are

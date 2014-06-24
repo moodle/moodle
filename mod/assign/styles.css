@@ -1,268 +1,303 @@
-div.gradingnavigation div {
+.path-mod-assign div.gradingnavigation div {
     float: left;
     margin-left: 2em;
 }
 
-
-div.submissionstatustable,
-div.submissionfull,
-div.submissionlinks,
-div.usersummary,
-div.feedback,
-div.gradingsummary {
+.path-mod-assign div.submissionstatustable,
+.path-mod-assign div.submissionfull,
+.path-mod-assign div.submissionlinks,
+.path-mod-assign div.usersummary,
+.path-mod-assign div.feedback,
+.path-mod-assign div.gradingsummary {
     margin-bottom: 5em;
 }
 
-
-div.submissionstatus .generaltable,
-div.submissionlinks .generaltable,
-div.feedback .generaltable,
-div.submissionsummarytable .generaltable,
-div.attempthistory table,
-div.gradingsummary .generaltable {
+.path-mod-assign div.submissionstatus .generaltable,
+.path-mod-assign div.submissionlinks .generaltable,
+.path-mod-assign div.feedback .generaltable,
+.path-mod-assign div.submissionsummarytable .generaltable,
+.path-mod-assign div.attempthistory table,
+.path-mod-assign div.gradingsummary .generaltable {
     width: 100%;
 }
 
-#page-mod-assign-view table.generaltable table td { border: 0px none; }
+.path-mod-assign table.generaltable table td {
+    border: 0px none;
+}
 
-.gradingsummarytable,
-.feedbacktable,
-.lockedsubmission,
-.submissionsummarytable {
+.path-mod-assign .gradingsummarytable,
+.path-mod-assign .feedbacktable,
+.path-mod-assign .lockedsubmission,
+.path-mod-assign .submissionsummarytable {
     margin-top: 1em;
 }
 
-div.submissionsummarytable table tbody tr td.c0 {
+.path-mod-assign div.submissionsummarytable table tbody tr td.c0 {
     width: 30%;
 }
 
-.submittedlate {
+.path-mod-assign .submittedlate {
     color: red;
     font-weight: 900;
 }
 
-.jsenabled .gradingoptionsform .fsubmit {display: none;}
-.jsenabled .gradingtable .c1 select {display: none;}
-.quickgradingform .mform fieldset { margin: 0px; padding: 0px; }
-.gradingbatchoperationsform .mform fieldset { margin: 0px; padding: 0px; }
+.path-mod-assign.jsenabled .gradingoptionsform .fsubmit {
+    display: none;
+}
 
-td.submissionstatus,
-div.submissionstatus,
-a:link.submissionstatus {
+.path-mod-assign.jsenabled .gradingtable .c1 select {
+    display: none;
+}
+
+.path-mod-assign .quickgradingform .mform fieldset {
+    margin: 0px;
+    padding: 0px;
+}
+
+.path-mod-assign .gradingbatchoperationsform .mform fieldset {
+    margin: 0px;
+    padding: 0px;
+}
+
+.path-mod-assign td.submissionstatus,
+.path-mod-assign div.submissionstatus,
+.path-mod-assign a:link.submissionstatus {
     color: black;
     background-color: #efefef;
 }
 
-td.submissionstatusdraft,
-div.submissionstatusdraft,
-a:link.submissionstatusdraft {
+.path-mod-assign td.submissionstatusdraft,
+.path-mod-assign div.submissionstatusdraft,
+.path-mod-assign a:link.submissionstatusdraft {
     color: black;
     background-color: #efefcf;
 }
 
-td.submissionstatussubmitted,
-div.submissionstatussubmitted,
-a:link.submissionstatussubmitted {
+.path-mod-assign td.submissionstatussubmitted,
+.path-mod-assign div.submissionstatussubmitted,
+.path-mod-assign a:link.submissionstatussubmitted {
     color: black;
     background-color: #cfefcf;
 }
 
 
-td.submissionlocked,
-div.submissionlocked {
+.path-mod-assign td.submissionlocked,
+.path-mod-assign div.submissionlocked {
     color: black;
     background-color: #efefcf;
 }
 
-td.submissionreopened,
-div.submissionreopened {
+.path-mod-assign td.submissionreopened,
+.path-mod-assign div.submissionreopened {
     color: black;
     background-color: #efefef;
 }
 
-td.submissiongraded,
-div.submissiongraded {
+.path-mod-assign td.submissiongraded,
+.path-mod-assign div.submissiongraded {
     color: black;
     background-color: #cfefcf;
 }
 
-td.submissionnotgraded,
-div.submissionnotgraded {
+.path-mod-assign td.submissionnotgraded,
+.path-mod-assign div.submissionnotgraded {
     color: black;
     background-color: #efefef;
 }
 
-td.latesubmission,
-a:link.latesubmission,
-div.latesubmission {
+.path-mod-assign td.latesubmission,
+.path-mod-assign a:link.latesubmission,
+.path-mod-assign div.latesubmission {
     color: black;
     background-color: #efcfcf;
 }
 
-td.earlysubmission,
-div.earlysubmission {
+.path-mod-assign td.earlysubmission,
+.path-mod-assign div.earlysubmission {
     color: black;
     background-color: #cfefcf;
 }
 
-.gradingtable .c0 { display: none; }
-.jsenabled .gradingtable .c0 { display: table-cell; }
-.gradingbatchoperationsform { display: none; }
-.jsenabled .gradingbatchoperationsform { display: block; }
-
-.gradingtable tr.selectedrow td { background-color: #ffeecc; }
-.gradingtable tr.unselectedrow td { background-color: white; }
-
-.gradingtable .c0 div.selectall {margin-left: 7px;}
-
-.gradingtable .yui3-menu ul {
-    margin: 0px;
-}
-
-.gradingtable .yui3-menu-label {
-    padding-left: 0px;
-    line-height: 12px;
-}
-.gradingtable .yui3-menu-label img { padding: 0 3px; }
-.gradingtable .yui3-menu li {
-    list-style-type: none;
-}
-
-.jsenabled .gradingtable .yui3-loading {
+.path-mod-assign .gradingtable .c0 {
     display: none;
 }
 
-.gradingtable .yui3-menu .yui3-menu-content {
+.path-mod-assign.jsenabled .gradingtable .c0 {
+    display: table-cell;
+}
+
+.path-mod-assign .gradingbatchoperationsform {
+    display: none;
+}
+
+.path-mod-assign.jsenabled .gradingbatchoperationsform {
+    display: block;
+}
+
+.path-mod-assign .gradingtable tr.selectedrow td {
+    background-color: #ffeecc;
+}
+
+.path-mod-assign .gradingtable tr.unselectedrow td {
+    background-color: white;
+}
+
+.path-mod-assign .gradingtable .c0 div.selectall {
+    margin-left: 7px;
+}
+
+.path-mod-assign .gradingtable .yui3-menu ul {
+    margin: 0px;
+}
+
+.path-mod-assign .gradingtable .yui3-menu-label {
+    padding-left: 0px;
+    line-height: 12px;
+}
+
+.path-mod-assign .gradingtable .yui3-menu-label img {
+    padding: 0 3px;
+}
+
+.path-mod-assign .gradingtable .yui3-menu li {
+    list-style-type: none;
+}
+
+.path-mod-assign.jsenabled .gradingtable .yui3-loading {
+    display: none;
+}
+
+.path-mod-assign .gradingtable .yui3-menu .yui3-menu-content {
     border: 0px;
     padding-top: 0;
 }
 
-#page-mod-assign-view div.gradingtable tr .quickgrademodified {
+.path-mod-assign div.gradingtable tr .quickgrademodified {
     background-color: #FFCC99;
 }
 
-td.submissioneditable {
+.path-mod-assign td.submissioneditable {
     color: red;
 }
 
-.expandsummaryicon {
+.path-mod-assign .expandsummaryicon {
     cursor: pointer;
     display: none;
 }
 
-.jsenabled .expandsummaryicon {
+.path-mod-assign.jsenabled .expandsummaryicon {
     display: inline;
 }
 
-.hidefull {
+.path-mod-assign .hidefull {
     display: none;
 }
 
-.quickgradingform form .commentscontainer input,
-.quickgradingform form .commentscontainer textarea {
+.path-mod-assign .quickgradingform form .commentscontainer input,
+.path-mod-assign .quickgradingform form .commentscontainer textarea {
     display: none;
 }
 
-.jsenabled .quickgradingform form .commentscontainer input,
-.jsenabled .quickgradingform form .commentscontainer textarea {
+.path-mod-assign.jsenabled .quickgradingform form .commentscontainer input,
+.path-mod-assign.jsenabled .quickgradingform form .commentscontainer textarea {
     display: inline;
 }
 
-#page-mod-assign-view .previousfeedbackwarning {
+.path-mod-assign .previousfeedbackwarning {
     font-size: 140%;
     font-weight: bold;
     text-align: center;
     color: #500;
 }
 
-#page-mod-assign-view .submissionhistory {
+.path-mod-assign .submissionhistory {
     background-color: #b0b0b0;
 }
 
-#page-mod-assign-view .submissionhistory .cell.historytitle {
+.path-mod-assign .submissionhistory .cell.historytitle {
     background-color: #808080;
 }
 
-#page-mod-assign-view .submissionhistory .cell {
+.path-mod-assign .submissionhistory .cell {
     background-color: #d0d0d0;
 }
 
-#page-mod-assign-view .submissionhistory .singlebutton {
+.path-mod-assign .submissionhistory .singlebutton {
     display: inline-block;
     float: right;
 }
 
-#page-mod-assign-view.dir-rtl .submissionhistory .singlebutton {
+.path-mod-assign.dir-rtl .submissionhistory .singlebutton {
     float: left;
 }
 
-#page-mod-assign-view .submissionsummarytable .singlebutton {
+.path-mod-assign .submissionsummarytable .singlebutton {
     display: inline-block;
 }
 
-.jsenabled .mod-assign-history-link {
+.path-mod-assign.jsenabled .mod-assign-history-link {
     display: block;
     cursor: pointer;
     margin-bottom: 7px;
 }
 
-.jsenabled .mod-assign-history-link h4 {
+.path-mod-assign.jsenabled .mod-assign-history-link h4 {
     display: inline;
 }
 
-#page-mod-assign-view.jsenabled .attempthistory h4 {
+.path-mod-assign.jsenabled .attempthistory h4 {
     margin-bottom: 7px;
     text-align: left;
 }
 
-#page-mod-assign-view.jsenabled.dir_rtl .attempthistory h4 {
+.path-mod-assign.jsenabled.dir_rtl .attempthistory h4 {
     text-align: right;
 }
 
-.dir-rtl.jsenabled .mod-assign-history-link h4 {
+.path-mod-assign.dir-rtl.jsenabled .mod-assign-history-link h4 {
     text-align: right;
 }
 
-.jsenabled .mod-assign-history-link-open {
+.path-mod-assign.jsenabled .mod-assign-history-link-open {
     padding: 0 5px 0 20px; background: url([[pix:t/expanded]]) 2px center no-repeat;
 }
 
-.jsenabled .mod-assign-history-link-closed {
+.path-mod-assign.jsenabled .mod-assign-history-link-closed {
     padding: 0 5px 0 20px; background: url([[pix:t/collapsed]]) 2px center no-repeat;
 }
 
-.dir-rtl.jsenabled .mod-assign-history-link-closed {
+.path-mod-assign.dir-rtl.jsenabled .mod-assign-history-link-closed {
     padding: 0 20px 0 5px; background: url([[pix:t/collapsed_rtl]]) 2px center no-repeat;
 }
 
-#page-mod-assign-view .submithelp {
+.path-mod-assign .submithelp {
     padding: 1em;
 }
 
-#page-mod-assign-view .feedbacktitle {
+.path-mod-assign .feedbacktitle {
     font-weight: bold;
 }
 
-#page-mod-assign-view .submitconfirm,
-#page-mod-assign-view .submissionlinks,
-#page-mod-assign-view .submissionaction {
+.path-mod-assign .submitconfirm,
+.path-mod-assign .submissionlinks,
+.path-mod-assign .submissionaction {
     text-align: center;
 }
 
-
-#page-mod-assign-view .submissionsummarytable .c0,
-#page-mod-assign-view .mod-assign-history-panel .c0 {
+.path-mod-assign .submissionsummarytable .c0,
+.path-mod-assign .mod-assign-history-panel .c0 {
     width: 150px;
 }
 
-
-#page-mod-assign-view .gradingtable .moodle-actionmenu {
+.path-mod-assign .gradingtable .moodle-actionmenu {
     white-space: nowrap;
 }
-#page-mod-assign-view .gradingtable .moodle-actionmenu[data-enhanced].show .menu a {
+
+.path-mod-assign .gradingtable .moodle-actionmenu[data-enhanced].show .menu a {
     padding-left: 12px;
     padding-right: 12px;
 }
-#page-mod-assign-view .gradingtable .menu-action img {
+
+.path-mod-assign .gradingtable .menu-action img {
     display: none;
 }
