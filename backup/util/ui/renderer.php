@@ -244,9 +244,20 @@ class core_backup_renderer extends plugin_renderer_base {
         global $CFG, $PAGE;
         require_once($CFG->dirroot.'/course/lib.php');
 
+        // These variables are used to check if the form using this function was submitted.
+        $target = optional_param('target', false, PARAM_INT);
+        $targetid = optional_param('targetid', null, PARAM_INT);
+
+        // Check if they submitted the form but did not provide all the data we need.
+        $missingdata = false;
+        if ($target and is_null($targetid)) {
+            $missingdata = true;
+        }
+
         $nextstageurl->param('sesskey', sesskey());
 
-        $form = html_writer::start_tag('form', array('method'=>'post', 'action'=>$nextstageurl->out_omit_querystring()));
+        $form = html_writer::start_tag('form', array('method' => 'post', 'action' => $nextstageurl->out_omit_querystring(),
+            'class' => 'mform'));
         foreach ($nextstageurl->params() as $key=>$value) {
             $form .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$key, 'value'=>$value));
         }
@@ -261,7 +272,16 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::start_tag('div', array('class'=>'bcs-new-course backup-section'));
             $html .= $this->output->heading(get_string('restoretonewcourse', 'backup'), 2, array('class'=>'header'));
             $html .= $this->backup_detail_input(get_string('restoretonewcourse', 'backup'), 'radio', 'target', backup::TARGET_NEW_COURSE, array('checked'=>'checked'));
-            $html .= $this->backup_detail_pair(get_string('selectacategory', 'backup'), $this->render($categories));
+            $selectacategoryhtml = $this->backup_detail_pair(get_string('selectacategory', 'backup'), $this->render($categories));
+            // Display the category selection as required if the form was submitted but this data was not supplied.
+            if ($missingdata && $target == backup::TARGET_NEW_COURSE) {
+                $html .= html_writer::span(get_string('required'), 'error');
+                $html .= html_writer::start_tag('fieldset', array('class' => 'error'));
+                $html .= $selectacategoryhtml;
+                $html .= html_writer::end_tag('fieldset');
+            } else {
+                $html .= $selectacategoryhtml;
+            }
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');
@@ -290,13 +310,21 @@ class core_backup_renderer extends plugin_renderer_base {
             if ($wholecourse) {
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
-                $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
             } else {
                 // We only allow restore adding to existing for now. Enforce it here.
                 $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'target', 'value'=>backup::TARGET_EXISTING_ADDING));
                 $courses->invalidate_results(); // Clean list of courses
                 $courses->set_include_currentcourse(); // Show current course in the list
-                $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
+            }
+            $selectacoursehtml = $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
+            // Display the course selection as required if the form was submitted but this data was not supplied.
+            if ($missingdata && $target == backup::TARGET_EXISTING_ADDING) {
+                $html .= html_writer::span(get_string('required'), 'error');
+                $html .= html_writer::start_tag('fieldset', array('class' => 'error'));
+                $html .= $selectacoursehtml;
+                $html .= html_writer::end_tag('fieldset');
+            } else {
+                $html .= $selectacoursehtml;
             }
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
