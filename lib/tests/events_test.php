@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__.'/fixtures/event_fixtures.php');
+
 class core_events_testcase extends advanced_testcase {
 
     /**
@@ -336,6 +338,37 @@ class core_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
         $expected = null;
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * There is no API associated with this event, so we will just test standard features.
+     */
+    public function test_grade_viewed() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $event = \core_tests\event\grade_report_viewed::create(
+            array(
+                'context' => $coursecontext,
+                'courseid' => $course->id,
+                'userid' => $user->id,
+            )
+        );
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\grade_report_viewed', $event);
+        $this->assertEquals($event->courseid, $course->id);
+        $this->assertEquals($event->userid, $user->id);
         $this->assertEventContextNotUsed($event);
     }
 }
