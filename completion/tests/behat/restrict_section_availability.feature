@@ -75,7 +75,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
     And I click on "min" "checkbox"
     And I set the following fields to these values:
-      | id | 2 |
+      | id | Grade assignment |
       | minval | 20 |
     And I press "Save changes"
     And I log out
