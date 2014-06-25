@@ -1406,6 +1406,9 @@ abstract class enrol_plugin {
         $DB->update_record('user_enrolments', $ue);
         context_course::instance($instance->courseid)->mark_dirty(); // reset enrol caches
 
+        // Invalidate core_access cache for get_suspended_userids.
+        cache_helper::invalidate_by_definition('core', 'get_suspended_userids', array(), array($instance->courseid));
+
         // Trigger event.
         $event = \core\event\user_enrolment_updated::create(
                 array(
