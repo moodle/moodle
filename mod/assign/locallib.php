@@ -132,9 +132,6 @@ class assign {
     /** @var bool whether to exclude users with inactive enrolment */
     private $showonlyactiveenrol = null;
 
-    /** @var array list of suspended user IDs in form of ([id1] => id1) */
-    public $susers = null;
-
     /** @var array cached list of participants for this assignment. The cache key will be group, showactive and the context id */
     private $participants = array();
 
@@ -6965,10 +6962,7 @@ class assign {
      * @return bool true is user is active in course.
      */
     public function is_active_user($userid) {
-        if (is_null($this->susers) && !is_null($this->context)) {
-            $this->susers = get_suspended_userids($this->context);
-        }
-        return !in_array($userid, $this->susers);
+        return !in_array($userid, get_suspended_userids($this->context, true));
     }
 
     /**

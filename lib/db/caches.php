@@ -221,5 +221,12 @@ $definitions = array(
         'mode' => cache_store::MODE_SESSION,
         'simplekeys' => true,
         'simpledata' => true
-    )
+    ),
+
+    // For the function get_suspended_userids() in core_access.
+    'get_suspended_userids' => array(
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ),
 );
