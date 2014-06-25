@@ -1671,14 +1671,6 @@ abstract class repository implements cacheable_object {
     public function get_file_reference($source) {
         if ($source && $this->has_moodle_files()) {
             $params = @json_decode(base64_decode($source), true);
-            if (!$params && !in_array($this->get_typename(), array('recent', 'user', 'local', 'coursefiles'))) {
-                // IMPORTANT! Since default format for moodle files was changed in the minor release as a security fix
-                // we maintain an old code here in order not to break 3rd party repositories that deal
-                // with moodle files. Repositories are strongly encouraged to be upgraded, see MDL-45616.
-                // In Moodle 2.8 this fallback will be removed.
-                $params = file_storage::unpack_reference($source, true);
-                return file_storage::pack_reference($params);
-            }
             if (!is_array($params) || empty($params['contextid'])) {
                 throw new repository_exception('invalidparams', 'repository');
             }

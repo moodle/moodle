@@ -3,6 +3,12 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 2.8 ===
+
+* Repositories working with Moodle files must replace serialize() with json_encode() in the
+  attribute 'source' returned by get_listing(). If repository overrides file_is_accessible(),
+  get_file_reference() or get_file_source_info() they need to be changed too. See MDL-45616.
+
 === 2.6 ===
 
 * get_option() now always return null when the first parameter ($config) is not empty, and
