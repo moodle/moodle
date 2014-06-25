@@ -98,7 +98,8 @@ class edit_category_form extends moodleform {
             $mform->setAdvanced('keephigh');
         }
 
-        $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
+        $mform->addElement('text', 'droplow', get_string('droplow', 'grades'), 'size="3"');
+        $mform->setType('droplow', PARAM_INT);
         $mform->addHelpButton('droplow', 'droplow', 'grades');
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
         if ((int)$CFG->grade_droplow_flag & 2) {
