@@ -254,6 +254,12 @@ if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");
 }
 
+if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
+} else {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
+}
+
 // Add the checknet system to keep checking for a connection.
 $PAGE->requires->string_for_js('networkdropped', 'mod_scorm');
 $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array(array(

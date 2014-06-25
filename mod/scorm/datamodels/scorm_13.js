@@ -19,7 +19,7 @@
 //
 // SCORM 1.3 API Implementation
 //
-function SCORMapi1_3() {
+function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg) {
 
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
@@ -1226,4 +1226,10 @@ function SCORMapi1_3() {
     this.GetErrorString = GetErrorString;
     this.GetDiagnostic = GetDiagnostic;
     this.version = '1.0';
+}
+
+M.scorm_api = {};
+
+M.scorm_api.init = function(Y, def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg) {
+    window.API_1484_11 = new SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg);
 }

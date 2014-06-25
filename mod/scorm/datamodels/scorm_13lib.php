@@ -1180,3 +1180,33 @@ function scorm_seq_flow ($activity, $direction, $seq, $childrenflag, $userid) {
         return $seq;
     }
 }
+
+function get_scorm_default ($userdata) {
+    $def = array();
+    $def['cmi.learner_id'] = $userdata->student_id;
+    $def['cmi.learner_name'] = $userdata->student_name;
+    $def['cmi.mode'] = $userdata->mode;
+    $def['cmi.entry'] = $userdata->entry;
+    $def['cmi.exit'] = scorm_empty($userdata, 'cmi.exit');
+    $def['cmi.credit'] = scorm_empty($userdata, 'credit');
+    $def['cmi.completion_status'] = scorm_empty($userdata, 'cmi.completion_status', 'unknown');
+    $def['cmi.completion_threshold'] = scorm_empty($userdata, 'threshold', 'null', true);
+    $def['cmi.learner_preference.audio_level'] = scorm_empty($userdata, 'cmi.learner_preference.audio_level', '\'1\'', true);
+    $def['cmi.learner_preference.language'] = scorm_empty($userdata, 'cmi.learner_preference.language', '\'\'', true);
+    $def['cmi.learner_preference.delivery_speed'] = scorm_empty($userdata, 'cmi.learner_preference.delivery_speed', '\'1\'', true);
+    $def['cmi.learner_preference.audio_captioning'] = scorm_empty($userdata, 'cmi.learner_preference.audio_captioning', '\'0\'', true);
+    $def['cmi.location'] = scorm_empty($userdata, 'cmi.location', 'null', true);
+    $def['cmi.max_time_allowed'] = scorm_empty($userdata, 'attemptAbsoluteDurationLimit', 'null', true);
+    $def['cmi.progress_measure'] = scorm_empty($userdata, 'cmi.progress_measure', 'null', true);
+    $def['cmi.scaled_passing_score'] = scorm_empty($userdata, 'cmi.scaled_passing_score', 'null', true);
+    $def['cmi.score.scaled'] = scorm_empty($userdata, 'cmi.score.scaled', 'null', true);
+    $def['cmi.score.raw'] = scorm_empty($userdata, 'cmi.score.raw', 'null', true);
+    $def['cmi.score.min'] = scorm_empty($userdata, 'cmi.score.min', 'null', true);
+    $def['cmi.score.max'] = scorm_empty($userdata, 'cmi.score.max', 'null', true);
+    $def['cmi.success_status'] = scorm_empty($userdata, 'cmi.success_status', 'unknown');
+    $def['cmi.suspend_data'] = scorm_empty($userdata, 'cmi.suspend_data', 'null', true);
+    $def['cmi.time_limit_action'] = scorm_empty($userdata, 'timelimitaction', 'null', true);
+    $def['cmi.total_time'] = scorm_empty($userdata, 'cmi.total_time', 'PT0H0M0S');
+
+    return $def;
+}

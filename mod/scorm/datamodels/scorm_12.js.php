@@ -41,58 +41,18 @@ if (intval(get_config("scorm", "scorm12standard"))) {
 }
 
 // Set some vars to use as default values.
-$def = array();
-$def['cmi.core.student_id'] = $userdata->student_id;
-$def['cmi.core.student_name'] = $userdata->student_name;
-$def['cmi.core.credit'] = $userdata->credit;
-$def['cmi.core.entry'] = $userdata->entry;
-$def['cmi.core.lesson_mode'] = $userdata->mode;
-$def['cmi.launch_data'] = scorm_isset($userdata, 'datafromlms');
-$def['cmi.student_data.mastery_score'] = scorm_isset($userdata, 'masteryscore');
-$def['cmi.student_data.max_time_allowed'] = scorm_isset($userdata, 'maxtimeallowed');
-$def['cmi.student_data.time_limit_action'] = scorm_isset($userdata, 'timelimitaction');
-$def['cmi.core.total_time'] = scorm_isset($userdata, 'cmi.core.total_time', '00:00:00');
+$def = get_scorm_default($userdata);
 
-// Now handle standard userdata items:
-$def['cmi.core.lesson_location'] = scorm_isset($userdata, 'cmi.core.lesson_location');
-$def['cmi.core.lesson_status'] = scorm_isset($userdata, 'cmi.core.lesson_status');
-$def['cmi.core.score.raw'] = scorm_isset($userdata, 'cmi.core.score.raw');
-$def['cmi.core.score.max'] = scorm_isset($userdata, 'cmi.core.score.max');
-$def['cmi.core.score.min'] = scorm_isset($userdata, 'cmi.core.score.min');
-$def['cmi.core.exit'] = scorm_isset($userdata, 'cmi.core.exit');
-$def['cmi.suspend_data'] = scorm_isset($userdata, 'cmi.suspend_data');
-$def['cmi.comments'] = scorm_isset($userdata, 'cmi.comments');
-$def['cmi.student_preference.language'] = scorm_isset($userdata, 'cmi.student_preference.language');
-$def['cmi.student_preference.audio'] = scorm_isset($userdata, 'cmi.student_preference.audio', '0');
-$def['cmi.student_preference.speed'] = scorm_isset($userdata, 'cmi.student_preference.speed', '0');
-$def['cmi.student_preference.text'] = scorm_isset($userdata, 'cmi.student_preference.text', '0');
-
-echo js_writer::set_variable('def', $def);
-
-echo js_writer::set_variable('cmistring256', $cmistring256);
-echo js_writer::set_variable('cmistring4096', $cmistring4096);
-echo js_writer::set_variable('scormdebugging', scorm_debugging($scorm));
-echo js_writer::set_variable('scormauto', $scorm->auto);
-echo js_writer::set_variable('scormid', $scorm->id);
-echo js_writer::set_variable('cfgwwwroot', $CFG->wwwroot);
-echo js_writer::set_variable('sesskey', sesskey());
-echo js_writer::set_variable('scoid', $scoid);
-echo js_writer::set_variable('attempt', $attempt);
-echo js_writer::set_variable('viewmode', $mode);
-echo js_writer::set_variable('cmid', $id);
-echo js_writer::set_variable('currentorg', $currentorg);
-
- // reconstitute objectives
+// reconstitute objectives
 $cmiobj = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
 $cmiint = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.interactions', array('objectives', 'correct_responses'));
 
-echo js_writer::set_variable('cmiobj', $cmiobj);
-echo js_writer::set_variable('cmiint', $cmiint);
-
-echo 'var API = new SCORMapi1_2();';
+$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, $cmistring256, $cmistring4096,
+                                                        scorm_debugging($scorm), $scorm->auto, $scorm->id, $CFG->wwwroot,
+                                                        sesskey(), $scoid, $attempt, $mode, $id, $currentorg));
 
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {
-    include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
-    echo 'AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);';
+    $PAGE->requires->js($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php', true);
+    echo html_writer::script('AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);');
 }

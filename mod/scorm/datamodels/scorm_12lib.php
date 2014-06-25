@@ -120,3 +120,32 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
     }
     return eval('return '.implode($stack).';');
 }
+
+function get_scorm_default ($userdata) {
+    $def = array();
+    $def['cmi.core.student_id'] = $userdata->student_id;
+    $def['cmi.core.student_name'] = $userdata->student_name;
+    $def['cmi.core.credit'] = $userdata->credit;
+    $def['cmi.core.entry'] = $userdata->entry;
+    $def['cmi.core.lesson_mode'] = $userdata->mode;
+    $def['cmi.launch_data'] = scorm_isset($userdata, 'datafromlms');
+    $def['cmi.student_data.mastery_score'] = scorm_isset($userdata, 'masteryscore');
+    $def['cmi.student_data.max_time_allowed'] = scorm_isset($userdata, 'maxtimeallowed');
+    $def['cmi.student_data.time_limit_action'] = scorm_isset($userdata, 'timelimitaction');
+    $def['cmi.core.total_time'] = scorm_isset($userdata, 'cmi.core.total_time', '00:00:00');
+
+    // Now handle standard userdata items:
+    $def['cmi.core.lesson_location'] = scorm_isset($userdata, 'cmi.core.lesson_location');
+    $def['cmi.core.lesson_status'] = scorm_isset($userdata, 'cmi.core.lesson_status');
+    $def['cmi.core.score.raw'] = scorm_isset($userdata, 'cmi.core.score.raw');
+    $def['cmi.core.score.max'] = scorm_isset($userdata, 'cmi.core.score.max');
+    $def['cmi.core.score.min'] = scorm_isset($userdata, 'cmi.core.score.min');
+    $def['cmi.core.exit'] = scorm_isset($userdata, 'cmi.core.exit');
+    $def['cmi.suspend_data'] = scorm_isset($userdata, 'cmi.suspend_data');
+    $def['cmi.comments'] = scorm_isset($userdata, 'cmi.comments');
+    $def['cmi.student_preference.language'] = scorm_isset($userdata, 'cmi.student_preference.language');
+    $def['cmi.student_preference.audio'] = scorm_isset($userdata, 'cmi.student_preference.audio', '0');
+    $def['cmi.student_preference.speed'] = scorm_isset($userdata, 'cmi.student_preference.speed', '0');
+    $def['cmi.student_preference.text'] = scorm_isset($userdata, 'cmi.student_preference.text', '0');
+    return $def;
+}

@@ -16,7 +16,7 @@
 //
 // SCORM 1.2 API Implementation
 //
-function AICCapi() {
+function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid) {
 
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
@@ -528,4 +528,10 @@ function AICCapi() {
     this.LMSGetLastError = LMSGetLastError;
     this.LMSGetErrorString = LMSGetErrorString;
     this.LMSGetDiagnostic = LMSGetDiagnostic;
+}
+
+M.scorm_api = {};
+
+M.scorm_api.init = function(Y, def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid) {
+    window.API = new AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid);
 }

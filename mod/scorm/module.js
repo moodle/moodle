@@ -133,13 +133,6 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             }
 
             scorm_tree_node.closeAll();
-            // remove any reference to the old API
-            if (window.API) {
-                window.API = null;
-            }
-            if (window.API_1484_11) {
-                window.API_1484_11 = null;
-            }
             var url_prefix = M.cfg.wwwroot + '/mod/scorm/loadSCO.php?';
             var el_old_api = document.getElementById('scormapi123');
             if (el_old_api) {
