@@ -29,8 +29,7 @@ Feature: Backup Moodle courses
     When I backup "Course 1" course using this options:
       | Initial | Include calendar events | 0 |
       | Initial | Include course logs | 1 |
-      | Schema | setting_section_section_5_userinfo | 0 |
-      | Schema | setting_section_section_5_included | 0 |
+      | Schema | Topic 5 | 0 |
       | Confirmation | Filename | test_backup.mbz |
     Then I should see "Restore"
     And I click on "Restore" "link" in the "test_backup.mbz" "table_row"
@@ -50,10 +49,8 @@ Feature: Backup Moodle courses
   @javascript
   Scenario: Backup selecting just one section
     When I backup "Course 2" course using this options:
-      | Schema | setting_section_section_2_userinfo | 0 |
-      | Schema | setting_section_section_2_userinfo | 0 |
-      | Schema | setting_section_section_4_included | 0 |
-      | Schema | setting_section_section_4_included | 0 |
+      | Schema | Test data | 0 |
+      | Schema | Topic 2 | 0 |
       | Confirmation | Filename | test_backup.mbz |
     Then I should see "Course backup area"
     And I click on "Restore" "link" in the "test_backup.mbz" "table_row"

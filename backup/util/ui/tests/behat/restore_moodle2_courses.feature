@@ -52,10 +52,8 @@ Feature: Restore Moodle 2 course backups
     When I backup "Course 3" course using this options:
       | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
-      | Schema | setting_section_section_3_included | 0 |
-      | Schema | setting_section_section_3_userinfo | 0 |
-      | Schema | setting_section_section_5_included | 0 |
-      | Schema | setting_section_section_5_userinfo | 0 |
+      | Schema | Test database name | 0 |
+      | Schema | Section 2 | 0 |
     Then I should see "Course 2"
     And I should see "Test assign name"
     And I should not see "Test database name"
@@ -70,8 +68,7 @@ Feature: Restore Moodle 2 course backups
       | Description | Test forum post backup description |
     And I follow "Restore"
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
-      | Schema | setting_section_section_8_userinfo | 0 |
-      | Schema | setting_section_section_8_included | 0 |
+      | Schema | Section 3 | 0 |
     Then I should see "Course 1"
     And I should not see "Section 3"
     And I should not see "Test forum post backup name"
