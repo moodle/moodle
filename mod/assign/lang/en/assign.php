@@ -50,6 +50,7 @@ $string['assign:managegrades'] = 'Review and release grades';
 $string['assign:releasegrades'] = 'Release grades';
 $string['assign:revealidentities'] = 'Reveal student identities';
 $string['assign:reviewgrades'] = 'Review grades';
+$string['assign:viewblinddetails'] = 'View student identities when blind marking is enabled';
 $string['assign:viewgrades'] = 'View grades';
 $string['assign:submit'] = 'Submit assignment';
 $string['assign:view'] = 'View assignment';
