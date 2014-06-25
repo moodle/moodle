@@ -1499,7 +1499,6 @@ class core_course_renderer extends plugin_renderer_base {
         }
 
         // We must only load this module once.
-        $this->page->requires->set_required_html_output('core_course_categoryexpanderjsinit');
         $this->page->requires->yui_module('moodle-course-categoryexpander',
                 'Y.Moodle.course.categoryexpander.init');
     }
