@@ -66,10 +66,16 @@ class test_output_factory extends renderer_factory_base {
         $searchtargets = array();
 
         list($target, $suffix) = $this->get_target_suffix($target);
+        // Add all suffix versions first - to match the real search order.
         foreach ($classnames as $classnamedetails) {
             if ($classnamedetails['validwithoutprefix']) {
                 $newclassname = $classnamedetails['classname'] . $suffix;
                 $searchtargets[] = $newclassname;
+            }
+        }
+        // Add all non-suffixed versions now.
+        foreach ($classnames as $classnamedetails) {
+            if ($classnamedetails['validwithoutprefix']) {
                 $newclassname = $classnamedetails['classname'];
                 $searchtargets[] = $newclassname;
             }

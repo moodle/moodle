@@ -168,6 +168,7 @@ abstract class renderer_factory_base implements renderer_factory {
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to:
      *              '\mod_forum\output\news_renderer'
+     *              or '\mod_forum\output\news\renderer'
      *              or non-autoloaded 'mod_forum_news'
      * @return array[] Each element of the array is an array with keys:
      *                 classname - The class name to search
@@ -242,12 +243,26 @@ abstract class renderer_factory_base implements renderer_factory {
                 'autoloaded' => true,
                 'classname' => '\\output\\' . $component . '\\' . $subtype . '_renderer'
             );
+            // Version of the above with subtype being a namespace level on it's own.
+            $classnames[] = array(
+                'validwithprefix' => true,
+                'validwithoutprefix' => false,
+                'autoloaded' => true,
+                'classname' => '\\output\\' . $component . '\\' . $subtype . '\\renderer'
+            );
             // Standard autoloaded plugin name (not valid with a prefix).
             $classnames[] = array(
                 'validwithprefix' => false,
                 'validwithoutprefix' => true,
                 'autoloaded' => true,
                 'classname' => '\\' . $component . '\\output\\' . $subtype . '_renderer'
+            );
+            // Version of the above with subtype being a namespace level on it's own.
+            $classnames[] = array(
+                'validwithprefix' => false,
+                'validwithoutprefix' => true,
+                'autoloaded' => true,
+                'classname' => '\\' . $component . '\\output\\' . $subtype . '\\renderer'
             );
             // Legacy class name - (valid with or without a prefix).
             $classnames[] = array(
@@ -288,23 +303,38 @@ class standard_renderer_factory extends renderer_factory_base {
         $classname = '';
 
         list($target, $suffix) = $this->get_target_suffix($target);
+        // First look for a version with a suffix.
         foreach ($classnames as $classnamedetails) {
             if ($classnamedetails['validwithoutprefix']) {
                 $newclassname = $classnamedetails['classname'] . $suffix;
                 if (class_exists($newclassname)) {
                     $classname = $newclassname;
+                    break;
                 } else {
                     $newclassname = $classnamedetails['classname'];
                     if (class_exists($newclassname)) {
                         $classname = $newclassname;
+                        break;
+                    }
+                }
+            }
+        }
+        // Now look for a non-suffixed version.
+        if (empty($classname)) {
+            foreach ($classnames as $classnamedetails) {
+                if ($classnamedetails['validwithoutprefix']) {
+                    $newclassname = $classnamedetails['classname'];
+                    if (class_exists($newclassname)) {
+                        $classname = $newclassname;
+                        break;
                     }
                 }
             }
         }
 
-        if (!class_exists($classname)) {
+        if (empty($classname)) {
             // Standard renderer must always exist.
-            throw new coding_exception('Request for an unknown renderer class ' . $classname);
+            throw new coding_exception('Request for an unknown renderer class. Searched for: ' . var_export($classnames, true));
         }
 
         return new $classname($page, $target);
