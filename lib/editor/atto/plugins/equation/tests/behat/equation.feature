@@ -1,4 +1,4 @@
-@editor @editor_atto @atto @atto_equation
+@editor @editor_atto @atto @atto_equation @_bug_phantomjs
 Feature: Atto equation editor
   To teach maths to students, I need to write equations
 
