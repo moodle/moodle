@@ -293,7 +293,7 @@ case 'download':
     // note that in this case user may not have permission to access the source file directly
     // so no file_browser/file_info can be used below
     if ($repo->has_moodle_files()) {
-        $file = repository::get_moodle_file($fileurl);
+        $file = repository::get_moodle_file($reference);
         if ($file && $file->is_external_file()) {
             $sourcefield = $file->get_source(); // remember the original source
             $record->source = $repo::build_source_field($sourcefield);
