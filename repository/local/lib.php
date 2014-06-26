@@ -56,7 +56,7 @@ class repository_local extends repository {
         $component = null;
 
         if (!empty($encodedpath)) {
-            $params = unserialize(base64_decode($encodedpath));
+            $params = json_decode(base64_decode($encodedpath), true);
             if (is_array($params) && isset($params['contextid'])) {
                 $component = is_null($params['component']) ? NULL : clean_param($params['component'], PARAM_COMPONENT);
                 $filearea  = is_null($params['filearea']) ? NULL : clean_param($params['filearea'], PARAM_AREA);
@@ -205,7 +205,7 @@ class repository_local extends repository {
      */
     private function get_node(file_info $fileinfo) {
         global $OUTPUT;
-        $encodedpath = base64_encode(serialize($fileinfo->get_params()));
+        $encodedpath = base64_encode(json_encode($fileinfo->get_params()));
         $node = array(
             'title' => $fileinfo->get_visible_name(),
             'datemodified' => $fileinfo->get_timemodified(),
@@ -245,7 +245,7 @@ class repository_local extends repository {
      * @return array
      */
     private function get_node_path(file_info $fileinfo) {
-        $encodedpath = base64_encode(serialize($fileinfo->get_params()));
+        $encodedpath = base64_encode(json_encode($fileinfo->get_params()));
         return array(
             'path' => $encodedpath,
             'name' => $fileinfo->get_visible_name()
