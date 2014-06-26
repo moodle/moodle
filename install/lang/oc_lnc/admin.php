@@ -30,6 +30,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Occitan-Lengadocian';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'Error, valor incorrecte « {$a->value} » per lo paramètre « {$a->option} »';
+$string['cliincorrectvalueretry'] = 'Valor incorrecte, veuillez réessayer';
+$string['clitypevalue'] = 'tipe valor';
+$string['clitypevaluedefault'] = 'tipe valor, tapez Entrée per utilizar la valor per defaut ({$a})';
+$string['cliunknowoption'] = 'Options non reconnues :
+ {$a}.
+Utilisez l\'option --help.';
+$string['cliyesnoprompt'] = 'Tapez y (pour oui) o n (pour non)';
+$string['environmentrequireinstall'] = 'doit être installé e activé';
+$string['environmentrequireversion'] = 'la version {$a->needed} es requise ; vous utilisez actualament la version {$a->current}';
