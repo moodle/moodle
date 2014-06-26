@@ -1890,6 +1890,11 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
 }
 
 
+/**
+ * Validate a forumula.
+ * @param string $formula the formula to validate.
+ * @return string|boolean false if there are no problems. Otherwise a string error message.
+ */
 function qtype_calculated_find_formula_errors($formula) {
     // Validates the formula submitted from the question edit page.
     // Returns false if everything is alright
@@ -1918,7 +1923,7 @@ function qtype_calculated_find_formula_errors($formula) {
 
                 // Zero argument functions.
             case 'pi':
-                if ($regs[3]) {
+                if (array_key_exists(3, $regs)) {
                     return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
                 }
                 break;
