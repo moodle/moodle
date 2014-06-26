@@ -1625,12 +1625,32 @@ abstract class repository {
      * Prepare file reference information
      *
      * @param string $source source of the file, returned by repository as 'source' and received back from user (not cleaned)
-     * @return string file referece
+     * @return string file reference, ready to be stored
      */
     public function get_file_reference($source) {
         if ($source && $this->has_moodle_files()) {
-            $params = file_storage::unpack_reference($source);
-            if (!is_array($params)) {
+            $params = @json_decode(base64_decode($source), true);
+            if (!$params && !in_array($this->get_typename(), array('recent', 'user', 'local', 'coursefiles'))) {
+                // IMPORTANT! Since default format for moodle files was changed in the minor release as a security fix
+                // we maintain an old code here in order not to break 3rd party repositories that deal
+                // with moodle files. Repositories are strongly encouraged to be upgraded, see MDL-45616.
+                // In Moodle 2.8 this fallback will be removed.
+                $params = file_storage::unpack_reference($source, true);
+                return file_storage::pack_reference($params);
+            }
+            if (!is_array($params) || empty($params['contextid'])) {
+                throw new repository_exception('invalidparams', 'repository');
+            }
+            $params = array(
+                'component' => empty($params['component']) ? ''   : clean_param($params['component'], PARAM_COMPONENT),
+                'filearea'  => empty($params['filearea'])  ? ''   : clean_param($params['filearea'], PARAM_AREA),
+                'itemid'    => empty($params['itemid'])    ? 0    : clean_param($params['itemid'], PARAM_INT),
+                'filename'  => empty($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE),
+                'filepath'  => empty($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH),
+                'contextid' => clean_param($params['contextid'], PARAM_INT)
+            );
+            // Check if context exists.
+            if (!context::instance_by_id($params['contextid'], IGNORE_MISSING)) {
                 throw new repository_exception('invalidparams', 'repository');
             }
             return file_storage::pack_reference($params);

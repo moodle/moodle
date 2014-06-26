@@ -63,7 +63,7 @@ class repository_coursefiles extends repository {
         $browser = get_file_browser();
 
         if (!empty($encodedpath)) {
-            $params = unserialize(base64_decode($encodedpath));
+            $params = json_decode(base64_decode($encodedpath), true);
             if (is_array($params)) {
                 $filepath  = is_null($params['filepath']) ? NULL : clean_param($params['filepath'], PARAM_PATH);;
                 $filename  = is_null($params['filename']) ? NULL : clean_param($params['filename'], PARAM_FILE);
@@ -80,12 +80,12 @@ class repository_coursefiles extends repository {
         if ($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {
             // build path navigation
             $pathnodes = array();
-            $encodedpath = base64_encode(serialize($fileinfo->get_params()));
+            $encodedpath = base64_encode(json_encode($fileinfo->get_params()));
             $pathnodes[] = array('name'=>$fileinfo->get_visible_name(), 'path'=>$encodedpath);
             $level = $fileinfo->get_parent();
             while ($level) {
                 $params = $level->get_params();
-                $encodedpath = base64_encode(serialize($params));
+                $encodedpath = base64_encode(json_encode($params));
                 if ($params['contextid'] != $context->id) {
                     break;
                 }
@@ -102,7 +102,7 @@ class repository_coursefiles extends repository {
                 if ($child->is_directory()) {
                     $params = $child->get_params();
                     $subdir_children = $child->get_children();
-                    $encodedpath = base64_encode(serialize($params));
+                    $encodedpath = base64_encode(json_encode($params));
                     $node = array(
                         'title' => $child->get_visible_name(),
                         'datemodified' => $child->get_timemodified(),
@@ -113,7 +113,7 @@ class repository_coursefiles extends repository {
                     );
                     $list[] = $node;
                 } else {
-                    $encodedpath = base64_encode(serialize($child->get_params()));
+                    $encodedpath = base64_encode(json_encode($child->get_params()));
                     $node = array(
                         'title' => $child->get_visible_name(),
                         'size' => $child->get_filesize(),

@@ -61,7 +61,7 @@ class repository_user extends repository {
         $list = array();
 
         if (!empty($encodedpath)) {
-            $params = unserialize(base64_decode($encodedpath));
+            $params = json_decode(base64_decode($encodedpath), true);
             if (is_array($params)) {
                 $filepath = clean_param($params['filepath'], PARAM_PATH);;
                 $filename = clean_param($params['filename'], PARAM_FILE);
@@ -84,7 +84,7 @@ class repository_user extends repository {
                 $level = $fileinfo;
                 $params = $fileinfo->get_params();
                 while ($level && $params['component'] == 'user' && $params['filearea'] == 'private') {
-                    $encodedpath = base64_encode(serialize($level->get_params()));
+                    $encodedpath = base64_encode(json_encode($level->get_params()));
                     $pathnodes[] = array('name'=>$level->get_visible_name(), 'path'=>$encodedpath);
                     $level = $level->get_parent();
                     $params = $level->get_params();
@@ -95,7 +95,7 @@ class repository_user extends repository {
                 $children = $fileinfo->get_children();
                 foreach ($children as $child) {
                     if ($child->is_directory()) {
-                        $encodedpath = base64_encode(serialize($child->get_params()));
+                        $encodedpath = base64_encode(json_encode($child->get_params()));
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'datemodified' => $child->get_timemodified(),
@@ -106,7 +106,7 @@ class repository_user extends repository {
                         );
                         $list[] = $node;
                     } else {
-                        $encodedpath = base64_encode(serialize($child->get_params()));
+                        $encodedpath = base64_encode(json_encode($child->get_params()));
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'size' => $child->get_filesize(),
