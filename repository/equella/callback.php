@@ -55,7 +55,7 @@ if (isset($info->license)) {
     $license = s(clean_param($info->license, PARAM_ALPHAEXT));
 }
 
-$source = base64_encode(serialize((object)array('url'=>$url,'filename'=>$filename)));
+$source = base64_encode(json_encode(array('url'=>$url,'filename'=>$filename)));
 
 $js =<<<EOD
 <html>
