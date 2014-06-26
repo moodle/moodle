@@ -37,6 +37,9 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated extends question_type {
+    /** Regular expression that finds the formulas in content. */
+    const FORMULAS_IN_TEXT_REGEX = '~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)\}~';
+
     const MAX_DATASET_ITEMS = 100;
 
     public $wizardpagesnumber = 3;
@@ -1983,4 +1986,27 @@ function qtype_calculated_find_formula_errors($formula) {
         // Formula just might be valid.
         return false;
     }
+}
+
+/**
+ * Validate all the forumulas in a bit of text.
+ * @param string $text the text in which to validate the formulas.
+ * @return string|boolean false if there are no problems. Otherwise a string error message.
+ */
+function qtype_calculated_find_formula_errors_in_text($text) {
+    preg_match_all(qtype_calculated::FORMULAS_IN_TEXT_REGEX, $text, $matches);
+
+    $errors = array();
+    foreach ($matches[1] as $match) {
+        $error = qtype_calculated_find_formula_errors($match);
+        if ($error) {
+            $errors[] = $error;
+        }
+    }
+
+    if ($errors) {
+        return implode(' ', $errors);
+    }
+
+    return false;
 }

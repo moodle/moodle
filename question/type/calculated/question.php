@@ -278,6 +278,7 @@ class qtype_calculated_dataset_loader {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated_variable_substituter {
+
     /** @var array variable name => value */
     protected $values;
 
@@ -466,7 +467,7 @@ class qtype_calculated_variable_substituter {
      */
     public function replace_expressions_in_text($text, $length = null, $format = null) {
         $vs = $this; // Can't use $this in a PHP closure.
-        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
+        $text = preg_replace_callback(qtype_calculated::FORMULAS_IN_TEXT_REGEX,
                 function ($matches) use ($vs, $format, $length) {
                     return $vs->format_float($vs->calculate($matches[1]), $length, $format);
                 }, $text);

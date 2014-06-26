@@ -83,4 +83,23 @@ class qtype_calculated_formula_validation_testcase extends basic_testcase {
         $this->assert_nonempty_string(qtype_calculated_find_formula_errors('atan2(1.0, 1.0, 2.0)'));
         $this->assert_nonempty_string(qtype_calculated_find_formula_errors('max(1.0)'));
     }
+
+    public function test_validation_of_formulas_in_text_ok() {
+        $this->assertFalse(qtype_calculated_find_formula_errors_in_text(
+                '<p>Look no equations.</p>'));
+        $this->assertFalse(qtype_calculated_find_formula_errors_in_text(
+                '<p>Simple variable: {x}.</p>'));
+        $this->assertFalse(qtype_calculated_find_formula_errors_in_text(
+                '<p>This is an equation: {=1+1}, as is this: {={x}+{y}}.</p>' .
+                '<p>Here is a more complex one: {=sin(2*pi()*{theta})}.</p>'));
+    }
+
+    public function test_validation_of_formulas_in_text_bad_function() {
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors_in_text(
+                '<p>This is an equation: {=eval(1)}.</p>'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors_in_text(
+                '<p>Good: {=1+1}, bad: {=eval(1)}, good: {={x}+{y}}.</p>'));
+        $this->assert_nonempty_string(qtype_calculated_find_formula_errors_in_text(
+                '<p>Bad: {=eval(1)}, bad: {=system(1)}.</p>'));
+    }
 }
