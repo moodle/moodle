@@ -125,9 +125,8 @@ function filter_tex_updatedcallback($name) {
         return;
     }
 
-    $pathlatex = trim($pathlatex, " '\"");
-    $pathdvips = trim(get_config('filter_tex', 'pathdvips'), " '\"");
-    $pathconvert = trim(get_config('filter_tex', 'pathconvert'), " '\"");
+    $pathdvips = get_config('filter_tex', 'pathdvips');
+    $pathconvert = get_config('filter_tex', 'pathconvert');
 
     if (!(is_file($pathlatex) && is_executable($pathlatex) &&
           is_file($pathdvips) && is_executable($pathdvips) &&
