@@ -104,6 +104,9 @@ function xmldb_folder_upgrade($oldversion) {
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'showexpanded');
         }
+        
+		// by default after upgrade the root will be shown
+        set_config('showexpandedroot', true, 'folder');
 
         // folder savepoint reached
         upgrade_mod_savepoint(true, 2013040700, 'folder');

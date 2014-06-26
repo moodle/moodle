@@ -86,7 +86,11 @@ class mod_folder_renderer extends plugin_renderer_base {
         if (empty($tree->folder->showexpanded)) {
             $showexpanded = false;
         }
-        $this->page->requires->js_init_call('M.mod_folder.init_tree', array($id, $showexpanded));
+        $showexpandedroot = true;
+        if (empty($tree->folder->showexpandedroot)) {
+            $showexpandedroot = false;
+        }		
+        $this->page->requires->js_init_call('M.mod_folder.init_tree', array($id, $showexpanded, $showexpandedroot));
         return $content;
     }
 

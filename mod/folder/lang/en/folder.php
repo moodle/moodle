@@ -52,3 +52,5 @@ $string['displayinline'] = 'Inline on a course page';
 $string['noautocompletioninline'] = 'Automatic completion on viewing of activity can not be selected together with "Display inline" option';
 $string['showexpanded'] = 'Show subfolders expanded';
 $string['showexpanded_help'] = 'If set to \'yes\', subfolders are shown expanded by default; otherwise they are shown collapsed.';
+$string['showexpandedroot'] = 'Show top folder expanded';
+$string['showexpandedroot_help'] = 'If set to \'yes\', the top root folder and its content is shown expanded by default; otherwise they are shown collapsed.';
