@@ -18,23 +18,23 @@ Feature: Add images to Atto
     And I click on "Select this file" "button"
     And I set the field "Describe this image" to "It's the Moodle"
     # Wait for the page to "settle".
-    And I wait "2" seconds
+    And I wait until the page is ready
     And the field "Width" matches value "204"
     And the field "Height" matches value "61"
     And I set the field "Auto size" to "1"
     And I set the field "Width" to "2040"
     # Trigger blur on the width field.
-    And I set the field "Alignment" to "Bottom"
+    And I take focus off "Width" "field"
     And the field "Height" matches value "610"
     And I set the field "Height" to "61"
     # Trigger blur on the height field.
-    And I set the field "Alignment" to "Bottom"
+    And I take focus off "Height" "field"
     And the field "Width" matches value "204"
     And I set the field "Auto size" to "0"
     And I set the field "Width" to "123"
     And I set the field "Height" to "456"
     # Trigger blur on the height field.
-    And I set the field "Alignment" to "Bottom"
+    And I take focus off "Height" "field"
     And the field "Width" matches value "123"
     And the field "Height" matches value "456"
     And I click on "Save image" "button"
