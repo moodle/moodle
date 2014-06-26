@@ -156,6 +156,13 @@ class qtype_calculatedmulti extends qtype_calculated {
         return true;
     }
 
+    protected function validate_answer($answer) {
+        $error = qtype_calculated_find_formula_errors_in_text($answer);
+        if ($error) {
+            throw new coding_exception($error);
+        }
+    }
+
     protected function make_question_instance($questiondata) {
         question_bank::load_question_definition_classes($this->name());
         if ($questiondata->options->single) {
