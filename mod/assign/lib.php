@@ -392,11 +392,12 @@ function assign_print_overview($courses, &$htmlarray) {
             if (!isset($unmarkedsubmissions)) {
                 $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt, mxs.assignment
                                          FROM {assign_submission} mxs
+                                         WHERE mxs.assignment ' . $sqlassignmentids . '
                                          GROUP BY mxs.userid, mxs.assignment';
 
                 // Build up and array of unmarked submissions indexed by assignment id/ userid
                 // for use where the user has grading rights on assignment.
-                $dbparams = array_merge(array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
+                $dbparams = array_merge($assignmentidparams, array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
                 $rs = $DB->get_recordset_sql('SELECT
                                                   s.assignment as assignment,
                                                   s.userid as userid,
@@ -451,10 +452,12 @@ function assign_print_overview($courses, &$htmlarray) {
                 // This is nasty because we only want the last attempt.
                 $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt, mxs.assignment
                                          FROM {assign_submission} mxs
+                                         WHERE mxs.assignment ' . $sqlassignmentids . '
+                                         AND mxs.userid = ?
                                          GROUP BY mxs.userid, mxs.assignment';
 
                 // Get all user submissions, indexed by assignment id.
-                $dbparams = array_merge(array($USER->id, $USER->id, $USER->id, $USER->id), $assignmentidparams);
+                $dbparams = array_merge($assignmentidparams, array($USER->id, $USER->id, $USER->id), $assignmentidparams);
                 $mysubmissions = $DB->get_records_sql('SELECT
                                                            a.id AS assignment,
                                                            a.nosubmissions AS nosubmissions,
@@ -464,7 +467,6 @@ function assign_print_overview($courses, &$htmlarray) {
                                                            s.status AS status
                                                        FROM {assign} a
                                                        LEFT JOIN ( ' . $submissionmaxattempt . ' ) smx ON
-                                                           smx.userid = ? AND
                                                            smx.assignment = a.id
                                                        LEFT JOIN {assign_grades} g ON
                                                            g.assignment = a.id AND
