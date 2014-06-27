@@ -58,6 +58,11 @@ class mod_forum_existing_subscriber_selector extends mod_forum_subscriber_select
                                               WHERE $wherecondition AND s.forum = :forumid
                                            ORDER BY $sort", $params);
 
+        $cm = get_coursemodule_from_instance('forum', $this->forumid);
+        $modinfo = get_fast_modinfo($cm->course);
+        $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
+        $subscribers = $info->filter_user_list($subscribers);
+
         return array(get_string("existingsubscribers", 'forum') => $subscribers);
     }
 
