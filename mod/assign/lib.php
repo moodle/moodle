@@ -393,9 +393,6 @@ function assign_print_overview($courses, &$htmlarray) {
                 $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt, mxs.assignment
                                          FROM {assign_submission} mxs
                                          GROUP BY mxs.userid, mxs.assignment';
-                $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt, mxg.assignment
-                                    FROM {assign_grades} mxg
-                                    GROUP BY mxg.userid, mxg.assignment';
 
                 // Build up and array of unmarked submissions indexed by assignment id/ userid
                 // for use where the user has grading rights on assignment.
@@ -410,13 +407,10 @@ function assign_print_overview($courses, &$htmlarray) {
                                               LEFT JOIN ( ' . $submissionmaxattempt . ' ) smx ON
                                                            smx.userid = s.userid AND
                                                            smx.assignment = s.id
-                                              LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON
-                                                           gmx.userid = s.userid AND
-                                                           gmx.assignment = s.id
                                               LEFT JOIN {assign_grades} g ON
                                                   s.userid = g.userid AND
                                                   s.assignment = g.assignment AND
-                                                  g.attemptnumber = gmx.maxattempt
+                                                  g.attemptnumber = smx.maxattempt
                                               WHERE
                                                   ( g.timemodified is NULL OR
                                                   s.timemodified > g.timemodified ) AND
@@ -458,9 +452,6 @@ function assign_print_overview($courses, &$htmlarray) {
                 $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt, mxs.assignment
                                          FROM {assign_submission} mxs
                                          GROUP BY mxs.userid, mxs.assignment';
-                $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt, mxg.assignment
-                                    FROM {assign_grades} mxg
-                                    GROUP BY mxg.userid, mxg.assignment';
 
                 // Get all user submissions, indexed by assignment id.
                 $dbparams = array_merge(array($USER->id, $USER->id, $USER->id, $USER->id), $assignmentidparams);
@@ -475,13 +466,10 @@ function assign_print_overview($courses, &$htmlarray) {
                                                        LEFT JOIN ( ' . $submissionmaxattempt . ' ) smx ON
                                                            smx.userid = ? AND
                                                            smx.assignment = a.id
-                                                       LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON
-                                                           gmx.userid = ? AND
-                                                           gmx.assignment = a.id
                                                        LEFT JOIN {assign_grades} g ON
                                                            g.assignment = a.id AND
                                                            g.userid = ? AND
-                                                           g.attemptnumber = gmx.maxattempt
+                                                           g.attemptnumber = smx.maxattempt
                                                        LEFT JOIN {assign_submission} s ON
                                                            s.attemptnumber = smx.maxattempt AND
                                                            s.assignment = a.id AND
@@ -491,15 +479,18 @@ function assign_print_overview($courses, &$htmlarray) {
 
             $str .= '<div class="details">';
             $str .= get_string('mysubmission', 'assign');
-            $submission = $mysubmissions[$assignment->id];
-            if ($submission->nosubmissions) {
-                $str .= get_string('offline', 'assign');
-            } else if (!$submission->status || $submission->status == 'draft') {
+            $submission = false;
+            if (isset($mysubmissions[$assignment->id])) {
+                $submission = $mysubmissions[$assignment->id];
+            }
+            if (!$submission || !$submission->status || $submission->status == 'draft') {
                 $str .= $strnotsubmittedyet;
+            } else if ($submission->nosubmissions) {
+                $str .= get_string('offline', 'assign');
             } else {
                 $str .= get_string('submissionstatus_' . $submission->status, 'assign');
             }
-            if (!$submission->grade || $submission->grade < 0) {
+            if (!$submission || !$submission->grade || $submission->grade < 0) {
                 $str .= ', ' . get_string('notgraded', 'assign');
             } else {
                 $str .= ', ' . get_string('graded', 'assign');
