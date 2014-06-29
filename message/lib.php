@@ -791,7 +791,7 @@ function message_get_recent_notifications($user, $limitfrom=0, $limitto=100) {
               FROM {message_read} mr
                    JOIN {user} u ON u.id=mr.useridfrom
              WHERE mr.useridto = :userid1 AND u.deleted = '0' AND mr.notification = :notification
-             ORDER BY mr.id DESC";//ordering by id should give the same result as ordering by timecreated but will be faster
+             ORDER BY mr.timecreated DESC";
     $params = array('userid1' => $user->id, 'notification' => 1);
 
     $notifications =  $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
