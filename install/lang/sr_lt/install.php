@@ -68,7 +68,7 @@ $string['pathsrodataroot'] = 'U direktorijum za podatke nije moguć upis';
 $string['pathsroparentdataroot'] = 'Nije moguć upis u nadređeni direktorijum ({$a->parent}).  Instalacioni program ne može da kreira direktorijum za podatke ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Vrlo mali broj veb servera koristi /admin kao specijalni URL za pristup raznim podešavanjima (kontrolni panel i sl.). Nažalost, to dovodi do konflikta sa standardnom lokacijom za administratorske stranice u Moodleu. Ovaj problem možete rešiti tako što ćete promeniti ime administratorskog direktorijuma u vašoj instalaciji, i ovde upisati to novo ime. Na primer <em>moodleadmin</em>. Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
 $string['pathssubdataroot'] = 'Potreban vam je prostor gde će Moodle čuvati postavljene datoteke. Ovaj direktorijum treba da bude podešen tako da se može čitati i u njega upisivati od strane korisnika veb servera (obično \'nobody\' ili \'apache\'), ali istovremeno mora biti dostupan direktno preko veba. Ukoliko ovaj direktorijum ne postoji Moodle će pokušati da ga kreira tokom instalacije.';
-$string['pathssubdirroot'] = 'Puna putanja do direktotijuma za instalaciju Moodlea.';
+$string['pathssubdirroot'] = 'Puna putanja do direktorijuma za instalaciju Moodlea.';
 $string['pathssubwwwroot'] = 'Puna veb adresa putem koje će se pristupati Moodleu. Nije moguće pristupati Moodleu koristeći više adresa.
 Ako vaš sajt ima više javnih adresa onda na svima morate da podesite permanentne redirekcije osim na ovoj.
 Ako je vaš sajt dostupan sa interneta ali i iz intranet okruženja ovde upotrebite javnu adresu i podesite DNS tako da i intranet korisnici mogu da koriste javnu adresu.
