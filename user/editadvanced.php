@@ -155,6 +155,7 @@ $userform = new user_editadvanced_form(null, array(
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
+    $usercreated = false;
 
     if (empty($usernew->auth)) {
         // User editing self.
@@ -166,7 +167,6 @@ if ($usernew = $userform->get_data()) {
 
     $usernew->timemodified = time();
     $createpassword = false;
-    $passwordupdated = false;
 
     if ($usernew->id == -1) {
         unset($usernew->id);
@@ -185,17 +185,15 @@ if ($usernew = $userform->get_data()) {
         } else {
             $usernew->password = AUTH_PASSWORD_NOT_CACHED;
         }
-        $usernew->id = user_create_user($usernew, false);
+        $usernew->id = user_create_user($usernew, false, false);
 
         if (!$authplugin->is_internal() and $authplugin->can_change_password() and !empty($usernew->newpassword)) {
             if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
                 // Do not stop here, we need to finish user creation.
                 debugging(get_string('cannotupdatepasswordonextauth', '', '', $usernew->auth), DEBUG_NONE);
-            } else {
-                $passwordupdated = true;
             }
         }
-
+        $usercreated = true;
     } else {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
         // Pass a true old $user here.
@@ -203,15 +201,13 @@ if ($usernew = $userform->get_data()) {
             // Auth update failed.
             print_error('cannotupdateuseronexauth', '', '', $user->auth);
         }
-        user_update_user($usernew, false);
+        user_update_user($usernew, false, false);
 
         // Set new password if specified.
         if (!empty($usernew->newpassword)) {
             if ($authplugin->can_change_password()) {
                 if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
                     print_error('cannotupdatepasswordonextauth', '', '', $usernew->auth);
-                } else {
-                    $passwordupdated = true;
                 }
                 unset_user_preference('create_password', $usernew); // Prevent cron from generating the password.
             }
@@ -250,14 +246,17 @@ if ($usernew = $userform->get_data()) {
     // Reload from db.
     $usernew = $DB->get_record('user', array('id' => $usernew->id));
 
-    if ($passwordupdated) {
-        \core\event\user_password_updated::create_from_user($usernew)->trigger();
-    }
-
     if ($createpassword) {
         setnew_password_and_mail($usernew);
         unset_user_preference('create_password', $usernew);
         set_user_preference('auth_forcepasswordchange', 1, $usernew);
+    }
+
+    // Trigger update/create event, after all fields are stored.
+    if ($usercreated) {
+        \core\event\user_created::create_from_userid($usernew->id)->trigger();
+    } else {
+        \core\event\user_updated::create_from_userid($usernew->id)->trigger();
     }
 
     if ($user->id == $USER->id) {
