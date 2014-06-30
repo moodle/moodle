@@ -724,7 +724,7 @@ class view {
                                               array('qperpage' => DEFAULT_QUESTIONS_PER_PAGE)));
                 $showall = '<a href="'.$url.'">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
             }
-            echo "<div class='paging'>$showall</div>";
+            echo "<div class='paging'>{$showall}</div>";
         }
         echo '</div>';
 
@@ -743,13 +743,13 @@ class view {
 
             if ($canmoveall && count($addcontexts)) {
                 echo '<input type="submit" name="move" value="'.get_string('moveto', 'question')."\" />\n";
-                question_category_select_menu($addcontexts, false, 0, "$category->id,$category->contextid");
+                question_category_select_menu($addcontexts, false, 0, "{$category->id},{$category->contextid}");
             }
 
             if (function_exists('module_specific_controls') && $canuseall) {
                 $modulespecific = module_specific_controls($totalnumber, $recurse, $category, $this->cm->id, $cmoptions);
                 if (!empty($modulespecific)) {
-                    echo "<hr />$modulespecific";
+                    echo "<hr />{$modulespecific}";
                 }
             }
         }
@@ -835,13 +835,13 @@ class view {
                         SELECT q.*, c.contextid
                         FROM {question} q
                         JOIN {question_categories} c ON c.id = q.category
-                        WHERE q.id $usql", $params);
+                        WHERE q.id {$usql}", $params);
                 foreach ($questions as $question) {
                     question_require_capability_on($question, 'move');
                 }
                 question_move_questions_to_category($questionids, $tocategory->id);
                 redirect($this->baseurl->out(false,
-                        array('category' => "$tocategoryid,$contextid")));
+                        array('category' => "{$tocategoryid},{$contextid}")));
             }
         }
 

@@ -837,7 +837,7 @@ class question_usage_by_activity {
         while ($record->qubaid != $qubaid) {
             $records->next();
             if (!$records->valid()) {
-                throw new coding_exception("Question usage $qubaid not found in the database.");
+                throw new coding_exception("Question usage {$qubaid} not found in the database.");
             }
             $record = $records->current();
         }

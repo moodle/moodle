@@ -1351,7 +1351,7 @@ class question_attempt {
         while ($record->questionattemptid != $questionattemptid) {
             $record = $records->next();
             if (!$records->valid()) {
-                throw new coding_exception("Question attempt $questionattemptid not found in the database.");
+                throw new coding_exception("Question attempt {$questionattemptid} not found in the database.");
             }
             $record = $records->current();
         }

@@ -396,23 +396,23 @@ function qtype_multianswer_extract_question($text) {
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
         while (preg_match('/~?'.ANSWER_ALTERNATIVE_REGEX.'/s', $remainingalts, $altregs)) {
             if ('=' == $altregs[ANSWER_ALTERNATIVE_REGEX_FRACTION]) {
-                $wrapped->fraction["$answerindex"] = '1';
+                $wrapped->fraction["{$answerindex}"] = '1';
             } else if ($percentile = $altregs[ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION]) {
-                $wrapped->fraction["$answerindex"] = .01 * $percentile;
+                $wrapped->fraction["{$answerindex}"] = .01 * $percentile;
             } else {
-                $wrapped->fraction["$answerindex"] = '0';
+                $wrapped->fraction["{$answerindex}"] = '0';
             }
             if (isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])) {
                 $feedback = html_entity_decode(
                         $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK], ENT_QUOTES, 'UTF-8');
                 $feedback = str_replace('\}', '}', $feedback);
-                $wrapped->feedback["$answerindex"]['text'] = str_replace('\#', '#', $feedback);
-                $wrapped->feedback["$answerindex"]['format'] = FORMAT_HTML;
-                $wrapped->feedback["$answerindex"]['itemid'] = '';
+                $wrapped->feedback["{$answerindex}"]['text'] = str_replace('\#', '#', $feedback);
+                $wrapped->feedback["{$answerindex}"]['format'] = FORMAT_HTML;
+                $wrapped->feedback["{$answerindex}"]['itemid'] = '';
             } else {
-                $wrapped->feedback["$answerindex"]['text'] = '';
-                $wrapped->feedback["$answerindex"]['format'] = FORMAT_HTML;
-                $wrapped->feedback["$answerindex"]['itemid'] = '';
+                $wrapped->feedback["{$answerindex}"]['text'] = '';
+                $wrapped->feedback["{$answerindex}"]['format'] = FORMAT_HTML;
+                $wrapped->feedback["{$answerindex}"]['itemid'] = '';
 
             }
             if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])
@@ -420,20 +420,20 @@ function qtype_multianswer_extract_question($text) {
                             $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], $numregs)) {
                 $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
                 if (array_key_exists(NUMERICAL_ABS_ERROR_MARGIN, $numregs)) {
-                    $wrapped->tolerance["$answerindex"] =
+                    $wrapped->tolerance["{$answerindex}"] =
                     $numregs[NUMERICAL_ABS_ERROR_MARGIN];
                 } else {
-                    $wrapped->tolerance["$answerindex"] = 0;
+                    $wrapped->tolerance["{$answerindex}"] = 0;
                 }
             } else { // Tolerance can stay undefined for non numerical questions.
                 // Undo quoting done by the HTML editor.
                 $answer = html_entity_decode(
                         $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER], ENT_QUOTES, 'UTF-8');
                 $answer = str_replace('\}', '}', $answer);
-                $wrapped->answer["$answerindex"] = str_replace('\#', '#', $answer);
+                $wrapped->answer["{$answerindex}"] = str_replace('\#', '#', $answer);
                 if ($wrapped->qtype == 'multichoice') {
-                    $wrapped->answer["$answerindex"] = array(
-                            'text' => $wrapped->answer["$answerindex"],
+                    $wrapped->answer["{$answerindex}"] = array(
+                            'text' => $wrapped->answer["{$answerindex}"],
                             'format' => FORMAT_HTML,
                             'itemid' => '');
                 }

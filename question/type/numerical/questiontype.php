@@ -433,7 +433,7 @@ class qtype_numerical extends question_type {
                 $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
                         $answer->feedback, $answer->feedbackformat, $answer->tolerance);
                 list($min, $max) = $ans->get_tolerance_interval();
-                $responseclass .= " ($min..$max)";
+                $responseclass .= " ({$min}..{$max})";
             }
 
             $responses[$aid] = new question_possible_response($responseclass,
@@ -569,12 +569,12 @@ class qtype_numerical_answer_processor {
         $decimalsre = $decsep . '(\d*)';
         $exponentre = '(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)';
 
-        $numberbit = "$beforepointre(?:$decimalsre)?(?:$exponentre)?";
+        $numberbit = "{$beforepointre}(?:{$decimalsre})?(?:{$exponentre})?";
 
         if ($this->unitsbefore) {
-            $this->regex = "/$numberbit$/";
+            $this->regex = "/{$numberbit}$/";
         } else {
-            $this->regex = "/^$numberbit/";
+            $this->regex = "/^{$numberbit}/";
         }
         return $this->regex;
     }
@@ -645,9 +645,9 @@ class qtype_numerical_answer_processor {
 
         $regex = '[+-]?(?:\d+(?:\\.\d*)?|\\.\d+)(?:e[-+]?\d+)?';
         if ($this->unitsbefore) {
-            $regex = "/$regex$/";
+            $regex = "/{$regex}$/";
         } else {
-            $regex = "/^$regex/";
+            $regex = "/^{$regex}/";
         }
         if (!preg_match($regex, $response, $matches)) {
             return array(null, null, null);

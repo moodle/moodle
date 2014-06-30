@@ -210,7 +210,7 @@ class qtype_numerical_edit_form extends question_edit_form {
         $key = 0;
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
-            unset($this->_form->_defaultValues["tolerance[$key]"]);
+            unset($this->_form->_defaultValues["tolerance[{$key}]"]);
 
             $question->tolerance[$key] = $answer->tolerance;
             $key++;

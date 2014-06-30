@@ -384,8 +384,8 @@ class qtype_calculated_variable_substituter {
                     }
                 } else {
                     // Stick to plain numeric format.
-                    $answer *= "1e$p10";
-                    if (0.1 <= $answer / "1e$length") {
+                    $answer *= "1e{$p10}";
+                    if (0.1 <= $answer / "1e{$length}") {
                         $x = $sign.$answer;
                     } else {
                         // Could be an idea to add some zeros here.
@@ -492,10 +492,10 @@ class qtype_calculated_variable_substituter {
         $formula = strtolower(str_replace(' ', '', $formula));
 
         $safeoperatorchar = '-+/*%>:^\~<?=&|!'; /* */
-        $operatorornumber = "[$safeoperatorchar.0-9eE]";
+        $operatorornumber = "[{$safeoperatorchar}.0-9eE]";
 
-        while (preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)" .
-                "\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
+        while (preg_match("~(^|[{$safeoperatorchar},(])([a-z0-9_]*)" .
+                "\\(({$operatorornumber}+(,{$operatorornumber}+((,{$operatorornumber}+)+)?)?)?\\)~",
             $formula, $regs)) {
             switch ($regs[2]) {
                 // Simple parenthesis.
@@ -558,11 +558,11 @@ class qtype_calculated_variable_substituter {
                 $formula = str_replace($regs[0], $regs[1] . '1', $formula);
             } else {
                 // The function call starts the formula.
-                $formula = preg_replace("~^$regs[2]\\([^)]*\\)~", '1', $formula);
+                $formula = preg_replace("~^{$regs[2]}\\([^)]*\\)~", '1', $formula);
             }
         }
 
-        if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
+        if (preg_match("~[^{$safeoperatorchar}.0-9eE]+~", $formula, $regs)) {
             return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
         } else {
             // Formula just might be valid.

@@ -651,7 +651,7 @@ $sqlorderby
         if (!empty($slots)) {
             list($slottest, $slotsparams) = $this->db->get_in_or_equal(
                     $slots, SQL_PARAMS_NAMED, 'slot');
-            $slotwhere = " AND qa.slot $slottest";
+            $slotwhere = " AND qa.slot {$slottest}";
         } else {
             $slotwhere = '';
             $slotsparams = array();
@@ -879,9 +879,9 @@ ORDER BY
         $this->delete_response_files($context->id, $test, $params);
 
         $this->db->delete_records_select('question_attempt_step_data',
-                "attemptstepid $test", $params);
+                "attemptstepid {$test}", $params);
         $this->db->delete_records_select('question_attempt_steps',
-                "id $test", $params);
+                "id {$test}", $params);
     }
 
     /**
@@ -942,7 +942,7 @@ ORDER BY
     protected function full_states_to_summary_state_sql() {
         $sql = '';
         foreach (question_state::get_all() as $state) {
-            $sql .= "WHEN '$state' THEN '{$state->get_summary_state()}'\n";
+            $sql .= "WHEN '{$state}' THEN '{$state->get_summary_state()}'\n";
         }
         return $sql;
     }
@@ -1043,7 +1043,7 @@ ORDER BY
                   JOIN {question_attempt_steps} {$alias}qas ON {$alias}qas.questionattemptid = {$alias}qa.id
                             AND {$alias}qas.sequencenumber = {$this->latest_step_for_qa_subquery($alias . 'qa.id')}
                  WHERE {$qubaids->where()}
-            ) $alias", $qubaids->from_where_params());
+            ) {$alias}", $qubaids->from_where_params());
     }
 
     protected function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
@@ -1658,7 +1658,7 @@ class qubaid_join extends qubaid_condition {
     }
 
     public function from_question_attempts($alias) {
-        return "$this->from
+        return "{$this->from}
                 JOIN {question_attempts} {$alias} ON " .
                         "{$alias}.questionusageid = $this->usageidcolumn";
     }
@@ -1672,7 +1672,7 @@ class qubaid_join extends qubaid_condition {
     }
 
     public function usage_id_in() {
-        return "IN (SELECT $this->usageidcolumn FROM $this->from WHERE $this->where)";
+        return "IN (SELECT {$this->usageidcolumn} FROM {$this->from} WHERE {$this->where})";
     }
 
     public function usage_id_in_params() {

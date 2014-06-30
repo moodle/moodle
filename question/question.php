@@ -188,7 +188,7 @@ if ($wizardnow !== '') {
     $mform = $qtypeobj->create_editing_form('question.php', $question, $category, $contexts, $formeditable);
 }
 $toform = fullclone($question); // send the question object and a few more parameters to the form
-$toform->category = "$category->id,$category->contextid";
+$toform->category = "{$category->id},{$category->contextid}";
 $toform->scrollpos = $scrollpos;
 if ($formeditable && $id){
     $toform->categorymoveto = $toform->category;
@@ -317,7 +317,7 @@ if ($mform->is_cancelled()) {
         $streditingmodule = get_string('editinga', 'moodle', $strmodule);
         $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url('/mod/'.$cm->modname.'/index.php', array('id'=>$cm->course)));
         $PAGE->navbar->add(format_string($module->name), new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
-        if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0){
+        if (stripos($returnurl, "{$CFG->wwwroot}/mod/{$cm->modname}/view.php")!== 0){
             //don't need this link if returnurl returns to view.php
             $PAGE->navbar->add($streditingmodule, $returnurl);
         }
