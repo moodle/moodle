@@ -1814,4 +1814,73 @@ class mod_forum_events_testcase extends advanced_testcase {
 
         $this->assertNotEmpty($event->get_name());
     }
+
+    /**
+     * Test mod_forum_observer methods.
+     */
+    public function test_observers() {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/mod/forum/lib.php');
+
+        $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $course = $this->getDataGenerator()->create_course();
+        $trackedrecord = array('course' => $course->id, 'type' => 'general', 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $untrackedrecord = array('course' => $course->id, 'type' => 'general');
+        $trackedforum = $this->getDataGenerator()->create_module('forum', $trackedrecord);
+        $untrackedforum = $this->getDataGenerator()->create_module('forum', $untrackedrecord);
+
+        // Used functions don't require these settings; adding
+        // them just in case there are APIs changes in future.
+        $user = $this->getDataGenerator()->create_user(array(
+            'maildigest' => 1,
+            'trackforums' => 1
+        ));
+
+        $manplugin = enrol_get_plugin('manual');
+        $manualenrol = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $student = $DB->get_record('role', array('shortname' => 'student'));
+
+        // The role_assign observer does it's job adding the forum_subscriptions record.
+        $manplugin->enrol_user($manualenrol, $user->id, $student->id);
+
+        // They are not required, but in a real environment they are supposed to be required;
+        // adding them just in case there are APIs changes in future.
+        set_config('forum_trackingtype', 1);
+        set_config('forum_trackreadposts', 1);
+
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $trackedforum->id;
+        $record['userid'] = $user->id;
+        $discussion = $forumgen->create_discussion($record);
+
+        $record = array();
+        $record['discussion'] = $discussion->id;
+        $record['userid'] = $user->id;
+        $post = $forumgen->create_post($record);
+
+        forum_tp_add_read_record($user->id, $post->id);
+        forum_set_user_maildigest($trackedforum, 2, $user);
+        forum_tp_stop_tracking($untrackedforum->id, $user->id);
+
+        $this->assertEquals(1, $DB->count_records('forum_subscriptions'));
+        $this->assertEquals(1, $DB->count_records('forum_digests'));
+        $this->assertEquals(1, $DB->count_records('forum_track_prefs'));
+        $this->assertEquals(1, $DB->count_records('forum_read'));
+
+        // The course_module_created observer does it's job adding a subscription.
+        $forumrecord = array('course' => $course->id, 'type' => 'general', 'forcesubscribe' => FORUM_INITIALSUBSCRIBE);
+        $extraforum = $this->getDataGenerator()->create_module('forum', $forumrecord);
+        $this->assertEquals(2, $DB->count_records('forum_subscriptions'));
+
+        $manplugin->unenrol_user($manualenrol, $user->id);
+
+        $this->assertEquals(0, $DB->count_records('forum_digests'));
+        $this->assertEquals(0, $DB->count_records('forum_subscriptions'));
+        $this->assertEquals(0, $DB->count_records('forum_track_prefs'));
+        $this->assertEquals(0, $DB->count_records('forum_read'));
+    }
+
 }
