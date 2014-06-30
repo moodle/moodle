@@ -279,6 +279,143 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expectedlog, $event);
     }
 
+    /**
+     * Test logging in via LDAP calls a user_loggedin event.
+     */
+    public function test_ldap_user_signup() {
+        global $CFG, $DB;
+
+        // User to create.
+        $user = array(
+            'username' => 'usersignuptest1',
+            'password' => 'Moodle2014!',
+            'idnumber' => 'idsignuptest1',
+            'firstname' => 'First Name User Test 1',
+            'lastname' => 'Last Name User Test 1',
+            'middlename' => 'Middle Name User Test 1',
+            'lastnamephonetic' => '最後のお名前のテスト一号',
+            'firstnamephonetic' => 'お名前のテスト一号',
+            'alternatename' => 'Alternate Name User Test 1',
+            'email' => 'usersignuptest1@email.com',
+            'description' => 'This is a description for user 1',
+            'city' => 'Perth',
+            'country' => 'au',
+            'mnethostid' => $CFG->mnet_localhost_id,
+            'auth' => 'ldap'
+            );
+
+        if (!extension_loaded('ldap')) {
+            $this->markTestSkipped('LDAP extension is not loaded.');
+        }
+
+        $this->resetAfterTest();
+
+        require_once($CFG->dirroot.'/auth/ldap/auth.php');
+        require_once($CFG->libdir.'/ldaplib.php');
+
+        if (!defined('TEST_AUTH_LDAP_HOST_URL') or !defined('TEST_AUTH_LDAP_BIND_DN') or !defined('TEST_AUTH_LDAP_BIND_PW') or !defined('TEST_AUTH_LDAP_DOMAIN')) {
+            $this->markTestSkipped('External LDAP test server not configured.');
+        }
+
+        // Make sure we can connect the server.
+        $debuginfo = '';
+        if (!$connection = ldap_connect_moodle(TEST_AUTH_LDAP_HOST_URL, 3, 'rfc2307', TEST_AUTH_LDAP_BIND_DN, TEST_AUTH_LDAP_BIND_PW, LDAP_DEREF_NEVER, $debuginfo, false)) {
+            $this->markTestSkipped('Can not connect to LDAP test server: '.$debuginfo);
+        }
+
+        $this->enable_plugin();
+
+        // Create new empty test container.
+        $topdn = 'dc=moodletest,'.TEST_AUTH_LDAP_DOMAIN;
+
+        $this->recursive_delete($connection, TEST_AUTH_LDAP_DOMAIN, 'dc=moodletest');
+
+        $o = array();
+        $o['objectClass'] = array('dcObject', 'organizationalUnit');
+        $o['dc']         = 'moodletest';
+        $o['ou']         = 'MOODLETEST';
+        if (!ldap_add($connection, 'dc=moodletest,'.TEST_AUTH_LDAP_DOMAIN, $o)) {
+            $this->markTestSkipped('Can not create test LDAP container.');
+        }
+
+        // Create a few users.
+        $o = array();
+        $o['objectClass'] = array('organizationalUnit');
+        $o['ou']          = 'users';
+        ldap_add($connection, 'ou='.$o['ou'].','.$topdn, $o);
+
+        // Configure the plugin a bit.
+        set_config('host_url', TEST_AUTH_LDAP_HOST_URL, 'auth/ldap');
+        set_config('start_tls', 0, 'auth/ldap');
+        set_config('ldap_version', 3, 'auth/ldap');
+        set_config('ldapencoding', 'utf-8', 'auth/ldap');
+        set_config('pagesize', '2', 'auth/ldap');
+        set_config('bind_dn', TEST_AUTH_LDAP_BIND_DN, 'auth/ldap');
+        set_config('bind_pw', TEST_AUTH_LDAP_BIND_PW, 'auth/ldap');
+        set_config('user_type', 'rfc2307', 'auth/ldap');
+        set_config('contexts', 'ou=users,'.$topdn, 'auth/ldap');
+        set_config('search_sub', 0, 'auth/ldap');
+        set_config('opt_deref', LDAP_DEREF_NEVER, 'auth/ldap');
+        set_config('user_attribute', 'cn', 'auth/ldap');
+        set_config('memberattribute', 'memberuid', 'auth/ldap');
+        set_config('memberattribute_isdn', 0, 'auth/ldap');
+        set_config('creators', 'cn=creators,'.$topdn, 'auth/ldap');
+        set_config('removeuser', AUTH_REMOVEUSER_KEEP, 'auth/ldap');
+
+        set_config('field_map_email', 'mail', 'auth/ldap');
+        set_config('field_updatelocal_email', 'oncreate', 'auth/ldap');
+        set_config('field_updateremote_email', '0', 'auth/ldap');
+        set_config('field_lock_email', 'unlocked', 'auth/ldap');
+
+        set_config('field_map_firstname', 'givenName', 'auth/ldap');
+        set_config('field_updatelocal_firstname', 'oncreate', 'auth/ldap');
+        set_config('field_updateremote_firstname', '0', 'auth/ldap');
+        set_config('field_lock_firstname', 'unlocked', 'auth/ldap');
+
+        set_config('field_map_lastname', 'sn', 'auth/ldap');
+        set_config('field_updatelocal_lastname', 'oncreate', 'auth/ldap');
+        set_config('field_updateremote_lastname', '0', 'auth/ldap');
+        set_config('field_lock_lastname', 'unlocked', 'auth/ldap');
+        set_config('passtype', 'md5', 'auth/ldap');
+        set_config('create_context', 'ou=users,'.$topdn, 'auth/ldap');
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $this->assertEquals(0, $DB->count_records('role_assignments'));
+
+        /** @var auth_plugin_ldap $auth */
+        $auth = get_auth_plugin('ldap');
+
+        $sink = $this->redirectEvents();
+        $auth->user_signup((object)$user, false);
+        $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Verify 2 events get generated.
+        $this->assertCount(2, $events);
+
+        // Get record from db.
+        $dbuser = $DB->get_record('user', array('username' => $user['username']));
+        $user['id'] = $dbuser->id;
+
+        // Last event is user_created.
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\user_created', $event);
+        $this->assertEquals($user['id'], $event->objectid);
+        $this->assertEquals('user_created', $event->get_legacy_eventname());
+        $this->assertEquals(context_user::instance($user['id']), $event->get_context());
+        $expectedlogdata = array(SITEID, 'user', 'add', '/view.php?id='.$event->objectid, fullname($dbuser));
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+
+        // First event is user_password_updated.
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\user_password_updated', $event);
+        $this->assertEventContextNotUsed($event);
+
+        // Delete user which we just created.
+        ldap_delete($connection, 'cn='.$user['username'].',ou=users,'.$topdn);
+    }
+
     protected function create_ldap_user($connection, $topdn, $i) {
         $o = array();
         $o['objectClass']   = array('inetOrgPerson', 'organizationalPerson', 'person', 'posixAccount');

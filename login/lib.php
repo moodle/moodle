@@ -251,9 +251,6 @@ function core_login_process_password_set($token) {
         }
         complete_user_login($user); // Triggers the login event.
 
-        $user = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
-        \core\event\user_password_updated::create_from_user($user, true)->trigger();
-
         $urltogo = core_login_get_return_url();
         unset($SESSION->wantsurl);
         redirect($urltogo, get_string('passwordset'), 1);
