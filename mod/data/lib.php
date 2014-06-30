@@ -3671,7 +3671,7 @@ function data_user_can_delete_preset($context, $preset) {
  * @return bool True if the record deleted, false if not.
  */
 function data_delete_record($recordid, $data, $courseid, $cmid) {
-    global $DB;
+    global $DB, $CFG;
 
     if ($deleterecord = $DB->get_record('data_records', array('id' => $recordid))) {
         if ($deleterecord->dataid == $data->id) {
@@ -3685,6 +3685,13 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                 $DB->delete_records('data_records', array('id'=>$deleterecord->id));
 
                 add_to_log($courseid, 'data', 'record delete', "view.php?id=$cmid", $data->id, $cmid);
+
+                // Delete cached RSS feeds.
+                if (!empty($CFG->enablerssfeeds)) {
+                    require_once($CFG->dirroot.'/mod/data/rsslib.php');
+                    data_rss_delete_file($data);
+                }
+
                 return true;
             }
         }
