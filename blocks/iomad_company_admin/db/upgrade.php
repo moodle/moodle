@@ -41,7 +41,7 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
         }
 
         // Iomad_company_admin savepoint reached.
-        upgrade_block_savepoint(true, 2014041200, 'iomad_approve_access');
+        upgrade_block_savepoint(true, 2014041200, 'iomad_company_admin');
     }
 
     return true;
