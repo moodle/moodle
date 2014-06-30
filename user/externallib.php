@@ -354,7 +354,7 @@ class core_user_external extends external_api {
                 }
                 profile_save_data((object) $user);
             }
-            
+
             // Trigger event.
             \core\event\user_updated::create_from_userid($user['id'])->trigger();
 
