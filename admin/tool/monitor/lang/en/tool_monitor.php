@@ -24,6 +24,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allevents'] = 'All events';
+$string['allmodules'] = 'All modules';
+$string['core'] = 'Core';
+$string['eventnotfound'] = 'Event not found';
+$string['freqdesc'] = '{$a->freq} times in {$a->mins} minutes';
 $string['pluginname'] = 'Event monitor';
+$string['selectcourse'] = 'Visit this report at course level to get a list of possible modules';
 $string['tool/monitor:managerules'] = 'Manage event monitor rules';
 $string['tool/monitor:subscribe'] = 'Subscribe to event monitor rules';
