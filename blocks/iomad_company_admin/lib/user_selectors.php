@@ -928,7 +928,7 @@ class current_license_user_selector extends user_selector_base {
 
         $sql = " FROM
                  {user}
-                 WHERE $wherecondition AND u.suspended = 0 
+                 WHERE $wherecondition AND suspended = 0 
                      AND id in (".$userfilter.") ";
 
         $order = ' ORDER BY lastname ASC, firstname ASC';
