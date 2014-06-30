@@ -613,7 +613,7 @@ abstract class question_edit_form extends question_wizard_form {
         foreach ($question->options->answers as $answer) {
             foreach ($extraanswerfields as $field) {
                 // See hack comment in {@link data_preprocessing_answers()}.
-                unset($this->_form->_defaultValues["$field[$key]"]);
+                unset($this->_form->_defaultValues["{$field}[{$key}]"]);
                 $extrafieldsdata[$field][$key] = $this->data_preprocessing_extra_answer_field($answer, $field);
             }
             $key++;
