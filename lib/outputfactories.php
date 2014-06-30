@@ -157,19 +157,29 @@ abstract class renderer_factory_base implements renderer_factory {
     }
 
     /**
-     * For a given module name, return the name of the standard renderer class
+     * For a given module name, return the possible class names
      * that defines the renderer interface for that module.
+     *
+     * Newer auto-loaded class names are returned as well as the old style _renderable classnames.
      *
      * Also, if it exists, include the renderer.php file for that module, so
      * the class definition of the default renderer has been loaded.
      *
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
-     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
-     * @return string the name of the standard renderer class for that module.
+     * @param string $subtype optional subtype such as 'news' resulting to:
+     *              '\mod_forum\output\news_renderer'
+     *              or '\mod_forum\output\news\renderer'
+     *              or non-autoloaded 'mod_forum_news'
+     * @return array[] Each element of the array is an array with keys:
+     *                 classname - The class name to search
+     *                 autoloaded - Does this classname assume autoloading?
+     *                 validwithprefix - Is this class name valid when a prefix is added to it?
+     *                 validwithoutprefix - Is this class name valid when no prefix is added to it?
      * @throws coding_exception
      */
-    protected function standard_renderer_classname($component, $subtype = null) {
+    protected function standard_renderer_classnames($component, $subtype = null) {
         global $CFG; // Needed in included files.
+        $classnames = array();
 
         // Standardize component name ala frankenstyle.
         list($plugin, $type) = core_component::normalize_component($component);
@@ -203,11 +213,66 @@ abstract class renderer_factory_base implements renderer_factory {
         }
 
         if (empty($subtype)) {
-            $class = $component . '_renderer';
+            // Theme specific auto-loaded name (only valid when prefixed with the theme name).
+            $classnames[] = array(
+                'validwithprefix' => true,
+                'validwithoutprefix' => false,
+                'autoloaded' => true,
+                'classname' => '\\output\\' . $component . '_renderer'
+            );
+
+            // Standard autoloaded plugin name (not valid with a prefix).
+            $classnames[] = array(
+                'validwithprefix' => false,
+                'validwithoutprefix' => true,
+                'autoloaded' => true,
+                'classname' => '\\' . $component . '\\output\\renderer'
+            );
+            // Legacy class name - (valid with or without a prefix).
+            $classnames[] = array(
+                'validwithprefix' => true,
+                'validwithoutprefix' => true,
+                'autoloaded' => false,
+                'classname' => $component . '_renderer'
+            );
         } else {
-            $class = $component . '_' . $subtype . '_renderer';
+            // Theme specific auto-loaded name (only valid when prefixed with the theme name).
+            $classnames[] = array(
+                'validwithprefix' => true,
+                'validwithoutprefix' => false,
+                'autoloaded' => true,
+                'classname' => '\\output\\' . $component . '\\' . $subtype . '_renderer'
+            );
+            // Version of the above with subtype being a namespace level on it's own.
+            $classnames[] = array(
+                'validwithprefix' => true,
+                'validwithoutprefix' => false,
+                'autoloaded' => true,
+                'classname' => '\\output\\' . $component . '\\' . $subtype . '\\renderer'
+            );
+            // Standard autoloaded plugin name (not valid with a prefix).
+            $classnames[] = array(
+                'validwithprefix' => false,
+                'validwithoutprefix' => true,
+                'autoloaded' => true,
+                'classname' => '\\' . $component . '\\output\\' . $subtype . '_renderer'
+            );
+            // Version of the above with subtype being a namespace level on it's own.
+            $classnames[] = array(
+                'validwithprefix' => false,
+                'validwithoutprefix' => true,
+                'autoloaded' => true,
+                'classname' => '\\' . $component . '\\output\\' . $subtype . '\\renderer'
+            );
+            // Legacy class name - (valid with or without a prefix).
+            $classnames[] = array(
+                'validwithprefix' => true,
+                'validwithoutprefix' => true,
+                'autoloaded' => false,
+                'classname' => $component . '_' . $subtype . '_renderer'
+            );
         }
-        return $class;
+        return $classnames;
     }
 }
 
@@ -234,16 +299,42 @@ class standard_renderer_factory extends renderer_factory_base {
      * @return renderer_base an object implementing the requested renderer interface.
      */
     public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
-        $classname = $this->standard_renderer_classname($component, $subtype);
-        if (!class_exists($classname)) {
-            throw new coding_exception('Request for an unknown renderer class ' . $classname);
-        }
+        $classnames = $this->standard_renderer_classnames($component, $subtype);
+        $classname = '';
 
         list($target, $suffix) = $this->get_target_suffix($target);
-        if (class_exists($classname . $suffix)) {
-            // use the specialised renderer for given target, default renderer might also decide
-            // to implement support for more targets
-            $classname = $classname . $suffix;
+        // First look for a version with a suffix.
+        foreach ($classnames as $classnamedetails) {
+            if ($classnamedetails['validwithoutprefix']) {
+                $newclassname = $classnamedetails['classname'] . $suffix;
+                if (class_exists($newclassname)) {
+                    $classname = $newclassname;
+                    break;
+                } else {
+                    $newclassname = $classnamedetails['classname'];
+                    if (class_exists($newclassname)) {
+                        $classname = $newclassname;
+                        break;
+                    }
+                }
+            }
+        }
+        // Now look for a non-suffixed version.
+        if (empty($classname)) {
+            foreach ($classnames as $classnamedetails) {
+                if ($classnamedetails['validwithoutprefix']) {
+                    $newclassname = $classnamedetails['classname'];
+                    if (class_exists($newclassname)) {
+                        $classname = $newclassname;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (empty($classname)) {
+            // Standard renderer must always exist.
+            throw new coding_exception('Request for an unknown renderer class. Searched for: ' . var_export($classnames, true));
         }
 
         return new $classname($page, $target);
@@ -293,39 +384,64 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
      * @return renderer_base an object implementing the requested renderer interface.
      */
     public function get_renderer(moodle_page $page, $component, $subtype = null, $target = null) {
-        $classname = $this->standard_renderer_classname($component, $subtype);
-        if (!class_exists($classname)) {
-            // standard renderer must always exist
-            throw new coding_exception('Request for an unknown renderer class ' . $classname);
-        }
+        $classnames = $this->standard_renderer_classnames($component, $subtype);
 
         list($target, $suffix) = $this->get_target_suffix($target);
 
-        // theme lib.php and renderers.php files are loaded automatically
-        // when loading the theme configs
+        // Theme lib.php and renderers.php files are loaded automatically
+        // when loading the theme configs.
 
-        // first try the renderers with correct suffix
+        // First try the renderers with correct suffix.
         foreach ($this->prefixes as $prefix) {
-            if (class_exists($prefix . '_' . $classname . $suffix)) {
-                $classname = $prefix . '_' . $classname . $suffix;
-                return new $classname($page, $target);
+            foreach ($classnames as $classnamedetails) {
+                if ($classnamedetails['validwithprefix']) {
+                    if ($classnamedetails['autoloaded']) {
+                        $newclassname = $prefix . $classnamedetails['classname'] . $suffix;
+                    } else {
+                        $newclassname = $prefix . '_' . $classnamedetails['classname'] . $suffix;
+                    }
+                    if (class_exists($newclassname)) {
+                        return new $newclassname($page, $target);
+                    }
+                }
             }
         }
-        if (class_exists($classname . $suffix)) {
-            // use the specialised renderer for given target, default renderer might also decide
-            // to implement support for more targets
-            $classname = $classname . $suffix;
-            return new $classname($page, $target);
-        }
-
-        // then try general renderer
-        foreach ($this->prefixes as $prefix) {
-            if (class_exists($prefix . '_' . $classname)) {
-                $classname = $prefix . '_' . $classname;
-                return new $classname($page, $target);
+        foreach ($classnames as $classnamedetails) {
+            if ($classnamedetails['validwithoutprefix']) {
+                $newclassname = $classnamedetails['classname'] . $suffix;
+                if (class_exists($newclassname)) {
+                    // Use the specialised renderer for given target, default renderer might also decide
+                    // to implement support for more targets.
+                    return new $newclassname($page, $target);
+                }
             }
         }
 
-        return new $classname($page, $target);
+        // Then try general renderer.
+        foreach ($this->prefixes as $prefix) {
+            foreach ($classnames as $classnamedetails) {
+                if ($classnamedetails['validwithprefix']) {
+                    if ($classnamedetails['autoloaded']) {
+                        $newclassname = $prefix . $classnamedetails['classname'];
+                    } else {
+                        $newclassname = $prefix . '_' . $classnamedetails['classname'];
+                    }
+                    if (class_exists($newclassname)) {
+                        return new $newclassname($page, $target);
+                    }
+                }
+            }
+        }
+
+        // Final attempt - no prefix or suffix.
+        foreach ($classnames as $classnamedetails) {
+            if ($classnamedetails['validwithoutprefix']) {
+                $newclassname = $classnamedetails['classname'];
+                if (class_exists($newclassname)) {
+                    return new $newclassname($page, $target);
+                }
+            }
+        }
+        throw new coding_exception('Request for an unknown renderer ' . $component . ', ' . $subtype . ', ' . $target);
     }
 }
