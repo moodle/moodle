@@ -4026,7 +4026,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     $newuser->timemodified = $newuser->timecreated;
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-    $newuser->id = user_create_user($newuser, false);
+    $newuser->id = user_create_user($newuser, false, false);
 
     // Save user profile data.
     profile_save_data($newuser);
@@ -4037,6 +4037,9 @@ function create_user_record($username, $password, $auth = 'manual') {
     }
     // Set the password.
     update_internal_user_password($user, $password);
+
+    // Trigger event.
+    \core\event\user_created::create_from_userid($newuser->id)->trigger();
 
     return $user;
 }
@@ -4093,10 +4096,13 @@ function update_user_record($username) {
         if ($newuser) {
             $newuser['id'] = $oldinfo->id;
             $newuser['timemodified'] = time();
-            user_update_user((object) $newuser, false);
+            user_update_user((object) $newuser, false, false);
 
             // Save user profile data.
             profile_save_data((object) $newuser);
+
+            // Trigger event.
+            \core\event\user_updated::create_from_userid($newuser['id'])->trigger();
         }
     }
 
@@ -4255,7 +4261,8 @@ function delete_user(stdClass $user) {
     $updateuser->picture      = 0;
     $updateuser->timemodified = time();
 
-    user_update_user($updateuser, false);
+    // Don't trigger update event, as user is being deleted.
+    user_update_user($updateuser, false, false);
 
     // Now do a final accesslib cleanup - removes all role assignments in user context and context itself.
     context_helper::delete_instance(CONTEXT_USER, $user->id);
@@ -4697,9 +4704,13 @@ function update_internal_user_password($user, $password) {
         $passwordchanged = ($user->password !== $hashedpassword);
         $algorithmchanged = false;
     } else {
-        // If verification fails then it means the password has changed.
-        $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        if (isset($user->password)) {
+            // If verification fails then it means the password has changed.
+            $passwordchanged = !password_verify($password, $user->password);
+            $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        } else {
+            $passwordchanged = true;
+        }
     }
 
     if ($passwordchanged || $algorithmchanged) {

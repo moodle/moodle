@@ -97,4 +97,24 @@ class user_created extends base {
     protected function get_legacy_logdata() {
         return array(SITEID, 'user', 'add', '/view.php?id='.$this->objectid, fullname($this->get_legacy_eventdata()));
     }
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.6.4, 2.7.1
+     *
+     * @param int $userid id of user
+     * @return user_created
+     */
+    public static function create_from_userid($userid) {
+        $data = array(
+            'objectid' => $userid,
+            'relateduserid' => $userid,
+            'context' => \context_user::instance($userid)
+        );
+
+        // Create user_created event.
+        $event = self::create($data);
+        return $event;
+    }
 }
