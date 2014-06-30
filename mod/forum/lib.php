@@ -1350,10 +1350,68 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
+/**
+ * Filters the forum discussions according to groups membership and config.
+ *
+ * @since  Moodle 2.8, 2.7.1, 2.6.4
+ * @param  array $discussions Discussions with new posts array
+ * @return array Forums with the number of new posts
+ */
+function forum_filter_user_groups_discussions($discussions) {
 
+    // Group the remaining discussions posts by their forumid.
+    $filteredforums = array();
 
+    // Discard not visible groups.
+    foreach ($discussions as $discussion) {
 
+        // Course data is already cached.
+        $instances = get_fast_modinfo($discussion->course)->get_instances();
+        $forum = $instances['forum'][$discussion->forum];
 
+        // Continue if the user should not see this discussion.
+        if (!forum_is_user_group_discussion($forum, $discussion->groupid)) {
+            continue;
+        }
+
+        // Grouping results by forum.
+        if (empty($filteredforums[$forum->instance])) {
+            $filteredforums[$forum->instance] = new stdClass();
+            $filteredforums[$forum->instance]->id = $forum->id;
+            $filteredforums[$forum->instance]->count = 0;
+        }
+        $filteredforums[$forum->instance]->count += $discussion->count;
+
+    }
+
+    return $filteredforums;
+}
+
+/**
+ * Returns whether the discussion group is visible by the current user or not.
+ *
+ * @since Moodle 2.8, 2.7.1, 2.6.4
+ * @param cm_info $cm The discussion course module
+ * @param int $discussiongroupid The discussion groupid
+ * @return bool
+ */
+function forum_is_user_group_discussion(cm_info $cm, $discussiongroupid) {
+
+    if ($discussiongroupid == -1 || $cm->effectivegroupmode != SEPARATEGROUPS) {
+        return true;
+    }
+
+    if (isguestuser()) {
+        return false;
+    }
+
+    if (has_capability('moodle/site:accessallgroups', context_module::instance($cm->id)) ||
+            in_array($discussiongroupid, $cm->get_modinfo()->get_groups($cm->groupingid))) {
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * @global object
@@ -1380,12 +1438,12 @@ function forum_print_overview($courses,&$htmlarray) {
 
         // If the user has never entered into the course all posts are pending
         if ($course->lastaccess == 0) {
-            $coursessqls[] = '(f.course = ?)';
+            $coursessqls[] = '(d.course = ?)';
             $params[] = $course->id;
 
         // Only posts created after the course last access
         } else {
-            $coursessqls[] = '(f.course = ? AND p.created > ?)';
+            $coursessqls[] = '(d.course = ? AND p.created > ?)';
             $params[] = $course->id;
             $params[] = $course->lastaccess;
         }
@@ -1393,17 +1451,19 @@ function forum_print_overview($courses,&$htmlarray) {
     $params[] = $USER->id;
     $coursessql = implode(' OR ', $coursessqls);
 
-    $sql = "SELECT f.id, COUNT(*) as count "
-                .'FROM {forum} f '
-                .'JOIN {forum_discussions} d ON d.forum  = f.id '
+    $sql = "SELECT d.id, d.forum, d.course, d.groupid, COUNT(*) as count "
+                .'FROM {forum_discussions} d '
                 .'JOIN {forum_posts} p ON p.discussion = d.id '
                 ."WHERE ($coursessql) "
                 .'AND p.userid != ? '
-                .'GROUP BY f.id';
+                .'GROUP BY d.id, d.forum, d.course, d.groupid';
 
-    if (!$new = $DB->get_records_sql($sql, $params)) {
-        $new = array(); // avoid warnings
+    // Avoid warnings.
+    if (!$discussions = $DB->get_records_sql($sql, $params)) {
+        $discussions = array();
     }
+
+    $forumsnewposts = forum_filter_user_groups_discussions($discussions);
 
     // also get all forum tracking stuff ONCE.
     $trackingforums = array();
@@ -1451,7 +1511,7 @@ function forum_print_overview($courses,&$htmlarray) {
         $unread = array();
     }
 
-    if (empty($unread) and empty($new)) {
+    if (empty($unread) and empty($forumsnewposts)) {
         return;
     }
 
@@ -1463,8 +1523,8 @@ function forum_print_overview($courses,&$htmlarray) {
         $thisunread = 0;
         $showunread = false;
         // either we have something from logs, or trackposts, or nothing.
-        if (array_key_exists($forum->id, $new) && !empty($new[$forum->id])) {
-            $count = $new[$forum->id]->count;
+        if (array_key_exists($forum->id, $forumsnewposts) && !empty($forumsnewposts[$forum->id])) {
+            $count = $forumsnewposts[$forum->id]->count;
         }
         if (array_key_exists($forum->id,$unread)) {
             $thisunread = $unread[$forum->id]->count;
@@ -1553,25 +1613,11 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
             }
         }
 
-        $groupmode = groups_get_activity_groupmode($cm, $course);
-
-        if ($groupmode) {
-            if ($post->groupid == -1 or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
-                // oki (Open discussions have groupid -1)
-            } else {
-                // separate mode
-                if (isguestuser()) {
-                    // shortcut
-                    continue;
-                }
-
-                if (!in_array($post->groupid, $modinfo->get_groups($cm->groupingid))) {
-                    continue;
-                }
-            }
+        // Check that the user can see the discussion.
+        if (forum_is_user_group_discussion($cm, $post->groupid)) {
+            $printposts[] = $post;
         }
 
-        $printposts[] = $post;
     }
     unset($posts);
 
