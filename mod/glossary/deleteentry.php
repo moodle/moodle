@@ -131,6 +131,12 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
         \mod_glossary\local\concept_cache::reset_glossary($glossary);
     }
 
+    // Delete cached RSS feeds.
+    if (!empty($CFG->enablerssfeeds)) {
+        require_once($CFG->dirroot.'/mod/glossary/rsslib.php');
+        glossary_rss_delete_file($glossary);
+    }
+
     redirect("view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook");
 
 } else {        // the operation has not been confirmed yet so ask the user to do so
