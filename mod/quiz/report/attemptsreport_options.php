@@ -272,12 +272,20 @@ class mod_quiz_attempts_report_options {
             $this->onlygraded = false;
         }
 
-        if ($this->onlygraded) {
-            $this->states = array(quiz_attempt::FINISHED);
+        if (!$this->is_showing_finished_attempts()) {
+            $this->onlygraded = false;
         }
 
         if ($this->pagesize < 1) {
             $this->pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
         }
+    }
+
+    /**
+     * Whether the options are such that finished attempts are being shown.
+     * @return boolean
+     */
+    protected function is_showing_finished_attempts() {
+        return $this->states === null || in_array(quiz_attempt::FINISHED, $this->states);
     }
 }
