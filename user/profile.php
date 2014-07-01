@@ -154,7 +154,7 @@ if ($PAGE->user_allowed_editing()) {
             if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
                 print_error('reseterror', 'my');
             }
-            redirect(new moodle_url('/user/profile.php'));
+            redirect(new moodle_url('/user/profile.php', array('id' => $userid)));
         }
     } else if ($edit !== null) {             // Editing state was specified.
         $USER->editing = $edit;       // Change editing state.
