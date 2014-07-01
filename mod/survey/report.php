@@ -485,22 +485,28 @@
 
         require_capability('mod/survey:download', $context);
 
-        echo '<p class="centerpara">'.get_string("downloadinfo", "survey").'</p>';
+        $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
+        if ($numusers > 0) {
+            echo html_writer::tag('p', get_string("downloadinfo", "survey"), array('class' => 'centerpara'));
 
-        echo $OUTPUT->container_start('reportbuttons');
-        $options = array();
-        $options["id"] = "$cm->id";
-        $options["group"] = $currentgroup;
+            echo $OUTPUT->container_start('reportbuttons');
+            $options = array();
+            $options["id"] = "$cm->id";
+            $options["group"] = $currentgroup;
 
-        $options["type"] = "ods";
-        echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadods"));
+            $options["type"] = "ods";
+            echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadods"));
 
-        $options["type"] = "xls";
-        echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadexcel"));
+            $options["type"] = "xls";
+            echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadexcel"));
 
-        $options["type"] = "txt";
-        echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadtext"));
-        echo $OUTPUT->container_end();
+            $options["type"] = "txt";
+            echo $OUTPUT->single_button(new moodle_url("download.php", $options), get_string("downloadtext"));
+            echo $OUTPUT->container_end();
+
+        } else {
+             echo html_writer::tag('p', get_string("nobodyyet", "survey"), array('class' => 'centerpara'));
+        }
 
         break;
 
