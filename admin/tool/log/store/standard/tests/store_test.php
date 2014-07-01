@@ -95,8 +95,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $event2->trigger();
         logstore_standard_restore::hack_executing(0);
 
-        $_SESSION['SESSION'] = new \stdClass();
-        $this->setUser(0);
+        \core\session\manager::init_empty_session();
         $this->assertFalse(\core\session\manager::is_loggedinas());
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');

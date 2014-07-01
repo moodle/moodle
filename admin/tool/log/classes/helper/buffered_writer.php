@@ -72,7 +72,7 @@ trait buffered_writer {
         $entry['other'] = serialize($entry['other']);
         $entry['origin'] = $PAGE->requestorigin;
         $entry['ip'] = $PAGE->requestip;
-        $entry['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
+        $entry['realuserid'] = \core\session\manager::is_loggedinas() ? $GLOBALS['USER']->realuser : null;
 
         $this->buffer[] = $entry;
         $this->count++;
