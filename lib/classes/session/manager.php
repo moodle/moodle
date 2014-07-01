@@ -79,6 +79,16 @@ class manager {
             self::initialise_user_session($newsid);
             self::check_security();
 
+            // Link global $USER and $SESSION,
+            // this is tricky because PHP does not allow references to references
+            // and global keyword uses internally once reference to the $GLOBALS array.
+            // The solution is to use the $GLOBALS['USER'] and $GLOBALS['$SESSION']
+            // as the main storage of data and put references to $_SESSION.
+            $GLOBALS['USER'] = $_SESSION['USER'];
+            $_SESSION['USER'] =& $GLOBALS['USER'];
+            $GLOBALS['SESSION'] = $_SESSION['SESSION'];
+            $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
+
         } catch (\Exception $ex) {
             @session_write_close();
             self::init_empty_session();
@@ -139,31 +149,29 @@ class manager {
 
     /**
      * Empty current session, fill it with not-logged-in user info.
+     *
+     * This is intended for installation scripts, unit tests and other
+     * special areas. Do NOT use for logout and session termination
+     * in normal requests!
      */
-    protected static function init_empty_session() {
+    public static function init_empty_session() {
         global $CFG;
 
-        // Session not used at all.
-        $_SESSION = array();
-        $_SESSION['SESSION']  = new \stdClass();
-        $_SESSION['USER']     = new \stdClass();
-        $_SESSION['USER']->id = 0;
+        $GLOBALS['SESSION'] = new \stdClass();
+
+        $GLOBALS['USER'] = new \stdClass();
+        $GLOBALS['USER']->id = 0;
         if (isset($CFG->mnet_localhost_id)) {
-            $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
+            $GLOBALS['USER']->mnethostid = $CFG->mnet_localhost_id;
         } else {
             // Not installed yet, the future host id will be most probably 1.
-            $_SESSION['USER']->mnethostid = 1;
+            $GLOBALS['USER']->mnethostid = 1;
         }
 
-        if (PHPUNIT_TEST or defined('BEHAT_TEST')) {
-            // Phpunit tests and behat init use reversed reference,
-            // the reason is we can not point global to $_SESSION outside of global scope.
-            global $USER, $SESSION;
-            $USER = $_SESSION['USER'];
-            $SESSION = $_SESSION['SESSION'];
-            $_SESSION['USER'] =& $USER;
-            $_SESSION['SESSION'] =& $SESSION;
-        }
+        // Link global $USER and $SESSION.
+        $_SESSION = array();
+        $_SESSION['USER'] =& $GLOBALS['USER'];
+        $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
     }
 
     /**
@@ -249,8 +257,10 @@ class manager {
     }
 
     /**
-     * Initialise $USER and $SESSION objects, handles google access
+     * Initialise $_SESSION, handles google access
      * and sets up not-logged-in user properly.
+     *
+     * WARNING: $USER and $SESSION are set up later, do not use them yet!
      *
      * @param bool $newsid is this a new session in first http request?
      */
@@ -416,6 +426,8 @@ class manager {
 
     /**
      * Do various session security checks.
+     *
+     * WARNING: $USER and $SESSION are set up later, do not use them yet!
      */
     protected static function check_security() {
         global $CFG;
@@ -489,7 +501,7 @@ class manager {
         session_regenerate_id(true);
         $DB->delete_records('sessions', array('sid'=>$sid));
         self::init_empty_session();
-        self::add_session_record($_SESSION['USER']->id);
+        self::add_session_record($_SESSION['USER']->id); // Do not use $USER here because it may not be set up yet.
         session_write_close();
         self::$sessionactive = false;
     }
@@ -590,22 +602,19 @@ class manager {
      * @param \stdClass $user record
      */
     public static function set_user(\stdClass $user) {
-        $_SESSION['USER'] = $user;
-        unset($_SESSION['USER']->description); // Conserve memory.
-        unset($_SESSION['USER']->password);    // Improve security.
-        if (isset($_SESSION['USER']->lang)) {
+        $GLOBALS['USER'] = $user;
+        unset($GLOBALS['USER']->description); // Conserve memory.
+        unset($GLOBALS['USER']->password);    // Improve security.
+        if (isset($GLOBALS['USER']->lang)) {
             // Make sure it is a valid lang pack name.
-            $_SESSION['USER']->lang = clean_param($_SESSION['USER']->lang, PARAM_LANG);
+            $GLOBALS['USER']->lang = clean_param($GLOBALS['USER']->lang, PARAM_LANG);
         }
-        sesskey(); // Init session key.
 
-        if (PHPUNIT_TEST or defined('BEHAT_TEST')) {
-            // Phpunit tests and behat init use reversed reference,
-            // the reason is we can not point global to $_SESSION outside of global scope.
-            global $USER;
-            $USER = $_SESSION['USER'];
-            $_SESSION['USER'] =& $USER;
-        }
+        // Relink session with global $USER just in case it got unlinked somehow.
+        $_SESSION['USER'] =& $GLOBALS['USER'];
+
+        // Init session key.
+        sesskey();
     }
 
     /**
@@ -697,7 +706,7 @@ class manager {
      * @return bool
      */
     public static function is_loggedinas() {
-        return !empty($_SESSION['USER']->realuser);
+        return !empty($GLOBALS['USER']->realuser);
     }
 
     /**
@@ -708,7 +717,7 @@ class manager {
         if (self::is_loggedinas()) {
             return $_SESSION['REALUSER'];
         } else {
-            return $_SESSION['USER'];
+            return $GLOBALS['USER'];
         }
     }
 
@@ -725,12 +734,14 @@ class manager {
             return;
         }
 
-        // Switch to fresh new $SESSION.
-        $_SESSION['REALSESSION'] = $_SESSION['SESSION'];
-        $_SESSION['SESSION']     = new \stdClass();
+        // Switch to fresh new $_SESSION.
+        $_SESSION = array();
+        $_SESSION['REALSESSION'] = clone($GLOBALS['SESSION']);
+        $GLOBALS['SESSION'] = new \stdClass();
+        $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
 
         // Create the new $USER object with all details and reload needed capabilities.
-        $_SESSION['REALUSER'] = $_SESSION['USER'];
+        $_SESSION['REALUSER'] = clone($GLOBALS['USER']);
         $user = get_complete_user_data('id', $userid);
         $user->realuser       = $_SESSION['REALUSER']->id;
         $user->loginascontext = $context;
