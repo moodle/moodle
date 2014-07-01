@@ -82,6 +82,14 @@ $badge = new external_badge($badge, $userid);
 
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('issuedbadge', 'badges'));
+$PAGE->set_heading(s($badge->issued->assertion->badge->name));
+$PAGE->navbar->add(s($badge->issued->assertion->badge->name));
+if (isloggedin() && $USER->id == $userid) {
+    $url = new moodle_url('/badges/mybadges.php');
+} else {
+    $url = new moodle_url($CFG->wwwroot);
+}
+navigation_node::override_active_url($url);
 
 echo $OUTPUT->header();
 
