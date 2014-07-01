@@ -699,6 +699,7 @@ $string['reportregrade'] = 'Regrade attempts';
 $string['reportresponses'] = 'Detailed responses';
 $string['reports'] = 'Reports';
 $string['reportshowonly'] = 'Show only attempts';
+$string['reportshowonlyfinished'] = 'Show at most one finished attempt per user ({$a})';
 $string['reportsimplestat'] = 'Simple statistics';
 $string['reportusersall'] = 'all users who have attempted the quiz';
 $string['reportuserswith'] = 'enrolled users who have attempted the quiz';
