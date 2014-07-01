@@ -204,7 +204,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             throw new coding_exception('This mongodb instance has already been initialised.');
         }
         $this->database = $this->connection->selectDB($this->databasename);
-        $this->definitionhash = $definition->generate_definition_hash();
+        $this->definitionhash = 'm'.$definition->generate_definition_hash();
         $this->collection = $this->database->selectCollection($this->definitionhash);
 
         $options = array('name' => 'idx_key');
@@ -578,6 +578,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
 
         $configuration = array();
         $configuration['servers'] = explode("\n", TEST_CACHESTORE_MONGODB_TESTSERVER);
+        $configuration['usesafe'] = 1;
 
         $store = new cachestore_mongodb('Test mongodb', $configuration);
         $store->initialise($definition);
