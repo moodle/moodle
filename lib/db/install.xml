@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20140324" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20140627" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2358,7 +2358,7 @@
         <KEY NAME="repositoryid" TYPE="foreign" FIELDS="repositoryid" REFTABLE="repository_instances" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="uq_external_file" UNIQUE="true" FIELDS="repositoryid, referencehash" COMMENT="The combination of repositoryid and reference field is supposed to be a unique identification of an external file. Because the reference is a TEXT field, we can't use to compose the index. So we use the referencehash instead and the file API is responsible to keep it up-to-date"/>
+        <INDEX NAME="uq_external_file" UNIQUE="true" FIELDS="referencehash, repositoryid" COMMENT="The combination of repositoryid and reference field is supposed to be a unique identification of an external file. Because the reference is a TEXT field, we can't use to compose the index. So we use the referencehash instead and the file API is responsible to keep it up-to-date"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance.">

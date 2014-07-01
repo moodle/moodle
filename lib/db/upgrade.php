@@ -3688,5 +3688,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014062600.01);
     }
 
+    // Switch the order of the fields in the files_reference index, to improve the performance of search_references.
+    if ($oldversion < 2014070100.00) {
+        $table = new xmldb_table('files_reference');
+        $index = new xmldb_index('uq_external_file', XMLDB_INDEX_UNIQUE, array('repositoryid', 'referencehash'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2014070100.00);
+    }
+
+    if ($oldversion < 2014070101.00) {
+        $table = new xmldb_table('files_reference');
+        $index = new xmldb_index('uq_external_file', XMLDB_INDEX_UNIQUE, array('referencehash', 'repositoryid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2014070101.00);
+    }
+
     return true;
 }
