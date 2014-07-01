@@ -1316,9 +1316,16 @@ class cm_info implements IteratorAggregate {
      * @return string
      */
     public function get_formatted_name($options = array()) {
+        global $CFG;
         $options = (array)$options;
         if (!isset($options['context'])) {
             $options['context'] = $this->get_context();
+        }
+        // Improve filter performance by preloading filter setttings for all
+        // activities on the course (this does nothing if called multiple
+        // times).
+        if (!empty($CFG->filterall)) {
+            filter_preload_activities($this->get_modinfo());
         }
         return format_string($this->get_name(), true,  $options);
     }
