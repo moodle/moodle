@@ -141,6 +141,10 @@ class cachestore_memcached_test extends cachestore_tests {
     public function test_clustered() {
         $this->resetAfterTest(true);
 
+        if (!defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
+            $this->markTestSkipped();
+        }
+
         $testservers = explode("\n", trim(TEST_CACHESTORE_MEMCACHED_TESTSERVERS));
 
         if (count($testservers) < 2) {
