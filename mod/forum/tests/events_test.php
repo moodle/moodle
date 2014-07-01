@@ -652,7 +652,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'subscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
-        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $url = new \moodle_url('/mod/forum/subscribers.php', array('id' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
@@ -749,7 +749,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'unsubscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
-        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $url = new \moodle_url('/mod/forum/subscribers.php', array('id' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
 
