@@ -908,6 +908,7 @@ class core_plugin_manager {
         $plugins = array(
             'qformat' => array('blackboard'),
             'enrol' => array('authorize'),
+            'tinymce' => array('dragmath'),
             'tool' => array('bloglevelupgrade', 'qeupgradehelper'),
             'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
                 'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
@@ -1121,7 +1122,7 @@ class core_plugin_manager {
             ),
 
             'tinymce' => array(
-                'ctrlhelp', 'dragmath', 'managefiles', 'moodleemoticon', 'moodleimage',
+                'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
                 'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
             ),
 

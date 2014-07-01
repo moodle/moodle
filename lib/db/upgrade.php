@@ -3676,5 +3676,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014061000.00);
     }
 
+    if ($oldversion < 2014062600.01) {
+        // We only want to delete DragMath if the directory no longer exists. If the directory
+        // is present then it means it has been restored, so do not perform the uninstall.
+        if (!check_dir_exists($CFG->libdir . '/editor/tinymce/plugins/dragmath', false)) {
+            // Purge DragMath plugin which is incompatible with GNU GPL license.
+            unset_all_config_for_plugin('tinymce_dragmath');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014062600.01);
+    }
+
     return true;
 }

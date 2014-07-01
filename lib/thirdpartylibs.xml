@@ -22,13 +22,6 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-    <location>dragmath</location>
-    <name>DragMath</name>
-    <license>GPL</license>
-    <version>0.7.8.2</version>
-    <licenseversion>3.0+</licenseversion>
-  </library>
-  <library>
     <location>evalmath</location>
     <name>EvalMath</name>
     <license>BSD</license>

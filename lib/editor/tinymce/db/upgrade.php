@@ -158,5 +158,25 @@ fontselect,fontsizeselect,wrap,code,search,replace,wrap,nonbreaking,charmap,tabl
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014062900) {
+        // We only want to delete DragMath from the customtoolbar setting if the directory no longer exists. If
+        // the directory is present then it means it has been restored, so do not remove any settings.
+        if (!check_dir_exists($CFG->libdir . '/editor/tinymce/plugins/dragmath', false)) {
+            // Remove the DragMath plugin from the 'customtoolbar' setting (if it exists) as it has been removed.
+            $currentorder = get_config('editor_tinymce', 'customtoolbar');
+            $newtoolbarrows = array();
+            $currenttoolbarrows = explode("\n", $currentorder);
+            foreach ($currenttoolbarrows as $currenttoolbarrow) {
+                $currenttoolbarrow = implode(',', array_diff(str_getcsv($currenttoolbarrow), array('dragmath')));
+                $newtoolbarrows[] = $currenttoolbarrow;
+            }
+            $neworder = implode("\n", $newtoolbarrows);
+            unset_config('customtoolbar', 'editor_tinymce');
+            set_config('customtoolbar', $neworder, 'editor_tinymce');
+        }
+
+        upgrade_plugin_savepoint(true, 2014062900, 'editor', 'tinymce');
+    }
+
     return true;
 }
