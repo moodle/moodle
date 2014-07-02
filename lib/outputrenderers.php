@@ -225,12 +225,31 @@ class plugin_renderer_base extends renderer_base {
         $classname = get_class($widget);
         // Strip namespaces.
         $classname = preg_replace('/^.*\\\/', '', $classname);
+        // Keep a copy at this point, we may need to look for a deprecated method.
+        $deprecatedmethod = 'render_'.$classname;
         // Remove _renderable suffixes
-        $classname = preg_replace('/_renderable/', '', $classname);
+        $classname = preg_replace('/_renderable$/', '', $classname);
 
         $rendermethod = 'render_'.$classname;
         if (method_exists($this, $rendermethod)) {
             return $this->$rendermethod($widget);
+        }
+        if ($rendermethod !== $deprecatedmethod && method_exists($this, $deprecatedmethod)) {
+            // This is exactly where we don't want to be.
+            // If you have arrived here you have a renderable component within your plugin that has the name
+            // blah_renderable, and you have a render method render_blah_renderable on your plugin.
+            // In 2.8 we revamped output, as part of this change we changed slightly how renderables got rendered
+            // and the _renderable suffix now gets removed when looking for a render method.
+            // You need to change your renderers render_blah_renderable to render_blah.
+            // Until you do this it will not be possible for a theme to override the renderer to override your method.
+            // Please do it ASAP.
+            static $debugged = array();
+            if (!isset($debugged[$deprecatedmethod])) {
+                debugging(sprintf('Deprecated call. Please rename your renderables render method from %s to %s.',
+                    $deprecatedmethod, $rendermethod), DEBUG_DEVELOPER);
+                $debugged[$deprecatedmethod] = true;
+            }
+            return $this->$deprecatedmethod($widget);
         }
         // pass to core renderer if method not found here
         return $this->output->render($widget);

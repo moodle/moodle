@@ -33,11 +33,23 @@ defined('MOODLE_INTERNAL') || die;
 class report_log_renderer extends plugin_renderer_base {
 
     /**
+     * This method should never be manually called, it should only be called by process.
+     *
+     * @deprecated since 2.8, to be removed in 2.9
+     * @param report_log_renderable $reportlog
+     * @return string
+     */
+    public function render_report_log_renderable(report_log_renderable $reportlog) {
+        debugging('Do not call this method. Please call $renderer->render($reportlog) instead.', DEBUG_DEVELOPER);
+        return $this->render($reportlog);
+    }
+
+    /**
      * Render log report page.
      *
      * @param report_log_renderable $reportlog object of report_log.
      */
-    public function render_report_log_renderable(report_log_renderable $reportlog) {
+    protected function render_report_log(report_log_renderable $reportlog) {
         if (empty($reportlog->selectedlogreader)) {
             echo $this->output->notification(get_string('nologreaderenabled', 'report_log'), 'notifyproblem');
             return;
