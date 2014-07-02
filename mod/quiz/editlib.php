@@ -1230,25 +1230,10 @@ class quiz_question_bank_view extends core_question\bank\view {
         echo $OUTPUT->box_end();
     }
 
-    /**
-     * Display the form with options for which questions are displayed and how they are displayed.
-     * This differs from parent display_options_form only in that it does not have the checkbox to show the question text.
-     * @param bool $showquestiontext Display the text of the question within the list. (Currently ignored)
-     */
-    protected function display_options_form($showquestiontext) {
-        global $PAGE;
-        echo html_writer::start_tag('form', array('method' => 'get',
-                'action' => new moodle_url('/mod/quiz/edit.php'), 'id' => 'displayoptions'));
-        echo html_writer::start_div();
-        foreach ($this->searchconditions as $searchcondition) {
-            echo $searchcondition->display_options($this);
-        }
-        $this->display_advanced_search_form();
-        $go = html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
-        echo html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
-        echo html_writer::end_div();
-        echo html_writer::end_tag('form');
-        $PAGE->requires->yui_module('moodle-question-searchform', 'M.question.searchform.init');
+    protected function display_options_form($showquestiontext, $scriptpath = '/mod/quiz/edit.php',
+            $showtextoption = false) {
+        // Overridden just to change the default values of the arguments.
+        parent::display_options_form($showquestiontext, $scriptpath, $showtextoption);
     }
 
     protected function print_category_info($category) {

@@ -582,22 +582,30 @@ class view {
     /**
      * Display the form with options for which questions are displayed and how they are displayed.
      * @param bool $showquestiontext Display the text of the question within the list.
+     * @param string $path path to the script displaying this page.
+     * @param bool $showtextoption whether to include the 'Show question text' checkbox.
      */
-    protected function display_options_form($showquestiontext) {
+    protected function display_options_form($showquestiontext, $scriptpath = '/question/edit.php',
+            $showtextoption = true) {
         global $PAGE;
 
-        echo '<form method="get" action="edit.php" id="displayoptions">';
-        echo "<fieldset class='invisiblefieldset'>";
+        echo \html_writer::start_tag('form', array('method' => 'get',
+                'action' => new \moodle_url($scriptpath), 'id' => 'displayoptions'));
+        echo \html_writer::start_div();
         echo \html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'qbshowtext'));
 
         foreach ($this->searchconditions as $searchcondition) {
             echo $searchcondition->display_options($this);
         }
-        $this->display_showtext_checkbox($showquestiontext);
+        if ($showtextoption) {
+            $this->display_showtext_checkbox($showquestiontext);
+        }
         $this->display_advanced_search_form();
+        $go = \html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
+        echo \html_writer::tag('noscript', \html_writer::div($go), array('class' => 'inline'));
+        echo \html_writer::end_div();
+        echo \html_writer::end_tag('form');
         $PAGE->requires->yui_module('moodle-question-searchform', 'M.question.searchform.init');
-        echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
-        echo '</div></noscript></fieldset></form>';
     }
 
     /**
