@@ -99,8 +99,13 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
 
         if (isset($data['clustered']) && ($data['clustered'] == 1)) {
             // Set servers is required with in cluster mode.
-            if (!isset($data['setservers']) || empty(trim($data['setservers']))) {
+            if (!isset($data['setservers'])) {
                 $errors['setservers'] = get_string('required');
+            } else {
+                $trimmed = trim($data['setservers']);
+                if (empty($trimmed)) {
+                    $errors['setservers'] = get_string('required');
+                }
             }
 
             $validservers = false;
