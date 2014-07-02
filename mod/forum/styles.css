@@ -112,3 +112,28 @@ span.unread {
 .forumpost.unread .row.header {
     border-bottom: 1px solid #DDD;
 }
+
+/* Discussion navigation */
+.path-mod-forum .discussion-nav {
+    margin: .5em 0;
+}
+.path-mod-forum .discussion-nav ul {
+    margin: 0;
+    list-style: none;
+}
+.dir-rtl.path-mod-forum .discussion-nav .next-discussion:after,
+.path-mod-forum .discussion-nav .prev-discussion:before {
+    content: ' ◄ ';
+}
+.dir-rtl.path-mod-forum .discussion-nav .prev-discussion:before,
+.path-mod-forum .discussion-nav .next-discussion:after {
+    content: ' ► ';
+}
+.dir-rtl.path-mod-forum .discussion-nav .prev-discussion,
+.path-mod-forum .discussion-nav .next-discussion {
+    float: right;
+}
+.dir-rtl.path-mod-forum .discussion-nav .next-discussion,
+.path-mod-forum .discussion-nav .prev-discussion {
+    float: left;
+}

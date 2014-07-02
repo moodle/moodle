@@ -32,6 +32,39 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class mod_forum_renderer extends plugin_renderer_base {
+
+    /**
+     * Returns the navigation to the previous and next discussion.
+     *
+     * @param mixed $prev Previous discussion record, or false.
+     * @param mixed $next Next discussion record, or false.
+     * @return string The output.
+     */
+    public function neighbouring_discussion_navigation($prev, $next) {
+        $html = '';
+        if ($prev || $next) {
+            $html .= html_writer::start_tag('div', array('class' => 'discussion-nav clearfix'));
+            $html .= html_writer::start_tag('ul');
+            if ($prev) {
+                $url = new moodle_url('/mod/forum/discuss.php', array('d' => $prev->id));
+                $html .= html_writer::start_tag('li', array('class' => 'prev-discussion'));
+                $html .= html_writer::link($url, $prev->name,
+                    array('aria-label' => get_string('prevdiscussiona', 'mod_forum', $prev->name)));
+                $html .= html_writer::end_tag('li');
+            }
+            if ($next) {
+                $url = new moodle_url('/mod/forum/discuss.php', array('d' => $next->id));
+                $html .= html_writer::start_tag('li', array('class' => 'next-discussion'));
+                $html .= html_writer::link($url, $next->name,
+                    array('aria-label' => get_string('nextdiscussiona', 'mod_forum', $next->name)));
+                $html .= html_writer::end_tag('li');
+            }
+            $html .= html_writer::end_tag('ul');
+            $html .= html_writer::end_tag('div');
+        }
+        return $html;
+    }
+
     /**
      * This method is used to generate HTML for a subscriber selection form that
      * uses two user_selector controls
