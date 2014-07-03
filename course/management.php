@@ -235,7 +235,6 @@ if ($action !== false && confirm_sesskey()) {
             if (!$category->can_delete()) {
                 throw new moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
             }
-            require_once($CFG->dirroot.'/course/delete_category_form.php');
             $mform = new core_course_deletecategory_form(null, $category);
             if ($mform->is_cancelled()) {
                 redirect($PAGE->url);
