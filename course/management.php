@@ -69,11 +69,8 @@ if ($courseid) {
 } else {
     $course = null;
     $courseid = null;
-    $category = null;
-    $categoryid = null;
-    if ($viewmode === 'default') {
-        $viewmode = 'categories';
-    }
+    $category = coursecat::get_default();
+    $categoryid = $category->id;
     $context = $systemcontext;
 }
 

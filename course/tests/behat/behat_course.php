@@ -1443,7 +1443,7 @@ class behat_course extends behat_base {
                 break;
             case "Course categories":
                 $return[] = new Given('"#category-listing" "css_element" should exist');
-                $return[] = new Given('"#course-listing" "css_element" should not exist');
+                $return[] = new Given('"#course-listing" "css_element" should exist');
                 break;
             case "Courses categories and courses":
             default:
