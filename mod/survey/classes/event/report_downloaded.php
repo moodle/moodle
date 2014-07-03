@@ -49,7 +49,7 @@ class report_downloaded extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'survey';
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
