@@ -48,6 +48,8 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $mform->addElement('advcheckbox', 'showmisplaced', ' ',
                                                 get_string('showmisplaced', 'qtype_ddmarker'));
         parent::definition_inner($mform);
+
+        $mform->addHelpButton('drops[0]', 'dropzones', 'qtype_ddmarker');
     }
 
     public function js_call() {
