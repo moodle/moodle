@@ -1125,6 +1125,7 @@ $string['useexternalyui'] = 'Use online YUI libraries';
 $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userlist'] = 'Browse list of users';
+$string['userdefaultpreferences'] = 'User default preferences';
 $string['userpreference'] = 'User preference';
 $string['userpolicies'] = 'User policies';
 $string['users'] = 'Users';

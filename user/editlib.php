@@ -359,13 +359,13 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
     $choices['1'] = get_string('emaildisplayyes');
     $choices['2'] = get_string('emaildisplaycourse');
     $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', 2);
+    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
 
     $choices = array();
     $choices['0'] = get_string('textformat');
     $choices['1'] = get_string('htmlformat');
     $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', 1);
+    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
 
     if (!empty($CFG->allowusermailcharset)) {
         $choices = array();
@@ -384,21 +384,21 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
     $choices['1'] = get_string('emaildigestcomplete');
     $choices['2'] = get_string('emaildigestsubjects');
     $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-    $mform->setDefault('maildigest', 0);
+    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
     $mform->addHelpButton('maildigest', 'emaildigest');
 
     $choices = array();
     $choices['1'] = get_string('autosubscribeyes');
     $choices['0'] = get_string('autosubscribeno');
     $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', 1);
+    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
 
     if (!empty($CFG->forum_trackreadposts)) {
         $choices = array();
         $choices['0'] = get_string('trackforumsno');
         $choices['1'] = get_string('trackforumsyes');
         $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', 0);
+        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
     }
 
     $editors = editors_get_enabled();
