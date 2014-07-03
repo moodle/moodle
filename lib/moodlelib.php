@@ -8778,43 +8778,7 @@ function message_popup_window() {
     // If we have new messages to notify the user about.
     if (!empty($messageusers)) {
 
-        $strmessages = '';
-        if (count($messageusers)>1) {
-            $strmessages = get_string('unreadnewmessages', 'message', count($messageusers));
-        } else {
-            $messageusers = reset($messageusers);
-
-            // Show who the message is from if its not a notification.
-            if (!$messageusers->notification) {
-                $strmessages = get_string('unreadnewmessage', 'message', fullname($messageusers) );
-            }
-
-            // Try to display the small version of the message.
-            $smallmessage = null;
-            if (!empty($messageusers->smallmessage)) {
-                // Display the first 200 chars of the message in the popup.
-                $smallmessage = null;
-                if (core_text::strlen($messageusers->smallmessage) > 200) {
-                    $smallmessage = core_text::substr($messageusers->smallmessage, 0, 200).'...';
-                } else {
-                    $smallmessage = $messageusers->smallmessage;
-                }
-
-                // Prevent html symbols being displayed.
-                if ($messageusers->fullmessageformat == FORMAT_HTML) {
-                    $smallmessage = html_to_text($smallmessage);
-                } else {
-                    $smallmessage = s($smallmessage);
-                }
-            } else if ($messageusers->notification) {
-                // Its a notification with no smallmessage so just say they have a notification.
-                $smallmessage = get_string('unreadnewnotification', 'message');
-            }
-            if (!empty($smallmessage)) {
-                $strmessages .= '<div id="usermessage">'.s($smallmessage).'</div>';
-            }
-        }
-
+        $strmessages = get_string('unreadnewmessages', 'message', count($messageusers));
         $strgomessage = get_string('gotomessages', 'message');
         $strstaymessage = get_string('ignore', 'admin');
 
