@@ -134,8 +134,8 @@ class category_condition extends condition {
 
         echo \html_writer::start_div('choosecategory');
         $catmenu = question_category_options($contexts, false, 0, true);
-        echo \html_writer::label(get_string('selectacategory', 'question'), 'category');
-        echo \html_writer::select($catmenu, 'category', $current, array(), array('class' => 'searchoptions'));
+        echo \html_writer::label(get_string('selectacategory', 'question'), 'id_selectacategory');
+        echo \html_writer::select($catmenu, 'category', $current, array(), array('class' => 'searchoptions', 'id' => 'id_selectacategory'));
         echo \html_writer::end_div() . "\n";
     }
 

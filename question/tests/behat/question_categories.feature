@@ -35,14 +35,14 @@ Feature: A teacher can put questions in categories in the question bank
 
   @javascript
   Scenario: Move a question between categories via the question page
-    When I set the field "category" to "New Category 1 (1)"
+    When I set the field "Select a category" to "New Category 1 (1)"
     And I click on "my test question" "checkbox" in the "my test question" "table_row"
-    And I set the field "menucategory" to "New Category 2"
+    And I set the field "Question category" to "New Category 2"
     And I press "Move to >>"
     Then I should see "my test question"
-    And the "category" select box should contain "New Category 2 (1)"
-    And the "category" select box should contain "New Category 1"
-    And the "category" select box should not contain "New Category 1 (1)"
+    And the "Select a category" select box should contain "New Category 2 (1)"
+    And the "Select a category" select box should contain "New Category 1"
+    And the "Select a category" select box should not contain "New Category 1 (1)"
 
   @javascript
   Scenario: Move a question between categories via the question settings page
@@ -51,8 +51,8 @@ Feature: A teacher can put questions in categories in the question bank
     And I set the field "Save in category" to "New Category 2"
     And I press "id_submitbutton"
     Then I should see "my test question"
-    And the "category" select box should contain "New Category 2 (1)"
-    And the "category" select box should not contain "New Category 1 (1)"
+    And the "Select a category" select box should contain "New Category 2 (1)"
+    And the "Select a category" select box should not contain "New Category 1 (1)"
 
   @javascript
   Scenario: Delete a question category
