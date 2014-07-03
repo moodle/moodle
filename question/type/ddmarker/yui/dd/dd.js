@@ -149,11 +149,11 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             if (this[drawfunc] instanceof Function){
                var xyfortext = this[drawfunc](dropzoneno, coords, colour);
                if (xyfortext !== null) {
-                   var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
+                   var markerspan = this.doc.top_node().one('div.ddarea div.markertexts span.markertext'+dropzoneno);
                    if (markerspan !== null) {
                        markerspan.setStyle('opacity', '0.6');
-                       xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
-                       xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
+                       xyfortext[0] -= markerspan.get('offsetWidth') / 2;
+                       xyfortext[1] -= markerspan.get('offsetHeight') / 2;
                        markerspan.setXY(this.convert_to_window_xy(xyfortext));
                        var markerspananchor = markerspan.one('a');
                        if (markerspananchor !== null) {
@@ -265,7 +265,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 polygon.end();
                 polygon.setXY(this.doc.bg_img().getXY());
                 this.shapes[dropzoneno] = polygon;
-                return [Math.round((minxy[0] + maxxy[0])/2), Math.round((minxy[1] + maxxy[1])/2)];
+                return [(minxy[0] + maxxy[0])/2, (minxy[1] + maxxy[1])/2];
             }
             return null;
         },
@@ -393,8 +393,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             return this.convert_to_window_xy(bgimgxy);
         },
         convert_to_bg_img_xy : function (windowxy) {
-            return [Math.round(+windowxy[0] - this.doc.bg_img().getX()-1),
-                    Math.round(+windowxy[1] - this.doc.bg_img().getY()-1)];
+            return [+windowxy[0] - this.doc.bg_img().getX()-1,
+                    +windowxy[1] - this.doc.bg_img().getY()-1];
         },
         redraw_drags_and_drops : function() {
             this.doc.drag_items().each(function(item) {
@@ -407,10 +407,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 var coords = this.get_coords(input);
                 var dragitemhome = this.doc.drag_item_home(choiceno);
                 for (var i=0; i < coords.length; i++) {
-                    var dragitem;
-                    coords[i][0] = Math.round(coords[i][0]);
-                    coords[i][1] = Math.round(coords[i][1]);
-                    dragitem = this.doc.drag_item_for_choice(choiceno, i);
+                    var dragitem = this.doc.drag_item_for_choice(choiceno, i);
                     if (!dragitem || dragitem.hasClass('beingdragged')) {
                         dragitem = this.clone_new_drag_item(dragitemhome, i);
                     } else {
@@ -439,6 +436,16 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     this.draw_drop_zone(dropzoneno, d.markertext,
                                         d.shape, d.coords, colourfordropzone, true);
                 }
+            }
+            if (YUI.Env.UA.webkit) {
+                // Webkit (Chrome, Safari, Android) has a repaint bug. This is a
+                // work-around. See, for example,
+                // http://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes
+                var outer = this.doc.top_node().one('div.ddarea');
+                var oldDisplay = outer.getStyle('display');
+                outer.setStyle('display', 'none');
+                outer.get('offsetHeight');
+                outer.setStyle('display', oldDisplay);
             }
         },
         /**
@@ -483,8 +490,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         drop_zone_key_press : function (e) {
             var dragitem = e.target;
             var xy = dragitem.getXY();
-            xy[0] = Math.round(xy[0]); 
-            xy[1] = Math.round(xy[1]);
             switch (e.direction) {
                 case 'left' :
                     xy[0] -= 1;
@@ -546,33 +551,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                                     this, notifier);
         }
     });
-    M.qtype_ddmarker.isGetBoundingClientRectOverridden = false;
-    M.qtype_ddmarker.overrideGetBoundingClientRect = function() {
-        if(M.qtype_ddmarker.isGetBoundingClientRectOverridden){
-            return;
-        }
-
-        if(Y.UA.ie != 10 || !Element.prototype.getBoundingClientRect){
-            return;
-        }
-
-        M.qtype_ddmarker.isGetBoundingClientRectOverridden = true;
-        Element.prototype.getBoundingClientRectOld = Element.prototype.getBoundingClientRect;
-        Element.prototype.getBoundingClientRect = function(){
-            var rect = this.getBoundingClientRectOld();
-
-            var newRect = new Object();
-            newRect.top = Math.round(rect.top);
-            newRect.bottom = Math.round(rect.bottom);
-            newRect.left = Math.round(rect.left);
-            newRect.right = Math.round(rect.right);
-            newRect.height = Math.round(rect.height);
-            newRect.width = Math.round(rect.width);
-            return newRect;
-        }
-    }
     M.qtype_ddmarker.init_question = function(config) {
-        M.qtype_ddmarker.overrideGetBoundingClientRect();
         return new DDMARKER_QUESTION(config);
     };
 }, '@VERSION@', {
