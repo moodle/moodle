@@ -45,6 +45,6 @@ $string['downloadedfilecheckfailed'] = 'A verificação do ficheiro descarregado
 $string['invalidmd5'] = 'A variável de verificação está errada - tente novamente.';
 $string['missingrequiredfield'] = 'Um dos campos obrigatórios está em falta';
 $string['remotedownloaderror'] = 'O download do componente para o servidor falhou. Verifique as configurações do proxy. A instalação da extensão cURL do PHP é muito recomendada.<br /><br />Terá de fazer manualmente o download do ficheiro <a href="{$a->url}">{$a->url}</a>, copiá-lo para a pasta "{$a->dest}" no seu servidor e descompactá-lo';
-$string['wrongdestpath'] = 'Caminho de destino errado.';
+$string['wrongdestpath'] = 'Caminho de destino errado';
 $string['wrongsourcebase'] = 'Base do URL de origem errada';
-$string['wrongzipfilename'] = 'Nome de ficheiro ZIP errado.';
+$string['wrongzipfilename'] = 'Nome de ficheiro ZIP errado';
