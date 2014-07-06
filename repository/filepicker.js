@@ -1301,7 +1301,7 @@ M.core_filepicker.init = function(Y, options) {
                 extraClasses : ['filepicker'],
                 draggable    : true,
                 bodyContent  : this.fpnode,
-                headerContent: '<span id="'+ labelid +'">'+ M.str.repository.filepicker +'</span>',
+                headerContent: '<h3 id="'+ labelid +'">'+ M.str.repository.filepicker +'</h3>',
                 centered     : true,
                 modal        : true,
                 visible      : false,
@@ -1319,7 +1319,7 @@ M.core_filepicker.init = function(Y, options) {
 
             var fplabel = 'fp-file_label_'+ client_id;
             this.selectui = new M.core.dialogue({
-                headerContent: '<span id="' + fplabel +'">'+M.str.repository.select+'</span>',
+                headerContent: '<h3 id="' + fplabel +'">'+M.str.repository.select+'</h3>',
                 draggable    : true,
                 width        : '450px',
                 bodyContent  : this.selectnode,
