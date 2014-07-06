@@ -379,6 +379,18 @@ class core_text {
     }
 
     /**
+     * Reverse UTF-8 multibytes character sets (used for RTL languages)
+     * (We only do this because there is no mb_strrev or iconv_strrev)
+     *
+     * @param string $str the multibyte string to reverse
+     * @return string the reversed multi byte string
+     */
+    public static function strrev($str) {
+        preg_match_all('/./us', $str, $ar);
+        return join('', array_reverse($ar[0]));
+    }
+
+    /**
      * Try to convert upper unicode characters to plain ascii,
      * the returned string may contain unconverted unicode characters.
      *
