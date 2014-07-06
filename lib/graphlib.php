@@ -1193,7 +1193,8 @@ class graph {
     function print_TTF($message) {
       $points    = $message['points'];
       $angle     = $message['angle'];
-      $text      = $message['text'];
+      // We have to manually reverse the label, since php GD cannot handle RTL characters properly in UTF8 strings.
+      $text      = (right_to_left()) ? core_text::strrev($message['text']) : $message['text'];
       $colour    = $this->colour[$message['colour']];
       $font      = $this->parameter['path_to_fonts'].$message['font'];
 
