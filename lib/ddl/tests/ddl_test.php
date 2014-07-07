@@ -1579,6 +1579,35 @@ class core_ddl_testcase extends database_driver_testcase {
         $dbman->drop_temp_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
         $this->assertDebuggingCalled();
+
+        // Try join with normal tables - MS SQL may use incompatible collation.
+        $table1 = new xmldb_table('test_table');
+        $table1->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table1->add_field('name', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null);
+        $table1->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table1);
+
+        $table2 = new xmldb_table('test_temp');
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table2->add_field('name', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null);
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_temp_table($table2);
+
+        $record = array('name' => 'a');
+        $DB->insert_record('test_table', $record);
+        $DB->insert_record('test_temp', $record);
+
+        $record = array('name' => 'b');
+        $DB->insert_record('test_table', $record);
+
+        $record = array('name' => 'c');
+        $DB->insert_record('test_temp', $record);
+
+        $sql = "SELECT *
+                  FROM {test_table} n
+                  JOIN {test_temp} t ON t.name = n.name";
+        $records = $DB->get_records_sql($sql);
+        $this->assertCount(1, $records);
     }
 
     public function test_concurrent_temp_tables() {
