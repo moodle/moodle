@@ -18,7 +18,7 @@
  * Unit tests for rule manager api.
  *
  * @package    tool_monitor
- * @category   phpunit
+ * @category   test
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-class rule_manager_testcase extends advanced_testcase {
+/**
+ * Tests for rule manager.
+ *
+ * Class tool_monitor_rule_manager_testcase
+ */
+class tool_monitor_rule_manager_testcase extends advanced_testcase {
 
     /**
      * Test add_rule method.
@@ -40,25 +45,25 @@ class rule_manager_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $now = time();
 
-        $rule = new \stdClass();
+        $rule = new stdClass();
         $rule->userid = $user->id;
         $rule->courseid = $course->id;
         $rule->name = 'test rule 1';
         $rule->plugin = 'core';
         $rule->eventname = '\core\event\course_updated';
         $rule->description = 'test description 1';
+        $rule->descriptionformat = FORMAT_HTML;
         $rule->frequency = 15;
-        $rule->message_template = 'test template message';
-        $rule->timewindow = null;
+        $rule->template = 'test template message';
+        $rule->templateformat = FORMAT_HTML;
+        $rule->timewindow = 300;
         $rule->timecreated = $now;
         $rule->timemodified = $now;
 
         $ruledata = \tool_monitor\rule_manager::add_rule($rule);
-
-        $this->assertEquals($rule->eventname, $ruledata->eventname);
-        $this->assertEquals($rule->userid, $ruledata->userid);
-        $this->assertEquals($rule->courseid, $ruledata->courseid);
-
+        foreach ($rule as $prop => $value) {
+            $this->assertEquals($ruledata->$prop, $value);
+        }
     }
 
     /**
@@ -72,6 +77,7 @@ class rule_manager_testcase extends advanced_testcase {
         $rule = $monitorgenerator->create_rule();
         $rules1 = \tool_monitor\rule_manager::get_rule($rule->id);
         $this->assertInstanceOf('tool_monitor\rule', $rules1);
+        $this->assertEquals($rules1, $rule);
     }
 
     /**
@@ -89,7 +95,7 @@ class rule_manager_testcase extends advanced_testcase {
         $ruledata->frequency = 25;
 
         \tool_monitor\rule_manager::update_rule($ruledata);
-        $this->assertNotEquals($ruledata->frequency, $rule->frequency);
+        $this->assertEquals(25, $ruledata->frequency);
 
     }
 
@@ -101,9 +107,24 @@ class rule_manager_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
-        $rule = $monitorgenerator->create_rule();
-        $ruledata = \tool_monitor\rule_manager::get_rules_by_courseid($rule->courseid);
-        $this->assertEquals($rule->courseid, 0);
+
+        $record = new stdClass();
+        $record->courseid = 3;
+
+        $record2 = new stdClass();
+        $record2->courseid = 4;
+
+        $ruleids = array();
+        for ($i = 0; $i < 10; $i++) {
+            $rule = $monitorgenerator->create_rule($record);
+            $ruleids[] = $rule->id;
+            $rule = $monitorgenerator->create_rule(); // Create some site level rules.
+            $ruleids[] = $rule->id;
+            $rule = $monitorgenerator->create_rule($record2); // Create rules in a different course.
+        }
+        $ruledata = \tool_monitor\rule_manager::get_rules_by_courseid(3);
+        $this->assertEquals($ruleids, array_keys($ruledata));
+        $this->assertCount(20, $ruledata);
     }
 
     /**
@@ -114,9 +135,23 @@ class rule_manager_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
-        $rule = $monitorgenerator->create_rule();
-        $rules1 = \tool_monitor\rule_manager::get_rules_by_plugin($rule->plugin);
-        $this->assertEquals(1, count($rules1));
+
+        $record = new stdClass();
+        $record->plugin = 'core';
+
+        $record2 = new stdClass();
+        $record2->plugin = 'mod_assign';
+
+        $ruleids = array();
+        for ($i = 0; $i < 10; $i++) {
+            $rule = $monitorgenerator->create_rule($record);
+            $ruleids[] = $rule->id;
+            $rule = $monitorgenerator->create_rule($record2); // Create rules in a different plugin.
+        }
+
+        $ruledata = \tool_monitor\rule_manager::get_rules_by_plugin('core');
+        $this->assertEquals($ruleids, array_keys($ruledata));
+        $this->assertCount(10, $ruledata);
     }
 
     /**
@@ -128,7 +163,22 @@ class rule_manager_testcase extends advanced_testcase {
 
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $rule = $monitorgenerator->create_rule();
-        $rules1 = \tool_monitor\rule_manager::get_rules_by_event($rule->eventname);
-        $this->assertEquals(1, count($rules1));
+
+        $record = new stdClass();
+        $record->eventname = '\core\event\calendar_event_created';
+
+        $record2 = new stdClass();
+        $record2->eventname = '\core\event\calendar_event_updated';
+
+        $ruleids = array();
+        for ($i = 0; $i < 10; $i++) {
+            $rule = $monitorgenerator->create_rule($record);
+            $ruleids[] = $rule->id;
+            $rule = $monitorgenerator->create_rule($record2); // Create rules in a different plugin.
+        }
+
+        $ruledata = \tool_monitor\rule_manager::get_rules_by_event('\core\event\calendar_event_created');
+        $this->assertEmpty(array_diff(array_keys($ruledata), $ruleids));
+        $this->assertCount(10, $ruledata);
     }
 }

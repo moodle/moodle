@@ -25,38 +25,67 @@ namespace tool_monitor;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Rule manager class.
+ *
+ * @package    tool_monitor
+ * @copyright  2014 onwards Simey Lameze <lameze@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class rule_manager {
 
     /**
      * Create a new rule.
      *
      * @param \stdClass $ruledata data to insert as new rule entry.
-     * @return \tool_monitor\rule object with rule id.
+     *
+     * @return rule An instance of rule class.
      */
     public static function add_rule($ruledata) {
-        global $DB, $USER;
-        $now = time();
-        $rule = new \stdClass();
-        $rule->userid = empty($ruledata->userid) ? $USER->id : $ruledata->userid;
-        $rule->courseid = $ruledata->courseid;
-        $rule->name = $ruledata->name;
-        $rule->plugin = $ruledata->plugin;
-        $rule->eventname = $ruledata->eventname;
-        $rule->description = $ruledata->description;
-        $rule->frequency = (int)$ruledata->frequency;
-        $rule->message_template = $ruledata->message_template;
-        $rule->timewindow = $now;
-        $rule->timecreated = $now;
-        $rule->timemodified = $now;
-        $ruleid = $DB->insert_record('tool_monitor_rules', $rule, true);
+        global $DB;
 
-        return new rule($ruleid);
+        $now = time();
+        $ruledata->timecreated = $now;
+        $ruledata->timemodified = $now;
+
+        $ruledata->id = $DB->insert_record('tool_monitor_rules', $ruledata);
+        return new rule($ruledata);
     }
 
     /**
-     * Delete a rule and subscriptions by rule id.
+     * Clean data submitted by mform.
+     *
+     * @param \stdClass $mformdata data to insert as new rule entry.
+     *
+     * @return \stdClass Cleaned rule data.
+     */
+    public static function clean_ruledata_form($mformdata) {
+        global $USER;
+
+        $rule = new \stdClass();
+        if (!empty($mformdata->ruleid)) {
+            $rule->id = $mformdata->ruleid;
+        }
+        $rule->userid = empty($mformdata->userid) ? $USER->id : $mformdata->userid;
+        $rule->courseid = $mformdata->courseid;
+        $rule->name = $mformdata->name;
+        $rule->plugin = $mformdata->plugin;
+        $rule->eventname = $mformdata->eventname;
+        $rule->description = $mformdata->description['text'];
+        $rule->descriptionformat = $mformdata->description['format'];
+        $rule->frequency = $mformdata->frequency;
+        $rule->timewindow = $mformdata->minutes * MINSECS;
+        $rule->template = $mformdata->template['text'];
+        $rule->templateformat = $mformdata->template['format'];
+
+        return $rule;
+    }
+
+    /**
+     * Delete a rule and associated subscriptions, by rule id.
      *
      * @param int $ruleid id of rule to be deleted.
+     *
      * @return bool
      */
     public static function delete_rule($ruleid) {
@@ -67,10 +96,11 @@ class rule_manager {
     }
 
     /**
-     * Get a rule object by id.
+     * Get an instance of rule class.
      *
      * @param \stdClass|int $ruleorid A rule object from database or rule id.
-     * @return \tool_monitor\rule object with rule id.
+     *
+     * @return rule object with rule id.
      */
     public static function get_rule($ruleorid) {
         global $DB;
@@ -86,35 +116,54 @@ class rule_manager {
     /**
      * Update rule data.
      *
-     * @throws coding_exception if $record->ruleid is invalid.
-     * @param object $params rule data to be updated.
+     * @throws \coding_exception if $record->ruleid is invalid.
+     * @param object $ruledata rule data to be updated.
+     *
      * @return bool
      */
-    public static function update_rule($params) {
+    public static function update_rule($ruledata) {
         global $DB;
-        if (!self::get_rule($params->id)) {
-            throw new coding_exception('Invalid rule ID.');
+        if (!self::get_rule($ruledata->id)) {
+            throw new \coding_exception('Invalid rule ID.');
         }
-        $params->timemodified = time();
-        return $DB->update_record('tool_monitor_rules', $params, false);
+        $ruledata->timemodified = time();
+        return $DB->update_record('tool_monitor_rules', $ruledata);
     }
 
     /**
      * Get rules by course id.
      *
      * @param int $courseid course id of the rule.
-     * @return array rule data.
+     * @param int $limitfrom Limit from which to fetch rules.
+     * @param int $limitto  Limit to which rules need to be fetched.
+     *
+     * @return array List of rules for the given course id, also includes system wide rules.
      */
-    public static function get_rules_by_courseid($courseid) {
+    public static function get_rules_by_courseid($courseid, $limitfrom = 0, $limitto = 0) {
         global $DB;
-        return $DB->get_records('tool_monitor_rules', array('courseid' => $courseid));
+        $select = "courseid = ? OR courseid = ?";
+        return $DB->get_records_select('tool_monitor_rules', $select, array(0, $courseid), null, '*', $limitfrom, $limitto);
+    }
+
+    /**
+     * Get rule count by course id.
+     *
+     * @param int $courseid course id of the rule.
+     *
+     * @return int count of rules present in system visible in the given course id.
+     */
+    public static function count_rules_by_courseid($courseid) {
+        global $DB;
+        $select = "courseid = ? OR courseid = ?";
+        return $DB->count_records_select('tool_monitor_rules', $select, array(0, $courseid));
     }
 
     /**
      * Get rules by plugin name.
      *
      * @param string $plugin plugin name of the rule.
-     * @return array rule data.
+     *
+     * @return array List of rules for the given plugin name.
      */
     public static function get_rules_by_plugin($plugin) {
         global $DB;
@@ -125,7 +174,8 @@ class rule_manager {
      * Get rules by event name.
      *
      * @param string $eventname event name of the rule.
-     * @return array rule data.
+     *
+     * @return array List of rules for the given event.
      */
     public static function get_rules_by_event($eventname) {
         global $DB;

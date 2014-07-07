@@ -18,20 +18,19 @@
  * PHPUnit data generator tests.
  *
  * @package    tool_monitor
- * @category   phpunit
+ * @category   test
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * PHPUnit data generator test case.
  *
  * @since      Moodle 2.8
  * @package    tool_monitor
- * @category   phpunit
+ * @category   test
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -75,12 +74,16 @@ class tool_monitor_generator_testcase extends advanced_testcase {
         $record->userid = $user->id;
         $record->ruleid = $rule->id;
 
-        $sid = $monitorgenerator->create_subscription($record);
-        $subscription = \tool_monitor\subscription_manager::get_subscription($sid);
+        $subscription = $monitorgenerator->create_subscription($record);
         $this->assertEquals($record->courseid, $subscription->courseid);
         $this->assertEquals($record->ruleid, $subscription->ruleid);
         $this->assertEquals($record->userid, $subscription->userid);
         $this->assertEquals(0, $subscription->cmid);
+
+        // Make sure rule id is always required.
+        $this->setExpectedException('coding_exception');
+        unset($record->ruleid);
+        $monitorgenerator->create_subscription($record);
     }
 
     /**
@@ -89,20 +92,16 @@ class tool_monitor_generator_testcase extends advanced_testcase {
     public function test_create_event_entries() {
         $this->setAdminUser();
         $this->resetAfterTest(true);
-        $record = new \stdClass();
         $context = \context_system::instance();
 
         // Default data generator values.
-        $record->eventname = '\core\event\user_loggedin';
-        $record->contextid = $context->id;
-        $record->contextlevel = $context->contextlevel;
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
 
         // First create and assertdata using default values.
         $eventdata = $monitorgenerator->create_event_entries();
-        $this->assertEquals($record->eventname, $eventdata->eventname);
-        $this->assertEquals($record->contextid, $eventdata->contextid);
-        $this->assertEquals($record->contextlevel, $eventdata->contextlevel);
+        $this->assertEquals('\core\event\user_loggedin', $eventdata->eventname);
+        $this->assertEquals($context->id, $eventdata->contextid);
+        $this->assertEquals($context->contextlevel, $eventdata->contextlevel);
     }
 
     /**
@@ -118,8 +117,7 @@ class tool_monitor_generator_testcase extends advanced_testcase {
         $record = new \stdClass();
         $record->userid = $user->id;
         $record->ruleid = $rule->id;
-        $sid = $monitorgenerator->create_subscription($record);
-        \tool_monitor\subscription_manager::get_subscription($sid);
+        $sid = $monitorgenerator->create_subscription($record)->id;
         $record->sid = $sid;
         $historydata = $monitorgenerator->create_history($record);
         $this->assertEquals($record->userid, $historydata->userid);
