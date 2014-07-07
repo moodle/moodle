@@ -135,7 +135,7 @@ class edit_scale_form extends moodleform {
             $scalearray = array_map('trim', $scalearray);
             $scaleoptioncount = count($scalearray);
 
-            if (count($scalearray) < 2) {
+            if (count($scalearray) < 1) {
                 $errors['scale'] = get_string('badlyformattedscale', 'grades');
             } else {
                 $thescale = implode(',',$scalearray);
