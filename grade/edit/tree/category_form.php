@@ -86,19 +86,15 @@ class edit_category_form extends moodleform {
             $mform->setAdvanced('aggregatesubcats');
         }
 
-        $options = array(0 => get_string('none'));
-
-        for ($i=1; $i<=20; $i++) {
-            $options[$i] = $i;
-        }
-
-        $mform->addElement('select', 'keephigh', get_string('keephigh', 'grades'), $options);
+        $mform->addElement('text', 'keephigh', get_string('keephigh', 'grades'), 'size="3"');
+        $mform->setType('keephigh', PARAM_INT);
         $mform->addHelpButton('keephigh', 'keephigh', 'grades');
         if ((int)$CFG->grade_keephigh_flag & 2) {
             $mform->setAdvanced('keephigh');
         }
 
-        $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
+        $mform->addElement('text', 'droplow', get_string('droplow', 'grades'), 'size="3"');
+        $mform->setType('droplow', PARAM_INT);
         $mform->addHelpButton('droplow', 'droplow', 'grades');
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
         if ((int)$CFG->grade_droplow_flag & 2) {
