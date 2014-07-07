@@ -72,6 +72,23 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
         $user->calendartype = $CFG->calendartype;
     }
 
+    // Apply default values for user preferences that are stored in users table.
+    if (!isset($user->maildisplay)) {
+        $user->maildisplay = $CFG->defaultpreference_maildisplay;
+    }
+    if (!isset($user->mailformat)) {
+        $user->mailformat = $CFG->defaultpreference_mailformat;
+    }
+    if (!isset($user->maildigest)) {
+        $user->maildigest = $CFG->defaultpreference_maildigest;
+    }
+    if (!isset($user->autosubscribe)) {
+        $user->autosubscribe = $CFG->defaultpreference_autosubscribe;
+    }
+    if (!isset($user->trackforums)) {
+        $user->trackforums = $CFG->defaultpreference_trackforums;
+    }
+
     $user->timecreated = time();
     $user->timemodified = $user->timecreated;
 
