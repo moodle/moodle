@@ -221,21 +221,21 @@ class admin_uploaduser_form2 extends moodleform {
 
         $choices = array(0 => get_string('emaildisplayno'), 1 => get_string('emaildisplayyes'), 2 => get_string('emaildisplaycourse'));
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-        $mform->setDefault('maildisplay', 2);
+        $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
 
         $choices = array(0 => get_string('textformat'), 1 => get_string('htmlformat'));
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-        $mform->setDefault('mailformat', 1);
+        $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
         $mform->setAdvanced('mailformat');
 
         $choices = array(0 => get_string('emaildigestoff'), 1 => get_string('emaildigestcomplete'), 2 => get_string('emaildigestsubjects'));
         $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-        $mform->setDefault('maildigest', 0);
+        $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
         $mform->setAdvanced('maildigest');
 
         $choices = array(1 => get_string('autosubscribeyes'), 0 => get_string('autosubscribeno'));
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-        $mform->setDefault('autosubscribe', 1);
+        $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="25"');
         $mform->setType('city', PARAM_TEXT);
