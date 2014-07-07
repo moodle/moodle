@@ -7445,10 +7445,20 @@ function extract_suspended_users($context, &$users, $ignoreusers=array()) {
  * or enrolment has expired or not started.
  *
  * @param context $context context in which user enrolment is checked.
+ * @param bool $context Enable or disable (default) the request cache
  * @return array list of suspended user id's.
  */
-function get_suspended_userids($context){
+function get_suspended_userids(context $context, $usecache = false) {
     global $DB;
+
+    // Check the cache first for performance reasons if enabled.
+    if ($usecache) {
+        $cache = cache::make('core', 'get_suspended_userids');
+        $susers = $cache->get($context->id);
+        if ($susers !== false) {
+            return $susers;
+        }
+    }
 
     // Get all enrolled users.
     list($sql, $params) = get_enrolled_sql($context);
@@ -7466,5 +7476,12 @@ function get_suspended_userids($context){
             }
         }
     }
+
+    // Cache results for the remainder of this request.
+    if ($usecache) {
+        $cache->set($context->id, $susers);
+    }
+
+    // Return.
     return $susers;
 }
