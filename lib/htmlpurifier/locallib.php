@@ -42,6 +42,22 @@ class HTMLPurifier_URIScheme_rtsp extends HTMLPurifier_URIScheme {
 
 
 /**
+ * Validates RTMP defined by Adobe
+ */
+class HTMLPurifier_URIScheme_rtmp extends HTMLPurifier_URIScheme {
+
+    public $browsable = false;
+    public $hierarchical = true;
+
+    public function doValidate(&$uri, $config, $context) {
+        $uri->userinfo = null;
+        return true;
+    }
+
+}
+
+
+/**
  * Validates IRC defined by IETF Draft
  */
 class HTMLPurifier_URIScheme_irc extends HTMLPurifier_URIScheme {
