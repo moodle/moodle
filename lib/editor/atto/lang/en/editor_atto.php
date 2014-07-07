@@ -36,3 +36,7 @@ $string['toolbarconfig_desc'] = 'The list of plugins and the order they are disp
 $string['editor_command_keycode'] = 'Cmd + {$a}';
 $string['editor_control_keycode'] = 'Ctrl + {$a}';
 $string['plugin_title_shortcut'] = '{$a->title} [{$a->shortcut}]';
+$string['confirm'] = 'Confirm';
+$string['cancel'] = 'Cancel';
+$string['recover'] = 'Recover';
+$string['confirmrecover'] = 'A previously unsaved version of the text for field "{$a->label}" was found. Do you want to recover it?';

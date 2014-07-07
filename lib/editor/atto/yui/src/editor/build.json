@@ -5,6 +5,7 @@
             "jsfiles": [
                 "editor.js",
                 "textarea.js",
+                "autosave.js",
                 "clean.js",
                 "toolbar.js",
                 "toolbar-keyboardnav.js",

@@ -10,6 +10,7 @@
             "event-custom",
             "yui-throttle",
             "moodle-core-notification-dialogue",
+            "moodle-core-notification-confirm",
             "moodle-editor_atto-rangy",
             "handlebars",
             "timers"
