@@ -199,9 +199,9 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $key = 0;
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
-            unset($this->_form->_defaultValues["tolerancetype[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerlength[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerformat[$key]"]);
+            unset($this->_form->_defaultValues["tolerancetype[{$key}]"]);
+            unset($this->_form->_defaultValues["correctanswerlength[{$key}]"]);
+            unset($this->_form->_defaultValues["correctanswerformat[{$key}]"]);
 
             $question->tolerancetype[$key]       = $answer->tolerancetype;
             $question->correctanswerlength[$key] = $answer->correctanswerlength;

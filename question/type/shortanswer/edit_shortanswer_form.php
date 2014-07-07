@@ -80,7 +80,7 @@ class qtype_shortanswer_edit_form extends question_edit_form {
                 }
             } else if ($data['fraction'][$key] != 0 ||
                     !html_is_blank($data['feedback'][$key]['text'])) {
-                $errors["answeroptions[$key]"] = get_string('answermustbegiven', 'qtype_shortanswer');
+                $errors["answeroptions[{$key}]"] = get_string('answermustbegiven', 'qtype_shortanswer');
                 $answercount++;
             }
         }

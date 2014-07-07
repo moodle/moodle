@@ -59,11 +59,11 @@ class qformat_xhtml extends qformat_default {
         $id = $question->id;
 
         // Add comment and div tags.
-        $expout .= "<!-- question: $id  name: $question->name -->\n";
+        $expout .= "<!-- question: {$id}  name: {$question->name} -->\n";
         $expout .= "<div class=\"question\">\n";
 
         // Add header.
-        $expout .= "<h3>$question->name</h3>\n";
+        $expout .= "<h3>{$question->name}</h3>\n";
 
         // Format and add the question text.
         $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
@@ -78,8 +78,8 @@ class qformat_xhtml extends qformat_default {
                 $sttrue = get_string('true', 'qtype_truefalse');
                 $stfalse = get_string('false', 'qtype_truefalse');
                 $expout .= "<ul class=\"truefalse\">\n";
-                $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$sttrue\" />$sttrue</li>\n";
-                $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$stfalse\" />$stfalse</li>\n";
+                $expout .= "  <li><input name=\"quest_{$id}\" type=\"radio\" value=\"{$sttrue}\" />{$sttrue}</li>\n";
+                $expout .= "  <li><input name=\"quest_{$id}\" type=\"radio\" value=\"{$stfalse}\" />{$stfalse}</li>\n";
                 $expout .= "</ul>\n";
                 break;
             case 'multichoice':
@@ -87,11 +87,11 @@ class qformat_xhtml extends qformat_default {
                 foreach ($question->options->answers as $answer) {
                     $answertext = $this->repchar( $answer->answer );
                     if ($question->options->single) {
-                        $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\""
-                                . s($answertext) . "\" />$answertext</li>\n";
+                        $expout .= "  <li><input name=\"quest_{$id}\" type=\"radio\" value=\""
+                                . s($answertext) . "\" />{$answertext}</li>\n";
                     } else {
-                        $expout .= "  <li><input name=\"quest_$id\" type=\"checkbox\" value=\""
-                                . s($answertext) . "\" />$answertext</li>\n";
+                        $expout .= "  <li><input name=\"quest_{$id}\" type=\"checkbox\" value=\""
+                                . s($answertext) . "\" />{$answertext}</li>\n";
                     }
                 }
                 $expout .= "</ul>\n";
@@ -100,7 +100,7 @@ class qformat_xhtml extends qformat_default {
                 $expout .= html_writer::start_tag('ul', array('class' => 'shortanswer'));
                 $expout .= html_writer::start_tag('li');
                 $expout .= html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
-                $expout .= html_writer::empty_tag('input', array('id' => "quest_$id", 'name' => "quest_$id", 'type' => 'text'));
+                $expout .= html_writer::empty_tag('input', array('id' => "quest_{$id}", 'name' => "quest_{$id}", 'type' => 'text'));
                 $expout .= html_writer::end_tag('li');
                 $expout .= html_writer::end_tag('ul');
                 break;
@@ -108,7 +108,7 @@ class qformat_xhtml extends qformat_default {
                 $expout .= html_writer::start_tag('ul', array('class' => 'numerical'));
                 $expout .= html_writer::start_tag('li');
                 $expout .= html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
-                $expout .= html_writer::empty_tag('input', array('id' => "quest_$id", 'name' => "quest_$id", 'type' => 'text'));
+                $expout .= html_writer::empty_tag('input', array('id' => "quest_{$id}", 'name' => "quest_{$id}", 'type' => 'text'));
                 $expout .= html_writer::end_tag('li');
                 $expout .= html_writer::end_tag('ul');
                 break;
@@ -149,7 +149,7 @@ class qformat_xhtml extends qformat_default {
                 break;
             case 'multianswer':
             default:
-                $expout .= "<!-- export of $question->qtype type is not supported  -->\n";
+                $expout .= "<!-- export of {$question->qtype} type is not supported  -->\n";
         }
         // Close off div.
         $expout .= "</div>\n\n\n";
@@ -163,7 +163,7 @@ class qformat_xhtml extends qformat_default {
         global $CFG;
 
         // Get css bit.
-        $csslines = file( "$CFG->dirroot/question/format/xhtml/xhtml.css" );
+        $csslines = file( "{$CFG->dirroot}/question/format/xhtml/xhtml.css" );
         $css = implode( ' ', $csslines );
 
         $xp =  "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";

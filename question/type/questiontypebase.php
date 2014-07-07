@@ -417,7 +417,7 @@ class question_type {
         }
 
         if (!empty($result->notice)) {
-            notice($result->notice, "question.php?id=$question->id");
+            notice($result->notice, "question.php?id={$question->id}");
         }
 
         if (!empty($result->noticeyesno)) {
@@ -1181,7 +1181,7 @@ class question_type {
         $expout='';
         foreach ($extraquestionfields as $field) {
             $exportedvalue = $format->xml_escape($question->options->$field);
-            $expout .= "    <$field>{$exportedvalue}</$field>\n";
+            $expout .= "    <{$field}>{$exportedvalue}</{$field}>\n";
         }
 
         $extraanswersfields = $this->extra_answer_fields();

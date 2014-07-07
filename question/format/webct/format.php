@@ -150,7 +150,7 @@ function qformat_webct_convert_formula($formula) {
         }
 
         // Replace it!
-        $formula = "$splits[0]pow($base,$exp)$splits[1]";
+        $formula = "{$splits[0]}pow({$base},{$exp}){$splits[1]}";
     }
 
     // Nothing more is known to need to be converted.
@@ -239,7 +239,7 @@ class qformat_webct extends qformat_default {
                 $dirpath = dirname($path);
                 $filename = basename($path);
                 $newfilename = $this->store_file_for_text_field($data, $this->tempdir, $dirpath, $filename);
-                $text = preg_replace("|$path|", "@@PLUGINFILE@@/" . $newfilename, $text);
+                $text = preg_replace("|{$path}|", "@@PLUGINFILE@@/" . $newfilename, $text);
                 $filepaths[] = $path;
             }
 
@@ -497,7 +497,7 @@ class qformat_webct extends qformat_default {
                             case 'shortanswer':
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = "'$question->name': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
+                                    $errors[] = "'{$question->name}': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
                                             .' '.get_string('fractionsnomax', 'question', $maxfraction);
                                     $questionok = false;
                                 }
@@ -509,7 +509,7 @@ class qformat_webct extends qformat_default {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
+                                        $errors[] = "'{$question->name}': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
                                                 .' '.get_string('fractionsnomax', 'question', $maxfraction);
                                         $questionok = false;
                                     }
@@ -517,7 +517,7 @@ class qformat_webct extends qformat_default {
                                     $totalfraction = round($totalfraction, 2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
+                                        $errors[] = "'{$question->name}': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
                                                 .' '.get_string('fractionsaddwrong', 'question', $totalfraction);
                                         $questionok = false;
                                     }
@@ -527,7 +527,7 @@ class qformat_webct extends qformat_default {
                             case 'calculated':
                                 foreach ($question->answers as $answer) {
                                     if ($formulaerror = qtype_calculated_find_formula_errors($answer)) {
-                                        $warnings[] = "'$question->name': ". $formulaerror;
+                                        $warnings[] = "'{$question->name}': ". $formulaerror;
                                         $questionok = false;
                                     }
                                 }
@@ -687,7 +687,7 @@ class qformat_webct extends qformat_default {
                 continue;
             }
             if (isset($question->qtype ) && 'calculated' == $question->qtype && preg_match(
-                    "~^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)~", $line, $webctoptions)) {
+                    "~^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?({$webctnumberregex})~", $line, $webctoptions)) {
                 $datasetname = preg_replace('/^::/', '', $webctoptions[1]);
                 $datasetvalue = qformat_webct_convert_formula($webctoptions[4]);
                 switch ($webctoptions[2]) {
@@ -803,7 +803,7 @@ class qformat_webct extends qformat_default {
             }
 
             if (isset($question->qtype )&& 'calculated' == $question->qtype
-                    && preg_match("~^:TOL:($webctnumberregex)~i", $line, $webctoptions)) {
+                    && preg_match("~^:TOL:({$webctnumberregex})~i", $line, $webctoptions)) {
                 // We can but hope that this always appear before the TOL property.
                 $question->tolerance[$currentchoice] =
                         qformat_webct_convert_formula($webctoptions[1]);
@@ -858,7 +858,7 @@ class qformat_webct extends qformat_default {
         if (count($errors) > 0) {
             echo '<p>'.get_string('errorsdetected', 'qformat_webct', count($errors)).'</p><ul>';
             foreach ($errors as $error) {
-                echo "<li>$error</li>";
+                echo "<li>{$error}</li>";
             }
             echo '</ul>';
             unset($questions);     // No questions imported.
@@ -867,7 +867,7 @@ class qformat_webct extends qformat_default {
         if (count($warnings) > 0) {
             echo '<p>'.get_string('warningsdetected', 'qformat_webct', count($warnings)).'</p><ul>';
             foreach ($warnings as $warning) {
-                echo "<li>$warning</li>";
+                echo "<li>{$warning}</li>";
             }
             echo '</ul>';
         }

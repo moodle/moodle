@@ -167,12 +167,12 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $mform->setType('nounits', PARAM_INT);
         $mform->setConstants(array('nounits'=>$nounits));
         for ($i = 0; $i < $nounits; $i++) {
-            $mform->addElement('hidden', 'unit'."[$i]",
-                    optional_param("unit[$i]", '', PARAM_NOTAGS));
-            $mform->setType('unit'."[$i]", PARAM_NOTAGS);
-            $mform->addElement('hidden', 'multiplier'."[$i]",
-                    optional_param("multiplier[$i]", '', PARAM_FLOAT));
-            $mform->setType("multiplier[$i]", PARAM_FLOAT);
+            $mform->addElement('hidden', 'unit'."[{$i}]",
+                    optional_param("unit[{$i}]", '', PARAM_NOTAGS));
+            $mform->setType('unit'."[{$i}]", PARAM_NOTAGS);
+            $mform->addElement('hidden', 'multiplier'."[{$i}]",
+                    optional_param("multiplier[{$i}]", '', PARAM_FLOAT));
+            $mform->setType("multiplier[{$i}]", PARAM_FLOAT);
         }
 
         $this->add_combined_feedback_fields(true);
@@ -217,10 +217,10 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $key = 0;
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
-            unset($this->_form->_defaultValues["tolerance[$key]"]);
-            unset($this->_form->_defaultValues["tolerancetype[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerlength[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerformat[$key]"]);
+            unset($this->_form->_defaultValues["tolerance[{$key}]"]);
+            unset($this->_form->_defaultValues["tolerancetype[{$key}]"]);
+            unset($this->_form->_defaultValues["correctanswerlength[{$key}]"]);
+            unset($this->_form->_defaultValues["correctanswerformat[{$key}]"]);
 
             $question->tolerance[$key]           = $answer->tolerance;
             $question->tolerancetype[$key]       = $answer->tolerancetype;
