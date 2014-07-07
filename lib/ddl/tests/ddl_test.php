@@ -509,6 +509,93 @@ class core_ddl_testcase extends database_driver_testcase {
     }
 
     /**
+     * Test if database supports tables with many TEXT fields,
+     * InnoDB is known to failed during data insertion instead
+     * of table creation when text fields contain actual data.
+     */
+    public function test_row_size_limits() {
+
+        $DB = $this->tdb; // Do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        $text = str_repeat('š', 1333);
+
+        $data = new stdClass();
+        $data->name = 'test';
+        $table = new xmldb_table('test_innodb');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        for ($i = 0; $i < 20; $i++) {
+            $table->add_field('text'.$i, XMLDB_TYPE_TEXT, null, null, null, null, null);
+            $data->{'text'.$i} = $text;
+        }
+        $dbman->create_table($table);
+
+        try {
+            $id = $DB->insert_record('test_innodb', $data);
+            $expected = (array)$data;
+            $expected['id'] = (string)$id;
+            $this->assertEquals($expected, (array)$DB->get_record('test_innodb', array('id' => $id)), '', 0, 10, true);
+        } catch (dml_exception $e) {
+            // Give some nice error message when known problematic MySQL with InnoDB detected.
+            if ($DB->get_dbfamily() === 'mysql') {
+                $engine = strtolower($DB->get_dbengine());
+                if ($engine === 'innodb' or $engine === 'xtradb') {
+                    if (!$DB->is_compressed_row_format_supported()) {
+                        $this->fail("Row size limit reached in MySQL using InnoDB, configure server to use innodb_file_format=Barracuda and innodb_file_per_table=1");
+                    }
+                }
+            }
+            throw $e;
+        }
+
+        $dbman->drop_table($table);
+
+        $data = new stdClass();
+        $data->name = 'test';
+        $table = new xmldb_table('test_innodb');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $DB->insert_record('test_innodb', array('name' => 'test'));
+
+        for ($i = 0; $i < 20; $i++) {
+            $field = new xmldb_field('text'.$i, XMLDB_TYPE_TEXT, null, null, null, null, null);
+            $dbman->add_field($table, $field);
+            $data->{'text'.$i} = $text;
+
+            $id = $DB->insert_record('test_innodb', $data);
+            $expected = (array)$data;
+            $expected['id'] = (string)$id;
+            $this->assertEquals($expected, (array)$DB->get_record('test_innodb', array('id' => $id)), '', 0, 10, true);
+        }
+
+        $dbman->drop_table($table);
+
+        // MySQL VARCHAR fields may hit a different 65535 row size limit when creating tables.
+        $data = new stdClass();
+        $data->name = 'test';
+        $table = new xmldb_table('test_innodb');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        for ($i = 0; $i < 15; $i++) {
+            $table->add_field('text'.$i, XMLDB_TYPE_CHAR, '1333', null, null, null, null);
+            $data->{'text'.$i} = $text;
+        }
+        $dbman->create_table($table);
+
+        $id = $DB->insert_record('test_innodb', $data);
+        $expected = (array)$data;
+        $expected['id'] = (string)$id;
+        $this->assertEquals($expected, (array)$DB->get_record('test_innodb', array('id' => $id)), '', 0, 10, true);
+
+        $dbman->drop_table($table);
+    }
+
+    /**
      * Test behaviour of drop_table()
      */
     public function test_drop_table() {
