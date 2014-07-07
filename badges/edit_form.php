@@ -54,7 +54,7 @@ class edit_details_form extends moodleform {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('textarea', 'description', get_string('description', 'badges'), 'wrap="virtual" rows="8" cols="70"');
-        $mform->setType('description', PARAM_CLEANHTML);
+        $mform->setType('description', PARAM_NOTAGS);
         $mform->addRule('description', null, 'required');
 
         $str = $action == 'new' ? get_string('badgeimage', 'badges') : get_string('newimage', 'badges');
