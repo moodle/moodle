@@ -223,8 +223,9 @@ $definitions = array(
         'simpledata' => true
     ),
 
-    // For the function get_suspended_userids() in core_access.
-    'get_suspended_userids' => array(
+    // Caches suspended userids by course.
+    // The key is the courseid, the value is an array of user ids.
+    'suspended_userids' => array(
         'mode' => cache_store::MODE_REQUEST,
         'simplekeys' => true,
         'simpledata' => true,
