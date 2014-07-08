@@ -89,8 +89,8 @@ abstract class mod_quiz_attempts_report_form extends moodleform {
             $gm = html_writer::tag('span',
                     quiz_get_grading_option_name($this->_customdata['quiz']->grademethod),
                     array('class' => 'highlight'));
-            $mform->addElement('advcheckbox', 'onlygraded', get_string('reportshowonly', 'quiz'),
-                    get_string('optonlygradedattempts', 'quiz_overview', $gm));
+            $mform->addElement('advcheckbox', 'onlygraded', '',
+                    get_string('reportshowonlyfinished', 'quiz', $gm));
             $mform->disabledIf('onlygraded', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
             $mform->disabledIf('onlygraded', 'statefinished', 'notchecked');
         }

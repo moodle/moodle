@@ -311,8 +311,9 @@ div.editq div.question div.content .singlequestion a .questiontext {
 #page-mod-quiz-view #page .quizattemptsummary td p {
     margin-top: 0;
 }
-table.quizattemptsummary .bestrow td {
-    background-color: #e8e8e8;
+#page-mod-quiz-view table.quizattemptsummary tr.bestrow td {
+    border-color: #bce8f1;
+    background-color: #d9edf7;
 }
 table.quizattemptsummary .noreviewmessage {
     color: gray;
@@ -347,9 +348,10 @@ table.quizattemptsummary .noreviewmessage {
     display: inline;
 }
 
-.mod-quiz .gradedattempt,
-.mod-quiz tr.gradedattempt td {
-    background-color: #e8e8e8;
+body.path-mod-quiz .gradedattempt,
+body.path-mod-quiz table tbody tr.gradedattempt > td {
+    border-color: #bce8f1;
+    background-color: #d9edf7;
 }
 
 .quizattemptcounts {
@@ -431,8 +433,8 @@ table.quizreviewsummary td.cell {
     background-color: #fcc;
 }
 #page-mod-quiz-report .highlight {
-    border : medium solid yellow;
-    background-color: lightYellow;
+    border: 1px solid #bce8f1;
+    background-color: #d9edf7;
 }
 #page-mod-quiz-report .negcovar {
     border : medium solid pink;
@@ -443,11 +445,8 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-report .gradetheselink {
     font-size: 0.8em;
 }
-#page-mod-quiz-report .mform fieldset {
-    margin: 0;
-}
-#page-mod-quiz-report fieldset.felement.fgroup {
-    margin: 0;
+#page-mod-quiz-report .mform fieldset.fgroup span label {
+    margin-right: 14px;
 }
 #page-mod-quiz-report table th {
     white-space: normal;

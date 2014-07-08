@@ -121,13 +121,6 @@ class quiz_overview_report extends quiz_attempts_report {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
-            if ($this->qmsubselect) {
-                $fields .=
-                    "(CASE " .
-                    "   WHEN {$this->qmsubselect} THEN 1" .
-                    "   ELSE 0 " .
-                    "END) AS gradedattempt, ";
-            }
 
             list($fields, $from, $where, $params) = $table->base_sql($allowed);
 

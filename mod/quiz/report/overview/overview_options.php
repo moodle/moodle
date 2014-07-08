@@ -88,6 +88,10 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     public function resolve_dependencies() {
         parent::resolve_dependencies();
 
+        if ($this->attempts == quiz_attempts_report::ENROLLED_WITHOUT) {
+            $this->onlyregraded = false;
+        }
+
         if (!$this->usercanseegrades) {
             $this->slotmarks = false;
         }
