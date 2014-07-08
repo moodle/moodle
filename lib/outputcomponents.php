@@ -175,6 +175,11 @@ class user_picture implements renderable {
     public $class = 'userpicture';
 
     /**
+     * @var bool Whether to be visible to screen readers.
+     */
+    public $visibletoscreenreaders = true;
+
+    /**
      * User picture constructor.
      *
      * @param stdClass $user user record with at least id, picture, imagealt, firstname and lastname set.
