@@ -14,12 +14,12 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I set the field "menuselectsortby" to "All categories"
     And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
@@ -38,7 +38,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Test category" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -65,7 +65,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Master cat" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -91,7 +91,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Master cat" category in the management category listing
   # Redirect.
     And I should see the "Course categories and courses" management page
@@ -118,7 +118,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect. We should a 1, 1a, 1b, 1c, 2.
     And I should see the "Course categories and courses" management page
@@ -178,7 +178,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page

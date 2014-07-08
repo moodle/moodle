@@ -14,7 +14,7 @@ Feature: Course category management interface performs as expected
     And I should see "Course and category management" in the "h2" "css_element"
     And I should see "Course categories" in the ".view-mode-selector" "css_element"
     And I should see "Course categories" in the "h3" "css_element"
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
 
   @javascript
   Scenario: Test view mode functionality
@@ -27,7 +27,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Course categories" in the ".view-mode-selector" "css_element"
@@ -42,9 +42,9 @@ Feature: Course category management interface performs as expected
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
-    And I should see "Courses" in the "#course-listing h3" "css_element"
+    And I should see "Miscellaneous" in the "#course-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
-    And I should see "Please select a category" in the "#course-listing" "css_element"
+    And I should see "No courses in this category" in the "#course-listing" "css_element"
     And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -94,7 +94,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat 1-1" in the "#course-category-listings ul.ml" "css_element"
@@ -164,7 +164,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat 1-1" in the "#course-category-listings ul.ml" "css_element"
@@ -244,12 +244,12 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I set the field "menuselectsortby" to "All categories"
     And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
@@ -269,7 +269,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Master cat" category in the management category listing
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -297,7 +297,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Cat 1" "link"
   # Redirect.
     And I should see the "Course categories and courses" management page
@@ -339,7 +339,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -522,7 +522,7 @@ Feature: Course category management interface performs as expected
       | CAT1 | Course 5 | Course 5 | C5 |
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -587,7 +587,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -681,7 +681,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     And I click on "edit" action for "Course 1" in management course listing
     # Redirect
@@ -706,7 +706,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat 1-1" in the "#course-category-listings ul.ml" "css_element"
@@ -764,7 +764,7 @@ Feature: Course category management interface performs as expected
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat A (1)" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat B (2)" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat C (1-1)" in the "#course-category-listings ul.ml" "css_element"
