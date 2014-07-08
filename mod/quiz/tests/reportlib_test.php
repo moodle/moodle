@@ -95,16 +95,17 @@ class mod_quiz_reportlib_testcase extends advanced_testcase {
         $fakeattempt->userid = 123;
         $fakeattempt->quiz = 456;
         $fakeattempt->layout = '1,2,0,3,4,0,5';
+        $fakeattempt->state = quiz_attempt::FINISHED;
 
         // We intentionally insert these in a funny order, to test the SQL better.
         // The test data is:
-        // id | quizid | user | attempt | sumgrades
-        // ----------------------------------------
-        // 4  | 456    | 123  | 1       | 30
-        // 2  | 456    | 123  | 2       | 50
-        // 1  | 456    | 123  | 3       | 50
-        // 3  | 456    | 123  | 4       | null
-        // 5  | 456    | 1    | 1       | 100
+        // id | quizid | user | attempt | sumgrades | state
+        // ---------------------------------------------------
+        // 4  | 456    | 123  | 1       | 30        | finished
+        // 2  | 456    | 123  | 2       | 50        | finished
+        // 1  | 456    | 123  | 3       | 50        | finished
+        // 3  | 456    | 123  | 4       | null      | inprogress
+        // 5  | 456    | 1    | 1       | 100       | finished
         // layout is only given because it has a not-null constraint.
         // uniqueid values are meaningless, but that column has a unique constraint.
 
@@ -121,11 +122,13 @@ class mod_quiz_reportlib_testcase extends advanced_testcase {
         $fakeattempt->attempt = 4;
         $fakeattempt->sumgrades = null;
         $fakeattempt->uniqueid = 39;
+        $fakeattempt->state = quiz_attempt::IN_PROGRESS;
         $DB->insert_record('quiz_attempts', $fakeattempt);
 
         $fakeattempt->attempt = 1;
         $fakeattempt->sumgrades = 30;
         $fakeattempt->uniqueid = 52;
+        $fakeattempt->state = quiz_attempt::FINISHED;
         $DB->insert_record('quiz_attempts', $fakeattempt);
 
         $fakeattempt->attempt = 1;
@@ -151,7 +154,7 @@ class mod_quiz_reportlib_testcase extends advanced_testcase {
                 . quiz_report_qm_filter_select($quiz), array(123, 456));
         $this->assertEquals(1, count($lastattempt));
         $lastattempt = reset($lastattempt);
-        $this->assertEquals(4, $lastattempt->attempt);
+        $this->assertEquals(3, $lastattempt->attempt);
 
         $quiz->attempts = 0;
         $quiz->grademethod = QUIZ_GRADEHIGHEST;
