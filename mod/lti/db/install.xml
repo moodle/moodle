@@ -22,7 +22,7 @@
         <FIELD NAME="instructorchoiceallowsetting" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow a tool to store a setting"/>
         <FIELD NAME="instructorcustomparameters" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Additional custom parameters provided by the instructor"/>
         <FIELD NAME="instructorchoiceacceptgrades" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Accept grades from tool"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" DECIMALS="5" COMMENT="Grade scale"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" COMMENT="Grade scale"/>
         <FIELD NAME="launchcontainer" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Launch external tool in a pop-up"/>
         <FIELD NAME="resourcekey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
