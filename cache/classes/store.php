@@ -356,13 +356,13 @@ abstract class cache_store implements cache_store_interface {
      * Initialises a test instance for unit tests.
      *
      * This differs from initialise_test_instance in that it doesn't rely on interacting with the config table.
-     * By default however it calls initialise_test_instance to support backwards compatability.
+     * By default however it calls initialise_test_instance to support backwards compatibility.
      *
      * @since 2.8
      * @param cache_definition $definition
      * @return cache_store|false
      */
     public static function initialise_unit_test_instance(cache_definition $definition) {
-        return self::initialise_test_instance($definition);
+        return static::initialise_test_instance($definition);
     }
 }
