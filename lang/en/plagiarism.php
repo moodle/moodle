@@ -5,4 +5,4 @@ $string['enableplagiarism'] ='Enable plagiarism plugins';
 $string['configenableplagiarism'] = 'This will allow administrators to configure plagiarism plugins (if installed)';
 $string['manageplagiarism'] = 'Manage plagiarism plugins';
 $string['nopluginsinstalled'] = 'No plagiarism plugins are installed.';
-$string['plagiarism'] = 'Plagiarism prevention';
+$string['plagiarism'] = 'Plagiarism';
