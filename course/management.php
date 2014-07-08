@@ -71,7 +71,8 @@ if ($courseid) {
     $courseid = null;
     $category = coursecat::get_default();
     $categoryid = $category->id;
-    $context = $systemcontext;
+    $context = context_coursecat::instance($category->id);
+    $url->param('categoryid', $category->id);
 }
 
 // Check if there is a selected category param, and if there is apply it.
