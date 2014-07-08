@@ -85,6 +85,20 @@ function xmldb_lti_upgrade($oldversion) {
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014060201) {
+
+        // Changing type of field grade on table lti to int.
+        $table = new xmldb_table('lti');
+        $field = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '100',
+                'instructorchoiceacceptgrades');
+
+        // Launch change of type for field grade.
+        $dbman->change_field_type($table, $field);
+
+        // Lti savepoint reached.
+        upgrade_mod_savepoint(true, 2014060201, 'lti');
+    }
+
     return true;
 }
 
