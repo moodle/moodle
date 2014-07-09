@@ -775,7 +775,7 @@ class qformat_xml extends qformat_default {
 
         // Get answers array.
         $answers = $question['#']['answer'];
-        $qo->answers = array();
+        $qo->answer = array();
         $qo->feedback = array();
         $qo->fraction = array();
         $qo->tolerance = array();
@@ -789,7 +789,7 @@ class qformat_xml extends qformat_default {
             if (empty($ans->answer['text'])) {
                 $ans->answer['text'] = '*';
             }
-            $qo->answers[] = $ans->answer;
+            $qo->answer[] = $ans->answer['text'];
             $qo->feedback[] = $ans->feedback;
             $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
             // Fraction as a tag is deprecated.
