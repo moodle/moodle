@@ -131,11 +131,13 @@ class qtype_calculated extends question_type {
 
     public function save_question_options($question) {
         global $CFG, $DB;
+
+        // Make it impossible to save bad formulas anywhere.
+        $this->validate_question_data($question);
+
         // The code is used for calculated, calculatedsimple and calculatedmulti qtypes.
         $context = $question->context;
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
+
         // Calculated options.
         $update = true;
         $options = $DB->get_record('question_calculated_options',
@@ -185,14 +187,7 @@ class qtype_calculated extends question_type {
             $units = $result->units;
         }
 
-        // Insert all the new answers.
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
-        foreach ($question->answers as $key => $answerdata) {
-            if (is_array($answerdata)) {
-                $answerdata = $answerdata['text'];
-            }
+        foreach ($question->answer as $key => $answerdata) {
             if (trim($answerdata) == '') {
                 continue;
             }
@@ -472,6 +467,25 @@ class qtype_calculated extends question_type {
     }
 
     /**
+     * Validate data before save.
+     * @param stdClass $question data from the form / import file.
+     */
+    protected function validate_question_data($question) {
+        $this->validate_text($question->questiontext); // Yes, really no ['text'].
+
+        if (isset($question->generalfeedback['text'])) {
+            $this->validate_text($question->generalfeedback['text']);
+        } else if (isset($question->generalfeedback)) {
+            $this->validate_text($question->generalfeedback); // Because question import is weird.
+        }
+
+        foreach ($question->answer as $key => $answer) {
+            $this->validate_answer($answer);
+            $this->validate_text($question->feedback[$key]['text']);
+        }
+    }
+
+    /**
      * This method prepare the $datasets in a format similar to dadatesetdefinitions_form.php
      * so that they can be saved
      * using the function save_dataset_definitions($form)
@@ -483,13 +497,13 @@ class qtype_calculated extends question_type {
      * @param object $form
      * @param int $questionfromid default = '0'
      */
-    public function preparedatasets($form , $questionfromid = '0') {
+    public function preparedatasets($form, $questionfromid = '0') {
 
         // The dataset names present in the edit_question_form and edit_calculated_form
         // are retrieved.
         $possibledatasets = $this->find_dataset_names($form->questiontext);
         $mandatorydatasets = array();
-        foreach ($form->answers as $key => $answer) {
+        foreach ($form->answer as $key => $answer) {
             $mandatorydatasets += $this->find_dataset_names($answer);
         }
         // If there are identical datasetdefs already saved in the original question
@@ -579,12 +593,6 @@ class qtype_calculated extends question_type {
     public function save_question($question, $form) {
         global $DB;
 
-        if (isset($form->correctfeedback)) {
-            $this->validate_text($form->correctfeedback['text']);
-            $this->validate_text($form->partiallycorrectfeedback['text']);
-            $this->validate_text($form->incorrectfeedback['text']);
-        }
-
         if ($this->wizardpagesnumber() == 1 || $question->qtype == 'calculatedsimple') {
             $question = parent::save_question($question, $form);
             return $question;
@@ -605,14 +613,6 @@ class qtype_calculated extends question_type {
             case '' :
             case 'question': // Coming from the first page, creating the second.
                 if (empty($form->id)) { // or a new question $form->id is empty.
-                    // Make it impossible to save bad formulas anywhere.
-                    $this->validate_text($form->questiontext['text']);
-                    $this->validate_text($form->generalfeedback['text']);
-                    foreach ($form->answer as $key => $answer) {
-                        $this->validate_answer($answer);
-                        $this->validate_text($form->feedback[$key]['text']);
-                    }
-
                     $question = parent::save_question($question, $form);
                     // Prepare the datasets using default $questionfromid.
                     $this->preparedatasets($form);
