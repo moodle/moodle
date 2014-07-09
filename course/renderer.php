@@ -1675,13 +1675,12 @@ class core_course_renderer extends plugin_renderer_base {
         $site = get_site();
         $output = '';
 
-        $this->page->set_button($this->course_search_form('', 'navbar'));
+        if (can_edit_in_category($category)) {
+            // Add 'Manage' button if user has permissions to edit this category.
+            $managebutton = $this->single_button(new moodle_url('/course/management.php'), get_string('managecourses'), 'get');
+            $this->page->set_button($managebutton);
+        }
         if (!$coursecat->id) {
-            if (can_edit_in_category()) {
-                // add 'Manage' button instead of course search form
-                $managebutton = $this->single_button(new moodle_url('/course/management.php'), get_string('managecourses'), 'get');
-                $this->page->set_button($managebutton);
-            }
             if (coursecat::count_all() == 1) {
                 // There exists only one category in the system, do not display link to it
                 $coursecat = coursecat::get_default();
@@ -1745,14 +1744,11 @@ class core_course_renderer extends plugin_renderer_base {
             $catdisplayoptions['viewmoreurl'] = new moodle_url($baseurl, array('browse' => 'categories', 'page' => 1));
         }
         $chelper->set_courses_display_options($coursedisplayoptions)->set_categories_display_options($catdisplayoptions);
-
-        // Display course category tree
+        // Display course category tree.
         $output .= $this->coursecat_tree($chelper, $coursecat);
 
-        // Add course search form (if we are inside category it was already added to the navbar)
-        if (!$coursecat->id) {
-            $output .= $this->course_search_form();
-        }
+        // Add course search form.
+        $output .= $this->course_search_form();
 
         // Add action buttons
         $output .= $this->container_start('buttons');
