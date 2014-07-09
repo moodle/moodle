@@ -346,49 +346,6 @@ class qtype_calculated extends question_type {
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
 
-    public function validate_form($form) {
-        switch($form->wizardpage) {
-            case 'question':
-                $calculatedmessages = array();
-                if (empty($form->name)) {
-                    $calculatedmessages[] = get_string('missingname', 'qtype_calculated');
-                }
-                if (empty($form->questiontext)) {
-                    $calculatedmessages[] = get_string('missingquestiontext', 'qtype_calculated');
-                }
-                // Verify formulas
-                foreach ($form->answers as $key => $answer) {
-                    if ('' === trim($answer)) {
-                        $calculatedmessages[] = get_string(
-                                'missingformula', 'qtype_calculated');
-                    }
-                    if ($formulaerrors = qtype_calculated_find_formula_errors($answer)) {
-                        $calculatedmessages[] = $formulaerrors;
-                    }
-                    if (! isset($form->tolerance[$key])) {
-                        $form->tolerance[$key] = 0.0;
-                    }
-                    if (! is_numeric($form->tolerance[$key])) {
-                        $calculatedmessages[] = get_string(
-                                'tolerancemustbenumeric', 'qtype_calculated');
-                    }
-                }
-
-                if (!empty($calculatedmessages)) {
-                    $errorstring = "The following errors were found:<br />";
-                    foreach ($calculatedmessages as $msg) {
-                        $errorstring .= $msg . '<br />';
-                    }
-                    print_error($errorstring);
-                }
-
-                break;
-            default:
-                return parent::validate_form($form);
-                break;
-        }
-        return true;
-    }
     public function finished_edit_wizard($form) {
         return isset($form->savechanges);
     }
