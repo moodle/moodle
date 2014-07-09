@@ -1063,10 +1063,14 @@ class qtype_calculated extends question_type {
         }
 
         $answers = fullclone($answers);
-        $errors = '';
         $delimiter = ': ';
         $virtualqtype =  $qtypeobj->get_virtual_qtype();
         foreach ($answers as $key => $answer) {
+            $error = qtype_calculated_find_formula_errors($answer->answer);
+            if ($error) {
+                $comment->stranswers[$key] = $error;
+                continue;
+            }
             $formula = $this->substitute_variables($answer->answer, $data);
             $formattedanswer = qtype_calculated_calculate_answer(
                 $answer->answer, $data, $answer->tolerance,
