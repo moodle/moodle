@@ -372,6 +372,7 @@ class qformat_default {
                         $this->category = $newcategory;
                     }
                 }
+                $transaction->allow_commit();
                 continue;
             }
             $question->context = $this->importcontext;
