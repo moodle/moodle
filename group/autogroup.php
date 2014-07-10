@@ -85,7 +85,7 @@ if ($editform->is_cancelled()) {
         default:
             print_error('unknoworder');
     }
-    $users = groups_get_potential_members($data->courseid, $data->roleid, $data->cohortid, $orderby);
+    $users = groups_get_potential_members($data->courseid, $data->roleid, $data->cohortid, $orderby, !empty($data->notingroup));
     $usercnt = count($users);
 
     if ($data->allocateby == 'random') {

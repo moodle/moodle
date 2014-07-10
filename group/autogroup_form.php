@@ -110,6 +110,8 @@ class autogroup_form extends moodleform {
         $mform->addElement('checkbox', 'nosmallgroups', get_string('nosmallgroups', 'group'));
         $mform->disabledIf('nosmallgroups', 'groupby', 'noteq', 'members');
 
+        $mform->addElement('checkbox', 'notingroup', get_string('notingroup', 'group'));
+
         $mform->addElement('header', 'groupinghdr', get_string('grouping', 'group'));
 
         $options = array('0' => get_string('nogrouping', 'group'),
