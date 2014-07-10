@@ -84,14 +84,14 @@ class core_notes_external extends external_api {
 
         // Retrieve all courses.
         $courseids = array();
-        foreach($params['notes'] as $note) {
+        foreach ($params['notes'] as $note) {
             $courseids[] = $note['courseid'];
         }
         $courses = $DB->get_records_list("course", "id", $courseids);
 
         // Retrieve all users of the notes.
         $userids = array();
-        foreach($params['notes'] as $note) {
+        foreach ($params['notes'] as $note) {
             $userids[] = $note['userid'];
         }
         list($sqluserids, $sqlparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid_');
@@ -191,7 +191,7 @@ class core_notes_external extends external_api {
             new external_single_structure(
                 array(
                     'clientnoteid' => new external_value(PARAM_ALPHANUMEXT, 'your own id for the note', VALUE_OPTIONAL),
-                    'noteid' => new external_value(PARAM_INT, 'test this to know if it success: id of the created note when successed, -1 when failed'),
+                    'noteid' => new external_value(PARAM_INT, 'ID of the created note when successful, -1 when failed'),
                     'errormessage' => new external_value(PARAM_TEXT, 'error message - if failed', VALUE_OPTIONAL)
                 )
             )
@@ -241,7 +241,10 @@ class core_notes_external extends external_api {
                 self::validate_context($context);
                 require_capability('moodle/notes:manage', $context);
                 if (!note_delete($note)) {
-                    $warnings[] = array(array('item'=>'note', 'itemid'=>$noteid, 'warningcode'=>'savedfailed', 'message'=>'Note could not be modified'));
+                    $warnings[] = array(array('item' => 'note',
+                                              'itemid' => $noteid,
+                                              'warningcode' => 'savedfailed',
+                                              'message' => 'Note could not be modified'));
                 }
             } else {
                 $warnings[] = array('item'=>'note', 'itemid'=>$noteid, 'warningcode'=>'badid', 'message'=>'Note does not exist');
@@ -307,14 +310,22 @@ class core_notes_external extends external_api {
                 $context = context_course::instance($note->courseid);
                 self::validate_context($context);
                 require_capability('moodle/notes:view', $context);
-                list($gotnote['text'], $gotnote['format']) = external_format_text($note->content, $note->format, $context->id, 'notes', '', '');
+                list($gotnote['text'], $gotnote['format']) = external_format_text($note->content,
+                                                                                  $note->format,
+                                                                                  $context->id,
+                                                                                  'notes',
+                                                                                  '',
+                                                                                  '');
                 $gotnote['noteid'] = $note->id;
                 $gotnote['userid'] = $note->userid;
                 $gotnote['publishstate'] = $note->publishstate;
                 $gotnote['courseid'] = $note->courseid;
                 $resultnotes["notes"][] = $gotnote;
             } else {
-                $resultnotes["warnings"][] = array('item'=>'note', 'itemid'=>$noteid, 'warningcode'=>'badid', 'message'=>'Note does not exist');
+                $resultnotes["warnings"][] = array('item' => 'note',
+                                                   'itemid' => $noteid,
+                                                   'warningcode' => 'badid',
+                                                   'message' => 'Note does not exist');
             }
         }
         return $resultnotes;
@@ -417,14 +428,23 @@ class core_notes_external extends external_api {
                         $dbnote->courseid = SITEID;
                         break;
                     default:
-                        $warnings[] = array('item'=>'note', 'itemid'=>$note["id"], 'warningcode'=>'badparam', 'message'=>'Provided publishstate incorrect');
+                        $warnings[] = array('item' => 'note',
+                                            'itemid' => $note["id"],
+                                            'warningcode' => 'badparam',
+                                            'message' => 'Provided publishstate incorrect');
                         break;
                 }
                 if (!note_save($dbnote)) {
-                    $warnings[] = array('item'=>'note', 'itemid'=>$note["id"], 'warningcode'=>'savedfailed', 'message'=>'Note could not be modified');
+                    $warnings[] = array('item' => 'note',
+                                        'itemid' => $note["id"],
+                                        'warningcode' => 'savedfailed',
+                                        'message' => 'Note could not be modified');
                 }
             } else {
-                $warnings[] = array('item'=>'note', 'itemid'=>$note["id"], 'warningcode'=>'badid', 'message'=>'Note does not exist');
+                $warnings[] = array('item' => 'note',
+                                    'itemid' => $note["id"],
+                                    'warningcode' => 'badid',
+                                    'message' => 'Note does not exist');
             }
         }
         return $warnings;
