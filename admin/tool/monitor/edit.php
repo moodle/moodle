@@ -21,17 +21,13 @@
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require('../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once('locallib.php');
 
 $ruleid = optional_param('ruleid', 0, PARAM_INT);
-$courseid = optional_param('id', 0, PARAM_INT);
+$courseid = optional_param('courseid', 0, PARAM_INT);
 
-$ruledata = new \stdClass();
-
-// Validate course id
+// Validate course id.
 if (empty($courseid)) {
     require_login();
     $context = context_system::instance();
@@ -39,71 +35,63 @@ if (empty($courseid)) {
     $PAGE->set_context($context);
 } else {
     $course = get_course($courseid);
-    $ruledata->courseid = $course->id;
     require_login($course);
     $context = context_course::instance($course->id);
     $coursename = format_string($course->fullname, true, array('context' => $context));
 }
+
+// Check for caps.
 require_capability('tool/monitor:managerules', $context);
-
-// Get rule data to edit form
-if ($ruleid) {
-    $rule = \tool_monitor\rule_manager::get_rule($ruleid);
-
-    $ruledata->ruleid = $rule->id;
-    $ruledata->courseid = $rule->courseid;
-    $ruledata->name = $rule->name;
-    $ruledata->plugin = $rule->plugin;
-    $ruledata->event = $rule->event;
-    $ruledata->description['text'] = $rule->description;
-    $ruledata->rule['frequency'] = $rule->frequency;
-    $ruledata->rule['minutes'] = $rule->minutes;
-    $ruledata->message_template['text'] = $rule->message_template;
-}
 
 // Set up the page.
 $a = new stdClass();
 $a->coursename = $coursename;
 $a->reportname = get_string('pluginname', 'tool_monitor');
 $title = get_string('title', 'tool_monitor', $a);
-$url = new moodle_url("/admin/tool/monitor/edit.php", array('id' => $courseid));
-$indexurl = new moodle_url("/admin/tool/monitor/index.php", array('id' => $courseid));
+$url = new moodle_url("/admin/tool/monitor/edit.php", array('courseid' => $courseid, 'ruleid' => $ruleid));
+$manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->requires->js('/tool/monitor/event.js');
+$PAGE->requires->yui_module('moodle-tool_monitor-dropdown', 'Y.M.tool_monitor.DropDown.init');
 
 // Site level report.
 if (empty($courseid)) {
     admin_externalpage_setup('toolmonitorrules', '', null, '', array('pagelayout' => 'report'));
+} else {
+    // Course level report.
+    $PAGE->navigation->override_active_url($manageurl);
 }
 
-$mform = new tool_monitor\rule_form();
-if ($mformdata = $mform->get_data()) {
-    $ruledata = new \stdClass();
-    $ruledata->courseid = $mformdata->courseid;
-    $ruledata->name = $mformdata->name;
-    $ruledata->plugin = $mformdata->plugin;
-    $ruledata->event = $mformdata->event;
-    $ruledata->description = $mformdata->description['text'];
-    $ruledata->frequency = $mformdata->rule['frequency'];
-    $ruledata->minutes = $mformdata->rule['minutes'];
-    $ruledata->message_template = $mformdata->message_template['text'];
+// Get data ready for mform.
+$eventlist = tool_monitor\eventlist::get_all_eventlist(true);
+$pluginlist = tool_monitor\eventlist::get_plugin_list();
+if (!empty($ruleid)) {
+    $rule = \tool_monitor\rule_manager::get_rule($ruleid)->get_mform_set_data();
+    $rule->minutes = $rule->timewindow / MINSECS;
+} else {
+    $rule = new stdClass();
+}
 
-    if (empty($mformdata->ruleid)) {
-        \tool_monitor\rule_manager::add_rule($ruledata);
+$mform = new tool_monitor\rule_form(null, array('eventlist' => $eventlist, 'pluginlist' => $pluginlist, 'rule' => $rule,
+        'courseid' => $courseid));
+
+if ($mformdata = $mform->get_data()) {
+    $rule = \tool_monitor\rule_manager::clean_ruledata_form($mformdata);
+
+    if (empty($rule->id)) {
+        \tool_monitor\rule_manager::add_rule($rule);
     } else {
-        $ruledata->id = $mformdata->ruleid;
-        \tool_monitor\rule_manager::update_rule($ruledata);
+        \tool_monitor\rule_manager::update_rule($rule);
     }
-    $courseid = $mformdata->courseid;
-    $url = new moodle_url("/admin/tool/monitor/managerules.php", array('id' => $courseid));
-    redirect($url);
+
+    redirect($manageurl);
 } else {
     echo $OUTPUT->header();
-    $mform->set_data($ruledata);
+    $mform->set_data($rule);
     $mform->display();
+    echo $OUTPUT->footer();
 }
-echo $OUTPUT->footer();
+

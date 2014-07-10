@@ -117,7 +117,7 @@ class rule {
                 }
             }
         }
-        $url = new \moodle_url($CFG->wwwroot. '/tool/monitor/index.php', array('id' => $courseid, 'ruleid' => $this->id,
+        $url = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/index.php', array('courseid' => $courseid, 'ruleid' => $this->id,
                 'action' => 'subscribe'));
         return new \single_select($url, 'cmid', $options, '', $nothing = array('' => 'choosedots'));
     }
