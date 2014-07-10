@@ -479,6 +479,16 @@ function scorm_aicc_generate_simple_sco($scorm) {
     return $id;
 }
 
+/**
+ * Sets up $userdata array and default values for AICC package.
+ *
+ * @param stdClass $userdata an empty stdClass variable that should be set up with user values
+ * @param object $scorm package record
+ * @param string $scoid SCO Id
+ * @param string $attempt attempt number for the user
+ * @param string $mode scorm display mode type
+ * @return array The default values that should be used for AICC package
+ */
 function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     global $USER;
     

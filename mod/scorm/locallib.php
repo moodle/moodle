@@ -998,7 +998,7 @@ function scorm_get_count_users($scormid, $groupingid=null) {
  * @param array $userdata User track data
  * @param string $elementname Name of array element to get values for
  * @param array $children list of sub elements of this array element that also need instantiating
- * @return None
+ * @return Javascript array elements
  */
 function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $children) {
     // Reconstitute comments_from_learner and comments_from_lms.
@@ -1938,7 +1938,15 @@ function scorm_check_url($url) {
     return true;
 }
 
-// Helper function.
+/**
+ * Check for a parameter in userdata and return it if it's set
+ * or return the value from $ifempty if its empty
+ *
+ * @param stdClass $userdata Contains user's data
+ * @param string $param parameter that should be checked
+ * @param string $ifempty value to be replaced with if $param is not set
+ * @return string value from $userdata->$param if its not empty, or $ifempty
+ */
 function scorm_isset($userdata, $param, $ifempty = '') {
     if (isset($userdata->$param)) {
         return $userdata->$param;
@@ -1947,6 +1955,16 @@ function scorm_isset($userdata, $param, $ifempty = '') {
     }
 }
 
+/**
+ * Check for a parameter in userdata and return it with or without slashes it it's not empty
+ * or return the value from $ifempty if its empty
+ *
+ * @param stdClass $userdata Contains user's data
+ * @param string $param parameter that should be checked
+ * @param string $ifempty value to be replaced with if $param is not set
+ * @param bool $addslash if True - add slashes, if False - Don't add slash
+ * @return string value from $userdata->$param with or without if its not empty, or $ifempty
+ */
 function scorm_empty($userdata, $param, $ifempty = '', $addslash = false) {
     if (!empty($userdata->$param)) {
         return $addslash ? '\''.$userdata->$param.'\'' : $userdata->$param;

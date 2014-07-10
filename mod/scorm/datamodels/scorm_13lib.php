@@ -1181,6 +1181,16 @@ function scorm_seq_flow ($activity, $direction, $seq, $childrenflag, $userid) {
     }
 }
 
+/**
+ * Sets up $userdata array and default values for SCORM 1.3 .
+ *
+ * @param stdClass $userdata an empty stdClass variable that should be set up with user values
+ * @param object $scorm package record
+ * @param string $scoid SCO Id
+ * @param string $attempt attempt number for the user
+ * @param string $mode scorm display mode type
+ * @return array The default values that should be used for SCORM 1.3 package
+ */
 function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     global $DB, $USER;
 
