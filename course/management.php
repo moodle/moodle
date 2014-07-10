@@ -354,10 +354,14 @@ if ($action !== false && confirm_sesskey()) {
                     // They're not sorting anything.
                     break;
                 }
-                if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
+                if (!in_array($sortcategoriesby, array('idnumber', 'idnumberdesc',
+                                                       'name', 'namedesc'))) {
                     $sortcategoriesby = false;
                 }
-                if (!in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                if (!in_array($sortcoursesby, array('timecreated', 'timecreateddesc',
+                                                    'idnumber', 'idnumberdesc',
+                                                    'fullname', 'fullnamedesc',
+                                                    'shortname', 'shortnamedesc'))) {
                     $sortcoursesby = false;
                 }
 

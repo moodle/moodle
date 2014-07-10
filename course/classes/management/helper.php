@@ -221,12 +221,22 @@ class helper {
             $actions['resortbyname'] = array(
                 'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'name')),
                 'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
-                'string' => new \lang_string('resortsubcategoriesbyname', 'moodle')
+                'string' => new \lang_string('resortsubcategoriesby', 'moodle' , get_string('categoryname'))
+            );
+            $actions['resortbynamedesc'] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'namedesc')),
+                'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
+                'string' => new \lang_string('resortsubcategoriesbyreverse', 'moodle', get_string('categoryname'))
             );
             $actions['resortbyidnumber'] = array(
                 'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'idnumber')),
                 'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
-                'string' => new \lang_string('resortsubcategoriesbyidnumber', 'moodle')
+                'string' => new \lang_string('resortsubcategoriesby', 'moodle', get_string('idnumbercoursecategory'))
+            );
+            $actions['resortbyidnumberdesc'] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'idnumberdesc')),
+                'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
+                'string' => new \lang_string('resortsubcategoriesbyreverse', 'moodle', get_string('idnumbercoursecategory'))
             );
         }
 
