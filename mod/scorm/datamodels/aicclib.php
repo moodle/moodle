@@ -479,7 +479,54 @@ function scorm_aicc_generate_simple_sco($scorm) {
     return $id;
 }
 
-function get_scorm_default ($userdata) {
+function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
+    global $USER;
+    
+    $userdata->student_id = $USER->username;
+    $userdata->student_name = $USER->lastname .', '. $USER->firstname;
+
+    if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
+        foreach ($usertrack as $key => $value) {
+            $userdata->$key = $value;
+        }
+    } else {
+        $userdata->status = '';
+        $userdata->score_raw = '';
+    }
+
+    if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
+        foreach ($scodatas as $key => $value) {
+            $userdata->$key = $value;
+        }
+    } else {
+        print_error('cannotfindsco', 'scorm');
+    }
+    if (!$sco = scorm_get_sco($scoid)) {
+        print_error('cannotfindsco', 'scorm');
+    }
+
+    $userdata->mode = 'normal';
+    if (!empty($mode)) {
+        $userdata->mode = $mode;
+    }
+    if ($userdata->mode == 'normal') {
+        $userdata->credit = 'credit';
+    } else {
+        $userdata->credit = 'no-credit';
+    }
+
+    if (isset($userdata->status)) {
+        if ($userdata->status == '') {
+            $userdata->entry = 'ab-initio';
+        } else {
+            if (isset($userdata->{'cmi.core.exit'}) && ($userdata->{'cmi.core.exit'} == 'suspend')) {
+                $userdata->entry = 'resume';
+            } else {
+                $userdata->entry = '';
+            }
+        }
+    }
+
     $def = array();
     $def['cmi.core.student_id'] = $userdata->student_id;
     $def['cmi.core.student_name'] = $userdata->student_name;

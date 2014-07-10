@@ -16,43 +16,26 @@
 
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
-if (isset($userdata->status)) {
-    if ($userdata->status == '') {
-        $userdata->entry = 'ab-initio';
-    } else {
-        if (isset($userdata->{'cmi.core.exit'}) && ($userdata->{'cmi.core.exit'} == 'suspend')) {
-            $userdata->entry = 'resume';
-        } else {
-            $userdata->entry = '';
-        }
-    }
-}
+$userdata = new stdClass();
+$def = get_scorm_default($userdata, $scorm, $scoid, $attempt, $mode);
+
 if (!isset($currentorg)) {
     $currentorg = '';
 }
 
-// If SCORM 1.2 standard mode is disabled allow higher datamodel limits.
-if (intval(get_config("scorm", "scorm12standard"))) {
-    $cmistring256 = '^[\\u0000-\\uFFFF]{0,255}$';
-    $cmistring4096 = '^[\\u0000-\\uFFFF]{0,4096}$';
-} else {
-    $cmistring256 = '^[\\u0000-\\uFFFF]{0,64000}$';
-    $cmistring4096 = $cmistring256;
-}
-
-// Set some vars to use as default values.
-$def = get_scorm_default($userdata);
-
-// reconstitute objectives
+// reconstitute objectives, comments_from_learner and comments_from_lms
 $cmiobj = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
 $cmiint = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.interactions', array('objectives', 'correct_responses'));
+$cmicommentsuser = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.comments_from_learner', array());
+$cmicommentslms = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.comments_from_lms', array());
 
-$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, $cmistring256, $cmistring4096,
+$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, $cmicommentsuser, $cmicommentslms,
                                                         scorm_debugging($scorm), $scorm->auto, $scorm->id, $CFG->wwwroot,
                                                         sesskey(), $scoid, $attempt, $mode, $id, $currentorg));
+
 
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {
     $PAGE->requires->js($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php', true);
-    echo html_writer::script('AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);');
+    echo html_writer::script('AppendToLog("Moodle SCORM 1.3 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);');
 }

@@ -1181,7 +1181,72 @@ function scorm_seq_flow ($activity, $direction, $seq, $childrenflag, $userid) {
     }
 }
 
-function get_scorm_default ($userdata) {
+function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
+    global $DB, $USER;
+
+    $userdata->student_id = $USER->username;
+    $userdata->student_name = $USER->lastname .', '. $USER->firstname;
+
+    if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
+        // According to SCORM 2004(RTE V1, 4.2.8), only cmi.exit==suspend should allow previous datamodel elements on re-launch.
+        if (isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} == 'suspend')) {
+            foreach ($usertrack as $key => $value) {
+                $userdata->$key = $value;
+            }
+        } else {
+            $userdata->status = '';
+            $userdata->score_raw = '';
+        }
+    } else {
+        $userdata->status = '';
+        $userdata->score_raw = '';
+    }
+
+    if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
+        foreach ($scodatas as $key => $value) {
+            $userdata->$key = $value;
+        }
+    } else {
+        print_error('cannotfindsco', 'scorm');
+    }
+    if (!$sco = scorm_get_sco($scoid)) {
+        print_error('cannotfindsco', 'scorm');
+    }
+
+    if (isset($userdata->status)) {
+        if (!isset($userdata->{'cmi.exit'}) || $userdata->{'cmi.exit'} == 'time-out' || $userdata->{'cmi.exit'} == 'normal') {
+                $userdata->entry = 'ab-initio';
+        } else {
+            if (isset($userdata->{'cmi.exit'}) && ($userdata->{'cmi.exit'} == 'suspend' || $userdata->{'cmi.exit'} == 'logout')) {
+                $userdata->entry = 'resume';
+            } else {
+                $userdata->entry = '';
+            }
+        }
+    }
+    
+    $userdata->mode = 'normal';
+    if (!empty($mode)) {
+        $userdata->mode = $mode;
+    }
+    if ($userdata->mode == 'normal') {
+        $userdata->credit = 'credit';
+    } else {
+        $userdata->credit = 'no-credit';
+    }
+
+    $objectives = $DB->get_records('scorm_seq_objective', array('scoid' => $scoid));
+    $index = 0;
+    foreach ($objectives as $objective) {
+        if (!empty($objective->minnormalizedmeasure)) {
+            $userdata->{'cmi.scaled_passing_score'} = $objective->minnormalizedmeasure;
+        }
+        if (!empty($objective->objectiveid)) {
+            $userdata->{'cmi.objectives.N'.$index.'.id'} = $objective->objectiveid;
+            $index++;
+        }
+    }
+
     $def = array();
     $def['cmi.learner_id'] = $userdata->student_id;
     $def['cmi.learner_name'] = $userdata->student_name;

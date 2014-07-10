@@ -27,6 +27,11 @@ mod_scorm_activate_item = null;
 mod_scorm_parse_toc_tree = null;
 scorm_layout_widget = null;
 
+function underscore(str) {
+    str = String(str).replace(/.N/g,".");
+    return str.replace(/\./g,"__");
+}
+
 M.mod_scorm = {};
 
 M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, hide_toc, collapsetocwinsize, toc_title, window_name, launch_sco, scoes_nav) {
@@ -137,18 +142,6 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             var el_old_api = document.getElementById('scormapi123');
             if (el_old_api) {
                 el_old_api.parentNode.removeChild(el_old_api);
-            }
-
-            if (node.title) {
-                var el_scorm_api = document.getElementById("external-scormapi");
-                el_scorm_api.parentNode.removeChild(el_scorm_api);
-                el_scorm_api = document.createElement('script');
-                el_scorm_api.setAttribute('id','external-scormapi');
-                el_scorm_api.setAttribute('type','text/javascript');
-                var pel_scorm_api = document.getElementById('scormapi-parent');
-                pel_scorm_api.appendChild(el_scorm_api);
-                var api_url = M.cfg.wwwroot + '/mod/scorm/loaddatamodel.php?' + node.title;
-                document.getElementById('external-scormapi').src = api_url;
             }
 
             var content = Y.one('#scorm_content');

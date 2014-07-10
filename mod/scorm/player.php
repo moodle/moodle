@@ -254,10 +254,10 @@ if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");
 }
 
-if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
-    include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
+if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.php')) {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.php');
 } else {
-    include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.php');
 }
 
 // Add the checknet system to keep checking for a connection.
@@ -266,3 +266,6 @@ $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', arra
     'message' => array('networkdropped', 'mod_scorm'),
 )));
 echo $OUTPUT->footer();
+
+// Set the start time of this SCO.
+scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, 'x.start.time', time());

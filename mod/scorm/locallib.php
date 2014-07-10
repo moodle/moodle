@@ -1033,8 +1033,8 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
             preg_match('/\_(\d+)\./', $element, $matches);
         }
         if (count($matches) > 0 && $current != $matches[1]) {
-            if ($count_sub > 0) {
-                $return .= '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+            if ($countsub > 0) {
+                $return .= '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
             }
             $current = $matches[1];
             $count++;
@@ -1061,9 +1061,9 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
         }
 
         // Check the sub element type.
-        if (count($matches) > 0 && $current_subelement != $matches[1]) {
-            if ($count_sub > 0) {
-                $return .= '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+        if (count($matches) > 0 && $currentsubelement != $matches[1]) {
+            if ($countsub > 0) {
+                $return .= '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
             }
             $currentsubelement = $matches[1];
             $currentsub = '';
@@ -1084,11 +1084,11 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
 
         $return .= '    '.$element.' = \''.$value."';\n";
     }
-    if ($count_sub > 0) {
-        $return .= '    '.$element_name.$scormseperator.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+    if ($countsub > 0) {
+        $return .= '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
     }
     if ($count > 0) {
-        $return .= '    '.$element_name.'._count = '.$count.";\n";
+        $return .= '    '.$elementname.'._count = '.$count.";\n";
     }
     return $return;
 }

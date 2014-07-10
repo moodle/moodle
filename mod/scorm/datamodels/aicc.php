@@ -14,33 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-if (isset($userdata->status)) {
-    if ($userdata->status == '') {
-        $userdata->entry = 'ab-initio';
-    } else {
-        if (isset($userdata->{'cmi.core.exit'}) && ($userdata->{'cmi.core.exit'} == 'suspend')) {
-            $userdata->entry = 'resume';
-        } else {
-            $userdata->entry = '';
-        }
-    }
-}
+require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+
+$userdata = new stdClass();
+$def = get_scorm_default($userdata, $scorm, $scoid, $attempt, $mode);
+
 if (!isset($currentorg)) {
     $currentorg = '';
 }
 
-$def = get_scorm_default($userdata);
-
 $cmiobj = '';
-$current_objective = '';
+$currentobj = '';
 $count = 0;
-$objectives = '';
 foreach ($userdata as $element => $value) {
     if (substr($element, 0, 14) == 'cmi.objectives') {
         $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
         preg_match('/\_(\d+)\./', $element, $matches);
-        if (count($matches) > 0 && $current_objective != $matches[1]) {
-            $current_objective = $matches[1];
+        if (count($matches) > 0 && $currentobj != $matches[1]) {
+            $currentobj = $matches[1];
             $count++;
             $end = strpos($element, $matches[1])+strlen($matches[1]);
             $subelement = substr($element, 0, $end);
@@ -58,4 +49,5 @@ if ($count > 0) {
     $cmiobj .= '    cmi.objectives._count = '.$count.";\n";
 }
 
-$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $scorm->auto, $CFG->wwwroot, $scorm->id, $scoid, $attempt, $mode, $currentorg, sesskey(), $id);
+$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $scorm->auto, $CFG->wwwroot, $scorm->id, $scoid, $attempt,
+                                                         $mode, $currentorg, sesskey(), $id));
