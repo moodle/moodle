@@ -342,6 +342,10 @@ class qtype_calculated_variable_substituter {
      * @return float the computed result.
      */
     public function calculate($expression) {
+        // Make sure no malicious code is present in the expression. Refer MDL-46148 for details.
+        if ($error = qtype_calculated_find_formula_errors($expression)) {
+            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $error);
+        }
         return $this->calculate_raw($this->substitute_values_for_eval($expression));
     }
 
