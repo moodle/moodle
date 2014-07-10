@@ -77,6 +77,10 @@ $mform = new gradereport_history_filter_form(null, $params);
 $filters = array();
 if ($data = $mform->get_data()) {
     $filters = (array)$data;
+
+    if (!empty($filters['datetill'])) {
+        $filters['datetill'] += DAYSECS - 1; // Set to end of the chosen day.
+    }
 } else {
     $filters = array(
         'id' => $courseid,
@@ -88,9 +92,8 @@ if ($data = $mform->get_data()) {
         'revisedonly' => optional_param('revisedonly', 0, PARAM_INT),
     );
 }
-if (!empty($filters['datetill'])) {
-    $filters['datetill'] += DAYSECS - 1; // Set to end of the chosen day.
-}
+
+
 
 $report = new grade_report_history($courseid, $gpr, $context, $filters, $page, $sortitemid);
 
@@ -123,7 +126,7 @@ $reportname = $output->report_title($report->get_selected_users());
 // Print header.
 print_grade_page_head($COURSE->id, 'report', 'history', $reportname, false, '');
 
-if (!empty($report->perpage)) {
+if (!empty($report->perpage) && $report->perpage < $report->numrows) {
     echo $OUTPUT->paging_bar($numrows, $report->page, $report->perpage, $report->pbarurl);
 }
 
@@ -131,7 +134,7 @@ $mform->display();
 echo $historytable;
 
 // Prints paging bar at bottom for large pages.
-if (!empty($report->perpage) && $report->perpage >= 20) {
+if (!empty($report->perpage) && $report->perpage < $report->numrows) {
     echo $OUTPUT->paging_bar($numrows, $report->page, $report->perpage, $report->pbarurl);
 }
 echo $OUTPUT->footer();

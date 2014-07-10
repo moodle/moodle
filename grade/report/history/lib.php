@@ -37,8 +37,22 @@ class grade_report_history extends grade_report {
     private $history;
     private $itemidmap = array();
 
+    /**
+     * Current page (for paging).
+     * @var int $page
+     */
     public $page = 0;
+
+    /**
+     * Number of history rows per page.
+     * @var string $perpage
+     */
     public $perpage = 50;
+
+    /**
+     * Total number of history rows.
+     * @var string $numrows
+     */
     public $numrows = 0;
 
     /**
@@ -88,6 +102,7 @@ class grade_report_history extends grade_report {
         unset($urlparams['submitbutton']);
         unset($urlparams['userfullnames']);
         $this->pbarurl = new moodle_url('/grade/report/history/index.php', $urlparams);
+        $this->perpage = $this->get_pref('historyperpage');
 
         $this->setup_sortitemid();
     }
@@ -100,10 +115,33 @@ class grade_report_history extends grade_report {
 
         $coursecontext = $this->context->get_course_context(true);
 
-        $fields = 'ggh.*, gi.itemname, gi.itemtype, gi.itemmodule, gi.iteminstance, gi.itemnumber';
+        $fields = 'ggh.timemodified, ggh.itemid, ggh.userid, ggh.finalgrade, ggh.usermodified,
+                   ggh.source, ggh.overridden, ggh.locked, ggh.excluded, ggh.feedback,
+                   gi.itemtype, gi.itemmodule, gi.iteminstance, gi.itemnumber';
 
-        $select = $count ? 'COUNT(1)' : $fields;
-        $order = $count ? '' : 'ORDER BY ggh.id ASC';
+        if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname' || $this->sortitemid == 'username' || $this->sortitemid == 'email') {
+            $sortitemid = 'u.' . $this->sortitemid;
+            $fields .= ', u.' . $this->sortitemid;
+        } else if ($this->sortitemid == 'grader') {
+            $sortitemid = 'ug.firstname, ug.lastname';
+            $fields .= ', ug.firstname, ug.lastname';
+        } else {
+            $sortitemid = $this->sortitemid;
+        }
+
+        if (!$count) {
+            // Max removes duplicates. Aliased and conditional fields added here.
+            $select = 'MAX(ggh.id) AS id, ' . $fields . ',
+                       ggh2.finalgrade AS prevgrade,
+                       CASE WHEN gi.itemname IS NULL THEN gi.itemtype ELSE gi.itemname END AS itemname';
+        } else {
+            $select = 'COUNT(1)';
+        }
+
+        // Group by removes duplicates, non-aliased fields added here.
+        $groupby = 'GROUP BY '.$fields. ', ggh2.finalgrade,  gi.itemname';
+
+        $order = $count ? '' : 'ORDER BY ' . $sortitemid . ' ' . $this->sortorder;
         $params = array(
             'courseid' => $coursecontext->instanceid,
         );
@@ -118,16 +156,43 @@ class grade_report_history extends grade_report {
             $filter .= " AND ggh.userid $insql";
             $params += $plist;
         }
+        if (!empty($this->filters['datefrom'])) {
+            $filter .= " AND ggh.timemodified >= :datefrom";
+            $params += array('datefrom' => $this->filters['datefrom']);
+        }
+        if (!empty($this->filters['datetill'])) {
+            $filter .= " AND ggh.timemodified <= :datetill";
+            $params += array('datetill' => $this->filters['datetill']);
+        }
+        if (!empty($this->filters['grader'])) {
+            $filter .= " AND ggh.usermodified = :grader";
+            $params += array('grader' => $this->filters['grader']);
+        }
+        if (!empty($this->filters['revisedonly'])) {
+            $filter .= " AND (ggh.finalgrade != ggh2.finalgrade
+                             OR (ggh2.finalgrade IS NULL AND ggh.finalgrade IS NOT NULL)
+                             OR (ggh2.finalgrade IS NOT NULL AND ggh.finalgrade IS NULL))";
+        }
 
         $sql = "SELECT $select
                 FROM {grade_grades_history} ggh
                 JOIN {grade_items} gi ON gi.id = ggh.itemid
+                LEFT JOIN {grade_grades_history} ggh2 ON ggh2.id = (SELECT MAX(h.id)
+                                                                    FROM {grade_grades_history} h
+                                                                    WHERE h.itemid = ggh.itemid
+                                                                        AND h.userid = ggh.userid
+                                                                        AND (h.id < ggh.id))
+                JOIN {user} u ON u.id = ggh.userid
+                JOIN {user} ug ON ug.id = ggh.usermodified
                 WHERE gi.courseid = :courseid $filter
+                $groupby
                 $order";
         if ($count) {
-            return $DB->count_records_sql($sql, $params);
+            $countsql = "SELECT COUNT(1) FROM ($sql) res";
+            return $DB->count_records_sql($countsql, $params);
         }
-        if (!$this->history = $DB->get_records_sql($sql, $params)) {
+
+        if (!$this->history = $DB->get_records_sql($sql, $params, $this->perpage * $this->page, $this->perpage)) {
             return $this->history;
         }
 
@@ -137,71 +202,12 @@ class grade_report_history extends grade_report {
                 $modifiers[$record->usermodified] = true;
             }
             $this->itemidmap[$record->itemid][$record->userid][] = $record->id;
-
-            $record->display = true;
-            if (!empty($this->filters['datefrom']) && $record->timemodified < $this->filters['datefrom']) {
-                $record->display = false;
-            }
-            if (!empty($this->filters['datetill']) && $record->timemodified > $this->filters['datetill']) {
-                $record->display = false;
-            }
-            if (!empty($this->filters['grader']) && $record->usermodified != $this->filters['grader']) {
-                $record->display = false;
-            }
         }
         if ($users = $DB->get_records_list('user', 'id', array_keys($modifiers), '', 'id,username,firstname,lastname,email')) {
             $this->users += $users;
         }
 
         return $this->history;
-    }
-
-    protected function sort_table(&$rows) {
-        $sort = $this->sortorder == 'ASC' ? SORT_ASC : SORT_DESC;
-        if ($this->sortitemid == 'datetime') {
-            if ($this->sortorder == 'ASC') {
-                return;
-            }
-            krsort($rows);
-            return;
-        }
-
-        if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
-            $values = array();
-            foreach ($rows as $row) {
-                $values[] = $row->cells[$this->fieldorder['studentname']]->attributes["data-$this->sortitemid"];
-            }
-            array_multisort($values, $sort, $rows);
-            return;
-        }
-
-        $values = array();
-        foreach ($rows as $row) {
-            $values[] = $row->cells[$this->fieldorder[$this->sortitemid]];
-        }
-        array_multisort($values, $sort, $rows);
-    }
-
-    /**
-     * @param int $id   The id in the history table you want to find the
-     *                  history of.
-     */
-    protected function get_previous_record($id) {
-        if (!isset($this->itemidmap[$this->history[$id]->itemid][$this->history[$id]->userid])) {
-            return null;
-        }
-        $list = $this->itemidmap[$this->history[$id]->itemid][$this->history[$id]->userid];
-        $prev = false;
-        foreach ($list as $value) {
-            if ($value == $id) {
-                if ($prev) {
-                    return $this->history[$prev];
-                }
-                return null;
-            }
-            $prev = $value;
-        }
-        return null;
     }
 
     public function get_table_data() {
@@ -364,23 +370,13 @@ class grade_report_history extends grade_report {
 
         $gitems = grade_item::fetch_all(array('courseid' => $this->context->instanceid));
         foreach ($data as $record) {
-            if (!$record->display) {
-                continue;
-            }
-            $previous = $this->get_previous_record($record->id);
-            $previousgrade = is_null($previous) ? '' : $previous->finalgrade;
-
-            if ($this->filters['revisedonly'] && $previousgrade == $record->finalgrade) {
-                continue;
-            }
-
             $row = new html_table_row();
             $row->cells[] = userdate($record->timemodified, '%d/%m/%Y %H:%M');
 
             $row->cells[] = $gitems[$record->itemid]->get_name();
             $row->cells[] = $this->users[$record->userid]->username;
 
-            $row->cells[] = $previousgrade;
+            $row->cells[] = $record->prevgrade;
             $row->cells[] = $record->finalgrade;
             foreach ($extrafields as $field) {
                 // BASE-445 - do not show an additional username column
@@ -407,26 +403,11 @@ class grade_report_history extends grade_report {
             $row->cells[] = $record->feedback;
             $rows[] = $row;
         }
-
-        $this->sort_table($rows);
-
-        // Prune duplicate rows. Gradebook likes to have several history rows
-        // for the same action.
-        $lastrow = null;
-        foreach ($rows as $key => $row) {
-            if ($lastrow == $row) {
-                unset($rows[$key]);
-            }
-            $lastrow = $row;
-        }
-        $this->numrows = count($rows);
-        array_unshift($rows, null);
-        $rows = array_slice($rows, $this->perpage * $this->page, $this->perpage + 1);
-        $fulltable->data += $rows;
-        $html .= html_writer::table($fulltable);
-
         $this->tabledata = $rows;
 
+        $this->numrows = $this->get_history(true);
+        $fulltable->data = array_merge($fulltable->data, $rows);
+        $html .= html_writer::table($fulltable);
         return $OUTPUT->container($html, 'gradeparent');
     }
 
@@ -440,7 +421,7 @@ class grade_report_history extends grade_report {
         // TODO: build list of fields, then sort at end.
 
         // Sortable items.
-        $items = array('datetime', 'gradeitem', 'username');
+        $items = array('timemodified', 'itemname', 'username', 'prevgrade', 'finalgrade');
         foreach ($items as $item) {
             $header = new html_table_cell();
             $header->attributes['class'] = 'header';
@@ -448,18 +429,6 @@ class grade_report_history extends grade_report {
             $header->header = true;
             $header->id = $item.'header';
             $header->text = $arrows[$item];
-            $headerrow->cells[] = $header;
-        }
-
-        // Non-sorting items.
-        $items = array('gradeold', 'gradenew');
-        foreach ($items as $item) {
-            $header = new html_table_cell();
-            $header->attributes['class'] = 'header';
-            $header->scope = 'col';
-            $header->header = true;
-            $header->id = $item.'header';
-            $header->text = $this->get_lang_string($item, 'gradereport_history');
             $headerrow->cells[] = $header;
         }
 
@@ -479,7 +448,7 @@ class grade_report_history extends grade_report {
         }
 
         // More sortable items.
-        $items = array('studentname', 'grader');
+        $items = array('studentname', 'grader', 'source', 'overridden', 'locked', 'excluded', 'feedback');
         foreach ($items as $item) {
             $header = new html_table_cell();
             $header->attributes['class'] = 'header';
@@ -487,18 +456,6 @@ class grade_report_history extends grade_report {
             $header->header = true;
             $header->id = $item.'header';
             $header->text = $arrows[$item];
-            $headerrow->cells[] = $header;
-        }
-
-        // Non-sorting items.
-        $items = array('source', 'overridden', 'locked', 'excluded', 'feedbacktext');
-        foreach ($items as $item) {
-            $header = new html_table_cell();
-            $header->attributes['class'] = 'header';
-            $header->scope = 'col';
-            $header->header = true;
-            $header->id = $item.'header';
-            $header->text = html_writer::tag('p', $this->get_lang_string($item, 'gradereport_history'));
             $headerrow->cells[] = $header;
         }
 
@@ -554,19 +511,35 @@ class grade_report_history extends grade_report {
         $strdatetime  = $this->get_lang_string('datetime', 'gradereport_history');
         $strgradeitem = $this->get_lang_string('gradeitem', 'grades');
         $strgrader    = $this->get_lang_string('grader', 'gradereport_history');
+        $strgradeold  = $this->get_lang_string('gradeold', 'gradereport_history');
+        $strgradenew  = $this->get_lang_string('gradenew', 'gradereport_history');
+        $strsource    = $this->get_lang_string('source', 'gradereport_history');
+        $stroverride  = $this->get_lang_string('overridden', 'gradereport_history');
+        $strlocked    = $this->get_lang_string('locked', 'gradereport_history');
+        $strexcluded  = $this->get_lang_string('excluded', 'gradereport_history');
+        $strfeedback  = $this->get_lang_string('feedbacktext', 'gradereport_history');
+
 
         $iconasc = $OUTPUT->pix_icon('t/sort_asc', $strsortasc, '', array('class' => 'iconsmall sorticon'));
         $icondesc = $OUTPUT->pix_icon('t/sort_desc', $strsortdesc, '', array('class' => 'iconsmall sorticon'));
 
-        $firstlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid' => 'firstname')), $strfirstname);
-        $lastlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid' => 'lastname')), $strlastname);
+        $firstlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'firstname')), $strfirstname);
+        $lastlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'lastname')), $strlastname);
 
-        $datetimelink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid' => 'datetime')), $strdatetime);
-        $usernamelink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid' => 'username')), $strusername);
-        $gradeitemlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid' => 'gradeitem')), $strgradeitem);
-        $graderlink = html_writer::link(new moodle_url($this->baseurl, array('sortitemid' => 'grader')), $strgrader);
+        $timemodifiedlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'timemodified')), $strdatetime);
+        $usernamelink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'username')), $strusername);
+        $itemnamelink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'itemname')), $strgradeitem);
+        $graderlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'grader')), $strgrader);
+        $finalgradelink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'finalgrade')), $strgradenew);
+        $prevgradelink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'prevgrade')), $strgradeold);
+        $sourcelink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'source')), $strsource);
+        $overriddenlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'overridden')), $stroverride);
+        $lockedlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'locked')), $strlocked);
+        $excludedlink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'excluded')), $strexcluded);
+        $feedbacklink = html_writer::link(new moodle_url($this->pbarurl, array('sortitemid' => 'feedback')), $strfeedback);
 
-        $stditems = array('datetime', 'username', 'gradeitem', 'grader');
+        $stditems = array('timemodified', 'username', 'itemname', 'grader', 'prevgrade', 'finalgrade',
+                          'source', 'overridden', 'locked', 'excluded', 'feedback');
         foreach ($stditems as $item) {
             $arrows[$item] = ${"{$item}link"};
             if ($this->sortitemid === $item) {
@@ -599,7 +572,7 @@ class grade_report_history extends grade_report {
         }
 
         foreach ($extrafields as $field) {
-            $fieldlink = html_writer::link(new moodle_url($this->baseurl,
+            $fieldlink = html_writer::link(new moodle_url($this->pbarurl,
                     array('sortitemid' => $field)), get_user_field_name($field));
             $arrows[$field] = $fieldlink;
 

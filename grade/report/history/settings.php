@@ -15,16 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the grade history
+ * Defines site config settings for the grade history report
  *
  * @package    gradereport_history
- * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
- * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @copyright  2014 NetSpot Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2014070900;
-$plugin->requires  = 2013051402;
-$plugin->component = 'gradereport_history';
+if ($ADMIN->fulltree) {
+
+    /// Add settings for this module to the $settings object (it's already defined)
+    $settings->add(new admin_setting_configtext('grade_report_historyperpage', get_string('historyperpage', 'gradereport_history'),
+                                            get_string('historyperpage_help', 'gradereport_history'), 50));
+
+}
