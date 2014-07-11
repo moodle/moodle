@@ -42,7 +42,10 @@ class qtype_calculatedmulti extends qtype_calculated {
         global $CFG, $DB;
         $context = $question->context;
 
-        // Calculated options
+        // Make it impossible to save bad formulas anywhere.
+        $this->validate_question_data($question);
+
+        // Calculated options.
         $update = true;
         $options = $DB->get_record('question_calculated_options',
                 array('question' => $question->id));
@@ -71,11 +74,8 @@ class qtype_calculatedmulti extends qtype_calculated {
             $oldoptions = array();
         }
 
-        // Insert all the new answers
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
-        foreach ($question->answers as $key => $answerdata) {
+        // Insert all the new answers.
+        foreach ($question->answer as $key => $answerdata) {
             if (is_array($answerdata)) {
                 $answerdata = $answerdata['text'];
             }
@@ -154,6 +154,20 @@ class qtype_calculatedmulti extends qtype_calculated {
         }
 
         return true;
+    }
+
+    protected function validate_answer($answer) {
+        $error = qtype_calculated_find_formula_errors_in_text($answer);
+        if ($error) {
+            throw new coding_exception($error);
+        }
+    }
+
+    protected function validate_question_data($question) {
+        parent::validate_question_data($question);
+        $this->validate_text($question->correctfeedback['text']);
+        $this->validate_text($question->partiallycorrectfeedback['text']);
+        $this->validate_text($question->incorrectfeedback['text']);
     }
 
     protected function make_question_instance($questiondata) {

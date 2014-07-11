@@ -845,7 +845,7 @@ class gradingform_guide_instance extends gradingform_instance {
             if (!empty($this->validationerrors)) {
                 foreach ($this->validationerrors as $id => $err) {
                     $a = new stdClass();
-                    $a->criterianame = $criteria[$id]['shortname'];
+                    $a->criterianame = s($criteria[$id]['shortname']);
                     $a->maxscore = $criteria[$id]['maxscore'];
                     $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
                         array('class' => 'gradingform_guide-error'));

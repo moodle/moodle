@@ -95,6 +95,25 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     }
 
     /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param string $event Name of event
+     * @param mixed $arg event arguments
+     * @param object $caller calling object
+     * @return bool
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        switch ($event) {
+            case 'createElement':
+                $caller->setType($arg[0] . '[format]', PARAM_ALPHANUM);
+                $caller->setType($arg[0] . '[itemid]', PARAM_INT);
+                break;
+        }
+        return parent::onQuickFormEvent($event, $arg, $caller);
+    }
+
+    /**
      * Sets name of editor
      *
      * @param string $name name of the editor
@@ -403,7 +422,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         if (!during_initial_install() && empty($CFG->adminsetuppending)) {
             // 0 means no files, -1 unlimited
             if ($maxfiles != 0 ) {
-                $str .= '<input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" />';
+                $str .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $elname.'[itemid]',
+                        'value' => $draftitemid));
 
                 // used by non js editor only
                 $editorurl = new moodle_url("$CFG->wwwroot/repository/draftfiles_manager.php", array(

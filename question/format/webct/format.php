@@ -606,12 +606,9 @@ class qformat_webct extends qformat_default {
                 // Calculated Question.
                 $question = $this->defaultquestion();
                 $question->qtype = 'calculated';
-                $question->answers = array(); // No problem as they go as :FORMULA: from webct.
+                $question->answer = array(); // No problem as they go as :FORMULA: from webct.
                 $question->units = array();
                 $question->dataset = array();
-
-                // To make us pass the end-of-question sanity checks.
-                $question->answer = array('dummy');
                 $question->fraction = array('1.0');
                 $question->feedback = array();
 
@@ -736,7 +733,7 @@ class qformat_webct extends qformat_default {
             if (preg_match('~^:FORMULA:(.*)~i', $line, $webctoptions)) {
                 // Answer for a calculated question.
                 ++$currentchoice;
-                $question->answers[$currentchoice] =
+                $question->answer[$currentchoice] =
                         qformat_webct_convert_formula($webctoptions[1]);
 
                 // Default settings.

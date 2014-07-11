@@ -37,6 +37,9 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated extends question_type {
+    /** Regular expression that finds the formulas in content. */
+    const FORMULAS_IN_TEXT_REGEX = '~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)\}~';
+
     const MAX_DATASET_ITEMS = 100;
 
     public $wizardpagesnumber = 3;
@@ -128,12 +131,14 @@ class qtype_calculated extends question_type {
 
     public function save_question_options($question) {
         global $CFG, $DB;
-        // the code is used for calculated, calculatedsimple and calculatedmulti qtypes
+
+        // Make it impossible to save bad formulas anywhere.
+        $this->validate_question_data($question);
+
+        // The code is used for calculated, calculatedsimple and calculatedmulti qtypes.
         $context = $question->context;
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
-        // calculated options
+
+        // Calculated options.
         $update = true;
         $options = $DB->get_record('question_calculated_options',
                 array('question' => $question->id));
@@ -182,14 +187,7 @@ class qtype_calculated extends question_type {
             $units = $result->units;
         }
 
-        // Insert all the new answers
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
-        foreach ($question->answers as $key => $answerdata) {
-            if (is_array($answerdata)) {
-                $answerdata = $answerdata['text'];
-            }
+        foreach ($question->answer as $key => $answerdata) {
             if (trim($answerdata) == '') {
                 continue;
             }
@@ -343,49 +341,6 @@ class qtype_calculated extends question_type {
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
 
-    public function validate_form($form) {
-        switch($form->wizardpage) {
-            case 'question':
-                $calculatedmessages = array();
-                if (empty($form->name)) {
-                    $calculatedmessages[] = get_string('missingname', 'qtype_calculated');
-                }
-                if (empty($form->questiontext)) {
-                    $calculatedmessages[] = get_string('missingquestiontext', 'qtype_calculated');
-                }
-                // Verify formulas
-                foreach ($form->answers as $key => $answer) {
-                    if ('' === trim($answer)) {
-                        $calculatedmessages[] = get_string(
-                                'missingformula', 'qtype_calculated');
-                    }
-                    if ($formulaerrors = qtype_calculated_find_formula_errors($answer)) {
-                        $calculatedmessages[] = $formulaerrors;
-                    }
-                    if (! isset($form->tolerance[$key])) {
-                        $form->tolerance[$key] = 0.0;
-                    }
-                    if (! is_numeric($form->tolerance[$key])) {
-                        $calculatedmessages[] = get_string(
-                                'tolerancemustbenumeric', 'qtype_calculated');
-                    }
-                }
-
-                if (!empty($calculatedmessages)) {
-                    $errorstring = "The following errors were found:<br />";
-                    foreach ($calculatedmessages as $msg) {
-                        $errorstring .= $msg . '<br />';
-                    }
-                    print_error($errorstring);
-                }
-
-                break;
-            default:
-                return parent::validate_form($form);
-                break;
-        }
-        return true;
-    }
     public function finished_edit_wizard($form) {
         return isset($form->savechanges);
     }
@@ -482,6 +437,55 @@ class qtype_calculated extends question_type {
     }
 
     /**
+     * Verify that the equations in part of the question are OK.
+     * We throw an exception here because this should have already been validated
+     * by the form. This is just a last line of defence to prevent a question
+     * being stored in the database if it has bad formulas. This saves us from,
+     * for example, malicious imports.
+     * @param string $text containing equations.
+     */
+    protected function validate_text($text) {
+        $error = qtype_calculated_find_formula_errors_in_text($text);
+        if ($error) {
+            throw new coding_exception($error);
+        }
+    }
+
+    /**
+     * Verify that an answer is OK.
+     * We throw an exception here because this should have already been validated
+     * by the form. This is just a last line of defence to prevent a question
+     * being stored in the database if it has bad formulas. This saves us from,
+     * for example, malicious imports.
+     * @param string $text containing equations.
+     */
+    protected function validate_answer($answer) {
+        $error = qtype_calculated_find_formula_errors($answer);
+        if ($error) {
+            throw new coding_exception($error);
+        }
+    }
+
+    /**
+     * Validate data before save.
+     * @param stdClass $question data from the form / import file.
+     */
+    protected function validate_question_data($question) {
+        $this->validate_text($question->questiontext); // Yes, really no ['text'].
+
+        if (isset($question->generalfeedback['text'])) {
+            $this->validate_text($question->generalfeedback['text']);
+        } else if (isset($question->generalfeedback)) {
+            $this->validate_text($question->generalfeedback); // Because question import is weird.
+        }
+
+        foreach ($question->answer as $key => $answer) {
+            $this->validate_answer($answer);
+            $this->validate_text($question->feedback[$key]['text']);
+        }
+    }
+
+    /**
      * This method prepare the $datasets in a format similar to dadatesetdefinitions_form.php
      * so that they can be saved
      * using the function save_dataset_definitions($form)
@@ -493,12 +497,13 @@ class qtype_calculated extends question_type {
      * @param object $form
      * @param int $questionfromid default = '0'
      */
-    public function preparedatasets($form , $questionfromid = '0') {
-        // the dataset names present in the edit_question_form and edit_calculated_form
-        // are retrieved
+    public function preparedatasets($form, $questionfromid = '0') {
+
+        // The dataset names present in the edit_question_form and edit_calculated_form
+        // are retrieved.
         $possibledatasets = $this->find_dataset_names($form->questiontext);
         $mandatorydatasets = array();
-        foreach ($form->answers as $answer) {
+        foreach ($form->answer as $key => $answer) {
             $mandatorydatasets += $this->find_dataset_names($answer);
         }
         // if there are identical datasetdefs already saved in the original question.
@@ -587,8 +592,9 @@ class qtype_calculated extends question_type {
      */
     public function save_question($question, $form) {
         global $DB;
+
         if ($this->wizardpagesnumber() == 1 || $question->qtype == 'calculatedsimple') {
-                $question = parent::save_question($question, $form);
+            $question = parent::save_question($question, $form);
             return $question;
         }
 
@@ -605,8 +611,8 @@ class qtype_calculated extends question_type {
         // See where we're coming from
         switch($wizardnow) {
             case '' :
-            case 'question': // coming from the first page, creating the second
-                if (empty($form->id)) { // for a new question $form->id is empty
+            case 'question': // Coming from the first page, creating the second.
+                if (empty($form->id)) { // or a new question $form->id is empty.
                     $question = parent::save_question($question, $form);
                     //prepare the datasets using default $questionfromid
                     $this->preparedatasets($form);
@@ -1057,10 +1063,14 @@ class qtype_calculated extends question_type {
         }
 
         $answers = fullclone($answers);
-        $errors = '';
         $delimiter = ': ';
         $virtualqtype =  $qtypeobj->get_virtual_qtype();
         foreach ($answers as $key => $answer) {
+            $error = qtype_calculated_find_formula_errors($answer->answer);
+            if ($error) {
+                $comment->stranswers[$key] = $error;
+                continue;
+            }
             $formula = $this->substitute_variables($answer->answer, $data);
             $formattedanswer = qtype_calculated_calculate_answer(
                 $answer->answer, $data, $answer->tolerance,
@@ -1973,6 +1983,11 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
 }
 
 
+/**
+ * Validate a forumula.
+ * @param string $formula the formula to validate.
+ * @return string|boolean false if there are no problems. Otherwise a string error message.
+ */
 function qtype_calculated_find_formula_errors($formula) {
     // Validates the formula submitted from the question edit page.
     // Returns false if everything is alright.
@@ -2001,7 +2016,7 @@ function qtype_calculated_find_formula_errors($formula) {
 
                 // Zero argument functions
             case 'pi':
-                if ($regs[3]) {
+                if (array_key_exists(3, $regs)) {
                     return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
                 }
                 break;
@@ -2061,4 +2076,27 @@ function qtype_calculated_find_formula_errors($formula) {
         // Formula just might be valid
         return false;
     }
+}
+
+/**
+ * Validate all the forumulas in a bit of text.
+ * @param string $text the text in which to validate the formulas.
+ * @return string|boolean false if there are no problems. Otherwise a string error message.
+ */
+function qtype_calculated_find_formula_errors_in_text($text) {
+    preg_match_all(qtype_calculated::FORMULAS_IN_TEXT_REGEX, $text, $matches);
+
+    $errors = array();
+    foreach ($matches[1] as $match) {
+        $error = qtype_calculated_find_formula_errors($match);
+        if ($error) {
+            $errors[] = $error;
+        }
+    }
+
+    if ($errors) {
+        return implode(' ', $errors);
+    }
+
+    return false;
 }
