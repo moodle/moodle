@@ -1609,7 +1609,8 @@ class assign {
                  JOIN {grade_items} gri ON gri.iteminstance = a.id AND gri.courseid = a.course AND gri.itemmodule = md.name
                  WHERE g.timemodified >= :yesterday AND
                        g.timemodified <= :today AND
-                       uf.mailed = 0 AND gri.hidden = 0";
+                       uf.mailed = 0 AND gri.hidden = 0
+              ORDER BY a.course, cm.id";
 
         $params = array('yesterday' => $yesterday, 'today' => $timenow);
         $submissions = $DB->get_records_sql($sql, $params);
