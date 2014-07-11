@@ -126,7 +126,7 @@ class repository_recent extends repository {
                 $fileinfo = $browser->get_file_info($context, $file['component'],
                         $file['filearea'], $file['itemid'], $file['filepath'], $file['filename']);
                 if ($fileinfo) {
-                    $params = base64_encode(serialize($file));
+                    $params = base64_encode(json_encode($file));
                     $node = array(
                         'title' => $fileinfo->get_visible_name(),
                         'size' => $fileinfo->get_filesize(),
@@ -192,7 +192,8 @@ class repository_recent extends repository {
      */
     public function file_is_accessible($source) {
         global $USER;
-        $file = self::get_moodle_file($source);
+        $reference = $this->get_file_reference($source);
+        $file = self::get_moodle_file($reference);
         return (!empty($file) && $file->get_userid() == $USER->id);
     }
 
