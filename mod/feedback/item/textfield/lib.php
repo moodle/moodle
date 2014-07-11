@@ -167,11 +167,11 @@ class feedback_item_textfield extends feedback_item_base {
         $worksheet->write_string($row_offset, 1, $item->name, $xls_formats->head2);
         $data = $analysed_item->data;
         if (is_array($data)) {
-            $worksheet->write_string($row_offset, 2, $data[0], $xls_formats->value_bold);
+            $worksheet->write_string($row_offset, 2, htmlspecialchars_decode($data[0], ENT_QUOTES), $xls_formats->value_bold);
             $row_offset++;
             $sizeofdata = count($data);
             for ($i = 1; $i < $sizeofdata; $i++) {
-                $worksheet->write_string($row_offset, 2, $data[$i], $xls_formats->default);
+                $worksheet->write_string($row_offset, 2, htmlspecialchars_decode($data[$i], ENT_QUOTES), $xls_formats->default);
                 $row_offset++;
             }
         }
