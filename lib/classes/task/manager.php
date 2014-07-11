@@ -220,7 +220,7 @@ class manager {
         $record->blocking = $task->is_blocking();
         $record->nextruntime = $task->get_next_run_time();
         $record->faildelay = $task->get_fail_delay();
-        $record->customdata = $task->get_custom_data();
+        $record->customdata = $task->get_custom_data_as_string();
 
         return $record;
     }
@@ -254,7 +254,7 @@ class manager {
             $task->set_fail_delay($record->faildelay);
         }
         if (isset($record->customdata)) {
-            $task->set_custom_data($record->customdata);
+            $task->set_custom_data_as_string($record->customdata);
         }
 
         return $task;
