@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'd';
 $string['cliincorrectvalueerror'] = 'Napaka, nepravilna vrednost "{$a->value}" za "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Nepravilna vrednost, prosimo poskusite znova.';
+$string['cliincorrectvalueretry'] = 'Nepravilna vrednost, poskusite znova.';
 $string['clitypevalue'] = 'tip vrednosti';
 $string['clitypevaluedefault'] = 'tip vrednosti, kliknite Enter za uporabo privzete vrednosti ({$a})';
 $string['cliunknowoption'] = 'Neprepoznane možnosti:
