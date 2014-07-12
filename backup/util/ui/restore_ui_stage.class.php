@@ -450,12 +450,12 @@ class restore_ui_stage_settings extends restore_ui_stage {
         if ($data && confirm_sesskey()) {
             $tasks = $this->ui->get_tasks();
             $changes = 0;
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 // We are only interesting in the backup root task for this stage
                 if ($task instanceof restore_root_task || $task instanceof restore_course_task) {
                     // Get all settings into a var so we can iterate by reference
                     $settings = $task->get_settings();
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         $name = $setting->get_ui_name();
                         if (isset($data->$name) &&  $data->$name != $setting->get_value()) {
                             $setting->set_value($data->$name);
@@ -482,7 +482,7 @@ class restore_ui_stage_settings extends restore_ui_stage {
             $tasks = $this->ui->get_tasks();
             $headingprinted = false;
             // Iterate all tasks by reference
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 // For the initial stage we are only interested in the root settings
                 if ($task instanceof restore_root_task) {
                     if (!$headingprinted) {
@@ -491,14 +491,14 @@ class restore_ui_stage_settings extends restore_ui_stage {
                     }
                     $settings = $task->get_settings();
                     // First add all settings except the filename setting
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         if ($setting->get_name() == 'filename') {
                             continue;
                         }
                         $form->add_setting($setting, $task);
                     }
                     // Then add all dependencies
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         if ($setting->get_name() == 'filename') {
                             continue;
                         }
@@ -556,13 +556,13 @@ class restore_ui_stage_schema extends restore_ui_stage {
             $tasks = $this->ui->get_tasks();
             $changes = 0;
             // Iterate all tasks by reference
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 // We are only interested in schema settings
                 if (!($task instanceof restore_root_task)) {
                     // Store as a variable so we can iterate by reference
                     $settings = $task->get_settings();
                     // Iterate by reference
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         $name = $setting->get_ui_name();
                         if (isset($data->$name) &&  $data->$name != $setting->get_value()) {
                             $setting->set_value($data->$name);

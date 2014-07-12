@@ -2752,7 +2752,7 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
         $maxCol = PHPExcel_Cell::columnIndexFromString($maxCol);
 
         $rangeBlocks = explode(' ',$range);
-        foreach ($rangeBlocks as &$rangeSet) {
+        foreach ($rangeBlocks as $rangeSet) {
             $rangeBoundaries = PHPExcel_Cell::getRangeBoundaries($rangeSet);
 
             if (PHPExcel_Cell::columnIndexFromString($rangeBoundaries[0][0]) > $maxCol) { $rangeBoundaries[0][0] = PHPExcel_Cell::stringFromColumnIndex($maxCol); }

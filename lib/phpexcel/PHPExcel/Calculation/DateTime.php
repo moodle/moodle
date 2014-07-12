@@ -487,12 +487,15 @@ class PHPExcel_Calculation_DateTime {
 
 		$yearFound = false;
 		$t1 = explode(' ',$dateValue);
-		foreach($t1 as &$t) {
+		foreach($t1 as $index => $t) {
 			if ((is_numeric($t)) && ($t > 31)) {
 				if ($yearFound) {
 					return PHPExcel_Calculation_Functions::VALUE();
 				} else {
-					if ($t < 100) { $t += 1900; }
+					if ($t < 100) {
+                        $t += 1900;
+                        $t1[$index] = $t;
+                    }
 					$yearFound = true;
 				}
 			}

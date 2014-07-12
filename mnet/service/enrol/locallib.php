@@ -182,7 +182,7 @@ class mnetservice_enrol {
             // get the currently cached courses key'd on remote id - only need remoteid and id fields
             $cachedcourses = $DB->get_records('mnetservice_enrol_courses', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
 
-            foreach ($response as &$remote) {
+            foreach ($response as $remote) {
                 $course                 = new stdclass(); // record in our local cache
                 $course->hostid         = $mnethostid;
                 $course->remoteid       = (int)$remote['remoteid'];

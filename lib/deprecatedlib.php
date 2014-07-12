@@ -973,6 +973,7 @@ function error($message, $link='') {
 }
 
 
+
 /**
  * @deprecated use $PAGE->theme->name instead.
  * @todo final deprecation of this function in MDL-40607

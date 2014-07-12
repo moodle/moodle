@@ -100,8 +100,9 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
         $this->_styleMatches = array(); // reset
         $context->register('StyleBlocks', $style_blocks); // $context must not be reused
         if ($this->_tidy) {
-            foreach ($style_blocks as &$style) {
+            foreach ($style_blocks as $styleIndex => $style) {
                 $style = $this->cleanCSS($style, $config, $context);
+                $style_blocks[$styleIndex] = $style;
             }
         }
         return $html;

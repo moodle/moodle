@@ -105,20 +105,22 @@ class PHPExcel_Power_Best_Fit extends PHPExcel_Best_Fit
 	 * @param	 boolean	$const
 	 */
 	private function _power_regression($yValues, $xValues, $const) {
-		foreach($xValues as &$value) {
+		foreach($xValues as $xValuesIndex => $value) {
 			if ($value < 0.0) {
 				$value = 0 - log(abs($value));
 			} elseif ($value > 0.0) {
 				$value = log($value);
 			}
+            $xValues[$xValuesIndex] = $value;
 		}
 		unset($value);
-		foreach($yValues as &$value) {
+		foreach($yValues as $yValuesIndex => $value) {
 			if ($value < 0.0) {
 				$value = 0 - log(abs($value));
 			} elseif ($value > 0.0) {
 				$value = log($value);
 			}
+            $yValues[$yValuesIndex] = $value;
 		}
 		unset($value);
 

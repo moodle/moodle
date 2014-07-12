@@ -629,7 +629,7 @@ class Less_Tree_Ruleset extends Less_Tree{
 		}
 
 
-		foreach( $selectors as &$sel){
+		foreach( $selectors as $sel){
 
 			// if the previous thing in sel is a parent this needs to join on to it
 			if( $sel ){

@@ -689,7 +689,7 @@ class QRcode {
 	protected function binarize($frame) {
 		$len = count($frame);
 		// the frame is square (width = height)
-		foreach ($frame as &$frameLine) {
+		foreach ($frame as $frameLine) {
 			for ($i=0; $i<$len; $i++) {
 				$frameLine[$i] = (ord($frameLine[$i])&1)?'1':'0';
 			}

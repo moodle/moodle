@@ -535,7 +535,7 @@ class navigation_node implements renderable {
         if ($this->isactive) {
             return $this;
         } else {
-            foreach ($this->children as &$child) {
+            foreach ($this->children as $child) {
                 $outcome = $child->find_active_node();
                 if ($outcome !== false) {
                     return $outcome;
@@ -553,7 +553,7 @@ class navigation_node implements renderable {
         if ($this->check_if_active(URL_MATCH_BASE)) {
             return $this;
         } else {
-            foreach ($this->children as &$child) {
+            foreach ($this->children as $child) {
                 $outcome = $child->search_for_active_node();
                 if ($outcome !== false) {
                     return $outcome;
@@ -608,7 +608,7 @@ class navigation_node implements renderable {
      * @param array $expandable An array by reference to populate with expandable nodes.
      */
     public function find_expandable(array &$expandable) {
-        foreach ($this->children as &$child) {
+        foreach ($this->children as $child) {
             if ($child->display && $child->has_children() && $child->children->count() == 0) {
                 $child->id = 'expandable_branch_'.$child->type.'_'.clean_param($child->key, PARAM_ALPHANUMEXT);
                 $this->add_class('canexpand');
@@ -626,7 +626,7 @@ class navigation_node implements renderable {
      */
     public function find_all_of_type($type) {
         $nodes = $this->children->type($type);
-        foreach ($this->children as &$node) {
+        foreach ($this->children as $node) {
             $childnodes = $node->find_all_of_type($type);
             $nodes = array_merge($nodes, $childnodes);
         }
@@ -872,13 +872,13 @@ class navigation_node_collection implements IteratorAggregate {
         } else {
             $nodes = $this->getIterator();
             // Search immediate children first
-            foreach ($nodes as &$node) {
+            foreach ($nodes as $node) {
                 if ($node->key === $key && ($type === null || $type === $node->type)) {
                     return $node;
                 }
             }
             // Now search each childs children
-            foreach ($nodes as &$node) {
+            foreach ($nodes as $node) {
                 $result = $node->children->find($key, $type);
                 if ($result !== false) {
                     return $result;
@@ -1751,7 +1751,7 @@ class global_navigation extends navigation_node {
                       GROUP BY cc.id
                         HAVING COUNT(c.id) > :limit";
                 $excessivecategories = $DB->get_records_sql($sql, $params);
-                foreach ($categories as &$category) {
+                foreach ($categories as $category) {
                     if (array_key_exists($category->key, $excessivecategories) && !$this->can_add_more_courses_to_category($category)) {
                         $url = new moodle_url('/course/index.php', array('categoryid' => $category->key));
                         $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
@@ -3107,12 +3107,12 @@ class navbar extends navigation_node {
      * @return navigation_node|bool
      */
     public function get($key, $type = null) {
-        foreach ($this->children as &$child) {
+        foreach ($this->children as $child) {
             if ($child->key === $key && ($type == null || $type == $child->type)) {
                 return $child;
             }
         }
-        foreach ($this->prependchildren as &$child) {
+        foreach ($this->prependchildren as $child) {
             if ($child->key === $key && ($type == null || $type == $child->type)) {
                 return $child;
             }
@@ -3667,7 +3667,7 @@ class settings_navigation extends navigation_node {
      */
     protected function scan_for_active_node(navigation_node $node) {
         if (!$node->check_if_active() && $node->children->count()>0) {
-            foreach ($node->children as &$child) {
+            foreach ($node->children as $child) {
                 $this->scan_for_active_node($child);
             }
         }

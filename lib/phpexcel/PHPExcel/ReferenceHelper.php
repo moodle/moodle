@@ -654,7 +654,7 @@ class PHPExcel_ReferenceHelper
 		//	Update cell references in the formula
 		$formulaBlocks = explode('"',$pFormula);
 		$i = false;
-		foreach($formulaBlocks as &$formulaBlock) {
+		foreach($formulaBlocks as $formulaBlock) {
 			//	Ignore blocks that were enclosed in quotes (alternating entries in the $formulaBlocks array after the explode)
 			if ($i = !$i) {
 				$adjustCount = 0;

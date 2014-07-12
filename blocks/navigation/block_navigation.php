@@ -286,7 +286,7 @@ class block_navigation extends block_base {
                 break;
         }
         if ($recurse && $node->children->count()) {
-            foreach ($node->children as &$child) {
+            foreach ($node->children as $child) {
                 $this->trim($child, $mode, $long, $short, true);
             }
         }

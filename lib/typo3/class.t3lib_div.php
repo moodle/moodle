@@ -1779,11 +1779,12 @@ final class t3lib_div {
 	 * @return array
 	 */
 	public static function addSlashesOnArray(array &$theArray) {
-		foreach ($theArray as &$value) {
+		foreach ($theArray as $theArrayIndex => $value) {
 			if (is_array($value)) {
 				self::addSlashesOnArray($value);
 			} else {
 				$value = addslashes($value);
+                $theArray[$theArrayIndex] = $value;
 			}
 		}
 		unset($value);
@@ -1800,11 +1801,12 @@ final class t3lib_div {
 	 * @return array
 	 */
 	public static function stripSlashesOnArray(array &$theArray) {
-		foreach ($theArray as &$value) {
+		foreach ($theArray as $theArrayIndex => $value) {
 			if (is_array($value)) {
 				self::stripSlashesOnArray($value);
 			} else {
 				$value = stripslashes($value);
+                $theArray[$theArrayIndex] = $value;
 			}
 		}
 		unset($value);
@@ -4228,15 +4230,17 @@ final class t3lib_div {
 					// converting the default language (English)
 					// this needs to be done for a few accented loan words and extension names
 				if (is_array($LOCAL_LANG['default']) && $targetCharset != 'utf-8') {
-					foreach ($LOCAL_LANG['default'] as &$labelValue) {
+					foreach ($LOCAL_LANG['default'] as $localLangIndex => $labelValue) {
 						$labelValue = $csConvObj->conv($labelValue, 'utf-8', $targetCharset);
+                        $LOCAL_LANG['default'][$localLangIndex] = $labelValue;
 					}
 					unset($labelValue);
 				}
 
 				if ($langKey != 'default' && is_array($LOCAL_LANG[$langKey]) && $sourceCharset != $targetCharset) {
-					foreach ($LOCAL_LANG[$langKey] as &$labelValue) {
+					foreach ($LOCAL_LANG[$langKey] as $localLangIndex => $labelValue) {
 						$labelValue = $csConvObj->conv($labelValue, $sourceCharset, $targetCharset);
+                        $LOCAL_LANG[$langKey][$localLangIndex] = $labelValue;
 					}
 					unset($labelValue);
 				}
@@ -4319,8 +4323,9 @@ final class t3lib_div {
 					// this needs to be done for a few accented loan words and extension names
 					// NOTE: no conversion is done when in UTF-8 mode!
 				if (is_array($LOCAL_LANG['default']) && $targetCharset != 'utf-8') {
-					foreach ($LOCAL_LANG['default'] as &$labelValue) {
+					foreach ($LOCAL_LANG['default'] as $localLangIndex => $labelValue) {
 						$labelValue = $csConvObj->utf8_decode($labelValue, $targetCharset);
+                        $LOCAL_LANG['default'][$localLangIndex] = $labelValue;
 					}
 					unset($labelValue);
 				}
@@ -4338,8 +4343,9 @@ final class t3lib_div {
 
 						// Checking if charset should be converted.
 					if (is_array($LOCAL_LANG[$langKey]) && $targetCharset != 'utf-8') {
-						foreach ($LOCAL_LANG[$langKey] as &$labelValue) {
+						foreach ($LOCAL_LANG[$langKey] as $localLangIndex => $labelValue) {
 							$labelValue = $csConvObj->utf8_decode($labelValue, $targetCharset);
+                            $LOCAL_LANG[$langKey][$localLangIndex] = $labelValue;
 						}
 						unset($labelValue);
 					}
@@ -4390,8 +4396,9 @@ final class t3lib_div {
 
 							// Checking if charset should be converted.
 						if (is_array($LOCAL_LANG[$langKey]) && $targetCharset != 'utf-8') {
-							foreach ($LOCAL_LANG[$langKey] as &$labelValue) {
+							foreach ($LOCAL_LANG[$langKey] as $localLangIndex => $labelValue) {
 								$labelValue = $csConvObj->utf8_decode($labelValue, $targetCharset);
+                                $LOCAL_LANG[$langKey][$localLangIndex] = $labelValue;
 							}
 							unset($labelValue);
 						}
@@ -4416,12 +4423,12 @@ final class t3lib_div {
 			}
 
 				// Convert the $LOCAL_LANG array to XLIFF structure
-			foreach ($LOCAL_LANG as &$keysLabels) {
-				foreach ($keysLabels as &$label) {
-					$label = array(0 => array(
-						'target' => $label,
-					));
+			foreach ($LOCAL_LANG as $localLangIndex => $keysLabels) {
+				foreach ($keysLabels as $keysLabelsIndex => $label) {
+					$label = array(0 => array('target' => $label,));
+                    $keysLabels[$keysLabelsIndex] = $label;
 				}
+                $LOCAL_LANG[$localLangIndex] = $keysLabels;
 				unset($label);
 			}
 			unset($keysLabels);
