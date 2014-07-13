@@ -1848,6 +1848,7 @@ $string['trackforumsyes'] = 'Yes: highlight new posts for me';
 $string['trysearching'] = 'Try searching instead.';
 $string['turneditingoff'] = 'Turn editing off';
 $string['turneditingon'] = 'Turn editing on';
+$string['unauthorisedlogin'] = 'The user account "{$a}" is not available on this site';
 $string['undecided'] = 'Undecided';
 $string['unfinished'] = 'Unfinished';
 $string['unknowncategory'] = 'Unknown category';

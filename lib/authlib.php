@@ -76,6 +76,8 @@ define('AUTH_LOGIN_FAILED', 3);
 /** Can not login because user is locked out. */
 define('AUTH_LOGIN_LOCKOUT', 4);
 
+/** Can not login becauser user is not authorised. */
+define('AUTH_LOGIN_UNAUTHORISED', 5);
 
 /**
  * Abstract authentication plugin.
