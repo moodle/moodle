@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -35,7 +34,9 @@ require_login();
 $context = context_system::instance();
 require_capability('moodle/blog:manageexternal', $context);
 
-// TODO redirect if $CFG->useexternalblogs is off, $CFG->maxexternalblogsperuser == 0, or if user doesn't have caps to manage external blogs
+// TODO redirect if $CFG->useexternalblogs is off,
+//                  $CFG->maxexternalblogsperuser == 0,
+//                  or if user doesn't have caps to manage external blogs.
 
 $id = optional_param('id', null, PARAM_INT);
 $url = new moodle_url('/blog/external_blog_edit.php');
@@ -52,24 +53,24 @@ $action = (empty($id)) ? 'add' : 'edit';
 
 $external = new stdClass();
 
-// Check that this id exists
+// Check that this id exists.
 if (!empty($id) && !$DB->record_exists('blog_external', array('id' => $id))) {
     print_error('wrongexternalid', 'blog');
-} elseif (!empty($id)) {
+} else if (!empty($id)) {
     $external = $DB->get_record('blog_external', array('id' => $id));
 }
 
 $strformheading = ($action == 'edit') ? get_string('editexternalblog', 'blog') : get_string('addnewexternalblog', 'blog');
-$strexternalblogs = get_string('externalblogs','blog');
-$strblogs = get_string('blogs','blog');
+$strexternalblogs = get_string('externalblogs', 'blog');
+$strblogs = get_string('blogs', 'blog');
 
 $externalblogform = new blog_edit_external_form();
 
-if ($externalblogform->is_cancelled()){
+if ($externalblogform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $externalblogform->get_data()) {
-    //save stuff in db
+    // Save stuff in db.
     switch ($action) {
         case 'add':
             $rss = new moodle_simplepie($data->url);
