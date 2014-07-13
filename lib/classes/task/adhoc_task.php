@@ -66,7 +66,7 @@ abstract class adhoc_task extends task_base {
 
     /**
      * Alternate setter for $customdata. Expects the data as a json_encoded string.
-     * @param string json_encoded string
+     * @param string $customdata json_encoded string
      */
     public function set_custom_data_as_string($customdata) {
         $this->customdata = $customdata;
@@ -82,7 +82,7 @@ abstract class adhoc_task extends task_base {
 
     /**
      * Alternate getter for $customdata.
-     * @return string (this is the raw json encoded version).
+     * @return string this is the raw json encoded version.
      */
     public function get_custom_data_as_string() {
         return $this->customdata;
