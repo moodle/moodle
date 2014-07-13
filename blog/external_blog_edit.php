@@ -79,12 +79,15 @@ if ($externalblogform->is_cancelled()){
             $newexternal->description = (empty($data->description)) ? $rss->get_description() : $data->description;
             $newexternal->userid = $USER->id;
             $newexternal->url = $data->url;
-            $newexternal->filtertags = $data->filtertags;
+            $newexternal->filtertags = (!empty($data->filtertags)) ? $data->filtertags : null;
             $newexternal->timemodified = time();
 
             $newexternal->id = $DB->insert_record('blog_external', $newexternal);
             blog_sync_external_entries($newexternal);
-            tag_set('blog_external', $newexternal->id, explode(',', $data->autotags));
+            if ($CFG->usetags) {
+                $autotags = (!empty($data->autotags)) ? $data->autotags : null;
+                tag_set('blog_external', $newexternal->id, explode(',', $autotags));
+            }
 
             break;
 
@@ -98,12 +101,14 @@ if ($externalblogform->is_cancelled()){
                 $external->description = (empty($data->description)) ? $rss->get_description() : $data->description;
                 $external->userid = $USER->id;
                 $external->url = $data->url;
-                $external->filtertags = $data->filtertags;
+                $external->filtertags = (!empty($data->filtertags)) ? $data->filtertags : null;
                 $external->timemodified = time();
 
                 $DB->update_record('blog_external', $external);
-                tag_set('blog_external', $external->id, explode(',', $data->autotags));
-
+                if ($CFG->usetags) {
+                    $autotags = (!empty($data->autotags)) ? $data->autotags : null;
+                    tag_set('blog_external', $external->id, explode(',', $autotags));
+                }
             } else {
                 print_error('wrongexternalid', 'blog');
             }
