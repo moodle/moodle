@@ -3201,10 +3201,10 @@ function calendar_cron() {
         mtrace("Updating calendar subscription {$sub->name} in course {$sub->courseid}");
         try {
             $log = calendar_update_subscription_events($sub->id);
+            mtrace(trim(strip_tags($log)));
         } catch (moodle_exception $ex) {
-
+            mtrace('Error updating calendar subscription: ' . $ex->getMessage());
         }
-        mtrace(trim(strip_tags($log)));
     }
 
     mtrace('Finished updating calendar subscriptions.');
