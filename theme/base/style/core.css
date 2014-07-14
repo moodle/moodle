@@ -1203,7 +1203,10 @@ sup {vertical-align: super;}
     -moz-box-shadow: 5px 5px 20px 0px #666666;
     overflow: hidden;
 }
-
+.moodle-dialogue-base h3 {
+    margin: 0;
+    line-height: 20px;
+}
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
     margin:0;
