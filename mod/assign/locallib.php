@@ -4482,14 +4482,6 @@ class assign {
     public function render_area_files($component, $area, $submissionid) {
         global $USER;
 
-        $fs = get_file_storage();
-        $browser = get_file_browser();
-        $files = $fs->get_area_files($this->get_context()->id,
-                                     $component,
-                                     $area,
-                                     $submissionid,
-                                     'timemodified',
-                                     false);
         return $this->get_renderer()->assign_files($this->context, $submissionid, $area, $component);
 
     }
