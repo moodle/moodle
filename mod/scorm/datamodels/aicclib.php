@@ -491,7 +491,7 @@ function scorm_aicc_generate_simple_sco($scorm) {
  */
 function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     global $USER;
-    
+
     $userdata->student_id = $USER->username;
     $userdata->student_name = $USER->lastname .', '. $USER->firstname;
 

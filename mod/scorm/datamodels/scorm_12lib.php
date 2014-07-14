@@ -145,7 +145,7 @@ function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
         $userdata->status = '';
         $userdata->score_raw = '';
     }
-    
+
     if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
         foreach ($scodatas as $key => $value) {
             $userdata->$key = $value;

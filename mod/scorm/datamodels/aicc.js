@@ -21,7 +21,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
     var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
-    
+
     // Standard Data Type Definition
     CMIString256 = '^.{0,255}$';
     CMIString4096 = '^.{0,4096}$';
@@ -156,7 +156,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
     }
 
     eval(cmiobj);
-    
+
     if (cmi.core.lesson_status == '') {
         cmi.core.lesson_status = 'not attempted';
     }
@@ -511,7 +511,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
         } else {
             datastring = CollectData(data,'cmi');
         }
- 
+
         //popupwin(datastring);
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,datamodelurl,datamodelurlparams+datastring);

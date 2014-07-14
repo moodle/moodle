@@ -1234,7 +1234,7 @@ function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
             }
         }
     }
-    
+
     $userdata->mode = 'normal';
     if (!empty($mode)) {
         $userdata->mode = $mode;

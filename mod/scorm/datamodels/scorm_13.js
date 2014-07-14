@@ -24,7 +24,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
     var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
-  
+
     // Standard Data Type Definition
 
     // language key has to be checked for language dependent strings
@@ -253,7 +253,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     eval(cmiint);
     eval(cmicommentsuser);
     eval(cmicommentslms);
-    
+
     if (cmi.completion_status == '') {
         cmi.completion_status = 'not attempted';
     }
