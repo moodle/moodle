@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,84 +13,71 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-if (isset($userdata->status)) {
-    if ($userdata->status == '') {
-        $userdata->entry = 'ab-initio';
-    } else {
-        if (isset($userdata->{'cmi.core.exit'}) && ($userdata->{'cmi.core.exit'} == 'suspend')) {
-            $userdata->entry = 'resume';
-        } else {
-            $userdata->entry = '';
-        }
-    }
-}
-if (!isset($currentorg)) {
-    $currentorg = '';
-}
-?>
 //
 // SCORM 1.2 API Implementation
 //
-function AICCapi() {
+function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg) {
+    
+    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+    var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
+    var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+
     // Standard Data Type Definition
-    CMIString256 = '^.{0,255}$';
-    CMIString4096 = '^.{0,4096}$';
+    CMIString256 = cmistring256;
+    CMIString4096 = cmistring4096;
     CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]{1,2})?$';
-    CMIIdentifier = '^\\w{1,255}$';
+    CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]*)?$';
+    CMIIdentifier = '^[\\u0021-\\u007E]{0,255}$';
     CMIFeedback = CMIString256; // This must be redefined
     CMIIndex = '[._](\\d+).';
-
     // Vocabulary Data Type Definition
     CMIStatus = '^passed$|^completed$|^failed$|^incomplete$|^browsed$';
     CMIStatus2 = '^passed$|^completed$|^failed$|^incomplete$|^browsed$|^not attempted$';
     CMIExit = '^time-out$|^suspend$|^logout$|^$';
     CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
-    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
+    CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]*)?$';
     NAVEvent = '^previous$|^continue$';
-
     // Children lists
-    cmi_children = 'core, suspend_data, launch_data, comments, objectives, student_data, student_preference, interactions';
-    core_children = 'student_id, student_name, lesson_location, credit, lesson_status, entry, score, total_time, lesson_mode, exit, session_time';
-    score_children = 'raw, min, max';
-    comments_children = 'content, location, time';
-    objectives_children = 'id, score, status';
-    student_data_children = 'attempt_number, tries, mastery_score, max_time_allowed, time_limit_action';
-    student_preference_children = 'audio, language, speed, text';
-    interactions_children = 'id, objectives, time, type, correct_responses, weighting, student_response, result, latency';
-
+    cmi_children = 'core,suspend_data,launch_data,comments,objectives,student_data,student_preference,interactions';
+    core_children = 'student_id,student_name,lesson_location,credit,lesson_status,entry,score,total_time,lesson_mode,exit,session_time';
+    score_children = 'raw,min,max';
+    comments_children = 'content,location,time';
+    objectives_children = 'id,score,status';
+    correct_responses_children = 'pattern';
+    student_data_children = 'mastery_score,max_time_allowed,time_limit_action';
+    student_preference_children = 'audio,language,speed,text';
+    interactions_children = 'id,objectives,time,type,correct_responses,weighting,student_response,result,latency';
     // Data ranges
     score_range = '0#100';
     audio_range = '-1#100';
     speed_range = '-100#100';
     weighting_range = '-100#100';
     text_range = '-1#1';
-
-    // The AICC data model
+    // The SCORM 1.2 data model
     var datamodel =  {
         'cmi._children':{'defaultvalue':cmi_children, 'mod':'r', 'writeerror':'402'},
         'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
         'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.exit':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.exit'})?$userdata->{'cmi.core.exit'}:'' ?>', 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.core.entry':{'defaultvalue':'<?php echo $userdata->entry ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.core.student_id':{'defaultvalue':def['cmi.core.student_id'], 'mod':'r', 'writeerror':'403'},
+        'cmi.core.student_name':{'defaultvalue':def['cmi.core.student_name'], 'mod':'r', 'writeerror':'403'},
+        'cmi.core.lesson_location':{'defaultvalue':def['cmi.core.lesson_location'], 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
+        'cmi.core.credit':{'defaultvalue':def['cmi.core.credit'], 'mod':'r', 'writeerror':'403'},
+        'cmi.core.lesson_status':{'defaultvalue':def['cmi.core.lesson_status'], 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
+        'cmi.core.entry':{'defaultvalue':def['cmi.core.entry'], 'mod':'r', 'writeerror':'403'},
         'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.core.score.raw':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.raw'})?$userdata->{'cmi.core.score.raw'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.max'})?$userdata->{'cmi.core.score.max'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.score.min':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.min'})?$userdata->{'cmi.core.score.min'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+        'cmi.core.score.raw':{'defaultvalue':def['cmi.core.score.raw'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+        'cmi.core.score.max':{'defaultvalue':def['cmi.core.score.max'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+        'cmi.core.score.min':{'defaultvalue':def['cmi.core.score.min'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+        'cmi.core.total_time':{'defaultvalue':def['cmi.core.total_time'], 'mod':'r', 'writeerror':'403'},
+        'cmi.core.lesson_mode':{'defaultvalue':def['cmi.core.lesson_mode'], 'mod':'r', 'writeerror':'403'},
+        'cmi.core.exit':{'defaultvalue':def['cmi.core.exit'], 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
         'cmi.core.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'00:00:00', 'readerror':'404', 'writeerror':'405'},
-        'cmi.core.total_time':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.total_time'})?$userdata->{'cmi.core.total_time'}:'00:00:00' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.core.lesson_mode':{'defaultvalue':'<?php echo $userdata->mode ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.suspend_data':{'defaultvalue':'<?php echo isset($userdata->{'cmi.suspend_data'})?$userdata->{'cmi.suspend_data'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
-        'cmi.launch_data':{'defaultvalue':'<?php echo isset($userdata->datafromlms)?$userdata->datafromlms:'' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.comments':{'defaultvalue':'<?php echo isset($userdata->{'cmi.comments'})?$userdata->{'cmi.comments'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+        'cmi.suspend_data':{'defaultvalue':def['cmi.suspend_data'], 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+        'cmi.launch_data':{'defaultvalue':def['cmi.launch_data'], 'mod':'r', 'writeerror':'403'},
+        'cmi.comments':{'defaultvalue':def['cmi.comments'], 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
         // deprecated evaluation attributes
         'cmi.evaluation.comments._count':{'defaultvalue':'0', 'mod':'r', 'writeerror':'402'},
         'cmi.evaluation.comments._children':{'defaultvalue':comments_children, 'mod':'r', 'writeerror':'402'},
@@ -108,16 +94,9 @@ function AICCapi() {
         'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.student_data.attempt_number':{'defaultvalue':'<?php echo isset($userdata->{'cmi.student_data.attempt_number'})?$userdata->{'cmi.student_data.attempt_number'}:'' ?>', 'mod':'r', 'writeerror':'402'},
-        'cmi.student_data.tries.n.score.raw':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data.tries.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data.tries.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data.tries.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data.tries.n.time':{'pattern':CMIIndex, 'format':CMITime, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo isset($userdata->mastery_score)?$userdata->mastery_score:'' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo isset($userdata->max_time_allowed)?$userdata->max_time_allowed:'' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo isset($userdata->time_limit_action)?$userdata->time_limit_action:'' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.tries_during_lesson':{'defaultvalue':'<?php echo isset($userdata->{'cmi.student_data.tries_during_lesson'})?$userdata->{'cmi.student_data.tries_during_lesson'}:'' ?>', 'mod':'r', 'writeerror':'402'},
+        'cmi.student_data.mastery_score':{'defaultvalue':def['cmi.student_data.mastery_score'], 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.max_time_allowed':{'defaultvalue':def['cmi.student_data.max_time_allowed'], 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.time_limit_action':{'defaultvalue':def['cmi.student_data.time_limit_action'], 'mod':'r', 'writeerror':'403'},
         'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
         'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
@@ -138,7 +117,6 @@ function AICCapi() {
         'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
         'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
     };
-
     //
     // Datamodel inizialization
     //
@@ -166,33 +144,8 @@ function AICCapi() {
         }
     }
 
-<?php
-$current_objective = '';
-$count = 0;
-$objectives = '';
-foreach ($userdata as $element => $value) {
-    if (substr($element, 0, 14) == 'cmi.objectives') {
-        $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
-        preg_match('/\_(\d+)\./', $element, $matches);
-        if (count($matches) > 0 && $current_objective != $matches[1]) {
-            $current_objective = $matches[1];
-            $count++;
-            $end = strpos($element, $matches[1])+strlen($matches[1]);
-            $subelement = substr($element, 0, $end);
-            echo '    '.$subelement." = new Object();\n";
-            echo '    '.$subelement.".score = new Object();\n";
-            echo '    '.$subelement.".score._children = score_children;\n";
-            echo '    '.$subelement.".score.raw = '';\n";
-            echo '    '.$subelement.".score.min = '';\n";
-            echo '    '.$subelement.".score.max = '';\n";
-        }
-        echo '    '.$element.' = \''.$value."';\n";
-    }
-}
-if ($count > 0) {
-    echo '    cmi.objectives._count = '.$count.";\n";
-}
-?>
+    eval(cmiobj);
+    eval(cmiint);
 
     if (cmi.core.lesson_status == '') {
         cmi.core.lesson_status = 'not attempted';
@@ -209,12 +162,18 @@ if ($count > 0) {
             if (!Initialized) {
                 Initialized = true;
                 errorCode = "0";
+                if (scormdebugging) {
+                    LogAPICall("LMSInitialize", param, "", errorCode);
+                }
                 return "true";
             } else {
                 errorCode = "101";
             }
         } else {
             errorCode = "201";
+        }
+        if (scormdebugging) {
+            LogAPICall("LMSInitialize", param, "", errorCode);
         }
         return "false";
     }
@@ -232,23 +191,34 @@ if ($count > 0) {
                         setTimeout('mod_scorm_launch_prev_sco();',500);
                     }
                 } else {
-                    if (<?php echo $scorm->auto ?> == 1) {
+                    if (scormauto == 1) {
                         setTimeout('mod_scorm_launch_next_sco();',500);
                     }
                 }
+                if (scormdebugging) {
+                    LogAPICall("LMSFinish", "AJAXResult", result, 0);
+                }
+                result = ('true' == result) ? 'true' : 'false';
+                errorCode = (result == 'true')? '0' : '101';
+                if (scormdebugging) {
+                    LogAPICall("LMSFinish", "result", result, 0);
+                    LogAPICall("LMSFinish", param, "", 0);
+                }
                 // trigger TOC update
-                var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
                 var callback = M.mod_scorm.connectPrereqCallback;
                 YUI().use('io-base', function(Y) {
                     Y.on('io:complete', callback.success, Y);
-                    Y.io(sURL);
+                    Y.io(prerequrl);
                 });
-                return "true";
+                return result;
             } else {
                 errorCode = "301";
             }
         } else {
             errorCode = "201";
+        }
+        if (scormdebugging) {
+            LogAPICall("LMSFinish", param, "", errorCode);
         }
         return "false";
     }
@@ -261,15 +231,18 @@ if ($count > 0) {
                 elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                            element = String(element).replace(expression, "_$1.");
-                            elementIndexes = element.split('.');
+                        element = String(element).replace(expression, "_$1.");
+                        elementIndexes = element.split('.');
                         subelement = 'cmi';
                         i = 1;
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
                             subelement += '.'+elementIndexes[i++];
                         }
-                        if (subelement == element) {
+                            if (subelement == element) {
                             errorCode = "0";
+                            if (scormdebugging) {
+                                LogAPICall("LMSGetValue", element, eval(element), 0);
+                            }
                             return eval(element);
                         } else {
                             errorCode = "0"; // Need to check if it is the right errorCode
@@ -303,6 +276,9 @@ if ($count > 0) {
             }
         } else {
             errorCode = "301";
+        }
+        if (scormdebugging) {
+            LogAPICall("LMSGetValue", element, "", errorCode);
         }
         return "";
     }
@@ -367,19 +343,25 @@ if ($count > 0) {
                                     ranges = range.split('#');
                                     value = value*1.0;
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
-                                        eval(element+'="'+value+'";');
+                                        eval(element+'=value;');
                                         errorCode = "0";
+                                        if (scormdebugging) {
+                                            LogAPICall("LMSSetValue", element, value, errorCode);
+                                        }
                                         return "true";
                                     } else {
                                         errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
                                     }
                                 } else {
                                     if (element == 'cmi.comments') {
-                                        eval(element+'+="'+value+'";');
+                                        cmi.comments = cmi.comments + value;
                                     } else {
-                                        eval(element+'="'+value+'";');
+                                        eval(element+'=value;');
                                     }
                                     errorCode = "0";
+                                    if (scormdebugging) {
+                                        LogAPICall("LMSSetValue", element, value, errorCode);
+                                    }
                                     return "true";
                                 }
                             }
@@ -398,6 +380,9 @@ if ($count > 0) {
         } else {
             errorCode = "301";
         }
+        if (scormdebugging) {
+            LogAPICall("LMSSetValue", element, value, errorCode);
+        }
         return "false";
     }
 
@@ -406,17 +391,41 @@ if ($count > 0) {
         if (param == "") {
             if (Initialized) {
                 result = StoreData(cmi,false);
-                return "true";
+                // trigger TOC update
+                var callback = M.mod_scorm.connectPrereqCallback;
+                YUI().use('io-base', function(Y) {
+                    Y.on('io:complete', callback.success, Y);
+                    Y.io(prerequrl);
+                });
+                if (scormdebugging) {
+                    LogAPICall("Commit", param, "", 0);
+                }
+                if (scormdebugging) {
+                    LogAPICall("LMSCommit", "AJAXResult", result, 0);
+                }
+                result = ('true' == result) ? 'true' : 'false';
+                errorCode = (result =='true')? '0' : '101';
+                if (scormdebugging) {
+                    LogAPICall("LMSCommit", "result", result, 0);
+                    LogAPICall("LMSCommit", "errorCode", errorCode, 0);
+                }
+                return result;
             } else {
                 errorCode = "301";
             }
         } else {
             errorCode = "201";
         }
+        if (scormdebugging) {
+            LogAPICall("LMSCommit", param, "", 0);
+        }
         return "false";
     }
 
     function LMSGetLastError () {
+        if (scormdebugging) {
+            LogAPICall("LMSGetLastError", "", "", errorCode);
+        }
         return errorCode;
     }
 
@@ -434,8 +443,14 @@ if ($count > 0) {
             errorString["403"] = "Element is read only";
             errorString["404"] = "Element is write only";
             errorString["405"] = "Incorrect data type";
+            if (scormdebugging) {
+                LogAPICall("LMSGetErrorString", param,  errorString[param], 0);
+            }
             return errorString[param];
         } else {
+            if (scormdebugging) {
+                LogAPICall("LMSGetErrorString", param,  "No error string found!", 0);
+            }
            return "";
         }
     }
@@ -443,6 +458,9 @@ if ($count > 0) {
     function LMSGetDiagnostic (param) {
         if (param == "") {
             param = errorCode;
+        }
+        if (scormdebugging) {
+            LogAPICall("LMSGetDiagnostic", param, param, 0);
         }
         return param;
     }
@@ -497,7 +515,7 @@ if ($count > 0) {
 
     function TotalTime() {
         total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
-        return '&'+underscore('cmi.core.total_time')+'='+escape(total_time);
+        return '&'+underscore('cmi.core.total_time')+'='+encodeURIComponent(total_time);
     }
 
     function CollectData(data,parent) {
@@ -508,16 +526,50 @@ if ($count > 0) {
             } else {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndex,'g');
+
+                // get the generic name for this element (e.g. convert 'cmi.interactions.1.id' to 'cmi.interactions.n.id')
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        elementstring = '&'+underscore(element)+'='+escape(data[property]);
-                        if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
+
+                // ignore the session time element
+                if (element != "cmi.core.session_time") {
+
+                    // check if this specific element is not defined in the datamodel,
+                    // but the generic element name is
+                    if ((eval('typeof datamodel["'+element+'"]')) == "undefined"
+                        && (eval('typeof datamodel["'+elementmodel+'"]')) != "undefined") {
+
+                        // add this specific element to the data model (by cloning
+                        // the generic element) so we can track changes to it
+                        eval('datamodel["'+element+'"]=CloneObj(datamodel["'+elementmodel+'"]);');
+                    }
+
+                    // check if the current element exists in the datamodel
+                    if ((typeof eval('datamodel["'+element+'"]')) != "undefined") {
+
+                        // make sure this is not a read only element
+                        if (eval('datamodel["'+element+'"].mod') != 'r') {
+
+                            elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
+
+                            // check if the element has a default value
+                            if ((typeof eval('datamodel["'+element+'"].defaultvalue')) != "undefined") {
+
+                                // check if the default value is different from the current value
+                                if (eval('datamodel["'+element+'"].defaultvalue') != data[property]
+                                    || eval('typeof(datamodel["'+element+'"].defaultvalue)') != typeof(data[property])) {
+
+                                    // append the URI fragment to the string we plan to commit
+                                    datastring += elementstring;
+
+                                    // update the element default to reflect the current committed value
+                                    eval('datamodel["'+element+'"].defaultvalue=data[property];');
+                                }
+                            } else {
+                                // append the URI fragment to the string we plan to commit
                                 datastring += elementstring;
+                                // no default value for the element, so set it now
+                                eval('datamodel["'+element+'"].defaultvalue=data[property];');
                             }
-                        } else {
-                            datastring += elementstring;
                         }
                     }
                 }
@@ -526,12 +578,28 @@ if ($count > 0) {
         return datastring;
     }
 
+    function CloneObj(obj){
+        if(obj == null || typeof(obj) != 'object') {
+            return obj;
+        }
+
+        var temp = new obj.constructor(); // changed (twice)
+        for(var key in obj) {
+            temp[key] = CloneObj(obj[key]);
+        }
+
+        return temp;
+    }
+
     function StoreData(data,storetotaltime) {
         if (storetotaltime) {
+            if (cmi.core.lesson_status == 'not attempted') {
+                cmi.core.lesson_status = 'completed';
+            }
             if (cmi.core.lesson_mode == 'normal') {
                 if (cmi.core.credit == 'credit') {
-                    if (cmi.student_data.mastery_score != '' && cmi.core.score.raw != '') {
-                        if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
+                    if (cmi.student_data.mastery_score !== '' && cmi.core.score.raw !== '') {
+                        if (parseFloat(cmi.core.score.raw) >= parseFloat(cmi.student_data.mastery_score)) {
                             cmi.core.lesson_status = 'passed';
                         } else {
                             cmi.core.lesson_status = 'failed';
@@ -549,12 +617,10 @@ if ($count > 0) {
         } else {
             datastring = CollectData(data,'cmi');
         }
-        datastring += '&attempt=<?php echo $attempt ?>';
-        datastring += '&scoid=<?php echo $scoid ?>';
 
-        //popupwin(datastring);
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
+        //alert('going to:' + "<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php" + "id=<?php p($id) ?>&a=<?php p($a) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
+        result = DoRequest(myRequest,datamodelurl,datamodelurlparams+datastring);
         results = String(result).split('\n');
         errorCode = results[1];
         return results[0];
@@ -570,4 +636,8 @@ if ($count > 0) {
     this.LMSGetDiagnostic = LMSGetDiagnostic;
 }
 
-var API = new AICCapi();
+M.scorm_api = {};
+
+M.scorm_api.init = function(Y, def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg) {
+    window.API = new SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg);
+}

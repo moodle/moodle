@@ -165,6 +165,13 @@ $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => false,
                                                        'popupoptions' => $scorm->options), true);
 $PAGE->requires->js('/mod/scorm/request.js', true);
 $PAGE->requires->js('/lib/cookies.js', true);
+
+if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js')) {
+    $PAGE->requires->js('/mod/scorm/datamodels/'.$scorm->version.'.js', true);
+} else {
+    $PAGE->requires->js('/mod/scorm/datamodels/scorm_12.js', true);
+}
+
 echo $OUTPUT->header();
 if (!empty($scorm->displayactivityname)) {
     echo $OUTPUT->heading(format_string($scorm->name));
@@ -247,9 +254,18 @@ if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");
 }
 
+if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.php')) {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.php');
+} else {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.php');
+}
+
 // Add the checknet system to keep checking for a connection.
 $PAGE->requires->string_for_js('networkdropped', 'mod_scorm');
 $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array(array(
     'message' => array('networkdropped', 'mod_scorm'),
 )));
 echo $OUTPUT->footer();
+
+// Set the start time of this SCO.
+scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, 'x.start.time', time());
