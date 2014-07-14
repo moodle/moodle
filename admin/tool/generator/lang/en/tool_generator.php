@@ -71,6 +71,7 @@ $string['pluginname'] = 'Development data generator';
 $string['progress_checkaccounts'] = 'Checking user accounts ({$a})';
 $string['progress_coursecompleted'] = 'Course completed ({$a}s)';
 $string['progress_createaccounts'] = 'Creating user accounts ({$a->from} - {$a->to})';
+$string['progress_createassignments'] = 'Creating assignments ({$a})';
 $string['progress_createbigfiles'] = 'Creating big files ({$a})';
 $string['progress_createcourse'] = 'Creating course {$a}';
 $string['progress_createforum'] = 'Creating forum ({$a} posts)';
