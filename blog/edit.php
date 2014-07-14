@@ -31,14 +31,32 @@ include_once('locallib.php');
 $action   = required_param('action', PARAM_ALPHA);
 $id       = optional_param('entryid', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
-$modid    = optional_param('modid', 0, PARAM_INT); // To associate the entry with a module instance
-$courseid = optional_param('courseid', 0, PARAM_INT); // To associate the entry with a course
+$modid = optional_param('modid', 0, PARAM_INT); // To associate the entry with a module instance.
+$courseid = optional_param('courseid', 0, PARAM_INT); // To associate the entry with a course.
+
+if ($action == 'edit') {
+    $id = required_param('entryid', PARAM_INT);
+}
 
 $PAGE->set_url('/blog/edit.php', array('action' => $action, 'entryid' => $id, 'confirm' => $confirm, 'modid' => $modid, 'courseid' => $courseid));
 
 // If action is add, we ignore $id to avoid any further problems
 if (!empty($id) && $action == 'add') {
     $id = null;
+}
+
+// Blogs are always in system context.
+$sitecontext = context_system::instance();
+$PAGE->set_context($sitecontext);
+
+require_login($courseid);
+
+if (empty($CFG->enableblogs)) {
+    print_error('blogdisable', 'blog');
+}
+
+if (isguestuser()) {
+    print_error('noguestentry', 'blog');
 }
 
 $returnurl = new moodle_url('/blog/index.php');
@@ -54,26 +72,7 @@ if (!empty($modid)) {
     $returnurl->param('courseid', $courseid);
 }
 
-// Blogs are always in system context.
-$sitecontext = context_system::instance();
-$PAGE->set_context($sitecontext);
-
-
 $blogheaders = blog_get_headers();
-
-require_login($courseid);
-
-if ($action == 'edit') {
-    $id = required_param('entryid', PARAM_INT);
-}
-
-if (empty($CFG->enableblogs)) {
-    print_error('blogdisable', 'blog');
-}
-
-if (isguestuser()) {
-    print_error('noguestentry', 'blog');
-}
 
 if (!has_capability('moodle/blog:create', $sitecontext) && !has_capability('moodle/blog:manageentries', $sitecontext)) {
     print_error('cannoteditentryorblog');
