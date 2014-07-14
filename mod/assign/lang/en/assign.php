@@ -47,6 +47,7 @@ $string['assign:grade'] = 'Grade assignment';
 $string['assign:grantextension'] = 'Grant extension';
 $string['assign:manageallocations'] = 'Manage markers allocated to submissions';
 $string['assign:managegrades'] = 'Review and release grades';
+$string['assign:receivegradernotifications'] = 'Receive grader submission notifications';
 $string['assign:releasegrades'] = 'Release grades';
 $string['assign:revealidentities'] = 'Reveal student identities';
 $string['assign:reviewgrades'] = 'Review grades';

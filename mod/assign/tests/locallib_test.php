@@ -845,6 +845,58 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertCount(10, $assign->testable_get_graders($this->students[1]->id));
     }
 
+    public function test_get_notified_users() {
+        global $CFG, $DB;
+
+        $capability = 'mod/assign:receivegradernotifications';
+        $coursecontext = context_course::instance($this->course->id);
+        $role = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $this->create_extra_users();
+        $this->setUser($this->editingteachers[0]);
+
+        // Create an assignment with no groups.
+        $assign = $this->create_instance();
+
+        $this->assertCount(self::DEFAULT_TEACHER_COUNT +
+                           self::DEFAULT_EDITING_TEACHER_COUNT +
+                           self::EXTRA_TEACHER_COUNT +
+                           self::EXTRA_EDITING_TEACHER_COUNT,
+                           $assign->testable_get_notifiable_users($this->students[0]->id));
+
+        // Change nonediting teachers role to not receive grader notifications.
+        assign_capability($capability, CAP_PROHIBIT, $role->id, $coursecontext);
+
+        $this->assertCount(self::DEFAULT_EDITING_TEACHER_COUNT +
+                           self::EXTRA_EDITING_TEACHER_COUNT,
+                           $assign->testable_get_notifiable_users($this->students[0]->id));
+
+        // Reset nonediting teachers role to default.
+        unassign_capability($capability, $role->id, $coursecontext);
+
+        // Force create an assignment with SEPARATEGROUPS.
+        $data = new stdClass();
+        $data->courseid = $this->course->id;
+        $data->name = 'Grouping';
+        $groupingid = groups_create_grouping($data);
+        groups_assign_grouping($groupingid, $this->groups[0]->id);
+        $assign = $this->create_instance(array('groupingid' => $groupingid, 'groupmode' => SEPARATEGROUPS));
+
+        $this->setUser($this->students[1]);
+        $this->assertCount(4, $assign->testable_get_notifiable_users($this->students[0]->id));
+        // Note the second student is in a group that is not in the grouping.
+        // This means that we get all graders that are not in a group in the grouping.
+        $this->assertCount(10, $assign->testable_get_notifiable_users($this->students[1]->id));
+
+        // Change nonediting teachers role to not receive grader notifications.
+        assign_capability($capability, CAP_PROHIBIT, $role->id, $coursecontext);
+
+        $this->assertCount(2, $assign->testable_get_notifiable_users($this->students[0]->id));
+        // Note the second student is in a group that is not in the grouping.
+        // This means that we get all graders that are not in a group in the grouping.
+        $this->assertCount(5, $assign->testable_get_notifiable_users($this->students[1]->id));
+    }
+
     public function test_group_members_only() {
         global $CFG;
 
