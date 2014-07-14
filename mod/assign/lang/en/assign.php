@@ -423,7 +423,6 @@ $string['teamsubmission'] = 'Students submit in groups';
 $string['teamsubmission_help'] = 'If enabled students will be divided into groups based on the default set of groups or a custom grouping. A group submission will be shared among group members and all members of the group will see each others changes to the submission.';
 $string['teamsubmissiongroupingid'] = 'Grouping for student groups';
 $string['teamsubmissiongroupingid_help'] = 'This is the grouping that the assignment will use to find groups for student groups. If not set - the default set of groups will be used.';
-$string['teamsubmissionstatus'] = 'Group submission status';
 $string['textinstructions'] = 'Assignment instructions';
 $string['timemodified'] = 'Last modified';
 $string['timeremaining'] = 'Time remaining';
