@@ -1166,7 +1166,8 @@ function format_postdata_for_curlcall($postdata) {
  * @param string $tofile store the downloaded content to file instead of returning it.
  * @param bool $calctimeout false by default, true enables an extra head request to try and determine
  *   filesize and appropriately larger timeout based on $CFG->curltimeoutkbitrate
- * @return mixed false if request failed or content of the file as string if ok. True if file downloaded into $tofile successfully.
+ * @return stdClass|string|bool stdClass object if $fullresponse is true, false if request failed, true
+ *   if file downloaded into $tofile successfully or the file content as a string.
  */
 function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20, $skipcertverify=false, $tofile=NULL, $calctimeout=false) {
     global $CFG;
