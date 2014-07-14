@@ -1266,12 +1266,16 @@ M.core_filepicker.init = function(Y, options) {
             var viewbar = this.fpnode.one('.fp-viewbar')
             if (viewbar) {
                 if (mode) {
-                    viewbar.addClass('enabled').removeClass('disabled')
+                    viewbar.addClass('enabled').removeClass('disabled');
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("aria-disabled", "false");
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("tabindex", "");
                 } else {
-                    viewbar.removeClass('enabled').addClass('disabled')
+                    viewbar.removeClass('enabled').addClass('disabled');
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("aria-disabled", "true");
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("tabindex", "-1");
                 }
             }
-            this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').removeClass('checked')
+            this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').removeClass('checked');
             var modes = {1:'icons', 2:'tree', 3:'details'};
             this.fpnode.all('.fp-vb-'+modes[this.viewmode]).addClass('checked');
         },
