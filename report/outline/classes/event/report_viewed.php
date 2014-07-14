@@ -48,7 +48,7 @@ class report_viewed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
