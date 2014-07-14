@@ -1680,6 +1680,7 @@ function purify_html($text, $options = array()) {
             'nntp' => true,
             'news' => true,
             'rtsp' => true,
+            'rtmp' => true,
             'teamspeak' => true,
             'gopher' => true,
             'mms' => true,
