@@ -709,23 +709,42 @@ function groups_get_possible_roles($context) {
  * @param int $roleid The role to select users from
  * @param int $cohortid restrict to cohort id
  * @param string $orderby The column to sort users by
+ * @param int $notingroup restrict to users not in existing groups
  * @return array An array of the users
  */
-function groups_get_potential_members($courseid, $roleid = null, $cohortid = null, $orderby = 'lastname ASC, firstname ASC') {
+function groups_get_potential_members($courseid, $roleid = null, $cohortid = null,
+                                      $orderby = 'lastname ASC, firstname ASC',
+                                      $notingroup = null) {
     global $DB;
 
     $context = context_course::instance($courseid);
 
     list($esql, $params) = get_enrolled_sql($context);
 
+    $notingroupsql = "";
+    if ($notingroup) {
+        // We want to eliminate users that are already associated with a course group.
+        $notingroupsql = "u.id NOT IN (SELECT userid
+                                         FROM {groups_members}
+                                        WHERE groupid IN (SELECT id
+                                                            FROM {groups}
+                                                           WHERE courseid = :courseid))";
+        $params['courseid'] = $courseid;
+    }
+
     if ($roleid) {
         // We are looking for all users with this role assigned in this context or higher.
-        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true),
+                                                                       SQL_PARAMS_NAMED,
+                                                                       'relatedctx');
 
         $params = array_merge($params, $relatedctxparams, array('roleid' => $roleid));
         $where = "WHERE u.id IN (SELECT userid
                                    FROM {role_assignments}
                                   WHERE roleid = :roleid AND contextid $relatedctxsql)";
+        $where .= $notingroup ? "AND $notingroupsql" : "";
+    } else if ($notingroup) {
+        $where = "WHERE $notingroupsql";
     } else {
         $where = "";
     }
