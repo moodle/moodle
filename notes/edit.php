@@ -41,20 +41,19 @@ if (!$course = $DB->get_record('course', array('id'=>$note->courseid))) {
     print_error('invalidcourseid');
 }
 
-/// locate user information
-if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
-    print_error('invaliduserid');
-}
-
 /// require login to access notes
 require_login($course);
+
+if (empty($CFG->enablenotes)) {
+    print_error('notesdisabled', 'notes');
+}
 
 /// locate context information
 $context = context_course::instance($course->id);
 require_capability('moodle/notes:manage', $context);
 
-if (empty($CFG->enablenotes)) {
-    print_error('notesdisabled', 'notes');
+if (!$user = $DB->get_record('user', array('id' => $note->userid))) {
+    print_error('invaliduserid');
 }
 
 /// create form
