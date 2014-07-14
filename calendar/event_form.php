@@ -120,7 +120,7 @@ class event_form extends moodleform {
         $group[] =& $mform->createElement('radio', 'duration', null, get_string('durationuntil', 'calendar'), 1);
         $group[] =& $mform->createElement('date_time_selector', 'timedurationuntil', '');
         $group[] =& $mform->createElement('radio', 'duration', null, get_string('durationminutes', 'calendar'), 2);
-        $group[] =& $mform->createElement('text', 'timedurationminutes', null);
+        $group[] =& $mform->createElement('text', 'timedurationminutes', get_string('durationminutes', 'calendar'));
 
         $mform->addGroup($group, 'durationgroup', '', '<br />', false);
 
