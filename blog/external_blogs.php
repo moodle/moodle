@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -36,23 +35,25 @@ require_capability('moodle/blog:manageexternal', $context);
 
 $delete = optional_param('delete', null, PARAM_INT);
 
-$strexternalblogs = get_string('externalblogs','blog');
-$straddnewexternalblog = get_string('addnewexternalblog','blog');
-$strblogs = get_string('blogs','blog');
+$strexternalblogs = get_string('externalblogs', 'blog');
+$straddnewexternalblog = get_string('addnewexternalblog', 'blog');
+$strblogs = get_string('blogs', 'blog');
 $message = null;
 
 if ($delete && confirm_sesskey()) {
     $externalbloguserid = $DB->get_field('blog_external', 'userid', array('id' => $delete));
     if ($externalbloguserid == $USER->id) {
-        // Delete the external blog
+        // Delete the external blog.
         $DB->delete_records('blog_external', array('id' => $delete));
 
-        // Delete the external blog's posts
+        // Delete the external blog's posts.
         $deletewhere = 'module = :module
                             AND userid = :userid
                             AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false) . '
                             AND ' . $DB->sql_compare_text('content') . ' = ' . $DB->sql_compare_text(':delete');
-        $DB->delete_records_select('post', $deletewhere, array('module' => 'blog_external', 'userid' => $USER->id, 'delete' => $delete));
+        $DB->delete_records_select('post', $deletewhere, array('module' => 'blog_external',
+                                                               'userid' => $USER->id,
+                                                               'delete' => $delete));
 
         $message = get_string('externalblogdeleted', 'blog');
     }
@@ -77,7 +78,11 @@ if (!empty($blogs)) {
     $table = new html_table();
     $table->cellpadding = 4;
     $table->attributes['class'] = 'generaltable boxaligncenter';
-    $table->head = array(get_string('name'), get_string('url', 'blog'), get_string('timefetched', 'blog'), get_string('valid', 'blog'), get_string('actions'));
+    $table->head = array(get_string('name'),
+                         get_string('url', 'blog'),
+                         get_string('timefetched', 'blog'),
+                         get_string('valid', 'blog'),
+                         get_string('actions'));
 
     foreach ($blogs as $blog) {
         if ($blog->failedlastsync) {
@@ -92,7 +97,11 @@ if (!empty($blogs)) {
         $deletelink = new moodle_url('/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey'=>sesskey()));
         $deleteicon = $OUTPUT->action_icon($deletelink, new pix_icon('t/delete', get_string('deleteexternalblog', 'blog')));
 
-        $table->data[] = new html_table_row(array($blog->name, $blog->url, userdate($blog->timefetched), $validicon, $editicon . '&nbsp'. $deleteicon));
+        $table->data[] = new html_table_row(array($blog->name,
+                                                  $blog->url,
+                                                  userdate($blog->timefetched),
+                                                  $validicon,
+                                                  $editicon . '&nbsp'. $deleteicon));
     }
     echo html_writer::table($table);
 }

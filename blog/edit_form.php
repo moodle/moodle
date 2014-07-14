@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
 }
 
 require_once($CFG->libdir.'/formslib.php');
@@ -24,7 +23,10 @@ require_once($CFG->libdir.'/formslib.php');
 class blog_edit_form extends moodleform {
     public $modnames = array();
 
-    function definition() {
+    /**
+     * Blog form definition.
+     */
+    public function definition() {
         global $CFG, $DB;
 
         $mform =& $this->_form;
@@ -50,12 +52,12 @@ class blog_edit_form extends moodleform {
 
         $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'forum'), null, $attachmentoptions);
 
-        //disable publishstate options that are not allowed
+        // Disable publishstate options that are not allowed.
         $publishstates = array();
         $i = 0;
 
         foreach (blog_entry::get_applicable_publish_states() as $state => $desc) {
-            $publishstates[$state] = $desc;   //no maximum was set
+            $publishstates[$state] = $desc;   // No maximum was set.
             $i++;
         }
 
@@ -87,7 +89,12 @@ class blog_edit_form extends moodleform {
                 }
 
                 $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
-                $mform->addElement('advcheckbox', 'courseassoc', get_string('associatewithcourse', 'blog', $a), null, null, array(0, $contextid));
+                $mform->addElement('advcheckbox',
+                                   'courseassoc',
+                                   get_string('associatewithcourse', 'blog', $a),
+                                   null,
+                                   null,
+                                   array(0, $contextid));
                 $mform->setDefault('courseassoc', $contextid);
 
             } else if ((!empty($entry->modassoc) || !empty($modid))) {
@@ -107,7 +114,12 @@ class blog_edit_form extends moodleform {
                 }
 
                 $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
-                $mform->addElement('advcheckbox', 'modassoc', get_string('associatewithmodule', 'blog', $a), null, null, array(0, $context->id));
+                $mform->addElement('advcheckbox',
+                                   'modassoc',
+                                   get_string('associatewithmodule', 'blog', $a),
+                                   null,
+                                   null,
+                                   array(0, $context->id));
                 $mform->setDefault('modassoc', $context->id);
             }
         }
@@ -130,12 +142,18 @@ class blog_edit_form extends moodleform {
         $mform->setDefault('courseid', $courseid);
     }
 
-    function validation($data, $files) {
+    /**
+     * Validate the blog form data.
+     * @param array $data Data to be validated
+     * @param array $files unused
+     * @return array|bool
+     */
+    public function validation($data, $files) {
         global $CFG, $DB, $USER;
 
         $errors = array();
 
-        // validate course association
+        // Validate course association.
         if (!empty($data['courseassoc'])) {
             $coursecontext = context::instance_by_id($data['courseassoc']);
 
@@ -144,16 +162,16 @@ class blog_edit_form extends moodleform {
             }
         }
 
-        // validate mod association
+        // Validate mod association.
         if (!empty($data['modassoc'])) {
             $modcontextid = $data['modassoc'];
             $modcontext = context::instance_by_id($modcontextid);
 
             if ($modcontext->contextlevel == CONTEXT_MODULE) {
-                // get context of the mod's course
+                // Get context of the mod's course.
                 $coursecontext = $modcontext->get_course_context(true);
 
-                // ensure only one course is associated
+                // Ensure only one course is associated.
                 if (!empty($data['courseassoc'])) {
                     if ($data['courseassoc'] != $coursecontext->id) {
                         $errors['modassoc'] = get_string('onlyassociateonecourse', 'blog');

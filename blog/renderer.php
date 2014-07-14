@@ -63,7 +63,9 @@ class core_blog_renderer extends plugin_renderer_base {
         $o .= $this->output->container_start('topic starter header clearfix');
 
         // Title.
-        $titlelink =  html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $entry->id)), format_string($entry->subject));
+        $titlelink = html_writer::link(new moodle_url('/blog/index.php',
+                                                       array('entryid' => $entry->id)),
+                                                       format_string($entry->subject));
         $o .= $this->output->container($titlelink, 'subject');
 
         // Post by.
@@ -244,9 +246,14 @@ class core_blog_renderer extends plugin_renderer_base {
             $o = html_writer::empty_tag('img', $attrs);
             $class = 'attachedimages';
         } else {
-            $image = $this->output->pix_icon(file_file_icon($attachment->file), $attachment->filename, 'moodle', array('class'=>'icon'));
+            $image = $this->output->pix_icon(file_file_icon($attachment->file),
+                                             $attachment->filename,
+                                             'moodle',
+                                             array('class' => 'icon'));
             $o = html_writer::link($attachment->url, $image);
-            $o .= format_text(html_writer::link($attachment->url, $attachment->filename), FORMAT_HTML, array('context' => $syscontext));
+            $o .= format_text(html_writer::link($attachment->url, $attachment->filename),
+                              FORMAT_HTML,
+                              array('context' => $syscontext));
             $class = 'attachments';
         }
 
