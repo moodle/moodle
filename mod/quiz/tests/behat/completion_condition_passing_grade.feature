@@ -48,7 +48,7 @@ Feature: Set a quiz to be marked complete when the student passes
       | Feedback for the response 'False'. | So you think it is false                |
     And I follow "Course 1"
     And I follow "Grades"
-    And I select "Simple view" from "jump"
+    And I set the field "jump" to "Simple view"
     And I press "Go"
     And I follow "Edit  quiz Test quiz name"
     Then I should see "Edit grade item"
