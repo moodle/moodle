@@ -37,6 +37,10 @@ class tool_generator_course_backend extends tool_generator_backend {
      */
     private static $paramsections = array(1, 10, 100, 500, 1000, 2000);
     /**
+     * @var array Number of assignments in course
+     */
+    private static $paramassignments = array(1, 10, 100, 500, 1000, 2000);
+    /**
      * @var array Number of Page activities in course
      */
     private static $parampages = array(1, 50, 200, 1000, 5000, 10000);
@@ -179,6 +183,7 @@ class tool_generator_course_backend extends tool_generator_backend {
         // Make course.
         $this->course = $this->create_course();
         $this->create_users();
+        $this->create_assignments();
         $this->create_pages();
         $this->create_small_files();
         $this->create_big_files();
@@ -315,6 +320,26 @@ class tool_generator_course_backend extends tool_generator_backend {
             $this->userids[$number] = (int)$user->id;
             $this->dot($done, $count);
         }
+        $this->end_log();
+    }
+
+    /**
+     * Creates a number of Assignment activities.
+     */
+    private function create_assignments() {
+        // Set up generator.
+        $assigngenerator = $this->generator->get_plugin_generator('mod_assign');
+
+        // Create assignments.
+        $number = self::$paramassignments[$this->size];
+        $this->log('createassignments', $number, true);
+        for ($i = 0; $i < $number; $i++) {
+            $record = array('course' => $this->course);
+            $options = array('section' => $this->get_target_section());
+            $assigngenerator->create_instance($record, $options);
+            $this->dot($i, $number);
+        }
+
         $this->end_log();
     }
 
