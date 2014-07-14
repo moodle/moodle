@@ -1,0 +1,9 @@
+{
+    "moodle-local_ucla-gradebooktable": {
+        "requires": [
+            "node",
+            "event",
+            "node-event-simulate"
+        ]
+    }
+}

@@ -1137,7 +1137,7 @@ class grade_report_grader extends grade_report {
             $html .= $OUTPUT->container(html_writer::table($righttable), 'right_scroller');
         } else {
             $fulltable = new html_table();
-            $fulltable->attributes['class'] = 'gradestable flexible boxaligncenter generaltable';
+            $fulltable->attributes['class'] = 'table table-bordered table-striped table-condensed';
             $fulltable->id = 'user-grades';
 
             // Extract rows from each side (left and right) and collate them into one row each

@@ -56,7 +56,8 @@ M.gradereport_grader = {
                     return;
                 }
 
-                var content = '<div class="graderreportoverlay" role="tooltip" aria-describedby="' + properties.id + '">';
+                var overriden = /.*overridden.*/g.test(properties.cell.getAttribute('class')) ? 'overriden' : '';
+                var content = '<div class="graderreportoverlay ' + overriden +  '" role="tooltip" aria-describedby="' + properties.id + '">';
                 content += '<div class="fullname">'+properties.username+'</div><div class="itemname">'+properties.itemname+'</div>';
                 if (properties.feedback) {
                     content += '<div class="feedback">'+properties.feedback+'</div>';

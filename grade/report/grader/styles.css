@@ -1,75 +1,142 @@
-.path-grade-report-grader .flexible th {
-    white-space: normal;
+.path-grade-report-grader .yui3-overlay {
+  border: 0;
+  background: none;
+  background-color: 'initial';
+  min-width: 200px;
 }
-.gradestable {
-    margin-bottom: 0;
+.path-grade-report-grader .graderreportoverlay {
+  background-color: white;
+  width: auto;
+  padding: 10px;
+  border-color: #ddd;
+  font-size: 12px;
+  -webkit-box-shadow: #999999 2px 2px 3px;
+  -moz-box-shadow: #999999 2px 2px 3px;
+  box-shadow: #999999 2px 2px 3px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
 }
-.gradestable th.user img {
-    width: 20px;
-    height: 20px;
+.path-grade-report-grader .graderreportoverlay.overriden {
+  border-top: 22px solid #f1c32a;
 }
-.gradestable th img {
-    vertical-align: text-bottom;
-    padding-bottom: 0;
+.path-grade-report-grader .graderreportoverlay.overriden:before {
+  font-size: 12px;
+  content: "Overridden grade";
+  color: black;
+  height: 0px;
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+  top: -32px;
+  float: left;
+  position: relative;
 }
-.gradestable th .grade_icons {
-    margin-top: .3em;
+.path-grade-report-grader .graderreportoverlay .overriden {
+  background-color: #f1c32a;
+  width: 100%;
+  text-align: center;
 }
-.gradestable th img.sorticon {
-    margin-left: .3em;
+.path-grade-report-grader .graderreportoverlay .fullname {
+  color: #444;
 }
-.dir-rtl .gradestable th img.sorticon {
-    margin-left: 0;
-    margin-right: .3em;
+.path-grade-report-grader .graderreportoverlay .itemname {
+  padding-top: 4px;
+  color: #666;
 }
-table#user-grades .catlevel2 {
-    background-color: #f9f9f9;
+.path-grade-report-grader .gradeparent {
+  overflow: inherit;
 }
-table#user-grades tr.range td.cell {
-    font-weight: 700;
+
+table#user-grades {
+  font-size: 14px;
 }
-table#user-grades tr.avg td.cell {
-    background-color: #efefff;
-    font-weight: 700;
-    color: #00008B;
+table#user-grades .avg th,
+table#user-grades .avg td,
+table#user-grades .heading th {
+  font-weight: bold;
+  background-color: #333;
+  color: #ddd;
+  border-color: #444;
 }
-table#user-grades tr.odd td.cell {
-    background-color: #efefef;
-    white-space: nowrap;
+table#user-grades .avg th a,
+table#user-grades .avg td a,
+table#user-grades .heading th a {
+  color: white;
+  font-weight: normal;
 }
-table#user-grades tr td.overridden {
-    background-color: #F3E4C0;
+table#user-grades .avg .cell {
+  font-weight: bold;
+  text-align: center;
 }
-table#user-grades tr.odd td.overridden {
-    background-color: #EFD9A4;
+table#user-grades .avg .cell.header {
+  text-align: right;
 }
-table#user-grades tr td.ajaxoverridden {
-    background-color: #FFE3A0;
+table#user-grades th {
+  font-weight: normal;
 }
-table#user-grades tr.odd td.ajaxoverridden {
-    background-color: #FFDA83;
+table#user-grades th.cell {
+  height: 20px;
+  white-space: nowrap;
 }
-table#user-grades tr.even td.excluded {
-    background-color: #EABFFF;
+.path-grade-report-history table#user-grades th.cell {
+  white-space: normal;
 }
-table#user-grades tr.odd td.excluded {
-    background-color: #E5AFFF;
+table#user-grades .controls {
+  text-align: right;
+  background-color: #eee;
+  height: 20px;
 }
-table#user-grades tr.odd th.header {
-    background-color: #efefef;
-    background-image: none;
+table#user-grades tr {
+  height: 40px;
 }
-table#user-grades tr.even th.header {
-    background-image: none;
+table#user-grades tr .gradevalue {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
 }
-table#user-grades tr.groupavg td.cell {
-    background-color: #efffef;
-    font-weight: 700;
-    color: #006400;
+table#user-grades tr .user {
+  min-width: 200px;
+  max-width: 200px;
+  width: 200px;
+  background-color: #777777;
+  border-color: #666666;
 }
-table#user-grades td.cat,
-table#user-grades td.course {
-    font-weight: 700;
+table#user-grades tr .user a {
+  color: white;
+}
+table#user-grades tr .user .userpicture {
+  display: none;
+}
+table#user-grades tr.odd td.grade.vmarked {
+  background-color: #f39a00;
+  border-bottom-color: #f39a00;
+}
+table#user-grades tr.odd td.grade.vmarked.overridden {
+  background-color: #f39a00;
+}
+table#user-grades tr.odd td.grade.hmarked {
+  background-color: #f5cd00;
+  border-bottom-color: #f5cd00;
+}
+table#user-grades tr.odd td.grade.hmarked.overridden {
+  background-color: #f5cd00;
+}
+table#user-grades tr.odd td.grade.vmarked.hmarked {
+  background-color: #f1b900;
+  border-bottom-color: #f1b900;
+}
+table#user-grades tr.odd td.grade.vmarked.hmarked.overridden {
+  background-color: #f1b900;
+}
+table#user-grades tr.odd td.grade.overridden {
+  background-color: #fff;
+  background: url([[pix:gradereport_grader|corner-fold]]) no-repeat;
+  width: 16px;
+  height: 16px;
+  background-color: #efefef;
 }
 table#user-grades {
     font-size: 10px;
@@ -411,110 +478,36 @@ tr.groupavg th.header {
 .path-grade-report-grader .heading_name_row th {
     white-space: nowrap;
     width: 2000px;
+table#user-grades tr.even td.grade.vmarked {
+  background-color: #f4a400;
+  border-bottom-color: #f4a400;
 }
-
-/*MDL-21088 - IE 7 ignores nowraps on tds or ths so we put a span within it with a nowrap on it*/
-.path-grade-report-grader heading_name_row th span {
-    white-space: nowrap;
+table#user-grades tr.even td.grade.vmarked.overridden {
+  background-color: #f4a400;
 }
-.path-grade-report-grader .grade_icons img.ajax {
-    float: right;
+table#user-grades tr.even td.grade.hmarked {
+  background-color: #f5cf2c;
+  border-bottom-color: #f5cf2c;
 }
-.path-grade-report-grader .gradestable th.user,
-.path-grade-report-grader .gradestable th.range,
-.path-grade-report-grader .flexible th,
-.path-grade-report-grader .flexible td,
-.path-grade-report-grader .flexible th a,
-.path-grade-report-grader .flexible td a,
-.path-grade-report-grader .gradestable th.range,
-.path-grade-report-grader td {
-    white-space: nowrap;
+table#user-grades tr.even td.grade.hmarked.overridden {
+  background-color: #f5cf2c;
 }
-table#user-grades .catlevel1,
-table#user-grades .r1,
-.path-grade-report-grader table tr.even td.cell,
-.path-grade-report-grader table tr.even th {
-    background-color: #fff;
+table#user-grades tr.even td.grade.vmarked.hmarked {
+  background-color: #f1be00;
+  border-bottom-color: #f1be00;
 }
-table#user-grades .catlevel3,
-.path-grade-report-grader table tr.odd td.cell {
-    background-color: #efefef;
+table#user-grades tr.even td.grade.vmarked.hmarked.overridden {
+  background-color: #f1be00;
 }
-table#fixed_column tr.odd th ,
-table#user-grades tr.odd th {
-    background-color: #efefef;
+table#user-grades tr.even td.grade.overridden {
+  background-color: #efefef;
+  background: url([[pix:gradereport_grader|corner-fold]]) no-repeat;
+  width: 16px;
+  height: 16px;
+  background-color: #efefef;
 }
-table#user-grades td.vmarked,
-table#user-grades tr.odd td.vmarked,
-table#user-grades tr.avg td.vmarked,
-table#user-grades tr.controls td.vmarked,
-table#user-grades .catlevel1.vmarked,
-table#user-grades .catlevel2.vmarked,
-table#user-grades .catlevel3.vmarked,
-table#user-grades tr.range td.vmarked,
-table#user-grades tr.groupavg td.vmarked {
-    background-color: #fc3;
-}
-table#user-grades td.hmarked,
-table#user-grades tr.odd td.hmarked,
-table#user-grades tr.even td.hmarked,
-table#user-grades tr.odd th.hmarked,
-table#user-grades tr.even th.hmarked {
-    background-color: #ff9;
-}
-table#user-grades td.hmarked.vmarked,
-table#user-grades tr.odd td.hmarked.vmarked,
-table#user-grades tr.even td.hmarked.vmarked {
-    background-color: #fc9;
-}
-table#user-grades tr.heading,
-table#user-grades .heading td {
-    border-style: solid;
-    border-width: 0;
-}
-table#user-grades td.userfield,
-table#user-grades th,
-.path-grade-report-grader div.gradeparent,
-.path-grade-report-grader .ie6 form,
-table#user-grades td.ajax {
-    text-align: left;
-}
-.dir-rtl table#user-grades td.userfield,
-.dir-rtl table#user-grades th,
-.path-grade-report-grader.dir-rtl  div.gradeparent,
-.path-grade-report-grader.dir-rtl  .ie6 form,
-.dir-rtl table#user-grades td.ajax {
-    text-align: right;
-}
-.path-grade-report-grader .gradeparent {
-    overflow: auto;
-}
-table#user-grades td.controls,
-.path-grade-report-grader table tr.avg .cell,
-.path-grade-report-grader table tr.range .cell {
-    background-color: #f3ead8;
-}
-.path-grade-report-grader div.left_scroller tr,
-.path-grade-report-grader div.right_scroller tr,
-.path-grade-report-grader div.left_scroller td,
-.path-grade-report-grader div.right_scroller td,
-.path-grade-report-grader div.left_scroller th,
-.path-grade-report-grader div.right_scroller th {
-    height: 4.5em;
-    font-size: 10px;
-}
-.path-grade-report-grader table th.user,
-.path-grade-report-grader table td.userfield {
-    text-align: left;
-    vertical-align: middle;
-}
-.path-grade-report-grader .usersuspended a:link,
-.path-grade-report-grader .usersuspended a:visited {
-    color: #666;
-}
-.path-grade-report-grader table th.usersuspended img.usersuspendedicon {
-    vertical-align: text-bottom;
-    margin-left: .45em;
+table#user-grades .overridden .grade_icons {
+  padding-left: 10px;
 }
 .path-grade-report-grader .yui3-overlay {
     background-color: #FFEE69;
@@ -524,69 +517,234 @@ table#user-grades td.controls,
     left: 0;
     padding: 2px 5px;
     font-size: 0.7em;
+table#user-grades .catlevel1 .action-icon img {
+  opacity: 0.5;
 }
-.path-grade-report-grader .yui3-overlay .fullname {
-    color: #5F3E00;
-    font-weight: bold;
-}
-.path-grade-report-grader .yui3-overlay .itemname {
-    color: #194F3E;
-    font-weight: bold;
-}
-.path-grade-report-grader .yui3-overlay .feedback {
-    color: #5F595E;
-}
-/* table#user-grades td */
-/* .grader-report-grader table#user-grades td .yui-panel div.hd { */
-.path-grade-report-grader #tooltipPanel {
-    text-align: left;
-}
-.path-grade-report-grader .yui3-overlay a.container-close {
-    margin-top: -3px;
-}
-.path-grade-report-grader #hiddentooltiproot,
-.tooltipDiv {
-    display: none;
-}
-.path-grade-report-grader.ie .right_scroller {
-    overflow-y: hidden;
-}
-.path-grade-report-grader.ie table#fixed_column th {
-    height: 4.5em;
-}
-.path-grade-report-grader.ie table#fixed_column tr.avg th {
-    height: 2.1em;
-}
-.path-grade-report-grader.ie div.left_scroller td {
-    height: 4.5em;
-}
-.path-grade-report-grader.ie6 div.right_scroller {
-    margin-top: 4em;
-    width: auto;
-    position: absolute;
-}
-.path-grade-report-grader.ie6 .excludedfloater {
-    font-size: 7px;
+table#user-grades .catlevel1 .action-icon.selected img {
+  opacity: 1;
 }
 
-/** MDL-40071 **/
-.path-grade-report-grader.dir-rtl table th.user,
-.path-grade-report-grader.dir-rtl table td.userfield {
-    text-align: right;
+#gradebook-header-container {
+  font-size: 14px;
+  background-color: #444;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#gradebook-header-container .gradebook-header-cell {
+  background-color: #444;
+  color: white;
+  padding: 4px;
+  white-space: nowrap;
+  border: 1px solid #444;
+  border-top: 0;
+  border-right: 0;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#gradebook-header-container .gradebook-header-cell.catlevel1 {
+  background-color: #333;
+}
+#gradebook-header-container .gradebook-header-cell.catlevel2 {
+  background-color: #222;
+}
+#gradebook-header-container .gradebook-header-cell a {
+  color: white;
+}
+#gradebook-header-container .gradebook-header-cell:hover {
+  background-color: #111;
+}
+#gradebook-header-container .gradebook-header-cell .icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  border: 0;
+  padding-right: 6px;
 }
 
-/** MDL-40180 **/
-.dir-rtl table#user-grades th.category,
-.dir-rtl table#user-grades th#studentheader,
-.dir-rtl table#user-grades th.user {
-    text-align: right;
+#gradebook-user-container {
+  background-color: #777;
 }
-.path-grade-report-grader.dir-rtl th.user img.userpicture {
-    margin-left: 0.5em;
+#gradebook-user-container .gradebook-user-cell {
+  background-color: #666;
+  font-size: 14px;
+  border: 1px solid #666;
+  border-top: 0;
+  padding: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#gradebook-user-container .gradebook-user-cell .userpicture {
+  display: none;
+}
+#gradebook-user-container .gradebook-user-cell a {
+  font-weight: normal;
+  color: #fff;
+}
+#gradebook-user-container .gradebook-user-cell:nth-child(2n+1) {
+  background-color: #777;
+  border-bottom: 1px solid #777;
+}
+#gradebook-user-container .gradebook-user-cell:nth-child(2n):hover {
+  background-color: #5c5c5c;
+}
+#gradebook-user-container .gradebook-user-cell:hover {
+  background-color: #6d6d6d;
+}
+#gradebook-user-container .gradebook-user-cell:first-child {
+  /*border-top: 1px solid #666;*/
 }
 
-.path-grade-report-grader .yui3-scrollview-scrollbar {
-    opacity: 1 !important;
+#gradebook-footer-container {
+  display: none;
+  font-size: 14px;
+  background-color: #444;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#gradebook-footer-container.gradebook-footer-row-sticky {
+  display: block;
+}
+#gradebook-footer-container.gradebook-footer-row-sticky .cell {
+  border-top: 2px solid gray;
+}
+#gradebook-footer-container .gradebook-footer-cell {
+  padding: 8px;
+  font-size: 14px;
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #444;
+  border-right: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#gradebook-footer-container .gradebook-footer-cell:nth-of-type(1) {
+  text-align: right;
+}
+#gradebook-footer-container .gradebook-footer-cell .btn {
+  float: left;
+}
+
+#gradebook-user-header-container {
+  background-color: #333;
+  font-size: 14px;
+  text-align: left;
+  padding: 8px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#gradebook-user-header-container a {
+  color: white;
+}
+
+.gradebook-loading-screen {
+  width: 100%;
+  height: 40px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: black;
+  z-index: 99999;
+  opacity: 0.8;
+  padding: 10px;
+  text-align: center;
+}
+.gradebook-loading-screen .gradebook-loading {
+  padding-right: 40px;
+  text-align: center;
+  width: 100%;
+}
+
+.gradebook-loading i {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #00b3d5;
+}
+
+.gradebook-loading i:first-child {
+  -webkit-animation: gradebook-loading-ani2 0.5s linear infinite;
+  animation: gradebook-loading-ani2 0.5s linear infinite;
+  opacity: 0;
+  -webkit-transform: translate(-20px);
+  -moz-transform: translate(-20px);
+  -ms-transform: translate(-20px);
+  -o-transform: translate(-20px);
+  transform: translate(-20px);
+}
+
+.gradebook-loading i:nth-child(2),
+.gradebook-loading i:nth-child(3) {
+  -webkit-animation: gradebook-loading-ani3 0.5s linear infinite;
+  animation: gradebook-loading-ani3 0.5s linear infinite;
+}
+
+.gradebook-loading i:last-child {
+  -webkit-animation: gradebook-loading-ani1 0.5s linear infinite;
+  animation: gradebook-loading-ani1 0.5s linear infinite;
+}
+
+@-webkit-keyframes gradebook-loading-ani1 {
+  100% {
+    -webkit-transform: translate(40px);
+    -moz-transform: translate(40px);
+    -ms-transform: translate(40px);
+    -o-transform: translate(40px);
+    transform: translate(40px);
+    opacity: 0;
+  }
+}
+
+@keyframes gradebook-loading-ani1 {
+  100% {
+    -webkit-transform: translate(40px);
+    -moz-transform: translate(40px);
+    -ms-transform: translate(40px);
+    -o-transform: translate(40px);
+    transform: translate(40px);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes gradebook-loading-ani2 {
+  100% {
+    -webkit-transform: translate(20px);
+    -moz-transform: translate(20px);
+    -ms-transform: translate(20px);
+    -o-transform: translate(20px);
+    transform: translate(20px);
+    opacity: 1;
+  }
+}
+
+@keyframes gradebook-loading-ani2 {
+  100% {
+    -webkit-transform: translate(20px);
+    -moz-transform: translate(20px);
+    -ms-transform: translate(20px);
+    -o-transform: translate(20px);
+    transform: translate(20px);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes gradebook-loading-ani3 {
+  100% {
+    -webkit-transform: translate(20px);
+    -moz-transform: translate(20px);
+    -ms-transform: translate(20px);
+    -o-transform: translate(20px);
+    transform: translate(20px);
+  }
 }
 
 .path-grade-report-grader .yui3-scrollview-scrollbar-horiz {
@@ -627,6 +785,14 @@ table#user-grades th.category {
 }
 .path-grade-report-grader td.grade.overridden {
     line-height: 20px;
+@keyframes gradebook-loading-ani3 {
+  100% {
+    -webkit-transform: translate(20px);
+    -moz-transform: translate(20px);
+    -ms-transform: translate(20px);
+    -o-transform: translate(20px);
+    transform: translate(20px);
+  }
 }
 
 /** MDL-46812 **/
