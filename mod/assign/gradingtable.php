@@ -285,9 +285,6 @@ class assign_grading_table extends table_sql implements renderable {
         if ($assignment->get_instance()->teamsubmission) {
             $columns[] = 'team';
             $headers[] = get_string('submissionteam', 'assign');
-
-            $columns[] = 'teamstatus';
-            $headers[] = get_string('teamsubmissionstatus', 'assign');
         }
         // Allocated marker.
         if ($this->assignment->get_instance()->markingallocation &&
@@ -408,7 +405,6 @@ class assign_grading_table extends table_sql implements renderable {
 
         if ($assignment->get_instance()->teamsubmission) {
             $this->no_sorting('team');
-            $this->no_sorting('teamstatus');
         }
 
         $plugincolumnindex = 0;
@@ -664,26 +660,6 @@ class assign_grading_table extends table_sql implements renderable {
         }
     }
 
-
-    /**
-     * Get the team status for this user.
-     *
-     * @param stdClass $row
-     * @return string The team name
-     */
-    public function col_teamstatus(stdClass $row) {
-        $submission = false;
-        $group = false;
-        $this->get_group_and_submission($row->id, $group, $submission, -1);
-
-        $status = '';
-        if ($submission) {
-            $status = $submission->status;
-        }
-        return get_string('submissionstatus_' . $status, 'assign');
-    }
-
-
     /**
      * Format a list of outcomes.
      *
@@ -897,7 +873,12 @@ class assign_grading_table extends table_sql implements renderable {
     public function col_timesubmitted(stdClass $row) {
         $o = '-';
 
-        if ($row->timesubmitted) {
+        $group = false;
+        $submission = false;
+        $this->get_group_and_submission($row->id, $group, $submission, -1);
+        if ($group && $submission && $submission->timemodified) {
+            $o = userdate($submission->timemodified);
+        } else if ($row->timesubmitted) {
             $o = userdate($row->timesubmitted);
         }
 
@@ -920,12 +901,23 @@ class assign_grading_table extends table_sql implements renderable {
             $due = $row->extensionduedate;
         }
 
+        $group = false;
+        $submission = false;
+        $this->get_group_and_submission($row->id, $group, $submission, -1);
+        if ($group && $submission) {
+            $timesubmitted = $submission->timemodified;
+            $status = $submission->status;
+        } else {
+            $timesubmitted = $row->timesubmitted;
+            $status = $row->status;
+        }
+
         if ($this->assignment->is_any_submission_plugin_enabled()) {
 
-            $o .= $this->output->container(get_string('submissionstatus_' . $row->status, 'assign'),
-                                           array('class'=>'submissionstatus' .$row->status));
-            if ($due && $row->timesubmitted > $due) {
-                $usertime = format_time($row->timesubmitted - $due);
+            $o .= $this->output->container(get_string('submissionstatus_' . $status, 'assign'),
+                                           array('class'=>'submissionstatus' .$status));
+            if ($due && $timesubmitted > $due) {
+                $usertime = format_time($timesubmitted - $due);
                 $latemessage = get_string('submittedlateshort',
                                           'assign',
                                           $usertime);
@@ -941,15 +933,14 @@ class assign_grading_table extends table_sql implements renderable {
                 $o .= $this->col_workflowstatus($row);
             } else if ($row->grade !== null && $row->grade >= 0) {
                 $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
-            }
-
-            if (!$row->timesubmitted) {
+            } else if (!$timesubmitted) {
                 $now = time();
                 if ($due && ($now > $due)) {
                     $overduestr = get_string('overdue', 'assign', format_time($now - $due));
                     $o .= $this->output->container($overduestr, 'overduesubmission');
                 }
             }
+
             if ($row->extensionduedate) {
                 $userdate = userdate($row->extensionduedate);
                 $extensionstr = get_string('userextensiondate', 'assign', $userdate);
