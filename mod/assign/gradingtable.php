@@ -530,7 +530,11 @@ class assign_grading_table extends table_sql implements renderable {
             return '';
         }
         if ($this->is_downloading()) {
-            return $markers[$row->allocatedmarker];
+            if (isset($markers[$row->allocatedmarker])) {
+                return fullname($markers[$row->allocatedmarker]);
+            } else {
+                return '';
+            }
         }
 
         if ($this->quickgrading && has_capability('mod/assign:manageallocations', $this->assignment->get_context()) &&
