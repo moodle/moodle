@@ -662,21 +662,30 @@ class page_wiki_comments extends page_wiki {
 
             $t->data = array($row1, $row2);
 
-            $actionicons = false;
+            $canedit = $candelete = false;
+            if ((has_capability('mod/wiki:editcomment', $this->modcontext)) and ($USER->id == $user->id)) {
+                $candelete = $canedit = true;
+            }
             if ((has_capability('mod/wiki:managecomment', $this->modcontext))) {
-                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'edit'));
-                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'delete'));
-                $actionicons = true;
-            } else if ((has_capability('mod/wiki:editcomment', $this->modcontext)) and ($USER->id == $user->id)) {
-                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'edit'));
-                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'delete'));
-                $actionicons = true;
+                $candelete = true;
             }
 
-            if ($actionicons) {
-                $cell6 = new html_table_cell($OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit'),
-                        '', array('class' => 'iconsmall'))) . $OUTPUT->action_icon($urldelet, new pix_icon('t/delete',
-                        get_string('delete'), '', array('class' => 'iconsmall'))));
+            $editicon = $deleteicon = '';
+            if ($canedit) {
+                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'edit'));
+                $editicon = $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit'), '', array('class' => 'iconsmall')));
+            }
+            if ($candelete) {
+                $urldelete = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'delete'));
+                $deleteicon = $OUTPUT->action_icon($urldelete,
+                                                  new pix_icon('t/delete',
+                                                               get_string('delete'),
+                                                               '',
+                                                               array('class' => 'iconsmall')));
+            }
+
+            if ($candelete || $canedit) {
+                $cell6 = new html_table_cell($editicon.$deleteicon);
                 $row3 = new html_table_row();
                 $row3->cells[] = $cell5;
                 $row3->cells[] = $cell6;
@@ -2252,23 +2261,29 @@ class page_wiki_handlecomments extends page_wiki {
         global $CFG, $PAGE, $USER;
 
         if ($this->action == 'add') {
-            if (has_capability('mod/wiki:editcomment', $this->modcontext)) {
-                $this->add_comment($this->content, $this->commentid);
-            }
+            require_capability('mod/wiki:editcomment', $this->modcontext);
+            $this->add_comment($this->content, $this->commentid);
         } else if ($this->action == 'edit') {
+            require_capability('mod/wiki:editcomment', $this->modcontext);
+
             $comment = wiki_get_comment($this->commentid);
-            $edit = has_capability('mod/wiki:editcomment', $this->modcontext);
             $owner = ($comment->userid == $USER->id);
-            if ($owner && $edit) {
+
+            if ($owner) {
                 $this->add_comment($this->content, $this->commentid);
             }
         } else if ($this->action == 'delete') {
             $comment = wiki_get_comment($this->commentid);
+
             $manage = has_capability('mod/wiki:managecomment', $this->modcontext);
+            $edit = has_capability('mod/wiki:editcomment', $this->modcontext);
             $owner = ($comment->userid == $USER->id);
-            if ($owner || $manage) {
+
+            if ($manage || ($owner && $edit)) {
                 $this->delete_comment($this->commentid);
                 redirect($CFG->wwwroot . '/mod/wiki/comments.php?pageid=' . $this->page->id, get_string('deletecomment', 'wiki'), 2);
+            } else {
+                print_error('nopermissiontoeditcomment');
             }
         }
 
