@@ -89,17 +89,17 @@ Feature: Automatic creation of groups
   Scenario: Split automatically the course users in groups that are not in groups
     Given I press "Cancel"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group 1 |
     And I press "Save changes"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group 2 |
     And I press "Save changes"
-    When I add "student0" user to "Group 1" group
-    And I add "student1" user to "Group 1" group
-    And I add "student2" user to "Group 2" group
-    And I add "student3" user to "Group 2" group
+    When I add "Student 0" user to "Group 1" group members
+    And I add "Student 1" user to "Group 1" group members
+    And I add "Student 2" user to "Group 2" group members
+    And I add "Student 3" user to "Group 2" group members
     And I press "Auto-create groups"
     And I expand all fieldsets
     And I set the field "Auto create based on" to "Number of groups"
