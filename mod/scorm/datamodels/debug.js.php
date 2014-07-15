@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+echo html_writer::start_tag('script');
 ?>
 
 <!--// hopefully fool ie IE proof way of getting DOM element
@@ -70,7 +71,7 @@ function toggleLog () {
     if (getLoggingActive() == "A") {
         AppendToLog("Moodle Logging Deactivated", 0);
         setLoggingActive('N');
-        logButton.innerHTML = '--><?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
+        logButton.innerHTML = '-><?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
     } else {
         setLoggingActive('A');
         AppendToLog("Moodle Logging Activated", 0);
@@ -762,3 +763,7 @@ if (!document.getElementById('mod-scorm-log-toggle')) {
     var content = safeGetElement(document, 'scormpage');
     content.insertBefore(logButton, content.firstChild);
 }
+-->
+
+<?php
+echo html_writer::end_tag('script');
