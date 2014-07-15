@@ -8,7 +8,11 @@ information provided here is intended especially for developers.
   If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"
   you will need to change the name of your render method to "render_blah" instead, as renderable at the end is no longer accepted.
 
+DEPRECATIONS:
+* completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
+
 === 2.6.4 / 2.7.1 ===
+
 * setnew_password_and_mail() and update_internal_user_password() will trigger
   \core\event\user_password_updated. Previously they used to generate
   \core\event\user_updated event.
