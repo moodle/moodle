@@ -219,7 +219,23 @@ EOD;
         }
 
         if (!isset($record['maildisplay'])) {
-            $record['maildisplay'] = 1;
+            $record['maildisplay'] = $CFG->defaultpreference_maildisplay;
+        }
+
+        if (!isset($record['mailformat'])) {
+            $record['mailformat'] = $CFG->defaultpreference_mailformat;
+        }
+
+        if (!isset($record['maildigest'])) {
+            $record['maildigest'] = $CFG->defaultpreference_maildigest;
+        }
+
+        if (!isset($record['autosubscribe'])) {
+            $record['autosubscribe'] = $CFG->defaultpreference_autosubscribe;
+        }
+
+        if (!isset($record['trackforums'])) {
+            $record['trackforums'] = $CFG->defaultpreference_trackforums;
         }
 
         if (!isset($record['deleted'])) {

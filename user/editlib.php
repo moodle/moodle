@@ -218,72 +218,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->setType('email', PARAM_EMAIL);
     }
 
-    $choices = array();
-    $choices['0'] = get_string('emaildisplayno');
-    $choices['1'] = get_string('emaildisplayyes');
-    $choices['2'] = get_string('emaildisplaycourse');
-    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', 2);
-
-    $choices = array();
-    $choices['0'] = get_string('textformat');
-    $choices['1'] = get_string('htmlformat');
-    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', 1);
-
-    if (!empty($CFG->allowusermailcharset)) {
-        $choices = array();
-        $charsets = get_list_of_charsets();
-        if (!empty($CFG->sitemailcharset)) {
-            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
-        } else {
-            $choices['0'] = get_string('site').' (UTF-8)';
-        }
-        $choices = array_merge($choices, $charsets);
-        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
-    }
-
-    $choices = array();
-    $choices['0'] = get_string('emaildigestoff');
-    $choices['1'] = get_string('emaildigestcomplete');
-    $choices['2'] = get_string('emaildigestsubjects');
-    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-    $mform->setDefault('maildigest', 0);
-    $mform->addHelpButton('maildigest', 'emaildigest');
-
-    $choices = array();
-    $choices['1'] = get_string('autosubscribeyes');
-    $choices['0'] = get_string('autosubscribeno');
-    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', 1);
-
-    if (!empty($CFG->forum_trackreadposts)) {
-        $choices = array();
-        $choices['0'] = get_string('trackforumsno');
-        $choices['1'] = get_string('trackforumsyes');
-        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', 0);
-    }
-
-    $editors = editors_get_enabled();
-    if (count($editors) > 1) {
-        $choices = array('' => get_string('defaulteditor'));
-        $firsteditor = '';
-        foreach (array_keys($editors) as $editor) {
-            if (!$firsteditor) {
-                $firsteditor = $editor;
-            }
-            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
-        }
-        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
-        $mform->setDefault('preference_htmleditor', '');
-    } else {
-        // Empty string means use the first chosen text editor.
-        $mform->addElement('hidden', 'preference_htmleditor');
-        $mform->setDefault('preference_htmleditor', '');
-        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
-    }
-
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
     if (!empty($CFG->defaultcity)) {
@@ -305,9 +239,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
         $mform->setDefault('timezone', '99');
     }
-
-    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-    $mform->setDefault('lang', $CFG->lang);
 
     // Multi-Calendar Support - see MDL-18375.
     $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
@@ -332,6 +263,9 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
     $mform->setType('description_editor', PARAM_CLEANHTML);
     $mform->addHelpButton('description_editor', 'userdescription');
+
+    $mform->addElement('header', 'moodle_userpreferences', get_string('preferences'));
+    useredit_shared_definition_preferences($user, $mform, $editoroptions, $filemanageroptions);
 
     if (empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
@@ -410,6 +344,88 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 }
 
 /**
+ * Adds user preferences elements to user edit form.
+ *
+ * @param stdClass $user
+ * @param moodleform $mform
+ * @param array|null $editoroptions
+ * @param array|null $filemanageroptions
+ */
+function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
+    global $CFG;
+
+    $choices = array();
+    $choices['0'] = get_string('emaildisplayno');
+    $choices['1'] = get_string('emaildisplayyes');
+    $choices['2'] = get_string('emaildisplaycourse');
+    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+
+    $choices = array();
+    $choices['0'] = get_string('textformat');
+    $choices['1'] = get_string('htmlformat');
+    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
+    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
+
+    if (!empty($CFG->allowusermailcharset)) {
+        $choices = array();
+        $charsets = get_list_of_charsets();
+        if (!empty($CFG->sitemailcharset)) {
+            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
+        } else {
+            $choices['0'] = get_string('site').' (UTF-8)';
+        }
+        $choices = array_merge($choices, $charsets);
+        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
+    }
+
+    $choices = array();
+    $choices['0'] = get_string('emaildigestoff');
+    $choices['1'] = get_string('emaildigestcomplete');
+    $choices['2'] = get_string('emaildigestsubjects');
+    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
+    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
+    $mform->addHelpButton('maildigest', 'emaildigest');
+
+    $choices = array();
+    $choices['1'] = get_string('autosubscribeyes');
+    $choices['0'] = get_string('autosubscribeno');
+    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
+    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
+
+    if (!empty($CFG->forum_trackreadposts)) {
+        $choices = array();
+        $choices['0'] = get_string('trackforumsno');
+        $choices['1'] = get_string('trackforumsyes');
+        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
+        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
+    }
+
+    $editors = editors_get_enabled();
+    if (count($editors) > 1) {
+        $choices = array('' => get_string('defaulteditor'));
+        $firsteditor = '';
+        foreach (array_keys($editors) as $editor) {
+            if (!$firsteditor) {
+                $firsteditor = $editor;
+            }
+            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
+        }
+        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
+        $mform->setDefault('preference_htmleditor', '');
+    } else {
+        // Empty string means use the first chosen text editor.
+        $mform->addElement('hidden', 'preference_htmleditor');
+        $mform->setDefault('preference_htmleditor', '');
+        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
+    }
+
+    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
+    $mform->setDefault('lang', $CFG->lang);
+
+}
+
+/**
  * Return required user name fields for forms.
  *
  * @return array required user name fields in order according to settings.
@@ -482,5 +498,3 @@ function useredit_get_disabled_name_fields($enabledadditionalusernames = null) {
             array_merge(array('firstname', 'lastname'), $enabledadditionalusernames));
     return $nonusednamefields;
 }
-
-

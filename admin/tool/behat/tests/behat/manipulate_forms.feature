@@ -11,6 +11,7 @@ Feature: Forms manipulation
     When I set the field "First name" to "Field value"
     And I set the field "Text editor" to "Plain text area"
     And I set the field "Unmask" to "1"
+    And I expand all fieldsets
     Then the field "First name" matches value "Field value"
     And the "Text editor" select box should contain "Plain text area"
     And the field "Unmask" matches value "1"
