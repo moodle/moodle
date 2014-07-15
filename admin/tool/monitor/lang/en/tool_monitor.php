@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addrule'] = 'Add a new rule';
 $string['allevents'] = 'All events';
 $string['allmodules'] = 'All modules';
 $string['core'] = 'Core';
