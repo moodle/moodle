@@ -63,7 +63,7 @@ Feature: Users can comment on wiki pages
     And I follow "Comments"
     Then ".r0 img[title='Edit']" "css_element" should not exist
     Then ".r0 img[title='Delete']" "css_element" should not exist
-    
+
   @javascript
   Scenario: Teacher can delete a student comment
     When I log out
