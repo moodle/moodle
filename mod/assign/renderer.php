@@ -92,10 +92,11 @@ class mod_assign_renderer extends plugin_renderer_base {
     public function render_assign_gradingmessage(assign_gradingmessage $result) {
         $urlparams = array('id' => $result->coursemoduleid, 'action'=>'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $classes = $result->gradingerror ? 'notifyproblem' : 'notifysuccess';
 
         $o = '';
         $o .= $this->output->heading($result->heading, 4);
-        $o .= $this->output->notification($result->message);
+        $o .= $this->output->notification($result->message, $classes);
         $o .= $this->output->continue_button($url);
         return $o;
     }
