@@ -26,6 +26,8 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $courseid = optional_param('courseid', 0, PARAM_INT);
+$ruleid = optional_param('ruleid', 0, PARAM_INT);
+$action = optional_param('action', '', PARAM_ALPHA);
 
 // Validate course id.
 if (empty($courseid)) {
@@ -61,6 +63,29 @@ if (empty($courseid)) {
 }
 
 echo $OUTPUT->header();
+
+// Copy/delete rule if needed.
+if (!empty($action) && $ruleid) {
+    $rule = \tool_monitor\rule_manager::get_rule($ruleid);
+    if ($rule->can_manage_rule()) {
+        switch ($action) {
+            case 'copy' :
+                $rule->duplicate_rule($courseid);
+                echo $OUTPUT->notification(get_string('rulecopysuccess', 'tool_monitor'), 'notifysuccess');
+                break;
+            case 'delete' :
+                $rule->delete_rule();
+                echo $OUTPUT->notification(get_string('ruledeletesuccess', 'tool_monitor'), 'notifysuccess');
+                break;
+            default:
+        }
+    } else {
+        // User doesn't have permissions. Should never happen for real users.
+        throw new moodle_exception('rulenopermissions', 'tool_monitor', $manageurl, $action);
+    }
+}
+
+// Render the rule list.
 $renderable = new \tool_monitor\output\managerules\renderable('toolmonitorrules', $manageurl, $courseid);
 $renderer = $PAGE->get_renderer('tool_monitor', 'managerules');
 echo $renderer->render($renderable);
