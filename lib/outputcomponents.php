@@ -510,8 +510,9 @@ class pix_icon implements renderable {
         if (empty($this->attributes['class'])) {
             $this->attributes['class'] = 'smallicon';
         }
-
-        if (empty($this->attributes['title'])) {
+        if (!isset($this->attributes['title'])) {
+            $this->attributes['title'] = $this->attributes['alt'];
+        } else if (empty($this->attributes['title'])) {
             // Remove the title attribute if empty, we probably want to use the parent node's title
             // and some browsers might overwrite it with an empty title.
             unset($this->attributes['title']);
