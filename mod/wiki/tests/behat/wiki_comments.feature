@@ -43,14 +43,14 @@ Feature: Users can comment on wiki pages
 
   @javascript
   Scenario: Student can edit and delete their own comment
-    When I click on ".r0 img[title='Edit']" "css_element"
+    When I click on "Edit" "link" in the "wiki-comments" "table"
     And I set the following fields to these values:
       | Comment | student 1 updated comment |
     And I press "Save"
     Then I should see "student 1 updated comment"
-    And ".r0 img[title='Edit']" "css_element" should exist
-    And ".r0 img[title='Delete']" "css_element" should exist
-    And I click on ".r0 img[title='Delete']" "css_element"
+    And "Edit" "link" should exist in the "wiki-comments" "table"
+    And "Delete" "link" should exist in the "wiki-comments" "table"
+    And I click on "Delete" "link" in the "wiki-comments" "table"
     And I press "Yes"
     And I should not see "student 1 updated comment"
 
@@ -61,8 +61,8 @@ Feature: Users can comment on wiki pages
     And I follow "Course 1"
     And I follow "Test wiki name"
     And I follow "Comments"
-    Then ".r0 img[title='Edit']" "css_element" should not exist
-    Then ".r0 img[title='Delete']" "css_element" should not exist
+    Then "Edit" "link" should not exist in the "wiki-comments" "table"
+    And "Delete" "link" should not exist in the "wiki-comments" "table"
 
   @javascript
   Scenario: Teacher can delete a student comment
@@ -71,5 +71,5 @@ Feature: Users can comment on wiki pages
     And I follow "Course 1"
     And I follow "Test wiki name"
     And I follow "Comments"
-    Then ".r0 img[title='Edit']" "css_element" should not exist
-    Then ".r0 img[title='Delete']" "css_element" should exist
+    Then "Edit" "link" should not exist in the "wiki-comments" "table"
+    And "Delete" "link" should exist in the "wiki-comments" "table"

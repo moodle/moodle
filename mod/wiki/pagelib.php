@@ -633,6 +633,7 @@ class page_wiki_comments extends page_wiki {
             $by->date = userdate($comment->timecreated);
 
             $t = new html_table();
+            $t->id = 'wiki-comments';
             $cell1 = new html_table_cell($OUTPUT->user_picture($user, array('popup' => true)));
             $cell2 = new html_table_cell(get_string('bynameondate', 'forum', $by));
             $cell3 = new html_table_cell();
