@@ -270,13 +270,16 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
      * @param string $tagcontents The raw contents of the XML element
      */
     protected function process_group_tag($tagcontents) {
-        global $DB;
+        global $DB, $CFG;
 
         // Get configs.
         $truncatecoursecodes    = $this->get_config('truncatecoursecodes');
         $createnewcourses       = $this->get_config('createnewcourses');
         $createnewcategories    = $this->get_config('createnewcategories');
 
+        if ($createnewcourses) {
+            require_once("$CFG->dirroot/course/lib.php");
+        }
         // Process tag contents.
         $group = new stdClass();
         if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
