@@ -39,6 +39,12 @@ class handler_base extends \core\message\inbound\handler {
     }
 
     /**
+     * Get the name for unit tests.
+     */
+    public function get_name() {
+    }
+
+    /**
      * Process a message for unit tests.
      *
      * @param stdClass $record The record to process
