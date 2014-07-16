@@ -78,7 +78,7 @@
         /**
          * Render TeX string into gif/png
          * @param string $formula TeX formula
-         * @param string $filename base of filename for output (no extension)
+         * @param string $filename filename for output (including extension)
          * @param int $fontsize font size
          * @param int $density density value for .ps to .gif/.png conversion
          * @param string $background background color (e.g, #FFFFFF).
@@ -98,10 +98,14 @@
             $doc = $this->construct_latex_document( $formula, $fontsize );
 
             // construct some file paths
+            $convertformat = get_config('filter_tex', 'convertformat');
+            if (!strpos($filename, ".{$convertformat}")) {
+                $convertformat = 'png';
+            }
+            $filename = str_replace(".{$convertformat}", '', $filename);
             $tex = "{$this->temp_dir}/$filename.tex";
             $dvi = "{$this->temp_dir}/$filename.dvi";
             $ps  = "{$this->temp_dir}/$filename.ps";
-            $convertformat = get_config('filter_tex', 'convertformat');
             $img = "{$this->temp_dir}/$filename.{$convertformat}";
 
             // turn the latex doc into a .tex file in the temp area
@@ -123,14 +127,19 @@
                 return false;
             }
 
-            // run convert on document (.ps to .gif/.png)
+            // Run convert on document (.ps to .gif/.png) or run dvisvgm (.ps to .svg).
             if ($background) {
                 $bg_opt = "-transparent \"$background\""; // Makes transparent background
             } else {
                 $bg_opt = "";
             }
-            $pathconvert = get_config('filter_tex', 'pathconvert');
-            $command = "{$pathconvert} -density $density -trim $bg_opt $ps $img";
+            if ($convertformat == 'svg') {
+                $pathdvisvgm = get_config('filter_tex', 'pathdvisvgm');
+                $command = "{$pathdvisvgm} -E $ps -o $img";
+            } else {
+                $pathconvert = get_config('filter_tex', 'pathconvert');
+                $command = "{$pathconvert} -density $density -trim $bg_opt $ps $img";
+            }
             if ($this->execute($command, $log )) {
                 return false;
             }

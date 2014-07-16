@@ -39,6 +39,7 @@ if ($ADMIN->fulltree) {
     if (PHP_OS=='Linux') {
         $default_filter_tex_pathlatex   = "/usr/bin/latex";
         $default_filter_tex_pathdvips   = "/usr/bin/dvips";
+        $default_filter_tex_pathdvisvgm = "/usr/bin/dvisvgm";
         $default_filter_tex_pathconvert = "/usr/bin/convert";
 
     } else if (PHP_OS=='Darwin') {
@@ -57,18 +58,20 @@ if ($ADMIN->fulltree) {
     } else {
         $default_filter_tex_pathlatex   = '';
         $default_filter_tex_pathdvips   = '';
+        $default_filter_tex_pathdvisvgm = '';
         $default_filter_tex_pathconvert = '';
     }
 
     $items[] = new admin_setting_configexecutable('filter_tex/pathlatex', get_string('pathlatex', 'filter_tex'), '', $default_filter_tex_pathlatex);
     $items[] = new admin_setting_configexecutable('filter_tex/pathdvips', get_string('pathdvips', 'filter_tex'), '', $default_filter_tex_pathdvips);
     $items[] = new admin_setting_configexecutable('filter_tex/pathconvert', get_string('pathconvert', 'filter_tex'), '', $default_filter_tex_pathconvert);
+    $items[] = new admin_setting_configexecutable('filter_tex/pathdvisvgm', get_string('pathdvisvgm', 'filter_tex'), '', $default_filter_tex_pathdvisvgm);
     $items[] = new admin_setting_configexecutable('filter_tex/pathmimetex', get_string('pathmimetex', 'filter_tex'), get_string('pathmimetexdesc', 'filter_tex'), '');
 
-    // Even if we offer GIF and PNG formats here, in the update callback we check whether
-    // all the paths actually point to executables. If they don't, we force the setting
+    // Even if we offer GIF, PNG and SVG formats here, in the update callback we check whether
+    // required paths actually point to executables. If they don't, we force the setting
     // to GIF, as that's the only format mimeTeX can produce.
-    $formats = array('gif' => 'GIF', 'png' => 'PNG');
+    $formats = array('gif' => 'GIF', 'png' => 'PNG', 'svg' => 'SVG');
     $items[] = new admin_setting_configselect('filter_tex/convertformat', get_string('convertformat', 'filter_tex'), get_string('configconvertformat', 'filter_tex'), 'gif', $formats);
 
     foreach ($items as $item) {
