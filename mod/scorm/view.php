@@ -66,22 +66,24 @@ $contextmodule = context_module::instance($cm->id);
 $launch = false; // Does this automatically trigger a launch based on skipview.
 if (!empty($scorm->popup)) {
     $orgidentifier = '';
+
     $scoid = 0;
+    $orgidentifier = '';
+    if ($sco = scorm_get_sco($scorm->launch, SCO_ONLY)) {
+        if (($sco->organization == '') && ($sco->launch == '')) {
+            $orgidentifier = $sco->identifier;
+        } else {
+            $orgidentifier = $sco->organization;
+        }
+        $scoid = $sco->id;
+    }
+
     if (empty($preventskip) && $scorm->skipview >= SCORM_SKIPVIEW_FIRST &&
         has_capability('mod/scorm:skipview', $contextmodule) &&
         !has_capability('mod/scorm:viewreport', $contextmodule)) { // Don't skip users with the capability to view reports.
 
         // do we launch immediately and redirect the parent back ?
         if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || !scorm_has_tracks($scorm->id, $USER->id)) {
-            $orgidentifier = '';
-            if ($sco = scorm_get_sco($scorm->launch, SCO_ONLY)) {
-                if (($sco->organization == '') && ($sco->launch == '')) {
-                    $orgidentifier = $sco->identifier;
-                } else {
-                    $orgidentifier = $sco->organization;
-                }
-                $scoid = $sco->id;
-            }
             $launch = true;
         }
     }
@@ -97,7 +99,6 @@ if (!empty($scorm->popup)) {
     } else {
         $courseurl = course_get_url($course, $sectionid)->out(false);
     }
-
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
                                                            'currentorg' => $orgidentifier,
                                                            'sco' => $scoid,
