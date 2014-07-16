@@ -2609,7 +2609,18 @@ class restore_course_logs_structure_step extends restore_structure_step {
 
         // If we have data, insert it, else something went wrong in the restore_logs_processor
         if ($data) {
-            $DB->insert_record('log', $data);
+            if (empty($data->url)) {
+                $data->url = '';
+            }
+            if (empty($data->info)) {
+                $data->info = '';
+            }
+            // Store the data in the legacy log table if we are still using it.
+            $manager = get_log_manager();
+            if (method_exists($manager, 'legacy_add_to_log')) {
+                $manager->legacy_add_to_log($data->course, $data->module, $data->action, $data->url,
+                    $data->info, $data->cmid, $data->userid);
+            }
         }
     }
 }
@@ -2647,7 +2658,18 @@ class restore_activity_logs_structure_step extends restore_course_logs_structure
 
         // If we have data, insert it, else something went wrong in the restore_logs_processor
         if ($data) {
-            $DB->insert_record('log', $data);
+            if (empty($data->url)) {
+                $data->url = '';
+            }
+            if (empty($data->info)) {
+                $data->info = '';
+            }
+            // Store the data in the legacy log table if we are still using it.
+            $manager = get_log_manager();
+            if (method_exists($manager, 'legacy_add_to_log')) {
+                $manager->legacy_add_to_log($data->course, $data->module, $data->action, $data->url,
+                    $data->info, $data->cmid, $data->userid);
+            }
         }
     }
 }
