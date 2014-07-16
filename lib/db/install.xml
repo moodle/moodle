@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20140918" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20141002" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3059,6 +3059,19 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="handler_datavalue" TYPE="unique" FIELDS="handler, datavalue" COMMENT="The combination of handler and data item value must be unique."/>
         <KEY NAME="handler" TYPE="foreign" FIELDS="handler" REFTABLE="messageinbound_handlers" REFFIELDS="id" COMMENT="The handler must point to a valid record in the messageinbound_handlers table."/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="messageinbound_messagelist" COMMENT="A list of message IDs for existing replies">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="messageid" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="address" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The Inbound Message address that the message was originally sent to"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
