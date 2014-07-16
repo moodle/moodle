@@ -65,17 +65,21 @@ class assign_gradingmessage implements renderable {
     public $message = '';
     /** @var int $coursemoduleid */
     public $coursemoduleid = 0;
+    /** @var int $gradingerror should be set true if there was a problem grading */
+    public $gradingerror = null;
 
     /**
      * Constructor
      * @param string $heading This is the heading to display
      * @param string $message This is the message to display
+     * @param bool $gradingerror Set to true to display the message as an error.
      * @param int $coursemoduleid
      */
-    public function __construct($heading, $message, $coursemoduleid) {
+    public function __construct($heading, $message, $coursemoduleid, $gradingerror = false) {
         $this->heading = $heading;
         $this->message = $message;
         $this->coursemoduleid = $coursemoduleid;
+        $this->gradingerror = $gradingerror;
     }
 
 }
