@@ -43,11 +43,9 @@ class qtype_calculatedsimple extends qtype_calculated {
     public function save_question_options($question) {
         global $CFG, $DB;
         $context = $question->context;
-        // Get old answers.
 
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
+        // Make it impossible to save bad formulas anywhere.
+        $this->validate_question_data($question);
 
         // Get old versions of the objects.
         if (!$oldanswers = $DB->get_records('question_answers',
@@ -69,10 +67,7 @@ class qtype_calculatedsimple extends qtype_calculated {
             $units = &$result->units;
         }
         // Insert all the new answers.
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
-        foreach ($question->answers as $key => $answerdata) {
+        foreach ($question->answer as $key => $answerdata) {
             if (is_array($answerdata)) {
                 $answerdata = $answerdata['text'];
             }

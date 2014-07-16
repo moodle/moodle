@@ -111,9 +111,9 @@ M.gradingform_guideeditor.editmode = function(el, editmode) {
             value = M.str.gradingform_guide.clicktoedit
             taplain.addClass('empty')
         }
-        taplain.one('.textvalue').set('innerHTML', value)
+        taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value))
         if (tb) {
-            tbplain.one('.textvalue').set('innerHTML', tb.get('value'))
+            tbplain.one('.textvalue').set('innerHTML', Y.Escape.html(tb.get('value')))
         }
         // hide/display textarea, textbox and plaintexts
         taplain.removeClass('hiddenelement')
