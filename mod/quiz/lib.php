@@ -1835,7 +1835,9 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
                 'itemmodule' => 'quiz', 'iteminstance' => $cm->instance));
         if ($item) {
             $grades = grade_grade::fetch_users_grades($item, array($userid), false);
-            return $grades[$userid]->is_passed($item);
+            if (!empty($grades[$userid])) {
+                return $grades[$userid]->is_passed($item);
+            }
         }
     }
     return false;
