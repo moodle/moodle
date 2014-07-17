@@ -1329,6 +1329,8 @@ function html_is_blank($string) {
  *
  * A NULL value will delete the entry.
  *
+ * NOTE: this function is called from lib/db/upgrade.php
+ *
  * @param string $name the key to set
  * @param string $value the value to set (without magic quotes)
  * @param string $plugin (optional) the plugin scope, default null
@@ -1398,6 +1400,8 @@ function set_config($name, $value, $plugin=null) {
  *
  * If called with 2 parameters it will return a string single
  * value or false if the value is not found.
+ *
+ * NOTE: this function is called from lib/db/upgrade.php
  *
  * @static string|false $siteidentifier The site identifier is not cached. We use this static cache so
  *     that we need only fetch it once per request.
@@ -1484,6 +1488,8 @@ function get_config($plugin, $name = null) {
 
 /**
  * Removes a key from global configuration.
+ *
+ * NOTE: this function is called from lib/db/upgrade.php
  *
  * @param string $name the key to set
  * @param string $plugin (optional) the plugin scope
