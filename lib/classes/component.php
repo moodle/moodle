@@ -685,6 +685,7 @@ $cache = '.var_export($cache, true).';
         global $CFG;
 
         $psrsystems = array(
+            'Horde' => 'horde/framework',
         );
         self::$psrclassmap = array();
 
