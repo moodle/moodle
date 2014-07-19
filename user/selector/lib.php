@@ -435,9 +435,9 @@ abstract class user_selector_base {
 
         // Prepend the table alias.
         if ($u) {
-            foreach ($fields as $fieldsIndex => $field) {
+            foreach ($fields as $fields_index => $field) {
                 $field = $u . '.' . $field;
-                $fields[$fieldsIndex] = $field;
+                $fields[$fields_index] = $field;
             }
         }
         return implode(',', $fields);

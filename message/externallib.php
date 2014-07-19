@@ -526,7 +526,7 @@ class core_message_external extends external_api {
         }
 
         // Reorganising information.
-        foreach ($results as $resultIndex => $user) {
+        foreach ($results as $result_index => $user) {
             $newuser = array(
                 'id' => $user->id,
                 'fullname' => fullname($user)
@@ -544,7 +544,7 @@ class core_message_external extends external_api {
             }
 
             $user = $newuser;
-            $results[$resultIndex] = $user;
+            $results[$result_index] = $user;
         }
 
         return $results;
