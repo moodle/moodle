@@ -895,9 +895,10 @@ function quiz_update_all_final_grades($quiz) {
 function quiz_update_open_attempts(array $conditions) {
     global $DB;
 
-    foreach ($conditions as &$value) {
+    foreach ($conditions as $conditions_index => $value) {
         if (!is_array($value)) {
             $value = array($value);
+            $conditions[$conditions_index] = $value;
         }
     }
 

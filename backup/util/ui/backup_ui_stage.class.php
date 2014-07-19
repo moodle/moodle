@@ -88,12 +88,12 @@ class backup_ui_stage_initial extends backup_ui_stage {
         if ($data && confirm_sesskey()) {
             $tasks = $this->ui->get_tasks();
             $changes = 0;
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 // We are only interesting in the backup root task for this stage
                 if ($task instanceof backup_root_task) {
                     // Get all settings into a var so we can iterate by reference
                     $settings = $task->get_settings();
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         $name = $setting->get_ui_name();
                         if (isset($data->$name) &&  $data->$name != $setting->get_value()) {
                             $setting->set_value($data->$name);
@@ -126,20 +126,20 @@ class backup_ui_stage_initial extends backup_ui_stage {
             // Iterate all tasks by reference
             $add_settings = array();
             $dependencies = array();
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 // For the initial stage we are only interested in the root settings
                 if ($task instanceof backup_root_task) {
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
                     $settings = $task->get_settings();
                     // First add all settings except the filename setting
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         if ($setting->get_name() == 'filename') {
                             continue;
                         }
                         $add_settings[] = array($setting, $task);
                     }
                     // Then add all dependencies
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         if ($setting->get_name() == 'filename') {
                             continue;
                         }
@@ -203,13 +203,13 @@ class backup_ui_stage_schema extends backup_ui_stage {
             $tasks = $this->ui->get_tasks();
             $changes = 0;
             // Iterate all tasks by reference
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 // We are only interested in schema settings
                 if (!($task instanceof backup_root_task)) {
                     // Store as a variable so we can iterate by reference
                     $settings = $task->get_settings();
                     // Iterate by reference
-                    foreach ($settings as &$setting) {
+                    foreach ($settings as $setting) {
                         $name = $setting->get_ui_name();
                         if (isset($data->$name) &&  $data->$name != $setting->get_value()) {
                             $setting->set_value($data->$name);
@@ -350,7 +350,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
             $tasks = $this->ui->get_tasks();
             $changes = 0;
             // Iterate each task by reference
-            foreach ($tasks as &$task) {
+            foreach ($tasks as $task) {
                 if ($task instanceof backup_root_task) {
                     // At this stage all we are interested in is the filename setting
                     $setting = $task->get_setting('filename');

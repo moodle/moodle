@@ -102,7 +102,7 @@ switch ($action) {
         } else {
             $useroptions['link'] = false;
         }
-        foreach ($outcome->response['users'] as &$user) {
+        foreach ($outcome->response['users'] as $outcome_index => $user) {
             $user->userId = $user->id;
             $user->picture = $OUTPUT->user_picture($user, $useroptions);
             $user->fullname = fullname($user);
@@ -113,6 +113,7 @@ switch ($action) {
             }
             $user->extrafields = implode(', ', $fieldvalues);
             unset($user->id);
+            $outcome->response['users'][$outcome_index] = $user;
         }
         // Chrome will display users in the order of the array keys, so we need
         // to ensure that the results ordered array keys. Fortunately, the JavaScript

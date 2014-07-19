@@ -2436,7 +2436,7 @@ function get_message_processors($ready = false, $reset = false) {
     if (empty($processors)) {
         // Get all processors, ensure the name column is the first so it will be the array key
         $processors = $DB->get_records('message_processors', null, 'name DESC', 'name, id, enabled');
-        foreach ($processors as &$processor){
+        foreach ($processors as $processor) {
             $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
             if (is_readable($processorfile)) {
                 include_once($processorfile);

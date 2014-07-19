@@ -2059,7 +2059,7 @@ class PHPExcel_Calculation {
 				//		the formula
 				$temp = explode('"',$formula);
 				$i = FALSE;
-				foreach($temp as &$value) {
+				foreach($temp as $value) {
 					//	Only count/replace in alternating array entries
 					if ($i = !$i) {
 						$value = preg_replace($from,$to,$value);
@@ -2654,7 +2654,7 @@ class PHPExcel_Calculation {
 				//	Open and Closed counts used for trapping mismatched braces in the formula
 				$openCount = $closeCount = 0;
 				$i = FALSE;
-				foreach($temp as &$value) {
+				foreach($temp as $value) {
 					//	Only count/replace in alternating array entries
 					if ($i = !$i) {
 						$openCount += substr_count($value,'{');
@@ -3436,7 +3436,7 @@ class PHPExcel_Calculation {
 						if (strpos($functionCall,'::') !== FALSE) {
 							$result = call_user_func_array(explode('::',$functionCall),$args);
 						} else {
-							foreach($args as &$arg) {
+							foreach($args as $arg) {
 								$arg = PHPExcel_Calculation_Functions::flattenSingleValue($arg);
 							}
 							unset($arg);

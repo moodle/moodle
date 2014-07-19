@@ -856,7 +856,7 @@ class course_enrolment_manager {
         $instances = $this->get_enrolment_instances();
         $plugins = $this->get_enrolment_plugins(false);
         $inames = $this->get_enrolment_instance_names();
-        foreach ($userenrolments as &$ue) {
+        foreach ($userenrolments as $ue) {
             $ue->enrolmentinstance     = $instances[$ue->enrolid];
             $ue->enrolmentplugin       = $plugins[$ue->enrolmentinstance->enrol];
             $ue->enrolmentinstancename = $inames[$ue->enrolmentinstance->id];

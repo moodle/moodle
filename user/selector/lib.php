@@ -435,8 +435,9 @@ abstract class user_selector_base {
 
         // Prepend the table alias.
         if ($u) {
-            foreach ($fields as &$field) {
+            foreach ($fields as $fields_index => $field) {
                 $field = $u . '.' . $field;
+                $fields[$fields_index] = $field;
             }
         }
         return implode(',', $fields);
@@ -719,7 +720,7 @@ abstract class groups_user_selector_base extends user_selector_base {
                 $groupname = $role->name;
             }
             $groupedusers[$groupname] = $role->users;
-            foreach ($groupedusers[$groupname] as &$user) {
+            foreach ($groupedusers[$groupname] as $user) {
                 unset($user->roles);
                 $user->fullname = fullname($user);
                 if (!empty($user->component)) {

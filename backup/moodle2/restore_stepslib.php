@@ -4496,7 +4496,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     protected function recode_legacy_response_data($question, $qsession, $qstates) {
         $qsession->questionid = $question->id;
 
-        foreach ($qstates as &$state) {
+        foreach ($qstates as $state) {
             $state->question = $question->id;
             $state->answer = $this->restore_recode_legacy_answer($state, $question->qtype);
         }

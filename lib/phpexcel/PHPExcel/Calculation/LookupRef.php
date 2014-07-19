@@ -855,7 +855,7 @@ class PHPExcel_Calculation_LookupRef {
 			$lookup_vector = array_shift($lookup_vector);
 		}
 		if ($lookupColumns != 2) {
-			foreach($lookup_vector as &$value) {
+			foreach($lookup_vector as $lookupIndex => $value) {
 				if (is_array($value)) {
 					$k = array_keys($value);
 					$key1 = $key2 = array_shift($k);
@@ -871,6 +871,7 @@ class PHPExcel_Calculation_LookupRef {
 					$dataValue2 = array_shift($dataValue2);
 				}
 				$value = array($key1 => $dataValue1, $key2 => $dataValue2);
+                $lookup_vector[$lookupIndex] = $value;
 			}
 			unset($value);
 		}

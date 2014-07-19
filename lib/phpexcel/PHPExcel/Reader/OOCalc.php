@@ -621,7 +621,7 @@ class PHPExcel_Reader_OOCalc extends PHPExcel_Reader_Abstract implements PHPExce
 									$cellDataFormula = substr($cellDataFormula,strpos($cellDataFormula,':=')+1);
 									$temp = explode('"',$cellDataFormula);
 									$tKey = false;
-									foreach($temp as &$value) {
+									foreach($temp as $tempIndex => $value) {
 										//	Only replace in alternate array entries (i.e. non-quoted blocks)
 										if ($tKey = !$tKey) {
 											$value = preg_replace('/\[([^\.]+)\.([^\.]+):\.([^\.]+)\]/Ui','$1!$2:$3',$value);    //  Cell range reference in another sheet
@@ -629,7 +629,8 @@ class PHPExcel_Reader_OOCalc extends PHPExcel_Reader_Abstract implements PHPExce
 											$value = preg_replace('/\[\.([^\.]+):\.([^\.]+)\]/Ui','$1:$2',$value);    //  Cell range reference
 											$value = preg_replace('/\[\.([^\.]+)\]/Ui','$1',$value);                  //  Simple cell reference
 											$value = PHPExcel_Calculation::_translateSeparator(';',',',$value,$inBraces);
-										}
+										    $temp[$tempIndex] = $value;
+                                        }
 									}
 									unset($value);
 									//	Then rebuild the formula string

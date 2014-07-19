@@ -192,13 +192,13 @@ abstract class base_ui {
         // Get the tasks as a var so we can iterate by reference
         $tasks = $plan->get_tasks();
         $changes = 0;
-        foreach ($tasks as &$task) {
+        foreach ($tasks as $task) {
             // Store as a var so we can iterate by reference
             $settings = $task->get_settings();
-            foreach ($settings as &$setting) {
+            foreach ($settings as $setting) {
                 // Get all dependencies for iteration by reference
                 $dependencies = $setting->get_dependencies();
-                foreach ($dependencies as &$dependency) {
+                foreach ($dependencies as $dependency) {
                     // Enforce each dependency
                     if ($dependency->enforce()) {
                         $changes++;
