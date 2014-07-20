@@ -363,19 +363,19 @@ if (!isset($hiddenfields['mycourses'])) {
             if ($mycourse->category) {
                 context_helper::preload_from_record($mycourse);
                 $ccontext = context_course::instance($mycourse->id);
-                $class = '';
+                $linkattributes = null;
                 if ($mycourse->visible == 0) {
                     if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                         continue;
                     }
-                    $class = 'class="dimmed"';
+                    $linkattributes['class'] = 'dimmed';
                 }
                 $params = array('id' => $user->id, 'course' => $mycourse->id);
                 if ($showallcourses) {
                     $params['showallcourses'] = 1;
                 }
                 $url = new moodle_url('/user/view.php', $params);
-                $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), array('class' => $class));
+                $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), $linkattributes);
                 $courselisting .= ', ';
             }
             $shown++;
