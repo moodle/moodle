@@ -1108,7 +1108,7 @@ class core_course_renderer extends plugin_renderer_base {
 
             if ($ismoving) {
                 $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
-                $sectionoutput .= html_writer::tag('li', 
+                $sectionoutput .= html_writer::tag('li',
                         html_writer::link($movingurl, $this->output->render($movingpix), array('title' => $strmovefull)),
                         array('class' => 'movehere'));
             }
