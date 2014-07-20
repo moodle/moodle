@@ -43,7 +43,6 @@ if (empty($CFG->authloginviaemail)) {
             <div class="form-label"><label for="password"><?php print_string("password") ?></label></div>
             <div class="form-input">
               <input type="password" name="password" id="password" size="15" value="" <?php echo $autocomplete; ?> />
-              <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
             </div>
           </div>
             <div class="clearer"><!-- --></div>
@@ -54,6 +53,7 @@ if (empty($CFG->authloginviaemail)) {
               </div>
               <?php } ?>
           <div class="clearer"><!-- --></div>
+          <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
           <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
         </form>
         <div class="desc">
