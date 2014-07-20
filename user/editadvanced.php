@@ -184,6 +184,7 @@ if ($usernew = $userform->get_data()) {
             $usernew->password = hash_internal_user_password($usernew->newpassword);
         }
         $usernew->id = user_create_user($usernew, false, false);
+        $usercreated = true;
     } else {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
         // Pass a true old $user here.
@@ -240,6 +241,13 @@ if ($usernew = $userform->get_data()) {
         setnew_password_and_mail($usernew);
         unset_user_preference('create_password', $usernew);
         set_user_preference('auth_forcepasswordchange', 1, $usernew);
+    }
+
+    // Trigger update/create event, after all fields are stored.
+    if ($usercreated) {
+        \core\event\user_created::create_from_userid($usernew->id)->trigger();
+    } else {
+        \core\event\user_updated::create_from_userid($usernew->id)->trigger();
     }
 
     if ($user->id == $USER->id) {
