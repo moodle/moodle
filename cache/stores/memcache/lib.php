@@ -106,6 +106,12 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     protected $setconnections = array();
 
     /**
+     * If true data going in and out will be encoded.
+     * @var bool
+     */
+    protected $encode = true;
+
+    /**
      * Default prefix for key names.
      * @var string
      */
@@ -202,6 +208,24 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
         }
         $this->definition = $definition;
         $this->isinitialised = true;
+        $this->encode = self::require_encoding();
+    }
+
+    /**
+     * Tests if encoding is going to be required.
+     *
+     * Prior to memcache 3.0.3 scalar data types were not preserved.
+     * For earlier versions of the memcache extension we need to encode and decode scalar types
+     * to ensure that it is preserved.
+     *
+     * @param string $version The version to check, if null it is fetched from PHP.
+     * @return bool
+     */
+    public static function require_encoding($version = null) {
+        if (!$version) {
+            $version = phpversion('memcache');
+        }
+        return (version_compare($version, '3.0.3', '<'));
     }
 
     /**
@@ -292,7 +316,11 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
      * @return mixed The data that was associated with the key, or false if the key did not exist.
      */
     public function get($key) {
-        return $this->connection->get($this->parse_key($key));
+        $result = $this->connection->get($this->parse_key($key));
+        if ($this->encode && $result !== false) {
+            return @unserialize($result);
+        }
+        return $result;
     }
 
     /**
@@ -319,6 +347,9 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
                 $return[$key] = false;
             } else {
                 $return[$key] = $result[$mkey];
+                if ($this->encode && $return[$key] !== false) {
+                    $return[$key] = @unserialize($return[$key]);
+                }
             }
         }
         return $return;
@@ -332,6 +363,11 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
      * @return bool True if the operation was a success false otherwise.
      */
     public function set($key, $data) {
+        if ($this->encode) {
+            // We must serialise this data.
+            $data = serialize($data);
+        }
+
         if ($this->clustered) {
             $status = true;
             foreach ($this->setconnections as $connection) {
