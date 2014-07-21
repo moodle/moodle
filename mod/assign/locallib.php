@@ -841,10 +841,17 @@ class assign {
             // We need to remove the links to files as the calendar is not ready
             // to support module events with file areas.
             $intro = strip_pluginfile_content($intro);
-            $event->description = array(
-                'text' => $intro,
-                'format' => $instance->introformat
-            );
+            if ($this->show_intro()) {
+                $event->description = array(
+                    'text' => $intro,
+                    'format' => $instance->introformat
+                );
+            } else {
+                $event->description = array(
+                    'text' => '',
+                    'format' => $instance->introformat
+                );
+            }
 
             if ($event->id) {
                 $calendarevent = calendar_event::load($event->id);
@@ -1563,6 +1570,7 @@ class assign {
         // Only ever send a max of one days worth of updates.
         $yesterday = time() - (24 * 3600);
         $timenow   = time();
+        $lastcron = $DB->get_field('modules', 'lastcron', array('name'=>'mod_assign'));
 
         // Collect all submissions from the past 24 hours that require mailing.
         // Submissions are excluded if the assignment is hidden in the gradebook.
@@ -1581,143 +1589,159 @@ class assign {
         $params = array('yesterday' => $yesterday, 'today' => $timenow);
         $submissions = $DB->get_records_sql($sql, $params);
 
-        if (empty($submissions)) {
-            return true;
-        }
+        if (!empty($submissions)) {
 
-        mtrace('Processing ' . count($submissions) . ' assignment submissions ...');
+            mtrace('Processing ' . count($submissions) . ' assignment submissions ...');
 
-        // Preload courses we are going to need those.
-        $courseids = array();
-        foreach ($submissions as $submission) {
-            $courseids[] = $submission->course;
-        }
-
-        // Filter out duplicates.
-        $courseids = array_unique($courseids);
-        $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
-        list($courseidsql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $sql = 'SELECT c.*, ' . $ctxselect .
-                  ' FROM {course} c
-             LEFT JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
-                 WHERE c.id ' . $courseidsql;
-
-        $params['contextlevel'] = CONTEXT_COURSE;
-        $courses = $DB->get_records_sql($sql, $params);
-
-        // Clean up... this could go on for a while.
-        unset($courseids);
-        unset($ctxselect);
-        unset($courseidsql);
-        unset($params);
-
-        // Simple array we'll use for caching modules.
-        $modcache = array();
-
-        // Message students about new feedback.
-        foreach ($submissions as $submission) {
-
-            mtrace("Processing assignment submission $submission->id ...");
-
-            // Do not cache user lookups - could be too many.
-            if (!$user = $DB->get_record('user', array('id'=>$submission->userid))) {
-                mtrace('Could not find user ' . $submission->userid);
-                continue;
+            // Preload courses we are going to need those.
+            $courseids = array();
+            foreach ($submissions as $submission) {
+                $courseids[] = $submission->course;
             }
 
-            // Use a cache to prevent the same DB queries happening over and over.
-            if (!array_key_exists($submission->course, $courses)) {
-                mtrace('Could not find course ' . $submission->course);
-                continue;
-            }
-            $course = $courses[$submission->course];
-            if (isset($course->ctxid)) {
-                // Context has not yet been preloaded. Do so now.
-                context_helper::preload_from_record($course);
-            }
+            // Filter out duplicates.
+            $courseids = array_unique($courseids);
+            $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+            list($courseidsql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+            $sql = 'SELECT c.*, ' . $ctxselect .
+                      ' FROM {course} c
+                 LEFT JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+                     WHERE c.id ' . $courseidsql;
 
-            // Override the language and timezone of the "current" user, so that
-            // mail is customised for the receiver.
-            cron_setup_user($user, $course);
+            $params['contextlevel'] = CONTEXT_COURSE;
+            $courses = $DB->get_records_sql($sql, $params);
 
-            // Context lookups are already cached.
-            $coursecontext = context_course::instance($course->id);
-            if (!is_enrolled($coursecontext, $user->id)) {
-                $courseshortname = format_string($course->shortname,
-                                                 true,
-                                                 array('context' => $coursecontext));
-                mtrace(fullname($user) . ' not an active participant in ' . $courseshortname);
-                continue;
-            }
+            // Clean up... this could go on for a while.
+            unset($courseids);
+            unset($ctxselect);
+            unset($courseidsql);
+            unset($params);
 
-            if (!$grader = $DB->get_record('user', array('id'=>$submission->grader))) {
-                mtrace('Could not find grader ' . $submission->grader);
-                continue;
-            }
+            // Simple array we'll use for caching modules.
+            $modcache = array();
 
-            if (!array_key_exists($submission->assignment, $modcache)) {
-                $mod = get_coursemodule_from_instance('assign', $submission->assignment, $course->id);
-                if (empty($mod)) {
-                    mtrace('Could not find course module for assignment id ' . $submission->assignment);
+            // Message students about new feedback.
+            foreach ($submissions as $submission) {
+
+                mtrace("Processing assignment submission $submission->id ...");
+
+                // Do not cache user lookups - could be too many.
+                if (!$user = $DB->get_record('user', array('id'=>$submission->userid))) {
+                    mtrace('Could not find user ' . $submission->userid);
                     continue;
                 }
-                $modcache[$submission->assignment] = $mod;
-            } else {
-                $mod = $modcache[$submission->assignment];
+
+                // Use a cache to prevent the same DB queries happening over and over.
+                if (!array_key_exists($submission->course, $courses)) {
+                    mtrace('Could not find course ' . $submission->course);
+                    continue;
+                }
+                $course = $courses[$submission->course];
+                if (isset($course->ctxid)) {
+                    // Context has not yet been preloaded. Do so now.
+                    context_helper::preload_from_record($course);
+                }
+
+                // Override the language and timezone of the "current" user, so that
+                // mail is customised for the receiver.
+                cron_setup_user($user, $course);
+
+                // Context lookups are already cached.
+                $coursecontext = context_course::instance($course->id);
+                if (!is_enrolled($coursecontext, $user->id)) {
+                    $courseshortname = format_string($course->shortname,
+                                                     true,
+                                                     array('context' => $coursecontext));
+                    mtrace(fullname($user) . ' not an active participant in ' . $courseshortname);
+                    continue;
+                }
+
+                if (!$grader = $DB->get_record('user', array('id'=>$submission->grader))) {
+                    mtrace('Could not find grader ' . $submission->grader);
+                    continue;
+                }
+
+                if (!array_key_exists($submission->assignment, $modcache)) {
+                    $mod = get_coursemodule_from_instance('assign', $submission->assignment, $course->id);
+                    if (empty($mod)) {
+                        mtrace('Could not find course module for assignment id ' . $submission->assignment);
+                        continue;
+                    }
+                    $modcache[$submission->assignment] = $mod;
+                } else {
+                    $mod = $modcache[$submission->assignment];
+                }
+                // Context lookups are already cached.
+                $contextmodule = context_module::instance($mod->id);
+
+                if (!$mod->visible) {
+                    // Hold mail notification for hidden assignments until later.
+                    continue;
+                }
+
+                // Need to send this to the student.
+                $messagetype = 'feedbackavailable';
+                $eventtype = 'assign_notification';
+                $updatetime = $submission->lastmodified;
+                $modulename = get_string('modulename', 'assign');
+
+                $uniqueid = 0;
+                if ($submission->blindmarking && !$submission->revealidentities) {
+                    $uniqueid = self::get_uniqueid_for_user_static($submission->assignment, $user->id);
+                }
+                $showusers = $submission->blindmarking && !$submission->revealidentities;
+                self::send_assignment_notification($grader,
+                                                   $user,
+                                                   $messagetype,
+                                                   $eventtype,
+                                                   $updatetime,
+                                                   $mod,
+                                                   $contextmodule,
+                                                   $course,
+                                                   $modulename,
+                                                   $submission->name,
+                                                   $showusers,
+                                                   $uniqueid);
+
+                $flags = $DB->get_record('assign_user_flags', array('userid'=>$user->id, 'assignment'=>$submission->assignment));
+                if ($flags) {
+                    $flags->mailed = 1;
+                    $DB->update_record('assign_user_flags', $flags);
+                } else {
+                    $flags = new stdClass();
+                    $flags->userid = $user->id;
+                    $flags->assignment = $submission->assignment;
+                    $flags->mailed = 1;
+                    $DB->insert_record('assign_user_flags', $flags);
+                }
+
+                mtrace('Done');
             }
-            // Context lookups are already cached.
-            $contextmodule = context_module::instance($mod->id);
+            mtrace('Done processing ' . count($submissions) . ' assignment submissions');
 
-            if (!$mod->visible) {
-                // Hold mail notification for hidden assignments until later.
-                continue;
-            }
+            cron_setup_user();
 
-            // Need to send this to the student.
-            $messagetype = 'feedbackavailable';
-            $eventtype = 'assign_notification';
-            $updatetime = $submission->lastmodified;
-            $modulename = get_string('modulename', 'assign');
-
-            $uniqueid = 0;
-            if ($submission->blindmarking && !$submission->revealidentities) {
-                $uniqueid = self::get_uniqueid_for_user_static($submission->assignment, $user->id);
-            }
-            $showusers = $submission->blindmarking && !$submission->revealidentities;
-            self::send_assignment_notification($grader,
-                                               $user,
-                                               $messagetype,
-                                               $eventtype,
-                                               $updatetime,
-                                               $mod,
-                                               $contextmodule,
-                                               $course,
-                                               $modulename,
-                                               $submission->name,
-                                               $showusers,
-                                               $uniqueid);
-
-            $flags = $DB->get_record('assign_user_flags', array('userid'=>$user->id, 'assignment'=>$submission->assignment));
-            if ($flags) {
-                $flags->mailed = 1;
-                $DB->update_record('assign_user_flags', $flags);
-            } else {
-                $flags = new stdClass();
-                $flags->userid = $user->id;
-                $flags->assignment = $submission->assignment;
-                $flags->mailed = 1;
-                $DB->insert_record('assign_user_flags', $flags);
-            }
-
-            mtrace('Done');
+            // Free up memory just to be sure.
+            unset($courses);
+            unset($modcache);
         }
-        mtrace('Done processing ' . count($submissions) . ' assignment submissions');
 
-        cron_setup_user();
+        // Update calendar events to provide a description.
+        $sql = 'SELECT id
+                    FROM {assign}
+                    WHERE
+                        allowsubmissionsfromdate >= :lastcron AND
+                        allowsubmissionsfromdate <= :timenow AND
+                        alwaysshowdescription = 0';
+        $params = array('lastcron' => $lastcron, 'timenow' => $timenow);
+        $newlyavailable = $DB->get_records_sql($sql, $params);
+        foreach ($newlyavailable as $record) {
+            $cm = get_coursemodule_from_instance('assign', $record->id, 0, false, MUST_EXIST);
+            $context = context_module::instance($cm->id);
 
-        // Free up memory just to be sure.
-        unset($courses);
-        unset($modcache);
+            $assignment = new assign($context, null, null);
+            $assignment->update_calendar($cm->id);
+        }
 
         return true;
     }
