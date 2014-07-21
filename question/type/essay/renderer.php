@@ -365,7 +365,7 @@ class qtype_essay_format_editorfilepicker_renderer extends qtype_essay_format_ed
             'maxfiles' => -1,
             'context' => $context,
             'noclean' => 0,
-            'trusttext'=>0,
+            'trusttext'=> 0,
             'autosave' => false
         );
     }

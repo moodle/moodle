@@ -81,6 +81,5 @@ function xmldb_editor_atto_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014070301, 'editor', 'atto');
     }
 
-
     return true;
 }

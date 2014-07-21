@@ -104,7 +104,13 @@ if ($action === 'save') {
 
         // This function copies all the files in one draft area, to another area (in this case it's
         // another draft area). It also rewrites the text to @@PLUGINFILE@@ links.
-        $newdrafttext = file_save_draft_area_files($record->draftid, $usercontext->id, 'user', 'draft', $newdraftid, array(), $record->drafttext);
+        $newdrafttext = file_save_draft_area_files($record->draftid,
+                                                   $usercontext->id,
+                                                   'user',
+                                                   'draft',
+                                                   $newdraftid,
+                                                   array(),
+                                                   $record->drafttext);
 
         // Final rewrite to the new draft area (convert the @@PLUGINFILES@@ again).
         $newdrafttext = file_rewrite_pluginfile_urls($newdrafttext,
