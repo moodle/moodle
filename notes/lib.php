@@ -231,7 +231,8 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     $systemcontext = context_system::instance();
 
     $authoring = new stdClass();
-    $authoring->name = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $author->id . '&amp;course='.$note->courseid . '">' . fullname($author) . '</a>';
+    $authoring->name = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $author->id .
+        '&amp;course='.$note->courseid . '">' . fullname($author) . '</a>';
     $authoring->date = userdate($note->lastmodified);
 
     echo '<div class="notepost '. $note->publishstate . 'notepost' .
@@ -260,7 +261,8 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     // Print note options (e.g. delete, edit).
     if ($detail & NOTES_SHOW_FOOT) {
         if (has_capability('moodle/notes:manage', $systemcontext) && $note->publishstate == NOTES_STATE_SITE ||
-            has_capability('moodle/notes:manage', $context) && ($note->publishstate == NOTES_STATE_PUBLIC || $note->usermodified == $USER->id)) {
+            has_capability('moodle/notes:manage', $context) &&
+            ($note->publishstate == NOTES_STATE_PUBLIC || $note->usermodified == $USER->id)) {
             echo '<div class="footer"><p>';
             echo '<a href="' . $CFG->wwwroot . '/notes/edit.php?id=' . $note->id. '">' . get_string('edit') . '</a> | ';
             echo '<a href="' . $CFG->wwwroot . '/notes/delete.php?id=' . $note->id. '">' . get_string('delete') . '</a>';
@@ -305,9 +307,11 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
     }
     if ($addcourseid) {
         if ($userid) {
-            echo '<p><a href="' . $CFG->wwwroot . '/notes/edit.php?courseid=' . $addcourseid . '&amp;userid=' . $userid . '&amp;publishstate=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
+            echo '<p><a href="' . $CFG->wwwroot . '/notes/edit.php?courseid=' . $addcourseid . '&amp;userid=' . $userid .
+                '&amp;publishstate=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
         } else {
-            echo '<p><a href="' . $CFG->wwwroot . '/user/index.php?id=' . $addcourseid. '">' . get_string('addnewnoteselect', 'notes') . '</a></p>';
+            echo '<p><a href="' . $CFG->wwwroot . '/user/index.php?id=' . $addcourseid. '">' .
+                get_string('addnewnoteselect', 'notes') . '</a></p>';
         }
     }
     if ($viewnotes) {
