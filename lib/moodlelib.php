@@ -3602,10 +3602,22 @@ function fullname($user, $override=false) {
     if (isset($CFG->fullnamedisplay)) {
         $template = $CFG->fullnamedisplay;
     }
-    // If the template is empty, or set to language, or $override is set, return the language string.
-    if (empty($template) || $template == 'language' || $override) {
+    // If the template is empty, or set to language, return the language string.
+    if ((empty($template) || $template == 'language') && !$override) {
         return get_string('fullnamedisplay', null, $user);
     }
+
+    $admindisplay = null;
+    // Language isn't actually a valid value for alternativefullnameformat, but people might enter it in anyway.
+    if (empty($CFG->alternativefullnameformat) || $CFG->alternativefullnameformat == 'language') {
+        // Default to show all names if the setting is empty.
+        $admindisplay = 'firstname lastname firstnamephonetic lastnamephonetic middlename alternatename';
+    } else {
+        $admindisplay = $CFG->alternativefullnameformat;
+    }
+
+    // If the override is true, then change the template to use the complete name.
+    $template = ($override) ? $admindisplay : $template;
 
     $requirednames = array();
     // With each name, see if it is in the display name template, and add it to the required names array if it is.
