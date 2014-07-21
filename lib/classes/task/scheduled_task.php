@@ -184,6 +184,15 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
+     * Override this function if you want this scheduled task to run, even if the component is disabled.
+     *
+     * @return bool
+     */
+    public function get_run_if_component_disabled() {
+        return false;
+    }
+
+    /**
      * Take a cron field definition and return an array of valid numbers with the range min-max.
      *
      * @param string $field - The field definition.
