@@ -2343,7 +2343,6 @@ class core_renderer extends renderer_base {
             $attributes['role'] = 'presentation';
         }
 
-
         // get the image html output fisrt
         $output = html_writer::empty_tag('img', $attributes);
 
