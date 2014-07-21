@@ -2288,6 +2288,7 @@ class core_renderer extends renderer_base {
      *     - popup=false (open in popup)
      *     - alttext=true (add image alt attribute)
      *     - class = image class attribute (default 'userpicture')
+     *     - visibletoscreenreaders=true (whether to be visible to screen readers)
      * @return string HTML fragment
      */
     public function user_picture(stdClass $user, array $options = null) {
@@ -2338,6 +2339,10 @@ class core_renderer extends renderer_base {
         $src = $userpicture->get_url($this->page, $this);
 
         $attributes = array('src'=>$src, 'alt'=>$alt, 'title'=>$alt, 'class'=>$class, 'width'=>$size, 'height'=>$size);
+        if (!$userpicture->visibletoscreenreaders) {
+            $attributes['role'] = 'presentation';
+        }
+
 
         // get the image html output fisrt
         $output = html_writer::empty_tag('img', $attributes);
@@ -2360,6 +2365,11 @@ class core_renderer extends renderer_base {
         }
 
         $attributes = array('href'=>$url);
+        if (!$userpicture->visibletoscreenreaders) {
+            $attributes['role'] = 'presentation';
+            $attributes['tabindex'] = '-1';
+            $attributes['aria-hidden'] = 'true';
+        }
 
         if ($userpicture->popup) {
             $id = html_writer::random_id('userpicture');
