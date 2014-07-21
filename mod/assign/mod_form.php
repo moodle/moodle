@@ -241,6 +241,9 @@ class mod_assign_mod_form extends moodleform_mod {
                 $errors['cutoffdate'] = get_string('cutoffdatefromdatevalidation', 'assign');
             }
         }
+        if ($data['blindmarking'] && $data['attemptreopenmethod'] == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
+            $errors['attemptreopenmethod'] = get_string('reopenuntilpassincompatiblewithblindmarking', 'assign');
+        }
 
         return $errors;
     }

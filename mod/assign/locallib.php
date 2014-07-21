@@ -6453,7 +6453,7 @@ class assign {
             // Check the gradetopass from the gradebook.
             $gradeitem = $this->get_grade_item();
             if ($gradeitem) {
-                $gradegrade = grade_grade::fetch(array('userid'=>$userid, 'itemid'=>$gradeitem->id));
+                $gradegrade = grade_grade::fetch(array('userid' => $userid, 'itemid' => $gradeitem->id));
 
                 if ($gradegrade && !$gradegrade->is_passed()) {
                     $shouldreopen = true;
