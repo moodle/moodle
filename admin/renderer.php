@@ -1370,7 +1370,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * configuration and how it suits Moodle needs.
      *
      * @param boolean $result final result of the check (true/false)
-     * @param array $environment_results array of results gathered
+     * @param environment_results[] $environment_results array of results gathered
      * @return string HTML to output.
      */
     public function environment_check_table($result, $environment_results) {
@@ -1382,9 +1382,10 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('name'),
             get_string('info'),
             get_string('report'),
+            get_string('plugin'),
             get_string('status'),
         );
-        $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'centeralign status');
+        $servertable->colclasses = array('centeralign name', 'centeralign info', 'leftalign report', 'leftalign plugin', 'centeralign status');
         $servertable->attributes['class'] = 'admintable environmenttable generaltable';
         $servertable->id = 'serverstatus';
 
@@ -1394,9 +1395,10 @@ class core_admin_renderer extends plugin_renderer_base {
         $othertable->head  = array(
             get_string('info'),
             get_string('report'),
+            get_string('plugin'),
             get_string('status'),
         );
-        $othertable->colclasses = array('aligncenter info', 'alignleft report', 'aligncenter status');
+        $othertable->colclasses = array('aligncenter info', 'alignleft report', 'alignleft plugin', 'aligncenter status');
         $othertable->attributes['class'] = 'admintable environmenttable generaltable';
         $othertable->id = 'otherserverstatus';
 
@@ -1412,6 +1414,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $type = $environment_result->getPart();
                 $info = $environment_result->getInfo();
                 $status = $environment_result->getStatus();
+                $plugin = $environment_result->getPluginName();
                 $error_code = $environment_result->getErrorCode();
                 // Process Report field
                 $rec = new stdClass();
@@ -1488,7 +1491,8 @@ class core_admin_renderer extends plugin_renderer_base {
                 if (!empty($info)){
                    $linkparts[] = $info;
                 }
-                if (empty($CFG->docroot)) {
+                // Plugin environments do not have docs pages yet.
+                if (empty($CFG->docroot) or $environment_result->plugin) {
                     $report = get_string($stringtouse, 'admin', $rec);
                 } else {
                     $report = $this->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
@@ -1514,9 +1518,9 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 // Add the row to the table
                 if ($environment_result->getPart() == 'custom_check'){
-                    $otherdata[$messagetype][] = array ($info, $report, $status);
+                    $otherdata[$messagetype][] = array ($info, $report, $plugin, $status);
                 } else {
-                    $serverdata[$messagetype][] = array ($type, $info, $report, $status);
+                    $serverdata[$messagetype][] = array ($type, $info, $report, $plugin, $status);
                 }
             }
         }

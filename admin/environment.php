@@ -102,7 +102,7 @@ if ($contents = load_environment_xml()) {
 }
 
 // Get the results of the environment check.
-list($envstatus, $environment_results) = check_moodle_environment($version);
+list($envstatus, $environment_results) = check_moodle_environment($version, ENV_SELECT_NEWER);
 
 // Display the page.
 $output = $PAGE->get_renderer('core', 'admin');
