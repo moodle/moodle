@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cancel'] = 'Cancel';
+$string['confirm'] = 'Confirm';
+$string['confirmrecover'] = 'A previously unsaved version of the text for field "{$a->label}" was found. Do you want to recover it?';
 $string['errorcannotparseline'] = 'The line \'{$a}\' is not in the correct format.';
 $string['errorgroupisusedtwice'] = 'The group \'{$a}\' is defined twice; group names must be unique.';
 $string['errornopluginsorgroupsfound'] = 'No plugins or groups found; please add some groups and plugins.';
@@ -36,9 +39,7 @@ $string['toolbarconfig_desc'] = 'The list of plugins and the order they are disp
 $string['editor_command_keycode'] = 'Cmd + {$a}';
 $string['editor_control_keycode'] = 'Ctrl + {$a}';
 $string['plugin_title_shortcut'] = '{$a->title} [{$a->shortcut}]';
-$string['confirm'] = 'Confirm';
-$string['cancel'] = 'Cancel';
 $string['recover'] = 'Recover';
 $string['infostatus'] = 'Information';
 $string['warningstatus'] = 'Warning';
-$string['confirmrecover'] = 'A previously unsaved version of the text for field "{$a->label}" was found. Do you want to recover it?';
+$string['autosavefailed'] = 'Could not connect to the server. If you submit this page now, your changes may be lost.';

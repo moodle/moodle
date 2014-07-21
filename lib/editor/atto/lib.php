@@ -128,8 +128,13 @@ class atto_texteditor extends texteditor {
                 'confirm',
                 'recover',
                 'cancel',
-                'confirmrecover'
+                'confirmrecover',
+                'autosavefailed'
             ), 'editor_atto');
+        $PAGE->requires->strings_for_js(array(
+                'warning',
+                'info'
+            ), 'moodle');
         $PAGE->requires->yui_module($modules,
                                     'Y.M.editor_atto.Editor.init',
                                     array($this->get_init_params($elementid, $options, $fpoptions, $jsplugins)));
