@@ -258,7 +258,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             return $coursecat;
         } else {
             if ($strictness == MUST_EXIST) {
-                throw new moodle_exception('unknowcategory');
+                throw new moodle_exception('unknowncategory');
             }
         }
         return null;
@@ -2441,18 +2441,26 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     /**
      * Resorts the sub categories of this category by the given field.
      *
-     * @param string $field
+     * @param string $field One of name, idnumber or descending values of each (appended desc)
      * @param bool $cleanup If true cleanup will be done, if false you will need to do it manually later.
      * @return bool True on success.
      * @throws coding_exception
      */
     public function resort_subcategories($field, $cleanup = true) {
         global $DB;
+        $desc = false;
+        if (substr($field, -4) === "desc") {
+            $desc = true;
+            $field = substr($field, 0, -4);  // Remove "desc" from field name.
+        }
         if ($field !== 'name' && $field !== 'idnumber') {
             throw new coding_exception('Invalid field requested');
         }
         $children = $this->get_children();
         core_collator::asort_objects_by_property($children, $field, core_collator::SORT_NATURAL);
+        if (!empty($desc)) {
+            $children = array_reverse($children);
+        }
         $i = 1;
         foreach ($children as $cat) {
             $i++;
@@ -2481,14 +2489,19 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     /**
      * Resort the courses within this category by the given field.
      *
-     * @param string $field One of fullname, shortname or idnumber
+     * @param string $field One of fullname, shortname, idnumber or descending values of each (appended desc)
      * @param bool $cleanup
      * @return bool True for success.
      * @throws coding_exception
      */
     public function resort_courses($field, $cleanup = true) {
         global $DB;
-        if ($field !== 'fullname' && $field !== 'shortname' && $field !== 'idnumber') {
+        $desc = false;
+        if (substr($field, -4) === "desc") {
+            $desc = true;
+            $field = substr($field, 0, -4);  // Remove "desc" from field name.
+        }
+        if ($field !== 'fullname' && $field !== 'shortname' && $field !== 'idnumber' && $field !== 'timecreated') {
             // This is ultra important as we use $field in an SQL statement below this.
             throw new coding_exception('Invalid field requested');
         }
@@ -2497,8 +2510,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                   FROM {course} c
              LEFT JOIN {context} ctx ON ctx.instanceid = c.id
                  WHERE ctx.contextlevel = :ctxlevel AND
-                       c.category = :categoryid
-              ORDER BY c.{$field}, c.sortorder";
+                       c.category = :categoryid";
         $params = array(
             'ctxlevel' => CONTEXT_COURSE,
             'categoryid' => $this->id
@@ -2527,6 +2539,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             }
             // Sort the courses.
             core_collator::asort_objects_by_property($courses, 'sortby', core_collator::SORT_NATURAL);
+            if (!empty($desc)) {
+                $courses = array_reverse($courses);
+            }
             $i = 1;
             foreach ($courses as $course) {
                 $DB->set_field('course', 'sortorder', $this->sortorder + $i, array('id' => $course->id));
