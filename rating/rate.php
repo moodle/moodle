@@ -47,22 +47,17 @@ $PAGE->set_context($context);
 $PAGE->set_url('/rating/rate.php', array('contextid' => $context->id));
 
 if (!confirm_sesskey() || !has_capability('moodle/rating:rate', $context)) {
-    echo $OUTPUT->header();
-    echo get_string('ratepermissiondenied', 'rating');
-    echo $OUTPUT->footer();
-    die();
+    print_error('ratepermissiondenied', 'rating');
 }
 
 $rm = new rating_manager();
 
 // Check the module rating permissions.
-// Doing this check here rather than within rating_manager::get_ratings() so we can return a json error response.
+// Doing this check here rather than within rating_manager::get_ratings() so we can choose how to handle the error.
 $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $component, $ratingarea);
 
 if (!$pluginpermissionsarray['rate']) {
-    $result->error = get_string('ratepermissiondenied', 'rating');
-    echo json_encode($result);
-    die();
+    print_error('ratepermissiondenied', 'rating');
 } else {
     $params = array(
         'context'     => $context,
