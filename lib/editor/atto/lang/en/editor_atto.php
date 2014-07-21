@@ -39,4 +39,6 @@ $string['plugin_title_shortcut'] = '{$a->title} [{$a->shortcut}]';
 $string['confirm'] = 'Confirm';
 $string['cancel'] = 'Cancel';
 $string['recover'] = 'Recover';
+$string['infostatus'] = 'Information';
+$string['warningstatus'] = 'Warning';
 $string['confirmrecover'] = 'A previously unsaved version of the text for field "{$a->label}" was found. Do you want to recover it?';
