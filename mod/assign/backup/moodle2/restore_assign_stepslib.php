@@ -54,6 +54,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $grade = new restore_path_element('assign_grade', '/activity/assign/grades/grade');
             $paths[] = $grade;
             $this->add_subplugin_structure('assignfeedback', $grade);
+            $userflag = new restore_path_element('assign_userflag',
+                                                   '/activity/assign/userflags/userflag');
+            $paths[] = $userflag;
         }
         $paths[] = new restore_path_element('assign_plugin_config',
                                             '/activity/assign/plugin_configs/plugin_config');
@@ -145,7 +148,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
      * @param object $data The data in object form
      * @return void
      */
-    protected function process_assign_userflags($data) {
+    protected function process_assign_userflag($data) {
         global $DB;
 
         $data = (object)$data;
@@ -154,6 +157,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->assignment = $this->get_new_parentid('assign');
 
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->allocatedmarker = $this->get_mappingid('user', $data->allocatedmarker);
         if (!empty($data->extensionduedate)) {
             $data->extensionduedate = $this->apply_date_offset($data->extensionduedate);
         } else {
@@ -182,19 +186,24 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->grader = $this->get_mappingid('user', $data->grader);
 
-        // Handle flags restore to a different table.
-        $flags = new stdClass();
-        $flags->assignment = $this->get_new_parentid('assign');
-        if (!empty($data->extensionduedate)) {
-            $flags->extensionduedate = $this->apply_date_offset($data->extensionduedate);
+        // Handle flags restore to a different table (for upgrade from old backups).
+        if (!empty($data->extensionduedate) ||
+                !empty($data->mailed) ||
+                !empty($data->locked)) {
+            $flags = new stdClass();
+            $flags->assignment = $this->get_new_parentid('assign');
+            if (!empty($data->extensionduedate)) {
+                $flags->extensionduedate = $this->apply_date_offset($data->extensionduedate);
+            }
+            if (!empty($data->mailed)) {
+                $flags->mailed = $data->mailed;
+            }
+            if (!empty($data->locked)) {
+                $flags->locked = $data->locked;
+            }
+            $flags->userid = $this->get_mappingid('user', $data->userid);
+            $DB->insert_record('assign_user_flags', $flags);
         }
-        if (!empty($data->mailed)) {
-            $flags->mailed = $data->mailed;
-        }
-        if (!empty($data->locked)) {
-            $flags->locked = $data->locked;
-        }
-        $DB->insert_record('assign_user_flags', $flags);
 
         $newitemid = $DB->insert_record('assign_grades', $data);
 
