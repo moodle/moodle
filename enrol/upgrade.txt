@@ -1,6 +1,10 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.8 ===
+
+* enrol_plugin::instance_deleteable() is deprecated and has been replaced by enrol_plugin::can_delete_instance()
+
 === 2.6 ===
 
 * Enrolment plugin which supports self enrolment should implement can_self_enrol()
