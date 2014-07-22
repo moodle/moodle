@@ -199,30 +199,34 @@
 
         // first check if it is likely to work at all
         $output .= "<h3>Checking executables</h3>\n";
-        $executables_exist = true;
+        $executablesexist = true;
         $pathlatex = get_config('filter_tex', 'pathlatex');
         if (is_file($pathlatex)) {
             $output .= "latex executable ($pathlatex) is readable<br />\n";
-        }
-        else {
-            $executables_exist = false;
+        } else {
+            $executablesexist = false;
             $output .= "<b>Error:</b> latex executable ($pathlatex) is not readable<br />\n";
         }
         $pathdvips = get_config('filter_tex', 'pathdvips');
         if (is_file($pathdvips)) {
             $output .= "dvips executable ($pathdvips) is readable<br />\n";
-        }
-        else {
-            $executables_exist = false;
+        } else {
+            $executablesexist = false;
             $output .= "<b>Error:</b> dvips executable ($pathdvips) is not readable<br />\n";
         }
         $pathconvert = get_config('filter_tex', 'pathconvert');
         if (is_file($pathconvert)) {
             $output .= "convert executable ($pathconvert) is readable<br />\n";
-        }
-        else {
-            $executables_exist = false;
+        } else {
+            $executablesexist = false;
             $output .= "<b>Error:</b> convert executable ($pathconvert) is not readable<br />\n";
+        }
+        $pathdvisvgm = get_config('filter_tex', 'pathdvisvgm');
+        if (is_file($pathdvisvgm)) {
+            $output .= "dvisvgm executable ($pathdvisvgm) is readable<br />\n";
+        } else {
+            $executablesexist = false;
+            $output .= "<b>Error:</b> dvisvgm executable ($pathdvisvgm) is not readable<br />\n";
         }
 
         // knowing that it might work..
@@ -255,13 +259,17 @@
         $cmd = "$pathdvips -E $dvi -o $ps";
         $output .= execute($cmd);
 
-        // step 3: convert command
-        $cmd = "$pathconvert -density 240 -trim $ps $img ";
+        // Step 3: Set convert or dvisvgm command.
+        if ($convertformat == 'svg') {
+            $cmd = "$pathdvisvgm -E $ps -o $img";
+        } else {
+            $cmd = "$pathconvert -density 240 -trim $ps $img ";
+        }
         $output .= execute($cmd);
 
         if (!$graphic) {
             echo $output;
-        } else if (file_exists($img)){
+        } else if (file_exists($img)) {
             send_file($img, "$md5.{$convertformat}");
         } else {
             echo "Error creating image, see command execution output for more details.";
@@ -338,7 +346,7 @@ searches the database cache_filters table to see if this TeX expression had been
 processed before. If not, it adds a DB entry for that expression.  It then
 replaces the TeX expression by an &lt;img src=&quot;.../filter/tex/pix.php...&quot;&gt;
 tag.  The filter/tex/pix.php script then searches the database to find an
-appropriate gif/png image file for that expression and to create one if it doesn't exist.
+appropriate gif/png/svg image file for that expression and to create one if it doesn't exist.
 It will then use either the LaTex/Ghostscript renderer (using external executables
 on your system) or the bundled Mimetex executable. The full Latex/Ghostscript
 renderer produces better results and is tried first.
@@ -349,7 +357,7 @@ you might try to fix them.</p>
 process this expression. Then the database entry for that expression contains
 a bad TeX expression in the rawtext field (usually blank). You can fix this
 by clicking on &quot;Delete DB Entry&quot;</li>
-<li>The TeX to gif/png image conversion process does not work.
+<li>The TeX to gif/png/svg image conversion process does not work.
 If paths are specified in the filter configuation screen for the three
 executables these will be tried first. Note that they still must be correctly
 installed and have the correct permissions. In particular make sure that you
