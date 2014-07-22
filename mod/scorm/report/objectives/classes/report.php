@@ -14,33 +14,41 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Core Report class of basic reporting plugin
- * @package   scormreport
- * @subpackage interactions
- * @author    Dan Marsden and Ankit Kumar Agarwal
+ * Core Report class of objectives SCORM report plugin
+ * @package   scormreport_objectives
+ * @author    Dan Marsden <dan@danmarsden.com>
+ * @copyright 2013 Dan Marsden
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace scormreport_objectives;
+
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/scorm/report/interactions/responsessettings_form.php');
+require_once($CFG->dirroot.'/mod/scorm/report/objectives/responsessettings_form.php');
 
-class scorm_interactions_report extends scorm_default_report {
+/**
+ * Objectives report class
+ *
+ * @copyright  2013 Dan Marsden
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class report extends \mod_scorm\report {
     /**
      * displays the full report
-     * @param stdClass $scorm full SCORM object
-     * @param stdClass $cm - full course_module object
-     * @param stdClass $course - full course object
+     * @param \stdClass $scorm full SCORM object
+     * @param \stdClass $cm - full course_module object
+     * @param \stdClass $course - full course object
      * @param string $download - type of download being requested
      */
     public function display($scorm, $cm, $course, $download) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
-        $contextmodule = context_module::instance($cm->id);
+        $contextmodule = \context_module::instance($cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
         $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_ALL_STUDENTS, PARAM_INT);
-        $PAGE->set_url(new moodle_url($PAGE->url, array('attemptsmode' => $attemptsmode)));
+        $PAGE->set_url(new \moodle_url($PAGE->url, array('attemptsmode' => $attemptsmode)));
 
         if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
             if (scorm_delete_responses($attemptids, $scorm)) { // Delete responses.
@@ -51,21 +59,15 @@ class scorm_interactions_report extends scorm_default_report {
         $currentgroup = groups_get_activity_group($cm, true);
 
         // Detailed report.
-        $mform = new mod_scorm_report_interactions_settings($PAGE->url, compact('currentgroup'));
+        $mform = new \mod_scorm_report_objectives_settings($PAGE->url, compact('currentgroup'));
         if ($fromform = $mform->get_data()) {
             $pagesize = $fromform->pagesize;
-            $includeqtext = $fromform->qtext;
-            $includeresp = $fromform->resp;
-            $includeright = $fromform->right;
+            $showobjectivescore = $fromform->objectivescore;
             set_user_preference('scorm_report_pagesize', $pagesize);
-            set_user_preference('scorm_report_interactions_qtext', $includeqtext);
-            set_user_preference('scorm_report_interactions_resp', $includeresp);
-            set_user_preference('scorm_report_interactions_right', $includeright);
+            set_user_preference('scorm_report_objectives_score', $showobjectivescore);
         } else {
             $pagesize = get_user_preferences('scorm_report_pagesize', 0);
-            $includeqtext = get_user_preferences('scorm_report_interactions_qtext', 0);
-            $includeresp = get_user_preferences('scorm_report_interactions_resp', 1);
-            $includeright = get_user_preferences('scorm_report_interactions_right', 0);
+            $showobjectivescore = get_user_preferences('scorm_report_objectives_score', 0);
         }
         if ($pagesize < 1) {
             $pagesize = SCORM_REPORT_DEFAULT_PAGE_SIZE;
@@ -74,17 +76,15 @@ class scorm_interactions_report extends scorm_default_report {
         // Select group menu.
         $displayoptions = array();
         $displayoptions['attemptsmode'] = $attemptsmode;
-        $displayoptions['qtext'] = $includeqtext;
-        $displayoptions['resp'] = $includeresp;
-        $displayoptions['right'] = $includeright;
+        $displayoptions['objectivescore'] = $showobjectivescore;
 
         $mform->set_data($displayoptions + array('pagesize' => $pagesize));
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.
             if (!$download) {
-                groups_print_activity_menu($cm, new moodle_url($PAGE->url, $displayoptions));
+                groups_print_activity_menu($cm, new \moodle_url($PAGE->url, $displayoptions));
             }
         }
-        $formattextoptions = array('context' => context_course::instance($course->id));
+        $formattextoptions = array('context' => \context_course::instance($course->id));
 
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
@@ -105,9 +105,9 @@ class scorm_interactions_report extends scorm_default_report {
             unset($students);
         } else {
             // All users who can attempt scoes and who are in the currently selected group.
-            if (!$groupstudents = get_users_by_capability($contextmodule,
-                                                            'mod/scorm:savetrack', 'u.id', '', '', '',
-                                                            $currentgroup, '', false)) {
+            $groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack',
+                                                     'u.id', '', '', '', $currentgroup, '', false);
+            if (!$groupstudents) {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
                 $nostudents = true;
                 $groupstudents = array();
@@ -117,7 +117,7 @@ class scorm_interactions_report extends scorm_default_report {
         }
         if ( !$nostudents ) {
             // Now check if asked download of data.
-            $coursecontext = context_course::instance($course->id);
+            $coursecontext = \context_course::instance($course->id);
             if ($download) {
                 $filename = clean_filename("$course->shortname ".format_string($scorm->name, true, $formattextoptions));
             }
@@ -162,7 +162,7 @@ class scorm_interactions_report extends scorm_default_report {
             // Construct the SQL.
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
-                    user_picture::fields('u', array('idnumber'), 'userid') .
+                    \user_picture::fields('u', array('idnumber'), 'userid') .
                     get_extra_user_fields_sql($coursecontext, 'u', '', array('email', 'idnumber')) . ' ';
 
             // This part is the same for all cases - join users and scorm_scoes_track tables.
@@ -187,25 +187,37 @@ class scorm_interactions_report extends scorm_default_report {
             $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
-            $questioncount = get_scorm_question_count($scorm->id);
-            $nbmaincolumns = count($columns);
-            for ($id = 0; $id < $questioncount; $id++) {
-                if ($displayoptions['qtext']) {
-                    $columns[] = 'question' . $id;
-                    $headers[] = get_string('questionx', 'scormreport_interactions', $id);
-                }
-                if ($displayoptions['resp']) {
-                    $columns[] = 'response' . $id;
-                    $headers[] = get_string('responsex', 'scormreport_interactions', $id);
-                }
-                if ($displayoptions['right']) {
-                    $columns[] = 'right' . $id;
-                    $headers[] = get_string('rightanswerx', 'scormreport_interactions', $id);
+
+            $nbmaincolumns = count($columns); // Get number of main columns used.
+
+            $objectives = get_scorm_objectives($scorm->id);
+            $nosort = array();
+            foreach ($objectives as $scoid => $sco) {
+                foreach ($sco as $id => $objectivename) {
+                    $colid = $scoid.'objectivestatus' . $id;
+                    $columns[] = $colid;
+                    $nosort[] = $colid;
+
+                    if (!$displayoptions['objectivescore']) {
+                        // Display the objective name only.
+                        $headers[] = $objectivename;
+                    } else {
+                        // Display the objective status header with a "status" suffix to avoid confusion.
+                        $headers[] = $objectivename. ' '. get_string('status', 'scormreport_objectives');
+
+                        // Now print objective score headers.
+                        $colid = $scoid.'objectivescore' . $id;
+                        $columns[] = $colid;
+                        $nosort[] = $colid;
+                        $headers[] = $objectivename. ' '. get_string('score', 'scormreport_objectives');
+                    }
                 }
             }
 
+            $emptycell = ''; // Used when an empty cell is being printed - in html we add a space.
             if (!$download) {
-                $table = new flexible_table('mod-scorm-report');
+                $emptycell = '&nbsp;';
+                $table = new \flexible_table('mod-scorm-report');
 
                 $table->define_columns($columns);
                 $table->define_headers($headers);
@@ -220,24 +232,15 @@ class scorm_interactions_report extends scorm_default_report {
                 foreach ($extrafields as $field) {
                     $table->column_suppress($field);
                 }
+                foreach ($nosort as $field) {
+                    $table->no_sorting($field);
+                }
 
                 $table->no_sorting('start');
                 $table->no_sorting('finish');
                 $table->no_sorting('score');
                 $table->no_sorting('checkbox');
                 $table->no_sorting('picture');
-
-                for ($id = 0; $id < $questioncount; $id++) {
-                    if ($displayoptions['qtext']) {
-                        $table->no_sorting('question'.$id);
-                    }
-                    if ($displayoptions['resp']) {
-                        $table->no_sorting('response'.$id);
-                    }
-                    if ($displayoptions['right']) {
-                        $table->no_sorting('right'.$id);
-                    }
-                }
 
                 foreach ($scoes as $sco) {
                     if ($sco->launch != '') {
@@ -260,7 +263,7 @@ class scorm_interactions_report extends scorm_default_report {
 
                 $filename .= ".ods";
                 // Creating a workbook.
-                $workbook = new MoodleODSWorkbook("-");
+                $workbook = new \MoodleODSWorkbook("-");
                 // Sending HTTP headers.
                 $workbook->send($filename);
                 // Creating the first worksheet.
@@ -299,7 +302,7 @@ class scorm_interactions_report extends scorm_default_report {
 
                 $filename .= ".xls";
                 // Creating a workbook.
-                $workbook = new MoodleExcelWorkbook("-");
+                $workbook = new \MoodleExcelWorkbook("-");
                 // Sending HTTP headers.
                 $workbook->send($filename);
                 // Creating the first worksheet.
@@ -333,7 +336,7 @@ class scorm_interactions_report extends scorm_default_report {
                 }
                 $rownum = 1;
             } else if ($download == 'CSV') {
-                $csvexport = new csv_export_writer("tab");
+                $csvexport = new \csv_export_writer("tab");
                 $csvexport->set_filename($filename, ".txt");
                 $csvexport->add_data($headers);
             }
@@ -370,7 +373,7 @@ class scorm_interactions_report extends scorm_default_report {
 
                 $table->pagesize($pagesize, $total);
 
-                echo html_writer::start_div('scormattemptcounts');
+                echo \html_writer::start_div('scormattemptcounts');
                 if ( $count->nbresults == $count->nbattempts ) {
                     echo get_string('reportcountattempts', 'scorm', $count);
                 } else if ( $count->nbattempts > 0 ) {
@@ -378,26 +381,26 @@ class scorm_interactions_report extends scorm_default_report {
                 } else {
                     echo $count->nbusers.' '.get_string('users');
                 }
-                echo html_writer::end_div();
+                echo \html_writer::end_div();
             }
 
             // Fetch the attempts.
             if (!$download) {
                 $attempts = $DB->get_records_sql($select.$from.$where.$sort, $params,
                 $table->get_page_start(), $table->get_page_size());
-                echo html_writer::start_div('', array('id' => 'scormtablecontainer'));
+                echo \html_writer::start_div('', array('id' => 'scormtablecontainer'));
                 if ($candelete) {
                     // Start form.
                     $strreallydel  = addslashes_js(get_string('deleteattemptcheck', 'scorm'));
-                    echo html_writer::start_tag('form', array('id' => 'attemptsform', 'method' => 'post',
+                    echo \html_writer::start_tag('form', array('id' => 'attemptsform', 'method' => 'post',
                                                                 'action' => $PAGE->url->out(false),
                                                                 'onsubmit' => 'return confirm("'.$strreallydel.'");'));
-                    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'delete'));
-                    echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-                    echo html_writer::start_div('', array('style' => 'display: none;'));
-                    echo html_writer::input_hidden_params($PAGE->url);
-                    echo html_writer::end_div();
-                    echo html_writer::start_div();
+                    echo \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'delete'));
+                    echo \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+                    echo \html_writer::start_div('', array('style' => 'display: none;'));
+                    echo \html_writer::input_hidden_params($PAGE->url);
+                    echo \html_writer::end_div();
+                    echo \html_writer::start_div();
                 }
                 $table->initialbars($totalinitials > 20); // Build table rows.
             } else {
@@ -413,21 +416,21 @@ class scorm_interactions_report extends scorm_default_report {
                     }
                     if (in_array('checkbox', $columns)) {
                         if ($candelete && !empty($timetracks->start)) {
-                            $row[] = html_writer::checkbox('attemptid[]', $scouser->userid . ':' . $scouser->attempt, false);
+                            $row[] = \html_writer::checkbox('attemptid[]', $scouser->userid . ':' . $scouser->attempt, false);
                         } else if ($candelete) {
                             $row[] = '';
                         }
                     }
                     if (in_array('picture', $columns)) {
-                        $user = new stdClass();
-                        $additionalfields = explode(',', user_picture::fields());
+                        $user = new \stdClass();
+                        $additionalfields = explode(',', \user_picture::fields());
                         $user = username_load_fields_from_object($user, $scouser, null, $additionalfields);
                         $user->id = $scouser->userid;
                         $row[] = $OUTPUT->user_picture($user, array('courseid' => $course->id));
                     }
                     if (!$download) {
-                        $url = new moodle_url('/user/view.php', array('id' => $scouser->userid, 'course' => $course->id));
-                        $row[] = html_writer::link($url, fullname($scouser));
+                        $url = new \moodle_url('/user/view.php', array('id' => $scouser->userid, 'course' => $course->id));
+                        $row[] = \html_writer::link($url, fullname($scouser));
                     } else {
                         $row[] = fullname($scouser);
                     }
@@ -441,11 +444,9 @@ class scorm_interactions_report extends scorm_default_report {
                         $row[] = '-';
                     } else {
                         if (!$download) {
-                            $url = new moodle_url('/mod/scorm/report/userreport.php',
-                                                    array('id' => $cm->id,
-                                                        'user' => $scouser->userid,
-                                                        'attempt' => $scouser->attempt));
-                            $row[] = html_writer::link($url, $scouser->attempt);
+                            $url = new \moodle_url('/mod/scorm/report/userreport.php', array('id' => $cm->id,
+                                    'user' => $scouser->userid, 'attempt' => $scouser->attempt));
+                            $row[] = \html_writer::link($url, $scouser->attempt);
                         } else {
                             $row[] = $scouser->attempt;
                         }
@@ -469,59 +470,71 @@ class scorm_interactions_report extends scorm_default_report {
                                     $trackdata->status = 'notattempted';
                                 }
                                 $strstatus = get_string($trackdata->status, 'scorm');
-                                // If raw score exists, print it.
-                                if ($trackdata->score_raw != '') {
+
+                                if ($trackdata->score_raw != '') { // If raw score exists, print it.
                                     $score = $trackdata->score_raw;
                                     // Add max score if it exists.
                                     if (isset($trackdata->score_max)) {
                                         $score .= '/'.$trackdata->score_max;
                                     }
-                                } else { // Else print out status.
+
+                                } else { // ...else print out status.
                                     $score = $strstatus;
                                 }
                                 if (!$download) {
-                                    $url = new moodle_url('/mod/scorm/report/userreporttracks.php', array('id' => $cm->id,
+                                    $url = new \moodle_url('/mod/scorm/report/userreporttracks.php', array('id' => $cm->id,
                                         'scoid' => $sco->id, 'user' => $scouser->userid, 'attempt' => $scouser->attempt));
-                                    $row[] = html_writer::img($OUTPUT->pix_url($trackdata->status, 'scorm'), $strstatus,
-                                        array('title' => $strstatus)) . html_writer::empty_tag('br') .
-                                        html_writer::link($url, $score, array('title' => get_string('details', 'scorm')));
+                                    $row[] = \html_writer::img($OUTPUT->pix_url($trackdata->status, 'scorm'), $strstatus,
+                                        array('title' => $strstatus)) . \html_writer::empty_tag('br') .
+                                        \html_writer::link($url, $score, array('title' => get_string('details', 'scorm')));
                                 } else {
                                     $row[] = $score;
                                 }
-                                // Interaction data.
-                                for ($i = 0; $i < $questioncount; $i++) {
-                                    if ($displayoptions['qtext']) {
-                                        $element = 'cmi.interactions_'.$i.'.id';
-                                        if (isset($trackdata->$element)) {
-                                            $row[] = s($trackdata->$element);
-                                        } else {
-                                            $row[] = '&nbsp;';
-                                        }
-                                    }
-                                    if ($displayoptions['resp']) {
-                                        $element = 'cmi.interactions_'.$i.'.student_response';
-                                        if (isset($trackdata->$element)) {
-                                            $row[] = s($trackdata->$element);
-                                        } else {
-                                            $row[] = '&nbsp;';
-                                        }
-                                    }
-                                    if ($displayoptions['right']) {
-                                        $j = 0;
-                                        $element = 'cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
-                                        $rightans = '';
-                                        if (isset($trackdata->$element)) {
-                                            while (isset($trackdata->$element)) {
-                                                if ($j > 0) {
-                                                    $rightans .= ',';
-                                                }
-                                                $rightans .= s($trackdata->$element);
-                                                $j++;
-                                                $element = 'cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
+                                // Iterate over tracks and match objective id against values.
+                                $keywords = array("cmi.objectives_", ".id");
+                                $objectivestatus = array();
+                                $objectivescore = array();
+                                foreach ($trackdata as $name => $value) {
+                                    if (strpos($name, 'cmi.objectives_') === 0 && strrpos($name, '.id') !== false) {
+                                        $num = trim(str_ireplace($keywords, '', $name));
+                                        if (is_numeric($num)) {
+                                            if (scorm_version_check($scorm->version, SCORM_13)) {
+                                                $element = 'cmi.objectives_'.$num.'.completion_status';
+                                            } else {
+                                                $element = 'cmi.objectives_'.$num.'.status';
                                             }
-                                            $row[] = $rightans;
+                                            if (isset($trackdata->$element)) {
+                                                $objectivestatus[$value] = $trackdata->$element;
+                                            } else {
+                                                $objectivestatus[$value] = '';
+                                            }
+                                            if ($displayoptions['objectivescore']) {
+                                                $element = 'cmi.objectives_'.$num.'.score.raw';
+                                                if (isset($trackdata->$element)) {
+                                                    $objectivescore[$value] = $trackdata->$element;
+                                                } else {
+                                                    $objectivescore[$value] = '';
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Interaction data.
+                                if (!empty($objectives[$trackdata->scoid])) {
+                                    foreach ($objectives[$trackdata->scoid] as $name) {
+                                        if (isset($objectivestatus[$name])) {
+                                            $row[] = s($objectivestatus[$name]);
                                         } else {
-                                            $row[] = '&nbsp;';
+                                            $row[] = $emptycell;
+                                        }
+                                        if ($displayoptions['objectivescore']) {
+                                            if (isset($objectivescore[$name])) {
+                                                $row[] = s($objectivescore[$name]);
+                                            } else {
+                                                $row[] = $emptycell;
+                                            }
+
                                         }
                                     }
                                 }
@@ -530,14 +543,14 @@ class scorm_interactions_report extends scorm_default_report {
                                 // If we don't have track data, we haven't attempted yet.
                                 $strstatus = get_string('notattempted', 'scorm');
                                 if (!$download) {
-                                    $row[] = html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'), $strstatus,
-                                                array('title' => $strstatus)).html_writer::empty_tag('br').$strstatus;
+                                    $row[] = \html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'), $strstatus,
+                                                array('title' => $strstatus)).\html_writer::empty_tag('br').$strstatus;
                                 } else {
                                     $row[] = $strstatus;
                                 }
                                 // Complete the empty cells.
                                 for ($i = 0; $i < count($columns) - $nbmaincolumns; $i++) {
-                                    $row[] = '&nbsp;';
+                                    $row[] = $emptycell;
                                 }
                             }
                         }
@@ -559,50 +572,50 @@ class scorm_interactions_report extends scorm_default_report {
                 if (!$download) {
                     $table->finish_output();
                     if ($candelete) {
-                        echo html_writer::start_tag('table', array('id' => 'commands'));
-                        echo html_writer::start_tag('tr').html_writer::start_tag('td');
-                        echo html_writer::link('javascript:select_all_in(\'DIV\', null, \'scormtablecontainer\');',
+                        echo \html_writer::start_tag('table', array('id' => 'commands'));
+                        echo \html_writer::start_tag('tr').\html_writer::start_tag('td');
+                        echo \html_writer::link('javascript:select_all_in(\'DIV\', null, \'scormtablecontainer\');',
                                                     get_string('selectall', 'scorm')).' / ';
-                        echo html_writer::link('javascript:deselect_all_in(\'DIV\', null, \'scormtablecontainer\');',
+                        echo \html_writer::link('javascript:deselect_all_in(\'DIV\', null, \'scormtablecontainer\');',
                                                     get_string('selectnone', 'scorm'));
                         echo '&nbsp;&nbsp;';
-                        echo html_writer::empty_tag('input', array('type' => 'submit',
+                        echo \html_writer::empty_tag('input', array('type' => 'submit',
                                                                     'value' => get_string('deleteselected', 'quiz_overview')));
-                        echo html_writer::end_tag('td').html_writer::end_tag('tr').html_writer::end_tag('table');
+                        echo \html_writer::end_tag('td').\html_writer::end_tag('tr').\html_writer::end_tag('table');
                         // Close form.
-                        echo html_writer::end_tag('div');
-                        echo html_writer::end_tag('form');
+                        echo \html_writer::end_tag('div');
+                        echo \html_writer::end_tag('form');
                     }
-                    echo html_writer::end_div();
+                    echo \html_writer::end_div();
                     if (!empty($attempts)) {
-                        echo html_writer::start_tag('table', array('class' => 'boxaligncenter')).html_writer::start_tag('tr');
-                        echo html_writer::start_tag('td');
-                        echo $OUTPUT->single_button(new moodle_url($PAGE->url,
+                        echo \html_writer::start_tag('table', array('class' => 'boxaligncenter')).\html_writer::start_tag('tr');
+                        echo \html_writer::start_tag('td');
+                        echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'ODS') + $displayoptions),
                                                                    get_string('downloadods'));
-                        echo html_writer::end_tag('td');
-                        echo html_writer::start_tag('td');
-                        echo $OUTPUT->single_button(new moodle_url($PAGE->url,
+                        echo \html_writer::end_tag('td');
+                        echo \html_writer::start_tag('td');
+                        echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'Excel') + $displayoptions),
                                                                    get_string('downloadexcel'));
-                        echo html_writer::end_tag('td');
-                        echo html_writer::start_tag('td');
-                        echo $OUTPUT->single_button(new moodle_url($PAGE->url,
+                        echo \html_writer::end_tag('td');
+                        echo \html_writer::start_tag('td');
+                        echo $OUTPUT->single_button(new \moodle_url($PAGE->url,
                                                                    array('download' => 'CSV') + $displayoptions),
                                                                    get_string('downloadtext'));
-                        echo html_writer::end_tag('td');
-                        echo html_writer::start_tag('td');
-                        echo html_writer::end_tag('td');
-                        echo html_writer::end_tag('tr').html_writer::end_tag('table');
+                        echo \html_writer::end_tag('td');
+                        echo \html_writer::start_tag('td');
+                        echo \html_writer::end_tag('td');
+                        echo \html_writer::end_tag('tr').\html_writer::end_tag('table');
                     }
                 }
             } else {
                 if ($candelete && !$download) {
-                    echo html_writer::end_div();
-                    echo html_writer::end_tag('form');
+                    echo \html_writer::end_div();
+                    echo \html_writer::end_tag('form');
                     $table->finish_output();
                 }
-                echo html_writer::end_div();
+                echo \html_writer::end_div();
             }
             // Show preferences form irrespective of attempts are there to report or not.
             if (!$download) {
@@ -620,4 +633,32 @@ class scorm_interactions_report extends scorm_default_report {
             echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
         }
     }// Function ends.
+}
+
+/**
+ * Returns The maximum numbers of Objectives associated with an Scorm Pack
+ *
+ * @param int $scormid Scorm instance id
+ * @return array an array of possible objectives.
+ */
+function get_scorm_objectives($scormid) {
+    global $DB;
+    $objectives = array();
+    $params = array();
+    $select = "scormid = ? AND ";
+    $select .= $DB->sql_like("element", "?", false);
+    $params[] = $scormid;
+    $params[] = "cmi.objectives_%.id";
+    $rs = $DB->get_recordset_select("scorm_scoes_track", $select, $params, 'value', 'DISTINCT value, scoid');
+    if ($rs->valid()) {
+        foreach ($rs as $record) {
+            $objectives[$record->scoid][] = $record->value;
+        }
+        // Now naturally sort the sco arrays.
+        foreach ($objectives as $scoid => $sco) {
+            natsort($objectives[$scoid]);
+        }
+    }
+    $rs->close();
+    return $objectives;
 }
