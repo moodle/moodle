@@ -902,4 +902,67 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertEquals(0, $section1->groupingid);
         $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
     }
+
+    /**
+     * Tests for get_groups() method.
+     */
+    public function test_get_groups() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create courses.
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $course3 = $generator->create_course();
+
+        // Create users.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+
+        // Enrol users on courses.
+        $generator->enrol_user($user1->id, $course1->id);
+        $generator->enrol_user($user2->id, $course2->id);
+        $generator->enrol_user($user3->id, $course2->id);
+        $generator->enrol_user($user3->id, $course3->id);
+
+        // Create groups.
+        $group1 = $generator->create_group(array('courseid' => $course1->id));
+        $group2 = $generator->create_group(array('courseid' => $course2->id));
+        $group3 = $generator->create_group(array('courseid' => $course2->id));
+
+        // Assign users to groups and assert the result.
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group3->id, 'userid' => $user2->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user3->id)));
+
+        // Create groupings.
+        $grouping1 = $generator->create_grouping(array('courseid' => $course1->id));
+        $grouping2 = $generator->create_grouping(array('courseid' => $course2->id));
+
+        // Assign and assert group to groupings.
+        $this->assertTrue(groups_assign_grouping($grouping1->id, $group1->id));
+        $this->assertTrue(groups_assign_grouping($grouping2->id, $group2->id));
+        $this->assertTrue(groups_assign_grouping($grouping2->id, $group3->id));
+
+        // Test with one single group.
+        $modinfo = get_fast_modinfo($course1, $user1->id);
+        $groups = $modinfo->get_groups($grouping1->id);
+        $this->assertEquals(1, count($groups));
+        $this->assertTrue(array_key_exists($group1->id, $groups));
+
+        // Test with two groups.
+        $modinfo = get_fast_modinfo($course2, $user2->id);
+        $groups = $modinfo->get_groups();
+        $this->assertEquals(2, count($groups));
+        $this->assertTrue(in_array($group2->id, $groups));
+        $this->assertTrue(in_array($group3->id, $groups));
+
+        // Test with no groups.
+        $modinfo = get_fast_modinfo($course3, $user3->id);
+        $groups = $modinfo->get_groups();
+        $this->assertEquals(0, count($groups));
+        $this->assertFalse(array_key_exists($group1->id, $groups));
+    }
 }
