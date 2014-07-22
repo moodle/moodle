@@ -372,4 +372,30 @@ class core_cache_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('div');
         return $html;
     }
+
+    /**
+     * Renders an array of notifications for the cache configuration screen.
+     *
+     * Takes an array of notifications with the form:
+     * $notifications = array(
+     *     array('This is a success message', true),
+     *     array('This is a failure message', false),
+     * );
+     *
+     * @param array $notifications
+     * @return string
+     */
+    public function notifications(array $notifications = array()) {
+        if (count($notifications) === 0) {
+            // There are no notifications to render.
+            return '';
+        }
+        $html = html_writer::start_div('notifications');
+        foreach ($notifications as $notification) {
+            list($message, $notifysuccess) = $notification;
+            $html .= $this->notification($message, ($notifysuccess) ? 'notifysuccess' : 'notifyproblem');
+        }
+        $html .= html_writer::end_div();
+        return $html;
+    }
 }

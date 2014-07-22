@@ -736,4 +736,28 @@ class cache_helper {
         }
         return $stores;
     }
+
+    /**
+     * Returns an array of warnings from the cache API.
+     *
+     * The warning returned here are for things like conflicting store instance configurations etc.
+     * These get shown on the admin notifications page for example.
+     *
+     * @param array|null $stores An array of stores to get warnings for, or null for all.
+     * @return string[]
+     */
+    public static function warnings(array $stores = null) {
+        global $CFG;
+        if ($stores === null) {
+            require_once($CFG->dirroot.'/cache/locallib.php');
+            $stores = cache_administration_helper::get_store_instance_summaries();
+        }
+        $warnings = array();
+        foreach ($stores as $store) {
+            if (!empty($store['warnings'])) {
+                $warnings = array_merge($warnings, $store['warnings']);
+            }
+        }
+        return $warnings;
+    }
 }

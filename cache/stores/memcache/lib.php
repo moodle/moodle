@@ -573,4 +573,28 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     public function my_name() {
         return $this->name;
     }
+
+    /**
+     * Used to notify of configuration conflicts.
+     *
+     * The warnings returned here will be displayed on the cache configuration screen.
+     *
+     * @return string[] Returns an array of warnings (strings)
+     */
+    public function get_warnings() {
+        global $CFG;
+        $warnings = array();
+        if (isset($CFG->session_memcached_save_path) && count($this->servers)) {
+            $bits = explode(':', $CFG->session_memcached_save_path, 3);
+            $host = array_shift($bits);
+            $port = (count($bits)) ? array_shift($bits) : '11211';
+            foreach ($this->servers as $server) {
+                if ($server[0] === $host && $server[1] === $port) {
+                    $warnings[] = get_string('sessionhandlerconflict', 'cachestore_memcache', $this->my_name());
+                    break;
+                }
+            }
+        }
+        return $warnings;
+    }
 }
