@@ -942,27 +942,27 @@ class core_modinfolib_testcase extends advanced_testcase {
         $grouping2 = $generator->create_grouping(array('courseid' => $course2->id));
 
         // Assign and assert group to groupings.
-        $this->assertTrue(groups_assign_grouping($grouping1->id, $group1->id));
-        $this->assertTrue(groups_assign_grouping($grouping2->id, $group2->id));
-        $this->assertTrue(groups_assign_grouping($grouping2->id, $group3->id));
+        groups_assign_grouping($grouping1->id, $group1->id);
+        groups_assign_grouping($grouping2->id, $group2->id);
+        groups_assign_grouping($grouping2->id, $group3->id);
 
         // Test with one single group.
         $modinfo = get_fast_modinfo($course1, $user1->id);
         $groups = $modinfo->get_groups($grouping1->id);
-        $this->assertEquals(1, count($groups));
-        $this->assertTrue(array_key_exists($group1->id, $groups));
+        $this->assertCount(1, $groups);
+        $this->assertArrayHasKey($group1->id, $groups);
 
         // Test with two groups.
         $modinfo = get_fast_modinfo($course2, $user2->id);
         $groups = $modinfo->get_groups();
-        $this->assertEquals(2, count($groups));
+        $this->assertCount(2, $groups);
         $this->assertTrue(in_array($group2->id, $groups));
         $this->assertTrue(in_array($group3->id, $groups));
 
         // Test with no groups.
         $modinfo = get_fast_modinfo($course3, $user3->id);
         $groups = $modinfo->get_groups();
-        $this->assertEquals(0, count($groups));
-        $this->assertFalse(array_key_exists($group1->id, $groups));
+        $this->assertCount(0, $groups);
+        $this->assertArrayNotHasKey($group1->id, $groups);
     }
 }
