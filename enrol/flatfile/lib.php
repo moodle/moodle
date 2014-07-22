@@ -101,8 +101,9 @@ class enrol_flatfile_plugin extends enrol_plugin {
      * @param object $instance
      * @return bool
      */
-    public function instance_deleteable($instance) {
-        return true;
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/flatfile:manage', $context);
     }
 
     /**

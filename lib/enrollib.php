@@ -1540,11 +1540,25 @@ abstract class enrol_plugin {
     /**
      * Is it possible to delete enrol instance via standard UI?
      *
+     * @deprecated since Moodle 2.8 MDL-35864 - please use can_delete_instance() instead.
+     * @todo MDL-35864 This will be deleted in Moodle 2.9.
+     * @see class_name::can_delete_instance()
      * @param object $instance
      * @return bool
      */
     public function instance_deleteable($instance) {
-        return true;
+        debugging('Function enrol_plugin::instance_deleteable() is deprecated', DEBUG_DEVELOPER);
+        return $this->can_delete_instance($instance);
+    }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        return false;
     }
 
     /**
@@ -2310,4 +2324,14 @@ abstract class enrol_plugin {
         // Implement if you want to restore protected group memberships,
         // usually this is not necessary because plugins should be able to recreate the memberships automatically.
     }
+
+    /**
+     * Which capabilities are needed to configure the enrol instance via standard UI
+     *
+     * @return array Array with capabilities needed to configure the enrol instance
+     */
+    public function get_config_instance_capabilities() {
+        return array();
+    }
+
 }

@@ -106,7 +106,12 @@ class enrol_ldap_plugin extends enrol_plugin {
      * @param object $instance
      * @return bool
      */
-    public function instance_deleteable($instance) {
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        if (!has_capability('enrol/database:config', $context)) {
+            return false;
+        }
+
         if (!enrol_is_enabled('ldap')) {
             return true;
         }
@@ -1155,4 +1160,3 @@ class enrol_ldap_plugin extends enrol_plugin {
         }
     }
 }
-

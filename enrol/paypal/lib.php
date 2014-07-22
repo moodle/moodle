@@ -307,4 +307,15 @@ class enrol_paypal_plugin extends enrol_plugin {
         $this->process_expirations($trace);
         return 0;
     }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/paypal:config', $context);
+    }
 }
