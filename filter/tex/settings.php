@@ -36,16 +36,20 @@ if ($ADMIN->fulltree) {
     $items[] = new admin_setting_configtext('filter_tex/latexbackground', get_string('backgroundcolour', 'admin'), '', '#FFFFFF');
     $items[] = new admin_setting_configtext('filter_tex/density', get_string('density', 'admin'), '', '120', PARAM_INT);
 
+    $default_filter_tex_pathlatex   = '';
+    $default_filter_tex_pathdvips   = '';
+    $default_filter_tex_pathdvisvgm = '';
+    $default_filter_tex_pathconvert = '';
     if (PHP_OS=='Linux') {
         $default_filter_tex_pathlatex   = "/usr/bin/latex";
         $default_filter_tex_pathdvips   = "/usr/bin/dvips";
         $default_filter_tex_pathdvisvgm = "/usr/bin/dvisvgm";
         $default_filter_tex_pathconvert = "/usr/bin/convert";
-
     } else if (PHP_OS=='Darwin') {
         // most likely needs a fink install (fink.sf.net)
         $default_filter_tex_pathlatex   = "/sw/bin/latex";
         $default_filter_tex_pathdvips   = "/sw/bin/dvips";
+        $default_filter_tex_pathdvisvgm = "/usr/bin/dvisvgm";
         $default_filter_tex_pathconvert = "/sw/bin/convert";
 
     } else if (PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows') {
@@ -54,12 +58,6 @@ if ($ADMIN->fulltree) {
         $default_filter_tex_pathlatex   = "\"c:\\texmf\\miktex\\bin\\latex.exe\" ";
         $default_filter_tex_pathdvips   = "\"c:\\texmf\\miktex\\bin\\dvips.exe\" ";
         $default_filter_tex_pathconvert = "\"c:\\imagemagick\\convert.exe\" ";
-
-    } else {
-        $default_filter_tex_pathlatex   = '';
-        $default_filter_tex_pathdvips   = '';
-        $default_filter_tex_pathdvisvgm = '';
-        $default_filter_tex_pathconvert = '';
     }
 
     $items[] = new admin_setting_configexecutable('filter_tex/pathlatex', get_string('pathlatex', 'filter_tex'), '', $default_filter_tex_pathlatex);
