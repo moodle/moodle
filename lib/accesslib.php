@@ -5156,7 +5156,7 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @return void (modifies $rec)
      */
      protected static function preload_from_record(stdClass $rec) {
-         if (empty($rec->ctxid) or empty($rec->ctxlevel) or empty($rec->ctxinstance) or empty($rec->ctxpath) or empty($rec->ctxdepth)) {
+         if (empty($rec->ctxid) or empty($rec->ctxlevel) or !isset($rec->ctxinstance) or empty($rec->ctxpath) or empty($rec->ctxdepth)) {
              // $rec does not have enough data, passed here repeatedly or context does not exist yet
              return;
          }
