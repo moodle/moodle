@@ -305,6 +305,10 @@ class testable_assign extends assign {
         return parent::get_graders($userid);
     }
 
+    public function testable_get_notifiable_users($userid) {
+        return parent::get_notifiable_users($userid);
+    }
+
     public function testable_view_batch_set_workflow_state($selectedusers) {
         $mform = $this->testable_grading_batch_operations_form('setmarkingworkflowstate', $selectedusers);
         return parent::view_batch_set_workflow_state($mform);
