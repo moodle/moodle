@@ -130,16 +130,18 @@
   }
 }
 // Active state, and it's :hover/:focus to override normal :hover/:focus
-.nav-tabs > .active > a,
-.nav-tabs > .active > a:hover,
-.nav-tabs > .active > a:focus {
-  color: @gray;
+.nav-tabs > .active > a {
   background-color: @bodyBackground;
   border: 1px solid #ddd;
   border-bottom-color: transparent;
-  cursor: default;
 }
 
+.nav-tabs > .active > a:not([href]),
+.nav-tabs > .active > a:not([href]):hover,
+.nav-tabs > .active > a:not([href]):focus {
+  color: @gray;
+  cursor: default;
+}
 
 // PILLS
 // -----
