@@ -235,6 +235,8 @@ class core_cache_renderer extends plugin_renderer_base {
         );
         $table->data = array();
 
+        core_collator::asort_array_of_arrays_by_key($definitions, 'name');
+
         $none = new lang_string('none', 'cache');
         foreach ($definitions as $id => $definition) {
             $actions = cache_administration_helper::get_definition_actions($context, $definition);
