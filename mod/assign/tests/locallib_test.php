@@ -502,6 +502,25 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $event = $DB->get_record('event', $params);
         $this->assertNotEmpty($event);
         $this->assertSame('new', $event->description);     // The pluginfile links are removed.
+
+        // Create an assignment with a description that should be hidden.
+        $assign = $this->create_instance(array('duedate'=>$now + 160,
+                                               'alwaysshowdescription'=>false,
+                                               'allowsubmissionsfromdate'=>$now+3,
+                                               'intro'=>'Some text'));
+
+        // Get the event from the calendar.
+        $params = array('modulename'=>'assign', 'instance'=>$assign->get_instance()->id);
+        $event = $DB->get_record('event', $params);
+
+        $this->assertEmpty($event->description);
+        sleep(6);
+        // Run cron to update the event in the calendar.
+        assign::cron();
+        $event = $DB->get_record('event', $params);
+
+        $this->assertContains('Some text', $event->description);
+
     }
 
     public function test_update_instance() {
