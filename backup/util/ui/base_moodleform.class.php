@@ -369,4 +369,13 @@ abstract class base_moodleform extends moodleform {
             $this->definition_after_data();
         }
     }
+
+    /**
+     * Can be used to collapse a heading from outside of this form.
+     *
+     * @param string $heading
+     */
+    public function collapse_heading($heading) {
+        $this->_form->setExpanded($heading, false);
+    }
 }
