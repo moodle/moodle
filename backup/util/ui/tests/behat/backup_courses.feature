@@ -60,3 +60,8 @@ Feature: Backup Moodle courses
     And I press "Next"
     And I should see "Test assign"
     And I should not see "Test data"
+
+  @javascript
+  Scenario: Backup a course using the one click backup button
+    When I perform a quick backup of course "Course 2"
+    Then I should see "Restore"

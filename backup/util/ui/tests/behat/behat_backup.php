@@ -77,6 +77,9 @@ class behat_backup extends behat_base {
         $this->navigate_to_course_settings_link('backup');
         $this->wait();
 
+        // Expand the backup settings section.
+        $this->find_link(get_string('backupsettings', 'backup'))->click();
+
         // Initial settings.
         $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
         $this->find_button(get_string('backupstage1action', 'backup'))->press();
@@ -90,6 +93,40 @@ class behat_backup extends behat_base {
         // Confirmation and review, backup filename can also be specified.
         $this->fill_backup_restore_form($this->get_step_options($options, "Confirmation"));
         $this->find_button(get_string('backupstage4action', 'backup'))->press();
+
+        // Waiting for it to finish.
+        $this->wait(self::EXTENDED_TIMEOUT);
+
+        // Last backup continue button.
+        $this->find_button(get_string('backupstage16action', 'backup'))->press();
+    }
+
+    /**
+     * Performs a quick (one click) backup of a course.
+     *
+     * Please note that because you can't set settings with this there is no way to know what the filename
+     * that was produced was. It contains a timestamp making it hard to find.
+     *
+     * @Given /^I perform a quick backup of course "(?P<course_fullname_string>(?:[^"]|\\")*)"$/
+     * @param string $backupcourse
+     */
+    public function i_perform_a_quick_backup_of_course($backupcourse) {
+        // We can not use other steps here as we don't know where the provided data
+        // table elements are used, and we need to catch exceptions contantly.
+
+        // Go to homepage.
+        $this->getSession()->visit($this->locate_path('/'));
+
+        // Click the course link.
+        $this->find_link($backupcourse)->click();
+
+        // Click the backup link.
+        $this->find_link(get_string('backup'))->click();
+        $this->wait();
+
+        // Initial settings.
+        $this->find_button(get_string('performoneclickbackup', 'backup'))->press();
+        $this->wait();
 
         // Waiting for it to finish.
         $this->wait(self::EXTENDED_TIMEOUT);
