@@ -5137,6 +5137,18 @@ class assign {
                 $this->update_user_flags($flags);
             }
             $this->update_grade($grade);
+
+            // If the conditions are met, allow another attempt.
+            $submission = null;
+            if ($this->get_instance()->teamsubmission) {
+                $submission = $this->get_group_submission($userid, 0, false, -1);
+            } else {
+                $submission = $this->get_user_submission($userid, false, -1);
+            }
+            $this->reopen_submission_if_required($userid,
+                                                 $submission,
+                                                 false);
+
             // Allow teachers to skip sending notifications.
             if (optional_param('sendstudentnotifications', true, PARAM_BOOL)) {
                 $this->notify_grade_modified($grade);
@@ -6438,6 +6450,61 @@ class assign {
         }
     }
 
+    /**
+     * If the requirements are met - reopen the submission for another attempt.
+     * Only call this function when grading the latest attempt.
+     *
+     * @param int $userid The userid.
+     * @param stdClass $submission The submission (may be a group submission).
+     * @param bool $addattempt - True if the "allow another attempt" checkbox was checked.
+     * @return bool - true if another attempt was added.
+     */
+    protected function reopen_submission_if_required($userid, $submission, $addattempt) {
+        $instance = $this->get_instance();
+        $maxattemptsreached = !empty($submission) &&
+                              $submission->attemptnumber >= ($instance->maxattempts - 1) &&
+                              $instance->maxattempts != ASSIGN_UNLIMITED_ATTEMPTS;
+        $shouldreopen = false;
+        if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
+            // Check the gradetopass from the gradebook.
+            $gradinginfo = grade_get_grades($this->get_course()->id,
+                                            'mod',
+                                            'assign',
+                                            $instance->id,
+                                            $userid);
+
+            // What do we do if the grade has not been added to the gradebook (e.g. blind marking)?
+            $gradingitem = null;
+            $gradebookgrade = null;
+            if (isset($gradinginfo->items[0])) {
+                $gradingitem = $gradinginfo->items[0];
+                $gradebookgrade = $gradingitem->grades[$userid];
+            }
+
+            if ($gradebookgrade) {
+                // TODO: This code should call grade_grade->is_passed().
+                $shouldreopen = true;
+                if (is_null($gradebookgrade->grade)) {
+                    $shouldreopen = false;
+                }
+                if (empty($gradingitem->gradepass) || $gradingitem->gradepass == $gradingitem->grademin) {
+                    $shouldreopen = false;
+                }
+                if ($gradebookgrade->grade >= $gradingitem->gradepass) {
+                    $shouldreopen = false;
+                }
+            }
+        }
+        if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL &&
+                !empty($addattempt)) {
+            $shouldreopen = true;
+        }
+        if ($shouldreopen && !$maxattemptsreached) {
+            $this->add_attempt($userid);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Save grade update.
@@ -6477,50 +6544,11 @@ class assign {
 
             $this->process_outcomes($userid, $data);
         }
-        $maxattemptsreached = !empty($submission) &&
-                              $submission->attemptnumber >= ($instance->maxattempts - 1) &&
-                              $instance->maxattempts != ASSIGN_UNLIMITED_ATTEMPTS;
-        $shouldreopen = false;
-        if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
-            // Check the gradetopass from the gradebook.
-            $gradinginfo = grade_get_grades($this->get_course()->id,
-                                            'mod',
-                                            'assign',
-                                            $instance->id,
-                                            $userid);
-
-            // What do we do if the grade has not been added to the gradebook (e.g. blind marking)?
-            $gradingitem = null;
-            $gradebookgrade = null;
-            if (isset($gradinginfo->items[0])) {
-                $gradingitem = $gradinginfo->items[0];
-                $gradebookgrade = $gradingitem->grades[$userid];
-            }
-
-            if ($gradebookgrade) {
-                // TODO: This code should call grade_grade->is_passed().
-                $shouldreopen = true;
-                if (is_null($gradebookgrade->grade)) {
-                    $shouldreopen = false;
-                }
-                if (empty($gradingitem->gradepass) || $gradingitem->gradepass == $gradingitem->grademin) {
-                    $shouldreopen = false;
-                }
-                if ($gradebookgrade->grade >= $gradingitem->gradepass) {
-                    $shouldreopen = false;
-                }
-            }
-        }
-        if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL &&
-                !empty($data->addattempt)) {
-            $shouldreopen = true;
-        }
-        // Never reopen if we are editing a previous attempt.
-        if ($data->attemptnumber != -1) {
-            $shouldreopen = false;
-        }
-        if ($shouldreopen && !$maxattemptsreached) {
-            $this->add_attempt($userid);
+        if ($data->attemptnumber == -1) {
+            // We only allow another attempt when grading the latest submission.
+            $this->reopen_submission_if_required($userid,
+                                                 $submission,
+                                                 !empty($data->addattempt));
         }
         return true;
     }
