@@ -271,10 +271,13 @@ class company_user {
             if (empty($rid)) {
                 $rid = $manualcache[$courseid]->roleid;
             }
-
             if ($rid) {
                 // Find duration.
-                $timeend = 0;
+                if (!empty($manualcache[$courseid]->enrolperiod)) {
+                    $timeend = $today + $manualcache[$courseid]->enrolperiod;
+                } else {
+                    $timeend = 0;
+                }
                 $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today,
                                     $timeend, ENROL_USER_ACTIVE);
                 if ($shared) {
