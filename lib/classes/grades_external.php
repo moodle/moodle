@@ -169,14 +169,18 @@ class core_grades_external extends external_api {
 
             if (!empty($gradeitem->grades)) {
                 foreach ($gradeitem->grades as $studentid => $studentgrade) {
-                    $gradegradeinstance = grade_grade::fetch(
-                        array(
-                            'userid' => $studentid,
-                            'itemid' => $gradeiteminstance->id
-                        )
-                    );
-                    if (!$canviewhidden && $gradegradeinstance->is_hidden()) {
-                        continue;
+                    if (!$canviewhidden) {
+                        // Need to load the grade_grade object to check visibility.
+                        $gradegradeinstance = grade_grade::fetch(
+                            array(
+                                'userid' => $studentid,
+                                'itemid' => $gradeiteminstance->id
+                            )
+                        );
+                        // The grade grade may be legitimately missing if the student has no grade.
+                        if (!empty($gradegradeinstance) && $gradegradeinstance->is_hidden()) {
+                            continue;
+                        }
                     }
                     $gradeitemarray['grades'][$studentid] = (array)$studentgrade;
                     // Add the student ID as some WS clients can't access the array key.
