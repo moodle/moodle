@@ -606,6 +606,38 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(self::GROUP_COUNT + 1, $assign->count_teams());
     }
 
+    public function test_submit_to_default_group() {
+        global $DB;
+
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        $this->setUser($this->editingteachers[0]);
+        $params = array('teamsubmission' => 1,
+                        'assignsubmission_onlinetext_enabled' => 1,
+                        'submissiondrafts'=>0);
+        $assign = $this->create_instance($params);
+
+        $newstudent = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $this->getDataGenerator()->enrol_user($newstudent->id,
+                                              $this->course->id,
+                                              $studentrole->id);
+        $this->setUser($newstudent);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>'Submission text',
+                                         'format'=>FORMAT_MOODLE);
+        $notices = array();
+
+        $group = $assign->get_submission_group($newstudent->id);
+        $this->assertFalse($group, 'New student is in default group');
+        $assign->save_submission($data, $notices);
+        $this->assertEmpty($notices, 'No errors on save submission');
+
+        $sink->close();
+    }
+
     public function test_count_submissions() {
         $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
