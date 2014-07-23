@@ -5417,8 +5417,12 @@ class assign {
             $user = $DB->get_record('user', array('id' => $submission->userid), '*', MUST_EXIST);
             $name = fullname($user);
         } else {
-            $group = $DB->get_record('groups', array('id' => $submission->groupid), '*', MUST_EXIST);
-            $name = $group->name;
+            $group = $this->get_submission_group($submission->userid);
+            if ($group) {
+                $name = $group->name;
+            } else {
+                $name = get_string('defaultteam', 'assign');
+            }
         }
         $status = get_string('submissionstatus_' . $submission->status, 'assign');
         $params = array('id'=>$submission->userid, 'fullname'=>$name, 'status'=>$status);
