@@ -280,7 +280,11 @@ if (!empty($action) && confirm_sesskey()) {
     }
 }
 
-$notifications = array_merge($notifications, cache_helper::warnings($stores));
+// Add cache store warnings to the list of notifications.
+// Obviously as these are warnings they are show as failures.
+foreach (cache_helper::warnings($stores) as $warning) {
+    $notifications[] = array($warning, false);
+}
 
 $PAGE->set_title($title);
 $PAGE->set_heading($SITE->fullname);
