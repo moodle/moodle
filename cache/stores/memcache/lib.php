@@ -589,7 +589,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
             $host = array_shift($bits);
             $port = (count($bits)) ? array_shift($bits) : '11211';
             foreach ($this->servers as $server) {
-                if ($server[0] === $host && $server[1] === $port) {
+                if ($server[0] === $host && $server[1] == $port) {
                     $warnings[] = get_string('sessionhandlerconflict', 'cachestore_memcache', $this->my_name());
                     break;
                 }
