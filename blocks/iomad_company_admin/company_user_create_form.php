@@ -60,6 +60,7 @@ class user_edit_form extends company_moodleform {
                          'departmentid' => $departmentid,
                          'subdepartments' => $this->subhierarchieslist,
                          'parentdepartmentid' => $parentlevel,
+                         'showopenshared' => true,
                          'license' => false);
         $this->currentcourses = new potential_subdepartment_course_selector('currentcourses', $options);
         $this->currentcourses->set_rows(20);

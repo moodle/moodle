@@ -449,6 +449,7 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
         $this->departmentid = $options['departmentid'];
+        $this->showopenshared = $options['showopenshared'];
         $this->license = $options['license'];
 
         // Must select sortorder if we are going to ORDER BY on it.
@@ -515,6 +516,16 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
                       AND c.id != :siteid
                       AND NOT EXISTS (SELECT NULL FROM {company_course} WHERE courseid = c.id)";
 
+        if (!empty($this->showopenshared)) {
+            $sqlopenshared = " FROM {course} c,
+                            {iomad_courses} ic
+                            WHERE $wherecondition
+                            AND ic.courseid = c.id
+                            AND c.id != :siteid
+                            AND ic.shared = 1
+                            $licensesql";
+        }
+
         $order = ' ORDER BY c.fullname ASC';
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params) +
@@ -523,15 +534,25 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
+
         $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params) +
         $DB->get_records_sql($distinctfields . $sqldistinct . $order, $params);
+        if (!empty($this->showopenshared)) {
+            $availablecourses = $availablecourses + 
+            $DB->get_records_sql($distinctfields . $sqlopenshared . $order, $params);
+        }
 
         if (empty($availablecourses)) {
             return array();
         }
 
+        $sanitisedcourses = array();
+        foreach($availablecourses as $key => $availablecourse) {
+            $sanitisedcourses[$key] = $availablecourse;
+        }
+
         // Have any of the courses got enrollments?
-        $this->process_enrollments($availablecourses);
+        $this->process_enrollments($sanitisedcourses);
 
         if ($search) {
             $groupname = get_string('potcoursesmatching', 'block_iomad_company_admin', $search);
