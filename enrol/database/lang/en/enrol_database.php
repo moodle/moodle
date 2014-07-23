@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['database:config'] = 'Configure database enrol instances';
 $string['database:unenrol'] = 'Unenrol suspended users';
 $string['dbencoding'] = 'Database encoding';
 $string['dbhost'] = 'Database host';
