@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,7 +40,7 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
             $paths[] = new restore_path_element('chat_message', '/activity/chat/messages/message');
         }
 
-        // Return the paths wrapped into standard activity structure
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
@@ -55,9 +54,9 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $data->chattime = $this->apply_date_offset($data->chattime);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // insert the chat record
+        // Insert the chat record.
         $newitemid = $DB->insert_record('chat', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
@@ -73,11 +72,11 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $data->timestamp = $this->apply_date_offset($data->timestamp);
 
         $newitemid = $DB->insert_record('chat_messages', $data);
-        $this->set_mapping('chat_message', $oldid, $newitemid); // because of decode
+        $this->set_mapping('chat_message', $oldid, $newitemid); // Because of decode.
     }
 
     protected function after_execute() {
-        // Add chat related files, no need to match by itemname (just internally handled context)
+        // Add chat related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_chat', 'intro', null);
     }
 }
