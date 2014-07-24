@@ -50,14 +50,24 @@ if ($ADMIN->fulltree) {
     } else if (PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows') {
         // note: you need Ghostscript installed (standard), miktex (standard)
         // and ImageMagick (install at c:\ImageMagick)
-        $default_filter_tex_pathlatex   = "\"c:\\texmf\\miktex\\bin\\latex.exe\" ";
-        $default_filter_tex_pathdvips   = "\"c:\\texmf\\miktex\\bin\\dvips.exe\" ";
-        $default_filter_tex_pathconvert = "\"c:\\imagemagick\\convert.exe\" ";
+        $default_filter_tex_pathlatex   = "c:\\texmf\\miktex\\bin\\latex.exe";
+        $default_filter_tex_pathdvips   = "c:\\texmf\\miktex\\bin\\dvips.exe";
+        $default_filter_tex_pathconvert = "c:\\imagemagick\\convert.exe";
 
     } else {
         $default_filter_tex_pathlatex   = '';
         $default_filter_tex_pathdvips   = '';
         $default_filter_tex_pathconvert = '';
+    }
+
+    $pathlatex = isset($CFG->filter_tex_pathlatex) ? $CFG->filter_tex_pathlatex : $default_filter_tex_pathlatex;
+    $pathdvips = isset($CFG->filter_tex_pathdvips) ? $CFG->filter_tex_pathdvips : $default_filter_tex_pathdvips;
+    $pathconvert = isset($CFG->filter_tex_pathconvert) ? $CFG->filter_tex_pathconvert : $default_filter_tex_pathconvert;
+    if (strrpos($pathlatex . $pathdvips . $pathconvert, '"') or
+            strrpos($pathlatex . $pathdvips . $pathconvert, "'")) {
+        set_config('filter_tex_pathlatex', trim($pathlatex, " '\""));
+        set_config('filter_tex_pathdvips', trim($pathdvips, " '\""));
+        set_config('filter_tex_pathconvert', trim($pathconvert, " '\""));
     }
 
     $items[] = new admin_setting_configexecutable('filter_tex_pathlatex', get_string('pathlatex', 'admin'), '', $default_filter_tex_pathlatex);

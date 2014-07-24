@@ -108,14 +108,16 @@
             fclose( $fh );
 
             // run latex on document
-            $command = "{$CFG->filter_tex_pathlatex} --interaction=nonstopmode --halt-on-error $tex";
+            $pathlatex = escapeshellarg(trim($CFG->filter_tex_pathlatex, " '\""));
+            $command = "$pathlatex --interaction=nonstopmode --halt-on-error $tex";
             chdir( $this->temp_dir );
             if ($this->execute($command, $log)) { // It allways False on Windows
 //                return false;
             }
 
             // run dvips (.dvi to .ps)
-            $command = "{$CFG->filter_tex_pathdvips} -E $dvi -o $ps";
+            $pathdvips = escapeshellarg(trim($CFG->filter_tex_pathdvips, " '\""));
+            $command = "$pathdvips -E $dvi -o $ps";
             if ($this->execute($command, $log )) {
                 return false;
             }
@@ -126,7 +128,8 @@
             } else {
                 $bg_opt = "";
             }
-            $command = "{$CFG->filter_tex_pathconvert} -density $density -trim $bg_opt $ps $img";
+            $pathconvert = escapeshellarg(trim($CFG->filter_tex_pathconvert, " '\""));
+            $command = "$pathconvert -density $density -trim $bg_opt $ps $img";
             if ($this->execute($command, $log )) {
                 return false;
             }
