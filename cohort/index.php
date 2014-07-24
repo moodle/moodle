@@ -25,7 +25,6 @@
 require('../config.php');
 require($CFG->dirroot.'/cohort/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/coursecatlib.php');
 
 $contextid = optional_param('contextid', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
@@ -124,10 +123,10 @@ foreach($cohorts['cohorts'] as $cohort) {
     $cohortcontext = context::instance_by_id($cohort->contextid);
     if ($showall) {
         if ($cohortcontext->contextlevel == CONTEXT_COURSECAT) {
-            $cat = coursecat::get($cohortcontext->instanceid);
-            $line[] = html_writer::link(new moodle_url('/cohort/index.php' , array('contextid' => $cohort->contextid)), $cat->get_formatted_name());
+            $line[] = html_writer::link(new moodle_url('/cohort/index.php' ,
+                    array('contextid' => $cohort->contextid)), $cohortcontext->get_context_name(false));
         } else {
-            $line[] = get_string('coresystem');
+            $line[] = $cohortcontext->get_context_name(false);
         }
     }
     $line[] = format_string($cohort->name);
