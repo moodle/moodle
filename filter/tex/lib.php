@@ -125,9 +125,10 @@ function filter_tex_updatedcallback($name) {
         return;
     }
 
-    $pathdvips = get_config('filter_tex', 'pathdvips');
-    $pathconvert = get_config('filter_tex', 'pathconvert');
-    $pathdvisvgm = get_config('filter_tex', 'pathdvisvgm');
+    $pathlatex = trim($pathlatex, " '\"");
+    $pathdvips = trim(get_config('filter_tex', 'pathdvips'), " '\"");
+    $pathconvert = trim(get_config('filter_tex', 'pathconvert'), " '\"");
+    $pathdvisvgm = trim(get_config('filter_tex', 'pathdvisvgm'), " '\"");
 
     $supportedformats = array('gif');
     if ((is_file($pathlatex) && is_executable($pathlatex)) &&
