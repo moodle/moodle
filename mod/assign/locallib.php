@@ -1862,12 +1862,12 @@ class assign {
         if (!$batchusers) {
             $userid = required_param('userid', PARAM_INT);
 
-            $grade = $this->get_user_grade($userid, false);
+            $flags = $this->get_user_flags($userid, false);
 
             $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
 
-            if ($grade) {
-                $data->extensionduedate = $grade->extensionduedate;
+            if ($flags) {
+                $data->extensionduedate = $flags->extensionduedate;
             }
             $data->userid = $userid;
         } else {
