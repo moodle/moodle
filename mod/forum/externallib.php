@@ -184,10 +184,6 @@ class mod_forum_external extends external_api {
 
         // Array to store the forum discussions to return.
         $arrdiscussions = array();
-        // Keep track of the course ids we have performed a require_course_login check on to avoid repeating.
-        $arrcourseschecked = array();
-        // Store the modinfo for the forums in an individual courses.
-        $arrcoursesforuminfo = array();
         // Keep track of the users we have looked up in the DB.
         $arrusers = array();
 
@@ -195,51 +191,58 @@ class mod_forum_external extends external_api {
         foreach ($forumids as $id) {
             // Get the forum object.
             $forum = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
-            // Check that that user can view this course if check not performed yet.
-            if (!in_array($forum->course, $arrcourseschecked)) {
-                // Check the user can function in this context.
-                self::validate_context(context_course::instance($forum->course));
-                // Add to the array.
-                $arrcourseschecked[] = $forum->course;
-            }
-            // Get the modinfo for the course if we haven't already.
-            if (!isset($arrcoursesforuminfo[$forum->course])) {
-                $modinfo = get_fast_modinfo($forum->course);
-                $arrcoursesforuminfo[$forum->course] = $modinfo->get_instances_of('forum');
-            }
-            // Check if this forum does not exist in the modinfo array, should always be false unless DB is borked.
-            if (empty($arrcoursesforuminfo[$forum->course][$forum->id])) {
-                throw new moodle_exception('invalidmodule', 'error');
-            }
-            // We now have the course module.
-            $cm = $arrcoursesforuminfo[$forum->course][$forum->id];
-            // If the forum is not visible throw an exception.
-            if (!$cm->uservisible) {
-                throw new moodle_exception('nopermissiontoshow', 'error');
-            }
+            $course = get_course($forum->course);
+
+            $modinfo = get_fast_modinfo($course);
+            $forums  = $modinfo->get_instances_of('forum');
+            $cm = $forums[$forum->id];
+
             // Get the module context.
             $modcontext = context_module::instance($cm->id);
-            // Check they have the view forum capability.
+
+            // Validate the context.
+            self::validate_context($modcontext);
+
             require_capability('mod/forum:viewdiscussion', $modcontext);
-            // Check if they can view full names.
-            $canviewfullname = has_capability('moodle/site:viewfullnames', $modcontext);
-            // Get the unreads array, this takes a forum id and returns data for all discussions.
-            $unreads = array();
-            if ($cantrack = forum_tp_can_track_forums($forum)) {
-                if ($forumtracked = forum_tp_is_tracked($forum)) {
-                    $unreads = forum_get_discussions_unread($cm);
+
+            // Get the discussions for this forum.
+            $params = array();
+
+            $groupselect = "";
+            $groupmode = groups_get_activity_groupmode($cm, $course);
+
+            if ($groupmode and $groupmode != VISIBLEGROUPS and !has_capability('moodle/site:accessallgroups', $modcontext)) {
+                // Get all the discussions from all the groups this user belongs to.
+                $usergroups = groups_get_user_groups($course->id);
+                if (!empty($usergroups['0'])) {
+                    list($sql, $params) = $DB->get_in_or_equal($usergroups['0']);
+                    $groupselect = "AND (groupid $sql OR groupid = -1)";
                 }
             }
-            // The forum function returns the replies for all the discussions in a given forum.
-            $replies = forum_count_discussion_replies($id);
-            // Get the discussions for this forum.
-            if ($discussions = $DB->get_records('forum_discussions', array('forum' => $id))) {
-                foreach ($discussions as $discussion) {
-                    // If the forum is of type qanda and the user has not posted in the discussion
-                    // we need to ensure that they have the required capability.
-                    if ($forum->type == 'qanda' && !forum_user_has_posted($discussion->forum, $discussion->id, $USER->id)) {
-                        require_capability('mod/forum:viewqandawithoutposting', $modcontext);
+            array_unshift($params, $id);
+
+            $select = "forum = ? $groupselect";
+
+            if ($discussions = $DB->get_records_select('forum_discussions', $select, $params, 'timemodified DESC')) {
+
+                // Check if they can view full names.
+                $canviewfullname = has_capability('moodle/site:viewfullnames', $modcontext);
+                // Get the unreads array, this takes a forum id and returns data for all discussions.
+                $unreads = array();
+                if ($cantrack = forum_tp_can_track_forums($forum)) {
+                    if ($forumtracked = forum_tp_is_tracked($forum)) {
+                        $unreads = forum_get_discussions_unread($cm);
                     }
+                }
+                // The forum function returns the replies for all the discussions in a given forum.
+                $replies = forum_count_discussion_replies($id);
+
+                foreach ($discussions as $discussion) {
+                    // This function checks capabilities, timed discussions, groups and qanda forums posting.
+                    if (!forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
+                        continue;
+                    }
+
                     $usernamefields = user_picture::fields();
                     // If we don't have the users details then perform DB call.
                     if (empty($arrusers[$discussion->userid])) {
@@ -277,10 +280,10 @@ class mod_forum_external extends external_api {
                     if (!empty($replies[$discussion->id])) {
                          $return->numreplies = (int) $replies[$discussion->id]->replies;
                          $return->lastpost = (int) $replies[$discussion->id]->lastpostid;
-                     } else { // No replies, so the last post will be the first post.
+                    } else { // No replies, so the last post will be the first post.
                         $return->numreplies = 0;
                         $return->lastpost = (int) $discussion->firstpost;
-                     }
+                    }
                     // Get the last post as well as the user who made it.
                     $lastpost = $DB->get_record('forum_posts', array('id' => $return->lastpost), '*', MUST_EXIST);
                     if (empty($arrusers[$lastpost->userid])) {

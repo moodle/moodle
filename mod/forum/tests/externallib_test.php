@@ -177,11 +177,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->trackingtype = FORUM_TRACKING_FORCED;
         $forum2 = self::getDataGenerator()->create_module('forum', $record);
 
-        // Third forum where we will only have one discussion with no replies.
-        $record = new stdClass();
-        $record->course = $course2->id;
-        $forum3 = self::getDataGenerator()->create_module('forum', $record);
-
         // Add discussions to the forums.
         $record = new stdClass();
         $record->course = $course1->id;
@@ -194,12 +189,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->userid = $user2->id;
         $record->forum = $forum2->id;
         $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-
-        $record = new stdClass();
-        $record->course = $course2->id;
-        $record->userid = $user2->id;
-        $record->forum = $forum3->id;
-        $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         // Add three replies to the discussion 1 from different users.
         $record = new stdClass();
@@ -227,12 +216,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $discussion2reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
         // Check the forums were correctly created.
-        $this->assertEquals(3, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2 OR id = :forum3',
-                array('forum1' => $forum1->id, 'forum2' => $forum2->id, 'forum3' => $forum3->id)));
+        $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',
+                array('forum1' => $forum1->id, 'forum2' => $forum2->id)));
 
         // Check the discussions were correctly created.
-        $this->assertEquals(3, $DB->count_records_select('forum_discussions', 'forum = :forum1 OR forum = :forum2
-                OR id = :forum3', array('forum1' => $forum1->id, 'forum2' => $forum2->id, 'forum3' => $forum3->id)));
+        $this->assertEquals(2, $DB->count_records_select('forum_discussions', 'forum = :forum1 OR forum = :forum2',
+                                                            array('forum1' => $forum1->id, 'forum2' => $forum2->id)));
 
         // Check the posts were correctly created, don't forget each discussion created also creates a post.
         $this->assertEquals(7, $DB->count_records_select('forum_posts', 'discussion = :discussion1 OR discussion = :discussion2',
@@ -259,11 +248,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $cm = get_coursemodule_from_id('forum', $forum2->cmid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
         $newrole = create_role('Role 2', 'role2', 'Role 2 description');
-        $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
-
-        // Assign capabilities to view discussions for forum 3.
-        $cm = get_coursemodule_from_id('forum', $forum3->cmid, 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
         $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
 
         // Create what we expect to be returned when querying the forums.
@@ -322,47 +306,21 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'lastuserpicture' => $user3->picture,
                 'lastuseremail' => $user3->email
             );
-            $expecteddiscussions[$discussion3->id] = array(
-                'id' => $discussion3->id,
-                'course' => $discussion3->course,
-                'forum' => $discussion3->forum,
-                'name' => $discussion3->name,
-                'firstpost' => $discussion3->firstpost,
-                'userid' => $discussion3->userid,
-                'groupid' => $discussion3->groupid,
-                'assessed' => $discussion3->assessed,
-                'timemodified' => $discussion3->timemodified,
-                'usermodified' => $discussion3->usermodified,
-                'timestart' => $discussion3->timestart,
-                'timeend' => $discussion3->timeend,
-                'firstuserfullname' => fullname($user2),
-                'firstuserimagealt' => $user2->imagealt,
-                'firstuserpicture' => $user2->picture,
-                'firstuseremail' => $user2->email,
-                'subject' => $discussion3->name,
-                'numreplies' => 0,
-                'numunread' => 1,
-                'lastpost' => $discussion3->firstpost,
-                'lastuserid' => $user2->id,
-                'lastuserfullname' => fullname($user2),
-                'lastuserimagealt' => $user2->imagealt,
-                'lastuserpicture' => $user2->picture,
-                'lastuseremail' => $user2->email
-            );
 
         // Call the external function passing forum ids.
-        $discussions = mod_forum_external::get_forum_discussions(array($forum1->id, $forum2->id, $forum3->id));
+        $discussions = mod_forum_external::get_forum_discussions(array($forum1->id, $forum2->id));
         external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $this->assertEquals($expecteddiscussions, $discussions);
+        // Some debugging is going to be produced, this is because we switch PAGE contexts in the get_forum_discussions function,
+        // the switch happens when the validate_context function is called inside a foreach loop.
+        // See MDL-41746 for more information.
+        $this->assertDebuggingCalled();
 
         // Remove the users post from the qanda forum and ensure they can not return the discussion.
         $DB->delete_records('forum_posts', array('id' => $discussion2reply1->id));
-        try {
-            mod_forum_external::get_forum_discussions(array($forum2->id));
-            $this->fail('Exception expected due to attempting to access qanda forum without posting.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
-        }
+        $discussions = mod_forum_external::get_forum_discussions(array($forum2->id));
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $this->assertEquals(0, count($discussions));
 
         // Call without required view discussion capability.
         $this->unassignUserCapability('mod/forum:viewdiscussion', null, null, $course1->id);
@@ -372,6 +330,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
+        $this->assertDebuggingCalled();
 
         // Unenrol user from second course.
         $enrol->unenrol_user($instance2, $user1->id);
@@ -383,5 +342,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
+        $this->assertDebuggingCalled();
     }
 }
