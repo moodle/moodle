@@ -232,11 +232,61 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
     }
 
     /**
+     * For all submissions in this assignment, either set the submission->latest field to 1 for the latest attempts.
+     *
+     * @return void
+     */
+    protected function set_latest_submission_field() {
+        global $DB;
+
+        $assignmentid = $this->get_new_parentid('assign');
+        // This code could be rewritten as a monster SQL - but the point of adding this "latest" field
+        // to the submissions table in the first place was to get away from those hard to maintain SQL queries.
+
+        // First user submissions.
+        $sql = 'SELECT DISTINCT userid FROM {assign_submission} WHERE assignment = ? AND groupid = ?';
+        $params = array($assignmentid, 0);
+        $users = $DB->get_records_sql($sql, $params);
+
+        foreach ($users as $userid => $unused) {
+            $params = array('assignment'=>$assignmentid, 'groupid'=>0, 'userid'=>$userid);
+
+            // Only return the row with the highest attemptnumber.
+            $submission = null;
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+            if ($submissions) {
+                $submission = reset($submissions);
+                $submission->latest = 1;
+                $DB->update_record('assign_submission', $submission);
+            }
+        }
+        // Then group submissions (if any).
+        $sql = 'SELECT DISTINCT groupid FROM {assign_submission} WHERE assignment = ? AND userid = ?';
+        $params = array($assignmentid, 0);
+        $groups = $DB->get_records_sql($sql, $params);
+
+        foreach ($groups as $groupid => $unused) {
+            $params = array('assignment'=>$assignmentid, 'userid'=>0, 'groupid'=>$groupid);
+
+            // Only return the row with the highest attemptnumber.
+            $submission = null;
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+            if ($submissions) {
+                $submission = reset($submissions);
+                $submission->latest = 1;
+                $DB->update_record('assign_submission', $submission);
+            }
+        }
+    }
+
+    /**
      * Once the database tables have been fully restored, restore the files
      * @return void
      */
     protected function after_execute() {
         $this->add_related_files('mod_assign', 'intro', null);
         $this->add_related_files('mod_assign', 'introattachment', null);
+
+        $this->set_latest_submission_field();
     }
 }

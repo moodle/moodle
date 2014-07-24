@@ -244,6 +244,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $submission->timemodified = $submission->timecreated;
         $submission->status = 'draft';
         $submission->attemptnumber = 0;
+        $submission->latest = 0;
         $sid = $DB->insert_record('assign_submission', $submission);
 
         // Second attempt.
@@ -254,6 +255,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $submission->timemodified = $submission->timecreated;
         $submission->status = 'submitted';
         $submission->attemptnumber = 1;
+        $submission->latest = 1;
         $sid = $DB->insert_record('assign_submission', $submission);
         $submission->id = $sid;
 

@@ -523,6 +523,35 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2014072401, 'assign');
     }
+    if ($oldversion < 2014072403) {
+
+        // Prevent running this multiple times.
+
+        $countsql = 'SELECT COUNT(id) FROM {assign_submission} WHERE latest = ?;';
+
+        $count = $DB->count_records_sql($countsql, array(1));
+        if ($count == 0) {
+
+            // Mark the latest attempt for every submission in mod_assign.
+            $maxattemptsql = 'SELECT assignment, userid, groupid, max(attemptnumber) AS maxattempt
+                                FROM mdl23_assign_submission
+                            GROUP BY assignment, groupid, userid';
+
+            $maxattemptidssql = 'SELECT souter.id
+                                   FROM mdl23_assign_submission souter
+                                   JOIN (' . $maxattemptsql . ') sinner
+                                     ON souter.assignment = sinner.assignment
+                                    AND souter.userid = sinner.userid
+                                    AND souter.groupid = sinner.groupid
+                                    AND souter.attemptnumber = sinner.maxattempt';
+            $select = 'id IN(' . $maxattemptidssql . ')';
+            $DB->set_field_select('assign_submission', 'latest', 1, $select);
+
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2014072403, 'assign');
+    }
 
     return true;
 }
