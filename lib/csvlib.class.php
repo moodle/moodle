@@ -104,7 +104,7 @@ class csv_import_reader {
         // Create a temporary file and store the csv file there,
         // do not try using fgetcsv() because there is nothing
         // to split rows properly - fgetcsv() itself can not do it.
-        $tempfile = tempnam(make_temp_directory('/cvsimport'), 'tmp');
+        $tempfile = tempnam(make_temp_directory('/csvimport'), 'tmp');
         if (!$fp = fopen($tempfile, 'w+b')) {
             $this->_error = get_string('cannotsavedata', 'error');
             @unlink($tempfile);
