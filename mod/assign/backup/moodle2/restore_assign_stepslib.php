@@ -157,7 +157,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->assignment = $this->get_new_parentid('assign');
 
         $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->allocatedmarker = $this->get_mappingid('user', $data->allocatedmarker);
+        if (!empty($data->allocatedmarker)) {
+            $data->allocatedmarker = $this->get_mappingid('user', $data->allocatedmarker);
+        }
         if (!empty($data->extensionduedate)) {
             $data->extensionduedate = $this->apply_date_offset($data->extensionduedate);
         } else {
