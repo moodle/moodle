@@ -495,6 +495,34 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2014051201, 'assign');
     }
+    if ($oldversion < 2014072400) {
+
+        // Add "latest" column to submissions table to mark the latest attempt.
+        $table = new xmldb_table('assign_submission');
+        $field = new xmldb_field('latest', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'attemptnumber');
+
+        // Conditionally launch add field latest.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2014072400, 'assign');
+    }
+    if ($oldversion < 2014072401) {
+
+         // Define index latestattempt (not unique) to be added to assign_submission.
+        $table = new xmldb_table('assign_submission');
+        $index = new xmldb_index('latestattempt', XMLDB_INDEX_NOTUNIQUE, array('assignment', 'userid', 'groupid', 'latest'));
+
+        // Conditionally launch add index latestattempt.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2014072401, 'assign');
+    }
 
     return true;
 }
