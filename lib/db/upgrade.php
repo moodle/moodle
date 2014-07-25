@@ -3709,5 +3709,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014070101.00);
     }
 
+    if ($oldversion < 2014072400.01) {
+        $table = new xmldb_table('user_devices');
+        $oldindex = new xmldb_index('pushid-platform', XMLDB_KEY_UNIQUE, array('pushid', 'platform'));
+        if ($dbman->index_exists($table, $oldindex)) {
+            $key = new xmldb_key('pushid-platform', XMLDB_KEY_UNIQUE, array('pushid', 'platform'));
+            $dbman->drop_key($table, $key);
+        }
+        upgrade_main_savepoint(true, 2014072400.01);
+    }
+
     return true;
 }
