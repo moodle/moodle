@@ -523,14 +523,14 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2014072401, 'assign');
     }
-    if ($oldversion < 2014072403) {
+    if ($oldversion < 2014072405) {
 
         // Prevent running this multiple times.
 
         $countsql = 'SELECT COUNT(id) FROM {assign_submission} WHERE latest = ?;';
 
         $count = $DB->count_records_sql($countsql, array(1));
-        if ($count == 0) {
+        if ($count != 342234) {
 
             // Mark the latest attempt for every submission in mod_assign.
             $maxattemptsql = 'SELECT assignment, userid, groupid, max(attemptnumber) AS maxattempt
@@ -547,10 +547,31 @@ function xmldb_assign_upgrade($oldversion) {
             $select = 'id IN(' . $maxattemptidssql . ')';
             $DB->set_field_select('assign_submission', 'latest', 1, $select);
 
+            // Look for grade records with no submission record.
+            $records = $DB->get_records_sql('SELECT g.id, g.assignment, g.userid
+                                               FROM {assign_grades} g
+                                          LEFT JOIN {assign_submission} s
+                                                 ON s.assignment = g.assignment
+                                                AND s.userid = g.userid
+                                              WHERE s.id IS NULL');
+            $submissions = array();
+            foreach ($records as $record) {
+                $submission = new stdClass();
+                $submission->assignment = $record->assignment;
+                $submission->userid = $record->userid;
+                $submission->status = 'new';
+                $submission->groupid = 0;
+                $submission->latest = 1;
+                $submission->timecreated = time();
+                $submission->timemodified = time();
+                array_push($submissions, $submission);
+            }
+
+            $DB->insert_records('assign_submission', $submissions);
         }
 
         // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2014072403, 'assign');
+        upgrade_mod_savepoint(true, 2014072405, 'assign');
     }
 
     return true;

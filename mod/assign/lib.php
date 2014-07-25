@@ -390,7 +390,7 @@ function assign_print_overview($courses, &$htmlarray) {
             if (!isset($unmarkedsubmissions)) {
                 // Build up and array of unmarked submissions indexed by assignment id/ userid
                 // for use where the user has grading rights on assignment.
-                $dbparams = array_merge($assignmentidparams, array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
+                $dbparams = array_merge(array(ASSIGN_SUBMISSION_STATUS_SUBMITTED), $assignmentidparams);
                 $rs = $DB->get_recordset_sql('SELECT
                                                   s.assignment as assignment,
                                                   s.userid as userid,
@@ -440,7 +440,7 @@ function assign_print_overview($courses, &$htmlarray) {
             if (!isset($mysubmissions)) {
 
                 // Get all user submissions, indexed by assignment id.
-                $dbparams = array_merge(array($USER->id, $USER->id), $assignmentidparams);
+                $dbparams = array_merge(array($USER->id), $assignmentidparams, array($USER->id));
                 $mysubmissions = $DB->get_records_sql('SELECT
                                                            a.id AS assignment,
                                                            a.nosubmissions AS nosubmissions,
@@ -448,16 +448,15 @@ function assign_print_overview($courses, &$htmlarray) {
                                                            g.grader AS grader,
                                                            g.grade AS grade,
                                                            s.status AS status
-                                                       FROM {assign} a
+                                                       FROM {assign} a, {assign_submission} s
                                                        LEFT JOIN {assign_grades} g ON
-                                                           g.assignment = a.id AND
+                                                           g.assignment = s.assignment AND
                                                            g.userid = ? AND
                                                            g.attemptnumber = s.attemptnumber
-                                                       LEFT JOIN {assign_submission} s ON
+                                                       WHERE a.id ' . $sqlassignmentids . ' AND
                                                            s.latest = 1 AND
                                                            s.assignment = a.id AND
-                                                           s.userid = ?
-                                                       WHERE a.id ' . $sqlassignmentids, $dbparams);
+                                                           s.userid = ?', $dbparams);
             }
 
             $str .= '<div class="details">';

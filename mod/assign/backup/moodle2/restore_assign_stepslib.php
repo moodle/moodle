@@ -237,7 +237,10 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
      * @return void
      */
     protected function set_latest_submission_field() {
-        global $DB;
+        global $DB, $CFG;
+
+        // Required for constants.
+        require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
         $assignmentid = $this->get_new_parentid('assign');
         // This code could be rewritten as a monster SQL - but the point of adding this "latest" field
@@ -277,6 +280,29 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
                 $DB->update_record('assign_submission', $submission);
             }
         }
+
+        // Now check for records with a grade, but no submission record.
+        $records = $DB->get_records_sql('SELECT g.id, g.userid
+                                           FROM {assign_grades} g
+                                      LEFT JOIN {assign_submission} s
+                                             ON s.assignment = g.assignment
+                                            AND s.userid = g.userid
+                                          WHERE s.id IS NULL AND g.assignment = ?', array($assignmentid));
+
+        $submissions = array();
+        foreach ($records as $record) {
+            $submission = new stdClass();
+            $submission->assignment = $assignmentid;
+            $submission->userid = $record->userid;
+            $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+            $submission->groupid = 0;
+            $submission->latest = 1;
+            $submission->timecreated = time();
+            $submission->timemodified = time();
+            array_push($submissions, $submission);
+        }
+
+        $DB->insert_records('assign_submission', $submissions);
     }
 
     /**

@@ -138,13 +138,13 @@ class mod_assign_external extends external_api {
                            ag.grader,
                            ag.grade,
                            ag.attemptnumber
-                      FROM {assign_grades} ag, {assign_submission} as
-                     WHERE as.assignment $inorequalsql
-                       AND as.userid = ag.userid
-                       AND as.latest = 1
-                       AND as.attemptnumber = ag.attemptnumber
+                      FROM {assign_grades} ag, {assign_submission} s
+                     WHERE s.assignment $inorequalsql
+                       AND s.userid = ag.userid
+                       AND s.latest = 1
+                       AND s.attemptnumber = ag.attemptnumber
                        AND ag.timemodified  >= :since
-                       AND ag.assignment = as.assignment
+                       AND ag.assignment = s.assignment
                   ORDER BY ag.assignment, ag.id";
 
             $placeholders['since'] = $params['since'];
