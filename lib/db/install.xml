@@ -2959,7 +2959,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="pushid-userid" TYPE="unique" FIELDS="pushid, userid"/>
-        <KEY NAME="pushid-platform" TYPE="unique" FIELDS="pushid, platform"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
