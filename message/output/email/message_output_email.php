@@ -88,7 +88,9 @@ class message_output_email extends message_output {
                                 $eventdata->fullmessagehtml, $attachment, $attachname);
 
         // Remove an attachment file if any.
-        @unlink($attachment);
+        if (!empty($attachment) && file_exists($CFG->dataroot.'/'.$attachment)) {
+            unlink($CFG->dataroot.'/'.$attachment);
+        }
 
         return $result;
     }
