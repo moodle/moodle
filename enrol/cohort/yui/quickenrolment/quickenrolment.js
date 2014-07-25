@@ -292,7 +292,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                             } else {
                                 if (result.response && result.response.message) {
                                     var alertpanel = new M.core.alert(result.response);
-                                    Y.Node.one('#id_yuialertconfirm-' + alertpanel.COUNT).focus();
+                                    Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
                                 }
                                 var enrolled = Y.Node.create('<div class="'+CSS.COHORTBUTTON+' alreadyenrolled">'+M.str.enrol.synced+'</div>');
                                 node.one('.'+CSS.COHORT+' #cohortid_'+cohort.get(COHORTID)).replace(enrolled);
