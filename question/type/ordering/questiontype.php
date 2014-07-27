@@ -41,9 +41,10 @@ if (class_exists('question_type')) {
  */
 class qtype_ordering extends question_type {
 
-    public function is_not_blank($value) {
-        $value = trim($value);
-        return ($value || $value==='0');
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $answers = array_keys($questiondata->options->answers);
+        $question->rightanswer = implode(',', $answers);
     }
 
     public function save_question_options($question) {
@@ -126,6 +127,11 @@ class qtype_ordering extends question_type {
         }
 
         return true;
+    }
+
+    public function is_not_blank($value) {
+        $value = trim($value);
+        return ($value || $value==='0');
     }
 
     public function get_question_options($question) {

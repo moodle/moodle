@@ -1,0 +1,11 @@
+ul.boxy li.correctposition {
+    border: 4px solid #99ff66; /* gentle green */
+}
+ul.boxy li.wrongposition {
+    border: 4px solid #ff7373; /* gentle red */
+}
+ul.boxy li.correctposition,
+ul.boxy li.wrongposition {
+    margin-bottom: 4px;
+    margin-top: 4px;
+}

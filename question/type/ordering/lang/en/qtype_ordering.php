@@ -1,4 +1,4 @@
-<?php // $Id: qtype_TEMPLATE.php,v 1.2 2006/08/25 21:40:44 Serafim Panov Exp $
+<?php
 /**
  * The language strings for the QTYPENAME question type.
  *
@@ -33,10 +33,13 @@ $string['ordering_answer'] = 'Answer';
 
 $string['ordering_itemsforstudent'] = 'How many items the student will see';
 
-$string['correctfeedback'] = 'For any correct answer';
-$string['incorrectfeedback'] = 'For any incorrect answer';
+$string['correctorder'] = 'The correct order for these items is as follows:';
+$string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
+
+$string['correctfeedback'] = 'Correct answer';
+$string['incorrectfeedback'] = 'Incorrect answer';
 $string['overallfeedback'] = 'Overall Feedback';
-$string['partiallycorrectfeedback'] = 'For any partially correct answer';
+$string['partiallycorrectfeedback'] = 'Partially correct answer ({$a})';
 $string['ordering_notenoughanswers'] = 'not enough answers';
 
 $string['ordering_comment'] = 'Drag and drop the items into the correct order.';

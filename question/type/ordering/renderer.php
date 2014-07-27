@@ -35,53 +35,69 @@ class qtype_ordering_renderer extends qtype_renderer {
 
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB;
+
         static $addStyle = true;
         static $addScript = true;
 
         $question = $qa->get_question();
+        $ordering = $question->get_ordering_options();
+        $answers  = $question->get_ordering_answers();
 
-        if (! $options = $DB->get_record('question_ordering', array('question' => $question->id))) {
-            return '';
-        }
-
-        if (! $answers = $DB->get_records('question_answers', array('question' => $question->id), '', '*')) {
+        if (empty($ordering) || empty($answers)) {
             return ''; // shouldn't happen !!
         }
 
-        if ($options->studentsee==0) { // all items
-            $options->studentsee = count($answers);
+        if ($ordering->studentsee==0) { // all items
+            $ordering->studentsee = count($answers);
         } else {
             // a nasty hack so that "studentsee" is the same
             // as what is displayed by edit_ordering_form.php
-            $options->studentsee += 2;
+            $ordering->studentsee += 2;
         }
 
-        switch ($options->logical) {
-
-            case 0: // all
-                $answerids = array_keys($answers);
-                break;
-
-            case 1: // random subset
-                $answerids = array_rand($answers, $options->studentsee);
-                break;
-
-            case 2: // contiguous subset
-                if (count($answers) > $options->studentsee) {
-                    $offset = mt_rand(0, count($answers) - $options->studentsee);
-                    $answers = array_slice($answers, $offset, $options->studentsee, true);
-                }
-                $answerids = array_keys($answers);
-                break;
+        if ($options->readonly || $options->correctness) {
+            // don't allow items to be dragged and dropped
+            $readonly = true;
+        } else {
+            $readonly = false;
         }
-        shuffle($answerids);
+
+        if ($options->correctness) {
+            list($answerids, $correctorder) = $this->get_response($qa, $question, $answers);
+        } else {
+            $correctorder = array();
+            switch ($ordering->logical) {
+                case 0: // all
+                    $answerids = array_keys($answers);
+                    break;
+
+                case 1: // random subset
+                    $answerids = array_rand($answers, $ordering->studentsee);
+                    break;
+
+                case 2: // contiguous subset
+                    if (count($answers) > $ordering->studentsee) {
+                        $offset = mt_rand(0, count($answers) - $ordering->studentsee);
+                        $answers = array_slice($answers, $offset, $ordering->studentsee, true);
+                    }
+                    $answerids = array_keys($answers);
+                    break;
+            }
+            shuffle($answerids);
+        }
+
+        $response_name = $qa->get_qt_field_name($question->get_response_fieldname());
+        $response_id = 'id_'.preg_replace('/[^a-zA-Z0-9]+/', '_', $response_name);
+        $sortable_id = 'id_sortable_'.$question->id;
 
         $result = '';
-        $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.js'));
-        $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery-ui.js'));
+        if ($readonly==false) {
+            $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.js'));
+            $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery-ui.js'));
+        }
 
         $style = "\n";
-        $style .= "ul.sortable".$question->id." li {\n";
+        $style .= "ul#$sortable_id li {\n";
         $style .= "    position: relative;\n";
         $style .= "}\n";
         if ($addStyle) {
@@ -101,7 +117,9 @@ class qtype_ordering_renderer extends qtype_renderer {
             $style .= "    background-color: #eeeeee;\n";
             $style .= "    border: 1px solid #cccccc;\n";
             $style .= "    border-image: initial;\n";
-            $style .= "    cursor: move;\n";
+            if ($readonly==false) {
+                $style .= "    cursor: move;\n";
+            }
             $style .= "    list-style-type: none;\n";
             $style .= "    margin-bottom: 1px;\n";
             $style .= "    min-height: 20px;\n";
@@ -110,92 +128,109 @@ class qtype_ordering_renderer extends qtype_renderer {
         }
         $result .= html_writer::tag('style', $style, array('type' => 'text/css'));
 
-        $script = "\n";
-        $script .= "//<![CDATA[\n";
-        $script .= "$(function() {\n";
-        $script .= "    $('#sortable".$question->id."').sortable({\n";
-        $script .= "        update: function(event, ui) {\n";
-        $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
-        $script .= "            $('#q".$question->id."').attr('value', ItemsOrder);\n";
-        $script .= "        }\n";
-        $script .= "    });\n";
-        $script .= "    $('#sortable".$question->id."').disableSelection();\n";
-        $script .= "});\n";
-        $script .= "$(document).ready(function() {\n";
-        $script .= "    var ItemsOrder = $('#sortable".$question->id."').sortable('toArray').toString();\n";
-        $script .= "    $('#q".$question->id."').attr('value', ItemsOrder);\n";
-        $script .= "});\n";
-        $script .= "//]]>\n";
-        $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
-
-        $result .= html_writer::tag('div', stripslashes($question->format_questiontext($qa)), array('class' => 'qtext'));
-        $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::start_tag('div', array('class' => 'answer'));
-        $result .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => 'sortable'.$question->id));
-
-        // a salt (=random string) to help disguise answer ids
-        if (isset($CFG->passwordsaltmain)) {
-            $salt = $CFG->passwordsaltmain;
-        } else {
-            $salt = complex_random_string();
-        }
-
-        // generate ordering items
-        foreach ($answerids as $i => $answerid) {
-            // the original "id" revealed the correct order of the answers
-            // because $answer->fraction holds the correct order number
-            // $id = 'ordering_item_'.$answerid.'_'.intval($answers[$answerid]->fraction);
-            $id = 'ordering_item_'.md5($salt.$answers[$answerid]->answer);
-            $params = array('class' => 'ui-state-default', 'id' => $id);
-            $result .= html_writer::tag('li', $answers[$answerid]->answer, $params);
-        }
-
-        $result .= html_writer::end_tag('ul');
-        $result .= html_writer::end_tag('div'); // answer
-        $result .= html_writer::end_tag('div'); // ablock
-
-        $result .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'q'.$question->id, 'id' => 'q'.$question->id, 'value' => '9'));
-        $result .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'answer', 'value' => ''));
-
-        $result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
-
-        $script = "\n";
-        $script .= "//<![CDATA[\n";
-        if ($addScript) {
-            $addScript = false; // only add these functions once
-            $script .= "function orderingTouchHandler(event) {\n";
-            $script .= "    var touch = event.changedTouches[0];\n";
-            $script .= "    switch (event.type) {\n";
-            $script .= "        case 'touchstart': var type = 'mousedown'; break;\n";
-            $script .= "        case 'touchmove': var type = 'mousemove'; event.preventDefault(); break;\n";
-            $script .= "        case 'touchend': var type = 'mouseup'; break;\n";
-            $script .= "        default: return;\n";
-            $script .= "    }\n";
-            $script .= "    var simulatedEvent = document.createEvent('MouseEvent');\n";
-            $script .= "    // initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget)\n";
-            $script .= "    simulatedEvent.initMouseEvent(type, true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);\n";
-            $script .= "    touch.target.dispatchEvent(simulatedEvent);\n";
-            $script .= "    event.preventDefault();\n";
-            $script .= "}\n";
-            $script .= "function orderingInit(sortableid) {\n";
-            $script .= "    var obj = document.getElementById(sortableid);\n";
-            $script .= "    if (obj) {\n";
-            $script .= "        for (var i=0; i<obj.childNodes.length; i++) {\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchstart', orderingTouchHandler, false);\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchmove', orderingTouchHandler, false);\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchend', orderingTouchHandler, false);\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchcancel', orderingTouchHandler, false);\n";
+        if ($readonly==false) {
+            $script = "\n";
+            $script .= "//<![CDATA[\n";
+            $script .= "$(function() {\n";
+            $script .= "    $('#$sortable_id').sortable({\n";
+            $script .= "        update: function(event, ui) {\n";
+            $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
+            $script .= "            $('#$response_id').attr('value', ItemsOrder);\n";
             $script .= "        }\n";
-            $script .= "        obj = null;\n";
-            $script .= "    } else {\n";
-            $script .= "        // try again in 1/2 a second - shouldn't be necessary !!\n";
-            $script .= "        setTimeout(new Function('orderingInit(".'"'."'+sortableid+'".'"'.")'), 500);\n";
-            $script .= "    }\n";
-            $script .= "}\n";
+            $script .= "    });\n";
+            $script .= "    $('#$sortable_id').disableSelection();\n";
+            $script .= "});\n";
+            $script .= "$(document).ready(function() {\n";
+            $script .= "    var ItemsOrder = $('#$sortable_id').sortable('toArray').toString();\n";
+            $script .= "    $('#$response_id').attr('value', ItemsOrder);\n";
+            $script .= "});\n";
+            $script .= "//]]>\n";
+            $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
         }
-        $script .= "orderingInit('sortable".$question->id."');\n";
-        $script .= "//]]>\n";
-        $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+
+        $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
+
+        if (count($answerids)) {
+            $result .= html_writer::start_tag('div', array('class' => 'ablock'));
+            $result .= html_writer::start_tag('div', array('class' => 'answer'));
+            $result .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => $sortable_id));
+
+            // generate ordering items
+            foreach ($answerids as $position => $answerid) {
+                if (array_key_exists($answerid, $answers)) {
+                    if ($options->correctness) {
+                        if ($correctorder[$position]==$answerid) {
+                            $class = 'correctposition';
+                            $img = $this->feedback_image(1);
+                        } else {
+                            $class = 'wrongposition';
+                            $img = $this->feedback_image(0);
+                        }
+                        $img = "$img ";
+                    } else {
+                        $class = 'ui-state-default';
+                        $img = '';
+                    }
+                    // the original "id" revealed the correct order of the answers
+                    // because $answer->fraction holds the correct order number
+                    // $id = 'ordering_item_'.$answerid.'_'.intval($answers[$answerid]->fraction);
+                    $params = array('class' => $class, 'id' => $answers[$answerid]->md5key);
+
+                    $result .= html_writer::tag('li', $img.$answers[$answerid]->answer, $params);
+                }
+            }
+
+            $result .= html_writer::end_tag('ul');
+            $result .= html_writer::end_tag('div'); // answer
+            $result .= html_writer::end_tag('div'); // ablock
+
+            $params = array('type' => 'hidden', 'name' => $response_name, 'id' => $response_id, 'value' => '');
+            $result .= html_writer::empty_tag('input', $params);
+            $result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
+        }
+
+        if ($readonly==false) {
+            $script = "\n";
+            $script .= "//<![CDATA[\n";
+            if ($addScript) {
+                $addScript = false; // only add these functions once
+                $script .= "function orderingTouchHandler(evt) {\n";
+                $script .= "    var touchEvt = evt.changedTouches[0];\n";
+                $script .= "    switch (evt.type) {\n";
+                $script .= "        case 'touchstart': var type = 'mousedown'; break;\n";
+                $script .= "        case 'touchmove': var type = 'mousemove'; break;\n";
+                $script .= "        case 'touchend': var type = 'mouseup'; break;\n";
+                $script .= "        default: return;\n";
+                $script .= "    }\n";
+                $script .= "    var mouseEvt = document.createEvent('MouseEvent');\n";
+                $script .= "    // initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget)\n";
+                $script .= "    mouseEvt.initMouseEvent(type, true, true, window, 1, touchEvt.screenX, touchEvt.screenY, touchEvt.clientX, touchEvt.clientY, false, false, false, false, 0, null);\n";
+                $script .= "    touchEvt.target.dispatchEvent(mouseEvt);\n";
+                $script .= "    evt.preventDefault();\n";
+                $script .= "}\n";
+                $script .= "function orderingTouchHandlers(sortableid) {\n";
+                $script .= "    var obj = document.getElementById(sortableid);\n";
+                $script .= "    if (obj) {\n";
+                $script .= "        for (var i=0; i<obj.childNodes.length; i++) {\n";
+                $script .= "            obj.childNodes.item(i).addEventListener('touchstart',  orderingTouchHandler, false);\n";
+                $script .= "            obj.childNodes.item(i).addEventListener('touchmove',   orderingTouchHandler, false);\n";
+                $script .= "            obj.childNodes.item(i).addEventListener('touchend',    orderingTouchHandler, false);\n";
+                $script .= "            obj.childNodes.item(i).addEventListener('touchcancel', orderingTouchHandler, false);\n";
+                $script .= "        }\n";
+                $script .= "        obj = null;\n";
+                $script .= "    } else {\n";
+                $script .= "        // try again in 1/2 a second - shouldn't be necessary !!\n";
+                $script .= "        setTimeout(new Function('orderingTouchHandlers(".'"'."'+sortableid+'".'"'.")'), 500);\n";
+                $script .= "    }\n";
+                $script .= "}\n";
+            }
+            $script .= "if (document.body.ontouchstart) {\n";
+            $script .= "    orderingTouchHandlers('$sortable_id');\n";
+            $script .= "}\n";
+
+            $script .= "//]]>\n";
+            $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+        }
 
         return $result;
     }
@@ -203,21 +238,75 @@ class qtype_ordering_renderer extends qtype_renderer {
     public function correct_response(question_attempt $qa) {
         global $DB;
 
-        $question = $qa->get_question();
+        $output = '';
 
-        if (! $step = $DB->get_records('question_attempt_steps', array('questionattemptid' => $question->contextid), 'id DESC')) {
-            return ''; // shouldn't happen !!
+        $showcorrect = false;
+        if ($step = $qa->get_last_step()) {
+            switch ($step->get_state()) {
+                case 'gradedright':
+                    $msg = get_string('correctfeedback', 'qtype_ordering');
+                    break;
+                case 'gradedpartial':
+                    $showcorrect = true;
+                    $fraction = round($step->get_fraction(), 2);
+                    $msg = get_string('partiallycorrectfeedback', 'qtype_ordering', $fraction);
+                    break;
+                case 'gradedwrong':
+                    $showcorrect = true;
+                    $msg = get_string('incorrectfeedback', 'qtype_ordering');
+                    break;
+                default:
+                    $msg = '';
+            }
+            if ($msg) {
+                $output .= html_writer::tag('p', $msg);
+            }
         }
-        $step = current($step); // first one
 
-        if ($step->fraction >= 1) {
-            $feedback = get_string('correctfeedback', 'qtype_ordering');
-        } else if ($step->fraction > 0) {
-            $feedback = get_string('partiallycorrectfeedback', 'qtype_ordering').' '.round($step->fraction, 2);
-        } else {
-            $feedback = get_string('incorrectfeedback', 'qtype_ordering');
+        if ($showcorrect) {
+            $question = $qa->get_question();
+            $answers  = $question->get_ordering_answers();
+            list($answerids, $correctorder) = $this->get_response($qa, $question, $answers);
+            if (count($correctorder)) {
+                $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
+                $output .= html_writer::start_tag('ol');
+                foreach ($correctorder as $position => $answerid) {
+                    $output .= html_writer::tag('li', $answers[$answerid]->answer);
+                }
+                $output .= html_writer::end_tag('ol');
+            } else {
+                $output .= html_writer::tag('p', get_string('noresponsedetails', 'qtype_ordering'));
+            }
         }
 
-        return  $feedback;
+        return $output;
+    }
+
+    public function get_response($qa, $question, $answers) {
+        $answerids = array();
+        $correctorder = array();
+
+        $name = $question->get_response_fieldname();
+        if ($step = $qa->get_last_step_with_qt_var($name)) {
+
+            $response = $step->get_qt_var($name);  // "$md5key, ..."
+            $response = explode(',', $response);   // array($position => $md5key, ...)
+            $response = array_flip($response);     // array($md5key => $position, ...)
+
+            foreach ($answers as $answer) {
+                if (array_key_exists($answer->md5key, $response)) {
+                    $position = $response[$answer->md5key];
+                    $sortorder = intval($answer->fraction);
+                    $answerids[$position] = $answer->id;
+                    $correctorder[$sortorder] = $answer->id;
+                }
+            }
+
+            ksort($answerids);
+            ksort($correctorder);
+            $correctorder = array_values($correctorder);
+        }
+
+        return array($answerids, $correctorder);
     }
 }

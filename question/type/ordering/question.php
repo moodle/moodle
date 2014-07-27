@@ -32,18 +32,32 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_question extends question_graded_automatically {
+
+    public $answers;
+    public $options;
     public $rightanswer;
-    public $truefeedback;
-    public $falsefeedback;
-    public $trueanswerid;
-    public $falseanswerid;
+
+    public function get_response_fieldname() {
+        return 'response_'.$this->id;
+    }
+
+    public function format_questiontext($qa) {
+        $text = parent::format_questiontext($qa);
+        return stripslashes($text);
+    }
 
     public function get_expected_data() {
-        return array('answer' => PARAM_INTEGER);
+        $name = $this->get_response_fieldname();
+        return array($name => PARAM_TEXT);
     }
 
     public function get_correct_response() {
-        return array('answer' => (int) $this->rightanswer);
+        if ($this->rightanswer===null) {
+            $this->rightanswer = $this->get_ordering_answers();
+            $this->rightanswer = array_keys($this->rightanswer);
+            $this->rightanswer = implode(',', $this->rightanswer);
+        }
+        return array('answer' => $this->rightanswer);
     }
 
     public function summarise_response(array $response) {
@@ -59,10 +73,56 @@ class qtype_ordering_question extends question_graded_automatically {
         }
     }
 
+    public function get_ordering_options() {
+        global $DB;
+        if ($this->options===null) {
+            $this->options = $DB->get_record('question_ordering', array('question' => $this->id));
+            if ($this->options==false) {
+                $this->options = (object)array(
+                    'question'   => $this->id,
+                    'logical'    => 0, // require all answers
+                    'studentsee' => 0,
+                    'correctfeedback' => '',
+                    'incorrectfeedback' => '',
+                    'partiallycorrectfeedback' => ''
+                );
+                $this->options->id = $DB->insert_record('question_ordering', $options);
+            }
+        }
+        return $this->options;
+    }
+
+    public function get_ordering_answers() {
+        global $CFG, $DB;
+        if ($this->answers===null) {
+            $this->answers = $DB->get_records('question_answers', array('question' => $this->id), 'fraction,id');
+            if ($this->answers) {
+                if (isset($CFG->passwordsaltmain)) {
+                    $salt = $CFG->passwordsaltmain;
+                } else {
+                    $salt = ''; // complex_random_string()
+                }
+                foreach ($this->answers as $answerid => $answer) {
+                    $this->answers[$answerid]->md5key = 'ordering_item_'.md5($salt.$answer->answer);
+                }
+            } else {
+                $this->answers = array();
+            }
+        }
+        return $this->answers;
+    }
+
     public function is_complete_response(array $response) {
         global $CFG, $DB;
 
-        $responses = explode(',', $_POST['q'.$this->id]);
+        $name = $this->get_response_fieldname();
+        if (isset($response[$name])) {
+            $responses = $response[$name];
+        } else {
+            $responses = optional_param($name, '', PARAM_TEXT);
+        }
+        $responses = preg_replace('[^a-zA-Z0-9,_-]', '', $responses);
+        $responses = explode(',', $responses); // convert to array
         $responses = array_filter($responses); // remove blanks
         $responses = array_unique($responses); // remove duplicates
 
@@ -74,23 +134,25 @@ class qtype_ordering_question extends question_graded_automatically {
             }
         }
 
-        if (! $options = $DB->get_record ('question_ordering', array('question' => $this->id))) {
-            $options = (object)array('logical' => 0); // shouldn't happen !!
-        }
-        if (! $answers = $DB->get_records ('question_answers', array('question' => $this->id), 'fraction,id')) {
-            $answers = array(); // shouldn't happen !!
-        }
+        $ordering = $this->get_ordering_options();
+        $answers  = $this->get_ordering_answers();
 
-        if ($options->logical==0) {
+        if ($ordering->logical==0) {
             $total = count($answers); // require all answers
         } else {
-            $total = $options->studentsee + 2; // a subset of answers
+            $total = $ordering->studentsee + 2; // a subset of answers
+        }
+
+        if (isset($CFG->passwordsaltmain)) {
+            $salt = $CFG->passwordsaltmain;
+        } else {
+            $salt = ''; // complex_random_string()
         }
 
         $validresponses = array();
         foreach ($answers as $answerid => $answer) {
 
-            $response = md5($CFG->passwordsaltmain.$answer->answer);
+            $response = md5($salt.$answer->answer);
             $sortorder = intval($answer->fraction);
 
             if (in_array($response, $responses)) {
@@ -165,7 +227,7 @@ class qtype_ordering_question extends question_graded_automatically {
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
-    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-
+    public function check_file_access($qa, $ordering, $component, $filearea, $args, $forcedownload) {
+        // do nothing
     }
 }
