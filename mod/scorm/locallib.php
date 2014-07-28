@@ -909,7 +909,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
             }
         } else if (!empty($attemptcount) && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
                 echo html_writer::empty_tag('br');
-                echo html_writer::checkbox('newattempt', '', false, '', array('id' => 'a'));
+                echo html_writer::checkbox('newattempt', 'on', false, '', array('id' => 'a'));
                 echo html_writer::label(get_string('newattempt', 'scorm'), 'a');
         }
         if (!empty($scorm->popup)) {

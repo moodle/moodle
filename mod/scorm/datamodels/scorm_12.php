@@ -18,10 +18,28 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
 // Set some vars to use as default values.
 $userdata = new stdClass();
-$def = get_scorm_default($userdata, $scorm, $scoid, $attempt, $mode);
+$def = new stdClass();
+$cmiobj = new stdClass();
+$cmiint = new stdClass();
 
 if (!isset($currentorg)) {
     $currentorg = '';
+}
+
+if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sortorder, id')) {
+    // Drop keys so that it is a simple array.
+    $scoes = array_values($scoes);
+    foreach ($scoes as $sco) {
+        $def->{($sco->id)} = new stdClass();
+        $userdata->{($sco->id)} = new stdClass();
+        $def->{($sco->id)} = get_scorm_default($userdata->{($sco->id)}, $scorm, $sco->id, $attempt, $mode);
+
+        // Reconstitute objectives.
+        $cmiobj->{($sco->id)} = scorm_reconstitute_array_element($scorm->version, $userdata->{($sco->id)},
+                                                                    'cmi.objectives', array('score'));
+        $cmiint->{($sco->id)} = scorm_reconstitute_array_element($scorm->version, $userdata->{($sco->id)},
+                                                                    'cmi.interactions', array('objectives', 'correct_responses'));
+    }
 }
 
 // If SCORM 1.2 standard mode is disabled allow higher datamodel limits.
@@ -32,10 +50,6 @@ if (intval(get_config("scorm", "scorm12standard"))) {
     $cmistring256 = '^[\\u0000-\\uFFFF]{0,64000}$';
     $cmistring4096 = $cmistring256;
 }
-
-// reconstitute objectives
-$cmiobj = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
-$cmiint = scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.interactions', array('objectives', 'correct_responses'));
 
 $PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, $cmistring256, $cmistring4096,
                                                         scorm_debugging($scorm), $scorm->auto, $scorm->id, $CFG->wwwroot,

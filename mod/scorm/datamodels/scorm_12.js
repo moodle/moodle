@@ -56,99 +56,111 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
     speed_range = '-100#100';
     weighting_range = '-100#100';
     text_range = '-1#1';
+
     // The SCORM 1.2 data model
-    var datamodel =  {
-        'cmi._children':{'defaultvalue':cmi_children, 'mod':'r', 'writeerror':'402'},
-        'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
-        'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.core.student_id':{'defaultvalue':def['cmi.core.student_id'], 'mod':'r', 'writeerror':'403'},
-        'cmi.core.student_name':{'defaultvalue':def['cmi.core.student_name'], 'mod':'r', 'writeerror':'403'},
-        'cmi.core.lesson_location':{'defaultvalue':def['cmi.core.lesson_location'], 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.credit':{'defaultvalue':def['cmi.core.credit'], 'mod':'r', 'writeerror':'403'},
-        'cmi.core.lesson_status':{'defaultvalue':def['cmi.core.lesson_status'], 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.entry':{'defaultvalue':def['cmi.core.entry'], 'mod':'r', 'writeerror':'403'},
-        'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.core.score.raw':{'defaultvalue':def['cmi.core.score.raw'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.score.max':{'defaultvalue':def['cmi.core.score.max'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.score.min':{'defaultvalue':def['cmi.core.score.min'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.total_time':{'defaultvalue':def['cmi.core.total_time'], 'mod':'r', 'writeerror':'403'},
-        'cmi.core.lesson_mode':{'defaultvalue':def['cmi.core.lesson_mode'], 'mod':'r', 'writeerror':'403'},
-        'cmi.core.exit':{'defaultvalue':def['cmi.core.exit'], 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.core.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'00:00:00', 'readerror':'404', 'writeerror':'405'},
-        'cmi.suspend_data':{'defaultvalue':def['cmi.suspend_data'], 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
-        'cmi.launch_data':{'defaultvalue':def['cmi.launch_data'], 'mod':'r', 'writeerror':'403'},
-        'cmi.comments':{'defaultvalue':def['cmi.comments'], 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
-        // deprecated evaluation attributes
-        'cmi.evaluation.comments._count':{'defaultvalue':'0', 'mod':'r', 'writeerror':'402'},
-        'cmi.evaluation.comments._children':{'defaultvalue':comments_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.evaluation.comments.n.content':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
-        'cmi.evaluation.comments.n.location':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
-        'cmi.evaluation.comments.n.time':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMITime, 'mod':'rw', 'writeerror':'405'},
-        'cmi.comments_from_lms':{'mod':'r', 'writeerror':'403'},
-        'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
-        'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'rw', 'writeerror':'405'},
-        'cmi.objectives.n.score._children':{'pattern':CMIIndex, 'mod':'r', 'writeerror':'402'},
-        'cmi.objectives.n.score.raw':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.objectives.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.student_data.mastery_score':{'defaultvalue':def['cmi.student_data.mastery_score'], 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.max_time_allowed':{'defaultvalue':def['cmi.student_data.max_time_allowed'], 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.time_limit_action':{'defaultvalue':def['cmi.student_data.time_limit_action'], 'mod':'r', 'writeerror':'403'},
-        'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_preference.speed':{'defaultvalue':'0', 'format':CMISInteger, 'range':speed_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_preference.text':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r', 'writeerror':'402'},
-        'cmi.interactions._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
-        'cmi.interactions.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.objectives._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
-        'cmi.interactions.n.objectives.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.time':{'pattern':CMIIndex, 'format':CMITime, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.type':{'pattern':CMIIndex, 'format':CMIType, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.correct_responses._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
-        'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':weighting_range, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.student_response':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-        'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
-    };
-    //
-    // Datamodel inizialization
-    //
-    var cmi = new Object();
-        cmi.core = new Object();
-        cmi.core.score = new Object();
-        cmi.objectives = new Object();
-        cmi.student_data = new Object();
-        cmi.student_preference = new Object();
-        cmi.interactions = new Object();
-        // deprecated evaluation attributes
-        cmi.evaluation = new Object();
-        cmi.evaluation.comments = new Object();
-
-    // Navigation Object
-    var nav = new Object();
-
-    for (element in datamodel) {
-        if (element.match(/\.n\./) == null) {
-            if ((typeof eval('datamodel["'+element+'"].defaultvalue')) != 'undefined') {
-                eval(element+' = datamodel["'+element+'"].defaultvalue;');
-            } else {
-                eval(element+' = "";');
-            }
-        }
+    // Set up data model for each sco
+    var datamodel = {};
+    for(scoid in def){
+        datamodel[scoid] = {
+            'cmi._children':{'defaultvalue':cmi_children, 'mod':'r', 'writeerror':'402'},
+            'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
+            'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.core.student_id':{'defaultvalue':def[scoid]['cmi.core.student_id'], 'mod':'r', 'writeerror':'403'},
+            'cmi.core.student_name':{'defaultvalue':def[scoid]['cmi.core.student_name'], 'mod':'r', 'writeerror':'403'},
+            'cmi.core.lesson_location':{'defaultvalue':def[scoid]['cmi.core.lesson_location'], 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
+            'cmi.core.credit':{'defaultvalue':def[scoid]['cmi.core.credit'], 'mod':'r', 'writeerror':'403'},
+            'cmi.core.lesson_status':{'defaultvalue':def[scoid]['cmi.core.lesson_status'], 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
+            'cmi.core.entry':{'defaultvalue':def[scoid]['cmi.core.entry'], 'mod':'r', 'writeerror':'403'},
+            'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.core.score.raw':{'defaultvalue':def[scoid]['cmi.core.score.raw'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.core.score.max':{'defaultvalue':def[scoid]['cmi.core.score.max'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.core.score.min':{'defaultvalue':def[scoid]['cmi.core.score.min'], 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.core.total_time':{'defaultvalue':def[scoid]['cmi.core.total_time'], 'mod':'r', 'writeerror':'403'},
+            'cmi.core.lesson_mode':{'defaultvalue':def[scoid]['cmi.core.lesson_mode'], 'mod':'r', 'writeerror':'403'},
+            'cmi.core.exit':{'defaultvalue':def[scoid]['cmi.core.exit'], 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.core.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'00:00:00', 'readerror':'404', 'writeerror':'405'},
+            'cmi.suspend_data':{'defaultvalue':def[scoid]['cmi.suspend_data'], 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+            'cmi.launch_data':{'defaultvalue':def[scoid]['cmi.launch_data'], 'mod':'r', 'writeerror':'403'},
+            'cmi.comments':{'defaultvalue':def[scoid]['cmi.comments'], 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+            // deprecated evaluation attributes
+            'cmi.evaluation.comments._count':{'defaultvalue':'0', 'mod':'r', 'writeerror':'402'},
+            'cmi.evaluation.comments._children':{'defaultvalue':comments_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.evaluation.comments.n.content':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
+            'cmi.evaluation.comments.n.location':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
+            'cmi.evaluation.comments.n.time':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMITime, 'mod':'rw', 'writeerror':'405'},
+            'cmi.comments_from_lms':{'mod':'r', 'writeerror':'403'},
+            'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
+            'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'rw', 'writeerror':'405'},
+            'cmi.objectives.n.score._children':{'pattern':CMIIndex, 'mod':'r', 'writeerror':'402'},
+            'cmi.objectives.n.score.raw':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.objectives.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
+            'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.student_data.mastery_score':{'defaultvalue':def[scoid]['cmi.student_data.mastery_score'], 'mod':'r', 'writeerror':'403'},
+            'cmi.student_data.max_time_allowed':{'defaultvalue':def[scoid]['cmi.student_data.max_time_allowed'], 'mod':'r', 'writeerror':'403'},
+            'cmi.student_data.time_limit_action':{'defaultvalue':def[scoid]['cmi.student_data.time_limit_action'], 'mod':'r', 'writeerror':'403'},
+            'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
+            'cmi.student_preference.speed':{'defaultvalue':'0', 'format':CMISInteger, 'range':speed_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.student_preference.text':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw', 'writeerror':'405'},
+            'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r', 'writeerror':'402'},
+            'cmi.interactions._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
+            'cmi.interactions.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.objectives._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
+            'cmi.interactions.n.objectives.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.time':{'pattern':CMIIndex, 'format':CMITime, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.type':{'pattern':CMIIndex, 'format':CMIType, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.correct_responses._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
+            'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':weighting_range, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.student_response':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+            'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
+        };
     }
 
-    eval(cmiobj);
-    eval(cmiint);
+    var cmi, nav;
+    function initdatamodel(scoid){
+        prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+        datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
 
-    if (cmi.core.lesson_status == '') {
-        cmi.core.lesson_status = 'not attempted';
+        //
+        // Datamodel inizialization
+        //
+        cmi = new Object();
+            cmi.core = new Object();
+            cmi.core.score = new Object();
+            cmi.objectives = new Object();
+            cmi.student_data = new Object();
+            cmi.student_preference = new Object();
+            cmi.interactions = new Object();
+            // deprecated evaluation attributes
+            cmi.evaluation = new Object();
+            cmi.evaluation.comments = new Object();
+
+        // Navigation Object
+        nav = new Object();
+
+        for (element in datamodel[scoid]) {
+            if (element.match(/\.n\./) == null) {
+                if ((typeof eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue')) != 'undefined') {
+                    eval(element+' = datamodel["'+scoid+'"]["'+element+'"].defaultvalue;');
+                } else {
+                    eval(element+' = "";');
+                }
+            }
+        }
+
+        eval(cmiobj[scoid]);
+        eval(cmiint[scoid]);
+
+        if (cmi.core.lesson_status == '') {
+            cmi.core.lesson_status = 'not attempted';
+        }
     }
 
     //
@@ -157,6 +169,9 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
     var Initialized = false;
 
     function LMSInitialize (param) {
+        scoid = scorm_current_node ? scorm_current_node.scoid : scoid ;
+        initdatamodel(scoid);
+
         errorCode = "0";
         if (param == "") {
             if (!Initialized) {
@@ -229,8 +244,8 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
             if (element !="") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
+                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'w') {
                         element = String(element).replace(expression, "_$1.");
                         elementIndexes = element.split('.');
                         subelement = 'cmi';
@@ -248,21 +263,21 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
                             errorCode = "0"; // Need to check if it is the right errorCode
                         }
                     } else {
-                        errorCode = eval('datamodel["'+elementmodel+'"].readerror');
+                        errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].readerror');
                     }
                 } else {
                     childrenstr = '._children';
                     countstr = '._count';
                     if (elementmodel.substr(elementmodel.length-childrenstr.length,elementmodel.length) == childrenstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length-childrenstr.length);
-                        if ((typeof eval('datamodel["'+parentmodel+'"]')) != "undefined") {
+                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
                             errorCode = "202";
                         } else {
                             errorCode = "201";
                         }
                     } else if (elementmodel.substr(elementmodel.length-countstr.length,elementmodel.length) == countstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length-countstr.length);
-                        if ((typeof eval('datamodel["'+parentmodel+'"]')) != "undefined") {
+                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
                             errorCode = "203";
                         } else {
                             errorCode = "201";
@@ -289,9 +304,9 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
+                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
+                        expression = new RegExp(eval('datamodel["'+scoid+'"]["'+elementmodel+'"].format'));
                         value = value+'';
                         matches = value.match(expression);
                         if (matches != null) {
@@ -338,8 +353,8 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
                             }
                             //Store data
                             if (errorCode == "0") {
-                                if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
-                                    range = eval('datamodel["'+elementmodel+'"].range');
+                                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range')) != "undefined") {
+                                    range = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range');
                                     ranges = range.split('#');
                                     value = value*1.0;
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
@@ -350,7 +365,7 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
                                         }
                                         return "true";
                                     } else {
-                                        errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+                                        errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].writeerror');
                                     }
                                 } else {
                                     if (element == 'cmi.comments') {
@@ -366,10 +381,10 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
                                 }
                             }
                         } else {
-                            errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+                            errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].writeerror');
                         }
                     } else {
-                        errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+                        errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].writeerror');
                     }
                 } else {
                     errorCode = "201"
@@ -535,40 +550,40 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
 
                     // check if this specific element is not defined in the datamodel,
                     // but the generic element name is
-                    if ((eval('typeof datamodel["'+element+'"]')) == "undefined"
-                        && (eval('typeof datamodel["'+elementmodel+'"]')) != "undefined") {
+                    if ((eval('typeof datamodel["'+scoid+'"]["'+element+'"]')) == "undefined"
+                        && (eval('typeof datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
 
                         // add this specific element to the data model (by cloning
                         // the generic element) so we can track changes to it
-                        eval('datamodel["'+element+'"]=CloneObj(datamodel["'+elementmodel+'"]);');
+                        eval('datamodel["'+scoid+'"]["'+element+'"]=CloneObj(datamodel["'+scoid+'"]["'+elementmodel+'"]);');
                     }
 
                     // check if the current element exists in the datamodel
-                    if ((typeof eval('datamodel["'+element+'"]')) != "undefined") {
+                    if ((typeof eval('datamodel["'+scoid+'"]["'+element+'"]')) != "undefined") {
 
                         // make sure this is not a read only element
-                        if (eval('datamodel["'+element+'"].mod') != 'r') {
+                        if (eval('datamodel["'+scoid+'"]["'+element+'"].mod') != 'r') {
 
                             elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
 
                             // check if the element has a default value
-                            if ((typeof eval('datamodel["'+element+'"].defaultvalue')) != "undefined") {
+                            if ((typeof eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue')) != "undefined") {
 
                                 // check if the default value is different from the current value
-                                if (eval('datamodel["'+element+'"].defaultvalue') != data[property]
-                                    || eval('typeof(datamodel["'+element+'"].defaultvalue)') != typeof(data[property])) {
+                                if (eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue') != data[property]
+                                    || eval('typeof(datamodel["'+scoid+'"]["'+element+'"].defaultvalue)') != typeof(data[property])) {
 
                                     // append the URI fragment to the string we plan to commit
                                     datastring += elementstring;
 
                                     // update the element default to reflect the current committed value
-                                    eval('datamodel["'+element+'"].defaultvalue=data[property];');
+                                    eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue=data[property];');
                                 }
                             } else {
                                 // append the URI fragment to the string we plan to commit
                                 datastring += elementstring;
                                 // no default value for the element, so set it now
-                                eval('datamodel["'+element+'"].defaultvalue=data[property];');
+                                eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue=data[property];');
                             }
                         }
                     }
@@ -608,7 +623,7 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
                 }
             }
             if (cmi.core.lesson_mode == 'browse') {
-                if (datamodel['cmi.core.lesson_status'].defaultvalue == '' && cmi.core.lesson_status == 'not attempted') {
+                if (datamodel[scoid]['cmi.core.lesson_status'].defaultvalue == '' && cmi.core.lesson_status == 'not attempted') {
                     cmi.core.lesson_status = 'browsed';
                 }
             }
