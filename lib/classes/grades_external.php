@@ -308,7 +308,7 @@ class core_grades_external extends external_api {
                                         'str_long_grade' => new external_value(
                                             PARAM_RAW, 'A nicely formatted string representation of the grade'),
                                         'str_feedback' => new external_value(
-                                            PARAM_TEXT, 'A string representation of the feedback from the grader'),
+                                            PARAM_RAW, 'A formatted string representation of the feedback from the grader'),
                                     )
                                 )
                             ),
@@ -345,7 +345,7 @@ class core_grades_external extends external_api {
                                         'str_grade' => new external_value(
                                             PARAM_RAW, 'A string representation of the grade'),
                                         'str_feedback' => new external_value(
-                                            PARAM_TEXT, 'A string representation of the feedback from the grader'),
+                                            PARAM_RAW, 'A formatted string representation of the feedback from the grader'),
                                     )
                                 )
                             ),
