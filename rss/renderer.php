@@ -1,23 +1,18 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// This file is part of Moodle - http://moodle.org/                      //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//                                                                       //
-// Moodle is free software: you can redistribute it and/or modify        //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation, either version 3 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// Moodle is distributed in the hope that it will be useful,             //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details.                          //
-//                                                                       //
-// You should have received a copy of the GNU General Public License     //
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.       //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Web service documentation renderer.
@@ -42,8 +37,8 @@ class core_rss_renderer extends plugin_renderer_base {
     public function user_reset_rss_token_confirmation() {
         global $OUTPUT, $CFG;
         $managetokenurl = $CFG->wwwroot."/user/managetoken.php?sesskey=" . sesskey();
-        $optionsyes = array('action'=>'resetrsstoken', 'confirm'=>1, 'sesskey'=>sesskey());
-        $optionsno  = array('section'=>'webservicetokens', 'sesskey'=>sesskey());
+        $optionsyes = array('action' => 'resetrsstoken', 'confirm' => 1, 'sesskey' => sesskey());
+        $optionsno  = array('section' => 'webservicetokens', 'sesskey' => sesskey());
         $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
         $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno), get_string('cancel'), 'get');
         $html = $OUTPUT->confirm(get_string('resettokenconfirmsimple', 'webservice'), $formcontinue, $formcancel);
@@ -58,7 +53,7 @@ class core_rss_renderer extends plugin_renderer_base {
     public function user_rss_token_box($token) {
         global $OUTPUT, $CFG;
 
-        // display strings
+        // Display strings.
         $stroperation = get_string('operation', 'webservice');
         $strtoken = get_string('key', 'webservice');
 
