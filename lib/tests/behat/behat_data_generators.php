@@ -218,6 +218,25 @@ class behat_data_generators extends behat_base {
     }
 
     /**
+     * If contextlevel and reference are specified for cohort, transform them to the contextid.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_cohort($data) {
+        if (isset($data['contextlevel'])) {
+            if (!isset($data['reference'])) {
+                throw new Exception('If field contextlevel is specified, field reference must also be present');
+            }
+            $context = $this->get_context($data['contextlevel'], $data['reference']);
+            unset($data['contextlevel']);
+            unset($data['reference']);
+            $data['contextid'] = $context->id;
+        }
+        return $data;
+    }
+
+    /**
      * Adapter to modules generator
      * @throws Exception Custom exception for test writers
      * @param array $data
