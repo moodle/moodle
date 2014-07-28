@@ -575,6 +575,9 @@ class assign {
         }
         $update->markingworkflow = $formdata->markingworkflow;
         $update->markingallocation = $formdata->markingallocation;
+        if (empty($update->markingworkflow)) { // If marking workflow is disabled, make sure allocation is disabled.
+            $update->markingallocation = 0;
+        }
 
         $returnid = $DB->insert_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$returnid), '*', MUST_EXIST);
@@ -916,6 +919,9 @@ class assign {
         }
         $update->markingworkflow = $formdata->markingworkflow;
         $update->markingallocation = $formdata->markingallocation;
+        if (empty($update->markingworkflow)) { // If marking workflow is disabled, make sure allocation is disabled.
+            $update->markingallocation = 0;
+        }
 
         $result = $DB->update_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);
@@ -3007,7 +3013,8 @@ class assign {
         $quickgrading = get_user_preferences('assign_quickgrading', false);
         $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
 
-        $markingallocation = $this->get_instance()->markingallocation &&
+        $markingallocation = $this->get_instance()->markingworkflow &&
+            $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context);
         // Get markers to use in drop lists.
         $markingallocationoptions = array();
@@ -3330,7 +3337,8 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
         require_sesskey();
 
-        $markingallocation = $this->get_instance()->markingallocation &&
+        $markingallocation = $this->get_instance()->markingworkflow &&
+            $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context);
 
         $batchformparams = array('cm'=>$this->get_course_module()->id,
@@ -4891,7 +4899,8 @@ class assign {
                 $current->grade = floatval($current->grade);
             }
             $gradechanged = $gradecolpresent && $current->grade !== $modified->grade;
-            $markingallocationchanged = $this->get_instance()->markingallocation &&
+            $markingallocationchanged = $this->get_instance()->markingworkflow &&
+                                        $this->get_instance()->markingallocation &&
                                             ($modified->allocatedmarker !== false) &&
                                             ($current->allocatedmarker != $modified->allocatedmarker);
             $workflowstatechanged = $this->get_instance()->markingworkflow &&
@@ -5091,7 +5100,8 @@ class assign {
             $showonlyactiveenrolopt = false;
         }
 
-        $markingallocation = $this->get_instance()->markingallocation &&
+        $markingallocation = $this->get_instance()->markingworkflow &&
+            $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context);
         // Get markers to use in drop lists.
         $markingallocationoptions = array();
@@ -5681,7 +5691,10 @@ class assign {
             $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
         }
 
-        if ($this->get_instance()->markingallocation && has_capability('mod/assign:manageallocations', $this->context)) {
+        if ($this->get_instance()->markingworkflow &&
+            $this->get_instance()->markingallocation &&
+            has_capability('mod/assign:manageallocations', $this->context)) {
+
             $markers = get_users_by_capability($this->context, 'mod/assign:grade');
             $markerlist = array('' =>  get_string('choosemarker', 'assign'));
             foreach ($markers as $marker) {
