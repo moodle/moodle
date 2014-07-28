@@ -200,27 +200,30 @@
         // first check if it is likely to work at all
         $output .= "<h3>Checking executables</h3>\n";
         $executables_exist = true;
-        if (is_file($CFG->filter_tex_pathlatex)) {
-            $output .= "latex executable ($CFG->filter_tex_pathlatex) is readable<br />\n";
-        }
-        else {
+        $pathlatex = trim($CFG->filter_tex_pathlatex, " '\"");
+        if (is_file($pathlatex)) {
+            $output .= "latex executable ($pathlatex) is readable<br />\n";
+        } else {
             $executables_exist = false;
-            $output .= "<b>Error:</b> latex executable ($CFG->filter_tex_pathlatex) is not readable<br />\n";
+            $output .= "<b>Error:</b> latex executable ($pathlatex) is not readable<br />\n";
         }
-        if (is_file($CFG->filter_tex_pathdvips)) {
-            $output .= "dvips executable ($CFG->filter_tex_pathdvips) is readable<br />\n";
-        }
-        else {
+        $pathlatex = escapeshellarg($pathlatex);
+        $pathdvips = trim($CFG->filter_tex_pathdvips, " '\"");
+        if (is_file($pathdvips)) {
+            $output .= "dvips executable ($pathdvips) is readable<br />\n";
+        } else {
             $executables_exist = false;
-            $output .= "<b>Error:</b> dvips executable ($CFG->filter_tex_pathdvips) is not readable<br />\n";
+            $output .= "<b>Error:</b> dvips executable ($pathdvips) is not readable<br />\n";
         }
-        if (is_file($CFG->filter_tex_pathconvert)) {
-            $output .= "convert executable ($CFG->filter_tex_pathconvert) is readable<br />\n";
-        }
-        else {
+        $pathdvips = escapeshellarg($pathdvips);
+        $pathconvert = trim($CFG->filter_tex_pathconvert, " '\"");
+        if (is_file($pathconvert)) {
+            $output .= "convert executable ($pathconvert) is readable<br />\n";
+        } else {
             $executables_exist = false;
-            $output .= "<b>Error:</b> convert executable ($CFG->filter_tex_pathconvert) is not readable<br />\n";
+            $output .= "<b>Error:</b> convert executable ($pathconvert) is not readable<br />\n";
         }
+        $pathconvert = escapeshellarg($pathconvert);
 
         // knowing that it might work..
         $md5 = md5($expression);
@@ -244,15 +247,15 @@
         chdir($latex->temp_dir);
 
         // step 1: latex command
-        $cmd = "$CFG->filter_tex_pathlatex --interaction=nonstopmode --halt-on-error $tex";
+        $cmd = "$pathlatex --interaction=nonstopmode --halt-on-error $tex";
         $output .= execute($cmd);
 
         // step 2: dvips command
-        $cmd = "$CFG->filter_tex_pathdvips -E $dvi -o $ps";
+        $cmd = "$pathdvips -E $dvi -o $ps";
         $output .= execute($cmd);
 
         // step 3: convert command
-        $cmd = "$CFG->filter_tex_pathconvert -density 240 -trim $ps $img ";
+        $cmd = "$pathconvert -density 240 -trim $ps $img ";
         $output .= execute($cmd);
 
         if (!$graphic) {
