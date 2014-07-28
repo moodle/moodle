@@ -233,3 +233,25 @@ Feature: Set up contextual data for tests
     And the "members" select box should contain "Student 1"
     And I select "Group 2 (1)" from "groups"
     And the "members" select box should contain "Student 2"
+
+  Scenario: Add cohorts with data generator
+    Given the following "categories" exist:
+      | name  | category | idnumber |
+      | Cat 1 | 0        | CAT1     |
+    And the following "cohorts" exist:
+      | name            | idnumber |
+      | System cohort 1 | CH01     |
+    And the following "cohorts" exist:
+      | name                 | idnumber | contextlevel | reference |
+      | System cohort 2      | CH02     | System       |           |
+      | Cohort in category 1 | CH1      | Category     | CAT1      |
+    When I log in as "admin"
+    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    Then I should see "System cohort 1"
+    And I should see "System cohort 2"
+    And I should not see "Cohort in category"
+    And I follow "Courses"
+    And I follow "Cat 1"
+    And I follow "Cohorts"
+    And I should see "Cohort in category 1"
+    And I should not see "System cohort"
