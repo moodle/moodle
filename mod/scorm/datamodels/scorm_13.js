@@ -150,112 +150,123 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     }
 
     // The SCORM 1.3 data model
-    var datamodel =  {
-        'cmi._children':{'defaultvalue':cmi_children, 'mod':'r'},
-        'cmi._version':{'defaultvalue':'1.0', 'mod':'r'},
-        'cmi.comments_from_learner._children':{'defaultvalue':comments_children, 'mod':'r'},
-        'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
-        'cmi.comments_from_learner.n.comment':{'format':CMILangString4000, 'mod':'rw'},
-        'cmi.comments_from_learner.n.location':{'format':CMIString250, 'mod':'rw'},
-        'cmi.comments_from_learner.n.timestamp':{'format':CMITime, 'mod':'rw'},
-        'cmi.comments_from_lms._children':{'defaultvalue':comments_children, 'mod':'r'},
-        'cmi.comments_from_lms._count':{'mod':'r', 'defaultvalue':'0'},
-        'cmi.comments_from_lms.n.comment':{'format':CMILangString4000, 'mod':'r'},
-        'cmi.comments_from_lms.n.location':{'format':CMIString250, 'mod':'r'},
-        'cmi.comments_from_lms.n.timestamp':{'format':CMITime, 'mod':'r'},
-        'cmi.completion_status':{'defaultvalue':def['cmi.completion_status'], 'format':CMICStatus, 'mod':'rw'},
-        'cmi.completion_threshold':{'defaultvalue':def['cmi.completion_threshold'], 'mod':'r'},
-        'cmi.credit':{'defaultvalue':def['cmi.credit'], 'mod':'r'},
-        'cmi.entry':{'defaultvalue':def['cmi.entry'], 'mod':'r'},
-        'cmi.exit':{'defaultvalue':def['cmi.exit'], 'format':CMIExit, 'mod':'w'},
-        'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r'},
-        'cmi.interactions._count':{'mod':'r', 'defaultvalue':'0'},
-        'cmi.interactions.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
-        'cmi.interactions.n.type':{'pattern':CMIIndex, 'format':CMIType, 'mod':'rw'},
-        'cmi.interactions.n.objectives._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0'},
-        'cmi.interactions.n.objectives.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
-        'cmi.interactions.n.timestamp':{'pattern':CMIIndex, 'format':CMITime, 'mod':'rw'},
-        'cmi.interactions.n.correct_responses._count':{'defaultvalue':'0', 'pattern':CMIIndex, 'mod':'r'},
-        'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':'CMIFeedback', 'mod':'rw'},
-        'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.interactions.n.learner_response':{'pattern':CMIIndex, 'format':'CMIFeedback', 'mod':'rw'},
-        'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'rw'},
-        'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'rw'},
-        'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
-        'cmi.launch_data':{'defaultvalue':def['cmi.exit'], 'mod':'r'},
-        'cmi.learner_id':{'defaultvalue':def['cmi.learner_id'], 'mod':'r'},
-        'cmi.learner_name':{'defaultvalue':def['cmi.learner_name'], 'mod':'r'},
-        'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
-        'cmi.learner_preference.audio_level':{'defaultvalue':def['cmi.learner_preference.audio_level'], 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
-        'cmi.learner_preference.language':{'defaultvalue':def['cmi.learner_preference.language'], 'format':CMILang, 'mod':'rw'},
-        'cmi.learner_preference.delivery_speed':{'defaultvalue':def['cmi.learner_preference.delivery_speed'], 'format':CMIDecimal, 'range':speed_range, 'mod':'rw'},
-        'cmi.learner_preference.audio_captioning':{'defaultvalue':def['cmi.learner_preference.audio_captioning'], 'format':CMISInteger, 'range':text_range, 'mod':'rw'},
-        'cmi.location':{'defaultvalue':def['cmi.location'], 'format':CMIString1000, 'mod':'rw'},
-        'cmi.max_time_allowed':{'defaultvalue':def['cmi.max_time_allowed'], 'mod':'r'},
-        'cmi.mode':{'defaultvalue':def['cmi.mode'], 'mod':'r'},
-        'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r'},
-        'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0'},
-        'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
-        'cmi.objectives.n.score._children':{'defaultvalue':score_children, 'pattern':CMIIndex, 'mod':'r'},
-        'cmi.objectives.n.score.scaled':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
-        'cmi.objectives.n.score.raw':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.objectives.n.score.min':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.objectives.n.score.max':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.objectives.n.success_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
-        'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMICStatus, 'mod':'rw'},
-        'cmi.objectives.n.progress_measure':{'defaultvalue':null, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
-        'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
-        'cmi.progress_measure':{'defaultvalue':def['cmi.progress_measure'], 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
-        'cmi.scaled_passing_score':{'defaultvalue':def['cmi.scaled_passing_score'], 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
-        'cmi.score._children':{'defaultvalue':score_children, 'mod':'r'},
-        'cmi.score.scaled':{'defaultvalue':def['cmi.score.scaled'], 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
-        'cmi.score.raw':{'defaultvalue':def['cmi.score.raw'], 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.min':{'defaultvalue':def['cmi.score.min'], 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.score.max':{'defaultvalue':def['cmi.score.max'], 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'PT0H0M0S'},
-        'cmi.success_status':{'defaultvalue':def['cmi.success_status'], 'format':CMISStatus, 'mod':'rw'},
-        'cmi.suspend_data':{'defaultvalue':def['cmi.suspend_data'], 'format':CMIString64000, 'mod':'rw'},
-        'cmi.time_limit_action':{'defaultvalue':def['cmi.time_limit_action'], 'mod':'r'},
-        'cmi.total_time':{'defaultvalue':def['cmi.total_time'], 'mod':'r'},
-        'adl.nav.request':{'defaultvalue':'_none_', 'format':NAVEvent, 'mod':'rw'}
-    };
-    //
-    // Datamodel inizialization
-    //
-        var cmi = new Object();
-        cmi.comments_from_learner = new Object();
-        cmi.comments_from_learner._count = 0;
-        cmi.comments_from_lms = new Object();
-        cmi.comments_from_lms._count = 0;
-        cmi.interactions = new Object();
-        cmi.interactions._count = 0;
-        cmi.learner_preference = new Object();
-        cmi.objectives = new Object();
-        cmi.objectives._count = 0;
-        cmi.score = new Object();
-
-    // Navigation Object
-    var adl = new Object();
-        adl.nav = new Object();
-        adl.nav.request_valid = new Array();
-
-    for (element in datamodel) {
-        if (element.match(/\.n\./) == null) {
-            if ((typeof eval('datamodel["'+element+'"].defaultvalue')) != 'undefined') {
-                eval(element+' = datamodel["'+element+'"].defaultvalue;');
-            } else {
-                eval(element+' = "";');
-            }
-        }
+    // Set up data model for each sco
+    var datamodel = {};
+    for(scoid in def){
+        datamodel[scoid] = {
+            'cmi._children':{'defaultvalue':cmi_children, 'mod':'r'},
+            'cmi._version':{'defaultvalue':'1.0', 'mod':'r'},
+            'cmi.comments_from_learner._children':{'defaultvalue':comments_children, 'mod':'r'},
+            'cmi.comments_from_learner._count':{'mod':'r', 'defaultvalue':'0'},
+            'cmi.comments_from_learner.n.comment':{'format':CMILangString4000, 'mod':'rw'},
+            'cmi.comments_from_learner.n.location':{'format':CMIString250, 'mod':'rw'},
+            'cmi.comments_from_learner.n.timestamp':{'format':CMITime, 'mod':'rw'},
+            'cmi.comments_from_lms._children':{'defaultvalue':comments_children, 'mod':'r'},
+            'cmi.comments_from_lms._count':{'mod':'r', 'defaultvalue':'0'},
+            'cmi.comments_from_lms.n.comment':{'format':CMILangString4000, 'mod':'r'},
+            'cmi.comments_from_lms.n.location':{'format':CMIString250, 'mod':'r'},
+            'cmi.comments_from_lms.n.timestamp':{'format':CMITime, 'mod':'r'},
+            'cmi.completion_status':{'defaultvalue':def[scoid]['cmi.completion_status'], 'format':CMICStatus, 'mod':'rw'},
+            'cmi.completion_threshold':{'defaultvalue':def[scoid]['cmi.completion_threshold'], 'mod':'r'},
+            'cmi.credit':{'defaultvalue':def[scoid]['cmi.credit'], 'mod':'r'},
+            'cmi.entry':{'defaultvalue':def[scoid]['cmi.entry'], 'mod':'r'},
+            'cmi.exit':{'defaultvalue':def[scoid]['cmi.exit'], 'format':CMIExit, 'mod':'w'},
+            'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r'},
+            'cmi.interactions._count':{'mod':'r', 'defaultvalue':'0'},
+            'cmi.interactions.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
+            'cmi.interactions.n.type':{'pattern':CMIIndex, 'format':CMIType, 'mod':'rw'},
+            'cmi.interactions.n.objectives._count':{'pattern':CMIIndex, 'mod':'r', 'defaultvalue':'0'},
+            'cmi.interactions.n.objectives.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
+            'cmi.interactions.n.timestamp':{'pattern':CMIIndex, 'format':CMITime, 'mod':'rw'},
+            'cmi.interactions.n.correct_responses._count':{'defaultvalue':'0', 'pattern':CMIIndex, 'mod':'r'},
+            'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':'CMIFeedback', 'mod':'rw'},
+            'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.interactions.n.learner_response':{'pattern':CMIIndex, 'format':'CMIFeedback', 'mod':'rw'},
+            'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'rw'},
+            'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'rw'},
+            'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
+            'cmi.launch_data':{'defaultvalue':def[scoid]['cmi.exit'], 'mod':'r'},
+            'cmi.learner_id':{'defaultvalue':def[scoid]['cmi.learner_id'], 'mod':'r'},
+            'cmi.learner_name':{'defaultvalue':def[scoid]['cmi.learner_name'], 'mod':'r'},
+            'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
+            'cmi.learner_preference.audio_level':{'defaultvalue':def[scoid]['cmi.learner_preference.audio_level'], 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
+            'cmi.learner_preference.language':{'defaultvalue':def[scoid]['cmi.learner_preference.language'], 'format':CMILang, 'mod':'rw'},
+            'cmi.learner_preference.delivery_speed':{'defaultvalue':def[scoid]['cmi.learner_preference.delivery_speed'], 'format':CMIDecimal, 'range':speed_range, 'mod':'rw'},
+            'cmi.learner_preference.audio_captioning':{'defaultvalue':def[scoid]['cmi.learner_preference.audio_captioning'], 'format':CMISInteger, 'range':text_range, 'mod':'rw'},
+            'cmi.location':{'defaultvalue':def[scoid]['cmi.location'], 'format':CMIString1000, 'mod':'rw'},
+            'cmi.max_time_allowed':{'defaultvalue':def[scoid]['cmi.max_time_allowed'], 'mod':'r'},
+            'cmi.mode':{'defaultvalue':def[scoid]['cmi.mode'], 'mod':'r'},
+            'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r'},
+            'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0'},
+            'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
+            'cmi.objectives.n.score._children':{'defaultvalue':score_children, 'pattern':CMIIndex, 'mod':'r'},
+            'cmi.objectives.n.score.scaled':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
+            'cmi.objectives.n.score.raw':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.objectives.n.score.min':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.objectives.n.score.max':{'defaultvalue':null, 'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.objectives.n.success_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMISStatus, 'mod':'rw'},
+            'cmi.objectives.n.completion_status':{'defaultvalue':'unknown', 'pattern':CMIIndex, 'format':CMICStatus, 'mod':'rw'},
+            'cmi.objectives.n.progress_measure':{'defaultvalue':null, 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
+            'cmi.objectives.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
+            'cmi.progress_measure':{'defaultvalue':def[scoid]['cmi.progress_measure'], 'format':CMIDecimal, 'range':progress_range, 'mod':'rw'},
+            'cmi.scaled_passing_score':{'defaultvalue':def[scoid]['cmi.scaled_passing_score'], 'format':CMIDecimal, 'range':scaled_range, 'mod':'r'},
+            'cmi.score._children':{'defaultvalue':score_children, 'mod':'r'},
+            'cmi.score.scaled':{'defaultvalue':def[scoid]['cmi.score.scaled'], 'format':CMIDecimal, 'range':scaled_range, 'mod':'rw'},
+            'cmi.score.raw':{'defaultvalue':def[scoid]['cmi.score.raw'], 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.score.min':{'defaultvalue':def[scoid]['cmi.score.min'], 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.score.max':{'defaultvalue':def[scoid]['cmi.score.max'], 'format':CMIDecimal, 'mod':'rw'},
+            'cmi.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'PT0H0M0S'},
+            'cmi.success_status':{'defaultvalue':def[scoid]['cmi.success_status'], 'format':CMISStatus, 'mod':'rw'},
+            'cmi.suspend_data':{'defaultvalue':def[scoid]['cmi.suspend_data'], 'format':CMIString64000, 'mod':'rw'},
+            'cmi.time_limit_action':{'defaultvalue':def[scoid]['cmi.time_limit_action'], 'mod':'r'},
+            'cmi.total_time':{'defaultvalue':def[scoid]['cmi.total_time'], 'mod':'r'},
+            'adl.nav.request':{'defaultvalue':'_none_', 'format':NAVEvent, 'mod':'rw'}
+        };
     }
 
-    eval(cmiobj);
-    eval(cmiint);
-    eval(cmicommentsuser);
-    eval(cmicommentslms);
+    var cmi, adl;
+    function initdatamodel(scoid){
+        prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+        datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
 
-    if (cmi.completion_status == '') {
-        cmi.completion_status = 'not attempted';
+        //
+        // Datamodel inizialization
+        //
+        cmi = new Object();
+            cmi.comments_from_learner = new Object();
+            cmi.comments_from_learner._count = 0;
+            cmi.comments_from_lms = new Object();
+            cmi.comments_from_lms._count = 0;
+            cmi.interactions = new Object();
+            cmi.interactions._count = 0;
+            cmi.learner_preference = new Object();
+            cmi.objectives = new Object();
+            cmi.objectives._count = 0;
+            cmi.score = new Object();
+
+        // Navigation Object
+        adl = new Object();
+            adl.nav = new Object();
+            adl.nav.request_valid = new Array();
+
+        for (element in datamodel[scoid]) {
+            if (element.match(/\.n\./) == null) {
+                if ((typeof eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue')) != 'undefined') {
+                    eval(element+' = datamodel["'+scoid+'"]["'+element+'"].defaultvalue;');
+                } else {
+                    eval(element+' = "";');
+                }
+            }
+        }
+
+        eval(cmiobj[scoid]);
+        eval(cmiint[scoid]);
+        eval(cmicommentsuser[scoid]);
+        eval(cmicommentslms[scoid]);
+
+        if (cmi.completion_status == '') {
+            cmi.completion_status = 'not attempted';
+        }
     }
 
     //
@@ -267,6 +278,9 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     var errorCode = "0";
 
     function Initialize (param) {
+        scoid = scorm_current_node ? scorm_current_node.scoid : scoid ;
+        initdatamodel(scoid);
+
         errorCode = "0";
         if (param == "") {
             if ((!Initialized) && (!Terminated)) {
@@ -365,8 +379,8 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             if (element !="") {
                 var expression = new RegExp(CMIIndex,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
+                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'w') {
 
                         element = String(element).replace(/\.(\d+)\./, ".N$1.");
                         element = element.replace(/\.(\d+)\./, ".N$1.");
@@ -393,7 +407,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                             errorCode = "301";
                         }
                     } else {
-                        //errorCode = eval('datamodel["'+elementmodel+'"].readerror');
+                        //errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].readerror');
                         errorCode = "405";
                     }
                 } else {
@@ -402,7 +416,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                     var parentmodel = '';
                     if (elementmodel.substr(elementmodel.length-childrenstr.length,elementmodel.length) == childrenstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length-childrenstr.length);
-                        if ((typeof eval('datamodel["'+parentmodel+'"]')) != "undefined") {
+                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
                             errorCode = "301";
                             diagnostic = "Data Model Element Does Not Have Children";
                         } else {
@@ -410,7 +424,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                         }
                     } else if (elementmodel.substr(elementmodel.length-countstr.length,elementmodel.length) == countstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length-countstr.length);
-                        if ((typeof eval('datamodel["'+parentmodel+'"]')) != "undefined") {
+                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
                             errorCode = "301";
                             diagnostic = "Data Model Element Cannot Have Count";
                         } else {
@@ -458,10 +472,10 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             if (element != "") {
                 var expression = new RegExp(CMIIndex,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        if (eval('datamodel["'+elementmodel+'"].format') != 'CMIFeedback') {
-                            expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
+                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
+                        if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].format') != 'CMIFeedback') {
+                            expression = new RegExp(eval('datamodel["'+scoid+'"]["'+elementmodel+'"].format'));
                         } else {
                             // cmi.interactions.n.type depending format accept everything at this stage
                             expression = new RegExp(CMIFeedback);
@@ -517,15 +531,15 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                         eval(parentelement+'._count++;');
                                                         eval(subelement+' = new Object();');
                                                         var subobject = eval(subelement);
-                                                        subobject.success_status = datamodel["cmi.objectives.n.success_status"].defaultvalue;
-                                                        subobject.completion_status = datamodel["cmi.objectives.n.completion_status"].defaultvalue;
-                                                        subobject.progress_measure = datamodel["cmi.objectives.n.progress_measure"].defaultvalue;
+                                                        subobject.success_status = datamodel[scoid]["cmi.objectives.n.success_status"].defaultvalue;
+                                                        subobject.completion_status = datamodel[scoid]["cmi.objectives.n.completion_status"].defaultvalue;
+                                                        subobject.progress_measure = datamodel[scoid]["cmi.objectives.n.progress_measure"].defaultvalue;
                                                         subobject.score = new Object();
                                                         subobject.score._children = score_children;
-                                                        subobject.score.scaled = datamodel["cmi.objectives.n.score.scaled"].defaultvalue;
-                                                        subobject.score.raw = datamodel["cmi.objectives.n.score.raw"].defaultvalue;
-                                                        subobject.score.min = datamodel["cmi.objectives.n.score.min"].defaultvalue;
-                                                        subobject.score.max = datamodel["cmi.objectives.n.score.max"].defaultvalue;
+                                                        subobject.score.scaled = datamodel[scoid]["cmi.objectives.n.score.scaled"].defaultvalue;
+                                                        subobject.score.raw = datamodel[scoid]["cmi.objectives.n.score.raw"].defaultvalue;
+                                                        subobject.score.min = datamodel[scoid]["cmi.objectives.n.score.min"].defaultvalue;
+                                                        subobject.score.max = datamodel[scoid]["cmi.objectives.n.score.max"].defaultvalue;
                                                     }
                                                 } else {
                                                     errorCode="351";
@@ -731,8 +745,8 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                             //Store data
                             if (errorCode == "0") {
 
-                                if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
-                                    range = eval('datamodel["'+elementmodel+'"].range');
+                                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range')) != "undefined") {
+                                    range = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range');
                                     ranges = range.split('#');
                                     value = value*1.0;
                                     if (value >= ranges[0]) {
@@ -1068,12 +1082,12 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     }
 
     function getElementModel(element) {
-        if (typeof datamodel[element] != "undefined") {
+        if (typeof datamodel[scoid][element] != "undefined") {
             return element;
         } else {
             var expression = new RegExp(CMIIndex,'g');
             var elementmodel = String(element).replace(expression,'.n.');
-            if (typeof datamodel[elementmodel] != "undefined") {
+            if (typeof datamodel[scoid][elementmodel] != "undefined") {
                 return elementmodel;
             }
         }
@@ -1161,11 +1175,11 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                 var element = parent+'.'+property;
                 var expression = new RegExp(CMIIndexStore,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
                         var elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
-                        if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property] || eval('typeof(datamodel["'+elementmodel+'"].defaultvalue)') != typeof(data[property])) {
+                        if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue')) != "undefined") {
+                            if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue') != data[property] || eval('typeof(datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue)') != typeof(data[property])) {
                                 datastring += elementstring;
                             }
                         } else {
@@ -1203,7 +1217,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         }
         datastring += CollectData(data,'cmi');
         var element = 'adl.nav.request';
-        var navrequest = eval(element) != datamodel[element].defaultvalue ? '&'+underscore(element)+'='+encodeURIComponent(eval(element)) : '';
+        var navrequest = eval(element) != datamodel[scoid][element].defaultvalue ? '&'+underscore(element)+'='+encodeURIComponent(eval(element)) : '';
         datastring += navrequest;
 
         var myRequest = NewHttpReq();

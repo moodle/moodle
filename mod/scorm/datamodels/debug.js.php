@@ -736,7 +736,7 @@ function LogAPICall(func, nam, val, rc) {
     if (func.match(/GetValue/)) {
         s += ' - ' + val;
     }
-    s += ' => ' + String(rc);
+    s += ' => ' + String(rc) + "   scoid = " + scorm_current_node.scoid;
     AppendToLog(s, rc);
 <?php
 if (scorm_debugging($scorm) && ($sco->scormtype == 'asset')) {
