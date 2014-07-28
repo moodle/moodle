@@ -1956,7 +1956,7 @@ class core_renderer extends renderer_base {
     public function doc_link($path, $text = '', $forcepopup = false) {
         global $CFG;
 
-        $icon = $this->pix_icon('docs', $text, 'moodle', array('class'=>'iconhelp icon-pre'));
+        $icon = $this->pix_icon('docs', '', 'moodle', array('class'=>'iconhelp icon-pre', 'role'=>'presentation'));
 
         $url = new moodle_url(get_docs_url($path));
 
