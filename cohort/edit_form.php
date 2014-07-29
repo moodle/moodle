@@ -53,6 +53,11 @@ class cohort_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
+        if (isset($this->_customdata['returnurl'])) {
+            $mform->addElement('hidden', 'returnurl', $this->_customdata['returnurl']->out_as_local_url());
+            $mform->setType('returnurl', PARAM_LOCALURL);
+        }
+
         $this->add_action_buttons();
 
         $this->set_data($cohort);

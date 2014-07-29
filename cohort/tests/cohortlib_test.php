@@ -473,5 +473,74 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $result['totalcohorts']);
         $this->assertEquals(array(), $result['cohorts']);
         $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_cohorts(context_system::instance()->id);
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(1, $result['allcohorts']);
+    }
+
+    public function test_cohort_get_all_cohorts() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'aaagrrryyy', 'idnumber'=>'','description'=>''));
+        $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'bbb', 'idnumber'=>'', 'description'=>'yyybrrr'));
+        $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category2->id)->id, 'name'=>'ccc', 'idnumber'=>'xxarrrghyyy', 'description'=>'po_us'));
+        $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_system::instance()->id));
+
+        // Get list of all cohorts as admin.
+        $this->setAdminUser();
+
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(4, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort3->id=>$cohort3, $cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        $result = cohort_get_all_cohorts(0, 100, 'grrr');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        // Get list of all cohorts as manager who has capability everywhere.
+        $user = $this->getDataGenerator()->create_user();
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        role_assign($managerrole->id, $user->id, context_system::instance()->id);
+        $this->setUser($user);
+
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(4, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort3->id=>$cohort3, $cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        $result = cohort_get_all_cohorts(0, 100, 'grrr');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        // Get list of all cohorts as manager who has capability everywhere except category2.
+        $context2 = context_coursecat::instance($category2->id);
+        role_change_permission($managerrole->id, $context2, 'moodle/cohort:view', CAP_PROHIBIT);
+        role_change_permission($managerrole->id, $context2, 'moodle/cohort:manage', CAP_PROHIBIT);
+        $this->assertFalse(has_any_capability(array('moodle/cohort:view', 'moodle/cohort:manage'), $context2));
+
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(3, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_all_cohorts(0, 100, 'grrr');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 1, 1, 'yyy');
+        $this->assertEquals(2, $result['totalcohorts']);
+        $this->assertEquals(array($cohort2->id=>$cohort2), $result['cohorts']);
+        $this->assertEquals(2, $result['allcohorts']);
     }
 }

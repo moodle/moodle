@@ -31,6 +31,7 @@ $id        = optional_param('id', 0, PARAM_INT);
 $contextid = optional_param('contextid', 0, PARAM_INT);
 $delete    = optional_param('delete', 0, PARAM_BOOL);
 $confirm   = optional_param('confirm', 0, PARAM_BOOL);
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 require_login();
 
@@ -52,7 +53,11 @@ if ($id) {
 
 require_capability('moodle/cohort:manage', $context);
 
-$returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$context->id));
+if ($returnurl) {
+    $returnurl = new moodle_url($returnurl);
+} else {
+    $returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$context->id));
+}
 
 if (!empty($cohort->component)) {
     // We can not manually edit cohorts that were created by external systems, sorry.
@@ -60,7 +65,8 @@ if (!empty($cohort->component)) {
 }
 
 $PAGE->set_context($context);
-$PAGE->set_url('/cohort/edit.php', array('contextid'=>$context->id, 'id'=>$cohort->id));
+$baseurl = new moodle_url('/cohort/edit.php', array('contextid' => $context->id, 'id' => $cohort->id));
+$PAGE->set_url($baseurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 
@@ -84,7 +90,8 @@ if ($delete and $cohort->id) {
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strheading);
-    $yesurl = new moodle_url('/cohort/edit.php', array('id'=>$cohort->id, 'delete'=>1, 'confirm'=>1,'sesskey'=>sesskey()));
+    $yesurl = new moodle_url('/cohort/edit.php', array('id' => $cohort->id, 'delete' => 1,
+        'confirm' => 1, 'sesskey' => sesskey(), 'returnurl' => $returnurl->out_as_local_url()));
     $message = get_string('delconfirm', 'cohort', format_string($cohort->name));
     echo $OUTPUT->confirm($message, $yesurl, $returnurl);
     echo $OUTPUT->footer();
@@ -107,7 +114,7 @@ $PAGE->set_title($strheading);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->navbar->add($strheading);
 
-$editform = new cohort_edit_form(null, array('editoroptions'=>$editoroptions, 'data'=>$cohort));
+$editform = new cohort_edit_form(null, array('editoroptions'=>$editoroptions, 'data'=>$cohort, 'returnurl'=>$returnurl));
 
 if ($editform->is_cancelled()) {
     redirect($returnurl);
@@ -121,12 +128,22 @@ if ($editform->is_cancelled()) {
         cohort_add_cohort($data);
     }
 
-    // Use new context id, it could have been changed.
-    redirect(new moodle_url('/cohort/index.php', array('contextid'=>$data->contextid)));
+    if ($returnurl->get_param('showall') || $returnurl->get_param('contextid') == $data->contextid) {
+        // Redirect to where we were before.
+        redirect($returnurl);
+    } else {
+        // Use new context id, it has been changed.
+        redirect(new moodle_url('/cohort/index.php', array('contextid' => $data->contextid)));
+    }
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strheading);
+
+if (!$id && ($editcontrols = cohort_edit_controls($context, $baseurl))) {
+    echo $OUTPUT->render($editcontrols);
+}
+
 echo $editform->display();
 echo $OUTPUT->footer();
 

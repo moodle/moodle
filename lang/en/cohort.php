@@ -25,6 +25,7 @@
  */
 
 $string['addcohort'] = 'Add new cohort';
+$string['allcohorts'] = 'All cohorts';
 $string['anycohort'] = 'Any';
 $string['assign'] = 'Assign';
 $string['assignto'] = 'Cohort \'{$a}\' members';
@@ -59,6 +60,7 @@ $string['potusers'] = 'Potential users';
 $string['potusersmatching'] = 'Potential matching users';
 $string['removeuserwarning'] = 'Removing users from a cohort may result in unenrolling of users from multiple courses which includes deleting of user settings, grades, group membership and other user information from affected courses.';
 $string['selectfromcohort'] = 'Select members from cohort';
+$string['systemcohorts'] = 'System cohorts';
 $string['unknowncohort'] = 'Unknown cohort ({$a})!';
 $string['useradded'] = 'User added to cohort "{$a}"';
 $string['search'] = 'Search';
