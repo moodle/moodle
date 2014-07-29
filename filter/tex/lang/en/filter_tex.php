@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configconvertformat'] = 'If <i>latex</i> and <i>dvips</i> and are available, they are used to GIF or PNG images if <i>convert</i> is also available or if <i>dvisvgm</i> is available SVG images as specified. Otherwise <i>mimeTeX</i> will be used, and it will create GIF images.';
+$string['configconvertformat'] = 'If <i>latex</i> and <i>dvips</i> are present in addition to <i>convert</i> or <i>dvisvgm</i>, select the preferred image type (<i>convert</i> produces GIF or PNG; <i>dvisvgm</i> produces SVG). Otherwise <i>mimeTeX</i> will be used to to create GIF images.';
 $string['convertformat'] = 'Output image format';
 $string['latexpreamble'] = 'LaTeX preamble';
 $string['latexsettings'] = 'LaTeX renderer Settings';
