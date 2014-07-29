@@ -51,7 +51,7 @@ M.availability_date.form.getNode = function(json) {
                 var fields = Y.JSON.parse(response.responseText);
                 for (var field in fields) {
                     var select = node.one('select[name=x\\[' + field + '\\]]');
-                    select.set('value', fields[field]);
+                    select.set('value', '' + fields[field]);
                     select.set('disabled', false);
                 }
             },
