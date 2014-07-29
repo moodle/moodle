@@ -1580,17 +1580,18 @@ class assign {
 
         // Collect all submissions from the past 24 hours that require mailing.
         // Submissions are excluded if the assignment is hidden in the gradebook.
-        $sql = 'SELECT g.id as gradeid, a.course, a.name, a.blindmarking, a.revealidentities,
-                       g.*, g.timemodified as lastmodified
+        $sql = "SELECT g.id as gradeid, a.course, a.name, a.blindmarking, a.revealidentities,
+                       g.*, g.timemodified as lastmodified, cm.id as cmid
                  FROM {assign} a
                  JOIN {assign_grades} g ON g.assignment = a.id
             LEFT JOIN {assign_user_flags} uf ON uf.assignment = a.id AND uf.userid = g.userid
-                 JOIN {course_modules} cm ON cm.course = a.course
-                 JOIN {modules} md ON md.id = cm.module
+                 JOIN {course_modules} cm ON cm.course = a.course AND cm.instance = a.id
+                 JOIN {modules} md ON md.id = cm.module AND md.name = 'assign'
                  JOIN {grade_items} gri ON gri.iteminstance = a.id AND gri.courseid = a.course AND gri.itemmodule = md.name
                  WHERE g.timemodified >= :yesterday AND
                        g.timemodified <= :today AND
-                       uf.mailed = 0 AND gri.hidden = 0';
+                       uf.mailed = 0 AND gri.hidden = 0
+              ORDER BY a.course, cm.id";
 
         $params = array('yesterday' => $yesterday, 'today' => $timenow);
         $submissions = $DB->get_records_sql($sql, $params);
@@ -1622,9 +1623,6 @@ class assign {
             unset($ctxselect);
             unset($courseidsql);
             unset($params);
-
-            // Simple array we'll use for caching modules.
-            $modcache = array();
 
             // Message students about new feedback.
             foreach ($submissions as $submission) {
@@ -1667,21 +1665,13 @@ class assign {
                     continue;
                 }
 
-                if (!array_key_exists($submission->assignment, $modcache)) {
-                    $mod = get_coursemodule_from_instance('assign', $submission->assignment, $course->id);
-                    if (empty($mod)) {
-                        mtrace('Could not find course module for assignment id ' . $submission->assignment);
-                        continue;
-                    }
-                    $modcache[$submission->assignment] = $mod;
-                } else {
-                    $mod = $modcache[$submission->assignment];
-                }
+                $modinfo = get_fast_modinfo($course, $user->id);
+                $cm = $modinfo->get_cm($submission->cmid);
                 // Context lookups are already cached.
-                $contextmodule = context_module::instance($mod->id);
+                $contextmodule = context_module::instance($cm->id);
 
-                if (!$mod->visible) {
-                    // Hold mail notification for hidden assignments until later.
+                if (!$cm->uservisible) {
+                    // Hold mail notification for assignments the user cannot access until later.
                     continue;
                 }
 
@@ -1701,7 +1691,7 @@ class assign {
                                                    $messagetype,
                                                    $eventtype,
                                                    $updatetime,
-                                                   $mod,
+                                                   $cm,
                                                    $contextmodule,
                                                    $course,
                                                    $modulename,
@@ -1729,7 +1719,6 @@ class assign {
 
             // Free up memory just to be sure.
             unset($courses);
-            unset($modcache);
         }
 
         // Update calendar events to provide a description.
@@ -5766,7 +5755,16 @@ class assign {
             }
         }
         $mform->addElement('selectyesno', 'sendstudentnotifications', get_string('sendstudentnotifications', 'assign'));
-        $mform->setDefault('sendstudentnotifications', 1);
+        // Get assignment visibility information for student.
+        $modinfo = get_fast_modinfo($settings->course, $userid);
+        $cm = $modinfo->get_cm($this->get_course_module()->id);
+        // Don't allow notification to be sent if student can't access assignment.
+        if (!$cm->uservisible) {
+            $mform->setDefault('sendstudentnotifications', 0);
+            $mform->freeze('sendstudentnotifications');
+        } else {
+            $mform->setDefault('sendstudentnotifications', 1);
+        }
 
         $mform->addElement('hidden', 'action', 'submitgrade');
         $mform->setType('action', PARAM_ALPHA);
