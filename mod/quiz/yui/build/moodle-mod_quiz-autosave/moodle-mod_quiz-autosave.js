@@ -91,7 +91,7 @@ M.mod_quiz.autosave = {
      */
     SELECTORS: {
         QUIZ_FORM:             '#responseform',
-        VALUE_CHANGE_ELEMENTS: 'input, textarea',
+        VALUE_CHANGE_ELEMENTS: 'input, textarea, [contenteditable="true"]',
         CHANGE_ELEMENTS:       'input, select',
         HIDDEN_INPUTS:         'input[type=hidden]',
         CONNECTION_ERROR:      '#connection-error',
@@ -278,10 +278,13 @@ M.mod_quiz.autosave = {
     },
 
     value_changed: function(e) {
-        if (e.target.get('name') === 'thispage' || e.target.get('name') === 'scrollpos' ||
-                e.target.get('name').match(/_:flagged$/)) {
+        var name = e.target.getAttribute('name');
+        if (name === 'thispage' || name === 'scrollpos' || (name && name.match(/_:flagged$/))) {
             return; // Not interesting.
         }
+
+        // Fallback to the ID when the name is not present (in the case of content editable).
+        name = name || '#' + e.target.getAttribute('id');
         this.start_save_timer_if_necessary();
     },
 
