@@ -4448,3 +4448,93 @@ function coursemodule_visible_for_user($cm, $userid=0) {
             'Replace with \core_availability\info_module::is_user_visible().');
     return \core_availability\info_module::is_user_visible($cm, $userid, false);
 }
+
+/**
+ * Gets all the cohorts the user is able to view.
+ *
+ * @deprecated since Moodle 2.8 MDL-36014 please use enrol_cohort_search_cohorts()
+ *
+ * @param course_enrolment_manager $manager
+ * @return array
+ */
+function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
+    global $CFG;
+    require_once($CFG->dirroot . '/enrol/cohort/locallib.php');
+    debugging('Function enrol_cohort_get_cohorts() is deprecated, use enrol_cohort_search_cohorts() or '.
+        'cohort_get_available_cohorts() instead', DEBUG_DEVELOPER);
+    return enrol_cohort_search_cohorts($manager, 0, 0, '');
+}
+
+/**
+ * Check if cohort exists and user is allowed to enrol it.
+ *
+ * This function is deprecated, use {@link cohort_can_view_cohort()} instead since it also
+ * takes into account current context
+ *
+ * @deprecated since Moodle 2.8 MDL-36014 please use cohort_can_view_cohort()
+ *
+ * @param int $cohortid Cohort ID
+ * @return boolean
+ */
+function enrol_cohort_can_view_cohort($cohortid) {
+    global $CFG;
+    require_once($CFG->dirroot . '/cohort/lib.php');
+    debugging('Function enrol_cohort_can_view_cohort() is deprecated, use cohort_can_view_cohort() instead',
+        DEBUG_DEVELOPER);
+    return cohort_can_view_cohort($cohortid, null);
+}
+
+/**
+ * Returns list of cohorts from course parent contexts.
+ *
+ * Note: this function does not implement any capability checks,
+ *       it means it may disclose existence of cohorts,
+ *       make sure it is displayed to users with appropriate rights only.
+ *
+ * It is advisable to use {@link cohort_get_available_cohorts()} instead.
+ *
+ * @deprecated since Moodle 2.8 MDL-36014 use cohort_get_available_cohorts() instead
+ *
+ * @param  stdClass $course
+ * @param  bool $onlyenrolled true means include only cohorts with enrolled users
+ * @return array of cohort names with number of enrolled users
+ */
+function cohort_get_visible_list($course, $onlyenrolled=true) {
+    global $DB;
+
+    debugging('Function cohort_get_visible_list() is deprecated. Please use function cohort_get_available_cohorts() ".
+        "that correctly checks capabilities.', DEBUG_DEVELOPER);
+
+    $context = context_course::instance($course->id);
+    list($esql, $params) = get_enrolled_sql($context);
+    list($parentsql, $params2) = $DB->get_in_or_equal($context->get_parent_context_ids(), SQL_PARAMS_NAMED);
+    $params = array_merge($params, $params2);
+
+    if ($onlyenrolled) {
+        $left = "";
+        $having = "HAVING COUNT(u.id) > 0";
+    } else {
+        $left = "LEFT";
+        $having = "";
+    }
+
+    $sql = "SELECT c.id, c.name, c.contextid, c.idnumber, c.visible, COUNT(u.id) AS cnt
+              FROM {cohort} c
+        $left JOIN ({cohort_members} cm
+                   JOIN ($esql) u ON u.id = cm.userid) ON cm.cohortid = c.id
+             WHERE c.contextid $parentsql
+          GROUP BY c.id, c.name, c.contextid, c.idnumber
+           $having
+          ORDER BY c.name, c.idnumber, c.visible";
+
+    $cohorts = $DB->get_records_sql($sql, $params);
+
+    foreach ($cohorts as $cid=>$cohort) {
+        $cohorts[$cid] = format_string($cohort->name, true, array('context'=>$cohort->contextid));
+        if ($cohort->cnt) {
+            $cohorts[$cid] .= ' (' . $cohort->cnt . ')';
+        }
+    }
+
+    return $cohorts;
+}

@@ -95,25 +95,13 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @return bool
      */
     protected function can_add_new_instances($courseid) {
-        global $DB;
-
+        global $CFG;
+        require_once($CFG->dirroot . '/cohort/lib.php');
         $coursecontext = context_course::instance($courseid);
         if (!has_capability('moodle/course:enrolconfig', $coursecontext) or !has_capability('enrol/cohort:config', $coursecontext)) {
             return false;
         }
-        list($sqlparents, $params) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids());
-        $sql = "SELECT id, contextid
-                  FROM {cohort}
-                 WHERE contextid $sqlparents
-              ORDER BY name ASC";
-        $cohorts = $DB->get_records_sql($sql, $params);
-        foreach ($cohorts as $c) {
-            $context = context::instance_by_id($c->contextid);
-            if (has_capability('moodle/cohort:view', $context)) {
-                return true;
-            }
-        }
-        return false;
+        return cohort_get_available_cohorts($coursecontext) ? true : false;
     }
 
     /**

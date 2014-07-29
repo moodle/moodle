@@ -65,20 +65,10 @@ class enrol_cohort_edit_form extends moodleform {
 
         } else {
             $cohorts = array('' => get_string('choosedots'));
-            list($sqlparents, $params) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids());
-            $sql = "SELECT id, name, idnumber, contextid
-                      FROM {cohort}
-                     WHERE contextid $sqlparents
-                  ORDER BY name ASC, idnumber ASC";
-            $rs = $DB->get_recordset_sql($sql, $params);
-            foreach ($rs as $c) {
-                $context = context::instance_by_id($c->contextid);
-                if (!has_capability('moodle/cohort:view', $context)) {
-                    continue;
-                }
+            $allcohorts = cohort_get_available_cohorts($coursecontext);
+            foreach ($allcohorts as $c) {
                 $cohorts[$c->id] = format_string($c->name);
             }
-            $rs->close();
             $mform->addElement('select', 'customint1', get_string('cohort', 'cohort'), $cohorts);
             $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
         }

@@ -83,3 +83,6 @@ $string['uploadcohorts_help'] = 'Cohorts may be uploaded via text file. The form
 * Required fieldname is name
 * Optional fieldnames are idnumber, description, descriptionformat, context, category, category_id, category_idnumber, category_path
 ';
+$string['visible'] = 'Visible';
+$string['visible_help'] = "Any cohort can be viewed by users who have 'moodle/cohort:view' capability in the cohort context.<br/>
+Visible cohorts can also be viewed by users in the underlying courses.";

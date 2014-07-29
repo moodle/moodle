@@ -3837,5 +3837,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014100100.00);
     }
 
+    if ($oldversion < 2014100300.01) {
+
+        // Define field visible to be added to cohort.
+        $table = new xmldb_table('cohort');
+        $field = new xmldb_field('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'descriptionformat');
+
+        // Conditionally launch add field visible.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100300.01);
+    }
+
     return true;
 }

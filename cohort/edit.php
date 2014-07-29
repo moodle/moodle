@@ -30,6 +30,8 @@ require($CFG->dirroot.'/cohort/edit_form.php');
 $id        = optional_param('id', 0, PARAM_INT);
 $contextid = optional_param('contextid', 0, PARAM_INT);
 $delete    = optional_param('delete', 0, PARAM_BOOL);
+$show      = optional_param('show', 0, PARAM_BOOL);
+$hide      = optional_param('hide', 0, PARAM_BOOL);
 $confirm   = optional_param('confirm', 0, PARAM_BOOL);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
@@ -96,6 +98,22 @@ if ($delete and $cohort->id) {
     echo $OUTPUT->confirm($message, $yesurl, $returnurl);
     echo $OUTPUT->footer();
     die;
+}
+
+if ($show && $cohort->id && confirm_sesskey()) {
+    if (!$cohort->visible) {
+        $record = (object)array('id' => $cohort->id, 'visible' => 1, 'contextid' => $cohort->contextid);
+        cohort_update_cohort($record);
+    }
+    redirect($returnurl);
+}
+
+if ($hide && $cohort->id && confirm_sesskey()) {
+    if ($cohort->visible) {
+        $record = (object)array('id' => $cohort->id, 'visible' => 0, 'contextid' => $cohort->contextid);
+        cohort_update_cohort($record);
+    }
+    redirect($returnurl);
 }
 
 $editoroptions = array('maxfiles'=>0, 'context'=>$context);

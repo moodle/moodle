@@ -31,6 +31,7 @@ require('../../config.php');
 require_once($CFG->dirroot.'/enrol/locallib.php');
 require_once($CFG->dirroot.'/enrol/cohort/locallib.php');
 require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
 
 // Must have the sesskey.
 $id      = required_param('id', PARAM_INT); // course id
@@ -87,7 +88,7 @@ switch ($action) {
         $cohortid = required_param('cohortid', PARAM_INT);
 
         $roles = $manager->get_assignable_roles();
-        if (!enrol_cohort_can_view_cohort($cohortid) || !array_key_exists($roleid, $roles)) {
+        if (!cohort_can_view_cohort($cohortid, $context) || !array_key_exists($roleid, $roles)) {
             throw new enrol_ajax_exception('errorenrolcohort');
         }
         $enrol = enrol_get_plugin('cohort');
@@ -103,7 +104,7 @@ switch ($action) {
         $cohortid = required_param('cohortid', PARAM_INT);
 
         $roles = $manager->get_assignable_roles();
-        if (!enrol_cohort_can_view_cohort($cohortid) || !array_key_exists($roleid, $roles)) {
+        if (!cohort_can_view_cohort($cohortid, $context) || !array_key_exists($roleid, $roles)) {
             throw new enrol_ajax_exception('errorenrolcohort');
         }
 
