@@ -25,7 +25,7 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once('../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot.'/grade/report/history/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course id.

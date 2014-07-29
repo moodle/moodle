@@ -17,6 +17,7 @@
 /**
  * User button. Adapted from core_select_user_button.
  *
+ * @package    gradereport_history
  * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
  * @author     Adam Olley <adam.olley@netspot.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +27,12 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * A button that is used to select users for a form.
+ *
+ * @since      Moodle 2.8
+ * @package    gradereport_history
+ * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
+ * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gradereport_history_user_button extends single_button {
 
@@ -48,15 +55,14 @@ class gradereport_history_user_button extends single_button {
     protected $jsstrings = array();
 
     /**
-     * Initialises the new select_user_button
+     * Initialises the new select_user_button.
      *
-     * @staticvar int $count The number of select user buttons already created
      * @param moodle_url $url
      * @param string $label The text to display in the button
      * @param string $method Either post or get
      */
     public function __construct(moodle_url $url, $label, $method = 'post') {
-        static $count = 0;
+        static $count = 0; // The number of select user buttons already created.
         $count ++;
         parent::__construct($url, $label, $method);
         $this->class = 'singlebutton selectusersbutton';
@@ -102,7 +108,7 @@ class gradereport_history_user_button extends single_button {
     /**
      * Requires strings for JS that will be loaded when the button is used.
      *
-     * @param type $identifiers
+     * @param array|stdClass $identifiers
      * @param string $component
      * @param mixed $a
      */
@@ -115,7 +121,7 @@ class gradereport_history_user_button extends single_button {
     }
 
     /**
-     * Initialises the JS that is required by this button
+     * Initialises the JS that is required by this button.
      *
      * @param moodle_page $page
      */
@@ -131,4 +137,3 @@ class gradereport_history_user_button extends single_button {
         }
     }
 }
-

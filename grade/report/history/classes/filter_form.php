@@ -17,6 +17,7 @@
 /**
  * Form for grade history filters
  *
+ * @package    gradereport_history
  * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
  * @author     Adam Olley <adam.olley@netspot.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,10 +27,21 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Form for grade history filters
+ *
+ * @since      Moodle 2.8
+ * @package    gradereport_history
+ * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
+ * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class gradereport_history_filter_form extends moodleform {
 
+    /**
+     * Definition of the Mform for filters displayed in the report.
+     */
     public function definition() {
-        global $USER, $CFG;
 
         $mform    =& $this->_form;
         $course   = $this->_customdata['course'];
@@ -37,8 +49,6 @@ class gradereport_history_filter_form extends moodleform {
         $graders  = $this->_customdata['graders'];
         $userbutton = $this->_customdata['userbutton'];
         $names = html_writer::span('', 'selectednames');
-
-        $context = context_course::instance($course->id);
 
         $mform->addElement('static', 'userselect', get_string('selectuser', 'gradereport_history'), $userbutton);
         $mform->addElement('static', 'selectednames', get_string('selectedusers', 'gradereport_history'), $names);
@@ -72,6 +82,9 @@ class gradereport_history_filter_form extends moodleform {
         $mform->closeHeaderBefore('buttonar');
     }
 
+    /**
+     * This method implements changes to the form that need to be made once the form data is set.
+     */
     public function definition_after_data() {
         $mform =& $this->_form;
 
@@ -80,9 +93,4 @@ class gradereport_history_filter_form extends moodleform {
         }
     }
 
-    public function validation($data, $files) {
-        return parent::validation($data, $files);
-    }
-
 }
-

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/user/renderer.php');
 require_once($CFG->dirroot.'/grade/lib.php');
@@ -92,8 +92,6 @@ if ($data = $mform->get_data()) {
         'revisedonly' => optional_param('revisedonly', 0, PARAM_INT),
     );
 }
-
-
 
 $report = new grade_report_history($courseid, $gpr, $context, $filters, $page, $sortitemid);
 

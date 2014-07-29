@@ -14,8 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Renderer for history grade report.
+ *
+ * @package    gradereport_history
+ * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
+ * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * Renderer for history grade report.
+ *
+ * @since      Moodle 2.8
+ * @package    gradereport_history
+ * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
+ * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class gradereport_history_renderer extends plugin_renderer_base {
 
+    /**
+     * Render for the select user button.
+     *
+     * @param gradereport_history_user_button $button instance of  gradereport_history_user_button to render
+     *
+     * @return string HTML to display
+     */
     public function render_select_user_button(gradereport_history_user_button $button) {
         $attributes = array('type'     => 'button',
                             'class'    => 'selectortrigger',
@@ -32,10 +59,10 @@ class gradereport_history_renderer extends plugin_renderer_base {
         }
         $button->initialise_js($this->page);
 
-        // first the input element
+        // First the input element.
         $output = html_writer::empty_tag('input', $attributes);
 
-        // then hidden fields
+        // Then hidden fields.
         $params = $button->url->params();
         if ($button->method === 'post') {
             $params['sesskey'] = sesskey();
@@ -44,27 +71,34 @@ class gradereport_history_renderer extends plugin_renderer_base {
             $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
         }
 
-        // then div wrapper for xhtml strictness
+        // Then div wrapper for xhtml strictness.
         $output = html_writer::tag('div', $output);
 
-        // now the form itself around it
+        // Now the form itself around it.
         if ($button->method === 'get') {
-            $url = $button->url->out_omit_querystring(true); // url without params, the anchor part allowed
+            $url = $button->url->out_omit_querystring(true); // Url without params, the anchor part allowed.
         } else {
-            $url = $button->url->out_omit_querystring();     // url without params, the anchor part not allowed
+            $url = $button->url->out_omit_querystring();     // Url without params, the anchor part not allowed.
         }
         if ($url === '') {
-            $url = '#'; // there has to be always some action
+            $url = '#'; // There has to be always some action.
         }
         $attributes = array('method' => $button->method,
                             'action' => $url,
                             'id'     => $button->formid);
         $output = html_writer::tag('div', $output, $attributes);
 
-        // and finally one more wrapper with class
+        // Finally one more wrapper with class.
         return html_writer::tag('div', $output, array('class' => $button->class));
     }
 
+    /**
+     * Title to display on the report page.
+     *
+     * @param array $users list of selected users.
+     *
+     * @return string HTML to display
+     */
     public function report_title($users = array()) {
         $name = get_string('pluginname', 'gradereport_history');
         if (empty($users)) {

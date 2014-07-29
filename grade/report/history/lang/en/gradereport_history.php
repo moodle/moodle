@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'gradereport_grader', language 'en'
+ * Strings for component 'gradereport_history', language 'en'
  *
  * @package    gradereport_history
  * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)

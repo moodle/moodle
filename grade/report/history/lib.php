@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of the history report class
+ * Definition of the history report class.
  *
  * @package    gradereport_history
  * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
@@ -23,52 +23,75 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->dirroot.'/grade/report/history/classes/filter_form.php');
-require_once($CFG->dirroot.'/grade/report/history/classes/user_button.php');
 
+/**
+ * Definition of the history report class.
+ *
+ * @since      Moodle 2.8
+ * @package    gradereport_history
+ * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
+ * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_report_history extends grade_report {
 
+    /**
+     * @var array This doesn't seem to be used but set only.
+     */
     private $fieldorder = array();
+
+    /**
+     * @var array List of filters selected.
+     */
     private $filters = array();
+
+    /**
+     * @var array Raw data of the html table.
+     */
     private $tabledata = array();
+
+    /**
+     * @var array Raw dump of records from the grade history table.
+     */
     private $history;
+
+    /**
+     * @var array Generates a mapping that lists all history entries for a given grade item grouped by userids.
+     */
     private $itemidmap = array();
 
     /**
-     * Current page (for paging).
-     * @var int $page
+     * @var int $page Current page (for paging).
      */
     public $page = 0;
 
     /**
-     * Number of history rows per page.
-     * @var string $perpage
+     * @var string Number of history rows per page.
      */
     public $perpage = 50;
 
     /**
-     * Total number of history rows.
-     * @var string $numrows
+     * @var string Total number of history rows.
      */
     public $numrows = 0;
 
     /**
-     * The id of the grade_item by which this report will be sorted.
-     * @var int $sortitemid
+     * @var int The id of the grade_item by which this report will be sorted.
      */
     public $sortitemid;
 
     /**
-     * Sortorder used in the SQL selections.
-     * @var int $sortorder
+     * @var int Sortorder used in the SQL selections.
      */
     public $sortorder;
 
     /**
      * Constructor.
+     *
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
      * @param string $context
@@ -81,9 +104,9 @@ class grade_report_history extends grade_report {
      *                          revisedonly : only show revised grades (default: false)
      *                          format : page | csv | excel (default: page)
      * @param int $page The current page being viewed (when report is paged)
+     * @param int $sortitemid The id of the grade_item by which this report will be sorted.
      */
     public function __construct($courseid, $gpr, $context, $filters = array(), $page = null, $sortitemid = null) {
-        global $CFG;
         parent::__construct($courseid, $gpr, $context, $page);
 
         $this->baseurl = new moodle_url('index.php', array('id' => $this->courseid));
@@ -108,7 +131,13 @@ class grade_report_history extends grade_report {
     }
 
     /**
+     * Get history of grades.
+     *
      * @param bool $count If we just want the total count or not.
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
      */
     public function get_history($count = false) {
         global $DB;
@@ -119,7 +148,8 @@ class grade_report_history extends grade_report {
                    ggh.source, ggh.overridden, ggh.locked, ggh.excluded, ggh.feedback,
                    gi.itemtype, gi.itemmodule, gi.iteminstance, gi.itemnumber';
 
-        if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname' || $this->sortitemid == 'username' || $this->sortitemid == 'email') {
+        if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname'
+                || $this->sortitemid == 'username' || $this->sortitemid == 'email') {
             $sortitemid = 'u.' . $this->sortitemid;
             $fields .= ', u.' . $this->sortitemid;
         } else if ($this->sortitemid == 'grader') {
@@ -210,6 +240,11 @@ class grade_report_history extends grade_report {
         return $this->history;
     }
 
+    /**
+     * Returns raw table data for the report.
+     *
+     * @return array raw table data without any formatting.
+     */
     public function get_table_data() {
         $list = array();
 
@@ -242,7 +277,7 @@ class grade_report_history extends grade_report {
      * @return array empty array if success, array of warnings if something fails.
      */
     public function process_data($data) {
-        global $DB;
+
         $warnings = array();
 
         return $warnings;
@@ -307,6 +342,11 @@ class grade_report_history extends grade_report {
         }
     }
 
+    /**
+     * Returns a list of selected users.
+     *
+     * @return array returns an array in the format $userid => $userid
+     */
     public function get_selected_users() {
         $list = array();
         if (!empty($this->filters['userids'])) {
@@ -323,9 +363,15 @@ class grade_report_history extends grade_report {
 
     /**
      * We're interested in anyone that had a grade history in this course.
+     *
+     * @param string $search the text to search for (empty string = find all)
+     * @param int $page page number, defaults to 0. (This is not used)
+     * @param int $perpage Number of entries to display per page, defaults to 0.(This is not used)
+     *
+     * @return array
      */
     public function load_users($search = '', $page = 0, $perpage = 0) {
-        global $CFG, $DB;
+        global $DB;
 
         if (!empty($this->users)) {
             return;
@@ -353,7 +399,13 @@ class grade_report_history extends grade_report {
         return $this->users;
     }
 
-
+    /**
+     * Method to return html for the whole html table to be displayed to user as a report.
+     *
+     * This method sets up an instance of html_table, populates it and returns html to display it.
+     *
+     * @return string HTML to display the table.
+     */
     public function get_history_table() {
         global $OUTPUT;
         $extrafields = get_extra_user_fields($this->context);
@@ -379,7 +431,7 @@ class grade_report_history extends grade_report {
             $row->cells[] = $record->prevgrade;
             $row->cells[] = $record->finalgrade;
             foreach ($extrafields as $field) {
-                // BASE-445 - do not show an additional username column
+                // Do not show an additional username column.
                 if ($field == 'username') {
                     continue;
                 }
@@ -411,6 +463,11 @@ class grade_report_history extends grade_report {
         return $OUTPUT->container($html, 'gradeparent');
     }
 
+    /**
+     * Return the header for the html table.
+     *
+     * @return html_table_row The header row.
+     */
     public function get_table_headings() {
         $extrafields = get_extra_user_fields($this->context);
         $arrows = $this->get_sort_arrows($extrafields);
@@ -433,7 +490,7 @@ class grade_report_history extends grade_report {
         }
 
         foreach ($extrafields as $field) {
-            // BASE-445 - do not show an additional username column
+            // Do not show an additional username column.
             if ($field == 'username') {
                 continue;
             }
@@ -519,7 +576,6 @@ class grade_report_history extends grade_report {
         $strexcluded  = $this->get_lang_string('excluded', 'gradereport_history');
         $strfeedback  = $this->get_lang_string('feedbacktext', 'gradereport_history');
 
-
         $iconasc = $OUTPUT->pix_icon('t/sort_asc', $strsortasc, '', array('class' => 'iconsmall sorticon'));
         $icondesc = $OUTPUT->pix_icon('t/sort_desc', $strsortdesc, '', array('class' => 'iconsmall sorticon'));
 
@@ -588,6 +644,14 @@ class grade_report_history extends grade_report {
         return $arrows;
     }
 
+    /**
+     * Get an instance of the user select button {@link gradereport_history_user_button}.
+     *
+     * @param int $courseid course id
+     * @param array $currentusers List of currently selected users.
+     *
+     * @return gradereport_history_user_button the user select button.
+     */
     public static function get_user_select_button($courseid, $currentusers = array()) {
         global $PAGE;
         $button = new gradereport_history_user_button($PAGE->url, get_string('selectuser', 'gradereport_history'), 'get');
