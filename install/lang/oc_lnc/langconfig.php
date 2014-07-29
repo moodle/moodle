@@ -30,6 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'fr';
+$string['parentlanguage'] = '';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Lengadocian';
