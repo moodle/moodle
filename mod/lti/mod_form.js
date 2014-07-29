@@ -88,7 +88,7 @@
                 e.preventDefault();
             }
             var allowgrades = Y.one('#id_instructorchoiceacceptgrades');
-            var gradefieldset = Y.one('#modstandardgrade');
+            var gradefieldset = Y.one('#id_modstandardgrade');
             if (!allowgrades.get('checked')) {
                 gradefieldset.hide();
             } else {
