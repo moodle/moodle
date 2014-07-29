@@ -1052,16 +1052,6 @@ class core_user_external extends external_api {
             return $warnings;
         }
 
-        // The same key can't exists for the same platform.
-        if ($DB->get_record('user_devices', array('pushid' => $params['pushid'], 'platform' => $params['platform']))) {
-            $warnings['warning'][] = array(
-                'item' => $params['pushid'],
-                'warningcode' => 'existingkeyforplatform',
-                'message' => 'This key is already stored for other device using the same platform'
-            );
-            return $warnings;
-        }
-
         $userdevice = new stdclass;
         $userdevice->userid     = $USER->id;
         $userdevice->appid      = $params['appid'];
