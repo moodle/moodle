@@ -27,7 +27,7 @@ Feature: Course summary block used on the frontpage
     Then I should see "Front page settings" in the "h2" "css_element"
 
   Scenario: Admin can not see edit icon when edit mode is off
-    When I log in as "teacher1"
+    When I log in as "admin"
     And I am on homepage
     Then I should see "Proved the summary block works!" in the "Course/site summary" "block"
     And "Edit" "link" should not exist in the "Course/site summary" "block"
