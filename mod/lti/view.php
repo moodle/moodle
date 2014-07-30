@@ -120,7 +120,7 @@ if ($lti->showtitlelaunch) {
 }
 
 if ($lti->showdescriptionlaunch && $lti->intro) {
-    echo $OUTPUT->box($lti->intro, 'generalbox description', 'intro');
+    echo $OUTPUT->box(format_module_intro('lti', $lti, $cm->id), 'generalbox description', 'intro');
 }
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {

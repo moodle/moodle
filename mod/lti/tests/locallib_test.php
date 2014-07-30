@@ -53,8 +53,14 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 require_once($CFG->dirroot . '/mod/lti/servicelib.php');
 
-
-class mod_lti_locallib_testcase extends basic_testcase {
+/**
+ * Local library tests
+ *
+ * @package    mod_lti
+ * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_lti_locallib_testcase extends advanced_testcase {
 
     public function test_split_custom_parameters() {
         $this->assertEquals(lti_split_custom_parameters("x=1\ny=2"),
@@ -159,5 +165,44 @@ class mod_lti_locallib_testcase extends basic_testcase {
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('https://moodle.org/this/is/moodle'));
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle'));
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
+    }
+
+    /**
+     * Test lti_build_request's resource_link_description and ensure
+     * that the newlines in the description are correct.
+     */
+    public function test_lti_build_request_description() {
+        $this->resetAfterTest();
+
+        self::setUser($this->getDataGenerator()->create_user());
+        $course   = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module('lti', array(
+            'intro'       => "<p>This</p>\nhas\r\n<p>some</p>\nnew\n\rlines",
+            'introformat' => FORMAT_HTML,
+            'course'      => $course->id,
+        ));
+
+        $typeconfig = array(
+            'acceptgrades'     => 1,
+            'forcessl'         => 0,
+            'sendname'         => 2,
+            'sendemailaddr'    => 2,
+            'customparameters' => '',
+        );
+
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+
+        $ncount = substr_count($params['resource_link_description'], "\n");
+        $this->assertGreaterThan(0, $ncount);
+
+        $rcount = substr_count($params['resource_link_description'], "\r");
+        $this->assertGreaterThan(0, $rcount);
+
+        $this->assertEquals($ncount, $rcount, 'The number of \n characters should be the same as the number of \r characters');
+
+        $rncount = substr_count($params['resource_link_description'], "\r\n");
+        $this->assertGreaterThan(0, $rncount);
+
+        $this->assertEquals($ncount, $rncount, 'All newline characters should be a combination of \r\n');
     }
 }
