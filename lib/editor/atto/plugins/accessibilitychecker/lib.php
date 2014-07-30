@@ -39,6 +39,7 @@ function atto_accessibilitychecker_strings_for_js() {
                                     'tableswithmergedcells',
                                     'tablesmissingcaption',
                                     'emptytext',
+                                    'entiredocument',
                                     'tablesmissingheaders'),
                                     'atto_accessibilitychecker');
 }
