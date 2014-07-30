@@ -8762,8 +8762,7 @@ function message_popup_window() {
     }
 
     // There are unread messages so now do a more complex but slower query.
-    $namefields = get_all_user_name_fields(true, 'u');
-    $messagesql = "SELECT m.id, m.smallmessage, m.fullmessageformat, m.notification, m.useridto, m.useridfrom, $namefields, c.blocked
+    $messagesql = "SELECT m.id, c.blocked
                      FROM {message} m
                      JOIN {message_working} mw ON m.id=mw.unreadmessageid
                      JOIN {message_processors} p ON mw.processorid=p.id
@@ -8780,13 +8779,15 @@ function message_popup_window() {
         $messagesql .= 'AND m.timecreated > :lastpopuptime';
     }
 
-    $messageusers = $DB->get_records_sql($messagesql, array('userid' => $USER->id, 'lastpopuptime' => $USER->message_lastpopup));
+    $waitingmessages = $DB->get_records_sql($messagesql, array('userid' => $USER->id, 'lastpopuptime' => $USER->message_lastpopup));
 
     $validmessages = 0;
-    foreach($messageusers as $message) {
-        if ($message->blocked) {
+    foreach ($waitingmessages as $messageinfo) {
+        if ($messageinfo->blocked) {
             // Message is from a user who has since been blocked so just mark it read.
-            message_mark_message_read($message, time());
+            // Get the full message to mark as read.
+            $messageobject = $DB->get_record('message', array('id' => $messageinfo->id));
+            message_mark_message_read($messageobject, time());
         } else {
             $validmessages++;
         }
