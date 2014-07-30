@@ -22,6 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['autosavefailed'] = 'Could not connect to the server. If you submit this page now, your changes may be lost.';
+$string['autosavefrequency'] = 'Autosave frequency (seconds).';
+$string['autosavefrequency_desc'] = 'This is the number of seconds between auto save attempts. Atto will automatically save the text in the editor according to this setting, so that text can be automatically restored when the same user returns to the same form.';
+$string['autosavesucceeded'] = 'Text was automatically saved.';
 $string['cancel'] = 'Cancel';
 $string['confirm'] = 'Confirm';
 $string['confirmrecover'] = 'A previously unsaved version of the text for field "{$a->label}" was found. Do you want to recover it?';
@@ -42,4 +46,3 @@ $string['plugin_title_shortcut'] = '{$a->title} [{$a->shortcut}]';
 $string['recover'] = 'Recover';
 $string['infostatus'] = 'Information';
 $string['warningstatus'] = 'Warning';
-$string['autosavefailed'] = 'Could not connect to the server. If you submit this page now, your changes may be lost.';

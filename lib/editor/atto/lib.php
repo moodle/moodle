@@ -129,7 +129,8 @@ class atto_texteditor extends texteditor {
                 'recover',
                 'cancel',
                 'confirmrecover',
-                'autosavefailed'
+                'autosavefailed',
+                'autosavesucceeded'
             ), 'editor_atto');
         $PAGE->requires->strings_for_js(array(
                 'warning',
