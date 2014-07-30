@@ -827,10 +827,6 @@ class core_renderer extends renderer_base {
             $this->page->add_body_class('userloggedinas');
         }
 
-        if (is_role_switched($this->page->course->id)) {
-            $this->page->add_body_class('userswitchedrole');
-        }
-
         // Give themes a chance to init/alter the page object.
         $this->page->theme->init_page($this->page);
 
