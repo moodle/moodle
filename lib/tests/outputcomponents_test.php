@@ -389,7 +389,7 @@ EOF;
     }
 
     public function test_prepare() {
-        $expecteda = array('1',
+        $expecteda = array('<span class="current-page">1</span>',
                            '<a href="index.php?page=1">2</a>',
                            '<a href="index.php?page=2">3</a>',
                            '<a href="index.php?page=3">4</a>',
@@ -400,7 +400,7 @@ EOF;
                            );
         $expectedb = array('<a href="page?page=3">4</a>',
                            '<a href="page?page=4">5</a>',
-                           '6',
+                           '<span class="current-page">6</span>',
                            '<a href="page?page=6">7</a>',
                            '<a href="page?page=7">8</a>',
                            );

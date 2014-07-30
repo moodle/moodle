@@ -2359,7 +2359,7 @@ class paging_bar implements renderable {
                 $displaypage = $currpage + 1;
 
                 if ($this->page == $currpage) {
-                    $this->pagelinks[] = $displaypage;
+                    $this->pagelinks[] = html_writer::span($displaypage, 'current-page');
                 } else {
                     $pagelink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$currpage)), $displaypage);
                     $this->pagelinks[] = $pagelink;
