@@ -190,6 +190,7 @@ div.editor_atto_content:hover .atto_control {
     margin-left: 1px;
     margin-right: 1px;
     margin-bottom: 1em;
+    cursor: pointer;
 }
 .editor_atto_notification .atto_info {
     display: inline-block;

@@ -125,10 +125,7 @@ class atto_texteditor extends texteditor {
                 'editor_command_keycode',
                 'editor_control_keycode',
                 'plugin_title_shortcut',
-                'confirm',
-                'recover',
-                'cancel',
-                'confirmrecover',
+                'textrecovered',
                 'autosavefailed',
                 'autosavesucceeded'
             ), 'editor_atto');
@@ -157,6 +154,7 @@ class atto_texteditor extends texteditor {
         $strdate        = get_string('strftimedaydate');
         $lang           = current_language();
         $autosave       = true;
+        $autosavefrequency = get_config('editor_atto', 'autosavefrequency');
         if (isset($options['autosave'])) {
             $autosave       = $options['autosave'];
         }
@@ -167,6 +165,7 @@ class atto_texteditor extends texteditor {
             'content_css' => $contentcss,
             'contextid' => $options['context']->id,
             'autosaveEnabled' => $autosave,
+            'autosaveFrequency' => $autosavefrequency,
             'language' => $lang,
             'directionality' => $directionality,
             'filepickeroptions' => array(),
