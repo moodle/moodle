@@ -65,10 +65,9 @@ class unknown_service_api_called extends \core\event\base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'lti';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['context'] = \context_system::instance();
+        $this->context = \context_system::instance();
     }
 
     /**
