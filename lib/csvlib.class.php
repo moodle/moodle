@@ -471,6 +471,11 @@ class csv_export_writer {
      */
     protected function send_header() {
         global $CFG;
+
+        if (defined('BEHAT_SITE_RUNNING')) {
+            // For text based formats - we cannot test the output with behat if we force a file download.
+            return;
+        }
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
             header('Cache-Control: max-age=10');
             header('Pragma: ');
