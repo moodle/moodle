@@ -31,7 +31,6 @@ abstract class grade_export {
     public $course;      // course object
     public $columns;     // array of grade_items selected for export
 
-    public $previewrows;     // number of rows in preview
     public $export_letters;  // export letters
     public $export_feedback; // export feedback
     public $userkey;         // export using private user key
@@ -43,24 +42,61 @@ abstract class grade_export {
     public $usercustomfields; // include users custom fields
 
     /**
-     * Constructor should set up all the private variables ready to be pulled
+     * @deprecated since Moodle 2.8
+     * @var $previewrows Number of rows in preview.
+     */
+    public $previewrows;
+
+    /**
+     * Constructor should set up all the private variables ready to be pulled.
+     *
+     * This constructor used to accept the individual parameters as separate arguments, in
+     * 2.8 this was simplified to just accept the data from the moodle form.
+     *
      * @access public
      * @param object $course
-     * @param int $groupid id of selected group, 0 means all
-     * @param string $itemlist comma separated list of item ids, empty means all
-     * @param boolean $export_feedback
-     * @param boolean $updatedgradesonly
-     * @param string $displaytype
-     * @param int $decimalpoints
-     * @param boolean $onlyactive
-     * @param boolean $usercustomfields include user custom field in export
+     * @param int $groupid
+     * @param stdClass|null $formdata
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    public function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $onlyactive = false, $usercustomfields = false) {
+    public function __construct($course, $groupid, $formdata) {
+        if (func_num_args() != 3 || ($formdata != null && get_class($formdata) != "stdClass")) {
+            $args = func_get_args();
+            return call_user_func_array(array($this, "deprecated_constructor"), $args);
+        }
         $this->course = $course;
         $this->groupid = $groupid;
+
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
 
+        $this->process_form($formdata);
+    }
+
+    /**
+     * Old deprecated constructor.
+     *
+     * This deprecated constructor accepts the individual parameters as separate arguments, in
+     * 2.8 this was simplified to just accept the data from the moodle form.
+     *
+     * @deprecated since 2.8 MDL-46548. Instead call the shortened constructor which accepts the data
+     * directly from the grade_export_form.
+     */
+    protected function deprecated_constructor($course,
+                                              $groupid=0,
+                                              $itemlist='',
+                                              $export_feedback=false,
+                                              $updatedgradesonly = false,
+                                              $displaytype = GRADE_DISPLAY_TYPE_REAL,
+                                              $decimalpoints = 2,
+                                              $onlyactive = false,
+                                              $usercustomfields = false) {
+
+        debugging('Many argument constructor for class "grade_export" is deprecated. Call the 3 argument version instead.', DEBUG_DEVELOPER);
+
+        $this->course = $course;
+        $this->groupid = $groupid;
+
+        $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
         //Populating the columns here is required by /grade/export/(whatever)/export.php
         //however index.php, when the form is submitted, will construct the collection here
         //with an empty $itemlist then reconstruct it in process_form() using $formdata
@@ -124,6 +160,10 @@ abstract class grade_export {
                 $formdata->key = create_user_key('grade/export', $USER->id, $this->course->id, $formdata->iprestriction, $formdata->validuntil);
             }
             $this->userkey = $formdata->key;
+        }
+
+        if (isset($formdata->decimals)) {
+            $this->decimalpoints = $formdata->decimals;
         }
 
         if (isset($formdata->export_letters)) {
@@ -209,9 +249,12 @@ abstract class grade_export {
     /**
      * Prints preview of exported grades on screen as a feedback mechanism
      * @param bool $require_user_idnumber true means skip users without idnumber
+     * @deprecated since 2.8 MDL-46548. Previews are not useful on export.
      */
     public function display_preview($require_user_idnumber=false) {
         global $OUTPUT;
+
+        debugging('function grade_export::display_preview is deprecated.', DEBUG_DEVELOPER);
 
         $userprofilefields = grade_helper::get_user_profile_fields($this->course->id, $this->usercustomfields);
         $formatoptions = new stdClass();
@@ -327,19 +370,25 @@ abstract class grade_export {
     /**
      * Either prints a "Export" box, which will redirect the user to the download page,
      * or prints the URL for the published data.
+     *
+     * @deprecated since 2.8 MDL-46548. Call get_export_url and set the
+     *             action of the grade_export_form instead.
      * @return void
      */
     public function print_continue() {
         global $CFG, $OUTPUT;
 
+        debugging('function grade_export::print_continue is deprecated.', DEBUG_DEVELOPER);
         $params = $this->get_export_params();
 
         echo $OUTPUT->heading(get_string('export', 'grades'));
 
         echo $OUTPUT->container_start('gradeexportlink');
 
-        if (!$this->userkey) {      // this button should trigger a download prompt
-            echo $OUTPUT->single_button(new moodle_url('/grade/export/'.$this->plugin.'/export.php', $params), get_string('download', 'admin'));
+        if (!$this->userkey) {
+            // This button should trigger a download prompt.
+            $url = new moodle_url('/grade/export/'.$this->plugin.'/export.php', $params);
+            echo $OUTPUT->single_button($url, get_string('download', 'admin'));
 
         } else {
             $paramstr = '';
@@ -354,6 +403,8 @@ abstract class grade_export {
             echo get_string('download', 'admin').': ' . html_writer::link($link, $link);
         }
         echo $OUTPUT->container_end();
+
+        return;
     }
 }
 
