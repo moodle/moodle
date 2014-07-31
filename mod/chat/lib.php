@@ -723,7 +723,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     if ($courseid) {
         $message->picture = "<a onclick=\"window.open('$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid')\"".
-        $message->picture .= " href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
+                            " href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }
 
     // Calculate the row class.
