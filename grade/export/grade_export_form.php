@@ -37,6 +37,11 @@ class grade_export_form extends moodleform {
         if (empty($features['simpleui'])) {
             debugging('Grade export plugin needs updating to support one step exports.', DEBUG_DEVELOPER);
         }
+        if (!empty($features['idnumberrequired'])) {
+            $mform->addElement('header', 'warnings', get_string('warning', 'moodle'));
+            $mform->setExpanded('warnings', true);
+            $mform->addElement('static', 'idnumberwarning', get_string('useridnumberwarning', 'grades'));
+        }
 
         $mform->addElement('header', 'options', get_string('exportformatoptions', 'grades'));
         if (!empty($features['simpleui'])) {
