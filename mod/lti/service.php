@@ -156,17 +156,18 @@ switch ($messagetype) {
         $data = new stdClass();
         $data->body = $rawbody;
         $data->xml = $xml;
+        $data->messageid = lti_parse_message_id($xml);
         $data->messagetype = $messagetype;
         $data->consumerkey = $consumerkey;
         $data->sharedsecret = $sharedsecret;
         $eventdata = array();
         $eventdata['other'] = array();
-        $eventdata['other']['messageid'] = lti_parse_message_id($xml);
+        $eventdata['other']['messageid'] = $data->messageid;
         $eventdata['other']['messagetype'] = $messagetype;
         $eventdata['other']['consumerkey'] = $consumerkey;
 
         // Before firing the event, allow subplugins a chance to handle.
-        if (lti_extend_lti_services((object) $eventdata['other'])) {
+        if (lti_extend_lti_services($data)) {
             break;
         }
 
