@@ -657,7 +657,7 @@ class grade_report_history extends grade_report {
         $button = new gradereport_history_user_button($PAGE->url, get_string('selectuser', 'gradereport_history'), 'get');
         $button->class .= ' gradereport_history_plugin';
 
-        $modules = array('moodle-gradereport_history-quickselect', 'moodle-gradereport_history-quickselect-skin');
+        $modules = array('moodle-gradereport_history-userselector');
         $arguments = array(
             'courseid'            => $courseid,
             'ajaxurl'             => '/grade/report/history/ajax.php',
@@ -665,7 +665,7 @@ class grade_report_history extends grade_report {
             'userfullnames'       => $currentusers,
         );
 
-        $function = 'M.gradereport_history.quickselect.init';
+        $function = 'Y.M.gradereport_history.UserSelector.init';
         $button->require_yui_module($modules, $function, array($arguments));
         $button->strings_for_js(array(
             'ajaxoneuserfound',
