@@ -909,7 +909,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     $message->picture = $OUTPUT->user_picture($sender, array('courseid' => $courseid));
 
     $message->picture = "<a target='_blank'".
-    $message->picture .= " href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
+                        " href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
 
     // Start processing the message.
     if (!empty($message->system)) {
