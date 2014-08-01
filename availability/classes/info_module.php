@@ -113,8 +113,7 @@ class info_module extends info {
      * Checks if an activity is visible to the given user.
      *
      * Unlike other checks in the availability system, this check includes the
-     * $cm->visible flag and also (if enabled) the groupmembersonly feature.
-     * It is equivalent to $cm->uservisible.
+     * $cm->visible flag. It is equivalent to $cm->uservisible.
      *
      * If you have already checked (or do not care whether) the user has access
      * to the course, you can set $checkcourse to false to save it checking
@@ -158,11 +157,6 @@ class info_module extends info {
                 $cmorid = $cmorid->id;
             }
             $cm = $DB->get_record('course_modules', array('id' => $cmorid), '*', MUST_EXIST);
-        }
-
-        // Check the groupmembersonly feature.
-        if (!groups_course_module_visible($cm, $userid)) {
-            return false;
         }
 
         // If requested, check user can access the course.

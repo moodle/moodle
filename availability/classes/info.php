@@ -403,19 +403,19 @@ abstract class info {
      * Supported fields: availablefrom, availableuntil, showavailability
      * (and groupingid for sections).
      *
-     * If you enable $modgroupmembersonly, then it also supports the
-     * groupmembersonly field for modules. This is off by default because
-     * we are not yet moving the groupmembersonly option into this new API.
+     * It also supports the groupmembersonly field for modules. This part was
+     * optional in 2.7 but now always runs (because groupmembersonly has been
+     * removed).
      *
      * @param \stdClass $rec Object possibly containing legacy fields
      * @param bool $section True if this is a section
-     * @param bool $modgroupmembersonly True if groupmembersonly is converted for mods
+     * @param bool $modgroupmembersonlyignored Ignored option, previously used
      * @return string|null New availability value or null if none
      */
-    public static function convert_legacy_fields($rec, $section, $modgroupmembersonly = false) {
+    public static function convert_legacy_fields($rec, $section, $modgroupmembersonlyignored = false) {
         // Do nothing if the fields are not set.
         if (empty($rec->availablefrom) && empty($rec->availableuntil) &&
-                (!$modgroupmembersonly || empty($rec->groupmembersonly)) &&
+                (empty($rec->groupmembersonly)) &&
                 (!$section || empty($rec->groupingid))) {
             return null;
         }
@@ -426,7 +426,7 @@ abstract class info {
 
         // Groupmembersonly condition (if enabled) for modules, groupingid for
         // sections.
-        if (($modgroupmembersonly && !empty($rec->groupmembersonly)) ||
+        if (!empty($rec->groupmembersonly) ||
                 (!empty($rec->groupingid) && $section)) {
             if (!empty($rec->groupingid)) {
                 $conditions[] = '{"type":"grouping"' .
