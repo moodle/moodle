@@ -26,7 +26,7 @@ Feature: I need to export grades as xml
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Update"
 
-  @_file_upload @javascript
+  @javascript
   Scenario: Export grades as text
     When I navigate to "XML file" node in "Grade administration > Export"
     And I expand all fieldsets

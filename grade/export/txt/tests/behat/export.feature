@@ -40,7 +40,7 @@ Feature: I need to export grades as text
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Update"
 
-  @_file_upload @javascript
+  @javascript
   Scenario: Export grades as text
     When I set the field "Grade report" to "Plain text file"
     And I expand all fieldsets
