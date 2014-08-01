@@ -70,6 +70,7 @@ var SELECTORS = {
     SELECT: '.' + CSS.SELECT,
     SELECTEDNAMES: '.felement .selectednames',
     TRIGGER: '.gradereport_history_plugin input.selectortrigger',
+    USER: '.' + CSS.USER,
     USERDESELECT: '.' + CSS.USER + ' .' + CSS.DESELECT,
     USERFULLNAMES: 'input[name="userfullnames"]',
     USERIDS: 'input[name="userids"]',
@@ -265,7 +266,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         if (!this._userTemplate) {
             this._userTemplate = Y.Handlebars.compile(
-                '<div class="{{CSS.USER}} {{selected}} clearfix" rel="{{userId}}">' +
+                '<div class="{{CSS.USER}} {{selected}} clearfix" data-userid="{{userId}}">' +
                     '<div class="{{CSS.COUNT}}">{{count}}</div>' +
                     '<div class="{{CSS.PICTURE}}">{{{picture}}}</div>' +
                     '<div class="{{CSS.DETAILS}}">' +
@@ -273,7 +274,8 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                         '<div class="{{CSS.EXTRAFIELDS}}">{{extrafields}}</div>' +
                     '</div>' +
                     '<div class="{{CSS.OPTIONS}}">' +
-                        '<input type="button" class="{{actionClass}}" value="{{get_string actionStr actionComponent}}">' +
+                        '<input type="button" class="{{CSS.SELECT}}" value="{{get_string "select" "moodle"}}">' +
+                        '<input type="button" class="{{CSS.DESELECT}}" value="{{get_string "deselect" COMPONENT}}">' +
                     '</div>' +
                 '</div>'
             );
@@ -293,27 +295,15 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                 selected = '';
             }
 
-            if (selected === '') {
-                actionClass = CSS.SELECT;
-                actionStr = 'select';
-                actionComponent = 'moodle';
-            } else {
-                actionClass = CSS.DESELECT;
-                actionStr = 'deselect';
-                actionComponent = COMPONENT;
-            }
-
             node = create(userTemplate({
-                actionClass: actionClass,
-                actionComponent: actionComponent,
-                actionStr: actionStr,
+                COMPONENT: COMPONENT,
                 count: count,
                 CSS: CSS,
                 extrafields: user.extrafields,
                 fullname: user.fullname,
                 picture: user.picture,
                 selected: selected,
-                userId: user.userid,
+                userId: user.userid
             }));
             users.append(node);
         }
@@ -342,11 +332,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         }
     },
     deselectUser : function(e, args) {
-        var user = e.currentTarget.ancestor('.'+CSS.USER);
+        var user = e.currentTarget.ancestor(SELECTORS.USER);
         var list = this.get(USP.SELECTEDUSERS);
 
         // Find and remove item from the array.
-        var i = list.indexOf(user.getAttribute('rel'));
+        var i = list.indexOf(user.getData('userid'));
         if (i != -1) {
             list.splice(i, 1);
         }
@@ -354,35 +344,28 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         Y.one(SELECTORS.USERIDS).set('value', list.join());
 
         var namelist = this.get(USP.USERFULLNAMES);
-        delete namelist[user.getAttribute('rel')];
+        delete namelist[user.getData('userid')];
         this.set(USP.USERFULLNAMES, namelist);
         this.setnamedisplay();
 
         user.removeClass(CSS.SELECTED);
-        user.one(SELECTORS.DESELECT).remove();
-        user.one(SELECTORS.OPTIONS).append(create('<input type="button" class="'+CSS.SELECT+'" value="'+Y.Escape.html(M.util.get_string('select', 'moodle'))+'" />'));
     },
     selectUser : function(e, args) {
-        var user = e.currentTarget.ancestor('.'+CSS.USER);
+        var user = e.currentTarget.ancestor(SELECTORS.USER);
 
         // Add id to the userids element and internal js list.
         var list = this.get(USP.SELECTEDUSERS);
-        list.push(user.getAttribute('rel'));
+        list.push(user.getData('userid'));
         this.set(USP.SELECTEDUSERS, list);
 
         var fullname = user.one(SELECTORS.FULLNAME).get('innerHTML');
         var namelist = this.get(USP.USERFULLNAMES);
-        namelist[user.getAttribute('rel')] = fullname;
+        namelist[user.getData('userid')] = fullname;
         this.set(USP.USERFULLNAMES, namelist);
         this.setnamedisplay();
 
         Y.one(SELECTORS.USERIDS).set('value', list.join());
-
-        // Add name to selected list.
-
         user.addClass(CSS.SELECTED);
-        user.one(SELECTORS.SELECT).remove();
-        user.one(SELECTORS.OPTIONS).append(create('<input type="button" class="'+CSS.DESELECT+'" value="'+Y.Escape.html(M.util.get_string('deselect', COMPONENT))+'" />'));
     },
     setContent: function(content) {
         this.get(USP.BASE).one(SELECTORS.AJAXCONTENT).setContent(content);

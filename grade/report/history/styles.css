@@ -45,9 +45,11 @@ table#gradestable th.header.selected {
 .user-selector-panel .usp-search-results .user .picture {width:45px;float:left;margin:3px;}
 .user-selector-panel .usp-search-results .user .details {width:250px;float:left;margin:3px;}
 .user-selector-panel .usp-search-results .user .options {padding-right:7px;font-size:8pt;margin:3px;}
-.user-selector-panel .usp-search-results .user .options .deselect {margin:3px;float:right;cursor:pointer;}
+.user-selector-panel .usp-search-results .user .options .deselect {margin:3px;float:right;cursor:pointer;display: none;}
 .user-selector-panel .usp-search-results .user .options .select {margin:3px;float:right;cursor:pointer;}
 .user-selector-panel .usp-search-results .user.selected .count {width:40px;color:#eee;}
+.user-selector-panel .usp-search-results .user.selected .select { display: none; }
+.user-selector-panel .usp-search-results .user.selected .deselect { display: block; }
 .user-selector-panel .usp-search-results .usp-more-results {background-color:#eee;padding:5px;border-top:1px solid #BBB;}
 
 .user-selector-panel .usp-loading-lightbox {position:absolute;width:100%;height:100%;top:0;left:0;background-color:#FFF;min-width:50px;min-height:50px;}
