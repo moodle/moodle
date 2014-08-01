@@ -990,7 +990,6 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 /**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_COMPLETION_HAS_RULES
@@ -1003,7 +1002,6 @@ function scorm_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_COMPLETION_HAS_RULES:    return true;

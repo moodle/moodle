@@ -160,7 +160,7 @@ class core_test_generator_testcase extends advanced_testcase {
             'cmidnumber' => 'IDNUM', // Note: alternatively can have key 'idnumber'.
             // Module supports FEATURE_GROUPS;
             'groupmode' => SEPARATEGROUPS, // Note: will be reset to 0 if course groupmodeforce is set.
-            // Module supports FEATURE_GROUPINGS or module supports FEATURE_GROUPMEMBERSONLY:
+            // Module supports FEATURE_GROUPINGS.
             'groupingid' => $grouping->id,
         );
 

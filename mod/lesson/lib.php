@@ -729,7 +729,6 @@ function lesson_get_extra_capabilities() {
 /**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_GRADE_HAS_GRADE
@@ -741,7 +740,6 @@ function lesson_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return false;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
