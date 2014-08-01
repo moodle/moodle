@@ -29,20 +29,20 @@
 
 var COMPONENT = 'gradereport_history';
 var USP = {
-    NAME : 'User Selector Manager',
+    AJAXURL : 'ajaxurl',
     BASE : 'base',
+    COURSEID : 'courseid',
+    DIALOGUE_PREFIX : 'moodle-dialogue',
+    NAME : 'gradereport_history_usp',
+    PAGE : 'page',
+    PARAMS : 'params',
+    PERPAGE : 'perPage',
     SEARCH : 'search',
     SEARCHBTN : 'searchbtn',
-    PARAMS : 'params',
-    URL : 'url',
-    AJAXURL : 'ajaxurl',
-    PAGE : 'page',
-    COURSEID : 'courseid',
     SELECTEDUSERS : 'selectedusers',
-    USERFULLNAMES : 'userfullnames',
-    USERS : 'users',
+    URL : 'url',
     USERCOUNT : 'userCount',
-    PERPAGE : 'perPage'
+    USERFULLNAMES : 'userfullnames'
 };
 var CSS = {
     ACCESSHIDE : 'accesshide',
@@ -53,18 +53,14 @@ var CSS = {
     COUNT : 'count',
     DESELECT : 'deselect',
     DETAILS : 'details',
-    EVEN : 'even',
     EXTRAFIELDS : 'extrafields',
     FOOTER : 'usp-footer',
     FULLNAME : 'fullname',
-    HEADER : 'usp-header',
     HIDDEN : 'hidden',
     LIGHTBOX : 'usp-loading-lightbox',
     LOADINGICON : 'loading-icon',
     MORERESULTS : 'usp-more-results',
-    ODD  : 'odd',
     OPTIONS : 'options',
-    PANEL : 'user-selector-panel',
     PICTURE : 'picture',
     SEARCH : 'usp-search',
     SEARCHBTN : 'usp-search-btn',
@@ -78,13 +74,12 @@ var CSS = {
     WRAP : 'usp-wrap'
 };
 var SELECTORS = {
-    AJAXCONTENT: '.' + CSS.CONTENT + ' .' + CSS.AJAXCONTENT,
+    AJAXCONTENT: '.' + CSS.AJAXCONTENT,
     DESELECT: '.' + CSS.DESELECT,
+    FOOTER: '.' + CSS.FOOTER,
     FOOTERCLOSE: '.' + CSS.FOOTER + ' .' + CSS.CLOSEBTN + ' input',
     FULLNAME: '.' + CSS.FULLNAME,
-    HEADERCLOSE: '.' + CSS.HEADER + ' .' + CSS.CLOSE,
-    HEADING: '.' + CSS.HEADER + ' h2',
-    LIGHTBOX: '.' + CSS.CONTENT + ' .' + CSS.LIGHTBOX,
+    LIGHTBOX: '.' + CSS.LIGHTBOX,
     MORERESULTS: '.' + CSS.MORERESULTS,
     OPTIONS: '.' + CSS.OPTIONS,
     RESULTSUSERS: '.' + CSS.SEARCHRESULTS + ' .' + CSS.USERS,
@@ -112,25 +107,16 @@ var create = Y.Node.create;
 var USERSELECTOR = function() {
     USERSELECTOR.superclass.constructor.apply(this, arguments);
 };
-Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Base, {
+Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.core.dialogue, {
 
     /**
-     * The loading node.
+     * Whether or not this is the first time the user displays the dialogue within that request.
      *
-     * @property _loadingNode
-     * @type Node
+     * @property _firstDisplay
+     * @type {Boolean}
      * @private
      */
-    _loadingNode : null,
-
-    /**
-     * The Escape key close event.
-     *
-     * @property _escCloseEvent
-     * @type Event
-     * @private
-     */
-    _escCloseEvent : null,
+    _firstDisplay: true,
 
     /**
      * Compiled template function for a user node.
@@ -142,16 +128,14 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
     _userTemplate : null,
 
     initializer : function() {
-        var list,
+        var bb = this.get('boundingBox'),
+            content,
+            list,
             params,
             tpl;
 
-        tpl = Y.Handlebars.compile('<div class="{{CSS.PANEL}} {{CSS.HIDDEN}}">' +
+        tpl = Y.Handlebars.compile(
                 '<div class="{{CSS.WRAP}}">' +
-                    '<div class="{{CSS.HEADER}}">' +
-                        '<div class="{{CSS.CLOSE}}"></div>' +
-                        '<h2>{{get_string "selectuser" COMPONENT}}</h2>' +
-                    '</div>' +
                     '<div class="{{CSS.CONTENT}}">' +
                         '<div class="{{CSS.AJAXCONTENT}}"></div>' +
                         '<div class="{{CSS.LIGHTBOX}} {{CSS.HIDDEN}}">' +
@@ -171,20 +155,26 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                         '<div class="{{CSS.CLOSEBTN}}">' +
                             '<input type="button" value="{{get_string "finishselectingusers" COMPONENT}}">' +
                         '</div>' +
-                    '</div>' +
-                '</div>' +
-            '</div>');
+                    '<div>' +
+                '</div>');
 
-        this.set(USP.BASE, create(
+        content = create(
             tpl({
                 COMPONENT: COMPONENT,
                 CSS: CSS,
                 loadingIcon: M.util.image_url('i/loading', 'moodle')
             })
-        ));
+        );
 
-        this.set(USP.SEARCH, this.get(USP.BASE).one(SELECTORS.SEARCHFIELD));
-        this.set(USP.SEARCHBTN, this.get(USP.BASE).one(SELECTORS.SEARCHBTN));
+        // Set the title and content.
+        this.getStdModNode(Y.WidgetStdMod.HEADER).prepend(create('<h1>' + this.get('title') + '</h1>'));
+        this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
+
+        // Use standard dialogue class name. This removes the default styling of the footer.
+        this.get('boundingBox').one('.moodle-dialogue-wrap').addClass('moodle-dialogue-content');
+
+        this.set(USP.SEARCH, bb.one(SELECTORS.SEARCHFIELD));
+        this.set(USP.SEARCHBTN, bb.one(SELECTORS.SEARCHBTN));
         list = Y.one(SELECTORS.USERIDS).get('value').split(',');
         if (list[0] === '') {
             list = [];
@@ -201,23 +191,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         Y.one(SELECTORS.TRIGGER).on('click', this.show, this);
 
-        this.get(USP.BASE).one(SELECTORS.HEADERCLOSE).on('click', this.hide, this);
-        this.get(USP.BASE).one(SELECTORS.FOOTERCLOSE).on('click', this.hide, this);
-        this._loadingNode = this.get(USP.BASE).one(SELECTORS.LIGHTBOX);
+        bb.one(SELECTORS.FOOTERCLOSE).on('click', this.hide, this);
         params = this.get(USP.PARAMS);
         params.id = this.get(USP.COURSEID);
         this.set(USP.PARAMS, params);
 
         Y.on('key', this.preSearch, this.get(USP.SEARCH), 'down:13', this);
         this.get(USP.SEARCHBTN).on('click', this.preSearch, this);
-
-        Y.one(document.body).append(this.get(USP.BASE));
-
-        var base = this.get(USP.BASE);
-        base.plug(Y.Plugin.Drag);
-        base.dd.addHandle(SELECTORS.HEADING);
-        base.one(SELECTORS.HEADING).setStyle('cursor', 'move');
-
     },
 
     /**
@@ -235,36 +215,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
      * @method show
      */
     show : function(e) {
-        e.preventDefault();
-        e.halt();
-
-        var base = this.get(USP.BASE);
-        base.removeClass(CSS.HIDDEN);
-        var x = (base.get('winWidth') - 400)/2;
-        var y = (parseInt(base.get('winHeight'), 10)-base.get('offsetHeight'))/2 + parseInt(base.get('docScrollY'), 10);
-        if (y < parseInt(base.get('winHeight'), 10)*0.1) {
-            y = parseInt(base.get('winHeight'), 10)*0.1;
-        }
-        base.setXY([x,y]);
-
-        if (this.get(USP.USERS)===null) {
+        if (this._firstDisplay) {
+            // Load the default list of users when the dialogue is loaded for the first time.
+            this._firstDisplay = false;
             this.search(e, false);
         }
-
-        this._escCloseEvent = Y.on('key', this.hide, document.body, 'down:27', this);
-    },
-
-    /**
-     * Hide the dialogue.
-     *
-     * @method hide
-     */
-    hide : function(e) {
-        if (this._escCloseEvent) {
-            this._escCloseEvent.detach();
-            this._escCloseEvent = null;
-        }
-        this.get(USP.BASE).addClass(CSS.HIDDEN);
+        Y.namespace('M.gradereport_history.UserSelector').superclass.show.call(this);
     },
 
     /**
@@ -312,7 +268,10 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
      * @method displayLoading
      */
     displayLoading : function() {
-        this._loadingNode.removeClass(CSS.HIDDEN);
+        var bb = this.get('boundingBox');
+        bb.one(SELECTORS.LIGHTBOX).removeClass(CSS.HIDDEN);
+        bb.one(SELECTORS.AJAXCONTENT).addClass(CSS.HIDDEN);
+        bb.one(SELECTORS.FOOTER).addClass(CSS.HIDDEN);
     },
 
     /**
@@ -321,7 +280,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
      * @method removeLoading
      */
     removeLoading : function() {
-        this._loadingNode.addClass(CSS.HIDDEN);
+        var bb = this.get('boundingBox');
+        bb.one(SELECTORS.LIGHTBOX).addClass(CSS.HIDDEN);
+        bb.one(SELECTORS.AJAXCONTENT).removeClass(CSS.HIDDEN);
+        bb.one(SELECTORS.FOOTER).removeClass(CSS.HIDDEN);
+        this.centerDialogue();
     },
 
     /**
@@ -336,9 +299,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             count,
             selected,
             i,
-            actionClass,
-            actionStr,
-            actionComponent,
             node,
             usersstr,
             content,
@@ -358,7 +318,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         if (!args.append) {
             users = create('<div class="'+CSS.USERS+'"></div>');
         } else {
-            users = this.get(USP.BASE).one(SELECTORS.RESULTSUSERS);
+            users = this.get('boundingBox').one(SELECTORS.RESULTSUSERS);
         }
 
         if (!this._userTemplate) {
@@ -424,7 +384,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             Y.delegate("click", this.deselectUser, users, SELECTORS.USERDESELECT, this, args);
         } else {
             if (result.response.totalusers <= (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                this.get(USP.BASE).one(SELECTORS.MORERESULTS).remove();
+                this.get('boundingBox').one(SELECTORS.MORERESULTS).remove();
             }
         }
     },
@@ -488,7 +448,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
      * @param {String} content The content.
      */
     setContent: function(content) {
-        this.get(USP.BASE).one(SELECTORS.AJAXCONTENT).setContent(content);
+        this.get('boundingBox').one(SELECTORS.AJAXCONTENT).setContent(content);
     },
 
     /**
@@ -506,7 +466,46 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
     }
 }, {
     NAME : USP.NAME,
+    CSS_PREFIX : USP.CSS_PREFIX,
     ATTRS : {
+
+        extraClasses: {
+            value: [
+                'gradereport_history_usp'
+            ]
+        },
+
+        /**
+         * The header.
+         *
+         * @attribute title
+         * @type String
+         */
+        title: {
+            validator: Y.Lang.isString,
+            value: M.util.get_string('selectusers', COMPONENT)
+        },
+
+        /**
+         * Whether to focus on the target that caused the Widget to be shown.
+         *
+         * @attribute focusOnPreviousTargetAfterHide
+         * @type Node
+         */
+        focusOnPreviousTargetAfterHide: {
+            value: true
+        },
+
+        /**
+         *
+         * Width.
+         *
+         * @attribute width
+         * @type {String|Number}
+         */
+        width: {
+            value: '500px'
+        },
 
         /**
          * The current page URL.
@@ -526,33 +525,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
          */
         ajaxurl : {
             validator : Y.Lang.isString
-        },
-
-        /**
-         * The dialogue.
-         *
-         * @attribute base
-         * @type Node
-         */
-        base : {
-            setter : function(node) {
-                var n = Y.one(node);
-                if (!n) {
-                    Y.fail(USP.NAME+': invalid base node set');
-                }
-                return n;
-            }
-        },
-
-        /**
-         * The initial list of users.
-         *
-         * @attribute userfullnames
-         * @type Object
-         */
-        users : {
-            validator : Y.Lang.isArray,
-            value : null
         },
 
         /**
@@ -646,9 +618,40 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             value: 25,
             Validator: Y.Lang.isNumber
         }
+
     }
 });
-Y.augment(Y.namespace('M.gradereport_history').UserSelector, Y.EventTarget);
+// Y.augment(Y.namespace('M.gradereport_history').UserSelector, Y.EventTarget);
+
+Y.Base.modifyAttrs(Y.namespace('M.gradereport_history.UserSelector'), {
+
+    /**
+     * Boolean indicating whether or not the Widget is visible.
+     *
+     * @attribute visible
+     * @default true
+     * @type Boolean
+     */
+    visible: {
+        value: false
+    },
+
+   /**
+    * Whether the widget should be modal or not.
+    *
+    * @attribute modal
+    * @type Boolean
+    * @default true
+    */
+    modal: {
+        value: true
+    },
+
+    draggable: {
+        value: true
+    }
+
+});
 
 Y.namespace('M.gradereport_history.UserSelector').init = function(cfg) {
     return new USERSELECTOR(cfg);

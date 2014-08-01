@@ -51,6 +51,7 @@ $string['revisedonly_help'] = 'Only show grades which have been revised.
 
 This means only entries which result in the grade changing are listed.';
 $string['selectuser'] = 'Select user';
+$string['selectusers'] = 'Select users';
 $string['selectedusers'] = 'Selected users';
 $string['source'] = 'Source';
 $string['useractivitygrade'] = '{$a} grade';

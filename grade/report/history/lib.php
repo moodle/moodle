@@ -677,6 +677,7 @@ class grade_report_history extends grade_report {
         $button->strings_for_js(array(
             'deselect',
             'selectuser',
+            'selectusers',
             'finishselectingusers',
         ), 'gradereport_history');
         $button->strings_for_js(array(
