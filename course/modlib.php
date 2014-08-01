@@ -66,7 +66,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     }
     $newcm->groupmode        = $moduleinfo->groupmode;
     $newcm->groupingid       = $moduleinfo->groupingid;
-    $newcm->groupmembersonly = $moduleinfo->groupmembersonly;
     $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         $newcm->completion                = $moduleinfo->completion;
@@ -358,10 +357,6 @@ function set_moduleinfo_defaults($moduleinfo) {
         $moduleinfo->groupingid = 0;
     }
 
-    if (!isset($moduleinfo->groupmembersonly)) {
-        $moduleinfo->groupmembersonly = 0;
-    }
-
     if (!isset($moduleinfo->name)) { // Label.
         $moduleinfo->name = $moduleinfo->modulename;
     }
@@ -476,9 +471,6 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     $cm->groupmode = $moduleinfo->groupmode;
     if (isset($moduleinfo->groupingid)) {
         $cm->groupingid = $moduleinfo->groupingid;
-    }
-    if (isset($moduleinfo->groupmembersonly)) {
-        $cm->groupmembersonly = $moduleinfo->groupmembersonly;
     }
 
     $completion = new completion_info($course);
