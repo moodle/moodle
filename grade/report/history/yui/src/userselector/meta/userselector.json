@@ -2,11 +2,12 @@
     "moodle-gradereport_history-userselector": {
         "requires": [
             "dd-plugin",
+            "escape",
             "event-delegate",
             "event-key",
             "io-base",
             "json-parse",
-            "moodle-core-notification",
+            "moodle-core-notification-dialogue",
             "overlay"
         ]
     }

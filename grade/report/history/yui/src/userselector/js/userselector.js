@@ -1,3 +1,4 @@
+var COMPONENT = 'gradereport_history';
 var USP = {
     NAME : 'User Selector Manager',
     /** Properties **/
@@ -66,7 +67,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             .append(create('<div class="'+CSS.WRAP+'"></div>')
                 .append(create('<div class="'+CSS.HEADER+' header"></div>')
                     .append(create('<div class="'+CSS.CLOSE+'"></div>'))
-                    .append(create('<h2>'+M.str.gradereport_history.selectuser+'</h2>')))
+                    .append(create('<h2>'+M.util.get_string('selectuser', COMPONENT)+'</h2>')))
                 .append(create('<div class="'+CSS.CONTENT+'"></div>')
                     .append(create('<div class="'+CSS.AJAXCONTENT+'"></div>'))
                     .append(create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
@@ -74,12 +75,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                             .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
                         .setStyle('opacity', 0.5)))
                 .append(create('<div class="'+CSS.FOOTER+'"></div>')
-                    .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+M.str.enrol.usersearch+'</label></div>')
+                    .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+Y.Escape.html(M.util.get_string('usersearch', 'enrol'))+'</label></div>')
                         .append(create('<input type="text" id="enrolusersearch" value="" />'))
-                            .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+M.str.enrol.usersearch+'" />'))
+                            .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+Y.Escape.html(M.util.get_string('usersearch', 'enrol'))+'" />'))
                     )
                     .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
-                        .append(create('<input type="button" value="'+M.str.gradereport_history.finishselectingusers+'" />'))
+                        .append(create('<input type="button" value="'+Y.Escape.html(M.util.get_string('finishselectingusers', COMPONENT))+'" />'))
                     )
                 )
             )
@@ -212,7 +213,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             new M.core.exception(e);
         }
         if (!result.success) {
-            this.setContent = M.str.enrol.errajaxsearch;
+            this.setContent = M.util.get_string('errajaxsearch', 'enrol');
         }
 
         if (!args.append) {
@@ -234,9 +235,9 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             }
 
             if (selected === '') {
-                actionnode = create('<input type="button" class="'+CSS.SELECT+'" value="'+M.str.moodle.select+'" />');
+                actionnode = create('<input type="button" class="'+CSS.SELECT+'" value="'+Y.Escape.html(M.util.get_string('select', 'moodle'))+'" />');
             } else {
-                actionnode = create('<input type="button" class="'+CSS.DESELECT+'" value="'+M.str.gradereport_history.deselect+'" />');
+                actionnode = create('<input type="button" class="'+CSS.DESELECT+'" value="'+Y.Escape.html(M.util.get_string('deselect', COMPONENT))+'" />');
             }
 
             node = create('<div class="'+CSS.USER+selected+' clearfix" rel="'+user.userid+'"></div>')
@@ -253,12 +254,16 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         }
         this.set(USP.USERCOUNT, count);
         if (!args.append) {
-            usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
+            if (result.response.totalusers == '1') {
+                usersstr = M.util.get_string('ajaxoneuserfound', 'enrol');
+            } else {
+                usersstr = M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
+            }
             content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                 .append(create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
                 .append(users);
             if (result.response.totalusers > (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol.ajaxnext25+'</a></div>');
+                fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.util.get_string('ajaxnext25', 'enrol')+'</a></div>');
                 fetchmore.on('click', this.search, this, true);
                 content.append(fetchmore);
             }
@@ -290,7 +295,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         user.removeClass(CSS.SELECTED);
         user.one('.'+CSS.DESELECT).remove();
-        user.one('.'+CSS.OPTIONS).append(create('<input type="button" class="'+CSS.SELECT+'" value="'+M.str.moodle.select+'" />'));
+        user.one('.'+CSS.OPTIONS).append(create('<input type="button" class="'+CSS.SELECT+'" value="'+Y.Escape.html(M.util.get_string('select', 'moodle'))+'" />'));
     },
     selectUser : function(e, args) {
         var user = e.currentTarget.ancestor('.'+CSS.USER);
@@ -312,7 +317,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         user.addClass(CSS.SELECTED);
         user.one('.'+CSS.SELECT).remove();
-        user.one('.'+CSS.OPTIONS).append(create('<input type="button" class="'+CSS.DESELECT+'" value="'+M.str.gradereport_history.deselect+'" />'));
+        user.one('.'+CSS.OPTIONS).append(create('<input type="button" class="'+CSS.DESELECT+'" value="'+Y.Escape.html(M.util.get_string('deselect', COMPONENT))+'" />'));
     },
     setContent: function(content) {
         this.get(USP.BASE).one('.'+CSS.CONTENT+' .'+CSS.AJAXCONTENT).setContent(content);
