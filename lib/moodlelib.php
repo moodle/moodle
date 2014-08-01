@@ -4749,13 +4749,19 @@ function update_internal_user_password($user, $password, $fasthash = false) {
         $hashedpassword = hash_internal_user_password($password, $fasthash);
     }
 
-    // If verification fails then it means the password has changed.
-    if (isset($user->password)) {
-        // While creating new user, password in unset in $user object, to avoid
-        // saving it with user_create()
+    $algorithmchanged = false;
+
+    if ($hashedpassword === AUTH_PASSWORD_NOT_CACHED) {
+        // Password is not cached, update it if not set to AUTH_PASSWORD_NOT_CACHED.
+        $passwordchanged = ($user->password !== $hashedpassword);
+
+    } else if (isset($user->password)) {
+        // If verification fails then it means the password has changed.
         $passwordchanged = !password_verify($password, $user->password);
         $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
     } else {
+        // While creating new user, password in unset in $user object, to avoid
+        // saving it with user_create()
         $passwordchanged = true;
     }
 
