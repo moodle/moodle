@@ -319,7 +319,7 @@ class backup_module_structure_step extends backup_structure_step {
         $module = new backup_nested_element('module', array('id', 'version'), array(
             'modulename', 'sectionid', 'sectionnumber', 'idnumber',
             'added', 'score', 'indent', 'visible',
-            'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
+            'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
             'availability', 'showdescription'));
 

@@ -3154,13 +3154,16 @@ class restore_module_structure_step extends restore_structure_step {
         }
         $data->instance = 0; // Set to 0 for now, going to create it soon (next step)
 
-        // If there are legacy availablility data fields (and no new format data),
-        // convert the old fields.
         if (empty($data->availability)) {
-            // If groupmembersonly is disabled on this system, convert the
-            // groupmembersonly option into the new API. Otherwise don't.
+            // If there are legacy availablility data fields (and no new format data),
+            // convert the old fields.
             $data->availability = \core_availability\info::convert_legacy_fields(
-                    $data, false, !$CFG->enablegroupmembersonly);
+                    $data, false);
+        } else if (!empty($data->groupmembersonly)) {
+            // There is current availability data, but it still has groupmembersonly
+            // as well (2.7 backups), convert just that part.
+            require_once($CFG->dirroot . '/lib/db/upgradelib.php');
+            $data->availability = upgrade_group_members_only($data->groupingid, $data->availability);
         }
 
         // course_module record ready, insert it
