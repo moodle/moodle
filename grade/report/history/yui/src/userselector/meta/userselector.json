@@ -5,6 +5,7 @@
             "escape",
             "event-delegate",
             "event-key",
+            "handlebars",
             "io-base",
             "json-parse",
             "moodle-core-notification-dialogue",

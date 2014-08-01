@@ -20,35 +20,58 @@ var USP = {
 };
 /** CSS classes for nodes in structure **/
 var CSS = {
-    PANEL : 'user-selector-panel',
-    WRAP : 'usp-wrap',
-    HEADER : 'usp-header',
-    CONTENT : 'usp-content',
+    ACCESSHIDE : 'accesshide',
     AJAXCONTENT : 'usp-ajax-content',
-    SEARCHRESULTS : 'usp-search-results',
-    TOTALUSERS : 'totalusers',
-    USERS : 'users',
-    USER : 'user',
-    MORERESULTS : 'usp-more-results',
+    CLOSE : 'close',
+    CLOSEBTN : 'close-button',
+    CONTENT : 'usp-content',
+    COUNT : 'count',
+    DESELECT : 'deselect',
+    DETAILS : 'details',
+    EVEN : 'even',
+    EXTRAFIELDS : 'extrafields',
+    FOOTER : 'usp-footer',
+    FULLNAME : 'fullname',
+    HEADER : 'usp-header',
+    HIDDEN : 'hidden',
     LIGHTBOX : 'usp-loading-lightbox',
     LOADINGICON : 'loading-icon',
-    FOOTER : 'usp-footer',
-    DESELECT : 'deselect',
-    SELECT : 'select',
-    SELECTED : 'selected',
-    COUNT : 'count',
-    PICTURE : 'picture',
-    DETAILS : 'details',
-    FULLNAME : 'fullname',
-    EXTRAFIELDS : 'extrafields',
-    OPTIONS : 'options',
+    MORERESULTS : 'usp-more-results',
     ODD  : 'odd',
-    EVEN : 'even',
-    HIDDEN : 'hidden',
+    OPTIONS : 'options',
+    PANEL : 'user-selector-panel',
+    PICTURE : 'picture',
     SEARCH : 'usp-search',
     SEARCHBTN : 'usp-search-btn',
-    CLOSE : 'close',
-    CLOSEBTN : 'close-button'
+    SEARCHFIELD : 'usp-search-field',
+    SEARCHRESULTS : 'usp-search-results',
+    SELECT : 'select',
+    SELECTED : 'selected',
+    TOTALUSERS : 'totalusers',
+    USER : 'user',
+    USERS : 'users',
+    WRAP : 'usp-wrap'
+};
+var SELECTORS = {
+    AJAXCONTENT: '.' + CSS.CONTENT + ' .' + CSS.AJAXCONTENT,
+    DESELECT: '.' + CSS.DESELECT,
+    FOOTERCLOSE: '.' + CSS.FOOTER + ' .' + CSS.CLOSEBTN + ' input',
+    FULLNAME: '.' + CSS.FULLNAME,
+    HEADERCLOSE: '.' + CSS.HEADER + ' .' + CSS.CLOSE,
+    HEADING: '.' + CSS.HEADER + ' h2',
+    LIGHTBOX: '.' + CSS.CONTENT + ' .' + CSS.LIGHTBOX,
+    MORERESULTS: '.' + CSS.MORERESULTS,
+    OPTIONS: '.' + CSS.OPTIONS,
+    RESULTSUSERS: '.' + CSS.SEARCHRESULTS + ' .' + CSS.USERS,
+    SEARCHBTN: '.' + CSS.SEARCHBTN,
+    SEARCHFIELD: '.' + CSS.SEARCHFIELD,
+    SELECT: '.' + CSS.SELECT,
+    SELECTEDNAMES: '.felement .selectednames',
+    TRIGGER: '.gradereport_history_plugin input.selectortrigger',
+    USERDESELECT: '.' + CSS.USER + ' .' + CSS.DESELECT,
+    USERFULLNAMES: 'input[name="userfullnames"]',
+    USERIDS: 'input[name="userids"]',
+    USERSELECT: '.' + CSS.USER + ' .' + CSS.SELECT
 };
 var create = Y.Node.create;
 
@@ -59,36 +82,52 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
     _searchTimeout : null,
     _loadingNode : null,
     _escCloseEvent : null,
+    _userTemplate : null,
     initializer : function() {
         var list,
-            params;
+            params,
+            tpl;
 
-        this.set(USP.BASE, create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
-            .append(create('<div class="'+CSS.WRAP+'"></div>')
-                .append(create('<div class="'+CSS.HEADER+' header"></div>')
-                    .append(create('<div class="'+CSS.CLOSE+'"></div>'))
-                    .append(create('<h2>'+M.util.get_string('selectuser', COMPONENT)+'</h2>')))
-                .append(create('<div class="'+CSS.CONTENT+'"></div>')
-                    .append(create('<div class="'+CSS.AJAXCONTENT+'"></div>'))
-                    .append(create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
-                        .append(create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
-                            .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
-                        .setStyle('opacity', 0.5)))
-                .append(create('<div class="'+CSS.FOOTER+'"></div>')
-                    .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+Y.Escape.html(M.util.get_string('usersearch', 'enrol'))+'</label></div>')
-                        .append(create('<input type="text" id="enrolusersearch" value="" />'))
-                            .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+Y.Escape.html(M.util.get_string('usersearch', 'enrol'))+'" />'))
-                    )
-                    .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
-                        .append(create('<input type="button" value="'+Y.Escape.html(M.util.get_string('finishselectingusers', COMPONENT))+'" />'))
-                    )
-                )
-            )
-        );
+        tpl = Y.Handlebars.compile('<div class="{{CSS.PANEL}} {{CSS.HIDDEN}}">' +
+                '<div class="{{CSS.WRAP}}">' +
+                    '<div class="{{CSS.HEADER}}">' +
+                        '<div class="{{CSS.CLOSE}}"></div>' +
+                        '<h2>{{get_string "selectuser" COMPONENT}}</h2>' +
+                    '</div>' +
+                    '<div class="{{CSS.CONTENT}}">' +
+                        '<div class="{{CSS.AJAXCONTENT}}"></div>' +
+                        '<div class="{{CSS.LIGHTBOX}} {{CSS.HIDDEN}}">' +
+                            '<img class="{{CSS.LOADINGICON}}" alt="{{get_string "loading" "admin"}}"' +
+                                'src="{{{loadingIcon}}}">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="{{CSS.FOOTER}}">' +
+                        '<div class="{{CSS.SEARCH}}">' +
+                            '<label for="{{CSS.IDENROLUSERSEARCH}}" class="{{CSS.ACCESSHIDE}}">' +
+                                '{{get_string "usersearch" "enrol"}}' +
+                            '</label>' +
+                            '<input type="text" class="{{CSS.SEARCHFIELD}}" value="" />' +
+                            '<input type="button" class="{{CSS.SEARCHBTN}}"' +
+                                'value="{{get_string "usersearch" "enrol"}}">' +
+                        '</div>' +
+                        '<div class="{{CSS.CLOSEBTN}}">' +
+                            '<input type="button" value="{{get_string "finishselectingusers" COMPONENT}}">' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>');
 
-        this.set(USP.SEARCH, this.get(USP.BASE).one('#enrolusersearch'));
-        this.set(USP.SEARCHBTN, this.get(USP.BASE).one('#searchbtn'));
-        list = Y.one('input[name="userids"]').get('value').split(',');
+        this.set(USP.BASE, create(
+            tpl({
+                COMPONENT: COMPONENT,
+                CSS: CSS,
+                loadingIcon: M.util.image_url('i/loading', 'moodle')
+            })
+        ));
+
+        this.set(USP.SEARCH, this.get(USP.BASE).one(SELECTORS.SEARCHFIELD));
+        this.set(USP.SEARCHBTN, this.get(USP.BASE).one(SELECTORS.SEARCHBTN));
+        list = Y.one(SELECTORS.USERIDS).get('value').split(',');
         if (list[0] === '') {
             list = [];
         }
@@ -102,14 +141,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         }
         this.set(USP.USERFULLNAMES, list);
 
-        Y.all('.gradereport_history_plugin input').each(function(node){
-            if (node.hasClass('selectortrigger')) {
-                node.on('click', this.show, this);
-            }
-        }, this);
-        this.get(USP.BASE).one('.'+CSS.HEADER+' .'+CSS.CLOSE).on('click', this.hide, this);
-        this.get(USP.BASE).one('.'+CSS.FOOTER+' .'+CSS.CLOSEBTN+' input').on('click', this.hide, this);
-        this._loadingNode = this.get(USP.BASE).one('.'+CSS.CONTENT+' .'+CSS.LIGHTBOX);
+        Y.one(SELECTORS.TRIGGER).on('click', this.show, this);
+
+        this.get(USP.BASE).one(SELECTORS.HEADERCLOSE).on('click', this.hide, this);
+        this.get(USP.BASE).one(SELECTORS.FOOTERCLOSE).on('click', this.hide, this);
+        this._loadingNode = this.get(USP.BASE).one(SELECTORS.LIGHTBOX);
         params = this.get(USP.PARAMS);
         params.id = this.get(USP.COURSEID);
         this.set(USP.PARAMS, params);
@@ -121,8 +157,8 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         var base = this.get(USP.BASE);
         base.plug(Y.Plugin.Drag);
-        base.dd.addHandle('.'+CSS.HEADER+' h2');
-        base.one('.'+CSS.HEADER+' h2').setStyle('cursor', 'move');
+        base.dd.addHandle(SELECTORS.HEADING);
+        base.one(SELECTORS.HEADING).setStyle('cursor', 'move');
 
     },
     preSearch : function(e) {
@@ -196,10 +232,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
     processSearchResults : function(tid, outcome, args) {
         var result = false,
             users,
+            userTemplate,
             count,
             selected,
             i,
-            actionnode,
+            actionClass,
+            actionStr,
+            actionComponent,
             node,
             usersstr,
             content,
@@ -219,8 +258,26 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         if (!args.append) {
             users = create('<div class="'+CSS.USERS+'"></div>');
         } else {
-            users = this.get(USP.BASE).one('.'+CSS.SEARCHRESULTS+' .'+CSS.USERS);
+            users = this.get(USP.BASE).one(SELECTORS.RESULTSUSERS);
         }
+
+        if (!this._userTemplate) {
+            this._userTemplate = Y.Handlebars.compile(
+                '<div class="{{CSS.USER}} {{selected}} clearfix" rel="{{userId}}">' +
+                    '<div class="{{CSS.COUNT}}">{{count}}</div>' +
+                    '<div class="{{CSS.PICTURE}}">{{{picture}}}</div>' +
+                    '<div class="{{CSS.DETAILS}}">' +
+                        '<div class="{{CSS.FULLNAME}}">{{fullname}}</div>' +
+                        '<div class="{{CSS.EXTRAFIELDS}}">{{extrafields}}</div>' +
+                    '</div>' +
+                    '<div class="{{CSS.OPTIONS}}">' +
+                        '<input type="button" class="{{actionClass}}" value="{{get_string actionStr actionComponent}}">' +
+                    '</div>' +
+                '</div>'
+            );
+        }
+        userTemplate = this._userTemplate;
+
         count = this.get(USP.USERCOUNT);
         selected = '';
         for (i in result.response.users) {
@@ -235,21 +292,27 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             }
 
             if (selected === '') {
-                actionnode = create('<input type="button" class="'+CSS.SELECT+'" value="'+Y.Escape.html(M.util.get_string('select', 'moodle'))+'" />');
+                actionClass = CSS.SELECT;
+                actionStr = 'select';
+                actionComponent = 'moodle';
             } else {
-                actionnode = create('<input type="button" class="'+CSS.DESELECT+'" value="'+Y.Escape.html(M.util.get_string('deselect', COMPONENT))+'" />');
+                actionClass = CSS.DESELECT;
+                actionStr = 'deselect';
+                actionComponent = COMPONENT;
             }
 
-            node = create('<div class="'+CSS.USER+selected+' clearfix" rel="'+user.userid+'"></div>')
-                .addClass((count%2)?CSS.ODD:CSS.EVEN)
-                .append(create('<div class="'+CSS.COUNT+'">'+count+'</div>'))
-                .append(create('<div class="'+CSS.PICTURE+'"></div>')
-                    .append(create(user.picture)))
-                .append(create('<div class="'+CSS.DETAILS+'"></div>')
-                    .append(create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
-                    .append(create('<div class="'+CSS.EXTRAFIELDS+'">'+user.extrafields+'</div>')))
-                .append(create('<div class="'+CSS.OPTIONS+'"></div>')
-                    .append(actionnode));
+            node = create(userTemplate({
+                actionClass: actionClass,
+                actionComponent: actionComponent,
+                actionStr: actionStr,
+                count: count,
+                CSS: CSS,
+                extrafields: user.extrafields,
+                fullname: user.fullname,
+                picture: user.picture,
+                selected: selected,
+                userId: user.userid,
+            }));
             users.append(node);
         }
         this.set(USP.USERCOUNT, count);
@@ -268,11 +331,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                 content.append(fetchmore);
             }
             this.setContent(content);
-            Y.delegate("click", this.selectUser, users, '.'+CSS.USER+' .'+CSS.SELECT, this, args);
-            Y.delegate("click", this.deselectUser, users, '.'+CSS.USER+' .'+CSS.DESELECT, this, args);
+            Y.delegate("click", this.selectUser, users, SELECTORS.USERSELECT, this, args);
+            Y.delegate("click", this.deselectUser, users, SELECTORS.USERDESELECT, this, args);
         } else {
             if (result.response.totalusers <= (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                this.get(USP.BASE).one('.'+CSS.MORERESULTS).remove();
+                this.get(USP.BASE).one(SELECTORS.MORERESULTS).remove();
             }
         }
     },
@@ -286,7 +349,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             list.splice(i, 1);
         }
         this.set(USP.SELECTEDUSERS, list);
-        Y.one('input[name="userids"]').set('value', list.join());
+        Y.one(SELECTORS.USERIDS).set('value', list.join());
 
         var namelist = this.get(USP.USERFULLNAMES);
         delete namelist[user.getAttribute('rel')];
@@ -294,8 +357,8 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         this.setnamedisplay();
 
         user.removeClass(CSS.SELECTED);
-        user.one('.'+CSS.DESELECT).remove();
-        user.one('.'+CSS.OPTIONS).append(create('<input type="button" class="'+CSS.SELECT+'" value="'+Y.Escape.html(M.util.get_string('select', 'moodle'))+'" />'));
+        user.one(SELECTORS.DESELECT).remove();
+        user.one(SELECTORS.OPTIONS).append(create('<input type="button" class="'+CSS.SELECT+'" value="'+Y.Escape.html(M.util.get_string('select', 'moodle'))+'" />'));
     },
     selectUser : function(e, args) {
         var user = e.currentTarget.ancestor('.'+CSS.USER);
@@ -305,30 +368,30 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         list.push(user.getAttribute('rel'));
         this.set(USP.SELECTEDUSERS, list);
 
-        var fullname = user.one('.fullname').get('innerHTML');
+        var fullname = user.one(SELECTORS.FULLNAME).get('innerHTML');
         var namelist = this.get(USP.USERFULLNAMES);
         namelist[user.getAttribute('rel')] = fullname;
         this.set(USP.USERFULLNAMES, namelist);
         this.setnamedisplay();
 
-        Y.one('input[name="userids"]').set('value', list.join());
+        Y.one(SELECTORS.USERIDS).set('value', list.join());
 
         // Add name to selected list.
 
         user.addClass(CSS.SELECTED);
-        user.one('.'+CSS.SELECT).remove();
-        user.one('.'+CSS.OPTIONS).append(create('<input type="button" class="'+CSS.DESELECT+'" value="'+Y.Escape.html(M.util.get_string('deselect', COMPONENT))+'" />'));
+        user.one(SELECTORS.SELECT).remove();
+        user.one(SELECTORS.OPTIONS).append(create('<input type="button" class="'+CSS.DESELECT+'" value="'+Y.Escape.html(M.util.get_string('deselect', COMPONENT))+'" />'));
     },
     setContent: function(content) {
-        this.get(USP.BASE).one('.'+CSS.CONTENT+' .'+CSS.AJAXCONTENT).setContent(content);
+        this.get(USP.BASE).one(SELECTORS.AJAXCONTENT).setContent(content);
     },
     setnamedisplay: function() {
         var namelist = this.get(USP.USERFULLNAMES);
         namelist = namelist.filter(function(x) {
              return x;
         });
-        Y.one('.felement .selectednames').set('innerHTML', namelist.join(', '));
-        Y.one('input[name="userfullnames"]').set('value', namelist.join());
+        Y.one(SELECTORS.SELECTEDNAMES).set('innerHTML', namelist.join(', '));
+        Y.one(SELECTORS.USERFULLNAMES).set('value', namelist.join());
     }
 }, {
     NAME : USP.NAME,

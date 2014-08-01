@@ -32,7 +32,7 @@ table#gradestable th.header.selected {
 
 .user-selector-panel .usp-header {background-color:#eee;padding:1px;}
 .user-selector-panel .usp-header h2 {margin:3px 1em 0.5em 1em;font-size:1em;}
-.user-selector-panel .usp-header .close {width:25px;height:15px;position:absolute;top:2px;right:1em;cursor:pointer;background:url([[pix:theme|sprite]]) no-repeat scroll 0 0 transparent;}
+.user-selector-panel .usp-header .close {width:25px;height:15px;position:absolute;top:2px;right:1em;cursor:pointer;background:url([[pix:theme|sprite]]) no-repeat scroll 0 0 transparent; opacity: 1;}
 
 .user-selector-panel .usp-content {text-align:center;position:relative;width:100%;border-top:1px solid #999;border-bottom:1px solid #999;}
 .user-selector-panel .usp-content .usp-controls {margin:0;padding:3px;background-color:#ddd;text-align:left;border-bottom:1px solid #BBB;}
@@ -40,7 +40,7 @@ table#gradestable th.header.selected {
 .user-selector-panel .usp-ajax-content {height:375px;overflow:auto;}
 .user-selector-panel .usp-search-results .totalusers {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
 .user-selector-panel .usp-search-results .user {width:100%;text-align:left;font-size:9pt;border-bottom:1px solid #ddd;border-top:1px solid #eee;}
-.user-selector-panel .usp-search-results .user.odd {border-bottom:1px solid #ddd;border-top:1px solid #eee;background-color:#f9f9f9;}
+.user-selector-panel .usp-search-results .user:nth-child(odd) {border-bottom:1px solid #ddd;border-top:1px solid #eee;background-color:#f9f9f9;}
 .user-selector-panel .usp-search-results .user .count {width:20px;float:left;font-size:7pt;line-height:41px;border-right:1px solid #ddd;background-color:#EEE;text-align:right;padding:2px;}
 .user-selector-panel .usp-search-results .user .picture {width:45px;float:left;margin:3px;}
 .user-selector-panel .usp-search-results .user .details {width:250px;float:left;margin:3px;}
