@@ -3743,5 +3743,52 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014082900.01);
     }
 
+    if ($oldversion < 2014082900.02) {
+        // Replace groupmembersonly usage with new availability system.
+        $transaction = $DB->start_delegated_transaction();
+        if ($CFG->enablegroupmembersonly) {
+            // If it isn't already enabled, we need to enable availability.
+            if (!$CFG->enableavailability) {
+                set_config('enableavailability', 1);
+            }
+
+            // Count all course-modules with groupmembersonly set (for progress
+            // bar).
+            $total = $DB->count_records('course_modules', array('groupmembersonly' => 1));
+            $pbar = new progress_bar('upgradegroupmembersonly', 500, true);
+
+            // Get all these course-modules, one at a time.
+            $rs = $DB->get_recordset('course_modules', array('groupmembersonly' => 1),
+                    'course, id');
+            $i = 0;
+            foreach ($rs as $cm) {
+                // Calculate and set new availability value.
+                $availability = upgrade_group_members_only($cm->groupingid, $cm->availability);
+                $DB->set_field('course_modules', 'availability', $availability,
+                        array('id' => $cm->id));
+
+                // Update progress.
+                $i++;
+                $pbar->update($i, $total, "Upgrading groupmembersonly settings - $i/$total.");
+            }
+            $rs->close();
+        }
+
+        // Define field groupmembersonly to be dropped from course_modules.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('groupmembersonly');
+
+        // Conditionally launch drop field groupmembersonly.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Unset old config variable.
+        unset_config('enablegroupmembersonly');
+        $transaction->allow_commit();
+
+        upgrade_main_savepoint(true, 2014082900.02);
+    }
+
     return true;
 }

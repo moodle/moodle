@@ -1,6 +1,12 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.8 ===
+
+* Constant FEATURE_GROUPMEMBERSONLY is deprecated. Modules should remove this
+  constant from their module_supports() API function.
+* $CFG->enablegroupmembersonly no longer exists.
+
 === 2.7 ===
 
 * modgrade form element has been redesigned and allows setting the maximum grade point higher than 100.

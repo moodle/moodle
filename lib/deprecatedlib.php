@@ -956,6 +956,53 @@ function get_current_group($courseid, $full = false) {
     }
 }
 
+/**
+ * Filter a user list and return only the users that can see the course module based on
+ * groups/permissions etc. It is assumed that the users are pre-filtered to those who are enrolled in the course.
+ *
+ * @category group
+ * @param stdClass|cm_info $cm The course module
+ * @param array $users An array of users, indexed by userid
+ * @return array A filtered list of users that can see the module, indexed by userid.
+ * @deprecated Since Moodle 2.8
+ */
+function groups_filter_users_by_course_module_visible($cm, $users) {
+    debugging('groups_filter_users_by_course_module_visible() is deprecated. ' .
+            'Replace with a call to \core_availability\info_module::filter_user_list(), ' .
+            'which does basically the same thing but includes other restrictions such ' .
+            'as profile restrictions.', DEBUG_DEVELOPER);
+    if (empty($users)) {
+        return $users;
+    }
+    // Since this function allows stdclass, let's play it safe and ensure we
+    // do have a cm_info.
+    if (!($cm instanceof cm_info)) {
+        $modinfo = get_fast_modinfo($cm->course);
+        $cm = $modinfo->get_cm($cm->id);
+    }
+    $info = new \core_availability\info_module($cm);
+    return $info->filter_user_list($users);
+}
+
+/**
+ * Determine if a course module is currently visible to a user
+ *
+ * Deprecated (it was never very useful as it only took into account the
+ * groupmembersonly option and no other way of hiding activities). Always
+ * returns true.
+ *
+ * @category group
+ * @param stdClass|cm_info $cm The course module
+ * @param int $userid The user to check against the group.
+ * @return bool True
+ * @deprecated Since Moodle 2.8
+ */
+function groups_course_module_visible($cm, $userid=null) {
+    debugging('groups_course_module_visible() is deprecated and always returns ' .
+            'true; use $cm->uservisible to decide whether the current user can ' .
+            'access an activity.', DEBUG_DEVELOPER);
+    return true;
+}
 
 /**
  * Inndicates fatal error. This function was originally printing the

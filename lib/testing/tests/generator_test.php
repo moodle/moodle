@@ -131,7 +131,6 @@ class core_test_generator_testcase extends advanced_testcase {
         // Enable advanced functionality.
         $CFG->enablecompletion = 1;
         $CFG->enableavailability = 1;
-        $CFG->enablegroupmembersonly = 1;
         $CFG->enableoutcomes = 1;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/completionlib.php');
@@ -163,8 +162,6 @@ class core_test_generator_testcase extends advanced_testcase {
             'groupmode' => SEPARATEGROUPS, // Note: will be reset to 0 if course groupmodeforce is set.
             // Module supports FEATURE_GROUPINGS or module supports FEATURE_GROUPMEMBERSONLY:
             'groupingid' => $grouping->id,
-            // Module supports FEATURE_GROUPMEMBERSONLY:
-            'groupmembersonly' => 1,
         );
 
         // In case completion is enabled on site and for course every module can have manual completion.
@@ -233,7 +230,6 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertEquals($optionsgeneral['cmidnumber'], $cm1->idnumber); // Note difference in key.
         $this->assertEquals($optionsgeneral['groupmode'], $cm1->groupmode);
         $this->assertEquals($optionsgeneral['groupingid'], $cm1->groupingid);
-        $this->assertEquals($optionsgeneral['groupmembersonly'], $cm1->groupmembersonly);
 
         $cm2 = $modinfo->cms[$m2->cmid];
         $this->assertEquals($featurecompletionmanual['completion'], $cm2->completion);

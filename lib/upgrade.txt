@@ -12,10 +12,22 @@ information provided here is intended especially for developers.
   more efficiently load these basic data objects at the start of a script.
 * New function cm_info::create($cm) can be used when you need a cm_info
   object, but have a $cm which might only be a standard database record.
+* $CFG->enablegroupmembersonly no longer exists.
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
 * grade_category::aggregate_values() is deprecated and will be removed in Moodle 3.0.
+* groups_filter_users_by_course_module_visible() is deprecated; replace with
+  core_availability\info::filter_user_list. Will be removed in Moodle 3.0.
+* groups_course_module_visible() is deprecated; replace with $cm->uservisible.
+* cm_info property $cm->groupmembersonly is deprecated and always returns 0.
+  Use core_availability\info::filter_user_list if trying to determine which
+  other users can see an activity.
+* cm_info method $cm->is_user_access_restricted_by_group() is deprecated and
+  always returns false. Use $cm->uservisible to determine whether the user can
+  access the activity.
+* Constant FEATURE_GROUPMEMBERSONLY (used in module _supports functions) is
+  deprecated.
 
 === 2.6.4 / 2.7.1 ===
 

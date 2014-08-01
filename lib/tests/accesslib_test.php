@@ -304,7 +304,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $result[1]->id);
         $this->assertSame($course->shortname, $result[1]->shortname);
         $this->assertEquals($cm->id, $result[2]->id);
-        $this->assertEquals($cm->groupmembersonly, $result[2]->groupmembersonly);
 
         $result = get_context_info_array($block2context->id);
         $this->assertCount(3, $result);
@@ -312,7 +311,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $result[1]->id);
         $this->assertSame($course->shortname, $result[1]->shortname);
         $this->assertEquals($cm->id, $result[2]->id);
-        $this->assertEquals($cm->groupmembersonly, $result[2]->groupmembersonly);
     }
 
     /**

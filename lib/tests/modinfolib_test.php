@@ -175,7 +175,6 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertEquals($moduledb->groupmode, $cm->groupmode);
         $this->assertEquals(VISIBLEGROUPS, $cm->groupmode);
         $this->assertEquals($moduledb->groupingid, $cm->groupingid);
-        $this->assertEquals($moduledb->groupmembersonly, $cm->groupmembersonly);
         $this->assertEquals($course->groupmodeforce, $cm->coursegroupmodeforce);
         $this->assertEquals($course->groupmode, $cm->coursegroupmode);
         $this->assertEquals(SEPARATEGROUPS, $cm->coursegroupmode);
@@ -202,6 +201,10 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertEquals($modnamesplural['assign'], $cm->modplural);
         $this->assertEquals(new moodle_url('/mod/assign/view.php', array('id' => $moduledb->id)), $cm->url);
         $this->assertEquals($cachedcminfo->customdata, $cm->customdata);
+
+        // Deprecated field.
+        $this->assertEquals(0, $cm->groupmembersonly);
+        $this->assertDebuggingCalled();
 
         // Dynamic fields, just test that they can be retrieved (must be carefully tested in each activity type).
         $this->assertNotEmpty($cm->availableinfo); // Lists all unmet availability conditions.
@@ -411,95 +414,6 @@ class core_modinfolib_testcase extends advanced_testcase {
         $modinfo->cms = 'Illegal overwriting';
         $this->assertDebuggingCalled();
         $this->assertNotEquals('Illegal overwriting', $modinfo->cms);
-    }
-
-    /**
-     * Test is_user_access_restricted_by_group()
-     *
-     * The underlying groups system is more thoroughly tested in lib/tests/grouplib_test.php
-     */
-    public function test_is_user_access_restricted_by_group() {
-        global $DB, $CFG, $USER;
-
-        $this->resetAfterTest();
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
-
-        // Create a mod_assign instance.
-        $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
-        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign->id];
-
-        // Create and enrol a student.
-        // Enrolment is necessary for groups to work.
-        $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
-        $student = $this->getDataGenerator()->create_user();
-        role_assign($studentrole->id, $student->id, $coursecontext);
-        $enrolplugin = enrol_get_plugin('manual');
-        $enrolplugin->add_instance($course);
-        $enrolinstances = enrol_get_instances($course->id, false);
-        foreach ($enrolinstances as $enrolinstance) {
-            if ($enrolinstance->enrol === 'manual') {
-                break;
-            }
-        }
-        $enrolplugin->enrol_user($enrolinstance, $student->id);
-
-        // Switch to a student and reload the context info.
-        $this->setUser($student);
-        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign->id];
-
-        // Create up a teacher.
-        $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
-        $teacher = $this->getDataGenerator()->create_user();
-        role_assign($teacherrole->id, $teacher->id, $coursecontext);
-
-        // Create 2 groupings.
-        $grouping1 = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id, 'name' => 'grouping1'));
-        $grouping2 = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id, 'name' => 'grouping2'));
-
-        // Create 2 groups and put them in the groupings.
-        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'idnumber' => 'group1'));
-        groups_assign_grouping($grouping1->id, $group1->id);
-        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'idnumber' => 'group2'));
-        groups_assign_grouping($grouping2->id, $group2->id);
-
-        // If groups are disabled, the activity isn't restricted.
-        $CFG->enablegroupmembersonly = false;
-        $this->assertFalse($cm_info->is_user_access_restricted_by_group());
-
-        // Turn groups setting on.
-        $CFG->enablegroupmembersonly = true;
-        // Create a mod_assign instance with "group members only", the activity should not be restricted.
-        $assignnogroups = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
-            array('groupmembersonly' => NOGROUPS));
-        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignnogroups->id];
-        $this->assertFalse($cm_info->is_user_access_restricted_by_group());
-
-        // If "group members only" is on but user is in the wrong group, the activity is restricted.
-        $assignsepgroups = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
-            array('groupmembersonly' => SEPARATEGROUPS, 'groupingid' => $grouping1->id));
-        $this->assertTrue(groups_add_member($group2, $USER));
-        get_fast_modinfo($course->id, 0, true);
-        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignsepgroups->id];
-        $this->assertEquals($grouping1->id, $cm_info->groupingid);
-        $this->assertTrue($cm_info->is_user_access_restricted_by_group());
-
-        // If the user is in the required group, the activity isn't restricted.
-        groups_remove_member($group2, $USER);
-        $this->assertTrue(groups_add_member($group1, $USER));
-        get_fast_modinfo($course->id, 0, true);
-        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignsepgroups->id];
-        $this->assertFalse($cm_info->is_user_access_restricted_by_group());
-
-        // Switch to a teacher and reload the context info.
-        $this->setUser($teacher);
-        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignsepgroups->id];
-
-        // If the user isn't in the required group but has 'moodle/site:accessallgroups', the activity isn't restricted.
-        $this->assertTrue(has_capability('moodle/site:accessallgroups', $coursecontext));
-        $this->assertFalse($cm_info->is_user_access_restricted_by_group());
     }
 
     /**
@@ -717,7 +631,6 @@ class core_modinfolib_testcase extends advanced_testcase {
                     'availability' => null));
         $mods[4] = $this->getDataGenerator()->create_module('forum',
                 array('course' => $course->id,
-                    'groupmembersonly' => true,
                     'grouping' => 12));
 
         $modinfo = get_fast_modinfo($course->id);

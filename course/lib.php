@@ -996,7 +996,6 @@ function get_array_of_activities($courseid) {
 //  name - the name of the instance
 //  visible - is the instance visible or not
 //  groupingid - grouping id
-//  groupmembersonly - is this instance visible to group members only
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
     if(!empty($CFG->enableavailability)) {
@@ -1048,7 +1047,6 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->visibleold       = $rawmods[$seq]->visibleold;
                    $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
                    $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
-                   $mod[$seq]->groupmembersonly = $rawmods[$seq]->groupmembersonly;
                    $mod[$seq]->indent           = $rawmods[$seq]->indent;
                    $mod[$seq]->completion       = $rawmods[$seq]->completion;
                    $mod[$seq]->extra            = "";
@@ -1127,13 +1125,12 @@ function get_array_of_activities($courseid) {
                        $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id"=>$rawmods[$seq]->instance));
                    }
 
-                   // Minimise the database size by unsetting default options when they are
-                   // 'empty'. This list corresponds to code in the cm_info constructor.
-                   foreach (array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
-                           'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
-                           'icon', 'iconcomponent', 'customdata', 'availability',
-                           'completionview', 'completionexpected', 'score', 'showdescription')
-                           as $property) {
+                    // Minimise the database size by unsetting default options when they are
+                    // 'empty'. This list corresponds to code in the cm_info constructor.
+                    foreach (array('idnumber', 'groupmode', 'groupingid',
+                            'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
+                            'icon', 'iconcomponent', 'customdata', 'availability', 'completionview',
+                            'completionexpected', 'score', 'showdescription') as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});

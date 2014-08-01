@@ -458,6 +458,60 @@ function upgrade_availability_item($groupmembersonly, $groupingid,
 }
 
 /**
+ * Using data for a single course-module that has groupmembersonly enabled,
+ * returns the new availability value that incorporates the correct
+ * groupmembersonly option.
+ *
+ * Included as a function so that it can be shared between upgrade and restore,
+ * and unit-tested.
+ *
+ * @param int $groupingid Grouping id for the course-module (0 if none)
+ * @param string $availability Availability JSON data for the module (null if none)
+ * @return string New value for availability for the module
+ */
+function upgrade_group_members_only($groupingid, $availability) {
+    // Work out the new JSON object representing this option.
+    if ($groupingid) {
+        // Require specific grouping.
+        $condition = (object)array('type' => 'grouping', 'id' => (int)$groupingid);
+    } else {
+        // No grouping specified, so require membership of any group.
+        $condition = (object)array('type' => 'group');
+    }
+
+    if (is_null($availability)) {
+        // If there are no conditions using the new API then just set it.
+        $tree = (object)array('op' => '&', 'c' => array($condition), 'showc' => array(false));
+    } else {
+        // There are existing conditions.
+        $tree = json_decode($availability);
+        switch ($tree->op) {
+            case '&' :
+                // For & conditions we can just add this one.
+                $tree->c[] = $condition;
+                $tree->showc[] = false;
+                break;
+            case '!|' :
+                // For 'not or' conditions we can add this one
+                // but negated.
+                $tree->c[] = (object)array('op' => '!&', 'c' => array($condition));
+                $tree->showc[] = false;
+                break;
+            default:
+                // For the other two (OR and NOT AND) we have to add
+                // an extra level to the tree.
+                $tree = (object)array('op' => '&', 'c' => array($tree, $condition),
+                        'showc' => array($tree->show, false));
+                // Inner trees do not have a show option, so remove it.
+                unset($tree->c[0]->show);
+                break;
+        }
+    }
+
+    return json_encode($tree);
+}
+
+/**
  * Updates the mime-types for files that exist in the database, based on their
  * file extension.
  *

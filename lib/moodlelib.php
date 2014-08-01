@@ -414,7 +414,10 @@ define('FEATURE_IDNUMBER', 'idnumber');
 define('FEATURE_GROUPS', 'groups');
 /** True if module supports groupings */
 define('FEATURE_GROUPINGS', 'groupings');
-/** True if module supports groupmembersonly */
+/**
+ * True if module supports groupmembersonly (which no longer exists)
+ * @deprecated Since Moodle 2.8
+ */
 define('FEATURE_GROUPMEMBERSONLY', 'groupmembersonly');
 
 /** Type of module */
@@ -3134,7 +3137,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         }
     }
 
-    // Check visibility of activity to current user; includes visible flag, groupmembersonly, conditional availability, etc.
+    // Check visibility of activity to current user; includes visible flag, conditional availability, etc.
     if ($cm && !$cm->uservisible) {
         if ($preventredirect) {
             throw new require_login_exception('Activity is hidden');

@@ -201,7 +201,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->section = 1; // This is the section number in the course. Not the section id in the database.
         $moduleinfo->course = $course->id;
         $moduleinfo->groupingid = $grouping->id;
-        $moduleinfo->groupmembersonly = 0;
         $moduleinfo->visible = true;
 
         // Sometimes optional generic values for some modules.
@@ -276,7 +275,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->section, $section->section);
         $this->assertEquals($moduleinfo->course, $dbcm->course);
         $this->assertEquals($moduleinfo->groupingid, $dbcm->groupingid);
-        $this->assertEquals($moduleinfo->groupmembersonly, $dbcm->groupmembersonly);
         $this->assertEquals($moduleinfo->visible, $dbcm->visible);
         $this->assertEquals($moduleinfo->completion, $dbcm->completion);
         $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);
@@ -438,7 +436,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->modulename = $modulename;
         $moduleinfo->course = $course->id;
         $moduleinfo->groupingid = $grouping->id;
-        $moduleinfo->groupmembersonly = 0;
         $moduleinfo->visible = true;
 
         // Sometimes optional generic values for some modules.
@@ -509,7 +506,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($moduleinfo->modulename, $dbcm->modname);
         $this->assertEquals($moduleinfo->course, $dbcm->course);
         $this->assertEquals($moduleinfo->groupingid, $dbcm->groupingid);
-        $this->assertEquals($moduleinfo->groupmembersonly, $dbcm->groupmembersonly);
         $this->assertEquals($moduleinfo->visible, $dbcm->visible);
         $this->assertEquals($moduleinfo->completion, $dbcm->completion);
         $this->assertEquals($moduleinfo->completionview, $dbcm->completionview);

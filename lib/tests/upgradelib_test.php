@@ -214,6 +214,8 @@ class core_upgradelib_testcase extends advanced_testcase {
         require_once($CFG->libdir . '/db/upgradelib.php');
 
         // Groupmembersonly (or nothing). Show option on but ignored.
+        // Note: This $CFG option doesn't exist any more but we are testing the
+        // upgrade function so it did exist then...
         $CFG->enablegroupmembersonly = 0;
         $this->assertNull(
                 upgrade_availability_item(1, 0, 0, 0, 1, array(), array()));

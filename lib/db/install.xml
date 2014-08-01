@@ -293,7 +293,6 @@
         <FIELD NAME="visibleold" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="groupmembersonly" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="only members of any group are allowed to access the activity"/>
         <FIELD NAME="completion" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the completion-tracking facilities are enabled for this activity. 0 = not enabled (database default) 1 = manual tracking, user can tick this activity off (UI default for most activity types) 2 = automatic tracking, system should mark completion according to rules specified in course_moduleS_completion"/>
         <FIELD NAME="completiongradeitemnumber" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Grade-item number used to track automatic completion, if applicable."/>
         <FIELD NAME="completionview" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Controls whether a page view is part of the automatic completion requirements for this activity. 0 = view not required 1 = view required"/>

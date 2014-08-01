@@ -704,9 +704,6 @@ class course_modinfo {
  * @property-read int $groupmode Group mode (one of the constants NOGROUPS, SEPARATEGROUPS, or VISIBLEGROUPS) - from
  *    course_modules table. Use {@link cm_info::$effectivegroupmode} to find the actual group mode that may be forced by course.
  * @property-read int $groupingid Grouping ID (0 = all groupings)
- * @property-read int $groupmembersonly Group members only (if set to 1, only members of a suitable group see this link on the
- *    course page; 0 = everyone sees it even if they don't belong to a suitable group) - from
- *    course_modules table
  * @property-read bool $coursegroupmodeforce Indicates whether the course containing the module has forced the groupmode
  *    This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be used instead
  * @property-read int $coursegroupmode Group mode (one of the constants NOGROUPS, SEPARATEGROUPS, or VISIBLEGROUPS) - from
@@ -863,14 +860,6 @@ class cm_info implements IteratorAggregate {
      * @var int
      */
     private $groupingid;
-
-    /**
-     * Group members only (if set to 1, only members of a suitable group see this link on the
-     * course page; 0 = everyone sees it even if they don't belong to a suitable group)  - from
-     * course_modules table
-     * @var int
-     */
-    private $groupmembersonly;
 
     /**
      * Indent level on course page (0 = no indent) - from course_modules table
@@ -1093,7 +1082,7 @@ class cm_info implements IteratorAggregate {
         'effectivegroupmode' => 'get_effective_groupmode',
         'extra' => false,
         'groupingid' => false,
-        'groupmembersonly' => false,
+        'groupmembersonly' => 'get_deprecated_group_members_only',
         'groupmode' => false,
         'icon' => false,
         'iconcomponent' => false,
@@ -1520,7 +1509,7 @@ class cm_info implements IteratorAggregate {
 
         // Standard fields from table course_modules.
         static $cmfields = array('id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
-            'score', 'indent', 'visible', 'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
+            'score', 'indent', 'visible', 'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
             'showdescription', 'availability');
         foreach ($cmfields as $key) {
@@ -1699,7 +1688,6 @@ class cm_info implements IteratorAggregate {
         $this->sectionnum       = $mod->section; // Note weirdness with name here
         $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
         $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
-        $this->groupmembersonly = isset($mod->groupmembersonly) ? $mod->groupmembersonly : 0;
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
@@ -1872,8 +1860,24 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
+     * Getter method for $availablefrom and $availableuntil. Just returns zero
+     * as these are no longer supported.
+     *
+     * @return int Zero
+     * @deprecated Since Moodle 2.8
+     */
+    private function get_deprecated_group_members_only() {
+        debugging('$cm->groupmembersonly has been deprecated and always returns zero. ' .
+                'If used to restrict a list of enrolled users to only those who can ' .
+                'access the module, consider \core_availability\info_module::filter_user_list.',
+                DEBUG_DEVELOPER);
+        return 0;
+    }
+
+    /**
      * Getter method for property $availableinfo, ensures that dynamic data is retrieved
-     * @return type
+     *
+     * @return string Available info (HTML)
      */
     private function get_available_info() {
         $this->obtain_dynamic_data();
@@ -1885,7 +1889,6 @@ class cm_info implements IteratorAggregate {
      *
      * If the activity is unavailable, additional checks are required to determine if its hidden or greyed out
      *
-     * @see is_user_access_restricted_by_group()
      * @see is_user_access_restricted_by_conditional_access()
      * @return void
      */
@@ -1905,8 +1908,7 @@ class cm_info implements IteratorAggregate {
         }
 
         // Check group membership.
-        if ($this->is_user_access_restricted_by_group() ||
-                $this->is_user_access_restricted_by_capability()) {
+        if ($this->is_user_access_restricted_by_capability()) {
 
              $this->uservisible = false;
             // Ensure activity is completely hidden from the user.
@@ -1915,27 +1917,19 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Checks whether the module's group settings restrict the current user's access
+     * Checks whether the module's group settings restrict the current user's
+     * access. This function is not necessary now that all access restrictions
+     * are handled by the availability API. You can use $cm->uservisible to
+     * find out if the current user can access an activity, or $cm->availableinfo
+     * to get information about why not.
      *
-     * @return bool True if the user access is restricted
+     * @return bool False
+     * @deprecated Since Moodle 2.8
      */
     public function is_user_access_restricted_by_group() {
-        global $CFG;
-
-        if (!empty($CFG->enablegroupmembersonly) and !empty($this->groupmembersonly)) {
-            $userid = $this->modinfo->get_user_id();
-            if ($userid == -1) {
-                return null;
-            }
-            if (!has_capability('moodle/site:accessallgroups', $this->get_context(), $userid)) {
-                // If the activity has 'group members only' and you don't have accessallgroups...
-                $groups = $this->modinfo->get_groups($this->groupingid);
-                if (empty($groups)) {
-                    // ...and you don't belong to a group, then set it so you can't see/access it
-                    return true;
-                }
-            }
-        }
+        debugging('cm_info::is_user_access_restricted_by_group() ' .
+                'is deprecated and always returns false; use $cm->uservisible ' .
+                'to decide whether the current user can access an activity', DEBUG_DEVELOPER);
         return false;
     }
 
@@ -1976,7 +1970,7 @@ class cm_info implements IteratorAggregate {
         global $CFG;
         debugging('cm_info::is_user_access_restricted_by_conditional_access() ' .
                 'is deprecated; this function is not needed (use $cm->uservisible ' .
-                'and $cm->availableinfo) to decide whether it should be available ' .
+                'and $cm->availableinfo to decide whether it should be available ' .
                 'or appear)', DEBUG_DEVELOPER);
 
         if (empty($CFG->enableavailability)) {
