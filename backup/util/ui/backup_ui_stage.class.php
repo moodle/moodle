@@ -175,7 +175,6 @@ class backup_ui_stage_initial extends backup_ui_stage {
                 // For the initial stage we are only interested in the root settings
                 if ($task instanceof backup_root_task) {
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
-                    $form->collapse_heading('rootsettings');
                     $settings = $task->get_settings();
                     // First add all settings except the filename setting
                     foreach ($settings as &$setting) {

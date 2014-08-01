@@ -77,9 +77,6 @@ class behat_backup extends behat_base {
         $this->navigate_to_course_settings_link('backup');
         $this->wait();
 
-        // Expand the backup settings section.
-        $this->find_link(get_string('backupsettings', 'backup'))->click();
-
         // Initial settings.
         $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
         $this->find_button(get_string('backupstage1action', 'backup'))->press();

@@ -69,8 +69,6 @@ class backup_initial_form extends backup_moodleform {
         $mform->addElement('submit', 'oneclickbackup', get_string('performoneclickbackup', 'backup'));
 
         parent::definition();
-
-        $mform->setDisableShortforms(false);
     }
 }
 /**
