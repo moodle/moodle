@@ -1,24 +1,49 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The User Selector for the grade history report.
+ *
+ * @module     moodle-gradereport_history-userselector
+ * @package    gradereport_history
+ * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @main       moodle-gradereport_history-userselector
+ */
+
+/**
+ * @module moodle-gradereport_history-userselector
+ */
+
 var COMPONENT = 'gradereport_history';
 var USP = {
     NAME : 'User Selector Manager',
-    /** Properties **/
     BASE : 'base',
     SEARCH : 'search',
     SEARCHBTN : 'searchbtn',
     PARAMS : 'params',
     URL : 'url',
     AJAXURL : 'ajaxurl',
-    MULTIPLE : 'multiple',
     PAGE : 'page',
     COURSEID : 'courseid',
     SELECTEDUSERS : 'selectedusers',
     USERFULLNAMES : 'userfullnames',
     USERS : 'users',
     USERCOUNT : 'userCount',
-    LASTSEARCH : 'lastPreSearchValue',
     PERPAGE : 'perPage'
 };
-/** CSS classes for nodes in structure **/
 var CSS = {
     ACCESSHIDE : 'accesshide',
     AJAXCONTENT : 'usp-ajax-content',
@@ -76,14 +101,46 @@ var SELECTORS = {
 };
 var create = Y.Node.create;
 
+/**
+ * User Selector.
+ *
+ * @namespace M.gradereport_history
+ * @class UserSelector
+ * @constructor
+ */
+
 var USERSELECTOR = function() {
     USERSELECTOR.superclass.constructor.apply(this, arguments);
 };
 Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Base, {
-    _searchTimeout : null,
+
+    /**
+     * The loading node.
+     *
+     * @property _loadingNode
+     * @type Node
+     * @private
+     */
     _loadingNode : null,
+
+    /**
+     * The Escape key close event.
+     *
+     * @property _escCloseEvent
+     * @type Event
+     * @private
+     */
     _escCloseEvent : null,
+
+    /**
+     * Compiled template function for a user node.
+     *
+     * @property _userTemplate
+     * @type Function
+     * @private
+     */
     _userTemplate : null,
+
     initializer : function() {
         var list,
             params,
@@ -162,9 +219,21 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         base.one(SELECTORS.HEADING).setStyle('cursor', 'move');
 
     },
+
+    /**
+     * Before the search starts.
+     *
+     * @method preSearch
+     */
     preSearch : function(e) {
         this.search(null, false);
     },
+
+    /**
+     * Display the dialogue.
+     *
+     * @method show
+     */
     show : function(e) {
         e.preventDefault();
         e.halt();
@@ -184,6 +253,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         this._escCloseEvent = Y.on('key', this.hide, document.body, 'down:27', this);
     },
+
+    /**
+     * Hide the dialogue.
+     *
+     * @method hide
+     */
     hide : function(e) {
         if (this._escCloseEvent) {
             this._escCloseEvent.detach();
@@ -191,6 +266,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         }
         this.get(USP.BASE).addClass(CSS.HIDDEN);
     },
+
+    /**
+     * Search for users.
+     *
+     * @method search
+     */
     search : function(e, append) {
         if (e) {
             e.halt();
@@ -224,12 +305,30 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             }
         });
     },
+
+    /**
+     * Display the loading info.
+     *
+     * @method displayLoading
+     */
     displayLoading : function() {
         this._loadingNode.removeClass(CSS.HIDDEN);
     },
+
+    /**
+     * Hide the loading info.
+     *
+     * @method removeLoading
+     */
     removeLoading : function() {
         this._loadingNode.addClass(CSS.HIDDEN);
     },
+
+    /**
+     * Process and display the search results.
+     *
+     * @method processSearchResults
+     */
     processSearchResults : function(tid, outcome, args) {
         var result = false,
             users,
@@ -329,6 +428,14 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
             }
         }
     },
+
+    /**
+     * Deselect a user.
+     *
+     * @method deselectUser
+     * @param {EventFacade} e The event.
+     * @param {Object} args A list of argments.
+     */
     deselectUser : function(e, args) {
         var user = e.currentTarget.ancestor(SELECTORS.USER);
         var list = this.get(USP.SELECTEDUSERS);
@@ -348,6 +455,14 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 
         user.removeClass(CSS.SELECTED);
     },
+
+    /**
+     * Select a user.
+     *
+     * @method SelectUser
+     * @param {EventFacade} e The event.
+     * @param {Object} args A list of argments.
+     */
     selectUser : function(e, args) {
         var user = e.currentTarget.ancestor(SELECTORS.USER);
 
@@ -365,9 +480,22 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
         Y.one(SELECTORS.USERIDS).set('value', list.join());
         user.addClass(CSS.SELECTED);
     },
+
+    /**
+     * Set the content of the dialogue.
+     *
+     * @method setContent
+     * @param {String} content The content.
+     */
     setContent: function(content) {
         this.get(USP.BASE).one(SELECTORS.AJAXCONTENT).setContent(content);
     },
+
+    /**
+     * Display the names of the selected users in the form.
+     *
+     * @method setnamedisplay
+     */
     setnamedisplay: function() {
         var namelist = this.get(USP.USERFULLNAMES);
         namelist = namelist.filter(function(x) {
@@ -379,12 +507,33 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
 }, {
     NAME : USP.NAME,
     ATTRS : {
+
+        /**
+         * The current page URL.
+         *
+         * @attribute url
+         * @type String
+         */
         url : {
             validator : Y.Lang.isString
         },
+
+        /**
+         * The URL to the Ajax file.
+         *
+         * @attribute ajaxurl
+         * @type String
+         */
         ajaxurl : {
             validator : Y.Lang.isString
         },
+
+        /**
+         * The dialogue.
+         *
+         * @attribute base
+         * @type Node
+         */
         base : {
             setter : function(node) {
                 var n = Y.one(node);
@@ -394,41 +543,89 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                 return n;
             }
         },
+
+        /**
+         * The initial list of users.
+         *
+         * @attribute userfullnames
+         * @type Object
+         */
         users : {
             validator : Y.Lang.isArray,
             value : null
         },
+
+        /**
+         * IDs of the selected users.
+         *
+         * @attribute selectedusers
+         * @type Array
+         */
         selectedusers : {
             validator : Y.Lang.isArray,
             value : null
         },
+
+        /**
+         * The names of the selected users.
+         *
+         * @attribute userfullnames
+         * @type Object
+         */
         userfullnames : {
             validator : Y.Lang.isObject,
             value : null
         },
+
+        /**
+         * The course ID.
+         *
+         * @attribute courseid
+         * @type Number
+         */
         courseid : {
             value : null
         },
+
+        /**
+         * Array of parameters.
+         *
+         * @attribute params
+         * @type Array
+         */
         params : {
             validator : Y.Lang.isArray,
             value : []
         },
-        multiple : {
-            validator : Y.Lang.isBool,
-            value : false
-        },
+
+        /**
+         * The page we are on.
+         *
+         * @attribute page
+         * @type Number
+         */
         page : {
             validator : Y.Lang.isNumber,
             value : 0
         },
+
+        /**
+         * The number of users displayed.
+         *
+         * @attribute userCount
+         * @type Number
+         */
         userCount : {
             value : 0,
             validator : Y.Lang.isNumber
         },
-        requiresRefresh : {
-            value : false,
-            validator : Y.Lang.isBool
-        },
+
+        /**
+         * The search field.
+         *
+         * @attribute search
+         * @type Node
+         */
         search : {
             setter : function(node) {
                 var n = Y.one(node);
@@ -438,14 +635,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, Y.Bas
                 return n;
             }
         },
-        lastPreSearchValue : {
-            value : '',
-            validator : Y.Lang.isString
-        },
-        strings  : {
-            value : {},
-            validator : Y.Lang.isObject
-        },
+
+        /**
+         * The number of results per page.
+         *
+         * @attribute perPage
+         * @type Number
+         */
         perPage : {
             value: 25,
             Validator: Y.Lang.isNumber
