@@ -240,22 +240,22 @@ class qtype_ordering_renderer extends qtype_renderer {
 
         $output = '';
 
-        $showcorrect = false;
+        $showcorrect = true;
         if ($step = $qa->get_last_step()) {
             switch ($step->get_state()) {
                 case 'gradedright':
+                    $showcorrect = false;
                     $msg = get_string('correctfeedback', 'qtype_ordering');
                     break;
                 case 'gradedpartial':
-                    $showcorrect = true;
                     $fraction = round($step->get_fraction(), 2);
                     $msg = get_string('partiallycorrectfeedback', 'qtype_ordering', $fraction);
                     break;
                 case 'gradedwrong':
-                    $showcorrect = true;
                     $msg = get_string('incorrectfeedback', 'qtype_ordering');
                     break;
                 default:
+                    $showcorrect = false;
                     $msg = '';
             }
             if ($msg) {
