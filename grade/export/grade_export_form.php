@@ -37,11 +37,44 @@ class grade_export_form extends moodleform {
         if (empty($features['simpleui'])) {
             debugging('Grade export plugin needs updating to support one step exports.', DEBUG_DEVELOPER);
         }
+
+        $mform->addElement('header', 'gradeitems', get_string('gradeitemsinc', 'grades'));
+        $mform->setExpanded('gradeitems', true);
+
         if (!empty($features['idnumberrequired'])) {
-            $mform->addElement('header', 'warnings', get_string('warning', 'moodle'));
-            $mform->setExpanded('warnings', true);
             $mform->addElement('static', 'idnumberwarning', get_string('useridnumberwarning', 'grades'));
         }
+
+        $switch = grade_get_setting($COURSE->id, 'aggregationposition', $CFG->grade_aggregationposition);
+
+        // Grab the grade_seq for this course
+        $gseq = new grade_seq($COURSE->id, $switch);
+
+        if ($grade_items = $gseq->items) {
+            $needs_multiselect = false;
+            $canviewhidden = has_capability('moodle/grade:viewhidden', context_course::instance($COURSE->id));
+
+            foreach ($grade_items as $grade_item) {
+                // Is the grade_item hidden? If so, can the user see hidden grade_items?
+                if ($grade_item->is_hidden() && !$canviewhidden) {
+                    continue;
+                }
+
+                if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
+                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
+                    $mform->hardFreeze('itemids['.$grade_item->id.']');
+                } else {
+                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), null, array('group' => 1));
+                    $mform->setDefault('itemids['.$grade_item->id.']', 1);
+                    $needs_multiselect = true;
+                }
+            }
+
+            if ($needs_multiselect) {
+                $this->add_checkbox_controller(1, null, null, 1); // 1st argument is group name, 2nd is link text, 3rd is attributes and 4th is original value
+            }
+        }
+
 
         $mform->addElement('header', 'options', get_string('exportformatoptions', 'grades'));
         if (!empty($features['simpleui'])) {
@@ -140,41 +173,6 @@ class grade_export_form extends moodleform {
 
             $mform->disabledIf('iprestriction', 'key', 'noteq', 1);
             $mform->disabledIf('validuntil', 'key', 'noteq', 1);
-        }
-
-        $mform->addElement('header', 'gradeitems', get_string('gradeitemsinc', 'grades'));
-        if (!empty($features['simpleui'])) {
-            $mform->setExpanded('gradeitems', false);
-        }
-
-        $switch = grade_get_setting($COURSE->id, 'aggregationposition', $CFG->grade_aggregationposition);
-
-        // Grab the grade_seq for this course
-        $gseq = new grade_seq($COURSE->id, $switch);
-
-        if ($grade_items = $gseq->items) {
-            $needs_multiselect = false;
-            $canviewhidden = has_capability('moodle/grade:viewhidden', context_course::instance($COURSE->id));
-
-            foreach ($grade_items as $grade_item) {
-                // Is the grade_item hidden? If so, can the user see hidden grade_items?
-                if ($grade_item->is_hidden() && !$canviewhidden) {
-                    continue;
-                }
-
-                if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
-                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
-                    $mform->hardFreeze('itemids['.$grade_item->id.']');
-                } else {
-                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), null, array('group' => 1));
-                    $mform->setDefault('itemids['.$grade_item->id.']', 1);
-                    $needs_multiselect = true;
-                }
-            }
-
-            if ($needs_multiselect) {
-                $this->add_checkbox_controller(1, null, null, 1); // 1st argument is group name, 2nd is link text, 3rd is attributes and 4th is original value
-            }
         }
 
         $mform->addElement('hidden', 'id', $COURSE->id);
