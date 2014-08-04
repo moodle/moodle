@@ -33,6 +33,8 @@ The intended use case is to create an improved store for load-balanced configura
 
 When this setting is enabled, the server listed above will be used for fetching.';
 $string['clusteredheader'] = 'Split servers';
+$string['memcacheversioncheck'] = 'memcache PHP extension';
+$string['memcacheversionwarning'] = 'The installed memcache extension {$a->version} is lower than the recommended version {$a->minversion}, upgrading to at least the minimum version will result in better performance when using memcache.';
 $string['pluginname'] = 'Memcache';
 $string['prefix'] = 'Key prefix';
 $string['prefix_help'] = 'This prefix is used for all key names on the memcache server.
