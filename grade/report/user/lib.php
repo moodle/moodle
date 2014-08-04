@@ -435,8 +435,17 @@ class grade_report_user extends grade_report {
                             $data['grade']['content'] = '-';
                     } else {
                         $data['grade']['class'] = $class;
-                        $gradeval = $this->blank_hidden_total($this->courseid, $grade_grade->grade_item, $gradeval);
-                        $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
+                        $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
+                                                                                     $grade_grade->grade_item,
+                                                                                     $gradeval);
+
+                        // We temporarily adjust the view of this grade item - because the min and
+                        // max are affected by the hidden values in the aggregation.
+                        $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
+                        $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
+                        $data['grade']['content'] = grade_format_gradevalue($adjustedgrade['grade'],
+                                                                            $grade_grade->grade_item,
+                                                                            true);
                     }
                     $data['grade']['headers'] = "$header_cat $header_row grade";
                 }
