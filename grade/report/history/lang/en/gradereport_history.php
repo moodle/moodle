@@ -29,7 +29,6 @@ $string['datefrom'] = 'Date from';
 $string['datetill'] = 'Date till';
 $string['datetime'] = 'Date and time';
 $string['deleteditemid'] = 'Delete item with id {$a}';
-$string['deselect'] = 'De-select';
 $string['eventgradereportviewed'] = 'Grade history report viewed';
 $string['excluded'] = 'Excluded from calculations';
 $string['feedbacktext'] = 'Feedback text';

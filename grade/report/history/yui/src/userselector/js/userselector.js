@@ -31,6 +31,7 @@ var COMPONENT = 'gradereport_history';
 var USP = {
     AJAXURL : 'ajaxurl',
     BASE : 'base',
+    CHECKBOX_NAME_PREFIX : 'usp-u',
     COURSEID : 'courseid',
     DIALOGUE_PREFIX : 'moodle-dialogue',
     NAME : 'gradereport_history_usp',
@@ -47,11 +48,10 @@ var USP = {
 var CSS = {
     ACCESSHIDE : 'accesshide',
     AJAXCONTENT : 'usp-ajax-content',
+    CHECKBOX : 'usp-checkbox',
     CLOSE : 'close',
     CLOSEBTN : 'close-button',
     CONTENT : 'usp-content',
-    COUNT : 'count',
-    DESELECT : 'deselect',
     DETAILS : 'details',
     EXTRAFIELDS : 'extrafields',
     FOOTER : 'usp-footer',
@@ -66,7 +66,6 @@ var CSS = {
     SEARCHBTN : 'usp-search-btn',
     SEARCHFIELD : 'usp-search-field',
     SEARCHRESULTS : 'usp-search-results',
-    SELECT : 'select',
     SELECTED : 'selected',
     TOTALUSERS : 'totalusers',
     USER : 'user',
@@ -75,24 +74,21 @@ var CSS = {
 };
 var SELECTORS = {
     AJAXCONTENT: '.' + CSS.AJAXCONTENT,
-    DESELECT: '.' + CSS.DESELECT,
     FOOTER: '.' + CSS.FOOTER,
     FOOTERCLOSE: '.' + CSS.FOOTER + ' .' + CSS.CLOSEBTN + ' input',
-    FULLNAME: '.' + CSS.FULLNAME,
+    FULLNAME: '.' + CSS.FULLNAME + ' label',
     LIGHTBOX: '.' + CSS.LIGHTBOX,
     MORERESULTS: '.' + CSS.MORERESULTS,
     OPTIONS: '.' + CSS.OPTIONS,
     RESULTSUSERS: '.' + CSS.SEARCHRESULTS + ' .' + CSS.USERS,
     SEARCHBTN: '.' + CSS.SEARCHBTN,
     SEARCHFIELD: '.' + CSS.SEARCHFIELD,
-    SELECT: '.' + CSS.SELECT,
     SELECTEDNAMES: '.felement .selectednames',
     TRIGGER: '.gradereport_history_plugin input.selectortrigger',
     USER: '.' + CSS.USER,
-    USERDESELECT: '.' + CSS.USER + ' .' + CSS.DESELECT,
     USERFULLNAMES: 'input[name="userfullnames"]',
     USERIDS: 'input[name="userids"]',
-    USERSELECT: '.' + CSS.USER + ' .' + CSS.SELECT
+    USERSELECT: '.' + CSS.USER + ' .' + CSS.CHECKBOX + ' input[type=checkbox]'
 };
 var create = Y.Node.create;
 
@@ -119,6 +115,15 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     _firstDisplay: true,
 
     /**
+     * The list of all the users selected while the dialogue is open.
+     *
+     * @type {Object}
+     * @property _usersBufferList
+     * @private
+     */
+    _usersBufferList: null,
+
+    /**
      * Compiled template function for a user node.
      *
      * @property _userTemplate
@@ -136,7 +141,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         tpl = Y.Handlebars.compile(
                 '<div class="{{CSS.WRAP}}">' +
-                    '<div class="{{CSS.CONTENT}}">' +
+                    '<div class="{{CSS.CONTENT}}" aria-live="polite">' +
                         '<div class="{{CSS.AJAXCONTENT}}"></div>' +
                         '<div class="{{CSS.LIGHTBOX}} {{CSS.HIDDEN}}">' +
                             '<img class="{{CSS.LOADINGICON}}" alt="{{get_string "loading" "admin"}}"' +
@@ -175,23 +180,16 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         this.set(USP.SEARCH, bb.one(SELECTORS.SEARCHFIELD));
         this.set(USP.SEARCHBTN, bb.one(SELECTORS.SEARCHBTN));
-        list = Y.one(SELECTORS.USERIDS).get('value').split(',');
-        if (list[0] === '') {
-            list = [];
-        }
-        this.set(USP.SELECTEDUSERS, list);
 
-        list = [];
-        if (this.get(USP.USERFULLNAMES) !== null) {
-            Y.each(this.get(USP.USERFULLNAMES), function(value, key) {
-                list[key] = value;
-            });
-        }
-        this.set(USP.USERFULLNAMES, list);
+        // Load the list of users.
+        this.loadUsersFromForm();
 
+        // Add the event on the button that opens the dialogue.
         Y.one(SELECTORS.TRIGGER).on('click', this.show, this);
 
-        bb.one(SELECTORS.FOOTERCLOSE).on('click', this.hide, this);
+        // The button to finalize the selection.
+        bb.one(SELECTORS.FOOTERCLOSE).on('click', this.finishSelectingUsers, this);
+
         params = this.get(USP.PARAMS);
         params.id = this.get(USP.COURSEID);
         this.set(USP.PARAMS, params);
@@ -215,10 +213,20 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @method show
      */
     show : function(e) {
+        var bb;
+        this._usersBufferList = {};
         if (this._firstDisplay) {
             // Load the default list of users when the dialogue is loaded for the first time.
             this._firstDisplay = false;
             this.search(e, false);
+        } else {
+            // Leave the content as is, but reset the selection.
+            this._usersBufferList = Y.clone(this.get(USP.USERFULLNAMES));
+            bb = this.get('boundingBox');
+            bb.all(SELECTORS.USERSELECT).set('checked', false);
+            Y.Object.each(this._usersBufferList, function(v, k) {
+                bb.one(SELECTORS.USERSELECT + '[name=' + USP.CHECKBOX_NAME_PREFIX + k + ']').set('checked', true);
+            });
         }
         Y.namespace('M.gradereport_history.UserSelector').superclass.show.call(this);
     },
@@ -302,7 +310,8 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             node,
             usersstr,
             content,
-            fetchmore;
+            fetchmore,
+            checked;
         try {
             result = Y.JSON.parse(outcome.responseText);
             if (result.error) {
@@ -324,15 +333,16 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         if (!this._userTemplate) {
             this._userTemplate = Y.Handlebars.compile(
                 '<div class="{{CSS.USER}} {{selected}} clearfix" data-userid="{{userId}}">' +
-                    '<div class="{{CSS.COUNT}}">{{count}}</div>' +
+                    '<div class="{{CSS.CHECKBOX}}">' +
+                        '<input {{checked}} name="{{USP.CHECKBOX_NAME_PREFIX}}{{userId}}" type="checkbox"' +
+                            'id="{{checkboxId}}" aria-describedby="{{checkboxId}} {{extraFieldsId}}"/>' +
+                    '</div>' +
                     '<div class="{{CSS.PICTURE}}">{{{picture}}}</div>' +
                     '<div class="{{CSS.DETAILS}}">' +
-                        '<div class="{{CSS.FULLNAME}}">{{fullname}}</div>' +
-                        '<div class="{{CSS.EXTRAFIELDS}}">{{extrafields}}</div>' +
-                    '</div>' +
-                    '<div class="{{CSS.OPTIONS}}">' +
-                        '<input type="button" class="{{CSS.SELECT}}" value="{{get_string "select" "moodle"}}">' +
-                        '<input type="button" class="{{CSS.DESELECT}}" value="{{get_string "deselect" COMPONENT}}">' +
+                        '<div class="{{CSS.FULLNAME}}">' +
+                            '<label for="{{checkboxId}}">{{fullname}}</label>' +
+                        '</div>' +
+                        '<div id="{{extraFieldsId}}" class="{{CSS.EXTRAFIELDS}}">{{extrafields}}</div>' +
                     '</div>' +
                 '</div>'
             );
@@ -346,21 +356,27 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             user = result.response.users[i];
 
             // If already selected, add class.
-            if (this.get(USP.SELECTEDUSERS).indexOf(user.userid) >= 0) {
-                selected = ' '+CSS.SELECTED;
+            if (Y.Object.hasKey(this._usersBufferList, user.userid)) {
+                selected = ' ' + CSS.SELECTED;
+                checked = 'checked';
             } else {
                 selected = '';
+                checked = '';
             }
 
             node = create(userTemplate({
+                checkboxId: Y.guid(),
+                checked: checked,
                 COMPONENT: COMPONENT,
                 count: count,
                 CSS: CSS,
                 extrafields: user.extrafields,
+                extraFieldsId: Y.guid(),
                 fullname: user.fullname,
                 picture: user.picture,
                 selected: selected,
-                userId: user.userid
+                userId: user.userid,
+                USP: USP
             }));
             users.append(node);
         }
@@ -380,8 +396,9 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                 content.append(fetchmore);
             }
             this.setContent(content);
-            Y.delegate("click", this.selectUser, users, SELECTORS.USERSELECT, this, args);
-            Y.delegate("click", this.deselectUser, users, SELECTORS.USERDESELECT, this, args);
+
+            // Delegate the action when selecting a user.
+            Y.delegate("click", this.selectUser, users, SELECTORS.USERSELECT, this);
         } else {
             if (result.response.totalusers <= (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
                 this.get('boundingBox').one(SELECTORS.MORERESULTS).remove();
@@ -390,30 +407,42 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     },
 
     /**
-     * Deselect a user.
+     * When the user has finished selecting users.
      *
-     * @method deselectUser
+     * @method finishSelectingUsers
      * @param {EventFacade} e The event.
-     * @param {Object} args A list of argments.
      */
-    deselectUser : function(e, args) {
-        var user = e.currentTarget.ancestor(SELECTORS.USER);
-        var list = this.get(USP.SELECTEDUSERS);
+    finishSelectingUsers: function(e) {
+        this.applySelection();
+        this.hide();
+    },
 
-        // Find and remove item from the array.
-        var i = list.indexOf(user.getData('userid'));
-        if (i != -1) {
-            list.splice(i, 1);
+    /**
+     * Apply the selection made.
+     *
+     * @method applySelection
+     * @return Void
+     */
+    applySelection: function(e) {
+        var userIds = Y.Object.values(this._usersBufferList);
+        this.set(USP.SELECTEDUSERS, userIds);
+        this.set(USP.USERFULLNAMES, this._usersBufferList);
+        this.setnamedisplay();
+        Y.one(SELECTORS.USERIDS).set('value', userIds.join());
+    },
+
+    /**
+     * Loads the users from the form.
+     *
+     * @method loadUsersFromForm
+     * @return Void
+     */
+    loadUsersFromForm: function() {
+        var list = Y.one(SELECTORS.USERIDS).get('value').split(',');
+        if (list[0] === '') {
+            list = [];
         }
         this.set(USP.SELECTEDUSERS, list);
-        Y.one(SELECTORS.USERIDS).set('value', list.join());
-
-        var namelist = this.get(USP.USERFULLNAMES);
-        delete namelist[user.getData('userid')];
-        this.set(USP.USERFULLNAMES, namelist);
-        this.setnamedisplay();
-
-        user.removeClass(CSS.SELECTED);
     },
 
     /**
@@ -421,24 +450,23 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      *
      * @method SelectUser
      * @param {EventFacade} e The event.
-     * @param {Object} args A list of argments.
      */
-    selectUser : function(e, args) {
-        var user = e.currentTarget.ancestor(SELECTORS.USER);
+    selectUser : function(e) {
+        var user = e.currentTarget.ancestor(SELECTORS.USER),
+            fullname = user.one(SELECTORS.FULLNAME).get('innerHTML'),
+            checked = e.currentTarget.get('checked'),
+            userId = user.getData('userid');
 
-        // Add id to the userids element and internal js list.
-        var list = this.get(USP.SELECTEDUSERS);
-        list.push(user.getData('userid'));
-        this.set(USP.SELECTEDUSERS, list);
-
-        var fullname = user.one(SELECTORS.FULLNAME).get('innerHTML');
-        var namelist = this.get(USP.USERFULLNAMES);
-        namelist[user.getData('userid')] = fullname;
-        this.set(USP.USERFULLNAMES, namelist);
-        this.setnamedisplay();
-
-        Y.one(SELECTORS.USERIDS).set('value', list.join());
-        user.addClass(CSS.SELECTED);
+        if (checked) {
+            // Selecting the user.
+            this._usersBufferList[userId] = fullname;
+            user.addClass(CSS.SELECTED);
+        } else {
+            // De-selecting the user.
+            delete this._usersBufferList[userId];
+            delete this._usersBufferList[parseInt(userId, 10)]; // Also remove number'd keys.
+            user.removeClass(CSS.SELECTED);
+        }
     },
 
     /**
@@ -457,10 +485,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @method setnamedisplay
      */
     setnamedisplay: function() {
-        var namelist = this.get(USP.USERFULLNAMES);
-        namelist = namelist.filter(function(x) {
-             return x;
-        });
+        var namelist = Y.Object.values(this.get(USP.USERFULLNAMES));
         Y.one(SELECTORS.SELECTEDNAMES).set('innerHTML', namelist.join(', '));
         Y.one(SELECTORS.USERFULLNAMES).set('value', namelist.join());
     }

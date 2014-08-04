@@ -57,13 +57,8 @@ $outcome->response = array('users' => $users);
 $outcome->response['totalusers'] = count($users);
 
 $extrafields = get_extra_user_fields($context);
-$useroptions = array();
-// User is not enrolled, either link to site profile or do not link at all.
-if (has_capability('moodle/user:viewdetails', context_system::instance())) {
-    $useroptions['courseid'] = SITEID;
-} else {
-    $useroptions['link'] = false;
-}
+$useroptions = array('link' => false);
+
 foreach ($outcome->response['users'] as &$user) {
     $user->userid = $user->id;
     $user->picture = $OUTPUT->user_picture($user, $useroptions);
