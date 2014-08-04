@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace gradereport_history;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
@@ -36,7 +38,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @author     Adam Olley <adam.olley@netspot.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_history_filter_form extends moodleform {
+class filter_form extends \moodleform {
 
     /**
      * Definition of the Mform for filters displayed in the report.
@@ -48,7 +50,7 @@ class gradereport_history_filter_form extends moodleform {
         $itemids  = $this->_customdata['itemids'];
         $graders  = $this->_customdata['graders'];
         $userbutton = $this->_customdata['userbutton'];
-        $names = html_writer::span('', 'selectednames');
+        $names = \html_writer::span('', 'selectednames');
 
         $mform->addElement('static', 'userselect', get_string('selectuser', 'gradereport_history'), $userbutton);
         $mform->addElement('static', 'selectednames', get_string('selectedusers', 'gradereport_history'), $names);
@@ -89,7 +91,7 @@ class gradereport_history_filter_form extends moodleform {
         $mform =& $this->_form;
 
         if ($userfullnames = $mform->getElementValue('userfullnames')) {
-            $mform->getElement('selectednames')->setValue(html_writer::span($userfullnames, 'selectednames'));
+            $mform->getElement('selectednames')->setValue(\html_writer::span($userfullnames, 'selectednames'));
         }
     }
 

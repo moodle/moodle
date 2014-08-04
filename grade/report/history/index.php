@@ -73,7 +73,7 @@ $output = $PAGE->get_renderer('gradereport_history');
 
 $button = grade_report_history::get_user_select_button($course->id);
 $params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => null);
-$mform = new gradereport_history_filter_form(null, $params);
+$mform = new \gradereport_history\filter_form(null, $params);
 $filters = array();
 if ($data = $mform->get_data()) {
     $filters = (array)$data;
@@ -110,7 +110,7 @@ $filters['userfullnames'] = implode(',', $names);
 $button = grade_report_history::get_user_select_button($course->id, $names);
 $userbutton = $output->render($button);
 $params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => $userbutton);
-$mform = new gradereport_history_filter_form(null, $params);
+$mform = new \gradereport_history\filter_form(null, $params);
 $mform->set_data($filters);
 
 if ($export) {
