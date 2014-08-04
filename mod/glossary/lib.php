@@ -1352,20 +1352,27 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
 }
 
 /**
- * @todo Document this function
+ * Print the list of attachments for this glossary entry
+ *
+ * @param object $entry
+ * @param object $cm The coursemodule
+ * @param string $format The format for this view (html, or text)
+ * @param string $unused1 This parameter is no longer used
+ * @param string $unused2 This parameter is no longer used
  */
-function glossary_print_entry_attachment($entry, $cm, $format=NULL, $align="right", $insidetable=true) {
-///   valid format values: html  : Return the HTML link for the attachment as an icon
-///                        text  : Return the HTML link for tha attachment as text
-///                        blank : Print the output to the screen
+function glossary_print_entry_attachment($entry, $cm, $format = null, $unused1 = null, $unused2 = null) {
+    // Valid format values: html: The HTML link for the attachment is an icon; and
+    //                      text: The HTML link for the attachment is text.
     if ($entry->attachment) {
-          if ($insidetable) {
-              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap=\"nowrap\">\n";
-          }
-          echo glossary_print_attachments($entry, $cm, $format, $align);
-          if ($insidetable) {
-              echo "</td></tr></table>\n";
-          }
+        echo '<div class="attachments">';
+        echo glossary_print_attachments($entry, $cm, $format, $align);
+        echo '</div>';
+    }
+    if ($unused1) {
+        debugging('The align parameter is deprecated, please use appropriate CSS instead', DEBUG_DEVELOPER);
+    }
+    if ($unused2 !== null) {
+        debugging('The insidetable parameter is deprecated, please use appropriate CSS instead', DEBUG_DEVELOPER);
     }
 }
 
