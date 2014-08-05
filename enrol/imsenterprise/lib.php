@@ -68,7 +68,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
      * Read in an IMS Enterprise file.
      * Originally designed to handle v1.1 files but should be able to handle
      * earlier types as well, I believe.
-     *
+     * This cron feature has been converted to a scheduled task and it can now be scheduled
+     * from the UI.
      */
     public function cron() {
         global $CFG;
@@ -280,6 +281,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         if ($createnewcourses) {
             require_once("$CFG->dirroot/course/lib.php");
         }
+
         // Process tag contents.
         $group = new stdClass();
         if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
