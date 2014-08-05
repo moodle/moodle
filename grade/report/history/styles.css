@@ -55,12 +55,12 @@ table#gradestable th.header.selected {
     text-align: center;
 }
 
-.gradereport_history_usp .user {
+.gradereport_history_usp .usp-user {
     width: 100%;
     text-align: left;
     border-top: 1px solid #eee;
 }
-.gradereport_history_usp .user:nth-child(odd) {
+.gradereport_history_usp .usp-user:nth-child(odd) {
     background-color: #f9f9f9;
 }
 .gradereport_history_usp .usp-first-added {
@@ -78,14 +78,14 @@ table#gradestable th.header.selected {
     margin: 6px 3px 0 3px;
     float: left;
 }
-.gradereport_history_usp .userpicture{
+.gradereport_history_usp .usp-userpicture{
     cursor: pointer;
 }
-.gradereport_history_usp .user .details {
+.gradereport_history_usp .usp-user .details {
     margin-left: 67px;
     padding: 3px 6px 0 6px;
 }
-.gradereport_history_usp .user .details label {
+.gradereport_history_usp .usp-user .details label {
     margin: 0;
 }
 .gradereport_history_usp .usp-more-results {
@@ -100,6 +100,6 @@ table#gradestable th.header.selected {
     margin: 0;
 }
 
-.dir-rtl .gradereport_history_usp .usp-search-results .user { text-align: right;}
+.dir-rtl .gradereport_history_usp .usp-search-results .usp-user { text-align: right;}
 .dir-rtl .gradereport_history_usp .usp-content .usp-controls { text-align: right;}
 

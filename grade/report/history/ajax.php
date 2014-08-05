@@ -57,7 +57,7 @@ $outcome->response = array('users' => $users);
 $outcome->response['totalusers'] = count($users);
 
 $extrafields = get_extra_user_fields($context);
-$useroptions = array('link' => false);
+$useroptions = array('link' => false, 'visibletoscreenreaders' => false);
 
 foreach ($outcome->response['users'] as &$user) {
     $user->userid = $user->id;

@@ -71,8 +71,8 @@ var CSS = {
     SEARCHFIELD : 'usp-search-field',
     SEARCHRESULTS : 'usp-search-results',
     SELECTED : 'selected',
-    USER : 'user',
-    USERS : 'users',
+    USER : 'usp-user',
+    USERS : 'usp-users',
     WRAP : 'usp-wrap'
 };
 var SELECTORS = {
@@ -129,6 +129,15 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     _usersBufferList: null,
 
     /**
+     * The Node on which the focus is set.
+     *
+     * @property _userTabFocus
+     * @type Node
+     * @private
+     */
+    _userTabFocus: null,
+
+    /**
      * Compiled template function for a user node.
      *
      * @property _userTemplate
@@ -149,7 +158,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                     '<div class="{{CSS.SEARCH}}" role="search">' +
                         '<form>' +
                             '<input type="text" class="{{CSS.SEARCHFIELD}}" ' +
-                                'aria-labelledby="{{get_string "search" "moodle"}}" value="" />' +
+                                'aria-label="{{get_string "search" "moodle"}}" value="" />' +
                             '<input type="submit" class="{{CSS.SEARCHBTN}}"' +
                                 'value="{{get_string "search" "moodle"}}">' +
                         '</form>' +
@@ -194,9 +203,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // The button to finalize the selection.
         bb.one(SELECTORS.FINISHBTN).on('click', this.finishSelectingUsers, this);
 
+        // Delegate the keyboard navigation in the users list.
+        bb.delegate('key', this.userKeyboardNavigation, 'down:38,40', SELECTORS.AJAXCONTENT, this);
+
         // Delegate the action to select a user.
-        Y.delegate("click", this.selectUser, bb.one(SELECTORS.AJAXCONTENT), SELECTORS.USERSELECT, this);
-        Y.delegate("click", this.selectUser, bb.one(SELECTORS.AJAXCONTENT), SELECTORS.PICTURE, this);
+        Y.delegate('click', this.selectUser, SELECTORS.AJAXCONTENT, SELECTORS.USERSELECT, this);
+        Y.delegate('click', this.selectUser, SELECTORS.AJAXCONTENT, SELECTORS.PICTURE, this);
 
         params = this.get(USP.PARAMS);
         params.id = this.get(USP.COURSEID);
@@ -221,10 +233,22 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             // Leave the content as is, but reset the selection.
             this._usersBufferList = Y.clone(this.get(USP.USERFULLNAMES));
             bb = this.get('boundingBox');
-            bb.all(SELECTORS.USERSELECT).set('checked', false);
+
+            // Remove all the selected users.
+            bb.all(SELECTORS.USER).each(function(node) {
+                this.markUserNode(node, false);
+            }, this);
+
+            // Select the users.
             Y.Object.each(this._usersBufferList, function(v, k) {
-                bb.one(SELECTORS.USERSELECT + '[name=' + USP.CHECKBOX_NAME_PREFIX + k + ']').set('checked', true);
-            });
+                var user = bb.one(SELECTORS.USER + '[data-userid="' + k + '"]');
+                if (user) {
+                    this.markUserNode(user, true);
+                }
+            }, this);
+
+            // Reset the tab focus.
+            this.setUserTabFocus(bb.one(SELECTORS.USER));
         }
         Y.namespace('M.gradereport_history.UserSelector').superclass.show.call(this);
     },
@@ -296,14 +320,21 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      */
     postSearch: function(unused, args) {
         var bb = this.get('boundingBox'),
-            firstAdded = bb.one(SELECTORS.FIRSTADDED);
+            firstAdded = bb.one(SELECTORS.FIRSTADDED),
+            firstUser;
 
         // Hide the lightbox.
         bb.one(SELECTORS.LIGHTBOX).addClass(CSS.HIDDEN);
 
         // Sets the focus on the newly added user if we are appending results.
         if (args.append && firstAdded) {
+            this.setUserTabFocus(firstAdded);
             firstAdded.one(SELECTORS.USERSELECT).focus();
+        } else {
+            firstUser = bb.one(SELECTORS.USER);
+            if (firstUser) {
+                this.setUserTabFocus(firstUser);
+            }
         }
     },
 
@@ -325,7 +356,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             node,
             content,
             fetchmore,
-            checked,
             totalUsers;
 
         // Decodes the result.
@@ -347,7 +377,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         // Create the div containing the users when it is a fresh search.
         if (!args.append) {
-            users = create('<div class="'+CSS.USERS+'"></div>');
+            users = create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="'+CSS.USERS+'"></div>');
         } else {
             users = bb.one(SELECTORS.RESULTSUSERS);
         }
@@ -355,9 +385,10 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // Compile the template for each user node.
         if (!this._userTemplate) {
             this._userTemplate = Y.Handlebars.compile(
-                '<div class="{{CSS.USER}} {{selected}} clearfix" data-userid="{{userId}}">' +
+                '<div role="option" aria-selected="false" class="{{CSS.USER}} clearfix" ' +
+                        'data-userid="{{userId}}">' +
                     '<div class="{{CSS.CHECKBOX}}">' +
-                        '<input {{checked}} name="{{USP.CHECKBOX_NAME_PREFIX}}{{userId}}" type="checkbox"' +
+                        '<input name="{{USP.CHECKBOX_NAME_PREFIX}}{{userId}}" type="checkbox" tabindex="-1"' +
                             'id="{{checkboxId}}" aria-describedby="{{checkboxId}} {{extraFieldsId}}"/>' +
                     '</div>' +
                     '<div class="{{CSS.PICTURE}}">{{{picture}}}</div>' +
@@ -379,18 +410,15 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             count++;
             user = result.response.users[i];
 
-            // If already selected, add class.
+            // If already selected.
             if (Y.Object.hasKey(this._usersBufferList, user.userid)) {
-                selected = ' ' + CSS.SELECTED;
-                checked = 'checked';
+                selected = true;
             } else {
-                selected = '';
-                checked = '';
+                selected = false;
             }
 
             node = create(userTemplate({
                 checkboxId: Y.guid(),
-                checked: checked,
                 COMPONENT: COMPONENT,
                 count: count,
                 CSS: CSS,
@@ -398,10 +426,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                 extraFieldsId: Y.guid(),
                 fullname: user.fullname,
                 picture: user.picture,
-                selected: selected,
                 userId: user.userid,
                 USP: USP
             }));
+
+            this.markUserNode(node, selected);
 
             // Noting the first user that was when adding more results.
             if (args.append && firstAdded) {
@@ -509,18 +538,38 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         if (e.currentTarget !== checkbox) {
             // We triggered the selection from another node, so we need to change the checkbox value.
             checked = !checked;
-            checkbox.set('checked', checked);
         }
 
         if (checked) {
             // Selecting the user.
             this._usersBufferList[userId] = fullname;
-            user.addClass(CSS.SELECTED);
         } else {
             // De-selecting the user.
             delete this._usersBufferList[userId];
             delete this._usersBufferList[parseInt(userId, 10)]; // Also remove number'd keys.
-            user.removeClass(CSS.SELECTED);
+        }
+
+        this.markUserNode(user, checked);
+    },
+
+    /**
+     * Mark a user node as selected or not.
+     *
+     * This only takes care of the DOM side of things, not the internal mechanism
+     * storing what users have been selected or not.
+     *
+     * @param {Node} node The user node.
+     * @param {Boolean} selected True to mark as selected.
+     */
+    markUserNode: function(node, selected) {
+        if (selected) {
+            node.addClass(CSS.SELECTED);
+            node.set('aria-selected', 'true');
+            node.one(SELECTORS.USERSELECT).set('checked', true);
+        } else {
+            node.removeClass(CSS.SELECTED);
+            node.set('aria-selected', 'false');
+            node.one(SELECTORS.USERSELECT).set('checked', false);
         }
     },
 
@@ -543,7 +592,82 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         var namelist = Y.Object.values(this.get(USP.USERFULLNAMES));
         Y.one(SELECTORS.SELECTEDNAMES).set('innerHTML', namelist.join(', '));
         Y.one(SELECTORS.USERFULLNAMES).set('value', namelist.join());
+    },
+
+    /**
+     * User keyboard navigation.
+     *
+     * @method userKeyboardNavigation
+     */
+    userKeyboardNavigation: function(e) {
+        e.preventDefault();
+
+        var bb = this.get('boundingBox'),
+            users = bb.all(SELECTORS.USER),
+            direction = 1,
+            user,
+            current = e.target.ancestor(SELECTORS.USER, true);
+
+        if (e.keyCode === 38) {
+            direction = -1;
+        }
+
+        user = this.findFocusableUser(users, current, direction);
+        if (user) {
+            user.one(SELECTORS.USERSELECT).focus();
+            this.setUserTabFocus(user);
+        }
+    },
+
+    /**
+     * Find the next or previous focusable node.
+     *
+     * @param {NodeList} users The list of users.
+     * @param {Node} user The user to start with.
+     * @param {Number} direction The direction in which to go.
+     * @return {Node} A user node.
+     * @method findNextFocusableUser
+     */
+    findFocusableUser: function(users, user, direction) {
+        var index = users.indexOf(user);
+
+        if (users.size() < 1) {
+            return null;
+        }
+
+        if (index < 0) {
+            return users.item(0);
+        }
+
+        index += direction;
+
+        // Wrap the navigation when reaching the top of the bottom.
+        if (index < 0) {
+            index = users.size() - 1;
+        } else if (index >= users.size()) {
+            index = 0;
+        }
+
+        return users.item(index);
+    },
+
+    /**
+     * Set the user tab focus.
+     *
+     * @param {Node} user The user node.
+     * @method setUserTabFocus
+     */
+    setUserTabFocus: function(user) {
+        if (this._userTabFocus) {
+            this._userTabFocus.setAttribute('tabindex', '-1');
+        }
+
+        this._userTabFocus = user.one(SELECTORS.USERSELECT);
+        this._userTabFocus.setAttribute('tabindex', '0');
+
+        this.get('boundingBox').one(SELECTORS.RESULTSUSERS).setAttribute('aria-activedescendant', this._userTabFocus.generateID());
     }
+
 }, {
     NAME : USP.NAME,
     CSS_PREFIX : USP.CSS_PREFIX,
@@ -691,7 +815,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
     }
 });
-// Y.augment(Y.namespace('M.gradereport_history').UserSelector, Y.EventTarget);
 
 Y.Base.modifyAttrs(Y.namespace('M.gradereport_history.UserSelector'), {
 
@@ -743,7 +866,6 @@ Y.namespace('M.gradereport_history.UserSelector').init = function(cfg) {
         "handlebars",
         "io-base",
         "json-parse",
-        "moodle-core-notification-dialogue",
-        "overlay"
+        "moodle-core-notification-dialogue"
     ]
 });

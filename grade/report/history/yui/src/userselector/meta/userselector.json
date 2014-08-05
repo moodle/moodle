@@ -7,8 +7,7 @@
             "handlebars",
             "io-base",
             "json-parse",
-            "moodle-core-notification-dialogue",
-            "overlay"
+            "moodle-core-notification-dialogue"
         ]
     }
 }
