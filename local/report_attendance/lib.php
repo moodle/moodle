@@ -63,7 +63,7 @@ class attendancerep{
             $companyselect = " course in (".implode(',', array_keys($companycourses)).")";
         }
 
-        if (!$classmodinfo = $DB->get_record('modules', array('name' => 'courseclassroom'))) {
+        if (!$classmodinfo = $DB->get_record('modules', array('name' => 'trainingevent'))) {
             return $courseselect;
         }
         if (!$courses = $DB->get_records_sql("SELECT DISTINCT course FROM {course_modules}
