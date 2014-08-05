@@ -101,8 +101,13 @@ class grade_export_xml extends grade_export {
         $gui->close();
         $geub->close();
 
-        @header("Content-type: text/xml; charset=UTF-8");
-        send_temp_file($tempfilename, $downloadfilename, false);
+        if (defined('BEHAT_SITE_RUNNING')) {
+            // If behat is running, we cannot test the output if we force a file download.
+            include($tempfilename);
+        } else {
+            @header("Content-type: text/xml; charset=UTF-8");
+            send_temp_file($tempfilename, $downloadfilename, false);
+        }
     }
 }
 

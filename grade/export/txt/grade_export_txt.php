@@ -28,17 +28,11 @@ class grade_export_txt extends grade_export {
      * Constructor should set up all the private variables ready to be pulled
      * @param object $course
      * @param int $groupid id of selected group, 0 means all
-     * @param string $itemlist comma separated list of item ids, empty means all
-     * @param boolean $export_feedback
-     * @param boolean $updatedgradesonly
-     * @param string $displaytype
-     * @param int $decimalpoints
-     * @param boolean $onlyactive
-     * @param boolean $usercustomfields include user custom field in export
+     * @param stdClass $formdata The validated data from the grade export form.
      */
-    public function __construct($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $separator = 'comma', $onlyactive = false, $usercustomfields = false) {
-        parent::__construct($course, $groupid, $itemlist, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $onlyactive, $usercustomfields);
-        $this->separator = $separator;
+    public function __construct($course, $groupid, $formdata) {
+        parent::__construct($course, $groupid, $formdata);
+        $this->separator = $formdata->separator;
     }
 
     public function get_export_params() {

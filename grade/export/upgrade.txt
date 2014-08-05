@@ -1,0 +1,7 @@
+This files describes API changes in /grade/export/* - plugins,
+information provided here is intended especially for developers.
+
+=== 2.8 ===
+
+The UI for the grade export form was simplified down so it's all on one page. The export preview was removed because it was not useful (more useful on import than on export). To update your export plugins you must pass 'simpleui' => true as an option to the grade_export_form, and make your grade_export_form submit directly to your export script. It's easiest to look at a complete example - see "git show 1cc43058" for a complete example of updating the ods exporter.
+
