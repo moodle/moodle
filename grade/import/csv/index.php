@@ -96,6 +96,12 @@ if (!$iid) {
         $iid = csv_import_reader::get_new_iid('grade');
         $csvimport = new csv_import_reader($iid, 'grade');
 
+        if ($error = $csvimport->get_error()) {
+            echo $OUTPUT->notification($error);
+            echo $OUTPUT->footer();
+            die();
+        }
+
         $csvimport->load_csv_content($text, $formdata->encoding, $separator);
 
         // --- get header (field names) ---
