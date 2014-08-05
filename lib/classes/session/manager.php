@@ -524,12 +524,34 @@ class manager {
     /**
      * Does the PHP session with given id exist?
      *
-     * Note: this does not actually verify the presence of sessions record.
+     * The session must exist both in session table and actual
+     * session backend and the session must not be timed out.
+     *
+     * Timeout evaluation is simplified, the auth hooks are not executed.
      *
      * @param string $sid
      * @return bool
      */
     public static function session_exists($sid) {
+        global $DB, $CFG;
+
+        if (empty($CFG->version)) {
+            // Not installed yet, do not try to access database.
+            return false;
+        }
+
+        // Note: add sessions->state checking here if it gets implemented.
+        if (!$record = $DB->get_record('sessions', array('sid' => $sid), 'id, userid, timemodified')) {
+            return false;
+        }
+
+        if (empty($record->userid) or isguestuser($record->userid)) {
+            // Ignore guest and not-logged-in timeouts, there is very little risk here.
+        } else if ($record->timemodified < time() - $CFG->sessiontimeout) {
+            return false;
+        }
+
+        // There is no need the existence of handler storage in public API.
         self::load_handler();
         return self::$handler->session_exists($sid);
     }
