@@ -765,6 +765,7 @@ class potential_license_user_selector extends user_selector_base {
 
         $fields      = 'SELECT ' . $this->required_fields_sql('u').', u.email, d.shortname ';
         $countfields = 'SELECT COUNT(1)';
+        $myusers = company::get_my_users($this->companyid);
 
         $licenseusers = $this->get_license_user_ids();
         if (count($licenseusers) > 0) {
@@ -776,6 +777,11 @@ class potential_license_user_selector extends user_selector_base {
             }
         } else {
             $userfilter = "";
+        }
+
+        // Add in a filter to return just the users beloning to the current USER.
+        if (!empty($myusers)) {
+            $userfilter .= " AND u.id in (".implode(',',array_keys($myusers)).") ";
         }
 
         // Get the department ids for this license.
