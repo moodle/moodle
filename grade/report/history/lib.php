@@ -654,7 +654,7 @@ class grade_report_history extends grade_report {
      */
     public static function get_user_select_button($courseid, $currentusers = array()) {
         global $PAGE;
-        $button = new gradereport_history_user_button($PAGE->url, get_string('selectuser', 'gradereport_history'), 'get');
+        $button = new gradereport_history_user_button($PAGE->url, get_string('selectusers', 'gradereport_history'), 'get');
         $button->class .= ' gradereport_history_plugin';
 
         $modules = array('moodle-gradereport_history-userselector');
@@ -668,21 +668,19 @@ class grade_report_history extends grade_report {
         $function = 'Y.M.gradereport_history.UserSelector.init';
         $button->require_yui_module($modules, $function, array($arguments));
         $button->strings_for_js(array(
-            'ajaxoneuserfound',
-            'ajaxxusersfound',
-            'ajaxnext25',
             'errajaxsearch',
-            'none',
-            'usersearch'), 'enrol');
-        $button->strings_for_js(array(
-            'selectusers',
             'finishselectingusers',
+            'foundoneuser',
+            'foundnusers',
+            'loadmoreusers',
+            'selectusers',
         ), 'gradereport_history');
         $button->strings_for_js(array(
             'loading'
         ), 'admin');
         $button->strings_for_js(array(
-            'select'
+            'noresults',
+            'search'
         ));
 
         return $button;

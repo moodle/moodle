@@ -1,7 +1,6 @@
 {
     "moodle-gradereport_history-userselector": {
         "requires": [
-            "dd-plugin",
             "escape",
             "event-delegate",
             "event-key",

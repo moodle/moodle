@@ -52,36 +52,39 @@ var CSS = {
     AJAXCONTENT : 'usp-ajax-content',
     CHECKBOX : 'usp-checkbox',
     CLOSE : 'close',
-    CLOSEBTN : 'close-button',
+    CLOSEBTN : 'usp-finish',
     CONTENT : 'usp-content',
     DETAILS : 'details',
     EXTRAFIELDS : 'extrafields',
-    FOOTER : 'usp-footer',
+    FIRSTADDED : 'usp-first-added',
     FULLNAME : 'fullname',
+    HEADER : 'usp-header',
     HIDDEN : 'hidden',
     LIGHTBOX : 'usp-loading-lightbox',
     LOADINGICON : 'loading-icon',
     MORERESULTS : 'usp-more-results',
     OPTIONS : 'options',
-    PICTURE : 'picture',
+    PICTURE : 'usp-picture',
+    RESULTSCOUNT : 'usp-results-count',
     SEARCH : 'usp-search',
     SEARCHBTN : 'usp-search-btn',
     SEARCHFIELD : 'usp-search-field',
     SEARCHRESULTS : 'usp-search-results',
     SELECTED : 'selected',
-    TOTALUSERS : 'totalusers',
     USER : 'user',
     USERS : 'users',
     WRAP : 'usp-wrap'
 };
 var SELECTORS = {
     AJAXCONTENT: '.' + CSS.AJAXCONTENT,
-    FOOTER: '.' + CSS.FOOTER,
-    FOOTERCLOSE: '.' + CSS.FOOTER + ' .' + CSS.CLOSEBTN + ' input',
+    FINISHBTN: '.' + CSS.CLOSEBTN + ' input',
+    FIRSTADDED: '.' + CSS.FIRSTADDED,
     FULLNAME: '.' + CSS.FULLNAME + ' label',
     LIGHTBOX: '.' + CSS.LIGHTBOX,
     MORERESULTS: '.' + CSS.MORERESULTS,
     OPTIONS: '.' + CSS.OPTIONS,
+    PICTURE: '.' + CSS.USER + ' .userpicture',
+    RESULTSCOUNT: '.' + CSS.RESULTSCOUNT,
     RESULTSUSERS: '.' + CSS.SEARCHRESULTS + ' .' + CSS.USERS,
     SEARCHBTN: '.' + CSS.SEARCHBTN,
     SEARCHFIELD: '.' + CSS.SEARCHFIELD,
@@ -90,7 +93,7 @@ var SELECTORS = {
     USER: '.' + CSS.USER,
     USERFULLNAMES: 'input[name="userfullnames"]',
     USERIDS: 'input[name="userids"]',
-    USERSELECT: '.' + CSS.USER + ' .' + CSS.CHECKBOX + ' input[type=checkbox]'
+    USERSELECT: '.' + CSS.CHECKBOX + ' input[type=checkbox]'
 };
 var create = Y.Node.create;
 
@@ -137,33 +140,35 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     initializer : function() {
         var bb = this.get('boundingBox'),
             content,
-            list,
             params,
             tpl;
 
         tpl = Y.Handlebars.compile(
-                '<div class="{{CSS.WRAP}}">' +
-                    '<div class="{{CSS.CONTENT}}" aria-live="polite">' +
-                        '<div class="{{CSS.AJAXCONTENT}}"></div>' +
+            '<div class="{{CSS.WRAP}}">' +
+                '<div class="{{CSS.HEADER}}">' +
+                    '<div class="{{CSS.SEARCH}}" role="search">' +
+                        '<form>' +
+                            '<input type="text" class="{{CSS.SEARCHFIELD}}" ' +
+                                'aria-labelledby="{{get_string "search" "moodle"}}" value="" />' +
+                            '<input type="submit" class="{{CSS.SEARCHBTN}}"' +
+                                'value="{{get_string "search" "moodle"}}">' +
+                        '</form>' +
+                        '<div aria-live="polite" class="{{CSS.RESULTSCOUNT}}">{{get_string "loading" "admin"}}</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="{{CSS.CONTENT}}">' +
+                    '<form>' +
+                        '<div class="{{CSS.AJAXCONTENT}}" aria-live="polite"></div>' +
                         '<div class="{{CSS.LIGHTBOX}} {{CSS.HIDDEN}}">' +
                             '<img class="{{CSS.LOADINGICON}}" alt="{{get_string "loading" "admin"}}"' +
                                 'src="{{{loadingIcon}}}">' +
                         '</div>' +
-                    '</div>' +
-                    '<div class="{{CSS.FOOTER}}">' +
-                        '<div class="{{CSS.SEARCH}}">' +
-                            '<label for="{{CSS.IDENROLUSERSEARCH}}" class="{{CSS.ACCESSHIDE}}">' +
-                                '{{get_string "usersearch" "enrol"}}' +
-                            '</label>' +
-                            '<input type="text" class="{{CSS.SEARCHFIELD}}" value="" />' +
-                            '<input type="button" class="{{CSS.SEARCHBTN}}"' +
-                                'value="{{get_string "usersearch" "enrol"}}">' +
-                        '</div>' +
                         '<div class="{{CSS.CLOSEBTN}}">' +
-                            '<input type="button" value="{{get_string "finishselectingusers" COMPONENT}}">' +
+                            '<input type="submit" value="{{get_string "finishselectingusers" COMPONENT}}">' +
                         '</div>' +
-                    '<div>' +
-                '</div>');
+                    '</form>' +
+                '</div>' +
+            '</div>');
 
         content = create(
             tpl({
@@ -180,9 +185,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // Use standard dialogue class name. This removes the default styling of the footer.
         this.get('boundingBox').one('.moodle-dialogue-wrap').addClass('moodle-dialogue-content');
 
-        this.set(USP.SEARCH, bb.one(SELECTORS.SEARCHFIELD));
-        this.set(USP.SEARCHBTN, bb.one(SELECTORS.SEARCHBTN));
-
         // Load the list of users.
         this.loadUsersFromForm();
 
@@ -190,23 +192,17 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         Y.one(SELECTORS.TRIGGER).on('click', this.show, this);
 
         // The button to finalize the selection.
-        bb.one(SELECTORS.FOOTERCLOSE).on('click', this.finishSelectingUsers, this);
+        bb.one(SELECTORS.FINISHBTN).on('click', this.finishSelectingUsers, this);
+
+        // Delegate the action to select a user.
+        Y.delegate("click", this.selectUser, bb.one(SELECTORS.AJAXCONTENT), SELECTORS.USERSELECT, this);
+        Y.delegate("click", this.selectUser, bb.one(SELECTORS.AJAXCONTENT), SELECTORS.PICTURE, this);
 
         params = this.get(USP.PARAMS);
         params.id = this.get(USP.COURSEID);
         this.set(USP.PARAMS, params);
 
-        Y.on('key', this.preSearch, this.get(USP.SEARCH), 'down:13', this);
-        this.get(USP.SEARCHBTN).on('click', this.preSearch, this);
-    },
-
-    /**
-     * Before the search starts.
-     *
-     * @method preSearch
-     */
-    preSearch : function(e) {
-        this.search(null, false);
+        bb.one(SELECTORS.SEARCHBTN).on('click', this.search, this, false);
     },
 
     /**
@@ -253,7 +249,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         params = this.get(USP.PARAMS);
         params.sesskey = M.cfg.sesskey;
         params.action = 'searchusers';
-        params.search = this.get(USP.SEARCH).get('value');
+        params.search = this.get('boundingBox').one(SELECTORS.SEARCHFIELD).get('value');
         params.page = this.get(USP.PAGE);
         params.perpage = this.get(USP.PERPAGE);
 
@@ -261,40 +257,54 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             method:'POST',
             data:build_querystring(params),
             on : {
-                start : this.displayLoading,
+                start : this.preSearch,
                 complete: this.processSearchResults,
-                end : this.removeLoading
+                end : this.postSearch
             },
             context:this,
-            arguments:{
-                append:append
+            "arguments": {      // Quoted because this is a reserved keyword.
+                append: append
             }
         });
     },
 
     /**
-     * Display the loading info.
+     * Pre search callback.
      *
-     * @method displayLoading
+     * @method preSearch
+     * @param {Mixed} unused Not sure what that is.
+     * @param {Object} args The arguments passed from YUI.io()
      */
-    displayLoading : function() {
+    preSearch: function(unused, args) {
         var bb = this.get('boundingBox');
+
+        // Display the lightbox.
         bb.one(SELECTORS.LIGHTBOX).removeClass(CSS.HIDDEN);
-        bb.one(SELECTORS.AJAXCONTENT).addClass(CSS.HIDDEN);
-        bb.one(SELECTORS.FOOTER).addClass(CSS.HIDDEN);
+
+        // Set the number of results to 'loading...'.
+        if (!args.append) {
+            bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('loading', 'admin'));
+        }
     },
 
     /**
-     * Hide the loading info.
+     * Post search callback.
      *
-     * @method removeLoading
+     * @method postSearch
+     * @param {Mixed} unused Not sure what that is.
+     * @param {Object} args The arguments passed from YUI.io()
      */
-    removeLoading : function() {
-        var bb = this.get('boundingBox');
+    postSearch: function(unused, args) {
+        var bb = this.get('boundingBox'),
+            firstAdded = bb.one(SELECTORS.FIRSTADDED);
+
+        // Hide the lightbox.
         bb.one(SELECTORS.LIGHTBOX).addClass(CSS.HIDDEN);
-        bb.one(SELECTORS.AJAXCONTENT).removeClass(CSS.HIDDEN);
-        bb.one(SELECTORS.FOOTER).removeClass(CSS.HIDDEN);
-        this.centerDialogue();
+
+        // Sets the focus on the newly added user if we are appending results.
+        if (args.append && firstAdded) {
+            firstAdded.one(SELECTORS.USERSELECT).focus();
+        }
     },
 
     /**
@@ -304,34 +314,45 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      */
     processSearchResults : function(tid, outcome, args) {
         var result = false,
+            error = false,
+            bb = this.get('boundingBox'),
             users,
             userTemplate,
             count,
             selected,
             i,
+            firstAdded = true,
             node,
-            usersstr,
             content,
             fetchmore,
-            checked;
+            checked,
+            totalUsers;
+
+        // Decodes the result.
         try {
             result = Y.JSON.parse(outcome.responseText);
-            if (result.error) {
-                return new M.core.ajaxException(result);
+            if (!result.success || result.error) {
+                error = true;
             }
         } catch (e) {
-            new M.core.exception(e);
-        }
-        if (!result.success) {
-            this.setContent = M.util.get_string('errajaxsearch', 'enrol');
+            error = true;
         }
 
+        // There was an error.
+        if (error) {
+            this.setContent('');
+            bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('errajaxsearch', COMPONENT));
+            return;
+        }
+
+        // Create the div containing the users when it is a fresh search.
         if (!args.append) {
             users = create('<div class="'+CSS.USERS+'"></div>');
         } else {
-            users = this.get('boundingBox').one(SELECTORS.RESULTSUSERS);
+            users = bb.one(SELECTORS.RESULTSUSERS);
         }
 
+        // Compile the template for each user node.
         if (!this._userTemplate) {
             this._userTemplate = Y.Handlebars.compile(
                 '<div class="{{CSS.USER}} {{selected}} clearfix" data-userid="{{userId}}">' +
@@ -351,6 +372,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         }
         userTemplate = this._userTemplate;
 
+        // Append the users one by one.
         count = this.get(USP.USERCOUNT);
         selected = '';
         for (i in result.response.users) {
@@ -380,32 +402,55 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                 userId: user.userid,
                 USP: USP
             }));
+
+            // Noting the first user that was when adding more results.
+            if (args.append && firstAdded) {
+                users.all(SELECTORS.FIRSTADDED).removeClass(CSS.FIRSTADDED);
+                node.addClass(CSS.FIRSTADDED);
+                firstAdded = false;
+            }
             users.append(node);
         }
         this.set(USP.USERCOUNT, count);
+
+        // Update the count of users, and add a button to load more if need be.
+        totalUsers = parseInt(result.response.totalusers, 10);
         if (!args.append) {
-            if (result.response.totalusers == '1') {
-                usersstr = M.util.get_string('ajaxoneuserfound', 'enrol');
+            if (totalUsers === 0) {
+                bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('noresults', 'moodle'));
+                content = '';
             } else {
-                usersstr = M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
-            }
-            content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
-                .append(create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
-                .append(users);
-            if (result.response.totalusers > (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.util.get_string('ajaxnext25', 'enrol')+'</a></div>');
-                fetchmore.on('click', this.search, this, true);
-                content.append(fetchmore);
+                if (totalUsers === 1) {
+                    bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('foundoneuser', COMPONENT));
+                } else {
+                    bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('foundnusers', COMPONENT, totalUsers));
+                }
+
+                content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
+                    .append(users);
+                if (result.response.totalusers > (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
+                    fetchmore = create('<div class="'+CSS.MORERESULTS+'">' +
+                        '<a href="#" role="button">'+M.util.get_string('loadmoreusers', COMPONENT)+'</a></div>');
+                    fetchmore.one('a').on('click', this.search, this, true);
+                    fetchmore.one('a').on('key', this.search, 'space', this, true);
+                    content.append(fetchmore);
+                }
             }
             this.setContent(content);
-
-            // Delegate the action when selecting a user.
-            Y.delegate("click", this.selectUser, users, SELECTORS.USERSELECT, this);
         } else {
-            if (result.response.totalusers <= (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                this.get('boundingBox').one(SELECTORS.MORERESULTS).remove();
+            if (totalUsers <= (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
+                bb.one(SELECTORS.MORERESULTS).remove();
             }
         }
+    },
+
+    /**
+     * Fetch more results.
+     *
+     * @param {EventFacade} e The event.
+     */
+    fetchMore: function(e) {
+        this.search(e, true);
     },
 
     /**
@@ -415,6 +460,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @param {EventFacade} e The event.
      */
     finishSelectingUsers: function(e) {
+        e.preventDefault();
         this.applySelection();
         this.hide();
     },
@@ -455,9 +501,16 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      */
     selectUser : function(e) {
         var user = e.currentTarget.ancestor(SELECTORS.USER),
+            checkbox = user.one(SELECTORS.USERSELECT),
             fullname = user.one(SELECTORS.FULLNAME).get('innerHTML'),
-            checked = e.currentTarget.get('checked'),
+            checked = checkbox.get('checked'),
             userId = user.getData('userid');
+
+        if (e.currentTarget !== checkbox) {
+            // We triggered the selection from another node, so we need to change the checkbox value.
+            checked = !checked;
+            checkbox.set('checked', checked);
+        }
 
         if (checked) {
             // Selecting the user.
@@ -496,6 +549,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     CSS_PREFIX : USP.CSS_PREFIX,
     ATTRS : {
 
+        /**
+         * List of extra classes.
+         *
+         * @attribute extraClasses
+         * @type Array
+         */
         extraClasses: {
             value: [
                 'gradereport_history_usp'
@@ -620,22 +679,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         },
 
         /**
-         * The search field.
-         *
-         * @attribute search
-         * @type Node
-         */
-        search : {
-            setter : function(node) {
-                var n = Y.one(node);
-                if (!n) {
-                    Y.fail(USP.NAME+': invalid search node set');
-                }
-                return n;
-            }
-        },
-
-        /**
          * The number of results per page.
          *
          * @attribute perPage
@@ -674,6 +717,13 @@ Y.Base.modifyAttrs(Y.namespace('M.gradereport_history.UserSelector'), {
         value: true
     },
 
+   /**
+    * Whether the widget should be draggable or not.
+    *
+    * @attribute draggable
+    * @type Boolean
+    * @default true
+    */
     draggable: {
         value: true
     }
@@ -687,7 +737,6 @@ Y.namespace('M.gradereport_history.UserSelector').init = function(cfg) {
 
 }, '@VERSION@', {
     "requires": [
-        "dd-plugin",
         "escape",
         "event-delegate",
         "event-key",

@@ -52,7 +52,7 @@ class filter_form extends \moodleform {
         $userbutton = $this->_customdata['userbutton'];
         $names = \html_writer::span('', 'selectednames');
 
-        $mform->addElement('static', 'userselect', get_string('selectuser', 'gradereport_history'), $userbutton);
+        $mform->addElement('static', 'userselect', get_string('selectusers', 'gradereport_history'), $userbutton);
         $mform->addElement('static', 'selectednames', get_string('selectedusers', 'gradereport_history'), $names);
 
         $mform->addElement('select', 'itemid', get_string('gradeitem', 'gradereport_history'), $itemids);
