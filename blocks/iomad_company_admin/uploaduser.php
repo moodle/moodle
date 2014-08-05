@@ -631,7 +631,8 @@ if ($formdata = $mform->is_cancelled()) {
                 // Save custom profile fields data from csv file.
                 profile_save_data($existinguser);
 
-                core\event\user_updated::create_from_user($existinguser)->trigger();
+                \core\event\user_updated::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $existinguser->id))->trigger();
+ 
             }
 
             if ($bulk == 2 or $bulk == 3) {
@@ -731,7 +732,7 @@ if ($formdata = $mform->is_cancelled()) {
             // Add the user to the company default hierarchy level.
             company::assign_user_to_department($formdata->userdepartment, $user->id);
 
-            core\event\user_created::create_from_user($user)->trigger();
+            \core\event\user_created::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $existinguser->id))->trigger();
 
             if ($bulk == 1 or $bulk == 3) {
                 if (!in_array($user->id, $SESSION->bulk_users)) {

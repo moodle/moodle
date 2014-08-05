@@ -135,7 +135,8 @@ $userform = new user_editadvanced_form(null, array('editoroptions' => $editoropt
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
-    add_to_log($SITE->id, 'user', 'update', "view.php?id=$user->id&course=$SITE->id", '');
+    $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
+    $event->trigger();
 
     if (empty($usernew->auth)) {
         // User editing self.
@@ -220,9 +221,11 @@ if ($usernew = $userform->get_data()) {
         if (!message_set_default_message_preferences($usernew)) {
             print_error('cannotsavemessageprefs', 'message');
         }
-        core\event\user_created::create_from_user($usernew)->trigger();
+        $event = \core\event\user_created::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $usernew->id));
+        $event->trigger();
     } else {
-        core\event\user_updated::create_from_user($usernew)->trigger();
+        $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
+        $event->trigger();
     }
 
     if ($user->id == $USER->id) {
