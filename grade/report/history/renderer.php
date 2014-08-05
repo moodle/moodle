@@ -39,11 +39,11 @@ class gradereport_history_renderer extends plugin_renderer_base {
     /**
      * Render for the select user button.
      *
-     * @param gradereport_history_user_button $button instance of  gradereport_history_user_button to render
+     * @param user_button $button instance of  gradereport_history_user_button to render
      *
      * @return string HTML to display
      */
-    public function render_select_user_button(gradereport_history_user_button $button) {
+    public function render_user_button(user_button $button) {
         $attributes = array('type'     => 'button',
                             'class'    => 'selectortrigger',
                             'value'    => $button->label,

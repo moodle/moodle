@@ -108,7 +108,7 @@ $filters['userfullnames'] = implode(',', $names);
 
 // Now that we have the names, reinitialise the button so its able to control them.
 $button = grade_report_history::get_user_select_button($course->id, $names);
-$userbutton = $output->render_select_user_button($button);
+$userbutton = $output->render($button);
 $params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => $userbutton);
 $mform = new gradereport_history_filter_form(null, $params);
 $mform->set_data($filters);

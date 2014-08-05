@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace gradereport_history\output;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -34,7 +36,7 @@ defined('MOODLE_INTERNAL') || die;
  * @author     Adam Olley <adam.olley@netspot.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_history_user_button extends single_button {
+class user_button extends \single_button implements \renderable {
 
     /**
      * An array containing JS YUI modules required by this button
@@ -57,11 +59,11 @@ class gradereport_history_user_button extends single_button {
     /**
      * Initialises the new select_user_button.
      *
-     * @param moodle_url $url
+     * @param \moodle_url $url
      * @param string $label The text to display in the button
      * @param string $method Either post or get
      */
-    public function __construct(moodle_url $url, $label, $method = 'post') {
+    public function __construct(\moodle_url $url, $label, $method = 'post') {
         static $count = 0; // The number of select user buttons already created.
         $count ++;
         parent::__construct($url, $label, $method);
@@ -79,7 +81,7 @@ class gradereport_history_user_button extends single_button {
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      */
     public function require_yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
-        $js = new stdClass;
+        $js = new \stdClass;
         $js->modules = (array)$modules;
         $js->function = $function;
         $js->arguments = $arguments;
@@ -97,7 +99,7 @@ class gradereport_history_user_button extends single_button {
      * @param array $module A module definition
      */
     public function require_js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
-        $js = new stdClass;
+        $js = new \stdClass;
         $js->function = $function;
         $js->extraarguments = $extraarguments;
         $js->ondomready = $ondomready;
@@ -108,12 +110,12 @@ class gradereport_history_user_button extends single_button {
     /**
      * Requires strings for JS that will be loaded when the button is used.
      *
-     * @param array|stdClass $identifiers
+     * @param array|\stdClass $identifiers
      * @param string $component
      * @param mixed $a
      */
     public function strings_for_js($identifiers, $component = 'moodle', $a = null) {
-        $string = new stdClass;
+        $string = new \stdClass;
         $string->identifiers = (array)$identifiers;
         $string->component = $component;
         $string->a = $a;
@@ -123,9 +125,9 @@ class gradereport_history_user_button extends single_button {
     /**
      * Initialises the JS that is required by this button.
      *
-     * @param moodle_page $page
+     * @param \moodle_page $page
      */
-    public function initialise_js(moodle_page $page) {
+    public function initialise_js(\moodle_page $page) {
         foreach ($this->jsyuimodules as $js) {
             $page->requires->yui_module($js->modules, $js->function, $js->arguments, $js->galleryversion, $js->ondomready);
         }
