@@ -11,9 +11,9 @@ Feature: Test we can resort course in the management interface.
       | Cat 1 | 0 | CAT1 |
     And the following "courses" exist:
       | category | fullname | shortname | idnumber | sortorder | timecreated |
-      | CAT1 | Social studies | Senior school | Ext003 | 1 | 10000000001 |
-      | CAT1 | Applied sciences  | Middle school | Sci001 | 2 | 10000000002 |
-      | CAT1 | Extended social studies  | Junior school | Ext002 | 3 | 10000000003 |
+      | CAT1 | Social studies | Senior school | Ext003 | 1 | 1000000001 |
+      | CAT1 | Applied sciences  | Middle school | Sci001 | 2 | 1000000002 |
+      | CAT1 | Extended social studies  | Junior school | Ext002 | 3 | 1000000003 |
 
     And I log in as "admin"
     And I go to the courses management page
@@ -54,9 +54,9 @@ Feature: Test we can resort course in the management interface.
       | Cat 1 | 0 | CAT1 |
     And the following "courses" exist:
       | category | fullname | shortname | idnumber | sortorder | timecreated |
-      | CAT1 | Social studies | Senior school | Ext003 | 1 | 10000000001 |
-      | CAT1 | Applied sciences  | Middle school | Sci001 | 2 | 10000000002 |
-      | CAT1 | Extended social studies  | Junior school | Ext002 | 3 | 10000000003 |
+      | CAT1 | Social studies | Senior school | Ext003 | 1 | 1000000001 |
+      | CAT1 | Applied sciences  | Middle school | Sci001 | 2 | 1000000002 |
+      | CAT1 | Extended social studies  | Junior school | Ext002 | 3 | 1000000003 |
 
     And I log in as "admin"
     And I go to the courses management page
