@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace gradereport_history\output;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -34,7 +36,7 @@ defined('MOODLE_INTERNAL') || die;
  * @author     Adam Olley <adam.olley@netspot.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_history_renderer extends plugin_renderer_base {
+class renderer extends \plugin_renderer_base {
 
     /**
      * Render for the select user button.
@@ -51,7 +53,7 @@ class gradereport_history_renderer extends plugin_renderer_base {
                             'title'    => $button->tooltip);
 
         if ($button->actions) {
-            $id = html_writer::random_id('single_button');
+            $id = \html_writer::random_id('single_button');
             $attributes['id'] = $id;
             foreach ($button->actions as $action) {
                 $this->add_action_handler($action, $id);
@@ -60,7 +62,7 @@ class gradereport_history_renderer extends plugin_renderer_base {
         $button->initialise_js($this->page);
 
         // First the input element.
-        $output = html_writer::empty_tag('input', $attributes);
+        $output = \html_writer::empty_tag('input', $attributes);
 
         // Then hidden fields.
         $params = $button->url->params();
@@ -68,11 +70,11 @@ class gradereport_history_renderer extends plugin_renderer_base {
             $params['sesskey'] = sesskey();
         }
         foreach ($params as $var => $val) {
-            $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
+            $output .= \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
         }
 
         // Then div wrapper for xhtml strictness.
-        $output = html_writer::tag('div', $output);
+        $output = \html_writer::tag('div', $output);
 
         // Now the form itself around it.
         if ($button->method === 'get') {
@@ -86,10 +88,10 @@ class gradereport_history_renderer extends plugin_renderer_base {
         $attributes = array('method' => $button->method,
                             'action' => $url,
                             'id'     => $button->formid);
-        $output = html_writer::tag('div', $output, $attributes);
+        $output = \html_writer::tag('div', $output, $attributes);
 
         // Finally one more wrapper with class.
-        return html_writer::tag('div', $output, array('class' => $button->class));
+        return \html_writer::tag('div', $output, array('class' => $button->class));
     }
 
     /**
@@ -122,4 +124,22 @@ class gradereport_history_renderer extends plugin_renderer_base {
 
         return $name;
     }
+
+    /**
+     * Get the html for the table.
+     *
+     * @param tablelog $tablelog table object.
+     *
+     * @return string table html
+     */
+    protected function render_tablelog(tablelog $tablelog) {
+        $o = '';
+        ob_start();
+        $tablelog->out($tablelog->pagesize, false);
+        $o = ob_get_contents();
+        ob_end_clean();
+
+        return $o;
+    }
+
 }

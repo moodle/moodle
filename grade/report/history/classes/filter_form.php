@@ -76,12 +76,8 @@ class filter_form extends \moodleform {
         $mform->addElement('hidden', 'userfullnames');
         $mform->setType('userfullnames', PARAM_TEXT);
 
-        $submitlabel = get_string('submit');
-        $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-        $buttonarray[] = &$mform->createElement('submit', 'exportbutton', get_string('export', 'grades'));
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('buttonar');
+        // Add a submit button.
+        $mform->addElement('submit', 'submitbutton', get_string('submit'));
     }
 
     /**
