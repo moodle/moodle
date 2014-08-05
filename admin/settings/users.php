@@ -54,13 +54,11 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configselect('defaultpreference_autosubscribe', new lang_string('autosubscribe'),
             '', 1, $choices));
 
-        if (!empty($CFG->forum_trackreadposts)) {
-            $choices = array();
-            $choices['0'] = new lang_string('trackforumsno');
-            $choices['1'] = new lang_string('trackforumsyes');
-            $temp->add(new admin_setting_configselect('defaultpreference_trackforums', new lang_string('trackforums'),
-                '', 0, $choices));
-        }
+        $choices = array();
+        $choices['0'] = new lang_string('trackforumsno');
+        $choices['1'] = new lang_string('trackforumsyes');
+        $temp->add(new admin_setting_configselect('defaultpreference_trackforums', new lang_string('trackforums'),
+            '', 0, $choices));
     }
     $ADMIN->add('accounts', $temp);
 
