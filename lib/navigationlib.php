@@ -1411,16 +1411,16 @@ class global_navigation extends navigation_node {
                 return array();
             }
             if (iomad::is_company_user()) {
-                $company = company::get_company_byuserid($USER->id);
+                $companyid = iomad::get_my_companyid(context_system::instance());
                 $sharedsql = " AND ( c.id IN (
                                    SELECT courseid FROM {company_course}
-                                   WHERE companyid = $company->id)
+                                   WHERE companyid = $companyid)
                                OR c.id IN (
                                    SELECT courseid FROM {iomad_courses}
                                    WHERE shared=1)
                                OR c.id IN (
                                    SELECT courseid FROM {company_shared_courses}
-                                   WHERE companyid = $company->id)) ";
+                                   WHERE companyid = $companyid)) ";
             } else if (!is_siteadmin()) {
                 $sharedsql = " AND c.id IN (select courseid FROM {iomad_courses} WHERE shared=1) ";
             } else {
