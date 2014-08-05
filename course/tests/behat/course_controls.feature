@@ -67,7 +67,6 @@ Feature: Course activity controls works as expected
     And I open "Test forum name 1" actions menu
     And I click on "Hide" "link" in the "Test forum name 1" activity
     And "#section-2" "css_element" <should_see_other_sections> exist
-    And I open "Test forum name 1" actions menu
     And I delete "Test forum name 1" activity
     And I should not see "Test forum name 1" in the "#region-main" "css_element"
     And I duplicate "Test forum name 2" activity editing the new copy with:
