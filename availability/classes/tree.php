@@ -350,6 +350,52 @@ class tree extends tree_node {
         }
     }
 
+    public function get_user_list_sql($not, info $info, $onlyactive) {
+        // Get logic flags from operator.
+        list($innernot, $andoperator) = $this->get_logic_flags($not);
+
+        // Loop through all valid children, getting SQL for each.
+        $childresults = array();
+        foreach ($this->children as $index => $child) {
+            if (!$child->is_applied_to_user_lists()) {
+                continue;
+            }
+            $childresult = $child->get_user_list_sql($innernot, $info, $onlyactive);
+            if ($childresult[0]) {
+                $childresults[] = $childresult;
+            } else if (!$andoperator) {
+                // When using OR operator, if any part doesn't have restrictions,
+                // then nor does the whole thing.
+                return array('', array());
+            }
+        }
+
+        // If there are no conditions, return null.
+        if (!$childresults) {
+            return array('', array());
+        }
+        // If there is a single condition, return it.
+        if (count($childresults) === 1) {
+            return $childresults[0];
+        }
+
+        // Combine results using INTERSECT or UNION.
+        $outsql = null;
+        $outparams = null;
+        foreach ($childresults as $childresult) {
+            if (!$outsql) {
+                $outsql = '(' . $childresult[0] . ')';
+                $outparams = $childresult[1];
+            } else {
+                $outsql .= $andoperator ? ' INTERSECT (' : ' UNION (';
+                $outsql .= $childresult[0];
+                $outsql .= ')';
+                $outparams = array_merge($outparams, $childresult[1]);
+            }
+        }
+        return array($outsql, $outparams);
+    }
+
     public function is_available_for_all($not = false) {
         // Get logic flags.
         list($innernot, $andoperator) = $this->get_logic_flags($not);

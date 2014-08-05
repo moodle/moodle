@@ -40,6 +40,11 @@ class availability_profile_condition_testcase extends advanced_testcase {
     /** @var array Array of user IDs for whome we already set the profile field */
     protected $setusers = array();
 
+    /** @var condition Current condition */
+    private $cond;
+    /** @var \core_availability\info Current info */
+    private $info;
+
     public function setUp() {
         global $DB, $CFG;
 
@@ -345,21 +350,25 @@ class availability_profile_condition_testcase extends advanced_testcase {
      *
      * @param int $userid User id
      * @param string|null $value Field value or null to clear
+     * @param int $fieldid Field id or 0 to use default one
      */
-    protected function set_field($userid, $value) {
+    protected function set_field($userid, $value, $fieldid = 0) {
         global $DB, $USER;
 
+        if (!$fieldid) {
+            $fieldid = $this->profilefield->id;
+        }
         $alreadyset = array_key_exists($userid, $this->setusers);
         if (is_null($value)) {
             $DB->delete_records('user_info_data',
-                    array('userid' => $userid, 'fieldid' => $this->profilefield->id));
+                    array('userid' => $userid, 'fieldid' => $fieldid));
             unset($this->setusers[$userid]);
         } else if ($alreadyset) {
             $DB->set_field('user_info_data', 'data', $value,
-                    array('userid' => $userid, 'fieldid' => $this->profilefield->id));
+                    array('userid' => $userid, 'fieldid' => $fieldid));
         } else {
             $DB->insert_record('user_info_data', array('userid' => $userid,
-                    'fieldid' => $this->profilefield->id, 'data' => $value));
+                    'fieldid' => $fieldid, 'data' => $value));
             $this->setusers[$userid] = true;
         }
     }
@@ -440,5 +449,102 @@ class availability_profile_condition_testcase extends advanced_testcase {
         $result = array_keys($cond->filter_user_list($allusers, true, $info, $checker));
         ksort($result);
         $this->assertEquals(array($student3->id), $result);
+    }
+
+    /**
+     * Tests getting user list SQL. This is a different test from the above because
+     * there is some additional code in this function so more variants need testing.
+     */
+    public function test_get_user_list_sql() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $CFG->enableavailability = true;
+
+        // Erase static cache before test.
+        condition::wipe_static_cache();
+
+        // For testing, make another info field with default value.
+        $DB->insert_record('user_info_field', array(
+                'shortname' => 'tonguestyle', 'name' => 'Tongue style', 'categoryid' => 1,
+                'datatype' => 'text', 'defaultdata' => 'Slimy'));
+        $otherprofilefield = $DB->get_record('user_info_field',
+                array('shortname' => 'tonguestyle'));
+
+        // Make a test course and some users.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $student1 = $generator->create_user(array('institution' => 'Unseen University'));
+        $student2 = $generator->create_user(array('institution' => 'Hogwarts'));
+        $student3 = $generator->create_user(array('institution' => 'Unseen University'));
+        $student4 = $generator->create_user(array('institution' => '0'));
+        $allusers = array();
+        foreach (array($student1, $student2, $student3, $student4) as $student) {
+            $generator->enrol_user($student->id, $course->id);
+            $allusers[$student->id] = $student;
+        }
+        $this->set_field($student1->id, 'poison dart');
+        $this->set_field($student2->id, 'poison dart');
+        $this->set_field($student3->id, 'Rough', $otherprofilefield->id);
+        $this->info = new \core_availability\mock_info($course);
+
+        // Test standard field condition (positive).
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_CONTAINS, 'v' => 'Univ'));
+        $this->assert_user_list_sql_results(array($student1->id, $student3->id));
+
+        // Now try it negative.
+        $this->assert_user_list_sql_results(array($student2->id, $student4->id), true);
+
+        // Try all the other condition types.
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_DOES_NOT_CONTAIN, 'v' => 's'));
+        $this->assert_user_list_sql_results(array($student4->id));
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_IS_EQUAL_TO, 'v' => 'Hogwarts'));
+        $this->assert_user_list_sql_results(array($student2->id));
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_STARTS_WITH, 'v' => 'U'));
+        $this->assert_user_list_sql_results(array($student1->id, $student3->id));
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_ENDS_WITH, 'v' => 'rts'));
+        $this->assert_user_list_sql_results(array($student2->id));
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_IS_EMPTY));
+        $this->assert_user_list_sql_results(array($student4->id));
+        $this->cond = new condition((object)array('sf' => 'institution',
+                'op' => condition::OP_IS_NOT_EMPTY));
+        $this->assert_user_list_sql_results(array($student1->id, $student2->id, $student3->id));
+
+        // Try with a custom field condition that doesn't have a default.
+        $this->cond = new condition((object)array('cf' => 'frogtype',
+                'op' => condition::OP_CONTAINS, 'v' => 'poison'));
+        $this->assert_user_list_sql_results(array($student1->id, $student2->id));
+        $this->cond = new condition((object)array('cf' => 'frogtype',
+                'op' => condition::OP_IS_EMPTY));
+        $this->assert_user_list_sql_results(array($student3->id, $student4->id));
+
+        // Try with one that does have a default.
+        $this->cond = new condition((object)array('cf' => 'tonguestyle',
+                'op' => condition::OP_STARTS_WITH, 'v' => 'Sli'));
+        $this->assert_user_list_sql_results(array($student1->id, $student2->id,
+                $student4->id));
+        $this->cond = new condition((object)array('cf' => 'tonguestyle',
+                'op' => condition::OP_IS_EMPTY));
+        $this->assert_user_list_sql_results(array());
+    }
+
+    /**
+     * Convenience function. Gets the user list SQL and runs it, then checks
+     * results.
+     *
+     * @param array $expected Array of expected user ids
+     * @param bool $not True if using NOT condition
+     */
+    private function assert_user_list_sql_results(array $expected, $not = false) {
+        global $DB;
+        list ($sql, $params) = $this->cond->get_user_list_sql($not, $this->info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
     }
 }

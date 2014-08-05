@@ -164,7 +164,8 @@ class availability_group_condition_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests the filter_users (bulk checking) function.
+     * Tests the filter_users (bulk checking) function. Also tests the SQL
+     * variant get_user_list_sql.
      */
     public function test_filter_users() {
         global $DB;
@@ -205,21 +206,48 @@ class availability_group_condition_testcase extends advanced_testcase {
         $cond = new condition((object)array());
         $result = array_keys($cond->filter_user_list($allusers, false, $info, $checker));
         ksort($result);
-        $this->assertEquals(array($teacher->id, $students[1]->id, $students[2]->id), $result);
+        $expected = array($teacher->id, $students[1]->id, $students[2]->id);
+        $this->assertEquals($expected, $result);
+
+        // Test it with get_user_list_sql.
+        list ($sql, $params) = $cond->get_user_list_sql(false, $info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
 
         // Test NOT version (note that teacher can still access because AAG works
         // both ways).
         $result = array_keys($cond->filter_user_list($allusers, true, $info, $checker));
         ksort($result);
-        $this->assertEquals(array($teacher->id, $students[0]->id), $result);
+        $expected = array($teacher->id, $students[0]->id);
+        $this->assertEquals($expected, $result);
+
+        // Test with get_user_list_sql.
+        list ($sql, $params) = $cond->get_user_list_sql(true, $info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
 
         // Test specific group.
         $cond = new condition((object)array('id' => (int)$group1->id));
         $result = array_keys($cond->filter_user_list($allusers, false, $info, $checker));
         ksort($result);
-        $this->assertEquals(array($teacher->id, $students[1]->id), $result);
+        $expected = array($teacher->id, $students[1]->id);
+        $this->assertEquals($expected, $result);
+
+        list ($sql, $params) = $cond->get_user_list_sql(false, $info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
+
         $result = array_keys($cond->filter_user_list($allusers, true, $info, $checker));
         ksort($result);
-        $this->assertEquals(array($teacher->id, $students[0]->id, $students[2]->id), $result);
+        $expected = array($teacher->id, $students[0]->id, $students[2]->id);
+        $this->assertEquals($expected, $result);
+
+        list ($sql, $params) = $cond->get_user_list_sql(true, $info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
     }
 }

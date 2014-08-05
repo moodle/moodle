@@ -122,4 +122,18 @@ class condition extends \core_availability\condition {
         }
         return $result;
     }
+
+    public function get_user_list_sql($not, \core_availability\info $info, $onlyactive) {
+        global $DB;
+        // The data for this condition is not really stored in the database,
+        // so we return SQL that contains the hard-coded user list.
+        list ($enrolsql, $enrolparams) =
+                get_enrolled_sql($info->get_context(), '', 0, $onlyactive);
+        $condition = $not ? 'NOT' : '';
+        list ($matchsql, $matchparams) = $DB->get_in_or_equal($this->filter, SQL_PARAMS_NAMED);
+        $sql = "SELECT userids.id
+                  FROM ($enrolsql) userids
+                 WHERE $condition (userids.id $matchsql)";
+        return array($sql, array_merge($enrolparams, $matchparams));
+    }
 }

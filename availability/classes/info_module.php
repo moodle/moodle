@@ -109,6 +109,30 @@ class info_module extends info {
         return parent::filter_user_list($filtered);
     }
 
+    public function get_user_list_sql($onlyactive = true) {
+        global $CFG, $DB;
+        if (!$CFG->enableavailability) {
+            return array('', array());
+        }
+
+        // Get query for section (if any) and module.
+        $section = $this->cm->get_modinfo()->get_section_info(
+                $this->cm->sectionnum, MUST_EXIST);
+        $sectioninfo = new info_section($section);
+        $sectionresult = $sectioninfo->get_user_list_sql($onlyactive);
+        $moduleresult = parent::get_user_list_sql($onlyactive);
+
+        if (!$sectionresult[0]) {
+            return $moduleresult;
+        }
+        if (!$moduleresult[0]) {
+            return $sectionresult;
+        }
+
+        return array('(' . $sectionresult[0] . ') INTERSECT (' . $moduleresult[0] . ')',
+                array_merge($sectionresult[1], $moduleresult[1]));
+    }
+
     /**
      * Checks if an activity is visible to the given user.
      *

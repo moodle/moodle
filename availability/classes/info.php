@@ -591,6 +591,36 @@ abstract class info {
     }
 
     /**
+     * Obtains SQL that returns a list of enrolled users that has been filtered
+     * by the conditions applied in the availability API, similar to calling
+     * get_enrolled_users and then filter_user_list. As for filter_user_list,
+     * this ONLY filteres out users with conditions that are marked as applying
+     * to user lists. For example, group conditions are included but date
+     * conditions are not included.
+     *
+     * The returned SQL is a query that returns a list of user IDs. It does not
+     * include brackets, so you neeed to add these to make it into a subquery.
+     * You would normally use it in an SQL phrase like "WHERE u.id IN ($sql)".
+     *
+     * The function returns an array with '' and an empty array, if there are
+     * no restrictions on users from these conditions.
+     *
+     * The SQL will be complex and may be slow. It uses named parameters (sorry,
+     * I know they are annoying, but it was unavoidable here).
+     *
+     * @param bool $onlyactive True if including only active enrolments
+     * @return array Array of SQL code (may be empty) and params
+     */
+    public function get_user_list_sql($onlyactive) {
+        global $CFG;
+        if (is_null($this->availability) || !$CFG->enableavailability) {
+            return array('', array());
+        }
+        $tree = $this->get_availability_tree();
+        return $tree->get_user_list_sql(false, $this, $onlyactive);
+    }
+
+    /**
      * Formats the $cm->availableinfo string for display. This includes
      * filling in the names of any course-modules that might be mentioned.
      * Should be called immediately prior to display, or at least somewhere

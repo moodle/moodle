@@ -391,9 +391,9 @@ class info_testcase extends \advanced_testcase {
     }
 
     /**
-     * Tests the filter_users() function.
+     * Tests the filter_user_list() and get_user_list_sql() functions.
      */
-    public function test_filter_users() {
+    public function test_filter_user_list() {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
         $this->resetAfterTest();
@@ -408,6 +408,10 @@ class info_testcase extends \advanced_testcase {
         $u2 = $generator->create_user();
         $u3 = $generator->create_user();
         $allusers = array($u1->id => $u1, $u2->id => $u2, $u3->id => $u3);
+        $generator->enrol_user($u1->id, $course->id);
+        $generator->enrol_user($u2->id, $course->id);
+        $generator->enrol_user($u3->id, $course->id);
+
         $pagegen = $generator->get_plugin_generator('mod_page');
         $page = $pagegen->create_instance(array('course' => $course));
         $page2 = $pagegen->create_instance(array('course' => $course,
@@ -425,6 +429,7 @@ class info_testcase extends \advanced_testcase {
         $info = new info_module($modinfo->get_cm($page->cmid));
         $this->assertEquals(array($u1->id, $u2->id, $u3->id),
                 array_keys($info->filter_user_list($allusers)));
+        $this->assertEquals(array('', array()), $info->get_user_list_sql(true));
 
         // Set an availability restriction in database for section 1.
         // For the section we set it so it doesn't support filters; for the
@@ -440,28 +445,43 @@ class info_testcase extends \advanced_testcase {
 
         // Now it should work (for the module).
         $info = new info_module($modinfo->get_cm($page->cmid));
-        $this->assertEquals(array($u3->id),
+        $expected = array($u3->id);
+        $this->assertEquals($expected,
                 array_keys($info->filter_user_list($allusers)));
+        list ($sql, $params) = $info->get_user_list_sql();
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
         $info = new info_section($modinfo->get_section_info(1));
         $this->assertEquals(array($u1->id, $u2->id, $u3->id),
                 array_keys($info->filter_user_list($allusers)));
+        $this->assertEquals(array('', array()), $info->get_user_list_sql(true));
 
         // With availability disabled, module returns full list too.
         $CFG->enableavailability = false;
         $info = new info_module($modinfo->get_cm($page->cmid));
         $this->assertEquals(array($u1->id, $u2->id, $u3->id),
                 array_keys($info->filter_user_list($allusers)));
+        $this->assertEquals(array('', array()), $info->get_user_list_sql(true));
 
         // Check the other section...
         $CFG->enableavailability = true;
         $info = new info_section($modinfo->get_section_info(2));
-        $this->assertEquals(array($u1->id, $u2->id),
-                array_keys($info->filter_user_list($allusers)));
+        $expected = array($u1->id, $u2->id);
+        $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
+        list ($sql, $params) = $info->get_user_list_sql(true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
 
         // And the module in that section - which has combined the section and
         // module restrictions.
         $info = new info_module($modinfo->get_cm($page2->cmid));
-        $this->assertEquals(array($u2->id),
-                array_keys($info->filter_user_list($allusers)));
+        $expected = array($u2->id);
+        $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
+        list ($sql, $params) = $info->get_user_list_sql(true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
     }
 }

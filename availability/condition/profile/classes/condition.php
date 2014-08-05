@@ -461,4 +461,104 @@ class condition extends \core_availability\condition {
         }
         return $result;
     }
+
+    /**
+     * Gets SQL to match a field against this condition. The second copy of the
+     * field is in case you're using variables for the field so that it needs
+     * to be two different ones.
+     *
+     * @param string $field Field name
+     * @param string $field2 Second copy of field name (default same).
+     * @return array Array of SQL and parameters
+     */
+    private function get_condition_sql($field, $field2 = null) {
+        global $DB;
+        if (is_null($field2)) {
+            $field2 = $field;
+        }
+
+        $params = array();
+        switch($this->operator) {
+            case self::OP_CONTAINS:
+                $sql = $DB->sql_like($field, self::unique_sql_parameter(
+                        $params, '%' . $this->value . '%'));
+                break;
+            case self::OP_DOES_NOT_CONTAIN:
+                if (empty($this->value)) {
+                    // The 'does not contain nothing' expression matches everyone.
+                    return null;
+                }
+                $sql = $DB->sql_like($field, self::unique_sql_parameter(
+                        $params, '%' . $this->value . '%'), true, true, true);
+                break;
+            case self::OP_IS_EQUAL_TO:
+                $sql = $field . ' = ' . self::unique_sql_parameter(
+                        $params, $this->value);
+                break;
+            case self::OP_STARTS_WITH:
+                $sql = $DB->sql_like($field, self::unique_sql_parameter(
+                        $params, $this->value . '%'));
+                break;
+            case self::OP_ENDS_WITH:
+                $sql = $DB->sql_like($field, self::unique_sql_parameter(
+                        $params, '%' . $this->value));
+                break;
+            case self::OP_IS_EMPTY:
+                // Mimic PHP empty() behaviour for strings, '0' or ''.
+                $sql = '(' . $field . " IN ('0', '') OR $field2 IS NULL)";
+                break;
+            case self::OP_IS_NOT_EMPTY:
+                $sql = '(' . $field . " NOT IN ('0', '') AND $field2 IS NOT NULL)";
+                break;
+        }
+        return array($sql, $params);
+    }
+
+    public function get_user_list_sql($not, \core_availability\info $info, $onlyactive) {
+        global $DB;
+
+        // Build suitable SQL depending on custom or standard field.
+        if ($this->customfield) {
+            $customfields = self::get_custom_profile_fields();
+            if (!array_key_exists($this->customfield, $customfields)) {
+                // If the field isn't found, nobody matches.
+                return array('SELECT id FROM {user} WHERE 0 = 1', array());
+            }
+            $customfield = $customfields[$this->customfield];
+
+            $mainparams = array();
+            $tablesql = "LEFT JOIN {user_info_data} uid ON uid.fieldid = " .
+                    self::unique_sql_parameter($mainparams, $customfield->id) .
+                    " AND uid.userid = userids.id";
+            list ($condition, $conditionparams) = $this->get_condition_sql('uid.data');
+            $mainparams = array_merge($mainparams, $conditionparams);
+
+            // If default is true, then allow that too.
+            if ($this->is_field_condition_met(
+                    $this->operator, $customfield->defaultdata, $this->value)) {
+                $where = "((uid.data IS NOT NULL AND $condition) OR (uid.data IS NULL))";
+            } else {
+                $where = "(uid.data IS NOT NULL AND $condition)";
+            }
+        } else {
+            $tablesql = "JOIN {user} u ON u.id = userids.id";
+            list ($where, $mainparams) = $this->get_condition_sql(
+                    'u.' . $this->standardfield);
+        }
+
+        // Handle NOT.
+        if ($not) {
+            $where = 'NOT (' . $where . ')';
+        }
+
+        // Get enrolled user SQL and combine with this query.
+        list ($enrolsql, $enrolparams) =
+                get_enrolled_sql($info->get_context(), '', 0, $onlyactive);
+        $sql = "SELECT userids.id
+                  FROM ($enrolsql) userids
+                       $tablesql
+                 WHERE $where";
+        $params = array_merge($enrolparams, $mainparams);
+        return array($sql, $params);
+    }
 }

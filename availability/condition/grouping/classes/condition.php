@@ -258,4 +258,32 @@ class condition extends \core_availability\condition {
         }
         return $result;
     }
+
+    public function get_user_list_sql($not, \core_availability\info $info, $onlyactive) {
+        global $DB;
+
+        // Get enrolled users with access all groups. These always are allowed.
+        list($aagsql, $aagparams) = get_enrolled_sql(
+                $info->get_context(), 'moodle/site:accessallgroups', 0, $onlyactive);
+
+        // Get all enrolled users.
+        list ($enrolsql, $enrolparams) =
+                get_enrolled_sql($info->get_context(), '', 0, $onlyactive);
+
+        // Condition for specified or any group.
+        $matchparams = array();
+        $matchsql = "SELECT 1
+                       FROM {groups_members} gm
+                       JOIN {groupings_groups} gg ON gg.groupid = gm.groupid
+                      WHERE gm.userid = userids.id
+                            AND gg.groupingid = " .
+                self::unique_sql_parameter($matchparams, $this->get_grouping_id($info));
+
+        // Overall query combines all this.
+        $condition = $not ? 'NOT' : '';
+        $sql = "SELECT userids.id
+                  FROM ($enrolsql) userids
+                 WHERE (userids.id IN ($aagsql)) OR $condition EXISTS ($matchsql)";
+        return array($sql, array_merge($enrolparams, $aagparams, $matchparams));
+    }
 }
