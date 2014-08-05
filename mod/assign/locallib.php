@@ -697,7 +697,7 @@ class assign {
                 $fileareas = array();
                 $plugincomponent = $plugin->get_subtype() . '_' . $plugin->get_type();
                 $fileareas = $plugin->get_file_areas();
-                foreach ($fileareas as $filearea) {
+                foreach ($fileareas as $filearea => $notused) {
                     $fs->delete_area_files($this->context->id, $plugincomponent, $filearea);
                 }
 
@@ -712,7 +712,7 @@ class assign {
                 $fileareas = array();
                 $plugincomponent = $plugin->get_subtype() . '_' . $plugin->get_type();
                 $fileareas = $plugin->get_file_areas();
-                foreach ($fileareas as $filearea) {
+                foreach ($fileareas as $filearea => $notused) {
                     $fs->delete_area_files($this->context->id, $plugincomponent, $filearea);
                 }
 
