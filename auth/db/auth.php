@@ -302,20 +302,27 @@ class auth_plugin_db extends auth_plugin_base {
 
             // Find obsolete users.
             if (count($userlist)) {
-                list($notin_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u', false);
-                $params['authtype'] = $this->authtype;
-                $sql = "SELECT u.*
+                $remove_users = array();
+                // Oracle IN clause is limited to 1000 parameters. We need to chunk the SQL.
+                $userlistchunks = array_chunk($userlist , 999);
+                foreach($userlistchunks as $userlistchunk) {
+                    list($notin_sql, $params) = $DB->get_in_or_equal($userlistchunk, SQL_PARAMS_NAMED, 'u', false);
+                    $params['authtype'] = $this->authtype;
+                    $sql = "SELECT u.*
                           FROM {user} u
                          WHERE u.auth=:authtype AND u.deleted=0 AND u.mnethostid=:mnethostid $suspendselect AND u.username $notin_sql";
+                    $params['mnethostid'] = $CFG->mnet_localhost_id;
+                    $remove_users = $remove_users + $DB->get_records_sql($sql, $params);
+                }
             } else {
                 $sql = "SELECT u.*
                           FROM {user} u
                          WHERE u.auth=:authtype AND u.deleted=0 AND u.mnethostid=:mnethostid $suspendselect";
                 $params = array();
                 $params['authtype'] = $this->authtype;
+                $params['mnethostid'] = $CFG->mnet_localhost_id;
+                $remove_users = $DB->get_records_sql($sql, $params);
             }
-            $params['mnethostid'] = $CFG->mnet_localhost_id;
-            $remove_users = $DB->get_records_sql($sql, $params);
 
             if (!empty($remove_users)) {
                 $trace->output(get_string('auth_dbuserstoremove','auth_db', count($remove_users)));
@@ -358,12 +365,19 @@ class auth_plugin_db extends auth_plugin_base {
 
             // Only go ahead if we actually have fields to update locally.
             if (!empty($updatekeys)) {
-                list($in_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u', true);
-                $params['authtype'] = $this->authtype;
-                $sql = "SELECT u.id, u.username
+                $update_users = array();
+                // Oracle IN clause is limited to 1000 parameters. We need to chunk the SQL.
+                $userlistchunks = array_chunk($userlist , 999);
+                foreach($userlistchunks as $userlistchunk) {
+                    list($in_sql, $params) = $DB->get_in_or_equal($userlistchunk, SQL_PARAMS_NAMED, 'u', true);
+                    $params['authtype'] = $this->authtype;
+                    $sql = "SELECT u.id, u.username
                           FROM {user} u
                          WHERE u.auth=:authtype AND u.deleted=0 AND u.username {$in_sql}";
-                if ($update_users = $DB->get_records_sql($sql, $params)) {
+                    $update_users = $update_users + $DB->get_records_sql($sql, $params);
+                }
+
+                if ($update_users) {
                     $trace->output("User entries to update: ".count($update_users));
 
                     foreach ($update_users as $user) {
