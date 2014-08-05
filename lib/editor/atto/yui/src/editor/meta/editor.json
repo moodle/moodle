@@ -2,6 +2,7 @@
     "moodle-editor_atto-editor": {
         "requires": [
             "node",
+            "transition",
             "io",
             "overlay",
             "escape",
