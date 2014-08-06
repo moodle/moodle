@@ -42,7 +42,7 @@ class grade_report_viewed extends \core\event\grade_report_viewed {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventreportviewed', 'gradereport_user');
+        return get_string('eventgradereportviewed', 'gradereport_user');
     }
 
     /**
