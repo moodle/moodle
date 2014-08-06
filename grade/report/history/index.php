@@ -114,4 +114,13 @@ $mform->display();
 
 // Render table.
 echo $output->render($table);
+
+$event = \gradereport_history\event\grade_report_viewed::create(
+    array(
+        'context' => $context,
+        'courseid' => $courseid
+    )
+);
+$event->trigger();
+
 echo $OUTPUT->footer();
