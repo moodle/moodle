@@ -58,7 +58,7 @@ class workshop {
     const EXAMPLES_BEFORE_SUBMISSION    = 1;
     const EXAMPLES_BEFORE_ASSESSMENT    = 2;
 
-    /** @var stdclass course module record */
+    /** @var cm_info course module record */
     public $cm;
 
     /** @var stdclass course record */
@@ -178,26 +178,40 @@ class workshop {
     /**
      * Initializes the workshop API instance using the data from DB
      *
-     * Makes deep copy of all passed records properties. Replaces integer $course attribute
-     * with a full database record (course should not be stored in instances table anyway).
+     * Makes deep copy of all passed records properties.
+     *
+     * For unit testing only, $cm and $course may be set to null. This is so that
+     * you can test without having any real database objects if you like. Not all
+     * functions will work in this situation.
      *
      * @param stdClass $dbrecord Workshop instance data from {workshop} table
-     * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
-     * @param stdClass $course   Course record from {course} table
-     * @param stdClass $context  The context of the workshop instance
+     * @param stdClass|cm_info $cm Course module record
+     * @param stdClass $course Course record from {course} table
+     * @param stdClass $context The context of the workshop instance
      */
-    public function __construct(stdclass $dbrecord, stdclass $cm, stdclass $course, stdclass $context=null) {
+    public function __construct(stdclass $dbrecord, $cm, $course, stdclass $context=null) {
         foreach ($dbrecord as $field => $value) {
             if (property_exists('workshop', $field)) {
                 $this->{$field} = $value;
             }
         }
-        $this->cm           = $cm;
-        $this->course       = $course;
-        if (is_null($context)) {
-            $this->context = context_module::instance($this->cm->id);
+        if (is_null($cm) || is_null($course)) {
+            if (!PHPUNIT_TEST) {
+                throw new coding_exception('Must specify $cm and $course');
+            }
         } else {
-            $this->context = $context;
+            $this->course = $course;
+            if ($cm instanceof cm_info) {
+                $this->cm = $cm;
+            } else {
+                $modinfo = get_fast_modinfo($course);
+                $this->cm = $modinfo->get_cm($cm->id);
+            }
+            if (is_null($context)) {
+                $this->context = context_module::instance($this->cm->id);
+            } else {
+                $this->context = $context;
+            }
         }
     }
 
@@ -595,9 +609,9 @@ class workshop {
     /**
      * Groups the given users by the group membership
      *
-     * This takes the module grouping settings into account. If "Available for group members only"
-     * is set, returns only groups withing the course module grouping. Always returns group [0] with
-     * all the given users.
+     * This takes the module grouping settings into account. If a grouping is
+     * set, returns only groups withing the course module grouping. Always
+     * returns group [0] with all the given users.
      *
      * @param array $users array[userid] => stdclass{->id ->lastname ->firstname}
      * @return array array[groupid][userid] => stdclass{->id ->lastname ->firstname}
@@ -610,10 +624,10 @@ class workshop {
         if (empty($users)) {
             return $grouped;
         }
-        if (!empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
-            // Available for group members only - the workshop is available only
-            // to users assigned to groups within the selected grouping, or to
-            // any group if no grouping is selected.
+        if ($this->cm->groupingid) {
+            // Group workshop set to specified grouping - only consider groups
+            // within this grouping, and leave out users who aren't members of
+            // this grouping.
             $groupingid = $this->cm->groupingid;
             // All users that are members of at least one group will be
             // added into a virtual group id 0
@@ -2505,7 +2519,10 @@ class workshop {
      * Returns SQL to fetch all enrolled users with the given capability in the current workshop
      *
      * The returned array consists of string $sql and the $params array. Note that the $sql can be
-     * empty if groupmembersonly is enabled and the associated grouping is empty.
+     * empty if a grouping is selected and it has no groups.
+     *
+     * The list is automatically restricted according to any availability restrictions
+     * that apply to user lists (e.g. group, grouping restrictions).
      *
      * @param string $capability the name of the capability
      * @param bool $musthavesubmission ff true, return only users who have already submitted
@@ -2518,9 +2535,10 @@ class workshop {
         static $inc = 0;
         $inc++;
 
-        // if the caller requests all groups and we are in groupmembersonly mode, use the
-        // recursive call of itself to get users from all groups in the grouping
-        if (empty($groupid) and !empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
+        // If the caller requests all groups and we are using a selected grouping,
+        // recursively call this function for each group in the grouping (this is
+        // needed because get_enrolled_sql only supports a single group).
+        if (empty($groupid) and $this->cm->groupingid) {
             $groupingid = $this->cm->groupingid;
             $groupinggroupids = array_keys(groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid, 'g.id'));
             $sql = array();
@@ -2547,6 +2565,15 @@ class workshop {
         if ($musthavesubmission) {
             $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid{$inc}) ";
             $params['workshopid'.$inc] = $this->id;
+        }
+
+        // If the activity is restricted so that only certain users should appear
+        // in user lists, integrate this into the same SQL.
+        $info = new \core_availability\info_module($this->cm);
+        list ($listsql, $listparams) = $info->get_user_list_sql(false);
+        if ($listsql) {
+            $sql .= " JOIN ($listsql) restricted ON restricted.id = u.id ";
+            $params = array_merge($params, $listparams);
         }
 
         return array($sql, $params);

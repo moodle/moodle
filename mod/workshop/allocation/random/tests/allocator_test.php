@@ -42,11 +42,8 @@ class workshopallocation_random_testcase extends basic_testcase {
     protected function setUp() {
         parent::setUp();
 
-        $cm                 = new stdclass();
-        $course             = new stdclass();
-        $context            = new stdclass();
         $workshop           = (object)array('id' => 42);
-        $this->workshop     = new workshop($workshop, $cm, $course, $context);
+        $this->workshop     = new workshop($workshop, null, null);
         $this->allocator    = new testable_workshop_random_allocator($this->workshop);
     }
 

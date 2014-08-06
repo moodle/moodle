@@ -46,11 +46,8 @@ class workshopform_numerrors_strategy_testcase extends advanced_testcase {
     protected function setUp() {
         parent::setUp();
 
-        $cm             = new stdclass();
-        $course         = new stdclass();
-        $context        = new stdclass();
         $workshop       = (object)array('id' => 42, 'strategy' => 'numerrors');
-        $this->workshop = new workshop($workshop, $cm, $course, $context);
+        $this->workshop = new workshop($workshop, null, null);
         $this->strategy = new testable_workshop_numerrors_strategy($this->workshop);
     }
 
