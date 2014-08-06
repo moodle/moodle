@@ -43,6 +43,8 @@
 .dir-rtl.path-calendar .maincalendar .header .buttons {float: left;}
 .path-calendar .filters table {border-collapse:separate;border-spacing: 2px;width: 100%;}
 #page-calendar-export .indent {padding-left: 20px;}
+.path-calendar div.cal_courses_flt { float: left; }
+.dir-rtl.path-calendar div.cal_courses_flt { float: right; }
 .path-calendar .cal_courses_flt label { margin-right: .45em; }
 .dir-rtl.path-calendar .cal_courses_flt label { margin-left: .45em; margin-right: 0; }
 
