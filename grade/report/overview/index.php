@@ -148,7 +148,7 @@ if (has_capability('moodle/grade:viewall', $systemcontext)) { //Admins will see 
     }
 }
 
-$event = \gradereport_overview\event\report_viewed::create(
+$event = \gradereport_overview\event\grade_report_viewed::create(
     array(
         'context' => $context,
         'courseid' => $courseid,

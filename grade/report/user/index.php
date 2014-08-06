@@ -164,7 +164,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     }
 }
 
-$event = \gradereport_user\event\report_viewed::create(
+$event = \gradereport_user\event\grade_report_viewed::create(
     array(
         'context' => $context,
         'courseid' => $courseid,

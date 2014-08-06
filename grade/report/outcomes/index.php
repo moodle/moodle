@@ -170,7 +170,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
     $row++;
 }
 
-$event = \gradereport_outcomes\event\report_viewed::create(
+$event = \gradereport_outcomes\event\grade_report_viewed::create(
     array(
         'context' => $context,
         'courseid' => $courseid,

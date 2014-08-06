@@ -125,7 +125,7 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('pluginname', 'gradereport_grader');
 
-$event = \gradereport_grader\event\report_viewed::create(
+$event = \gradereport_grader\event\grade_report_viewed::create(
     array(
         'context' => $context,
         'courseid' => $courseid,
