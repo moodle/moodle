@@ -170,6 +170,12 @@ foreach ($report_info as $outcomeid => $outcomedata) {
     $row++;
 }
 
+$html .= '</table>';
+
+print_grade_page_head($courseid, 'report', 'outcomes');
+
+echo $html;
+
 $event = \gradereport_outcomes\event\grade_report_viewed::create(
     array(
         'context' => $context,
@@ -178,12 +184,4 @@ $event = \gradereport_outcomes\event\grade_report_viewed::create(
 );
 $event->trigger();
 
-$html .= '</table>';
-
-print_grade_page_head($courseid, 'report', 'outcomes');
-
-
-echo $html;
 echo $OUTPUT->footer();
-
-
