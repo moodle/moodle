@@ -336,11 +336,13 @@ abstract class grade_report {
         if (!empty($selectedusers)) {
             $coursecontext = $this->context->get_course_context(true);
 
-            $useractiveenrolments = get_enrolled_users($coursecontext, '', 0, 'u.*',  null, 0, 0, true);
-
             $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
             $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
             $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+
+            if ($showonlyactiveenrol) {
+                $useractiveenrolments = get_enrolled_users($coursecontext, '', 0, 'u.id',  null, 0, 0, true);
+            }
 
             foreach ($selectedusers as $id => $value) {
                 if (!$showonlyactiveenrol || ($showonlyactiveenrol && array_key_exists($id, $useractiveenrolments))) {
