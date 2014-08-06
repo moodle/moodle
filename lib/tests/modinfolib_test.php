@@ -902,4 +902,236 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertEquals(0, $section1->groupingid);
         $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
     }
+
+    /**
+     * Tests the function for constructing a cm_info from mixed data.
+     */
+    public function test_create() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        // Create a course and an activity.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $page = $generator->create_module('page', array('course' => $course->id,
+                'name' => 'Annie'));
+
+        // Null is passed through.
+        $this->assertNull(cm_info::create(null));
+
+        // Stdclass object turns into cm_info.
+        $cm = cm_info::create(
+                (object)array('id' => $page->cmid, 'course' => $course->id));
+        $this->assertInstanceOf('cm_info', $cm);
+        $this->assertEquals('Annie', $cm->name);
+
+        // A cm_info object stays as cm_info.
+        $this->assertSame($cm, cm_info::create($cm));
+
+        // Invalid object (missing fields) causes error.
+        try {
+            cm_info::create((object)array('id' => $page->cmid));
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        // Create a second hidden activity.
+        $hiddenpage = $generator->create_module('page', array('course' => $course->id,
+                'name' => 'Annie', 'visible' => 0));
+
+        // Create 2 user accounts, one is a manager who can see everything.
+        $user = $generator->create_user();
+        $generator->enrol_user($user->id, $course->id);
+        $manager = $generator->create_user();
+        $generator->enrol_user($manager->id, $course->id,
+                $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST));
+
+        // User can see the normal page but not the hidden one.
+        $cm = cm_info::create((object)array('id' => $page->cmid, 'course' => $course->id),
+                $user->id);
+        $this->assertTrue($cm->uservisible);
+        $cm = cm_info::create((object)array('id' => $hiddenpage->cmid, 'course' => $course->id),
+                $user->id);
+        $this->assertFalse($cm->uservisible);
+
+        // Manager can see the hidden one too.
+        $cm = cm_info::create((object)array('id' => $hiddenpage->cmid, 'course' => $course->id),
+                $manager->id);
+        $this->assertTrue($cm->uservisible);
+    }
+
+    /**
+     * Tests function for getting $course and $cm at once quickly from modinfo
+     * based on cmid or cm record.
+     */
+    public function test_get_course_and_cm_from_cmid() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        // Create a course and an activity.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(array('shortname' => 'Halls'));
+        $page = $generator->create_module('page', array('course' => $course->id,
+                'name' => 'Annie'));
+
+        // Successful usage.
+        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid);
+        $this->assertEquals('Halls', $course->shortname);
+        $this->assertInstanceOf('cm_info', $cm);
+        $this->assertEquals('Annie', $cm->name);
+
+        // Specified module type.
+        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page');
+        $this->assertEquals('Annie', $cm->name);
+
+        // With id in object.
+        $fakecm = (object)array('id' => $page->cmid);
+        list($course, $cm) = get_course_and_cm_from_cmid($fakecm);
+        $this->assertEquals('Halls', $course->shortname);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With both id and course in object.
+        $fakecm->course = $course->id;
+        list($course, $cm) = get_course_and_cm_from_cmid($fakecm);
+        $this->assertEquals('Halls', $course->shortname);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With supplied course id.
+        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', $course->id);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With supplied course object (modified just so we can check it is
+        // indeed reusing the supplied object).
+        $course->silly = true;
+        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', $course);
+        $this->assertEquals('Annie', $cm->name);
+        $this->assertTrue($course->silly);
+
+        // Incorrect module type.
+        try {
+            get_course_and_cm_from_cmid($page->cmid, 'forum');
+            $this->fail();
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidcoursemodule', $e->errorcode);
+        }
+
+        // Invalid module name.
+        try {
+            get_course_and_cm_from_cmid($page->cmid, 'pigs can fly');
+            $this->fail();
+        } catch (coding_exception $e) {
+            $this->assertContains('Invalid modulename parameter', $e->getMessage());
+        }
+
+        // Doesn't exist.
+        try {
+            get_course_and_cm_from_cmid($page->cmid + 1);
+            $this->fail();
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_exception', $e);
+        }
+
+        // Create a second hidden activity.
+        $hiddenpage = $generator->create_module('page', array('course' => $course->id,
+                'name' => 'Annie', 'visible' => 0));
+
+        // Create 2 user accounts, one is a manager who can see everything.
+        $user = $generator->create_user();
+        $generator->enrol_user($user->id, $course->id);
+        $manager = $generator->create_user();
+        $generator->enrol_user($manager->id, $course->id,
+                $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST));
+
+        // User can see the normal page but not the hidden one.
+        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', 0, $user->id);
+        $this->assertTrue($cm->uservisible);
+        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $user->id);
+        $this->assertFalse($cm->uservisible);
+
+        // Manager can see the hidden one too.
+        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
+        $this->assertTrue($cm->uservisible);
+    }
+
+    /**
+     * Tests function for getting $course and $cm at once quickly from modinfo
+     * based on instance id or record.
+     */
+    public function test_get_course_and_cm_from_instance() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        // Create a course and an activity.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(array('shortname' => 'Halls'));
+        $page = $generator->create_module('page', array('course' => $course->id,
+                'name' => 'Annie'));
+
+        // Successful usage.
+        list($course, $cm) = get_course_and_cm_from_instance($page->id, 'page');
+        $this->assertEquals('Halls', $course->shortname);
+        $this->assertInstanceOf('cm_info', $cm);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With id in object.
+        $fakeinstance = (object)array('id' => $page->id);
+        list($course, $cm) = get_course_and_cm_from_instance($fakeinstance, 'page');
+        $this->assertEquals('Halls', $course->shortname);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With both id and course in object.
+        $fakeinstance->course = $course->id;
+        list($course, $cm) = get_course_and_cm_from_instance($fakeinstance, 'page');
+        $this->assertEquals('Halls', $course->shortname);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With supplied course id.
+        list($course, $cm) = get_course_and_cm_from_instance($page->id, 'page', $course->id);
+        $this->assertEquals('Annie', $cm->name);
+
+        // With supplied course object (modified just so we can check it is
+        // indeed reusing the supplied object).
+        $course->silly = true;
+        list($course, $cm) = get_course_and_cm_from_instance($page->id, 'page', $course);
+        $this->assertEquals('Annie', $cm->name);
+        $this->assertTrue($course->silly);
+
+        // Doesn't exist (or is wrong type).
+        try {
+            get_course_and_cm_from_instance($page->id, 'forum');
+            $this->fail();
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_exception', $e);
+        }
+
+        // Invalid module name.
+        try {
+            get_course_and_cm_from_cmid($page->cmid, '1337 h4x0ring');
+            $this->fail();
+        } catch (coding_exception $e) {
+            $this->assertContains('Invalid modulename parameter', $e->getMessage());
+        }
+
+        // Create a second hidden activity.
+        $hiddenpage = $generator->create_module('page', array('course' => $course->id,
+                'name' => 'Annie', 'visible' => 0));
+
+        // Create 2 user accounts, one is a manager who can see everything.
+        $user = $generator->create_user();
+        $generator->enrol_user($user->id, $course->id);
+        $manager = $generator->create_user();
+        $generator->enrol_user($manager->id, $course->id,
+                $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST));
+
+        // User can see the normal page but not the hidden one.
+        list($course, $cm) = get_course_and_cm_from_cmid($page->cmid, 'page', 0, $user->id);
+        $this->assertTrue($cm->uservisible);
+        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $user->id);
+        $this->assertFalse($cm->uservisible);
+
+        // Manager can see the hidden one too.
+        list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
+        $this->assertTrue($cm->uservisible);
+    }
 }
