@@ -85,7 +85,17 @@ if ($editform->is_cancelled()) {
         default:
             print_error('unknoworder');
     }
-    $users = groups_get_potential_members($data->courseid, $data->roleid, $data->cohortid, $orderby, !empty($data->notingroup));
+    $source = array();
+    if ($data->cohortid) {
+        $source['cohortid'] = $data->cohortid;
+    }
+    if ($data->groupingid) {
+        $source['groupingid'] = $data->groupingid;
+    }
+    if ($data->groupid) {
+        $source['groupid'] = $data->groupid;
+    }
+    $users = groups_get_potential_members($data->courseid, $data->roleid, $source, $orderby, !empty($data->notingroup));
     $usercnt = count($users);
 
     if ($data->allocateby == 'random') {

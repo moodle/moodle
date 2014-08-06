@@ -406,4 +406,57 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('groupings', array('id' => $grouping1c2->id, 'courseid' => $course2->id)));
         $this->assertFalse($DB->record_exists('groupings_groups', array('groupid' => $group1->id, 'groupingid' => $grouping1->id)));
     }
+
+    public function test_groups_create_autogroups () {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group3 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $grouping1 = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
+        $this->getDataGenerator()->create_grouping_group(array('groupid' => $group2->id, 'groupingid' => $grouping1->id));
+        $this->getDataGenerator()->create_grouping_group(array('groupid' => $group3->id, 'groupingid' => $grouping1->id));
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id);
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group2->id, 'userid' => $user3->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group3->id, 'userid' => $user4->id));
+
+        // Test autocreate group based on all course users.
+        $users = groups_get_potential_members($course->id);
+        $group4 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        foreach ($users as $user) {
+            $this->getDataGenerator()->create_group_member(array('groupid' => $group4->id, 'userid' => $user->id));
+        }
+        $this->assertEquals(4, $DB->count_records('groups_members', array('groupid' => $group4->id)));
+
+        // Test autocreate group based on existing group.
+        $source = array();
+        $source['groupid'] = $group1->id;
+        $users = groups_get_potential_members($course->id, 0, $source);
+        $group5 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        foreach ($users as $user) {
+            $this->getDataGenerator()->create_group_member(array('groupid' => $group5->id, 'userid' => $user->id));
+        }
+        $this->assertEquals(2, $DB->count_records('groups_members', array('groupid' => $group5->id)));
+
+        // Test autocreate group based on existing grouping.
+        $source = array();
+        $source['groupingid'] = $grouping1->id;
+        $users = groups_get_potential_members($course->id, 0, $source);
+        $group6 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        foreach ($users as $user) {
+            $this->getDataGenerator()->create_group_member(array('groupid' => $group6->id, 'userid' => $user->id));
+        }
+        $this->assertEquals(2, $DB->count_records('groups_members', array('groupid' => $group6->id)));
+    }
 }
