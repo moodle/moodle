@@ -142,27 +142,28 @@ $ratingoptions->aggregate = $aggregationmethod;
 $items = $rm->get_ratings($ratingoptions);
 $firstrating = $items[0]->rating;
 
-// For custom scales return text not the value.
-// This scales weirdness will go away when scales are refactored.
-$scalearray = null;
-$aggregatetoreturn = round($firstrating->aggregate, 1);
-
-// Output a dash if aggregation method == COUNT as the count is output next to the aggregate anyway.
-if ($firstrating->settings->aggregationmethod == RATING_AGGREGATE_COUNT or $firstrating->count == 0) {
-    $aggregatetoreturn = ' - ';
-} else if ($firstrating->settings->scale->id < 0) { // If its non-numeric scale.
-    // Dont use the scale item if the aggregation method is sum as adding items from a custom scale makes no sense.
-    if ($firstrating->settings->aggregationmethod != RATING_AGGREGATE_SUM) {
-        $scalerecord = $DB->get_record('scale', array('id' => -$firstrating->settings->scale->id));
-        if ($scalerecord) {
-            $scalearray = explode(',', $scalerecord->scale);
-            $aggregatetoreturn = $scalearray[$aggregatetoreturn - 1];
-        }
-    }
-}
-
 // See if the user has permission to see the rating aggregate.
 if ($firstrating->user_can_view_aggregate()) {
+
+    // For custom scales return text not the value.
+    // This scales weirdness will go away when scales are refactored.
+    $scalearray = null;
+    $aggregatetoreturn = round($firstrating->aggregate, 1);
+
+    // Output a dash if aggregation method == COUNT as the count is output next to the aggregate anyway.
+    if ($firstrating->settings->aggregationmethod == RATING_AGGREGATE_COUNT or $firstrating->count == 0) {
+        $aggregatetoreturn = ' - ';
+    } else if ($firstrating->settings->scale->id < 0) { // If its non-numeric scale.
+        // Dont use the scale item if the aggregation method is sum as adding items from a custom scale makes no sense.
+        if ($firstrating->settings->aggregationmethod != RATING_AGGREGATE_SUM) {
+            $scalerecord = $DB->get_record('scale', array('id' => -$firstrating->settings->scale->id));
+            if ($scalerecord) {
+                $scalearray = explode(',', $scalerecord->scale);
+                $aggregatetoreturn = $scalearray[$aggregatetoreturn - 1];
+            }
+        }
+    }
+
     $result->aggregate = $aggregatetoreturn;
     $result->count = $firstrating->count;
     $result->itemid = $itemid;
