@@ -1365,7 +1365,7 @@ function glossary_print_entry_attachment($entry, $cm, $format = null, $unused1 =
     //                      text: The HTML link for the attachment is text.
     if ($entry->attachment) {
         echo '<div class="attachments">';
-        echo glossary_print_attachments($entry, $cm, $format, $align);
+        echo glossary_print_attachments($entry, $cm, $format);
         echo '</div>';
     }
     if ($unused1) {
@@ -1528,10 +1528,10 @@ function glossary_search_entries($searchterms, $glossary, $extended) {
  * @param object $entry
  * @param object $cm
  * @param string $type html, txt, empty
- * @param string $align left or right
+ * @param string $unused This parameter is no longer used
  * @return string image string or nothing depending on $type param
  */
-function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
+function glossary_print_attachments($entry, $cm, $type=NULL, $unused = null) {
     global $CFG, $DB, $OUTPUT;
 
     if (!$context = context_module::instance($cm->id, IGNORE_MISSING)) {
