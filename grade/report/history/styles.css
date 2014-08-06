@@ -54,7 +54,6 @@ table#gradestable th.header.selected {
 .gradereport_history_usp .usp-search {
     text-align: center;
 }
-
 .gradereport_history_usp .usp-user {
     width: 100%;
     text-align: left;
@@ -71,7 +70,7 @@ table#gradestable th.header.selected {
     float: left;
     padding: 11px 6px 0 6px;
 }
-.gradereport_history_usp .usp-checkbox input {
+.gradereport_history_usp .usp-checkbox input[type=checkbox] {
     margin: 0;
 }
 .gradereport_history_usp .usp-picture {
@@ -84,6 +83,7 @@ table#gradestable th.header.selected {
 .gradereport_history_usp .usp-user .details {
     margin-left: 67px;
     padding: 3px 6px 0 6px;
+    word-wrap: break-word;
 }
 .gradereport_history_usp .usp-user .details label {
     margin: 0;
@@ -100,6 +100,17 @@ table#gradestable th.header.selected {
     margin: 0;
 }
 
-.dir-rtl .gradereport_history_usp .usp-search-results .usp-user { text-align: right;}
-.dir-rtl .gradereport_history_usp .usp-content .usp-controls { text-align: right;}
-
+.dir-rtl .gradereport_history_usp .usp-search-results .usp-user {
+    text-align: right;
+}
+.dir-rtl .gradereport_history_usp .usp-picture,
+.dir-rtl .gradereport_history_usp .usp-checkbox {
+    float: right;
+}
+.dir-rtl .gradereport_history_usp .usp-user .details {
+    margin-right: 67px;
+    margin-left: 0;
+}
+.dir-rtl .gradereport_history_usp input.usp-search-btn {
+    margin-right: 5px;
+}
