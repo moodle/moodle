@@ -380,7 +380,6 @@ class assign_upgrade_manager {
         $newcm->indent           = $cm->indent;
         $newcm->groupmode        = $cm->groupmode;
         $newcm->groupingid       = $cm->groupingid;
-        $newcm->groupmembersonly = $cm->groupmembersonly;
         $newcm->completion                = $cm->completion;
         $newcm->completiongradeitemnumber = $cm->completiongradeitemnumber;
         $newcm->completionview            = $cm->completionview;

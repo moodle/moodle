@@ -98,7 +98,7 @@ class assign {
     /** @var assign_renderer the custom renderer for this module */
     private $output;
 
-    /** @var stdClass the course module for this assign instance */
+    /** @var cm_info the course module for this assign instance */
     private $coursemodule;
 
     /** @var array cache for things like the coursemodule name or the scale menu -
@@ -138,6 +138,9 @@ class assign {
     /**
      * Constructor for the base assign class.
      *
+     * Note: For $coursemodule you can supply a stdclass if you like, but it
+     * will be more efficient to supply a cm_info object.
+     *
      * @param mixed $coursemodulecontext context|null the course module context
      *                                   (or the course context if the coursemodule has not been
      *                                   created yet).
@@ -148,8 +151,10 @@ class assign {
      */
     public function __construct($coursemodulecontext, $coursemodule, $course) {
         $this->context = $coursemodulecontext;
-        $this->coursemodule = $coursemodule;
         $this->course = $course;
+
+        // Ensure that $this->coursemodule is a cm_info object (or null).
+        $this->coursemodule = cm_info::create($coursemodule);
 
         // Temporary cache only lives for a single request - used to reduce db lookups.
         $this->cache = array();
@@ -1182,7 +1187,7 @@ class assign {
     /**
      * Get the current course module.
      *
-     * @return mixed stdClass|null The course module
+     * @return cm_info|null The course module or null if not known
      */
     public function get_course_module() {
         if ($this->coursemodule) {
@@ -1193,11 +1198,8 @@ class assign {
         }
 
         if ($this->context->contextlevel == CONTEXT_MODULE) {
-            $this->coursemodule = get_coursemodule_from_id('assign',
-                                                           $this->context->instanceid,
-                                                           0,
-                                                           false,
-                                                           MUST_EXIST);
+            $modinfo = get_fast_modinfo($this->get_course());
+            $this->coursemodule = $modinfo->get_cm($this->context->instanceid);
             return $this->coursemodule;
         }
         return null;
@@ -1336,7 +1338,8 @@ class assign {
                     $this->show_only_active_users());
 
             $cm = $this->get_course_module();
-            $users = groups_filter_users_by_course_module_visible($cm, $users);
+            $info = new \core_availability\info_module($cm);
+            $users = $info->filter_user_list($users);
 
             $this->participants[$key] = $users;
         }

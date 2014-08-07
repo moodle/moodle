@@ -579,6 +579,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_list_participants() {
+        global $CFG, $DB;
+
         $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('grade'=>100));
@@ -596,6 +598,18 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         set_user_preference('grade_report_showonlyactiveenrol', false);
         $assign = $this->create_instance(array('grade'=>100));
         $this->assertEquals(self::DEFAULT_STUDENT_COUNT + self::EXTRA_STUDENT_COUNT, count($assign->list_participants(null, true)));
+
+        // Turn on availability and a group restriction, and check that it doesn't
+        // show users who aren't in the group.
+        $CFG->enableavailability = true;
+        $specialgroup = $this->getDataGenerator()->create_group(
+                array('courseid' => $this->course->id));
+        $assign = $this->create_instance(array('grade' => 100,
+                'availability' => json_encode(\core_availability\tree::get_root_json(
+                    array(\availability_group\condition::get_json($specialgroup->id))))));
+        groups_add_member($specialgroup, $this->students[0]);
+        groups_add_member($specialgroup, $this->students[1]);
+        $this->assertEquals(2, count($assign->list_participants(null, true)));
     }
 
     public function test_count_teams() {
@@ -1173,13 +1187,15 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         $this->setAdminUser();
         $this->create_extra_users();
-        $CFG->enablegroupmembersonly = true;
+        $CFG->enableavailability = true;
         $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $this->course->id));
         groups_assign_grouping($grouping->id, $this->groups[0]->id);
 
         // Force create an assignment with SEPARATEGROUPS.
         $instance = $this->getDataGenerator()->create_module('assign', array('course'=>$this->course->id),
-            array('groupmembersonly' => SEPARATEGROUPS, 'groupingid' => $grouping->id));
+                array('availability' => json_encode(\core_availability\tree::get_root_json(array(
+                    \availability_grouping\condition::get_json()))),
+                'groupingid' => $grouping->id));
 
         $cm = get_coursemodule_from_instance('assign', $instance->id);
         $context = context_module::instance($cm->id);
