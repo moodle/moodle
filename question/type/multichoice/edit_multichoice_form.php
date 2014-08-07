@@ -82,6 +82,13 @@ class qtype_multichoice_edit_form extends question_edit_form {
         return $repeated;
     }
 
+    protected function get_hint_fields($withclearwrong = false, $withshownumpartscorrect = false) {
+        list($repeated, $repeatedoptions) = parent::get_hint_fields($withclearwrong, $withshownumpartscorrect);
+        $repeatedoptions['hintclearwrong']['disabledif'] = array('single', 'eq', 1);
+        $repeatedoptions['hintshownumcorrect']['disabledif'] = array('single', 'eq', 1);
+        return array($repeated, $repeatedoptions);
+    }
+
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question, true);
