@@ -39,7 +39,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I follow "Grades"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
-    And I press "Update"
+    And I press "Save changes"
 
   @javascript
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook

@@ -22,8 +22,11 @@ Feature: Reset my home page to default
   Scenario: Add blocks to page and reset
     When I press "Customise this page"
     And I add the "Latest news" block
-    And I add the "My latest badges" block
+    And I add the "Comments" block
     And I press "Reset page to default"
     Then I should not see "Latest news"
-    And I should not see "My latest badges"
+    And I should see "My latest badges"
+    And I should see "Calendar"
+    And I should see "Upcoming events"
+    And I should not see "Comments"
     And I should not see "Reset page to default"

@@ -38,7 +38,7 @@ Feature: I need to export grades as text
     And I follow "Grades"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
-    And I press "Update"
+    And I press "Save changes"
 
   @javascript
   Scenario: Export grades as text
