@@ -160,9 +160,11 @@ class mod_glossary_concept_cache_testcase extends advanced_testcase {
         $this->assertEquals($concepts3, $concepts2);
 
         // Test uservisible flag.
-        set_config('enablegroupmembersonly', 1);
+        set_config('enableavailability', 1);
         $glossary1d = $this->getDataGenerator()->create_module('glossary',
-            array('course' => $course1->id, 'mainglossary' => 1, 'usedynalink' => 1, 'groupmembersonly' => 1));
+                array('course' => $course1->id, 'mainglossary' => 1, 'usedynalink' => 1,
+                'availability' => json_encode(\core_availability\tree::get_root_json(
+                        array(\availability_group\condition::get_json())))));
         $entry1d1 = $generator->create_content($glossary1d, array('concept' => 'membersonly', 'usedynalink' => 1));
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course1->id);
