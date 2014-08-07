@@ -26,7 +26,6 @@
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->dirroot . '/grade/report/history/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course id.
 $search = optional_param('search', '', PARAM_RAW);
@@ -47,30 +46,27 @@ $outcome->success = true;
 $outcome->response = new stdClass();
 $outcome->error = '';
 
-$report = new grade_report_history($course->id, null, $context);
-$users = $report->load_users($search, $page, 25);
-$outcome->response = array('users' => $users);
-$outcome->response['totalusers'] = count($users);
+$users = \gradereport_history\helper::get_users($context, $search, $page, 25);
+$outcome->response = array('users' => array());
+$outcome->response['totalusers'] = \gradereport_history\helper::get_users_count($context, $search);;
 
 $extrafields = get_extra_user_fields($context);
 $useroptions = array('link' => false, 'visibletoscreenreaders' => false);
 
-foreach ($outcome->response['users'] as &$user) {
-    $user->userid = $user->id;
-    $user->picture = $OUTPUT->user_picture($user, $useroptions);
-    $user->fullname = fullname($user);
+// Format the user record.
+foreach ($users as $user) {
+    $newuser = new stdClass();
+    $newuser->userid = $user->id;
+    $newuser->picture = $OUTPUT->user_picture($user, $useroptions);
+    $newuser->fullname = fullname($user);
     $fieldvalues = array();
     foreach ($extrafields as $field) {
         $fieldvalues[] = s($user->{$field});
-        unset($user->{$field});
     }
-    $user->extrafields = implode(', ', $fieldvalues);
-    unset($user->id);
+    $newuser->extrafields = implode(', ', $fieldvalues);
+    $outcome->response['users'][] = $newuser;
 }
-// Chrome will display users in the order of the array keys, so we need
-// to ensure that the results ordered array keys. Fortunately, the JavaScript
-// does not care what the array keys are. It uses user.id where necessary.
-$outcome->response['users'] = array_values($outcome->response['users']);
+
 $outcome->success = true;
 
 echo json_encode($outcome);
