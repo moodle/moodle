@@ -325,6 +325,7 @@ EDITOR.prototype = {
         }
         this.dialogue.centerDialogue();
         this.dialogue.show();
+        drawingcanvas.on('windowresize', this.resize, this);
     },
 
     /**
@@ -829,6 +830,16 @@ EDITOR.prototype = {
         this.currentedit.start = false;
         this.currentedit.end = false;
         this.currentedit.path = [];
+    },
+
+    /**
+     * Resize the dialogue window when the browser is resized.
+     * @public
+     * @method resize
+     */
+    resize : function() {
+        this.dialogue.centerDialogue();
+        return true;
     },
 
     /**
