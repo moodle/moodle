@@ -636,16 +636,14 @@ class grade_report_grader extends grade_report {
 
         $rows = $this->get_left_icons_row($rows, $colspan);
 
-        $rowclasses = array('even', 'odd');
-
         $suspendedstring = null;
         foreach ($this->users as $userid => $user) {
             $userrow = new html_table_row();
             $userrow->id = 'fixed_user_'.$userid;
-            $userrow->attributes['class'] = 'r'.$this->rowcount++.' '.$rowclasses[$this->rowcount % 2];
 
             $usercell = new html_table_cell();
             $usercell->attributes['class'] = 'user';
+            $usercell->attributes['data-uid'] = $userid;
 
             $usercell->header = true;
             $usercell->scope = 'row';
@@ -811,6 +809,7 @@ class grade_report_grader extends grade_report {
 
                     $itemcell = new html_table_cell();
                     $itemcell->attributes['class'] = $type . ' ' . $catlevel . ' highlightable'. ' i'. $element['object']->id;
+                    $itemcell->attributes['data-itemid'] = $element['object']->id;
 
                     if ($element['object']->is_hidden()) {
                         $itemcell->attributes['class'] .= ' dimmed_text';
@@ -852,8 +851,6 @@ class grade_report_grader extends grade_report {
         }
         $jsscales = $scalesarray;
 
-        $rowclasses = array('even', 'odd');
-
         foreach ($this->users as $userid => $user) {
 
             if ($this->canviewhidden) {
@@ -868,7 +865,6 @@ class grade_report_grader extends grade_report {
 
             $itemrow = new html_table_row();
             $itemrow->id = 'user_'.$userid;
-            $itemrow->attributes['class'] = $rowclasses[$this->rowcount % 2];
 
             $fullname = fullname($user);
             $jsarguments['users'][$userid] = $fullname;
@@ -880,6 +876,8 @@ class grade_report_grader extends grade_report {
                 $itemcell = new html_table_cell();
 
                 $itemcell->id = 'u'.$userid.'i'.$itemid;
+                $itemcell->attributes['data-itemid'] = $itemid;
+                $itemcell->attributes['data-uid'] = $userid;
 
                 // Get the decimal points preference for this item
                 $decimalpoints = $item->get_decimals();
@@ -928,6 +926,7 @@ class grade_report_grader extends grade_report {
                 }
                 if ($grade->is_overridden()) {
                     $itemcell->attributes['class'] .= ' overridden';
+                    $itemcell->attributes['aria-label'] = get_string('overriddengrade', 'gradereport_grader');
                 }
 
                 if (!empty($grade->feedback)) {

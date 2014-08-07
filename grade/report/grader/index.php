@@ -52,8 +52,7 @@ if (isset($graderreportsilast)) {
 }
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
-//$PAGE->requires->yui_module('moodle-gradereport_grader-scrollview', 'M.gradereport_grader.scrollview.init');
-$PAGE->requires->yui_module('moodle-gradereport_grader-gradereporttable', 'M.gradereport_grader.gradereporttable.init', array());
+$PAGE->requires->yui_module('moodle-gradereport_grader-gradereporttable', 'Y.M.gradereport_grader.init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -193,15 +192,6 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
 } else {
     echo $reporthtml;
 }
-
-// Render a loading screen.
-$loading = html_writer::div(
-            html_writer::div(
-                '<i></i><i></i><i></i><i></i>', 'gradebook-loading'
-            ), 'gradebook-loading-screen', array('aria-hidden' => 'true')
-        );
-
-echo $loading;
 
 // prints paging bar at bottom for large pages
 if (!empty($studentsperpage) && $studentsperpage >= 20) {
