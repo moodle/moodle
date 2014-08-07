@@ -1171,17 +1171,17 @@ class grade_structure {
 
                 } else if (($is_course or $is_category) and ($is_scale or $is_value)) {
                     if ($category = $element['object']->get_item_category()) {
+                        $aggrstrings = grade_helper::get_aggregation_strings();
+                        $stragg = $aggrstrings[$category->aggregation];
                         switch ($category->aggregation) {
                             case GRADE_AGGREGATE_MEAN:
                             case GRADE_AGGREGATE_MEDIAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
-                                $stragg = get_string('aggregation', 'grades');
                                 return '<img src="'.$OUTPUT->pix_url('i/agg_mean') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                             case GRADE_AGGREGATE_SUM:
-                                $stragg = get_string('aggregation', 'grades');
                                 return '<img src="'.$OUTPUT->pix_url('i/agg_sum') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                         }
@@ -2449,6 +2449,11 @@ abstract class grade_helper {
      * @var array
      */
     protected static $pluginstrings = null;
+    /**
+     * Cached grade aggregation strings
+     * @var array
+     */
+    protected static $aggregationstrings = null;
 
     /**
      * Gets strings commonly used by the describe plugins
@@ -2481,6 +2486,29 @@ abstract class grade_helper {
         }
         return self::$pluginstrings;
     }
+
+    /**
+     * Gets strings describing the available aggregation methods.
+     *
+     * @return array
+     */
+    public static function get_aggregation_strings() {
+        if (self::$aggregationstrings === null) {
+            self::$aggregationstrings = array(
+                GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
+                GRADE_AGGREGATE_WEIGHTED_MEAN    => get_string('aggregateweightedmean', 'grades'),
+                GRADE_AGGREGATE_WEIGHTED_MEAN2   => get_string('aggregateweightedmean2', 'grades'),
+                GRADE_AGGREGATE_EXTRACREDIT_MEAN => get_string('aggregateextracreditmean', 'grades'),
+                GRADE_AGGREGATE_MEDIAN           => get_string('aggregatemedian', 'grades'),
+                GRADE_AGGREGATE_MIN              => get_string('aggregatemin', 'grades'),
+                GRADE_AGGREGATE_MAX              => get_string('aggregatemax', 'grades'),
+                GRADE_AGGREGATE_MODE             => get_string('aggregatemode', 'grades'),
+                GRADE_AGGREGATE_SUM              => get_string('aggregatesum', 'grades')
+            );
+        }
+        return self::$aggregationstrings;
+    }
+
     /**
      * Get grade_plugin_info object for managing settings if the user can
      *

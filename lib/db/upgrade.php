@@ -3719,6 +3719,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014072400.01);
     }
 
+    if ($oldversion < 2014080700.00) {
+
+        // Define field usedinaggregation to be added to grade_grades.
+        $table = new xmldb_table('grade_grades');
+        $field = new xmldb_field('usedinaggregation', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'unknown', 'timemodified');
+
+        // Conditionally launch add field usedinaggregation.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014080700.00);
+    }
+
     if ($oldversion < 2014080801.00) {
 
         // Define index behaviour (not unique) to be added to question_attempts.

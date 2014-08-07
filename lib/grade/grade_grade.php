@@ -49,7 +49,8 @@ class grade_grade extends grade_object {
      */
     public $required_fields = array('id', 'itemid', 'userid', 'rawgrade', 'rawgrademax', 'rawgrademin',
                                  'rawscaleid', 'usermodified', 'finalgrade', 'hidden', 'locked',
-                                 'locktime', 'exported', 'overridden', 'excluded', 'timecreated', 'timemodified');
+                                 'locktime', 'exported', 'overridden', 'excluded', 'timecreated',
+                                 'timemodified', 'usedinaggregation');
 
     /**
      * Array of optional fields with default values (these should match db defaults)
@@ -158,6 +159,12 @@ class grade_grade extends grade_object {
      * @var bool $timemodified
      */
     public $timemodified = null;
+
+    /**
+     * Used in aggregation flag. Can be one of 'unknown', 'dropped', 'novalue' or a specific weighting.
+     * @var string $usedinaggregation
+     */
+    public $usedinaggregation = 'unknown';
 
 
     /**
@@ -283,6 +290,26 @@ class grade_grade extends grade_object {
     public function get_datesubmitted() {
         //TODO: HACK - create new fields (MDL-31379)
         return $this->timecreated;
+    }
+
+    /**
+     * Returns the info on how this value was used in the aggregated grade
+     *
+     * @return string One of 'dropped', 'excluded', 'novalue' or a specific weighting
+     */
+    public function get_usedinaggregation() {
+        return $this->usedinaggregation;
+    }
+
+    /**
+     * Set usedinaggregation flag
+     *
+     * @param string $usedinaggregation
+     * @return void
+     */
+    public function set_usedinaggregation($usedinaggregation) {
+        $this->usedinaggregation = $usedinaggregation;
+        $this->update();
     }
 
     /**
@@ -923,5 +950,54 @@ class grade_grade extends grade_object {
 
         // Pass information on to completion system
         $completion->inform_grade_changed($cm, $this->grade_item, $this, $deleted);
-     }
+    }
+
+    /**
+     * Get some useful information about how this grade_grade is reflected in the aggregation
+     * for the grade_category. For example this could be an extra credit item, and it could be
+     * dropped because it's in the X lowest or highest.
+     *
+     * @param grade_item $gradeitem An optional grade_item, saves having to load the grade_grade's grade_item
+     * @return string - A list of keywords that hint at how this grade_grade is reflected in the aggregation.
+     */
+    function get_aggregation_hint($gradeitem = null) {
+        $hint = '';
+
+        if ($this->is_excluded()) {
+            $hint = get_string('excluded', 'grades');
+        } else {
+            if (empty($grade_item)) {
+                if (!isset($this->grade_item)) {
+                    $this->load_grade_item();
+                }
+            } else {
+                $this->grade_item = $grade_item;
+                $this->itemid = $grade_item->id;
+            }
+            $item = $this->grade_item;
+
+            if (!$item->is_course_item()) {
+                $parent_category = $item->get_parent_category();
+                $parent_category->apply_forced_settings();
+                if ($parent_category->is_extracredit_used() && ($item->aggregationcoef > 0)) {
+                    $hint = get_string('aggregationcoefextra', 'grades');
+                }
+            }
+
+        }
+
+        // Is it dropped?
+        if ($hint == '') {
+            $aggr = $this->get_usedinaggregation();
+            if ($aggr == 'dropped') {
+                $hint = get_string('dropped', 'grades');
+            } else if ($aggr == 'novalue') {
+                $hint = '-';
+            } else if ($aggr != 'unknown') {
+                $hint = $aggr;
+            }
+        }
+
+        return $hint;
+    }
 }

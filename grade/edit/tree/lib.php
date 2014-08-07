@@ -661,15 +661,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
             throw new Exception('Array key (id) missing from 3rd param of grade_edit_tree_column_aggregation::get_category_cell($category, $levelclass, $params)');
         }
 
-        $options = array(GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
-                         GRADE_AGGREGATE_WEIGHTED_MEAN    => get_string('aggregateweightedmean', 'grades'),
-                         GRADE_AGGREGATE_WEIGHTED_MEAN2   => get_string('aggregateweightedmean2', 'grades'),
-                         GRADE_AGGREGATE_EXTRACREDIT_MEAN => get_string('aggregateextracreditmean', 'grades'),
-                         GRADE_AGGREGATE_MEDIAN           => get_string('aggregatemedian', 'grades'),
-                         GRADE_AGGREGATE_MIN              => get_string('aggregatemin', 'grades'),
-                         GRADE_AGGREGATE_MAX              => get_string('aggregatemax', 'grades'),
-                         GRADE_AGGREGATE_MODE             => get_string('aggregatemode', 'grades'),
-                         GRADE_AGGREGATE_SUM              => get_string('aggregatesum', 'grades'));
+        $options = grade_helper::get_aggregation_strings();
 
         $visible = explode(',', $CFG->grade_aggregations_visible);
         foreach ($options as $constant => $string) {
@@ -751,7 +743,7 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('weightuc', 'grades').$OUTPUT->help_icon('aggregationcoefweight', 'grades');
+        $headercell->text = get_string('weights', 'grades').$OUTPUT->help_icon('aggregationcoefweight', 'grades');
         return $headercell;
     }
 

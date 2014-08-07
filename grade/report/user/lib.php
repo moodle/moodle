@@ -408,10 +408,12 @@ class grade_report_user extends grade_report {
 
             if (!$hide) {
                 /// Excluded Item
+                /**
                 if ($grade_grade->is_excluded()) {
                     $fullname .= ' ['.get_string('excluded', 'grades').']';
                     $excluded = ' excluded';
                 }
+                **/
 
                 /// Other class information
                 $class = "$hidden $excluded";
@@ -456,8 +458,14 @@ class grade_report_user extends grade_report {
                     $data['weight']['content'] = '-';
                     $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
-                    if ($grade_object->aggregationcoef > 0 && $type <> 'courseitem') {
-                        $data['weight']['content'] = number_format($grade_object->aggregationcoef,2);
+
+                    $hints = $grade_grade->get_aggregation_hint($grade_object);
+                    if ($hints) {
+                        // This obliterates the weight because it provides a more informative description.
+                        if (intval($hints)) {
+                            $hints = format_float(intval($hints) / 100.0, 2) . ' %';
+                        }
+                        $data['weight']['content'] = $hints;
                     }
                 }
 

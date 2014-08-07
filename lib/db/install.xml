@@ -1764,6 +1764,7 @@
         <FIELD NAME="informationformat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="format of information text"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the time this grade was first created"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the time this grade was last modified"/>
+        <FIELD NAME="usedinaggregation" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="unknown" SEQUENCE="false" COMMENT="One of several values describing how this grade_grade was used when calculating the aggregation. Possible values are &quot;unknown&quot;, &quot;dropped&quot;, &quot;novalue&quot;, &quot;included&quot;"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
