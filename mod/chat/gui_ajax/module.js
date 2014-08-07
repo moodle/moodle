@@ -141,25 +141,27 @@ M.mod_chat_ajax.init = function(Y, cfg) {
         },
 
         send : function(e, beep) {
-            this.sendbutton.set('value', M.str.chat.sending);
-            var data = {
-                chat_message : (!beep)?this.messageinput.get('value'):'',
-                chat_sid : this.cfg.sid,
-                theme : this.cfg.theme
-            };
-            if (beep) {
-                data.beep = beep
-            }
-            data.action = 'chat';
+            if((this.messageinput.get('value') != '') || (typeof beep != 'undefined')) {
+                this.sendbutton.set('value', M.str.chat.sending);
+                var data = {
+                    chat_message : (!beep) ? this.messageinput.get('value') : '',
+                    chat_sid : this.cfg.sid,
+                    theme : this.cfg.theme
+                };
+                if (beep) {
+                    data.beep = beep
+                }
+                data.action = 'chat';
 
-            Y.io(this.api, {
-                method : 'POST',
-                data : build_querystring(data),
-                on : {
-                    success : this.send_callback
-                },
-                context : this
-            });
+                Y.io(this.api, {
+                    method : 'POST',
+                    data : build_querystring(data),
+                    on : {
+                        success : this.send_callback
+                    },
+                    context : this
+                });
+            }
         },
 
         send_callback : function(tid, outcome, args) {
