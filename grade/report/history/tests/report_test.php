@@ -138,6 +138,60 @@ class gradereport_history_report_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the get users helper method.
+     */
+    public function test_get_users() {
+        $this->resetAfterTest();
+
+        // Making the setup.
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $c1ctx = context_course::instance($c1->id);
+        $c2ctx = context_course::instance($c2->id);
+
+        $c1m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
+        $c2m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c2));
+
+        // Users.
+        $u1 = $this->getDataGenerator()->create_user(array('firstname' => 'Eric', 'lastname' => 'Cartman'));
+        $u2 = $this->getDataGenerator()->create_user(array('firstname' => 'Stan', 'lastname' => 'Marsh'));
+        $u3 = $this->getDataGenerator()->create_user(array('firstname' => 'Kyle', 'lastname' => 'Broflovski'));
+        $u4 = $this->getDataGenerator()->create_user(array('firstname' => 'Kenny', 'lastname' => 'McCormick'));
+
+        // Creating grade history for some users.
+        $gi = grade_item::fetch(array('iteminstance' => $c1m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u2->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u3->id));
+
+        $gi = grade_item::fetch(array('iteminstance' => $c2m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u4->id));
+
+        // Checking fetching some users.
+        $users = \gradereport_history\helper::get_users($c1ctx);
+        $this->assertCount(3, $users);
+        $this->assertArrayHasKey($u3->id, $users);
+        $users = \gradereport_history\helper::get_users($c2ctx);
+        $this->assertCount(1, $users);
+        $this->assertArrayHasKey($u4->id, $users);
+        $users = \gradereport_history\helper::get_users($c1ctx, 'c');
+        $this->assertCount(1, $users);
+        $this->assertArrayHasKey($u1->id, $users);
+        $users = \gradereport_history\helper::get_users($c1ctx, '', 0, 2);
+        $this->assertCount(2, $users);
+        $this->assertArrayHasKey($u3->id, $users);
+        $this->assertArrayHasKey($u1->id, $users);
+        $users = \gradereport_history\helper::get_users($c1ctx, '', 1, 2);
+        $this->assertCount(1, $users);
+        $this->assertArrayHasKey($u2->id, $users);
+
+        // Checking the count of users.
+        $this->assertEquals(3, \gradereport_history\helper::get_users_count($c1ctx));
+        $this->assertEquals(1, \gradereport_history\helper::get_users_count($c2ctx));
+        $this->assertEquals(1, \gradereport_history\helper::get_users_count($c1ctx, 'c'));
+    }
+
+    /**
      * Asserts that the array of grade objects contains exactly the right IDs.
      *
      * @param array $expectedids Array of expected IDs.
