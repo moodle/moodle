@@ -70,8 +70,8 @@ class tablelog extends \table_sql implements \renderable {
      * @param \context_course $context Context of the report.
      * @param \moodle_url $url url of the page where this table would be displayed.
      * @param array $filters options are:
-     *                          users : limit to specific users (default: none)
-     *                          gradeitem : limit to specific item (default: all)
+     *                          userids : limit to specific users (default: none)
+     *                          itemid : limit to specific grade item (default: all)
      *                          grader : limit to specific graders (default: all)
      *                          datefrom : start of date range
      *                          datetill : end of date range
