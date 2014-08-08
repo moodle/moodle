@@ -26,7 +26,7 @@
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->dirroot.'/grade/report/history/lib.php');
+require_once($CFG->dirroot . '/grade/report/history/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course id.
 $search = optional_param('search', '', PARAM_RAW);
@@ -41,10 +41,6 @@ if ($course->id == SITEID) {
 
 require_sesskey();
 require_login($course);
-
-$PAGE->set_context($context);
-
-echo $OUTPUT->header();
 
 $outcome = new stdClass();
 $outcome->success = true;
@@ -78,5 +74,3 @@ $outcome->response['users'] = array_values($outcome->response['users']);
 $outcome->success = true;
 
 echo json_encode($outcome);
-
-echo $OUTPUT->footer();

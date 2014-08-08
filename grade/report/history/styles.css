@@ -23,7 +23,9 @@ table#gradestable th.header.selected {
 }
 
 /* User Selector */
-.yui3-gradereport_history_usp-hidden {display:none;}
+.yui3-gradereport_history_usp-hidden {
+    display:none;
+}
 
 .gradereport_history_usp .usp-content {
     position: relative;

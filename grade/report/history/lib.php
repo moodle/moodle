@@ -660,7 +660,7 @@ class grade_report_history extends grade_report {
         $modules = array('moodle-gradereport_history-userselector');
         $arguments = array(
             'courseid'            => $courseid,
-            'ajaxurl'             => '/grade/report/history/ajax.php',
+            'ajaxurl'             => '/grade/report/history/users_ajax.php',
             'url'                 => $PAGE->url->out(false),
             'userfullnames'       => $currentusers,
         );

@@ -31,49 +31,49 @@ YUI.add('moodle-gradereport_history-userselector', function (Y, NAME) {
 
 var COMPONENT = 'gradereport_history';
 var USP = {
-    AJAXURL : 'ajaxurl',
-    BASE : 'base',
-    CHECKBOX_NAME_PREFIX : 'usp-u',
-    COURSEID : 'courseid',
-    DIALOGUE_PREFIX : 'moodle-dialogue',
-    NAME : 'gradereport_history_usp',
-    PAGE : 'page',
-    PARAMS : 'params',
-    PERPAGE : 'perPage',
-    SEARCH : 'search',
-    SEARCHBTN : 'searchbtn',
-    SELECTEDUSERS : 'selectedusers',
-    URL : 'url',
-    USERCOUNT : 'userCount',
-    USERFULLNAMES : 'userfullnames'
+    AJAXURL: 'ajaxurl',
+    BASE: 'base',
+    CHECKBOX_NAME_PREFIX: 'usp-u',
+    COURSEID: 'courseid',
+    DIALOGUE_PREFIX: 'moodle-dialogue',
+    NAME: 'gradereport_history_usp',
+    PAGE: 'page',
+    PARAMS: 'params',
+    PERPAGE: 'perPage',
+    SEARCH: 'search',
+    SEARCHBTN: 'searchbtn',
+    SELECTEDUSERS: 'selectedusers',
+    URL: 'url',
+    USERCOUNT: 'userCount',
+    USERFULLNAMES: 'userfullnames'
 };
 var CSS = {
-    ACCESSHIDE : 'accesshide',
-    AJAXCONTENT : 'usp-ajax-content',
-    CHECKBOX : 'usp-checkbox',
-    CLOSE : 'close',
-    CLOSEBTN : 'usp-finish',
-    CONTENT : 'usp-content',
-    DETAILS : 'details',
-    EXTRAFIELDS : 'extrafields',
-    FIRSTADDED : 'usp-first-added',
-    FULLNAME : 'fullname',
-    HEADER : 'usp-header',
-    HIDDEN : 'hidden',
-    LIGHTBOX : 'usp-loading-lightbox',
-    LOADINGICON : 'loading-icon',
-    MORERESULTS : 'usp-more-results',
-    OPTIONS : 'options',
-    PICTURE : 'usp-picture',
-    RESULTSCOUNT : 'usp-results-count',
-    SEARCH : 'usp-search',
-    SEARCHBTN : 'usp-search-btn',
-    SEARCHFIELD : 'usp-search-field',
-    SEARCHRESULTS : 'usp-search-results',
-    SELECTED : 'selected',
-    USER : 'usp-user',
-    USERS : 'usp-users',
-    WRAP : 'usp-wrap'
+    ACCESSHIDE: 'accesshide',
+    AJAXCONTENT: 'usp-ajax-content',
+    CHECKBOX: 'usp-checkbox',
+    CLOSE: 'close',
+    CLOSEBTN: 'usp-finish',
+    CONTENT: 'usp-content',
+    DETAILS: 'details',
+    EXTRAFIELDS: 'extrafields',
+    FIRSTADDED: 'usp-first-added',
+    FULLNAME: 'fullname',
+    HEADER: 'usp-header',
+    HIDDEN: 'hidden',
+    LIGHTBOX: 'usp-loading-lightbox',
+    LOADINGICON: 'loading-icon',
+    MORERESULTS: 'usp-more-results',
+    OPTIONS: 'options',
+    PICTURE: 'usp-picture',
+    RESULTSCOUNT: 'usp-results-count',
+    SEARCH: 'usp-search',
+    SEARCHBTN: 'usp-search-btn',
+    SEARCHFIELD: 'usp-search-field',
+    SEARCHRESULTS: 'usp-search-results',
+    SELECTED: 'selected',
+    USER: 'usp-user',
+    USERS: 'usp-users',
+    WRAP: 'usp-wrap'
 };
 var SELECTORS = {
     AJAXCONTENT: '.' + CSS.AJAXCONTENT,
@@ -114,7 +114,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * Whether or not this is the first time the user displays the dialogue within that request.
      *
      * @property _firstDisplay
-     * @type {Boolean}
+     * @type Boolean
      * @private
      */
     _firstDisplay: true,
@@ -122,7 +122,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     /**
      * The list of all the users selected while the dialogue is open.
      *
-     * @type {Object}
+     * @type Object
      * @property _usersBufferList
      * @private
      */
@@ -144,9 +144,9 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @type Function
      * @private
      */
-    _userTemplate : null,
+    _userTemplate: null,
 
-    initializer : function() {
+    initializer: function() {
         var bb = this.get('boundingBox'),
             content,
             params,
@@ -222,7 +222,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      *
      * @method show
      */
-    show : function(e) {
+    show: function(e) {
         var bb;
         this._usersBufferList = {};
         if (this._firstDisplay) {
@@ -250,17 +250,18 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             // Reset the tab focus.
             this.setUserTabFocus(bb.one(SELECTORS.USER));
         }
-        Y.namespace('M.gradereport_history.UserSelector').superclass.show.call(this);
+        return Y.namespace('M.gradereport_history.UserSelector').superclass.show.call(this);
     },
 
     /**
      * Search for users.
      *
      * @method search
+     * @param {EventFacade} e The event.
+     * @param {Boolean} append Whether we want to append the results to the current results or not.
      */
-    search : function(e, append) {
+    search: function(e, append) {
         if (e) {
-            e.halt();
             e.preventDefault();
         }
         var params;
@@ -277,13 +278,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         params.page = this.get(USP.PAGE);
         params.perpage = this.get(USP.PERPAGE);
 
-        Y.io(M.cfg.wwwroot+this.get(USP.AJAXURL), {
+        Y.io(M.cfg.wwwroot + this.get(USP.AJAXURL), {
             method:'POST',
             data:build_querystring(params),
-            on : {
-                start : this.preSearch,
+            on: {
+                start: this.preSearch,
                 complete: this.processSearchResults,
-                end : this.postSearch
+                end: this.postSearch
             },
             context:this,
             "arguments": {      // Quoted because this is a reserved keyword.
@@ -296,7 +297,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * Pre search callback.
      *
      * @method preSearch
-     * @param {Mixed} unused Not sure what that is.
+     * @param {String} transactionId The transaction ID.
      * @param {Object} args The arguments passed from YUI.io()
      */
     preSearch: function(unused, args) {
@@ -307,7 +308,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         // Set the number of results to 'loading...'.
         if (!args.append) {
-            bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('loading', 'admin'));
+            bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('loading', 'admin'));
         }
     },
 
@@ -315,10 +316,10 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * Post search callback.
      *
      * @method postSearch
-     * @param {Mixed} unused Not sure what that is.
+     * @param {String} transactionId The transaction ID.
      * @param {Object} args The arguments passed from YUI.io()
      */
-    postSearch: function(unused, args) {
+    postSearch: function(transactionId, args) {
         var bb = this.get('boundingBox'),
             firstAdded = bb.one(SELECTORS.FIRSTADDED),
             firstUser;
@@ -326,11 +327,12 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // Hide the lightbox.
         bb.one(SELECTORS.LIGHTBOX).addClass(CSS.HIDDEN);
 
-        // Sets the focus on the newly added user if we are appending results.
         if (args.append && firstAdded) {
+            // Sets the focus on the newly added user if we are appending results.
             this.setUserTabFocus(firstAdded);
             firstAdded.one(SELECTORS.USERSELECT).focus();
         } else {
+            // New search result, set the tab focus on the first user returned.
             firstUser = bb.one(SELECTORS.USER);
             if (firstUser) {
                 this.setUserTabFocus(firstUser);
@@ -342,8 +344,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * Process and display the search results.
      *
      * @method processSearchResults
+     * @param {String} tid The transaction ID.
+     * @param {Object} outcome The response object.
+     * @param {Object} args The arguments passed from YUI.io().
      */
-    processSearchResults : function(tid, outcome, args) {
+    processSearchResults: function(tid, outcome, args) {
         var result = false,
             error = false,
             bb = this.get('boundingBox'),
@@ -371,7 +376,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // There was an error.
         if (error) {
             this.setContent('');
-            bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('errajaxsearch', COMPONENT));
+            bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('errajaxsearch', COMPONENT));
             return;
         }
 
@@ -446,13 +451,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         totalUsers = parseInt(result.response.totalusers, 10);
         if (!args.append) {
             if (totalUsers === 0) {
-                bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('noresults', 'moodle'));
+                bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('noresults', 'moodle'));
                 content = '';
             } else {
                 if (totalUsers === 1) {
-                    bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('foundoneuser', COMPONENT));
+                    bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('foundoneuser', COMPONENT));
                 } else {
-                    bb.one(SELECTORS.RESULTSCOUNT).setContent(M.util.get_string('foundnusers', COMPONENT, totalUsers));
+                    bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('foundnusers', COMPONENT, totalUsers));
                 }
 
                 content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
@@ -474,15 +479,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     },
 
     /**
-     * Fetch more results.
-     *
-     * @param {EventFacade} e The event.
-     */
-    fetchMore: function(e) {
-        this.search(e, true);
-    },
-
-    /**
      * When the user has finished selecting users.
      *
      * @method finishSelectingUsers
@@ -498,13 +494,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * Apply the selection made.
      *
      * @method applySelection
-     * @return Void
+     * @param {EventFacade} e The event.
      */
     applySelection: function(e) {
         var userIds = Y.Object.values(this._usersBufferList);
-        this.set(USP.SELECTEDUSERS, userIds);
-        this.set(USP.USERFULLNAMES, this._usersBufferList);
-        this.setnamedisplay();
+        this.set(USP.SELECTEDUSERS, userIds)
+            .set(USP.USERFULLNAMES, this._usersBufferList)
+            .setNameDisplay();
         Y.one(SELECTORS.USERIDS).set('value', userIds.join());
     },
 
@@ -528,7 +524,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @method SelectUser
      * @param {EventFacade} e The event.
      */
-    selectUser : function(e) {
+    selectUser: function(e) {
         var user = e.currentTarget.ancestor(SELECTORS.USER),
             checkbox = user.one(SELECTORS.USERSELECT),
             fullname = user.one(SELECTORS.FULLNAME).get('innerHTML'),
@@ -546,7 +542,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         } else {
             // De-selecting the user.
             delete this._usersBufferList[userId];
-            delete this._usersBufferList[parseInt(userId, 10)]; // Also remove number'd keys.
+            delete this._usersBufferList[parseInt(userId, 10)]; // Also remove numbered keys.
         }
 
         this.markUserNode(user, checked);
@@ -560,17 +556,21 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      *
      * @param {Node} node The user node.
      * @param {Boolean} selected True to mark as selected.
+     * @chainable
      */
     markUserNode: function(node, selected) {
         if (selected) {
-            node.addClass(CSS.SELECTED);
-            node.set('aria-selected', 'true');
-            node.one(SELECTORS.USERSELECT).set('checked', true);
+            node.addClass(CSS.SELECTED)
+                .set('aria-selected', true)
+                .one(SELECTORS.USERSELECT)
+                    .set('checked', true);
         } else {
-            node.removeClass(CSS.SELECTED);
-            node.set('aria-selected', 'false');
-            node.one(SELECTORS.USERSELECT).set('checked', false);
+            node.removeClass(CSS.SELECTED)
+                .set('aria-selected', false)
+                .one(SELECTORS.USERSELECT)
+                    .set('checked', false);
         }
+        return this;
     },
 
     /**
@@ -578,17 +578,19 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      *
      * @method setContent
      * @param {String} content The content.
+     * @chainable
      */
     setContent: function(content) {
-        this.get('boundingBox').one(SELECTORS.AJAXCONTENT).setContent(content);
+        this.get('boundingBox').one(SELECTORS.AJAXCONTENT).setHTML(content);
+        return this;
     },
 
     /**
      * Display the names of the selected users in the form.
      *
-     * @method setnamedisplay
+     * @method setNameDisplay
      */
-    setnamedisplay: function() {
+    setNameDisplay: function() {
         var namelist = Y.Object.values(this.get(USP.USERFULLNAMES));
         Y.one(SELECTORS.SELECTEDNAMES).set('innerHTML', namelist.join(', '));
         Y.one(SELECTORS.USERFULLNAMES).set('value', namelist.join());
@@ -600,8 +602,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @method userKeyboardNavigation
      */
     userKeyboardNavigation: function(e) {
-        e.preventDefault();
-
         var bb = this.get('boundingBox'),
             users = bb.all(SELECTORS.USER),
             direction = 1,
@@ -614,6 +614,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         user = this.findFocusableUser(users, current, direction);
         if (user) {
+            e.preventDefault();
             user.one(SELECTORS.USERSELECT).focus();
             this.setUserTabFocus(user);
         }
@@ -625,8 +626,8 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @param {NodeList} users The list of users.
      * @param {Node} user The user to start with.
      * @param {Number} direction The direction in which to go.
-     * @return {Node} A user node.
-     * @method findNextFocusableUser
+     * @return {Node|null} A user node, or null if not found.
+     * @method findFocusableUser
      */
     findFocusableUser: function(users, user, direction) {
         var index = users.indexOf(user);
@@ -669,146 +670,127 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
     }
 
 }, {
-    NAME : USP.NAME,
-    CSS_PREFIX : USP.CSS_PREFIX,
-    ATTRS : {
-
-        /**
-         * List of extra classes.
-         *
-         * @attribute extraClasses
-         * @type Array
-         */
-        extraClasses: {
-            value: [
-                'gradereport_history_usp'
-            ]
-        },
+    NAME: USP.NAME,
+    CSS_PREFIX: USP.CSS_PREFIX,
+    ATTRS: {
 
         /**
          * The header.
          *
          * @attribute title
+         * @default selectusers language string.
          * @type String
          */
         title: {
             validator: Y.Lang.isString,
-            value: M.util.get_string('selectusers', COMPONENT)
-        },
-
-        /**
-         * Whether to focus on the target that caused the Widget to be shown.
-         *
-         * @attribute focusOnPreviousTargetAfterHide
-         * @type Node
-         */
-        focusOnPreviousTargetAfterHide: {
-            value: true
-        },
-
-        /**
-         *
-         * Width.
-         *
-         * @attribute width
-         * @type {String|Number}
-         */
-        width: {
-            value: '500px'
+            valueFn: function() {
+                return M.util.get_string('selectusers', COMPONENT);
+            }
         },
 
         /**
          * The current page URL.
          *
          * @attribute url
+         * @default null
          * @type String
          */
-        url : {
-            validator : Y.Lang.isString
+        url: {
+            validator: Y.Lang.isString,
+            value: null
         },
 
         /**
          * The URL to the Ajax file.
          *
          * @attribute ajaxurl
+         * @default null
          * @type String
          */
-        ajaxurl : {
-            validator : Y.Lang.isString
+        ajaxurl: {
+            validator: Y.Lang.isString,
+            value: null
         },
 
         /**
          * IDs of the selected users.
          *
          * @attribute selectedusers
+         * @default null
          * @type Array
          */
-        selectedusers : {
-            validator : Y.Lang.isArray,
-            value : null
+        selectedusers: {
+            validator: Y.Lang.isArray,
+            value: null
         },
 
         /**
          * The names of the selected users.
          *
          * @attribute userfullnames
+         * @default null
          * @type Object
          */
-        userfullnames : {
-            validator : Y.Lang.isObject,
-            value : null
+        userfullnames: {
+            validator: Y.Lang.isObject,
+            value: null
         },
 
         /**
          * The course ID.
          *
          * @attribute courseid
+         * @default null
          * @type Number
          */
-        courseid : {
-            value : null
+        courseid: {
+            value: null
         },
 
         /**
          * Array of parameters.
          *
          * @attribute params
+         * @default []
          * @type Array
          */
-        params : {
-            validator : Y.Lang.isArray,
-            value : []
+        params: {
+            validator: Y.Lang.isArray,
+            value: []
         },
 
         /**
          * The page we are on.
          *
          * @attribute page
+         * @default 0
          * @type Number
          */
-        page : {
-            validator : Y.Lang.isNumber,
-            value : 0
+        page: {
+            validator: Y.Lang.isNumber,
+            value: 0
         },
 
         /**
          * The number of users displayed.
          *
          * @attribute userCount
+         * @default 0
          * @type Number
          */
-        userCount : {
-            value : 0,
-            validator : Y.Lang.isNumber
+        userCount: {
+            value: 0,
+            validator: Y.Lang.isNumber
         },
 
         /**
          * The number of results per page.
          *
          * @attribute perPage
+         * @default 25
          * @type Number
          */
-        perPage : {
+        perPage: {
             value: 25,
             Validator: Y.Lang.isNumber
         }
@@ -819,10 +801,46 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 Y.Base.modifyAttrs(Y.namespace('M.gradereport_history.UserSelector'), {
 
     /**
+     * List of extra classes.
+     *
+     * @attribute extraClasses
+     * @default ['gradereport_history_usp']
+     * @type Array
+     */
+    extraClasses: {
+        value: [
+            'gradereport_history_usp'
+        ]
+    },
+
+    /**
+     * Whether to focus on the target that caused the Widget to be shown.
+     *
+     * @attribute focusOnPreviousTargetAfterHide
+     * @default true
+     * @type Node
+     */
+    focusOnPreviousTargetAfterHide: {
+        value: true
+    },
+
+    /**
+     *
+     * Width.
+     *
+     * @attribute width
+     * @default '500px'
+     * @type String|Number
+     */
+    width: {
+        value: '500px'
+    },
+
+    /**
      * Boolean indicating whether or not the Widget is visible.
      *
      * @attribute visible
-     * @default true
+     * @default false
      * @type Boolean
      */
     visible: {
