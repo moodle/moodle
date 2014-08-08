@@ -35,6 +35,7 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
+
     /**
      * Get an instance of the user select button {@link gradereport_history_user_button}.
      *
@@ -45,34 +46,36 @@ class helper {
      */
     public static function get_user_select_button($courseid, $currentusers = array()) {
         global $PAGE;
-        $button = new output\user_button($PAGE->url, get_string('selectuser', 'gradereport_history'), 'get');
+        $button = new output\user_button($PAGE->url, get_string('selectusers', 'gradereport_history'), 'get');
         $button->class .= ' gradereport_history_plugin';
 
-        $modules = array('moodle-gradereport_history-quickselect', 'moodle-gradereport_history-quickselect-skin');
+        $module = array('moodle-gradereport_history-userselector');
         $arguments = array(
-            'courseid' => $courseid,
-            'ajaxurl' => '/grade/report/history/ajax.php',
-            'url' => $PAGE->url->out(false),
-            'userfullnames' => $currentusers,
+            'courseid'            => $courseid,
+            'ajaxurl'             => '/grade/report/history/users_ajax.php',
+            'url'                 => $PAGE->url->out(false),
+            'userfullnames'       => $currentusers,
         );
 
-        $function = 'M.gradereport_history.quickselect.init';
-        $button->require_yui_module($modules, $function, array($arguments));
+        $function = 'Y.M.gradereport_history.UserSelector.init';
+        $button->require_yui_module($module, $function, array($arguments));
         $button->strings_for_js(array(
-            'ajaxoneuserfound',
-            'ajaxxusersfound',
-            'ajaxnext25',
             'errajaxsearch',
-            'none',
-            'usersearch'
-        ), 'enrol');
-        $button->strings_for_js(array(
-            'deselect',
-            'selectuser',
             'finishselectingusers',
+            'foundoneuser',
+            'foundnusers',
+            'loadmoreusers',
+            'selectusers',
         ), 'gradereport_history');
-        $button->strings_for_js('select');
+        $button->strings_for_js(array(
+            'loading'
+        ), 'admin');
+        $button->strings_for_js(array(
+            'noresults',
+            'search'
+        ));
 
         return $button;
     }
+
 }
