@@ -12,10 +12,6 @@ M.gradereport_grader = {
      */
     classes : {},
     /**
-     * @param {Object} tooltip Null or a tooltip object
-     */
-    tooltip : null,
-    /**
      * Instantiates a new grader report
      *
      * @function
@@ -28,73 +24,6 @@ M.gradereport_grader = {
      * @param {Array} An array of student grades
      */
     init_report : function(Y, id, cfg, items, users, feedback, grades) {
-        this.tooltip = this.tooltip || {
-            overlay : null, // Y.Overlay instance
-            /**
-             * Attaches the tooltip event to the provided cell
-             *
-             * @function M.gradereport_grader.tooltip.attach
-             * @this M.gradereport_grader
-             * @param {Y.Node} td The cell to attach the tooltip event to
-             */
-            attach : function(td, report) {
-                td.on('mouseenter', this.show, this, report);
-            },
-            /**
-             * Shows the tooltip: Callback from @see M.gradereport_grader.tooltip#attach
-             *
-             * @function M.gradereport_grader.tooltip.show
-             * @this {M.gradereport_grader.tooltip}
-             * @param {Event} e
-             * @param {M.gradereport_grader.classes.report} report
-             */
-            show : function(e, report) {
-                e.halt();
-
-                var properties = report.get_cell_info(e.target);
-                if (!properties) {
-                    return;
-                }
-
-                var overriden = /.*overridden.*/g.test(properties.cell.getAttribute('class')) ? 'overriden' : '';
-                var content = '<div class="graderreportoverlay ' + overriden +  '" role="tooltip" aria-describedby="' + properties.id + '">';
-                content += '<div class="fullname">'+properties.username+'</div><div class="itemname">'+properties.itemname+'</div>';
-                if (properties.feedback) {
-                    content += '<div class="feedback">'+properties.feedback+'</div>';
-                }
-                content += '</div>';
-
-                properties.cell.on('mouseleave', this.hide, this, properties.cell);
-                properties.cell.addClass('tooltipactive');
-
-                this.overlay = this.overlay || (function(){
-                    var overlay = new Y.Overlay({
-                        bodyContent : 'Loading',
-                        visible : false,
-                        zIndex : 2
-                    });
-                    overlay.render(report.table.ancestor('div'));
-                    return overlay;
-                })();
-                this.overlay.set('xy', [e.target.getX()+(e.target.get('offsetWidth')/2),e.target.getY()+e.target.get('offsetHeight')-5]);
-                this.overlay.set("bodyContent", content);
-                this.overlay.show();
-                this.overlay.get('boundingBox').setStyle('visibility', 'visible');
-            },
-            /**
-             * Hides the tooltip
-             *
-             * @function M.gradereport_grader.tooltip.hide
-             * @this {M.gradereport_grader.tooltip}
-             * @param {Event} e
-             * @param {Y.Node} cell
-             */
-            hide : function(e, cell) {
-                cell.removeClass('tooltipactive');
-                this.overlay.hide();
-                this.overlay.get('boundingBox').setStyle('visibility', 'hidden');
-            }
-        };
         // Create the actual report
         this.reports[id] = new this.classes.report(Y, id, cfg, items, users, feedback, grades);
     }
@@ -127,18 +56,6 @@ M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedbac
     this.feedback = feedback;
     this.table = Y.one('#user-grades');
     this.grades = grades;
-
-    // Alias this so that we can use the correct scope in the coming
-    // node iteration
-    this.table.all('tr').each(function(tr){
-        // Check it is a user row
-        if (tr.getAttribute('id').match(/^(fixed_)?user_(\d+)$/)) {
-            // Display tooltips
-            tr.all('td.cell').each(function(cell){
-                M.gradereport_grader.tooltip.attach(cell, this);
-            }, this);
-        }
-    }, this);
 
     // If ajax is enabled then initialise the ajax component
     if (this.ajaxenabled) {
@@ -191,13 +108,6 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
         return null;
     }
 
-    for (i in this.feedback) {
-        if (this.feedback[i] && this.feedback[i].user == userid && this.feedback[i].item == itemid) {
-            feedback = this.feedback[i].content;
-            break;
-        }
-    }
-
     return {
         id : cell.getAttribute('id'),
         userid : userid,
@@ -207,7 +117,6 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
         itemtype : this.items[itemid].type,
         itemscale : this.items[itemid].scale,
         itemdp : this.items[itemid].decimals,
-        feedback : feedback,
         cell : cell
     };
 };
@@ -231,28 +140,6 @@ M.gradereport_grader.classes.report.prototype.update_feedback = function(userid,
     this.feedback.push({user:userid,item:itemid,content:newfeedback});
     return true;
 };
-
-/**
- * Updates or creates the grade JS structure for the given user/item
- *
- * @function
- * @this {M.gradereport_grader}
- * @param {Int} userid
- * @param {Int} itemid
- * @param {String} newgrade
- * @return {Bool}
- */
-/*M.gradereport_grader.classes.report.prototype.update_grade = function(userid, itemid, newgrade) {
-    for (var i in this.grades) {
-        if (this.grades[i].user == userid && this.grades[i].item == itemid) {
-            this.grades[i].content = newgrade;
-            return true;
-        }
-    }
-    this.grades.push({user:userid,item:itemid,content:newgrade});
-    return true;
-};*/
-
 /**
  * Initialises the AJAX component of this report
  * @class ajax

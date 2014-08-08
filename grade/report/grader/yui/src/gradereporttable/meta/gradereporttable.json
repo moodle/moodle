@@ -4,6 +4,9 @@
             "base",
             "node",
             "event",
+            "handlebars",
+            "overlay",
+            "event-hover",
             "node-event-simulate"
         ]
     }

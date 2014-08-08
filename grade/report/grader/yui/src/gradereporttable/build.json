@@ -5,7 +5,8 @@
             "jsfiles": [
                 "gradereporttable.js",
                 "highlighter.js",
-                "floatingheaders.js"
+                "floatingheaders.js",
+                "tooltip.js"
             ]
         }
     }
