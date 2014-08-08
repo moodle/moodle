@@ -80,7 +80,7 @@ class fetcher {
         $uservisibilityselect = "";
         if ($CFG->block_online_users_onlinestatushiding) {
             $uservisibility = ", up.value AS uservisibility";
-            $uservisibilityselect = "AND (" . $DB->sql_cast_char2int('up.value') . " = 1
+            $uservisibilityselect = "AND (" . $DB->sql_cast_char2int('up.value', true) . " = 1
                                     OR up.value IS NULL
                                     OR u.id = :userid)";
         }
@@ -97,7 +97,7 @@ class fetcher {
             $lastaccess = ", MAX(u.lastaccess) AS lastaccess";
             $timeaccess = ", MAX(ul.timeaccess) AS lastaccess";
             if ($CFG->block_online_users_onlinestatushiding) {
-                $uservisibility = ", MAX(up.value) AS uservisibility";
+                $uservisibility = ", MAX(" . $DB->sql_cast_char2int('up.value', true) . ") AS uservisibility";
             }
             $params['currentgroup'] = $currentgroup;
         }

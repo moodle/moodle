@@ -1,0 +1,10 @@
+issueNumber: MDL-46739
+notes:
+  core:
+    - message: >-
+        The {user_preferences}.value database field is now TEXT instead of CHAR.
+        This means that any queries with a condition on this field in a WHERE or
+        JOIN statement will need updating to use `$DB->sql_compare_text()`. See
+        the `$newusers` query in
+        `\core\task\send_new_users_password_task::execute` for an example.
+      type: changed
