@@ -643,10 +643,11 @@ function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
     global $DB;
 
     $timedata = new stdClass();
-    $scoidpresent = "userid=$userid AND scormid=$scormid AND scoid=$scoid AND attempt=$attempt";
-    $scoidempty = "userid=$userid AND scormid=$scormid AND attempt=$attempt";
-    $sql = !empty($scoid) ? $scoidpresent : $scoidempty;
-    $tracks = $DB->get_records_select('scorm_scoes_track', "$sql ORDER BY timemodified ASC");
+    $params = array('userid' => $userid, 'scormid' => $scormid, 'attempt' => $attempt);
+    if (!empty($scoid)) {
+        $params['scoid'] = $scoid;
+    }
+    $tracks = $DB->get_records('scorm_scoes_track', $params, "timemodified ASC");
     if ($tracks) {
         $tracks = array_values($tracks);
     }
