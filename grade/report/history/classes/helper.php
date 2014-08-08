@@ -44,7 +44,7 @@ class helper {
      *
      * @return output\user_button the user select button.
      */
-    public static function get_user_select_button($courseid, $currentusers = array()) {
+    public static function get_user_select_button($courseid, array $currentusers = null) {
         global $PAGE;
         $button = new output\user_button($PAGE->url, get_string('selectusers', 'gradereport_history'), 'get');
         $button->class .= ' gradereport_history_plugin';
@@ -54,7 +54,7 @@ class helper {
             'courseid'            => $courseid,
             'ajaxurl'             => '/grade/report/history/users_ajax.php',
             'url'                 => $PAGE->url->out(false),
-            'userfullnames'       => $currentusers,
+            'selectedUsers'       => $currentusers,
         );
 
         $function = 'Y.M.gradereport_history.UserSelector.init';

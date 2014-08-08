@@ -95,7 +95,7 @@ foreach ($table->get_selected_users() as $key => $user) {
 $filters['userfullnames'] = implode(',', $names);
 
 // Now that we have the names, reinitialise the button so its able to control them.
-$button = \gradereport_history\helper::get_user_select_button($course->id);
+$button = \gradereport_history\helper::get_user_select_button($course->id, $names);
 $userbutton = $output->render($button);
 $params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => $userbutton);
 $mform = new \gradereport_history\filter_form(null, $params);

@@ -42,10 +42,9 @@ var USP = {
     PERPAGE: 'perPage',
     SEARCH: 'search',
     SEARCHBTN: 'searchbtn',
-    SELECTEDUSERS: 'selectedusers',
+    SELECTEDUSERS: 'selectedUsers',
     URL: 'url',
-    USERCOUNT: 'userCount',
-    USERFULLNAMES: 'userfullnames'
+    USERCOUNT: 'userCount'
 };
 var CSS = {
     ACCESSHIDE: 'accesshide',
@@ -194,9 +193,6 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // Use standard dialogue class name. This removes the default styling of the footer.
         this.get('boundingBox').one('.moodle-dialogue-wrap').addClass('moodle-dialogue-content');
 
-        // Load the list of users.
-        this.loadUsersFromForm();
-
         // Add the event on the button that opens the dialogue.
         Y.one(SELECTORS.TRIGGER).on('click', this.show, this);
 
@@ -224,14 +220,13 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      */
     show: function(e) {
         var bb;
-        this._usersBufferList = {};
+        this._usersBufferList = Y.clone(this.get(USP.SELECTEDUSERS));
         if (this._firstDisplay) {
             // Load the default list of users when the dialogue is loaded for the first time.
             this._firstDisplay = false;
             this.search(e, false);
         } else {
             // Leave the content as is, but reset the selection.
-            this._usersBufferList = Y.clone(this.get(USP.USERFULLNAMES));
             bb = this.get('boundingBox');
 
             // Remove all the selected users.
@@ -497,25 +492,10 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @param {EventFacade} e The event.
      */
     applySelection: function(e) {
-        var userIds = Y.Object.values(this._usersBufferList);
-        this.set(USP.SELECTEDUSERS, userIds)
-            .set(USP.USERFULLNAMES, this._usersBufferList)
+        var userIds = Y.Object.keys(this._usersBufferList);
+        this.set(USP.SELECTEDUSERS, Y.clone(this._usersBufferList))
             .setNameDisplay();
         Y.one(SELECTORS.USERIDS).set('value', userIds.join());
-    },
-
-    /**
-     * Loads the users from the form.
-     *
-     * @method loadUsersFromForm
-     * @return Void
-     */
-    loadUsersFromForm: function() {
-        var list = Y.one(SELECTORS.USERIDS).get('value').split(',');
-        if (list[0] === '') {
-            list = [];
-        }
-        this.set(USP.SELECTEDUSERS, list);
     },
 
     /**
@@ -591,7 +571,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @method setNameDisplay
      */
     setNameDisplay: function() {
-        var namelist = Y.Object.values(this.get(USP.USERFULLNAMES));
+        var namelist = Y.Object.values(this.get(USP.SELECTEDUSERS));
         Y.one(SELECTORS.SELECTEDNAMES).set('innerHTML', namelist.join(', '));
         Y.one(SELECTORS.USERFULLNAMES).set('value', namelist.join());
     },
@@ -715,27 +695,23 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         },
 
         /**
-         * IDs of the selected users.
-         *
-         * @attribute selectedusers
-         * @default null
-         * @type Array
-         */
-        selectedusers: {
-            validator: Y.Lang.isArray,
-            value: null
-        },
-
-        /**
          * The names of the selected users.
          *
-         * @attribute userfullnames
+         * The keys are the user IDs, the values are their fullname.
+         *
+         * @attribute selectedUsers
          * @default null
          * @type Object
          */
-        userfullnames: {
+        selectedUsers: {
             validator: Y.Lang.isObject,
-            value: null
+            value: null,
+            getter: function(v) {
+                if (v === null) {
+                    return {};
+                }
+                return v;
+            }
         },
 
         /**
