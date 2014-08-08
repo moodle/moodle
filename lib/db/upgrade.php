@@ -3719,5 +3719,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014072400.01);
     }
 
+    if ($oldversion < 2014080801.00) {
+
+        // Define index behaviour (not unique) to be added to question_attempts.
+        $table = new xmldb_table('question_attempts');
+        $index = new xmldb_index('behaviour', XMLDB_INDEX_NOTUNIQUE, array('behaviour'));
+
+        // Conditionally launch add index behaviour.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014080801.00);
+    }
+
     return true;
 }

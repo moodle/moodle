@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20140627" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20140808" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1323,6 +1323,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="questionusageid-slot" UNIQUE="true" FIELDS="questionusageid, slot"/>
+        <INDEX NAME="behaviour" UNIQUE="false" FIELDS="behaviour" COMMENT="Required because we need to be able to determine efficiently which behaviours are in use."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="question_attempt_steps" COMMENT="Stores one step in in a question attempt. As well as the data here, the step will have some data in the question_attempt_step_data table.">
