@@ -55,8 +55,9 @@ $PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, 
                                                         scorm_debugging($scorm), $scorm->auto, $scorm->id, $CFG->wwwroot,
                                                         sesskey(), $scoid, $attempt, $mode, $id, $currentorg, $scorm->autocommit));
 
-// pull in the debugging utilities
+// Pull in the debugging utilities.
 if (scorm_debugging($scorm)) {
     require_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
-    echo html_writer::script('AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);');
+    echo html_writer::script('AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: '.
+                                $scorm->name.', SCO: '.$sco->identifier.'", 0);');
 }

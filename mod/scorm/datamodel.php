@@ -20,7 +20,7 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
 $a = optional_param('a', '', PARAM_INT);         // scorm ID
 $scoid = required_param('scoid', PARAM_INT);  // sco ID
-$attempt = required_param('attempt', PARAM_INT);  // attempt number
+$attempt = required_param('attempt', PARAM_INT);  // attempt number.
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -65,19 +65,20 @@ if (confirm_sesskey() && (!empty($scoid))) {
                                              $trackdata) && $result;
             }
             if (substr($element, 0, 15) == 'adl.nav.request') {
-                // SCORM 2004 Sequencing Request
+                // SCORM 2004 Sequencing Request.
                 require_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_13lib.php');
 
-                $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@', '@exit@', '@exitAll@', '@abandon@', '@abandonAll@');
+                $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@', '@exit@',
+                                    '@exitAll@', '@abandon@', '@abandonAll@');
                 $replace = array('continue_', 'previous_', '\1', 'exit_', 'exitall_', 'abandon_', 'abandonall');
                 $action = preg_replace($search, $replace, $value);
 
                 if ($action != $value) {
-                    // Evaluating navigation request
+                    // Evaluating navigation request.
                     $valid = scorm_seq_overall ($scoid, $USER->id, $action, $attempt);
                     $valid = 'true';
 
-                    // Set valid request
+                    // Set valid request.
                     $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@');
                     $replace = array('true', 'true', 'true');
                     $matched = preg_replace($search, $replace, $value);

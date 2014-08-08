@@ -53,14 +53,14 @@ class mod_scorm_generator_testcase extends advanced_testcase {
         $this->assertEquals('Another scorm', $records[$scorm->id]->name);
 
         // Examples of specifying the package file (do not validate anything, just check for exceptions).
-        // 1. As path to the file in filesystem:
+        // 1. As path to the file in filesystem.
         $params = array(
             'course' => $course->id,
             'packagefilepath' => $CFG->dirroot.'/mod/scorm/tests/packages/singlescobasic.zip'
         );
         $scorm = $this->getDataGenerator()->create_module('scorm', $params);
 
-        // 2. As file draft area id:
+        // 2. As file draft area id.
         $fs = get_file_storage();
         $params = array(
             'course' => $course->id,

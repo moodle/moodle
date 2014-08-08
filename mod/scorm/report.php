@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// This script uses installed report plugins to print scorm reports
+// This script uses installed report plugins to print scorm reports.
 
 require_once("../../config.php");
 require_once($CFG->libdir.'/tablelib.php');
@@ -22,15 +22,15 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 require_once($CFG->dirroot.'/mod/scorm/reportsettings_form.php');
 require_once($CFG->dirroot.'/mod/scorm/report/reportlib.php');
 require_once($CFG->libdir.'/formslib.php');
-require_once($CFG->dirroot.'/mod/scorm/report/default.php'); // Parent class
+require_once($CFG->dirroot.'/mod/scorm/report/default.php'); // Parent class.
 define('SCORM_REPORT_DEFAULT_PAGE_SIZE', 20);
 define('SCORM_REPORT_ATTEMPTS_ALL_STUDENTS', 0);
 define('SCORM_REPORT_ATTEMPTS_STUDENTS_WITH', 1);
 define('SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO', 2);
 
-$id = required_param('id', PARAM_INT);// Course Module ID, or
+$id = required_param('id', PARAM_INT);// Course Module ID, or ...
 $download = optional_param('download', '', PARAM_RAW);
-$mode = optional_param('mode', '', PARAM_ALPHA); // Report mode
+$mode = optional_param('mode', '', PARAM_ALPHA); // Report mode.
 
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -75,7 +75,7 @@ $userdata = null;
 if (!empty($download)) {
     $noheader = true;
 }
-// Print the page header
+// Print the page header.
 if (empty($noheader)) {
     $strreport = get_string('report', 'scorm');
     $strattempt = get_string('attempt', 'scorm');
@@ -90,12 +90,12 @@ if (empty($noheader)) {
     require($CFG->dirroot . '/mod/scorm/tabs.php');
 }
 
-// Open the selected Scorm report and display it
+// Open the selected Scorm report and display it.
 $reportclassname = "scorm_{$mode}_report";
 $report = new $reportclassname();
 $report->display($scorm, $cm, $course, $download); // Run the report!
 
-// Print footer
+// Print footer.
 
 if (empty($noheader)) {
     echo $OUTPUT->footer();

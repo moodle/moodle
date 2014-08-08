@@ -18,9 +18,9 @@
 //
 function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid, autocommit) {
 
-    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a=" + scormid + "&scoid=" + scoid + "&attempt=" + attempt + "&mode=" + viewmode + "&currentorg=" + currentorg + "&sesskey=" + sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
-    var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+    var datamodelurlparams = "id=" + cmid + "&a=" + scormid + "&sesskey=" + sesskey + "&attempt=" + attempt + "&scoid=" + scoid;
 
     // Standard Data Type Definition
     CMIString256 = '^.{0,255}$';
@@ -133,8 +133,8 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
 
     var cmi, nav;
     function initdatamodel(scoid){
-        prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
-        datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+        prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a=" + scormid + "&scoid=" + scoid + "&attempt=" + attempt + "&mode=" + viewmode + "&currentorg=" + currentorg + "&sesskey=" + sesskey;
+        datamodelurlparams = "id=" + cmid + "&a=" + scormid + "&sesskey=" + sesskey + "&attempt=" + attempt + "&scoid=" + scoid;
 
         //
         // Datamodel inizialization
@@ -155,10 +155,10 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
 
         for (element in datamodel[scoid]) {
             if (element.match(/\.n\./) == null) {
-                if ((typeof eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue')) != 'undefined') {
-                    eval(element+' = datamodel["'+scoid+'"]["'+element+'"].defaultvalue;');
+                if ((typeof eval('datamodel["' + scoid + '"]["' + element + '"].defaultvalue')) != 'undefined') {
+                    eval(element + ' = datamodel["' + scoid + '"]["' + element + '"].defaultvalue;');
                 } else {
-                    eval(element+' = "";');
+                    eval(element + ' = "";');
                 }
             }
         }
@@ -176,7 +176,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
     var Initialized = false;
 
     function LMSInitialize (param) {
-        scoid = scorm_current_node ? scorm_current_node.scoid : scoid ;
+        scoid = scorm_current_node ? scorm_current_node.scoid : scoid;
         initdatamodel(scoid);
 
         errorCode = "0";
@@ -230,17 +230,17 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
     function LMSGetValue (element) {
         errorCode = "0";
         if (Initialized) {
-            if (element !="") {
+            if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'w') {
+                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
+                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'w') {
                             element = String(element).replace(expression, "_$1.");
                             elementIndexes = element.split('.');
                         subelement = 'cmi';
                         i = 1;
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
-                            subelement += '.'+elementIndexes[i++];
+                            subelement += '.' + elementIndexes[i++];
                         }
                         if (subelement == element) {
                             errorCode = "0";
@@ -249,21 +249,21 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                             errorCode = "0"; // Need to check if it is the right errorCode
                         }
                     } else {
-                        errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].readerror');
+                        errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].readerror');
                     }
                 } else {
                     childrenstr = '._children';
                     countstr = '._count';
-                    if (elementmodel.substr(elementmodel.length-childrenstr.length,elementmodel.length) == childrenstr) {
-                        parentmodel = elementmodel.substr(0,elementmodel.length-childrenstr.length);
-                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
+                    if (elementmodel.substr(elementmodel.length - childrenstr.length,elementmodel.length) == childrenstr) {
+                        parentmodel = elementmodel.substr(0,elementmodel.length - childrenstr.length);
+                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
                             errorCode = "202";
                         } else {
                             errorCode = "201";
                         }
-                    } else if (elementmodel.substr(elementmodel.length-countstr.length,elementmodel.length) == countstr) {
-                        parentmodel = elementmodel.substr(0,elementmodel.length-countstr.length);
-                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
+                    } else if (elementmodel.substr(elementmodel.length - countstr.length,elementmodel.length) == countstr) {
+                        parentmodel = elementmodel.substr(0,elementmodel.length - countstr.length);
+                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
                             errorCode = "203";
                         } else {
                             errorCode = "201";
@@ -287,84 +287,84 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
-                        expression = new RegExp(eval('datamodel["'+scoid+'"]["'+elementmodel+'"].format'));
-                        value = value+'';
+                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
+                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
+                        expression = new RegExp(eval('datamodel["' + scoid + '"]["' + elementmodel + '"].format'));
+                        value = value + '';
                         matches = value.match(expression);
                         if (matches != null) {
                             //Create dynamic data model element
                             if (element != elementmodel) {
                                 elementIndexes = element.split('.');
                                 subelement = 'cmi';
-                                for (i=1;i < elementIndexes.length-1;i++) {
+                                for (i = 1; i < elementIndexes.length - 1; i++) {
                                     elementIndex = elementIndexes[i];
-                                    if (elementIndexes[i+1].match(/^\d+$/)) {
-                                        if ((typeof eval(subelement+'.'+elementIndex)) == "undefined") {
-                                            eval(subelement+'.'+elementIndex+' = new Object();');
-                                            eval(subelement+'.'+elementIndex+'._count = 0;');
+                                    if (elementIndexes[i + 1].match(/^\d+$/)) {
+                                        if ((typeof eval(subelement + '.' + elementIndex)) == "undefined") {
+                                            eval(subelement + '.' + elementIndex + ' = new Object();');
+                                            eval(subelement + '.' + elementIndex + '._count = 0;');
                                         }
-                                        if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
-                                            eval(subelement+'.'+elementIndex+'._count++;');
+                                        if (elementIndexes[i + 1] == eval(subelement + '.' + elementIndex + '._count')) {
+                                            eval(subelement + '.' + elementIndex + '._count++;');
                                         }
-                                        if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
+                                        if (elementIndexes[i + 1] > eval(subelement + '.' + elementIndex + '._count')) {
                                             errorCode = "201";
                                         }
-                                        subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
+                                        subelement = subelement.concat('.' + elementIndex + '_' + elementIndexes[i + 1]);
                                         i++;
                                     } else {
-                                        subelement = subelement.concat('.'+elementIndex);
+                                        subelement = subelement.concat('.' + elementIndex);
                                     }
                                     if ((typeof eval(subelement)) == "undefined") {
-                                        eval(subelement+' = new Object();');
+                                        eval(subelement + ' = new Object();');
                                         if (subelement.substr(0,14) == 'cmi.objectives') {
-                                            eval(subelement+'.score = new Object();');
-                                            eval(subelement+'.score._children = score_children;');
-                                            eval(subelement+'.score.raw = "";');
-                                            eval(subelement+'.score.min = "";');
-                                            eval(subelement+'.score.max = "";');
+                                            eval(subelement + '.score = new Object();');
+                                            eval(subelement + '.score._children = score_children;');
+                                            eval(subelement + '.score.raw = "";');
+                                            eval(subelement + '.score.min = "";');
+                                            eval(subelement + '.score.max = "";');
                                         }
                                         if (subelement.substr(0,16) == 'cmi.interactions') {
-                                            eval(subelement+'.objectives = new Object();');
-                                            eval(subelement+'.objectives._count = 0;');
-                                            eval(subelement+'.correct_responses = new Object();');
-                                            eval(subelement+'.correct_responses._count = 0;');
+                                            eval(subelement + '.objectives = new Object();');
+                                            eval(subelement + '.objectives._count = 0;');
+                                            eval(subelement + '.correct_responses = new Object();');
+                                            eval(subelement + '.correct_responses._count = 0;');
                                         }
                                     }
                                 }
-                                element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                element = subelement.concat('.' + elementIndexes[elementIndexes.length - 1]);
                             }
-                            //Store data
+                            // Store data.
                             if (errorCode == "0") {
                                 if (autocommit && !(AICCapi.timeout)) {
                                     AICCapi.timeout = Y.later(60000, API, 'LMSCommit', [""], false);
                                 }
-                                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range')) != "undefined") {
-                                    range = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range');
+                                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range')) != "undefined") {
+                                    range = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range');
                                     ranges = range.split('#');
-                                    value = value*1.0;
+                                    value = value * 1.0;
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
-                                        eval(element+'="'+value+'";');
+                                        eval(element + '="' + value + '";');
                                         errorCode = "0";
                                         return "true";
                                     } else {
-                                        errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].writeerror');
+                                        errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].writeerror');
                                     }
                                 } else {
                                     if (element == 'cmi.comments') {
-                                        eval(element+'+="'+value+'";');
+                                        eval(element + '+="' + value + '";');
                                     } else {
-                                        eval(element+'="'+value+'";');
+                                        eval(element + '="' + value + '";');
                                     }
                                     errorCode = "0";
                                     return "true";
                                 }
                             }
                         } else {
-                            errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].writeerror');
+                            errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].writeerror');
                         }
                     } else {
-                        errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].writeerror');
+                        errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].writeerror');
                     }
                 } else {
                     errorCode = "201"
@@ -450,21 +450,21 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
             cents = "0" + cents.toString();
         }
 
-        var secs = parseInt(cFirst[0],10)+parseInt(cSecond[0],10)+change;  //Seconds
+        var secs = parseInt(cFirst[0],10) + parseInt(cSecond[0],10) + change;  //Seconds
         change = Math.floor(secs / 60);
         secs = secs - (change * 60);
         if (Math.floor(secs) < 10) {
             secs = "0" + secs.toString();
         }
 
-        mins = parseInt(sFirst[1],10)+parseInt(sSecond[1],10)+change;   //Minutes
+        mins = parseInt(sFirst[1],10) + parseInt(sSecond[1],10) + change;   //Minutes
         change = Math.floor(mins / 60);
         mins = mins - (change * 60);
         if (mins < 10) {
             mins = "0" + mins.toString();
         }
 
-        hours = parseInt(sFirst[0],10)+parseInt(sSecond[0],10)+change;  //Hours
+        hours = parseInt(sFirst[0],10) + parseInt(sSecond[0],10) + change;  //Hours
         if (hours < 10) {
             hours = "0" + hours.toString();
         }
@@ -478,23 +478,23 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
 
     function TotalTime() {
         total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
-        return '&'+underscore('cmi.core.total_time')+'='+escape(total_time);
+        return '&' + underscore('cmi.core.total_time') + '=' + escape(total_time);
     }
 
     function CollectData(data,parent) {
         var datastring = '';
         for (property in data) {
             if (typeof data[property] == 'object') {
-                datastring += CollectData(data[property],parent+'.'+property);
+                datastring += CollectData(data[property],parent + '.' + property);
             } else {
-                element = parent+'.'+property;
+                element = parent + '.' + property;
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
-                        elementstring = '&'+underscore(element)+'='+escape(data[property]);
-                        if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue') != data[property]) {
+                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
+                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
+                        elementstring = '&' + underscore(element) + '=' + escape(data[property]);
+                        if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue')) != "undefined") {
+                            if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue') != data[property]) {
                                 datastring += elementstring;
                             }
                         } else {
@@ -533,7 +533,7 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
 
         //popupwin(datastring);
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,datamodelurl,datamodelurlparams+datastring);
+        result = DoRequest(myRequest,datamodelurl,datamodelurlparams + datastring);
         results = String(result).split('\n');
         errorCode = results[1];
         return results[0];

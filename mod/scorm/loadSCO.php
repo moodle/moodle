@@ -19,9 +19,9 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
 $id    = optional_param('id', '', PARAM_INT);    // Course Module ID, or
 $a     = optional_param('a', '', PARAM_INT);     // scorm ID
-$scoid = required_param('scoid', PARAM_INT);     // sco ID
+$scoid = required_param('scoid', PARAM_INT);     // sco ID.
 
-$delayseconds = 2;  // Delay time before sco launch, used to give time to browser to define API
+$delayseconds = 2;  // Delay time before sco launch, used to give time to browser to define API.
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -60,7 +60,7 @@ if (!isloggedin()) { // Prevent login page from being shown in iframe.
 
 require_login($course, false, $cm, false); // Call require_login anyway to set up globals correctly.
 
-// check if scorm closed
+// Check if scorm closed.
 $timenow = time();
 if ($scorm->timeclose != 0) {
     if ($scorm->timeopen > $timenow) {
@@ -73,12 +73,10 @@ if ($scorm->timeclose != 0) {
 $context = context_module::instance($cm->id);
 
 if (!empty($scoid)) {
-    //
-    // Direct SCO request
-    //
+    // Direct SCO request.
     if ($sco = scorm_get_sco($scoid)) {
         if ($sco->launch == '') {
-            // Search for the next launchable sco
+            // Search for the next launchable sco.
             if ($scoes = $DB->get_records_select(
                     'scorm_scoes',
                     'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).' AND id > ?',
@@ -89,9 +87,8 @@ if (!empty($scoid)) {
         }
     }
 }
-//
-// If no sco was found get the first of SCORM package
-//
+
+// If no sco was found get the first of SCORM package.
 if (!isset($sco)) {
     $scoes = $DB->get_records_select(
         'scorm_scoes',
@@ -109,9 +106,7 @@ if ($sco->scormtype == 'asset') {
     $result = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
 }
 
-//
-// Forge SCO URL
-//
+// Forge SCO URL.
 $connector = '';
 $version = substr($scorm->version, 0, 4);
 if ((isset($sco->parameters) && (!empty($sco->parameters))) || ($version == 'AICC')) {
@@ -183,7 +178,7 @@ if ($sco->scormtype == 'asset') {
 }
 
 // We expect a SCO: select which API are we looking for.
-$LMSapi = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
+$lmsapi = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
 
 echo html_writer::start_tag('html');
 echo html_writer::start_tag('head');
@@ -203,7 +198,7 @@ echo html_writer::tag('title', 'LoadSCO');
     }
 
     function myFindAPI(win) {
-       while ((win.<?php echo $LMSapi; ?> == null) && (win.parent != null) && (win.parent != win)) {
+       while ((win.<?php echo $lmsapi; ?> == null) && (win.parent != null) && (win.parent != win)) {
           myFindAPITries++;
           // Note: 7 is an arbitrary number, but should be more than sufficient
           if (myFindAPITries > 7) {
@@ -211,7 +206,7 @@ echo html_writer::tag('title', 'LoadSCO');
           }
           win = win.parent;
        }
-       return win.<?php echo $LMSapi; ?>;
+       return win.<?php echo $lmsapi; ?>;
     }
 
     // hun for the API - needs to be loaded before we can launch the package
@@ -231,7 +226,10 @@ echo html_writer::tag('title', 'LoadSCO');
             location = "<?php echo $result ?>";
         }
         else {
-            document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds', 'moodle', '');?>. &nbsp; <img src='<?php echo $OUTPUT->pix_url('wait', 'scorm') ?>'><p>";
+            document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?>" +
+                                        "<span id='countdown'><?php echo $delayseconds ?></span> " +
+                                        "<?php echo get_string('numseconds', 'moodle', '');?>. &nbsp; " +
+                                        "<img src='<?php echo $OUTPUT->pix_url('wait', 'scorm') ?>'><p>";
             var e = document.getElementById("countdown");
             var cSeconds = parseInt(e.innerHTML);
             var timer = setInterval(function() {
@@ -239,7 +237,8 @@ echo html_writer::tag('title', 'LoadSCO');
                                                 e.innerHTML = --cSeconds;
                                             } else {
                                                 clearInterval(timer);
-                                                document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', 'scorm');?></p>";
+                                                document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', " +
+                                                                            s"'scorm');?></p>";
                                                 location = "<?php echo $result ?>";
                                             }
                                         }, 1000);

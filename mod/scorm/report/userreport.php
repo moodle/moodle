@@ -94,7 +94,7 @@ if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sort
     $table->width = '80%';
     $table->size = array('*', '*', '*', '*', '*');
     foreach ($scoes as $sco) {
-        if ($sco->launch!='') {
+        if ($sco->launch != '') {
             $row = array();
             $score = '&nbsp;';
             if ($trackdata = scorm_get_tracks($sco->id, $userid, $attempt)) {

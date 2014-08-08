@@ -21,9 +21,9 @@
 //
 function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit) {
 
-    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
+    var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a=" + scormid + "&scoid=" + scoid + "&attempt=" + attempt + "&mode=" + viewmode + "&currentorg=" + currentorg + "&sesskey=" + sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
-    var datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+    var datamodelurlparams = "id=" + cmid + "&a=" + scormid + "&sesskey=" + sesskey + "&attempt=" + attempt + "&scoid=" + scoid;
 
     // Standard Data Type Definition
 
@@ -112,7 +112,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]', 'unique':false},
         'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':'', 'unique':false},
         'matching':{'format':CMIShortIdentifier, 'format2':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false},
-        'performance':{'format':'^$|'+CMIShortIdentifier, 'format2':CMIDecimal+'|^$|'+CMIShortIdentifier, 'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false},
+        'performance':{'format':'^$|' + CMIShortIdentifier, 'format2':CMIDecimal + '|^$|' + CMIShortIdentifier, 'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false},
         'sequencing':{'format':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'unique':false},
         'likert':{'format':CMIShortIdentifier, 'max':1, 'delimiter':'', 'unique':false},
         'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false},
@@ -135,7 +135,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                     'format':CMIShortIdentifier, 'format2':CMIShortIdentifier},
         'performance':{'pre':'^(\{order_matters=(true|false)\})?',
                        'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'duplicate':false,
-                       'format':'^$|'+CMIShortIdentifier, 'format2':CMIDecimal+'|^$|'+CMIShortIdentifier},
+                       'format':'^$|' + CMIShortIdentifier, 'format2':CMIDecimal + '|^$|' + CMIShortIdentifier},
         'sequencing':{'pre':'', 'max':36, 'delimiter':'[,]', 'unique':false, 'duplicate':false,
                       'format':CMIShortIdentifier},
         'likert':{'pre':'', 'max':1, 'delimiter':'', 'unique':false, 'duplicate':false,
@@ -226,8 +226,9 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
 
     var cmi, adl;
     function initdatamodel(scoid){
-        prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
-        datamodelurlparams = "id="+cmid+"&a="+scormid+"&sesskey="+sesskey+"&attempt="+attempt+"&scoid="+scoid;
+
+        prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a=" + scormid + "&scoid=" + scoid + "&attempt=" + attempt + "&mode=" + viewmode + "&currentorg=" + currentorg + "&sesskey=" + sesskey;
+        datamodelurlparams = "id=" + cmid + "&a=" + scormid + "&sesskey=" + sesskey + "&attempt=" + attempt + "&scoid=" + scoid;
 
         //
         // Datamodel inizialization
@@ -251,10 +252,10 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
 
         for (element in datamodel[scoid]) {
             if (element.match(/\.n\./) == null) {
-                if ((typeof eval('datamodel["'+scoid+'"]["'+element+'"].defaultvalue')) != 'undefined') {
-                    eval(element+' = datamodel["'+scoid+'"]["'+element+'"].defaultvalue;');
+                if ((typeof eval('datamodel["' + scoid + '"]["' + element + '"].defaultvalue')) != 'undefined') {
+                    eval(element + ' = datamodel["' + scoid + '"]["' + element + '"].defaultvalue;');
                 } else {
-                    eval(element+' = "";');
+                    eval(element + ' = "";');
                 }
             }
         }
@@ -278,7 +279,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
     var errorCode = "0";
 
     function Initialize (param) {
-        scoid = scorm_current_node ? scorm_current_node.scoid : scoid ;
+        scoid = scorm_current_node ? scorm_current_node.scoid : scoid;
         initdatamodel(scoid);
 
         errorCode = "0";
@@ -315,7 +316,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                     LogAPICall("Terminate", "AJAXResult", AJAXResult, 0);
                 }
                 result = ('true' == AJAXResult) ? 'true' : 'false';
-                errorCode = ('true' == result)? '0' : '101'; // General exception for any AJAX fault
+                errorCode = ('true' == result) ? '0' : '101'; // General exception for any AJAX fault.
                 if (scormdebugging) {
                     LogAPICall("Terminate", "result", result, errorCode);
                 }
@@ -376,11 +377,11 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         errorCode = "0";
         diagnostic = "";
         if ((Initialized) && (!Terminated)) {
-            if (element !="") {
+            if (element != "") {
                 var expression = new RegExp(CMIIndex,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'w') {
+                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
+                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'w') {
 
                         element = String(element).replace(/\.(\d+)\./, ".N$1.");
                         element = element.replace(/\.(\d+)\./, ".N$1.");
@@ -389,7 +390,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                         var subelement = element.substr(0,3);
                         var i = 1;
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
-                            subelement += '.'+elementIndexes[i++];
+                            subelement += '.' + elementIndexes[i++];
                         }
 
                         if (subelement == element) {
@@ -407,24 +408,24 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                             errorCode = "301";
                         }
                     } else {
-                        //errorCode = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].readerror');
+                        //errorCode = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].readerror');
                         errorCode = "405";
                     }
                 } else {
                     var childrenstr = '._children';
                     var countstr = '._count';
                     var parentmodel = '';
-                    if (elementmodel.substr(elementmodel.length-childrenstr.length,elementmodel.length) == childrenstr) {
-                        parentmodel = elementmodel.substr(0,elementmodel.length-childrenstr.length);
-                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
+                    if (elementmodel.substr(elementmodel.length - childrenstr.length,elementmodel.length) == childrenstr) {
+                        parentmodel = elementmodel.substr(0,elementmodel.length - childrenstr.length);
+                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
                             errorCode = "301";
                             diagnostic = "Data Model Element Does Not Have Children";
                         } else {
                             errorCode = "401";
                         }
-                    } else if (elementmodel.substr(elementmodel.length-countstr.length,elementmodel.length) == countstr) {
-                        parentmodel = elementmodel.substr(0,elementmodel.length-countstr.length);
-                        if ((typeof eval('datamodel["'+scoid+'"]["'+parentmodel+'"]')) != "undefined") {
+                    } else if (elementmodel.substr(elementmodel.length - countstr.length,elementmodel.length) == countstr) {
+                        parentmodel = elementmodel.substr(0,elementmodel.length - countstr.length);
+                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
                             errorCode = "301";
                             diagnostic = "Data Model Element Cannot Have Count";
                         } else {
@@ -472,15 +473,15 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             if (element != "") {
                 var expression = new RegExp(CMIIndex,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
-                        if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].format') != 'CMIFeedback') {
-                            expression = new RegExp(eval('datamodel["'+scoid+'"]["'+elementmodel+'"].format'));
+                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
+                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
+                        if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].format') != 'CMIFeedback') {
+                            expression = new RegExp(eval('datamodel["' + scoid + '"]["' + elementmodel + '"].format'));
                         } else {
                             // cmi.interactions.n.type depending format accept everything at this stage
                             expression = new RegExp(CMIFeedback);
                         }
-                        value = value+'';
+                        value = value + '';
                         var matches = value.match(expression);
                         if ((matches != null) && ((matches.join('').length > 0) || (value.length == 0))) {
                             // Value match dataelement format
@@ -491,45 +492,45 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                 var elementIndexes = element.split('.');
                                 var subelement = 'cmi';
                                 var parentelement = 'cmi';
-                                for (var i=1;(i < elementIndexes.length-1) && (errorCode=="0");i++) {
+                                for (var i = 1; (i < elementIndexes.length - 1) && (errorCode == "0"); i++) {
                                     var elementIndex = elementIndexes[i];
-                                    if (elementIndexes[i+1].match(/^\d+$/)) {
-                                        if ((parseInt(elementIndexes[i+1]) > 0) && (elementIndexes[i+1].charAt(0) == 0)) {
+                                    if (elementIndexes[i + 1].match(/^\d+$/)) {
+                                        if ((parseInt(elementIndexes[i + 1]) > 0) && (elementIndexes[i + 1].charAt(0) == 0)) {
                                             // Index has a leading 0 (zero), this is not a number
                                             errorCode = "351";
                                         }
-                                        parentelement = subelement+'.'+elementIndex;
-                                        if ((typeof eval(parentelement) == "undefined") || (typeof eval(parentelement+'._count') == "undefined")) {
-                                            errorCode="408";
+                                        parentelement = subelement + '.' + elementIndex;
+                                        if ((typeof eval(parentelement) == "undefined") || (typeof eval(parentelement + '._count') == "undefined")) {
+                                            errorCode = "408";
                                         } else {
-                                            if (elementIndexes[i+1] > eval(parentelement+'._count')) {
+                                            if (elementIndexes[i + 1] > eval(parentelement + '._count')) {
                                                 errorCode = "351";
                                                 diagnostic = "Data Model Element Collection Set Out Of Order";
                                             }
-                                            subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
+                                            subelement = subelement.concat('.' + elementIndex + '.N' + elementIndexes[i + 1]);
                                             i++;
 
-                                            if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
-                                                errorCode="408";
+                                            if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length - 2)) {
+                                                errorCode = "408";
                                             }
                                         }
                                     } else {
-                                        subelement = subelement.concat('.'+elementIndex);
+                                        subelement = subelement.concat('.' + elementIndex);
                                     }
                                 }
 
                                 if (errorCode == "0") {
                                     // Till now it's a real datamodel element
 
-                                    element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+                                    element = subelement.concat('.' + elementIndexes[elementIndexes.length - 1]);
 
                                     if ((typeof eval(subelement)) == "undefined") {
                                         switch (elementmodel) {
                                             case 'cmi.objectives.n.id':
                                                 if (!duplicatedID(element,parentelement,value)) {
-                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
-                                                        eval(parentelement+'._count++;');
-                                                        eval(subelement+' = new Object();');
+                                                    if (elementIndexes[elementIndexes.length - 2] == eval(parentelement + '._count')) {
+                                                        eval(parentelement + '._count++;');
+                                                        eval(subelement + ' = new Object();');
                                                         var subobject = eval(subelement);
                                                         subobject.success_status = datamodel[scoid]["cmi.objectives.n.success_status"].defaultvalue;
                                                         subobject.completion_status = datamodel[scoid]["cmi.objectives.n.completion_status"].defaultvalue;
@@ -542,14 +543,14 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                         subobject.score.max = datamodel[scoid]["cmi.objectives.n.score.max"].defaultvalue;
                                                     }
                                                 } else {
-                                                    errorCode="351";
+                                                    errorCode = "351";
                                                     diagnostic = "Data Model Element ID Already Exists";
                                                 }
                                             break;
                                             case 'cmi.interactions.n.id':
-                                                if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
-                                                    eval(parentelement+'._count++;');
-                                                    eval(subelement+' = new Object();');
+                                                if (elementIndexes[elementIndexes.length - 2] == eval(parentelement + '._count')) {
+                                                    eval(parentelement + '._count++;');
+                                                    eval(subelement + ' = new Object();');
                                                     var subobject = eval(subelement);
                                                     subobject.objectives = new Object();
                                                     subobject.objectives._count = 0;
@@ -558,34 +559,34 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                             case 'cmi.interactions.n.objectives.n.id':
                                                 if (typeof eval(parentelement) != "undefined") {
                                                     if (!duplicatedID(element,parentelement,value)) {
-                                                        if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
-                                                            eval(parentelement+'._count++;');
-                                                            eval(subelement+' = new Object();');
+                                                        if (elementIndexes[elementIndexes.length - 2] == eval(parentelement + '._count')) {
+                                                            eval(parentelement + '._count++;');
+                                                            eval(subelement + ' = new Object();');
                                                         }
                                                     } else {
-                                                        errorCode="351";
+                                                        errorCode = "351";
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-                                                    errorCode="408";
+                                                    errorCode = "408";
                                                 }
                                             break;
                                             case 'cmi.interactions.n.correct_responses.n.pattern':
                                                 if (typeof eval(parentelement) != "undefined") {
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
-                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+                                                    if (elementIndexes[elementIndexes.length - 2] == eval(parentelement + '._count')) {
                                                         var interactiontype = eval(String(parentelement).replace('correct_responses','type'));
-                                                        var interactioncount = eval(parentelement+'._count');
+                                                        var interactioncount = eval(parentelement + '._count');
                                                         // trap duplicate values, which is not allowed for type choice
                                                         if (interactiontype == 'choice') {
-                                                            for (var i=0; (i < interactioncount) && (errorCode=="0"); i++) {
-                                                               if (eval(parentelement+'.N'+i+'.pattern') == value) {
+                                                            for (var i = 0; (i < interactioncount) && (errorCode == "0"); i++) {
+                                                               if (eval(parentelement + '.N' + i + '.pattern') == value) {
                                                                    errorCode = "351";
                                                                }
                                                             }
                                                         }
                                                         if ((typeof correct_responses[interactiontype].limit == 'undefined') ||
-                                                            (eval(parentelement+'._count') < correct_responses[interactiontype].limit)) {
+                                                            (eval(parentelement + '._count') < correct_responses[interactiontype].limit)) {
                                                             var nodes = new Array();
                                                             if (correct_responses[interactiontype].delimiter != '') {
                                                                 nodes = value.split(correct_responses[interactiontype].delimiter);
@@ -600,37 +601,37 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                             }
                                                             if ((errorCode == "0") && ((correct_responses[interactiontype].duplicate == false) ||
                                                                (!duplicatedPA(element,parentelement,value))) || (errorCode == "0" && value == "")) {
-                                                               eval(parentelement+'._count++;');
-                                                               eval(subelement+' = new Object();');
+                                                               eval(parentelement + '._count++;');
+                                                               eval(subelement + ' = new Object();');
                                                             } else {
                                                                 if (errorCode == "0") {
-                                                                    errorCode="351";
+                                                                    errorCode = "351";
                                                                     diagnostic = "Data Model Element Pattern Already Exists";
                                                                 }
                                                             }
                                                         } else {
-                                                            errorCode="351";
+                                                            errorCode = "351";
                                                             diagnostic = "Data Model Element Collection Limit Reached";
                                                         }
                                                     } else {
-                                                        errorCode="351";
+                                                        errorCode = "351";
                                                         diagnostic = "Data Model Element Collection Set Out Of Order";
                                                     }
                                                 } else {
-                                                    errorCode="408";
+                                                    errorCode = "408";
                                                 }
                                             break;
                                             default:
                                                 if ((parentelement != 'cmi.objectives') && (parentelement != 'cmi.interactions') && (typeof eval(parentelement) != "undefined")) {
-                                                    if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
-                                                        eval(parentelement+'._count++;');
-                                                        eval(subelement+' = new Object();');
+                                                    if (elementIndexes[elementIndexes.length - 2] == eval(parentelement + '._count')) {
+                                                        eval(parentelement + '._count++;');
+                                                        eval(subelement + ' = new Object();');
                                                     } else {
-                                                        errorCode="351";
+                                                        errorCode = "351";
                                                         diagnostic = "Data Model Element Collection Set Out Of Order";
                                                     }
                                                 } else {
-                                                    errorCode="408";
+                                                    errorCode = "408";
                                                 }
                                             break;
                                         }
@@ -654,11 +655,11 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                 subobject.correct_responses._count = 0;
                                             break;
                                             case 'cmi.interactions.n.learner_response':
-                                                if (typeof eval(subelement+'.type') == "undefined") {
-                                                    errorCode="408";
+                                                if (typeof eval(subelement + '.type') == "undefined") {
+                                                    errorCode = "408";
                                                 } else {
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
-                                                    interactiontype = eval(subelement+'.type');
+                                                    interactiontype = eval(subelement + '.type');
                                                     var nodes = new Array();
                                                     if (learner_response[interactiontype].delimiter != '') {
                                                         nodes = value.split(learner_response[interactiontype].delimiter);
@@ -667,7 +668,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                     }
                                                     if ((nodes.length > 0) && (nodes.length <= learner_response[interactiontype].max)) {
                                                         expression = new RegExp(learner_response[interactiontype].format);
-                                                        for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
+                                                        for (var i = 0; (i < nodes.length) && (errorCode == "0"); i++) {
                                                             if (typeof learner_response[interactiontype].delimiter2 != 'undefined') {
                                                                 values = nodes[i].split(learner_response[interactiontype].delimiter2);
                                                                 if (values.length == 2) {
@@ -690,7 +691,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                                     errorCode = "406";
                                                                 } else {
                                                                     if ((nodes[i] != '') && (learner_response[interactiontype].unique)) {
-                                                                        for (var j=0; (j<i) && (errorCode=="0"); j++) {
+                                                                        for (var j = 0; (j < i) && (errorCode == "0"); j++) {
                                                                             if (nodes[i] == nodes[j]) {
                                                                                 errorCode = "406";
                                                                             }
@@ -706,19 +707,19 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                                 }
                                              break;
                                          case 'cmi.interactions.n.correct_responses.n.pattern':
-                                           subel= subelement.split('.');
-                                             subel1= 'cmi.interactions.'+subel[2];
+                                           subel = subelement.split('.');
+                                             subel1 = 'cmi.interactions.' + subel[2];
 
-                                                if (typeof eval(subel1+'.type') == "undefined") {
-                                                    errorCode="408";
+                                                if (typeof eval(subel1 + '.type') == "undefined") {
+                                                    errorCode = "408";
                                                 } else {
                                                     // Use cmi.interactions.n.type value to check the right //dataelement format
-                                                    var interactiontype = eval(subel1+'.type');
-                                                    var interactioncount = eval(parentelement+'._count');
+                                                    var interactiontype = eval(subel1 + '.type');
+                                                    var interactioncount = eval(parentelement + '._count');
                                                     // trap duplicate values, which is not allowed for type choice
                                                     if (interactiontype == 'choice') {
-                                                        for (var i=0; (i < interactioncount) && (errorCode=="0"); i++) {
-                                                           if (eval(parentelement+'.N'+i+'.pattern') == value) {
+                                                        for (var i = 0; (i < interactioncount) && (errorCode == "0"); i++) {
+                                                           if (eval(parentelement + '.N' + i + '.pattern') == value) {
                                                                errorCode = "351";
                                                            }
                                                         }
@@ -747,13 +748,14 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                 if (autocommit && !(SCORMapi1_3.timeout)) {
                                     SCORMapi1_3.timeout = Y.later(60000, API_1484_11, 'Commit', [""], false);
                                 }
-                                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range')) != "undefined") {
-                                    range = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range');
+
+                                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range')) != "undefined") {
+                                    range = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range');
                                     ranges = range.split('#');
-                                    value = value*1.0;
+                                    value = value * 1.0;
                                     if (value >= ranges[0]) {
                                         if ((ranges[1] == '*') || (value <= ranges[1])) {
-                                            eval(element+'=value;');
+                                            eval(element + '=value;');
                                             errorCode = "0";
                                             if (scormdebugging) {
                                                 LogAPICall("SetValue", element, value, errorCode);
@@ -766,7 +768,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                         errorCode = '407';
                                     }
                                 } else {
-                                    eval(element+'=value;');
+                                    eval(element + '=value;');
                                     errorCode = "0";
                                     if (scormdebugging) {
                                         LogAPICall("SetValue", element, value, errorCode);
@@ -798,7 +800,6 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         }
         return "false";
     }
-
 
     function CRremovePrefixes (node) {
         // check for prefixes lang, case, order
@@ -852,10 +853,9 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         return {'errorCode': errorCode, 'node': node};
     }
 
-
     function CRcheckValueNodes(element, interactiontype, nodes, value, errorCode) {
         expression = new RegExp(correct_responses[interactiontype].format);
-        for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
+        for (var i = 0; (i < nodes.length) && (errorCode == "0"); i++) {
             if (interactiontype.match('^(fill-in|long-fill-in|matching|performance|sequencing)$')) {
                 result = CRremovePrefixes(nodes[i]);
                 errorCode = result.errorCode;
@@ -889,7 +889,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             } else {
                 matches = nodes[i].match(expression);
                 //if ((matches == null) || (matches.join('').length == 0)) {
-                if ((matches == null && value != "")||(matches == null && interactiontype=="true-false")){
+                if ((matches == null && value != "") || (matches == null && interactiontype == "true-false")){
                     errorCode = "406";
                 } else {
                     // numeric range - left must be <= right
@@ -899,7 +899,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                         }
                     } else {
                         if ((nodes[i] != '') && (correct_responses[interactiontype].unique)) {
-                            for (var j=0; (j < i) && (errorCode=="0"); j++) {
+                            for (var j = 0; (j < i) && (errorCode == "0"); j++) {
                                 if (nodes[i] == nodes[j]) {
                                     errorCode = "406";
                                 }
@@ -911,7 +911,6 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         } // end of for each nodes
         return errorCode;
     }
-
 
     function Commit (param) {
         if (SCORMapi1_3.timeout) {
@@ -926,7 +925,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                     LogAPICall("Commit", "AJAXResult", AJAXResult, 0);
                 }
                 var result = ('true' == AJAXResult) ? 'true' : 'false';
-                errorCode = ('true' == result)? '0' : '101'; // General exception for any AJAX fault
+                errorCode = ('true' == result) ? '0' : '101'; // General exception for any AJAX fault
                 if (scormdebugging) {
                     LogAPICall("Commit", "result", result, errorCode);
                 }
@@ -1067,9 +1066,9 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
 
     function duplicatedID (element, parent, value) {
         var found = false;
-        var elements = eval(parent+'._count');
-        for (var n=0;(n < elements) && (!found);n++) {
-            if ((parent+'.N'+n+'.id' != element) && (eval(parent+'.N'+n+'.id') == value)) {
+        var elements = eval(parent + '._count');
+        for (var n = 0; (n < elements) && (!found); n++) {
+            if ((parent + '.N' + n + '.id' != element) && (eval(parent + '.N' + n + '.id') == value)) {
                 found = true;
             }
         }
@@ -1078,9 +1077,9 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
 
     function duplicatedPA (element, parent, value) {
         var found = false;
-        var elements = eval(parent+'._count');
-        for (var n=0;(n < elements) && (!found);n++) {
-            if ((parent+'.N'+n+'.pattern' != element) && (eval(parent+'.N'+n+'.pattern') == value)) {
+        var elements = eval(parent + '._count');
+        for (var n = 0; (n < elements) && (!found); n++) {
+            if ((parent + '.N' + n + '.pattern' != element) && (eval(parent + '.N' + n + '.pattern') == value)) {
                 found = true;
             }
         }
@@ -1106,42 +1105,42 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         var firstarray = first.match(matchexpr);
         var secondarray = second.match(matchexpr);
         if ((firstarray != null) && (secondarray != null)) {
-            var firstsecs=0;
-            if(parseFloat(firstarray[13],10)>0){ firstsecs=parseFloat(firstarray[13],10); }
-            var secondsecs=0;
-            if(parseFloat(secondarray[13],10)>0){ secondsecs=parseFloat(secondarray[13],10); }
-            var secs = firstsecs+secondsecs;  //Seconds
-            var change = Math.floor(secs/60);
-            secs = Math.round((secs-(change*60))*100)/100;
-            var firstmins=0;
-            if(parseInt(firstarray[11],10)>0){ firstmins=parseInt(firstarray[11],10); }
-            var secondmins=0;
-            if(parseInt(secondarray[11],10)>0){ secondmins=parseInt(secondarray[11],10); }
-            var mins = firstmins+secondmins+change;   //Minutes
+            var firstsecs = 0;
+            if(parseFloat(firstarray[13],10) > 0){ firstsecs = parseFloat(firstarray[13],10); }
+            var secondsecs = 0;
+            if(parseFloat(secondarray[13],10) > 0){ secondsecs = parseFloat(secondarray[13],10); }
+            var secs = firstsecs + secondsecs;  //Seconds
+            var change = Math.floor(secs / 60);
+            secs = Math.round((secs - (change * 60)) * 100) / 100;
+            var firstmins = 0;
+            if(parseInt(firstarray[11],10) > 0){ firstmins = parseInt(firstarray[11],10); }
+            var secondmins = 0;
+            if(parseInt(secondarray[11],10) > 0){ secondmins = parseInt(secondarray[11],10); }
+            var mins = firstmins + secondmins + change;   //Minutes
             change = Math.floor(mins / 60);
-            mins = Math.round(mins-(change*60));
-            var firsthours=0;
-            if(parseInt(firstarray[9],10)>0){ firsthours=parseInt(firstarray[9],10); }
-            var secondhours=0;
-            if(parseInt(secondarray[9],10)>0){ secondhours=parseInt(secondarray[9],10); }
-            var hours = firsthours+secondhours+change; //Hours
-            change = Math.floor(hours/24);
-            hours = Math.round(hours-(change*24));
-            var firstdays=0;
-            if(parseInt(firstarray[6],10)>0){ firstdays=parseInt(firstarray[6],10); }
-            var seconddays=0;
-            if(parseInt(secondarray[6],10)>0){ firstdays=parseInt(secondarray[6],10); }
-            var days = Math.round(firstdays+seconddays+change); // Days
-            var firstmonths=0;
-            if(parseInt(firstarray[4],10)>0){ firstmonths=parseInt(firstarray[4],10); }
-            var secondmonths=0;
-            if(parseInt(secondarray[4],10)>0){ secondmonths=parseInt(secondarray[4],10); }
-            var months = Math.round(firstmonths+secondmonths);
-            var firstyears=0;
-            if(parseInt(firstarray[2],10)>0){ firstyears=parseInt(firstarray[2],10); }
-            var secondyears=0;
-            if(parseInt(secondarray[2],10)>0){ secondyears=parseInt(secondarray[2],10); }
-            var years = Math.round(firstyears+secondyears);
+            mins = Math.round(mins - (change * 60));
+            var firsthours = 0;
+            if(parseInt(firstarray[9],10) > 0){ firsthours = parseInt(firstarray[9],10); }
+            var secondhours = 0;
+            if(parseInt(secondarray[9],10) > 0){ secondhours = parseInt(secondarray[9],10); }
+            var hours = firsthours + secondhours + change; //Hours
+            change = Math.floor(hours / 24);
+            hours = Math.round(hours - (change * 24));
+            var firstdays = 0;
+            if(parseInt(firstarray[6],10) > 0){ firstdays = parseInt(firstarray[6],10); }
+            var seconddays = 0;
+            if(parseInt(secondarray[6],10) > 0){ firstdays = parseInt(secondarray[6],10); }
+            var days = Math.round(firstdays + seconddays + change); // Days
+            var firstmonths = 0;
+            if(parseInt(firstarray[4],10) > 0){ firstmonths = parseInt(firstarray[4],10); }
+            var secondmonths = 0;
+            if(parseInt(secondarray[4],10) > 0){ secondmonths = parseInt(secondarray[4],10); }
+            var months = Math.round(firstmonths + secondmonths);
+            var firstyears = 0;
+            if(parseInt(firstarray[2],10) > 0){ firstyears = parseInt(firstarray[2],10); }
+            var secondyears = 0;
+            if(parseInt(secondarray[2],10) > 0){ secondyears = parseInt(secondarray[2],10); }
+            var years = Math.round(firstyears + secondyears);
         }
         if (years > 0) {
             timestring += years + 'Y';
@@ -1169,23 +1168,23 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
 
     function TotalTime() {
         var total_time = AddTime(cmi.total_time, cmi.session_time);
-        return '&'+underscore('cmi.total_time')+'='+encodeURIComponent(total_time);
+        return '&' + underscore('cmi.total_time') + '=' + encodeURIComponent(total_time);
     }
 
     function CollectData(data,parent) {
         var datastring = '';
         for (property in data) {
             if (typeof data[property] == 'object') {
-                datastring += CollectData(data[property],parent+'.'+property);
+                datastring += CollectData(data[property],parent + '.' + property);
             } else {
-                var element = parent+'.'+property;
+                var element = parent + '.' + property;
                 var expression = new RegExp(CMIIndexStore,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"]')) != "undefined") {
-                    if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].mod') != 'r') {
-                        var elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
-                        if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue') != data[property] || eval('typeof(datamodel["'+scoid+'"]["'+elementmodel+'"].defaultvalue)') != typeof(data[property])) {
+                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
+                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
+                        var elementstring = '&' + underscore(element) + '=' + encodeURIComponent(data[property]);
+                        if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue')) != "undefined") {
+                            if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue') != data[property] || eval('typeof(datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue)') != typeof(data[property])) {
                                 datastring += elementstring;
                             }
                         } else {
@@ -1223,11 +1222,11 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         }
         datastring += CollectData(data,'cmi');
         var element = 'adl.nav.request';
-        var navrequest = eval(element) != datamodel[scoid][element].defaultvalue ? '&'+underscore(element)+'='+encodeURIComponent(eval(element)) : '';
+        var navrequest = eval(element) != datamodel[scoid][element].defaultvalue ? '&' + underscore(element) + '=' + encodeURIComponent(eval(element)) : '';
         datastring += navrequest;
 
         var myRequest = NewHttpReq();
-        result = DoRequest(myRequest,datamodelurl,datamodelurlparams+datastring);
+        result = DoRequest(myRequest, datamodelurl, datamodelurlparams + datastring);
 
         var results = String(result).split('\n');
         if ((results.length > 2) && (navrequest != '')) {

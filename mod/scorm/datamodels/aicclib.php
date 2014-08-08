@@ -29,7 +29,7 @@ function scorm_add_time($a, $b) {
     $bseconds = explode('.', $bes[2]);
     $change = 0;
 
-    $acents = 0;  //Cents
+    $acents = 0;  // Cents.
     if (count($aseconds) > 1) {
         $acents = $aseconds[1];
     }
@@ -44,21 +44,21 @@ function scorm_add_time($a, $b) {
         $cents = '0'. $cents;
     }
 
-    $secs = $aseconds[0] + $bseconds[0] + $change;  //Seconds
+    $secs = $aseconds[0] + $bseconds[0] + $change;  // Seconds.
     $change = floor($secs / 60);
     $secs = $secs - ($change * 60);
     if (floor($secs) < 10) {
         $secs = '0'. $secs;
     }
 
-    $mins = $aes[1] + $bes[1] + $change;   //Minutes
+    $mins = $aes[1] + $bes[1] + $change;   // Minutes.
     $change = floor($mins / 60);
     $mins = $mins - ($change * 60);
     if ($mins < 10) {
         $mins = '0' .  $mins;
     }
 
-    $hours = $aes[0] + $bes[0] + $change;  //Hours
+    $hours = $aes[0] + $bes[0] + $change;  // Hours.
     if ($hours < 10) {
         $hours = '0' . $hours;
     }
@@ -83,9 +83,9 @@ function scorm_get_aicc_columns($row, $mastername='system_id') {
     $tok = strtok(strtolower($row), "\",\n\r");
     $result = new stdClass();
     $result->columns = array();
-    $i=0;
+    $i = 0;
     while ($tok) {
-        if ($tok !='') {
+        if ($tok != '') {
             $result->columns[] = $tok;
             if ($tok == $mastername) {
                 $result->mastercol = $i;
@@ -184,14 +184,15 @@ function scorm_parse_aicc(&$scorm) {
             $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0]);
             $regexp = scorm_forge_cols_regexp($columns->columns);
-            for ($i=1; $i<count($rows); $i++) {
+            for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    for ($j=0; $j<count($columns->columns); $j++) {
+                    for ($j = 0; $j < count($columns->columns); $j++) {
                         $column = $columns->columns[$j];
-                        if (!isset($courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1 , -1)])) {
-                            $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1 , -1)] = new stdClass();
+                        if (!isset($courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)])) {
+                            $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)] = new stdClass();
                         }
-                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1 , -1)]->$column = substr(trim($matches[$j+1]), 1, -1);
+                        $temp = substr(trim($matches[$j + 1]), 1, -1);
+                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)]->$column = $temp;
                     }
                 }
             }
@@ -201,11 +202,12 @@ function scorm_parse_aicc(&$scorm) {
             $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0]);
             $regexp = scorm_forge_cols_regexp($columns->columns);
-            for ($i=1; $i<count($rows); $i++) {
+            for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    for ($j=0; $j<count($columns->columns); $j++) {
+                    for ($j = 0; $j < count($columns->columns); $j++) {
                         $column = $columns->columns[$j];
-                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]), 1, -1)]->$column = substr(trim($matches[$j+1]), 1, -1);
+                        $temp = substr(trim($matches[$j + 1]), 1, -1);
+                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1, -1)]->$column = $temp;
                     }
                 }
             }
@@ -215,13 +217,14 @@ function scorm_parse_aicc(&$scorm) {
             $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0], 'block');
             $regexp = scorm_forge_cols_regexp($columns->columns, '(.+)?,');
-            for ($i=1; $i<count($rows); $i++) {
+            for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    for ($j=0; $j<count($columns->columns); $j++) {
+                    for ($j = 0; $j < count($columns->columns); $j++) {
                         if ($j != $columns->mastercol) {
-                            $element = substr(trim($matches[$j+1]), 1 , -1);
+                            $element = substr(trim($matches[$j + 1]), 1 , -1);
                             if (!empty($element)) {
-                                $courses[$courseid]->elements[$element]->parent = substr(trim($matches[$columns->mastercol+1]), 1, -1);
+                                $temp = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
+                                $courses[$courseid]->elements[$element]->parent = $temp;
                             }
                         }
                     }
@@ -233,11 +236,12 @@ function scorm_parse_aicc(&$scorm) {
             $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0], 'course_element');
             $regexp = scorm_forge_cols_regexp($columns->columns, '(.+)?,');
-            for ($i=1; $i<count($rows); $i++) {
+            for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    for ($j=0; $j<count($matches)-1; $j++) {
+                    for ($j = 0; $j < count($matches) - 1; $j++) {
                         if ($j != $columns->mastercol) {
-                            $courses[$courseid]->elements[substr(trim($matches[$j+1]), 1, -1)]->parent = substr(trim($matches[$columns->mastercol+1]), 1, -1);
+                            $temp = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
+                            $courses[$courseid]->elements[substr(trim($matches[$j + 1]), 1, -1)]->parent = $temp;
                         }
                     }
                 }
@@ -248,9 +252,10 @@ function scorm_parse_aicc(&$scorm) {
             $rows = explode("\r\n", $contents);
             $columns = scorm_get_aicc_columns($rows[0], 'structure_element');
             $regexp = scorm_forge_cols_regexp($columns->columns, '(.+),');
-            for ($i=1; $i<count($rows); $i++) {
+            for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    $courses[$courseid]->elements[$columns->mastercol+1]->prerequisites = substr(trim($matches[1-$columns->mastercol+1]), 1, -1);
+                    $temp = substr(trim($matches[2 - $columns->mastercol]), 1, -1);
+                    $courses[$courseid]->elements[$columns->mastercol + 1]->prerequisites = $temp;
                 }
             }
         }
@@ -260,7 +265,7 @@ function scorm_parse_aicc(&$scorm) {
         }
     }
 
-    $oldscoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id));
+    $oldscoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id));
     $sortorder = 0;
     $launch = 0;
     if (isset($courses)) {
@@ -276,8 +281,8 @@ function scorm_parse_aicc(&$scorm) {
             $sco->scormtype = '';
             $sco->sortorder = $sortorder;
 
-            if ($ss = $DB->get_record('scorm_scoes', array('scorm'=>$scorm->id,
-                                                           'identifier'=>$sco->identifier))) {
+            if ($ss = $DB->get_record('scorm_scoes', array('scorm' => $scorm->id,
+                                                           'identifier' => $sco->identifier))) {
                 $id = $ss->id;
                 $sco->id = $id;
                 $DB->update_record('scorm_scoes', $sco);
@@ -319,7 +324,7 @@ function scorm_parse_aicc(&$scorm) {
                         $sco->id = $oldscoid;
                         $DB->update_record('scorm_scoes', $sco);
                         $id = $oldscoid;
-                        $DB->delete_records('scorm_scoes_data', array('scoid'=>$oldscoid));
+                        $DB->delete_records('scorm_scoes_data', array('scoid' => $oldscoid));
                         unset($oldscoes[$oldscoid]);
                     } else {
                         $id = $DB->insert_record('scorm_scoes', $sco);
@@ -358,7 +363,7 @@ function scorm_parse_aicc(&$scorm) {
                             $dataid = $DB->insert_record('scorm_scoes_data', $scodata);
                         }
                     }
-                    if ($launch==0) {
+                    if ($launch == 0) {
                         $launch = $id;
                     }
                 }
@@ -367,8 +372,8 @@ function scorm_parse_aicc(&$scorm) {
     }
     if (!empty($oldscoes)) {
         foreach ($oldscoes as $oldsco) {
-            $DB->delete_records('scorm_scoes', array('id'=>$oldsco->id));
-            $DB->delete_records('scorm_scoes_track', array('scoid'=>$oldsco->id));
+            $DB->delete_records('scorm_scoes', array('id' => $oldsco->id));
+            $DB->delete_records('scorm_scoes_track', array('scoid' => $oldsco->id));
         }
     }
 
@@ -396,8 +401,8 @@ function scorm_parse_aicc(&$scorm) {
  */
 function scorm_aicc_get_hacp_session($scormid) {
     global $USER, $DB, $SESSION;
-    $cfg_scorm = get_config('scorm');
-    if (empty($cfg_scorm->allowaicchacp)) {
+    $cfgscorm = get_config('scorm');
+    if (empty($cfgscorm->allowaicchacp)) {
         return false;
     }
     $now = time();
@@ -422,14 +427,14 @@ function scorm_aicc_get_hacp_session($scormid) {
  */
 function scorm_aicc_confirm_hacp_session($hacpsession) {
     global $DB;
-    $cfg_scorm = get_config('scorm');
-    if (empty($cfg_scorm->allowaicchacp)) {
+    $cfgscorm = get_config('scorm');
+    if (empty($cfgscorm->allowaicchacp)) {
         return false;
     }
-    $time = time()-($cfg_scorm->aicchacptimeout * 60);
+    $time = time() - ($cfgscorm->aicchacptimeout * 60);
     $sql = "hacpsession = ? AND timemodified > ?";
     $hacpsession = $DB->get_record_select('scorm_aicc_session', $sql, array($hacpsession, $time));
-    if (!empty($hacpsession)) { //update timemodified as this is still an active session - resets the timeout.
+    if (!empty($hacpsession)) { // Update timemodified as this is still an active session - resets the timeout.
         $hacpsession->timemodified = time();
         $DB->update_record('scorm_aicc_session', $hacpsession);
     }
