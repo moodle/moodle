@@ -95,7 +95,8 @@ foreach ($chatusers as $chatuser) {
 
 ob_start();
 echo $OUTPUT->header();
-echo html_writer::tag('div', html_writer::tag('a', 'Refresh link', array('href'=>$refreshurl, 'id'=>'refreshLink')), array('style'=>'display:none')); //TODO: localize
+echo html_writer::tag('div', html_writer::tag('a', get_string('refresh'),
+        array('href' => $refreshurl, 'id' => 'refreshLink')), array('style' => 'display:none'));
 echo html_writer::table($table);
 echo $OUTPUT->footer();
 
