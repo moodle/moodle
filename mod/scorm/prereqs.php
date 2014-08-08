@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    // this page is called via AJAX to repopulte the TOC when LMSFinish() is called
+// This page is called via AJAX to repopulte the TOC when LMSFinish() is called.
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
-$id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
-$a = optional_param('a', '', PARAM_INT);         // scorm ID
-$scoid = required_param('scoid', PARAM_INT);  // sco ID
-$attempt = required_param('attempt', PARAM_INT);  // attempt number
-$mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
-$currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
+$id = optional_param('id', '', PARAM_INT);                  // Course Module ID, or
+$a = optional_param('a', '', PARAM_INT);                    // scorm ID
+$scoid = required_param('scoid', PARAM_INT);                // sco ID
+$attempt = required_param('attempt', PARAM_INT);            // attempt number
+$mode = optional_param('mode', 'normal', PARAM_ALPHA);      // navigation mode
+$currentorg = optional_param('currentorg', '', PARAM_RAW);  // selected organization.
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -54,7 +54,7 @@ $PAGE->set_url('/mod/scorm/prereqs.php', array('scoid' => $scoid, 'attempt' => $
 
 require_login($course, false, $cm);
 
-$scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
+$scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe.
 if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
     $scorm->version = 'scorm_12';
 }

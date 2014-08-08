@@ -17,7 +17,7 @@
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
-$id = required_param('id', PARAM_INT);   // course id
+$id = required_param('id', PARAM_INT);   // Course id.
 
 $PAGE->set_url('/mod/scorm/index.php', array('id' => $id));
 
@@ -89,7 +89,8 @@ foreach ($scorms as $scorm) {
     if (has_capability('mod/scorm:viewreport', $context)) {
         $trackedusers = scorm_get_count_users($scorm->id, $scorm->groupingid);
         if ($trackedusers > 0) {
-            $reportshow = html_writer::link('report.php?id='.$scorm->coursemodule, get_string('viewallreports', 'scorm', $trackedusers)).html_writer::end_div();
+            $reportshow = html_writer::link('report.php?id='.$scorm->coursemodule,
+                                                get_string('viewallreports', 'scorm', $trackedusers)).html_writer::end_div();
         } else {
             $reportshow = get_string('noreports', 'scorm');
         }
@@ -100,11 +101,13 @@ foreach ($scorms as $scorm) {
     }
     $options = (object)array('noclean' => true);
     if (!$scorm->visible) {
-        // Show dimmed if the mod is hidden
-        $table->data[] = array ($tt, html_writer::link('view.php?id='.$scorm->coursemodule, format_string($scorm->name), array('class' => 'dimmed')),
+        // Show dimmed if the mod is hidden.
+        $table->data[] = array ($tt, html_writer::link('view.php?id='.$scorm->coursemodule,
+                                                        format_string($scorm->name),
+                                                        array('class' => 'dimmed')),
                                 format_module_intro('scorm', $scorm, $scorm->coursemodule), $reportshow);
     } else {
-        // Show normal if the mod is visible
+        // Show normal if the mod is visible.
         $table->data[] = array ($tt, html_writer::link('view.php?id='.$scorm->coursemodule, format_string($scorm->name)),
                                 format_module_intro('scorm', $scorm, $scorm->coursemodule), $reportshow);
     }

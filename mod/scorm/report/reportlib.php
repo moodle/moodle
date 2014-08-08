@@ -77,7 +77,6 @@ function get_scorm_question_count($scormid) {
         // Done as interactions start at 0 (do only if we have something to report).
         $count++;
     }
-    $rs->close(); // closing recordset
+    $rs->close(); // Closing recordset.
     return $count;
 }
-

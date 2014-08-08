@@ -295,7 +295,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             }
 
             // Calculate the rough new height from the viewport height.
-            newheight = Y.one('body').get('winHeight') -5;
+            newheight = Y.one('body').get('winHeight') - 5;
             if (newheight < 600) {
                 newheight = 600;
             }
@@ -331,7 +331,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
 
         var scorm_lastchild = function(node) {
             if (node.children.length) {
-                return scorm_lastchild(node.children[node.children.length-1]);
+                return scorm_lastchild(node.children[node.children.length - 1]);
             } else {
                 return node;
             }
@@ -632,9 +632,9 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
         // navigation
         if (scorm_hide_nav == false) {
             // TODO: make some better&accessible buttons.
-            var navbuttonshtml = '<span id="scorm_nav"><button id="nav_skipprev">&lt;&lt;</button>&nbsp;<button id="nav_prev">&lt;</button>'
-                    + '&nbsp;<button id="nav_up">^</button>&nbsp;<button id="nav_next">&gt;</button>'
-                    + '&nbsp;<button id="nav_skipnext">&gt;&gt;</button></span>';
+            var navbuttonshtml = '<span id="scorm_nav"><button id="nav_skipprev">&lt;&lt;</button>&nbsp;' +
+                                    '<button id="nav_prev">&lt;</button>&nbsp;<button id="nav_up">^</button>&nbsp;' +
+                                    '<button id="nav_next">&gt;</button>&nbsp;<button id="nav_skipnext">&gt;&gt;</button></span>';
             if (nav_display === 1) {
                 Y.one('#scorm_navpanel').setHTML(navbuttonshtml);
             } else {

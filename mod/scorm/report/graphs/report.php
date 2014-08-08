@@ -39,14 +39,14 @@ class scorm_graphs_report extends scorm_default_report {
      * @param stdClass $course - full course object
      * @param string $download - type of download being requested
      */
-    function display($scorm, $cm, $course, $download) {
+    public function display($scorm, $cm, $course, $download) {
         global $DB, $OUTPUT, $PAGE;
 
-        if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+        if ($groupmode = groups_get_activity_groupmode($cm)) { // Groups are being used.
             groups_print_activity_menu($cm, new moodle_url($PAGE->url));
         }
 
-        if ($scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'sortorder, id')) {
+        if ($scoes = $DB->get_records('scorm_scoes', array("scorm" => $scorm->id), 'sortorder, id')) {
             foreach ($scoes as $sco) {
                 if ($sco->launch != '') {
                     $imageurl = new moodle_url('/mod/scorm/report/graphs/graph.php',

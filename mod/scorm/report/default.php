@@ -18,17 +18,18 @@
  * @author     Ankit Kumar Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-////////////////////////////////////////////////////////////////////
-/// Default class for Scorm plugins
-///
-/// Doesn't do anything on it's own -- it needs to be extended.
-/// This class displays scorm reports.  Because it is called from
-/// within /mod/scorm/report.php you can assume that the page header
-/// and footer are taken care of.
-///
-/// This file can refer to itself as report.php to pass variables
-/// to itself - all these will also be globally available.
-////////////////////////////////////////////////////////////////////
+
+/*******************************************************************/
+// Default class for Scorm plugins
+//
+// Doesn't do anything on it's own -- it needs to be extended.
+// This class displays scorm reports.  Because it is called from
+// within /mod/scorm/report.php you can assume that the page header
+// and footer are taken care of.
+//
+// This file can refer to itself as report.php to pass variables
+// to itself - all these will also be globally available.
+/*******************************************************************/
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,15 +41,15 @@ class scorm_default_report {
      * @param stdClass $course - full course object
      * @param string $download - type of download being requested
      */
-    function display($scorm, $cm, $course, $download) {
-        /// This function just displays the report
+    public function display($scorm, $cm, $course, $download) {
+        // This function just displays the report.
         return true;
     }
     /**
      * allows the plugin to control who can see this plugin.
      * @return boolean
      */
-    function canview($contextmodule) {
+    public function canview($contextmodule) {
         return true;
     }
 }

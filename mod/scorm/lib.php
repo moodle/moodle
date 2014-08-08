@@ -431,7 +431,8 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 $i--;
                             }
                             if (($i == 0) && ($sco->parent != $currentorg)) {
-                                $report .= html_writer::start_tag('li').html_writer::start_tag('ul', array('id' => $sublist, 'class' => $liststyle));
+                                $report .= html_writer::start_tag('li');
+                                $report .= html_writer::start_tag('ul', array('id' => $sublist, 'class' => $liststyle));
                                 $level++;
                             } else {
                                 $report .= $closelist;
@@ -446,7 +447,8 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     } else {
                         $nextsco = false;
                     }
-                    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level == 0) || (($level > 0) && ($nextsco->parent == $sco->identifier)))) {
+                    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) &&
+                            (($level == 0) || (($level > 0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {
                         $report .= $OUTPUT->spacer(array("height" => "12", "width" => "13"));
@@ -460,13 +462,16 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 $usertrack->status = 'notattempted';
                             }
                             $strstatus = get_string($usertrack->status, 'scorm');
-                            $report .= html_writer::img($OUTPUT->pix_url($usertrack->status, 'scorm'), $strstatus, array('title' => $strstatus));
+                            $report .= html_writer::img($OUTPUT->pix_url($usertrack->status, 'scorm'),
+                                                        $strstatus, array('title' => $strstatus));
                         } else {
                             if ($sco->scormtype == 'sco') {
-                                $report .= html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'), get_string('notattempted', 'scorm'),
+                                $report .= html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'),
+                                                            get_string('notattempted', 'scorm'),
                                                             array('title' => get_string('notattempted', 'scorm')));
                             } else {
-                                $report .= html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('asset', 'scorm'), array('title' => get_string('asset', 'scorm')));
+                                $report .= html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('asset', 'scorm'),
+                                                            array('title' => get_string('asset', 'scorm')));
                             }
                         }
                         $report .= "&nbsp;$sco->title $score$totaltime".html_writer::end_tag('li');
@@ -571,7 +576,9 @@ function scorm_get_user_grades($scorm, $userid=0) {
 
     $grades = array();
     if (empty($userid)) {
-        if ($scousers = $DB->get_records_select('scorm_scoes_track', "scormid=? GROUP BY userid", array($scorm->id), "", "userid,null")) {
+        $scousers = $DB->get_records_select('scorm_scoes_track', "scormid=? GROUP BY userid",
+                                            array($scorm->id), "", "userid,null");
+        if ($scousers) {
             foreach ($scousers as $scouser) {
                 $grades[$scouser->userid] = new stdClass();
                 $grades[$scouser->userid]->id         = $scouser->userid;
@@ -583,7 +590,9 @@ function scorm_get_user_grades($scorm, $userid=0) {
         }
 
     } else {
-        if (!$DB->get_records_select('scorm_scoes_track', "scormid=? AND userid=? GROUP BY userid", array($scorm->id, $userid), "", "userid,null")) {
+        $preattempt = $DB->get_records_select('scorm_scoes_track', "scormid=? AND userid=? GROUP BY userid",
+                                                array($scorm->id, $userid), "", "userid,null");
+        if (!$preattempt) {
             return false; // No attempt yet.
         }
         $grades[$userid] = new stdClass();
@@ -647,7 +656,9 @@ function scorm_grade_item_update($scorm, $grades=null) {
     }
 
     if ($scorm->grademethod == GRADESCOES) {
-        if ($maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id))) {
+        $maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND '.
+                                                $DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id));
+        if ($maxgrade) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
             $params['grademax']  = $maxgrade;
             $params['grademin']  = 0;
@@ -899,7 +910,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, false, false);
     }
 
-    // scorm_intro handled in file_browser
+    // Scorm_intro handled in file_browser.
 
     return false;
 }
@@ -990,18 +1001,29 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
  */
 function scorm_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_COMPLETION_HAS_RULES:    return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_GROUPS:
+            return false;
+        case FEATURE_GROUPINGS:
+            return false;
+        case FEATURE_GROUPMEMBERSONLY:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -1091,10 +1113,9 @@ function scorm_print_overview($courses, &$htmlarray) {
             $showattemptstatus = true;
         }
         if ($showattemptstatus || !empty($isopen) || !empty($scorm->timeclose)) {
-            $str = html_writer::start_div('scorm overview').
-                    html_writer::div($strscorm. ': '.
-                                        html_writer::link($CFG->wwwroot.'/mod/scorm/view.php?id='.$scorm->coursemodule, $scorm->name,
-                                                        array('title' => $strscorm, 'class' => $scorm->visible ? '' : 'dimmed')), 'name');
+            $str = html_writer::start_div('scorm overview').html_writer::div($strscorm. ': '.
+                    html_writer::link($CFG->wwwroot.'/mod/scorm/view.php?id='.$scorm->coursemodule, $scorm->name,
+                                        array('title' => $strscorm, 'class' => $scorm->visible ? '' : 'dimmed')), 'name');
             if ($scorm->timeclose) {
                 $str .= html_writer::div($strduedate.': '.userdate($scorm->timeclose), 'info');
             }

@@ -25,7 +25,7 @@
 
 require_once("../../config.php");
 
-$id   = required_param('id', PARAM_INT);          // Course module ID
+$id = required_param('id', PARAM_INT); // Course module ID.
 
 if (! $cm = get_coursemodule_from_id('scorm', $id)) {
     print_error('invalidcoursemodule');

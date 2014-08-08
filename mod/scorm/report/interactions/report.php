@@ -441,8 +441,10 @@ class scorm_interactions_report extends scorm_default_report {
                         $row[] = '-';
                     } else {
                         if (!$download) {
-                            $url = new moodle_url('/mod/scorm/report/userreport.php', array('id' => $cm->id, 'user' => $scouser->userid,
-                                'attempt' => $scouser->attempt));
+                            $url = new moodle_url('/mod/scorm/report/userreport.php',
+                                                    array('id' => $cm->id,
+                                                        'user' => $scouser->userid,
+                                                        'attempt' => $scouser->attempt));
                             $row[] = html_writer::link($url, $scouser->attempt);
                         } else {
                             $row[] = $scouser->attempt;
