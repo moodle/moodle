@@ -52,19 +52,8 @@ $select = "itemtype != 'course' AND itemname != '' AND courseid = :courseid";
 $itemids = $DB->get_records_select_menu('grade_items', $select, array('courseid' => $course->id), 'itemname ASC', 'id, itemname');
 $itemids = array(0 => get_string('allgradeitems', 'gradereport_history')) + $itemids;
 
-$sql = "SELECT u.id, ".$DB->sql_concat('u.lastname', "' '", 'u.firstname')."
-        FROM {user} u
-        JOIN {grade_grades_history} ggh ON ggh.usermodified = u.id
-        JOIN {grade_items} gi ON gi.id = ggh.itemid
-        WHERE gi.courseid = :courseid
-        GROUP BY u.id
-        ORDER BY u.lastname ASC, u.firstname ASC";
-
-$graders = $DB->get_records_sql_menu($sql, array('courseid' => $course->id));
-$graders = array(0 => get_string('allgraders', 'gradereport_history')) + $graders;
-
 $output = $PAGE->get_renderer('gradereport_history');
-
+$graders = \gradereport_history\helper::get_graders($course->id);
 $params = array('course' => $course, 'itemids' => $itemids, 'graders' => $graders, 'userbutton' => null);
 $mform = new \gradereport_history\filter_form(null, $params);
 $filters = array();

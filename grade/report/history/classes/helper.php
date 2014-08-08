@@ -156,4 +156,31 @@ class helper {
 
         return array($sql, $params);
     }
+
+    /**
+     * Get a list of graders.
+     *
+     * @param int $courseid Id of course for which we need to fetch graders.
+     *
+     * @return array list of graders.
+     */
+    public static function get_graders($courseid) {
+        global $DB;
+
+        $ufields = get_all_user_name_fields(true, 'u');
+        $sql = "SELECT u.id, $ufields
+                  FROM {user} u
+                  JOIN {grade_grades_history} ggh ON ggh.usermodified = u.id
+                  JOIN {grade_items} gi ON gi.id = ggh.itemid
+                 WHERE gi.courseid = :courseid
+              GROUP BY u.id, $ufields
+              ORDER BY u.lastname ASC, u.firstname ASC";
+
+        $graders = $DB->get_records_sql($sql, array('courseid' => $courseid));
+        $return = array(0 => get_string('allgraders', 'gradereport_history'));
+        foreach ($graders as $grader) {
+            $return[$grader->id] = fullname($grader);
+        }
+        return $return;
+    }
 }
