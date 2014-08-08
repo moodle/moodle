@@ -74,12 +74,14 @@ class assign_gradingmessage implements renderable {
      * @param string $message This is the message to display
      * @param bool $gradingerror Set to true to display the message as an error.
      * @param int $coursemoduleid
+     * @param int $page This is the current quick grading page
      */
-    public function __construct($heading, $message, $coursemoduleid, $gradingerror = false) {
+    public function __construct($heading, $message, $coursemoduleid, $gradingerror = false, $page = null) {
         $this->heading = $heading;
         $this->message = $message;
         $this->coursemoduleid = $coursemoduleid;
         $this->gradingerror = $gradingerror;
+        $this->page = $page;
     }
 
 }
