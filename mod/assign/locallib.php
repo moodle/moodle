@@ -2354,9 +2354,12 @@ class assign {
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
                                                       get_string('quickgradingresult', 'assign')));
+        $lastpage = optional_param('lastpage', null, PARAM_INT);
         $gradingresult = new assign_gradingmessage(get_string('quickgradingresult', 'assign'),
                                                    $message,
-                                                   $this->get_course_module()->id);
+                                                   $this->get_course_module()->id,
+                                                   false,
+                                                   $lastpage);
         $o .= $this->get_renderer()->render($gradingresult);
         $o .= $this->view_footer();
         return $o;
@@ -3154,9 +3157,11 @@ class assign {
         if ($showquickgrading && $quickgrading) {
             $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, true);
             $table = $this->get_renderer()->render($gradingtable);
+            $page = optional_param('page', null, PARAM_INT);
             $quickformparams = array('cm'=>$this->get_course_module()->id,
                                      'gradingtable'=>$table,
-                                     'sendstudentnotifications'=>$this->get_instance()->sendstudentnotifications);
+                                     'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
+                                     'page' => $page);
             $quickgradingform = new mod_assign_quick_grading_form(null, $quickformparams);
 
             $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
