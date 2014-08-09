@@ -49,11 +49,21 @@ class grade_edit_tree {
     public $table;
 
     public $categories = array();
+
+    /**
+     * Show calculator icons next to manual grade items
+     * @var bool $show_calculations
+     */
+    private $show_calculations;
+
     /**
      * Constructor
      */
     public function __construct($gtree, $moving=false, $gpr) {
         global $USER, $OUTPUT, $COURSE;
+
+        $systemdefault = get_config('moodle', 'grade_report_showcalculations');
+        $this->show_calculations = get_user_preferences('grade_report_showcalculations', $systemdefault);
 
         $this->gtree = $gtree;
         $this->moving = $moving;
@@ -138,7 +148,9 @@ class grade_edit_tree {
             $actions .= $this->gtree->get_edit_icon($element, $this->gpr);
         }
 
-        $actions .= $this->gtree->get_calculation_icon($element, $this->gpr);
+        if ($this->show_calculations) {
+            $actions .= $this->gtree->get_calculation_icon($element, $this->gpr);
+        }
 
         if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
             if ($this->element_deletable($element)) {

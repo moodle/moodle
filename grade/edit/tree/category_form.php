@@ -162,11 +162,13 @@ class edit_category_form extends moodleform {
         $mform->disabledIf('grade_item_grademax', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->disabledIf('grade_item_grademax', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
-        $mform->addElement('text', 'grade_item_grademin', get_string('grademin', 'grades'));
-        $mform->setType('grade_item_grademin', PARAM_RAW);
-        $mform->addHelpButton('grade_item_grademin', 'grademin', 'grades');
-        $mform->disabledIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+        if ((bool) get_config('moodle', 'grade_report_showmin')) {
+            $mform->addElement('text', 'grade_item_grademin', get_string('grademin', 'grades'));
+            $mform->setType('grade_item_grademin', PARAM_RAW);
+            $mform->addHelpButton('grade_item_grademin', 'grademin', 'grades');
+            $mform->disabledIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
+            $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+        }
 
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->setType('grade_item_gradepass', PARAM_RAW);
@@ -413,7 +415,9 @@ class edit_category_form extends moodleform {
             if ($grade_item->is_outcome_item()) {
                 // we have to prevent incompatible modifications of outcomes if outcomes disabled
                 $mform->removeElement('grade_item_grademax');
-                $mform->removeElement('grade_item_grademin');
+                if ($mform->elementExists('grade_item_grademin')) {
+                    $mform->removeElement('grade_item_grademin');
+                }
                 $mform->removeElement('grade_item_gradetype');
                 $mform->removeElement('grade_item_display');
                 $mform->removeElement('grade_item_decimals');
