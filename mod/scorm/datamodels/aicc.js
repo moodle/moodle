@@ -16,7 +16,7 @@
 //
 // SCORM 1.2 API Implementation
 //
-function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid) {
+function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid, autocommit) {
 
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
@@ -336,6 +336,9 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
                             }
                             //Store data
                             if (errorCode == "0") {
+                                if (autocommit && !(AICCapi.timeout)) {
+                                    AICCapi.timeout = Y.later(60000, API, 'LMSCommit', [""], false);
+                                }
                                 if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range')) != "undefined") {
                                     range = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range');
                                     ranges = range.split('#');
@@ -376,6 +379,10 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
     }
 
     function LMSCommit (param) {
+        if (AICCapi.timeout) {
+            AICCapi.timeout.cancel();
+            AICCapi.timeout = null;
+        }
         errorCode = "0";
         if (param == "") {
             if (Initialized) {
@@ -544,6 +551,6 @@ function AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, vi
 
 M.scorm_api = {};
 
-M.scorm_api.init = function(Y, def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid) {
-    window.API = new AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid);
+M.scorm_api.init = function(Y, def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid, autocommit) {
+    window.API = new AICCapi(def, cmiobj, scormauto, cfgwwwroot, scormid, scoid, attempt, viewmode, currentorg, sesskey, cmid, autocommit);
 }

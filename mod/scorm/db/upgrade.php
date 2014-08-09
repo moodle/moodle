@@ -279,6 +279,21 @@ function xmldb_scorm_upgrade($oldversion) {
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014072500) {
+
+        // Define field autocommit to be added to scorm.
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('autocommit', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'displayactivityname');
+
+        // Conditionally launch add field autocommit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2014072500, 'scorm');
+    }
+
     return true;
 }
 
