@@ -732,7 +732,7 @@ if ($formdata = $mform->is_cancelled()) {
             // Add the user to the company default hierarchy level.
             company::assign_user_to_department($formdata->userdepartment, $user->id);
 
-            \core\event\user_created::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $existinguser->id))->trigger();
+            \core\event\user_created::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $user->id))->trigger();
 
             if ($bulk == 1 or $bulk == 3) {
                 if (!in_array($user->id, $SESSION->bulk_users)) {
