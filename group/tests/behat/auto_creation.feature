@@ -109,3 +109,33 @@ Feature: Automatic creation of groups
     And I press "Submit"
     And the "groups" select box should contain "Group A (3)"
     And the "groups" select box should contain "Group B (3)"
+
+  @javascript
+  Scenario: Split users into groups based on existing groups or groupings
+    Given I set the following fields to these values:
+      | Naming scheme | Group @ |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | Grouping of auto-created groups | No grouping |
+    And I press "Submit"
+    And I press "Auto-create groups"
+    And I set the following fields to these values:
+      | Naming scheme | Test @ |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | groupid | Group A |
+      | Grouping of auto-created groups | New grouping |
+      | Grouping name | Sub Grouping |
+    And I press "Submit"
+    And the "groups" select box should contain "Test A (3)"
+    And the "groups" select box should contain "Test B (2)"
+    And I press "Auto-create groups"
+    And I set the following fields to these values:
+      | Naming scheme | Test # |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | Select members from grouping | Sub Grouping |
+      | Grouping of auto-created groups | No grouping |
+    And I press "Submit"
+    And the "groups" select box should contain "Test 1 (3)"
+    And the "groups" select box should contain "Test 2 (2)"

@@ -99,6 +99,37 @@ class autogroup_form extends moodleform {
             $mform->setType('cohortid', PARAM_INT);
             $mform->setConstant('cohortid', '0');
         }
+
+        if ($groupings = groups_get_all_groupings($COURSE->id)) {
+            $options = array();
+            $options[0] = get_string('none');
+            foreach ($groupings as $grouping) {
+                $options[$grouping->id] = format_string($grouping->name);
+            }
+            $mform->addElement('select', 'groupingid', get_string('selectfromgrouping', 'group'), $options);
+            $mform->setDefault('groupingid', 0);
+            $mform->disabledIf('groupingid', 'notingroup', 'checked');
+        } else {
+            $mform->addElement('hidden', 'groupingid');
+            $mform->setType('groupingid', PARAM_INT);
+            $mform->setConstant('groupingid', 0);
+        }
+
+        if ($groups = groups_get_all_groups($COURSE->id)) {
+            $options = array();
+            $options[0] = get_string('none');
+            foreach ($groups as $group) {
+                $options[$group->id] = format_string($group->name);
+            }
+            $mform->addElement('select', 'groupid', get_string('selectfromgroup', 'group'), $options);
+            $mform->setDefault('groupid', 0);
+            $mform->disabledIf('groupid', 'notingroup', 'checked');
+        } else {
+            $mform->addElement('hidden', 'groupid');
+            $mform->setType('groupid', PARAM_INT);
+            $mform->setConstant('groupid', 0);
+        }
+
         $options = array('no'        => get_string('noallocation', 'group'),
                          'random'    => get_string('random', 'group'),
                          'firstname' => get_string('byfirstname', 'group'),
@@ -111,6 +142,8 @@ class autogroup_form extends moodleform {
         $mform->disabledIf('nosmallgroups', 'groupby', 'noteq', 'members');
 
         $mform->addElement('checkbox', 'notingroup', get_string('notingroup', 'group'));
+        $mform->disabledIf('notingroup', 'groupingid', 'neq', 0);
+        $mform->disabledIf('notingroup', 'groupid', 'neq', 0);
 
         $mform->addElement('header', 'groupinghdr', get_string('grouping', 'group'));
 
@@ -156,7 +189,17 @@ class autogroup_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         if ($data['allocateby'] != 'no') {
-            if (!$users = groups_get_potential_members($data['courseid'], $data['roleid'], $data['cohortid'])) {
+            $source = array();
+            if ($data['cohortid']) {
+                $source['cohortid'] = $data['cohortid'];
+            }
+            if ($data['groupingid']) {
+                $source['groupingid'] = $data['groupingid'];
+            }
+            if ($data['groupid']) {
+                $source['groupid'] = $data['groupid'];
+            }
+            if (!$users = groups_get_potential_members($data['courseid'], $data['roleid'], $source)) {
                 $errors['roleid'] = get_string('nousersinrole', 'group');
             }
 
