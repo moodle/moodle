@@ -15,15 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MathJax filter version information
+ * MathJAX filter upgrade code.
  *
  * @package    filter_mathjaxloader
  * @copyright  2014 Damyon Wiese (damyon@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_filter_mathjaxloader_upgrade($oldversion) {
+    global $CFG, $DB;
 
-$plugin->version  = 2014081100;
-$plugin->requires = 2014050800;  // Requires this Moodle version
-$plugin->component= 'filter_mathjaxloader';
+    $dbman = $DB->get_manager();
+
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2014081100) {
+
+        $sslcdnurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if ($sslcdnurl === "https://c328740.ssl.cf1.rackcdn.com/mathjax/2.3-latest/MathJax.js") {
+            set_config('httpsurl', 'https://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2014081100, 'filter', 'mathjaxloader');
+    }
+
+    return true;
+}
