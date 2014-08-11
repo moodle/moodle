@@ -19,7 +19,7 @@
  *
  * PHP Version 5
  *
- * @file     CAS/ProxiedService/Testabel.php
+ * @file     CAS/InvalidArgumentException.php
  * @category Authentication
  * @package  PhpCAS
  * @author   Adam Franco <afranco@middlebury.edu>
@@ -28,48 +28,43 @@
  */
 
 /**
- * This interface defines methods that allow proxy-authenticated service handlers
- * to be tested in unit tests.
+ * Exception that denotes invalid arguments were passed.
  *
- * Classes implementing this interface SHOULD store the CAS_Client passed and
- * initialize themselves with that client rather than via the static phpCAS
- * method. For example:
- *
- *		/ **
- *		 * Fetch our proxy ticket.
- *		 * /
- *		protected function initializeProxyTicket() {
- *			// Allow usage of a particular CAS_Client for unit testing.
- *			if (is_null($this->casClient))
- *				phpCAS::initializeProxiedService($this);
- *			else
- *				$this->casClient->initializeProxiedService($this);
- *		}
- *
- * @class    CAS_ProxiedService_Testabel
+ * @class    CAS_InvalidArgumentException
  * @category Authentication
  * @package  PhpCAS
  * @author   Adam Franco <afranco@middlebury.edu>
  * @license  http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
-interface CAS_ProxiedService_Testable
+class CAS_TypeMismatchException
+extends CAS_InvalidArgumentException
 {
-
     /**
-     * Use a particular CAS_Client->initializeProxiedService() rather than the
-     * static phpCAS::initializeProxiedService().
+     * Constructor, provides a nice message.
      *
-     * This method should not be called in standard operation, but is needed for unit
-     * testing.
-     *
-     * @param CAS_Client $casClient Cas client object
+     * @param mixed   $argument     Argument
+     * @param string  $argumentName Argument Name
+     * @param string  $type         Type
+     * @param string  $message      Error Message
+     * @param integer $code         Code
      *
      * @return void
-     * @throws CAS_OutOfSequenceException If called after a proxy ticket has
-     *         already been initialized/set.
      */
-    public function setCasClient (CAS_Client $casClient);
+    public function __construct (
+        $argument, $argumentName, $type, $message = '', $code = 0
+    ) {
+        if (is_object($argument)) {
+            $foundType = get_class($argument).' object';
+        } else {
+            $foundType = gettype($argument);
+        }
 
+        parent::__construct(
+            'type mismatched for parameter '
+            . $argumentName . ' (should be \'' . $type .' \'), '
+            . $foundType . ' given. ' . $message, $code
+        );
+    }
 }
 ?>
