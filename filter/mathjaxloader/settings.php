@@ -40,7 +40,7 @@ if ($ADMIN->fulltree) {
     $item = new admin_setting_configtext('filter_mathjaxloader/httpsurl',
                                          new lang_string('httpsurl', 'filter_mathjaxloader'),
                                          new lang_string('httpsurl_help', 'filter_mathjaxloader'),
-                                         'https://c328740.ssl.cf1.rackcdn.com/mathjax/2.3-latest/MathJax.js',
+                                         'https://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js',
                                          PARAM_RAW);
     $settings->add($item);
 
