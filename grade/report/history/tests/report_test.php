@@ -192,6 +192,45 @@ class gradereport_history_report_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the get graders helper method.
+     */
+    public function test_graders() {
+        $this->resetAfterTest();
+
+        // Making the setup.
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+
+        $c1m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
+        $c2m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c2));
+
+        // Users.
+        $u1 = $this->getDataGenerator()->create_user(array('firstname' => 'Eric', 'lastname' => 'Cartman'));
+        $u2 = $this->getDataGenerator()->create_user(array('firstname' => 'Stan', 'lastname' => 'Marsh'));
+        $u3 = $this->getDataGenerator()->create_user(array('firstname' => 'Kyle', 'lastname' => 'Broflovski'));
+        $u4 = $this->getDataGenerator()->create_user(array('firstname' => 'Kenny', 'lastname' => 'McCormick'));
+
+        // Creating grade history for some users.
+        $gi = grade_item::fetch(array('iteminstance' => $c1m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id, 'usermodified' => $u1->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id, 'usermodified' => $u2->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id, 'usermodified' => $u3->id));
+
+        $gi = grade_item::fetch(array('iteminstance' => $c2m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id, 'usermodified' => $u4->id));
+
+        // Checking fetching some users.
+        $graders = \gradereport_history\helper::get_graders($c1->id);
+        $this->assertCount(4, $graders); // Including "all graders" .
+        $this->assertArrayHasKey($u1->id, $graders);
+        $this->assertArrayHasKey($u2->id, $graders);
+        $this->assertArrayHasKey($u3->id, $graders);
+        $graders = \gradereport_history\helper::get_graders($c2->id);
+        $this->assertCount(2, $graders); // Including "all graders" .
+        $this->assertArrayHasKey($u4->id, $graders);
+    }
+
+    /**
      * Asserts that the array of grade objects contains exactly the right IDs.
      *
      * @param array $expectedids Array of expected IDs.
