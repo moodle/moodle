@@ -42,7 +42,7 @@ class enrol_category_plugin extends enrol_plugin {
         global $DB;
 
         $context = context_course::instance($instance->courseid);
-        if (!has_capability('enrol/database:config', $context)) {
+        if (!has_capability('enrol/category:config', $context)) {
             return false;
         }
 
