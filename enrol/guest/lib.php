@@ -403,4 +403,14 @@ class enrol_guest_plugin extends enrol_plugin {
         return has_capability('enrol/guest:config', $context);
     }
 
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/guest:config', $context);
+    }
 }

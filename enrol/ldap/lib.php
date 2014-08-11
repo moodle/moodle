@@ -125,6 +125,17 @@ class enrol_ldap_plugin extends enrol_plugin {
     }
 
     /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/ldap:config', $context);
+    }
+
+    /**
      * Forces synchronisation of user enrolments with LDAP server.
      * It creates courses if the plugin is configured to do so.
      *

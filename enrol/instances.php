@@ -146,28 +146,39 @@ if ($canconfig and $action and confirm_sesskey()) {
         } else if ($action === 'disable') {
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
-            if ($instance->status != ENROL_INSTANCE_DISABLED) {
-                if (enrol_accessing_via_instance($instance)) {
-                    if (!$confirm2) {
-                        $yesurl = new moodle_url('/enrol/instances.php', array('id'=>$course->id, 'action'=>'disable', 'instance'=>$instance->id, 'confirm2'=>1, 'sesskey'=>sesskey()));
-                        $displayname = $plugin->get_instance_name($instance);
-                        $message = markdown_to_html(get_string('disableinstanceconfirmself', 'enrol', array('name'=>$displayname)));
-                        echo $OUTPUT->header();
-                        echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
-                        echo $OUTPUT->footer();
-                        die();
+            if ($plugin->can_hide_show_instance($instance)) {
+                if ($instance->status != ENROL_INSTANCE_DISABLED) {
+                    if (enrol_accessing_via_instance($instance)) {
+                        if (!$confirm2) {
+                            $yesurl = new moodle_url('/enrol/instances.php',
+                                                     array('id' => $course->id,
+                                                           'action' => 'disable',
+                                                           'instance' => $instance->id,
+                                                           'confirm2' => 1,
+                                                           'sesskey' => sesskey()));
+                            $displayname = $plugin->get_instance_name($instance);
+                            $message = markdown_to_html(get_string('disableinstanceconfirmself',
+                                                        'enrol',
+                                                        array('name' => $displayname)));
+                            echo $OUTPUT->header();
+                            echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
+                            echo $OUTPUT->footer();
+                            die();
+                        }
                     }
+                    $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+                    redirect($PAGE->url);
                 }
-                $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
-                redirect($PAGE->url);
             }
 
         } else if ($action === 'enable') {
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
-            if ($instance->status != ENROL_INSTANCE_ENABLED) {
-                $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
-                redirect($PAGE->url);
+            if ($plugin->can_hide_show_instance($instance)) {
+                if ($instance->status != ENROL_INSTANCE_ENABLED) {
+                    $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+                    redirect($PAGE->url);
+                }
             }
         }
     }
@@ -235,7 +246,7 @@ foreach ($instances as $instance) {
             $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/delete', $strdelete, 'core', array('class' => 'iconsmall')));
         }
 
-        if (enrol_is_enabled($instance->enrol)) {
+        if (enrol_is_enabled($instance->enrol) && $plugin->can_hide_show_instance($instance)) {
             if ($instance->status == ENROL_INSTANCE_ENABLED) {
                 $aurl = new moodle_url($url, array('action'=>'disable', 'instance'=>$instance->id));
                 $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/hide', $strdisable, 'core', array('class' => 'iconsmall')));

@@ -107,6 +107,17 @@ class enrol_flatfile_plugin extends enrol_plugin {
     }
 
     /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/flatfile:manage', $context);
+    }
+
+    /**
      * Gets an array of the user enrolment actions.
      *
      * @param course_enrolment_manager $manager

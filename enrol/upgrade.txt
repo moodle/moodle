@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 2.8 ===
 
 * enrol_plugin::instance_deleteable() is deprecated and has been replaced by enrol_plugin::can_delete_instance()
+* enrol_plugin::can_hide_show_instance() is a new function to control who can hide/show enrolment instances.
+  Returns true by default but plugins must implement their own logic.
 
 === 2.6 ===
 
