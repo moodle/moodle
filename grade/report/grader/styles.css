@@ -294,6 +294,10 @@ table#user-grades td.topleft {
     width: auto;
     margin: 0;
     padding: 0;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
 }
 .path-grade-report-grader td input.submit {
     margin: 10px 10px 0px 10px;
@@ -339,7 +343,7 @@ table#user-grades th.fixedcolumn {
 .path-grade-report-grader .left_scroller {
     float: left;
     clear: none;
-    padding-top: 20px;
+    padding-top: 22px;
 }
 .path-grade-report-grader.dir-rtl .left_scroller {
     float: right;
@@ -512,12 +516,6 @@ table#user-grades td.controls,
     vertical-align: text-bottom;
     margin-left: .45em;
 }
-.path-grade-report-grader .grade_icons {
-    margin-bottom: .3em;
-}
-.path-grade-report-grader tr.controls .grade_icons {
-    margin-bottom: 0;
-}
 .path-grade-report-grader .yui3-overlay {
     background-color: #FFEE69;
     border-color: #D4C237 #A6982B #A6982B;
@@ -587,3 +585,45 @@ table#user-grades td.controls,
     margin-left: 0.5em;
 }
 
+/** MDL-43824 **/
+#page-grade-report-grader-index table#fixed_column td.topleft.cell,
+#page-grade-report-grader-index.jsenabled table#fixed_column td.topleft.cell {
+    padding: 8px 5px;
+}
+#page-grade-report-grader-index table#fixed_column td.header.controls {
+    border-left: 1px solid #cecece;
+}
+.path-grade-report-grader .right_scroller td select {
+    line-height: 2;
+    margin: 0;
+    padding: 0;
+    height: 22px;
+}
+table#user-grades {
+    margin-bottom: 0;
+}
+table#user-grades td,
+table#user-grades th.category {
+    padding: 8px 5px;
+}
+.path-grade-report-grader .gradeparent {
+    border-top: 1px solid #cecece;
+}
+#page-grade-report-grader-index .topscrollcontent {
+    background-color: #cecece;
+    height: 1px;
+}
+#page-grade-report-grader-index #user-grades {
+    margin-top: 4px;
+}
+.path-grade-report-grader div.left_scroller tr,
+.path-grade-report-grader div.right_scroller tr,
+.path-grade-report-grader div.left_scroller td,
+.path-grade-report-grader div.right_scroller td,
+.path-grade-report-grader div.left_scroller th,
+.path-grade-report-grader div.right_scroller th {
+     padding: 8px 5px;
+}
+.path-grade-report-grader td.grade.overridden {
+    line-height: 20px;
+}
