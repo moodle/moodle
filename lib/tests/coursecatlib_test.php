@@ -396,28 +396,28 @@ class core_coursecatlib_testcase extends advanced_testcase {
             'idnumber' => '006-01',
             'shortname' => 'Biome Study',
             'fullname' => '<span lang="ar" class="multilang">'.'دراسة منطقة إحيائية'.'</span><span lang="en" class="multilang">Biome Study</span>',
-            'timecreated' => '10000000001'
+            'timecreated' => '1000000001'
         ));
         $course2 = $generator->create_course(array(
             'category' => $category->id,
             'idnumber' => '007-02',
             'shortname' => 'Chemistry Revision',
             'fullname' => 'Chemistry Revision',
-            'timecreated' => '10000000002'
+            'timecreated' => '1000000002'
         ));
         $course3 = $generator->create_course(array(
             'category' => $category->id,
             'idnumber' => '007-03',
             'shortname' => 'Swiss Rolls and Sunflowers',
             'fullname' => 'Aarkvarks guide to Swiss Rolls and Sunflowers',
-            'timecreated' => '10000000003'
+            'timecreated' => '1000000003'
         ));
         $course4 = $generator->create_course(array(
             'category' => $category->id,
             'idnumber' => '006-04',
             'shortname' => 'Scratch',
             'fullname' => '<a href="test.php">Basic Scratch</a>',
-            'timecreated' => '10000000004'
+            'timecreated' => '1000000004'
         ));
         $c1 = (int)$course1->id;
         $c2 = (int)$course2->id;
