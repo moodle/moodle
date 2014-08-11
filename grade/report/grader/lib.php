@@ -110,11 +110,7 @@ class grade_report_grader extends grade_report {
         $this->canviewhidden = has_capability('moodle/grade:viewhidden', context_course::instance($this->course->id));
 
         // load collapsed settings for this report
-        if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
-            $this->collapsed = unserialize($collapsed);
-        } else {
-            $this->collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
-        }
+        $this->collapsed = static::get_collapsed_preferences($this->course->id);
 
         if (empty($CFG->enableoutcomes)) {
             $nooutcomes = false;
@@ -1543,32 +1539,140 @@ class grade_report_grader extends grade_report {
      * @return
      */
     public function process_action($target, $action) {
-        return self::do_process_action($target, $action);
+        return self::do_process_action($target, $action, $this->course->id);
+    }
+
+    /**
+     * From the list of categories that this user prefers to collapse choose ones that belong to the current course.
+     *
+     * This function serves two purposes.
+     * Mainly it helps migrating from user preference style when all courses were stored in one preference.
+     * Also it helps to remove the settings for categories that were removed if the array for one course grows too big.
+     *
+     * @param int $courseid
+     * @param array $collapsed
+     * @return array
+     */
+    protected static function filter_collapsed_categories($courseid, $collapsed) {
+        global $DB;
+        if (empty($collapsed)) {
+            $collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
+        }
+        if (empty($collapsed['aggregatesonly']) && empty($collapsed['gradesonly'])) {
+            return $collapsed;
+        }
+        $cats = $DB->get_fieldset_select('grade_categories', 'id', 'courseid = ?', array($courseid));
+        $collapsed['aggregatesonly'] = array_values(array_intersect($collapsed['aggregatesonly'], $cats));
+        $collapsed['gradesonly'] = array_values(array_intersect($collapsed['gradesonly'], $cats));
+        return $collapsed;
+    }
+
+    /**
+     * Returns the list of categories that this user wants to collapse or display aggregatesonly
+     *
+     * This method also migrates on request from the old format of storing user preferences when they were stored
+     * in one preference for all courses causing DB error when trying to insert very big value.
+     *
+     * @param int $courseid
+     * @return array
+     */
+    protected static function get_collapsed_preferences($courseid) {
+        if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories'.$courseid)) {
+            return json_decode($collapsed, true);
+        }
+
+        // Try looking for old location of user setting that used to store all courses in one serialized user preference.
+        if (($oldcollapsedpref = get_user_preferences('grade_report_grader_collapsed_categories')) !== null) {
+            if ($collapsedall = @unserialize($oldcollapsedpref)) {
+                // We found the old-style preference, filter out only categories that belong to this course and update the prefs.
+                $collapsed = static::filter_collapsed_categories($courseid, $collapsedall);
+                if (!empty($collapsed['aggregatesonly']) || !empty($collapsed['gradesonly'])) {
+                    static::set_collapsed_preferences($courseid, $collapsed);
+                    $collapsedall['aggregatesonly'] = array_diff($collapsedall['aggregatesonly'], $collapsed['aggregatesonly']);
+                    $collapsedall['gradesonly'] = array_diff($collapsedall['gradesonly'], $collapsed['gradesonly']);
+                    if (!empty($collapsedall['aggregatesonly']) || !empty($collapsedall['gradesonly'])) {
+                        set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsedall));
+                    } else {
+                        unset_user_preference('grade_report_grader_collapsed_categories');
+                    }
+                }
+            } else {
+                // We found the old-style preference, but it is unreadable, discard it.
+                unset_user_preference('grade_report_grader_collapsed_categories');
+            }
+        } else {
+            $collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
+        }
+        return $collapsed;
+    }
+
+    /**
+     * Sets the list of categories that user wants to see collapsed in user preferences
+     *
+     * This method may filter or even trim the list if it does not fit in DB field.
+     *
+     * @param int $courseid
+     * @param array $collapsed
+     */
+    protected static function set_collapsed_preferences($courseid, $collapsed) {
+        global $DB;
+        // In an unlikely case that the list of collapsed categories for one course is too big for the user preference size,
+        // try to filter the list of categories since array may contain categories that were deleted.
+        if (strlen(json_encode($collapsed)) >= 1333) {
+            $collapsed = static::filter_collapsed_categories($courseid, $collapsed);
+        }
+
+        // If this did not help, "forget" about some of the collapsed categories. Still better than to loose all information.
+        while (strlen(json_encode($collapsed)) >= 1333) {
+            if (count($collapsed['aggregatesonly'])) {
+                array_pop($collapsed['aggregatesonly']);
+            }
+            if (count($collapsed['gradesonly'])) {
+                array_pop($collapsed['gradesonly']);
+            }
+        }
+
+        if (!empty($collapsed['aggregatesonly']) || !empty($collapsed['gradesonly'])) {
+            set_user_preference('grade_report_grader_collapsed_categories'.$courseid, json_encode($collapsed));
+        } else {
+            unset_user_preference('grade_report_grader_collapsed_categories'.$courseid);
+        }
     }
 
     /**
      * Processes a single action against a category, grade_item or grade.
      * @param string $target eid ({type}{id}, e.g. c4 for category4)
      * @param string $action Which action to take (edit, delete etc...)
+     * @param int $courseid affected course.
      * @return
      */
-    public static function do_process_action($target, $action) {
+    public static function do_process_action($target, $action, $courseid = null) {
+        global $DB;
         // TODO: this code should be in some grade_tree static method
         $targettype = substr($target, 0, 1);
         $targetid = substr($target, 1);
         // TODO: end
 
-        if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
-            $collapsed = unserialize($collapsed);
-        } else {
-            $collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
+        if ($targettype !== 'c') {
+            // The following code only works with categories.
+            return true;
         }
+
+        if (!$courseid) {
+            debugging('Function grade_report_grader::do_process_action() now requires additional argument courseid',
+                DEBUG_DEVELOPER);
+            if (!$courseid = $DB->get_field('grade_categories', 'courseid', array('id' => $targetid), IGNORE_MISSING)) {
+                return true;
+            }
+        }
+
+        $collapsed = static::get_collapsed_preferences($courseid);
 
         switch ($action) {
             case 'switch_minus': // Add category to array of aggregatesonly
                 if (!in_array($targetid, $collapsed['aggregatesonly'])) {
                     $collapsed['aggregatesonly'][] = $targetid;
-                    set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
+                    static::set_collapsed_preferences($courseid, $collapsed);
                 }
                 break;
 
@@ -1580,13 +1684,13 @@ class grade_report_grader extends grade_report {
                 if (!in_array($targetid, $collapsed['gradesonly'])) {
                     $collapsed['gradesonly'][] = $targetid;
                 }
-                set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
+                static::set_collapsed_preferences($courseid, $collapsed);
                 break;
             case 'switch_whole': // Remove the category from the array of collapsed cats
                 $key = array_search($targetid, $collapsed['gradesonly']);
                 if ($key !== false) {
                     unset($collapsed['gradesonly'][$key]);
-                    set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
+                    static::set_collapsed_preferences($courseid, $collapsed);
                 }
 
                 break;
