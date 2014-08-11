@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
+* grade_category::aggregate_values() is deprecated and will be removed in Moodle 3.0.
 
 === 2.6.4 / 2.7.1 ===
 

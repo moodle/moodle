@@ -612,10 +612,11 @@ class grade_category extends grade_object {
         }
 
         // do the maths
-        $agg_grade = $this->aggregate_values($grade_values, $items);
+        $result = $this->aggregate_values_and_adjust_bounds($grade_values, $items);
+        $agg_grade = $result['grade'];
 
         // recalculate the grade back to requested range
-        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
+        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
 
         $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
 
@@ -628,15 +629,23 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Internal function that calculates the aggregated grade for this grade category
+     * Internal function that calculates the aggregated grade and new min/max for this grade category
      *
      * Must be public as it is used by grade_grade::get_hiding_affected()
      *
      * @param array $grade_values An array of values to be aggregated
      * @param array $items The array of grade_items
-     * @return float The aggregate grade for this grade category
+     * @since Moodle 2.6.5, 2.7.2
+     * @return array containing values for:
+     *                'grade' => the new calculated grade
+     *                'grademin' => the new calculated min grade for the category
+     *                'grademax' => the new calculated max grade for the category
      */
-    public function aggregate_values($grade_values, $items) {
+    public function aggregate_values_and_adjust_bounds($grade_values, $items) {
+        $category_item = $this->get_grade_item();
+        $grademin = $category_item->grademin;
+        $grademax = $category_item->grademax;
+
         switch ($this->aggregation) {
 
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
@@ -752,6 +761,19 @@ class grade_category extends grade_object {
                 }
                 break;
 
+            case GRADE_AGGREGATE_SUM:    // Add up all the items.
+                $num = count($grade_values);
+                $sum = array_sum($grade_values);
+                $agg_grade = $sum / $num;
+                // Excluded items can affect the grademax for this grade_item.
+                $grademin = 0;
+                $grademax = 0;
+                foreach ($grade_values as $itemid => $grade_value) {
+                    $grademin += $items[$itemid]->grademin;
+                    $grademax += $items[$itemid]->grademax;
+                }
+                break;
+
             case GRADE_AGGREGATE_MEAN:    // Arithmetic average of all grade items (if ungraded aggregated, NULL counted as minimum)
             default:
                 $num = count($grade_values);
@@ -760,7 +782,24 @@ class grade_category extends grade_object {
                 break;
         }
 
-        return $agg_grade;
+        return array('grade' => $agg_grade, 'grademin' => $grademin, 'grademax' => $grademax);
+    }
+
+    /**
+     * Internal function that calculates the aggregated grade for this grade category
+     *
+     * Must be public as it is used by grade_grade::get_hiding_affected()
+     *
+     * @deprecated since Moodle 2.8
+     * @param array $grade_values An array of values to be aggregated
+     * @param array $items The array of grade_items
+     * @return float The aggregate grade for this grade category
+     */
+    public function aggregate_values($grade_values, $items) {
+        debugging('grade_category::aggregate_values() is deprecated.
+                   Call grade_category::aggregate_values_and_adjust_bounds() instead.', DEBUG_DEVELOPER);
+        $result = $this->aggregate_values_and_adjust_bounds($grade_values, $items);
+        return $result['grade'];
     }
 
     /**
