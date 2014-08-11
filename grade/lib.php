@@ -1184,6 +1184,9 @@ class grade_structure {
                             case GRADE_AGGREGATE_SUM:
                                 return '<img src="'.$OUTPUT->pix_url('i/agg_sum') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
+                            default:
+                                return '<img src="'.$OUTPUT->pix_url('i/calc') . '" ' .
+                                        'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                         }
                     }
 
