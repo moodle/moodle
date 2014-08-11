@@ -445,7 +445,7 @@ abstract class grade_report {
 
     /**
      * Optionally blank out course/category totals if they contain any hidden items
-     * @deprecated since Moodle 2.8 - Call blank_hidden_total_and_adjust_bounds instead.
+     * Will be deprecated in Moodle 2.8 - Call blank_hidden_total_and_adjust_bounds instead.
      * @param string $courseid the course id
      * @param string $course_item an instance of grade_item
      * @param string $finalgrade the grade for the course_item
