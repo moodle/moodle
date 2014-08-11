@@ -635,6 +635,7 @@ class grade_category extends grade_object {
      *
      * @param array $grade_values An array of values to be aggregated
      * @param array $items The array of grade_items
+     * @since Moodle 2.6.5, 2.7.2
      * @return array containing values for:
      *                'grade' => the new calculated grade
      *                'grademin' => the new calculated min grade for the category
