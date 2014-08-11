@@ -17,55 +17,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
+ *
  * PHP Version 5
  *
- * @class    CAS/ProxyTicketException.php
+ * @file     CAS/OutOfSequenceBeforeClientException.php
  * @category Authentication
  * @package  PhpCAS
- * @author   Adam Franco <afranco@middlebury.edu>
+ * @author   Joachim Fritschi <jfritschi@freenet.de>
  * @license  http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
- *
  */
 
 /**
- * An Exception for errors related to fetching or validating proxy tickets.
+ * This class defines Exceptions that should be thrown when the sequence of
+ * operations is invalid. In this case it should be thrown when the client() or
+ *  proxy() call has not yet happened and no client or proxy object exists.
  *
- * @class    CAS_ProxyTicketException
+ * @class    CAS_OutOfSequenceBeforeClientException
  * @category Authentication
  * @package  PhpCAS
- * @author   Adam Franco <afranco@middlebury.edu>
+ * @author   Joachim Fritschi <jfritschi@freenet.de>
  * @license  http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
-class CAS_ProxyTicketException
-extends BadMethodCallException
+class CAS_OutOfSequenceBeforeClientException
+extends CAS_OutOfSequenceException
 implements CAS_Exception
 {
-
     /**
-     * Constructor
-     *
-     * @param string $message Message text
-     * @param int    $code    Error code
+     * Return standard error message
      *
      * @return void
      */
-    public function __construct ($message, $code = PHPCAS_SERVICE_PT_FAILURE)
+    public function __construct ()
     {
-        // Warn if the code is not in our allowed list
-        $ptCodes = array(
-        PHPCAS_SERVICE_PT_FAILURE,
-        PHPCAS_SERVICE_PT_NO_SERVER_RESPONSE,
-        PHPCAS_SERVICE_PT_BAD_SERVER_RESPONSE,
+        parent::__construct(
+            'this method cannot be called before phpCAS::client() or phpCAS::proxy()'
         );
-        if (!in_array($code, $ptCodes)) {
-            trigger_error(
-                'Invalid code '.$code
-                .' passed. Must be one of PHPCAS_SERVICE_PT_FAILURE, PHPCAS_SERVICE_PT_NO_SERVER_RESPONSE, or PHPCAS_SERVICE_PT_BAD_SERVER_RESPONSE.'
-            );
-        }
-
-        parent::__construct($message, $code);
     }
 }

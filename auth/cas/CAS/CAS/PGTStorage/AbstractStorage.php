@@ -68,7 +68,9 @@ abstract class CAS_PGTStorage_AbstractStorage
     {
         phpCAS::traceBegin();
         if ( !$cas_parent->isProxy() ) {
-            phpCAS::error('defining PGT storage makes no sense when not using a CAS proxy');
+            phpCAS::error(
+                'defining PGT storage makes no sense when not using a CAS proxy'
+            );
         }
         phpCAS::traceEnd();
     }
