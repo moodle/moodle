@@ -347,4 +347,26 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         // Setting the file path in CFG.
         $this->imsplugin->set_config('imsfilelocation', $xmlfilepath);
     }
+
+    /**
+     * IMS Enterprise enrolment task test.
+     */
+    public function test_imsenterprise_cron_task() {
+        global $DB;
+        $prevnusers = $DB->count_records('user');
+
+        $user1 = new StdClass();
+        $user1->username = 'u1';
+        $user1->email = 'u1@u1.org';
+        $user1->firstname = 'U';
+        $user1->lastname = '1';
+
+        $users = array($user1);
+        $this->set_xml_file($users);
+
+        $task = new enrol_imsenterprise\task\cron_task();
+        $task->execute();
+
+        $this->assertEquals(($prevnusers + 1), $DB->count_records('user'));
+    }
 }

@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IMS Enterprise file enrolment plugin version specification.
+ * Definition of IMS Enterprise enrolment scheduled tasks.
  *
- * @package    enrol_imsenterprise
- * @copyright  2010 Eugene Venter
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_imsenterprise
+ * @category  task
+ * @copyright 2014 Universite de Montreal
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014072200;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014072200;        // Requires this Moodle version
-$plugin->component = 'enrol_imsenterprise';
+$tasks = array(
+    array(
+        'classname' => 'enrol_imsenterprise\task\cron_task',
+        'blocking' => 0,
+        'minute' => '10',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
