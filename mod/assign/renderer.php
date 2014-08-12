@@ -91,6 +91,9 @@ class mod_assign_renderer extends plugin_renderer_base {
      */
     public function render_assign_gradingmessage(assign_gradingmessage $result) {
         $urlparams = array('id' => $result->coursemoduleid, 'action'=>'grading');
+        if (!empty($result->page)) {
+            $urlparams['page'] = $result->page;
+        }
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $classes = $result->gradingerror ? 'notifyproblem' : 'notifysuccess';
 
