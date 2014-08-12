@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<COMPATIBILITY_MATRIX>
+  <MOODLE version="2.7">
+    <CUSTOM_CHECKS>
+      <CUSTOM_CHECK function="cachestore_memcache_environment_check::check_memcache_version" level="optional">
+      </CUSTOM_CHECK>
+    </CUSTOM_CHECKS>
+  </MOODLE>
+</COMPATIBILITY_MATRIX>
