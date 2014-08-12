@@ -35,7 +35,8 @@ require_once("$CFG->dirroot/lib/classes/minify.php");
 if ($slashargument = min_get_slash_argument()) {
     $slashargument = ltrim($slashargument, '/');
     if (substr_count($slashargument, '/') < 1) {
-        image_not_found();
+        header('HTTP/1.0 404 not found');
+        die('Slash argument must contain both a revision and a file path');
     }
     // image must be last because it may contain "/"
     list($rev, $file) = explode('/', $slashargument, 2);
@@ -73,7 +74,8 @@ foreach ($files as $fsfile) {
 
 if (!$jsfiles) {
     // bad luck - no valid files
-    die();
+    header('HTTP/1.0 404 not found');
+    die('No valid javascript files found');
 }
 
 $etag = sha1($rev.implode(',', $jsfiles));
