@@ -766,7 +766,12 @@ function report_security_check_riskbackup($detailed=false) {
     $systemrolecount = empty($systemroles) ? 0 : count($systemroles);
     $overriddenrolecount = empty($overriddenroles) ? 0 : count($overriddenroles);
 
-    $result->status  = REPORT_SECURITY_WARNING; // there is always at least one admin
+    if (max($usercount, $systemrolecount, $overriddenrolecount) > 0) {
+        $result->status = REPORT_SECURITY_WARNING;
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+    }
+
     $a = (object)array('rolecount'=>$systemrolecount,'overridecount'=>$overriddenrolecount,'usercount'=>$usercount);
     $result->info = get_string('check_riskbackup_warning', 'report_security', $a);
 
