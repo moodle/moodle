@@ -26,6 +26,7 @@
 
 $string['log:view'] = 'View course logs';
 $string['log:viewtoday'] = 'View today\'s logs';
+$string['mnetlogwarning'] = 'If your MNet clients are running Moodle 2.7 or higher, then you may not receive any logs.';
 $string['page'] = 'Page {$a}';
 $string['logsformat'] = 'Logs format';
 $string['page-report-log-x'] = 'Any log report';

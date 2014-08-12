@@ -154,6 +154,7 @@ if (!empty($chooselog)) {
                 admin_externalpage_setup('reportlog');
                 $PAGE->set_title($course->shortname .': '. $strlogs);
                 echo $OUTPUT->header();
+                echo $OUTPUT->notification(get_string('mnetlogwarning', 'report_log'));
 
             } else {
                 $PAGE->set_title($course->shortname .': '. $strlogs);
