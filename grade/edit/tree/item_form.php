@@ -51,10 +51,10 @@ class edit_item_form extends moodleform {
         $mform->addHelpButton('idnumber', 'idnumbermod');
         $mform->setType('idnumber', PARAM_RAW);
 
-        $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
-                         GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),
-                         GRADE_TYPE_SCALE=>get_string('typescale', 'grades'),
-                         GRADE_TYPE_TEXT=>get_string('typetext', 'grades'));
+        // Manual grade items cannot have grade type GRADE_TYPE_NONE.
+        $options = array(GRADE_TYPE_VALUE => get_string('typevalue', 'grades'),
+                         GRADE_TYPE_SCALE => get_string('typescale', 'grades'),
+                         GRADE_TYPE_TEXT => get_string('typetext', 'grades'));
 
         $mform->addElement('select', 'gradetype', get_string('gradetype', 'grades'), $options);
         $mform->addHelpButton('gradetype', 'gradetype', 'grades');
