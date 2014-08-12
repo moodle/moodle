@@ -111,9 +111,9 @@ class memcache extends handler {
     }
 
     /**
-     * Checks for existing session with given id.
+     * Check the backend contains data for this session id.
      *
-     * Note: this verifies the storage backend only, not the actual session records.
+     * Note: this is intended to be called from manager::session_exists() only.
      *
      * @param string $sid PHP session ID
      * @return bool true if session found.

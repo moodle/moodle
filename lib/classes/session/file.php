@@ -76,9 +76,9 @@ class file extends handler {
     }
 
     /**
-     * Check for existing session with id $sid.
+     * Check the backend contains data for this session id.
      *
-     * Note: this verifies the storage backend only, not the actual session records.
+     * Note: this is intended to be called from manager::session_exists() only.
      *
      * @param string $sid
      * @return bool true if session found.

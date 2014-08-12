@@ -174,13 +174,47 @@ class core_session_manager_testcase extends advanced_testcase {
     }
 
     public function test_session_exists() {
-        global $CFG;
+        global $CFG, $DB;
         $this->resetAfterTest();
+
+        $this->assertFalse(\core\session\manager::session_exists('abc'));
+
+        $user = $this->getDataGenerator()->create_user();
+        $guest = guest_user();
 
         // The file handler is used by default, so let's fake the data somehow.
         $sid = md5('hokus');
         mkdir("$CFG->dataroot/sessions/", $CFG->directorypermissions, true);
         touch("$CFG->dataroot/sessions/sess_$sid");
+
+        $this->assertFalse(\core\session\manager::session_exists($sid));
+
+        $record = new stdClass();
+        $record->userid = 0;
+        $record->sid = $sid;
+        $record->timecreated = time();
+        $record->timemodified = $record->timecreated;
+        $record->id = $DB->insert_record('sessions', $record);
+
+        $this->assertTrue(\core\session\manager::session_exists($sid));
+
+        $record->timecreated = time() - $CFG->sessiontimeout - 100;
+        $record->timemodified = $record->timecreated + 10;
+        $DB->update_record('sessions', $record);
+
+        $this->assertTrue(\core\session\manager::session_exists($sid));
+
+        $record->userid = $guest->id;
+        $DB->update_record('sessions', $record);
+
+        $this->assertTrue(\core\session\manager::session_exists($sid));
+
+        $record->userid = $user->id;
+        $DB->update_record('sessions', $record);
+
+        $this->assertFalse(\core\session\manager::session_exists($sid));
+
+        $CFG->sessiontimeout = $CFG->sessiontimeout + 3000;
 
         $this->assertTrue(\core\session\manager::session_exists($sid));
     }
