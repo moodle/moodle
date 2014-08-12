@@ -1283,6 +1283,19 @@ class grade_item extends grade_object {
     }
 
     /**
+     * A grade item can return a more detailed description which will be added to the header of the column/row in some reports.
+     *
+     * @return string description
+     */
+    public function get_description() {
+        if ($this->is_course_item() || $this->is_category_item()) {
+            $categoryitem = $this->load_item_category();
+            return $categoryitem->get_description();
+        }
+        return '';
+    }
+
+    /**
      * Sets this item's categoryid. A generic method shared by objects that have a parent id of some kind.
      *
      * @param int $parentid The ID of the new parent

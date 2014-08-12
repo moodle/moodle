@@ -1239,10 +1239,11 @@ class grade_structure {
      * @param bool  $withlink Whether or not this header has a link
      * @param bool  $icon Whether or not to display an icon with this header
      * @param bool  $spacerifnone return spacer if no icon found
+     * @param bool  $withdescription Show description if defined by this item.
      *
      * @return string header
      */
-    public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false) {
+    public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false, $withdescription=false) {
         $header = '';
 
         if ($icon) {
@@ -1264,6 +1265,13 @@ class grade_structure {
                 $title = get_string('linktoactivity', 'grades', $a);
 
                 $header = html_writer::link($url, $header, array('title' => $title));
+            }
+        }
+
+        if ($withdescription) {
+            $desc = $element['object']->get_description();
+            if (!empty($desc)) {
+                $header .= '<div class="gradeitemdescription">' . s($desc) . '</div><div class="gradeitemdescriptionfiller"></div>';
             }
         }
 

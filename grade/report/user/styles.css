@@ -57,3 +57,6 @@
 
 table.user-grade td.feedbacktext {text-align:left;width: 40%;font-size: 0.8em;white-space:normal;}
 table.user-grade td.itemcenter {text-align:center;}
+.user-grade .gradeitemdescription { font-weight: normal; position: absolute; }
+.user-grade .gradeitemdescriptionfiller { clear: left; height: 1em; }
+.user-grade .gradeitemdescription { font-weight: normal; position: absolute;}

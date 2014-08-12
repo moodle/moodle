@@ -1602,6 +1602,31 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Describe the aggregation settings for this category so the reports make more sense.
+     *
+     * @return string description
+     */
+    public function get_description() {
+        $allhelp = array();
+        $aggrstrings = grade_helper::get_aggregation_strings();
+        $allhelp[] = $aggrstrings[$this->aggregation];
+
+        if ($this->droplow) {
+            $allhelp[] = get_string('droplowestvalues', 'grades', $this->droplow);
+        }
+        if ($this->keephigh) {
+            $allhelp[] = get_string('keephighestvalues', 'grades', $this->keephigh);
+        }
+        if (!$this->aggregateonlygraded) {
+            $allhelp[] = get_string('aggregatenotonlygraded', 'grades');
+        }
+        if ($this->aggregatesubcats) {
+            $allhelp[] = get_string('aggregatesubcatsshort', 'grades');
+        }
+        return implode('. ', $allhelp) . '.';
+    }
+
+    /**
      * Sets this category's parent id
      *
      * @param int $parentid The ID of the category that is the new parent to $this
