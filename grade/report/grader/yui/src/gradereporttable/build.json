@@ -4,6 +4,7 @@
         "moodle-gradereport_grader-gradereporttable": {
             "jsfiles": [
                 "gradereporttable.js",
+                "highlighter.js",
                 "floatingheaders.js"
             ]
         }

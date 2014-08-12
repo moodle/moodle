@@ -133,30 +133,11 @@ M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedbac
     this.table.all('tr').each(function(tr){
         // Check it is a user row
         if (tr.getAttribute('id').match(/^(fixed_)?user_(\d+)$/)) {
-            // Highlight rows
-            tr.all('th.cell').on('click', this.table_highlight_row, this, tr);
             // Display tooltips
             tr.all('td.cell').each(function(cell){
                 M.gradereport_grader.tooltip.attach(cell, this);
             }, this);
         }
-    }, this);
-
-    // If the fixed table exists then map those rows to highlight the
-    // grades table rows
-    var fixed = this.Y.one(id);
-    if (fixed) {
-        fixed.all('tr').each(function(tr) {
-            if (tr.getAttribute('id').match(/^fixed_user_(\d+)$/)) {
-                tr.all('th.cell').on('click', this.table_highlight_row, this, this.Y.one(tr.getAttribute('id').replace(/^fixed_/, '#')));
-            }
-        }, this);
-    }
-
-    // Highlight columns
-    this.table.all('.highlightable').each(function(cell){
-        cell.on('click', this.table_highlight_column, this, cell);
-        cell.removeClass('highlightable');
     }, this);
 
     // If ajax is enabled then initialise the ajax component
@@ -173,31 +154,6 @@ M.gradereport_grader.classes.report.prototype.users = [];             // Array c
 M.gradereport_grader.classes.report.prototype.feedback = [];          // Array containing feedback items
 M.gradereport_grader.classes.report.prototype.ajaxenabled = false;    // True is AJAX is enabled for the report
 M.gradereport_grader.classes.report.prototype.ajax = null;            // An instance of the ajax class or null
-/**
- * Highlights a row in the report
- *
- * @function
- * @param {Event} e
- * @param {Y.Node} tr The table row to highlight
- */
-M.gradereport_grader.classes.report.prototype.table_highlight_row = function (e, tr) {
-    tr.all('.cell').toggleClass('hmarked');
-};
-/**
- * Highlights a column in the table
- *
- * @function
- * @param {Event} e
- * @param {Y.Node} cell
- */
-M.gradereport_grader.classes.report.prototype.table_highlight_column = function(e, cell) {
-    // Among cell classes find the one that matches pattern / i[\d]+ /
-    var itemclass = (' '+cell.getAttribute('class')+' ').match(/ (i[\d]+) /);
-    if (itemclass) {
-        // Toggle class .vmarked for all cells in the table with the same class
-        this.table.all('.cell.'+itemclass[1]).toggleClass('vmarked');
-    }
-};
 /**
  * Builds an object containing information at the relevant cell given either
  * the cell to get information for or an array containing userid and itemid

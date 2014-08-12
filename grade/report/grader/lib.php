@@ -877,7 +877,6 @@ class grade_report_grader extends grade_report {
 
                 $itemcell->id = 'u'.$userid.'i'.$itemid;
                 $itemcell->attributes['data-itemid'] = $itemid;
-                $itemcell->attributes['data-uid'] = $userid;
 
                 // Get the decimal points preference for this item
                 $decimalpoints = $item->get_decimals();
