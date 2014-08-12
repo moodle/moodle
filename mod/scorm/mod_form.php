@@ -256,6 +256,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addHelpButton('auto', 'autocontinue', 'scorm');
         $mform->setDefault('auto', $cfgscorm->auto);
 
+        // Autocommit.
+        $mform->addElement('selectyesno', 'autocommit', get_string('autocommit', 'scorm'));
+        $mform->addHelpButton('autocommit', 'autocommit', 'scorm');
+        $mform->setDefault('autocommit', $cfgscorm->autocommit);
+
         // Hidden Settings.
         $mform->addElement('hidden', 'datadir', null);
         $mform->setType('datadir', PARAM_RAW);

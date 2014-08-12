@@ -62,5 +62,5 @@ if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sort
 }
 
 
-$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $scorm->auto, $CFG->wwwroot, $scorm->id, $scoid, $attempt,
-                                                         $mode, $currentorg, sesskey(), $id));
+$PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $scorm->auto, $CFG->wwwroot, $scorm->id, $scoid,
+                                                            $attempt, $mode, $currentorg, sesskey(), $id, $scorm->autocommit));

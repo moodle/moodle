@@ -53,7 +53,7 @@ if (intval(get_config("scorm", "scorm12standard"))) {
 
 $PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, $cmistring256, $cmistring4096,
                                                         scorm_debugging($scorm), $scorm->auto, $scorm->id, $CFG->wwwroot,
-                                                        sesskey(), $scoid, $attempt, $mode, $id, $currentorg));
+                                                        sesskey(), $scoid, $attempt, $mode, $id, $currentorg, $scorm->autocommit));
 
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {

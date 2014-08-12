@@ -111,6 +111,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('scorm/forcenewattempt',
         get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'), 0, $yesno));
 
+    $settings->add(new admin_setting_configselect('scorm/autocommit',
+    get_string('autocommit', 'scorm'), get_string('autocommitdesc', 'scorm'), 0, $yesno));
+
     $settings->add(new admin_setting_configselect('scorm/lastattemptlock',
         get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'), 0, $yesno));
 

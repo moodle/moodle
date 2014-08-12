@@ -16,7 +16,7 @@
 //
 // SCORM 1.2 API Implementation
 //
-function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg) {
+function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit) {
 
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a="+scormid+"&scoid="+scoid+"&attempt="+attempt+"&mode="+viewmode+"&currentorg="+currentorg+"&sesskey="+sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
@@ -353,6 +353,9 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
                             }
                             //Store data
                             if (errorCode == "0") {
+                                if (autocommit && !(SCORMapi1_2.timeout)) {
+                                    SCORMapi1_2.timeout = Y.later(60000, API, 'LMSCommit', [""], false);
+                                }
                                 if ((typeof eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range')) != "undefined") {
                                     range = eval('datamodel["'+scoid+'"]["'+elementmodel+'"].range');
                                     ranges = range.split('#');
@@ -402,6 +405,10 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
     }
 
     function LMSCommit (param) {
+        if (SCORMapi1_2.timeout) {
+            SCORMapi1_2.timeout.cancel();
+            SCORMapi1_2.timeout = null;
+        }
         errorCode = "0";
         if (param == "") {
             if (Initialized) {
@@ -653,6 +660,6 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
 
 M.scorm_api = {};
 
-M.scorm_api.init = function(Y, def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg) {
-    window.API = new SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg);
+M.scorm_api.init = function(Y, def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit) {
+    window.API = new SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit);
 }
