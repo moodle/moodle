@@ -271,7 +271,7 @@ $CFG->admin = 'admin';
 //      $CFG->reverseproxy = true;
 //
 // Enable when using external SSL appliance for performance reasons.
-// Please note that site may be accessible via https: or https:, but not both!
+// Please note that site may be accessible via http: or https:, but not both!
 //      $CFG->sslproxy = true;
 //
 // This setting will cause the userdate() function not to fix %d in
