@@ -221,7 +221,7 @@ if ($usernew = $userform->get_data()) {
         if (!message_set_default_message_preferences($usernew)) {
             print_error('cannotsavemessageprefs', 'message');
         }
-        $event = \core\event\user_created::create(array('context'=>$systemcontext, 'relateduserid' => $USER->id, 'userid' => $usernew->id));
+        $event = \core\event\user_created::create_from_userid($usernew->id);
         $event->trigger();
     } else {
         $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
