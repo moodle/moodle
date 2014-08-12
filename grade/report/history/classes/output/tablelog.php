@@ -307,11 +307,7 @@ class tablelog extends \table_sql implements \renderable {
             $filter .= " AND ggh.usermodified = :grader";
             $params += array('grader' => $this->filters->grader);
         }
-        if (!empty($this->filters->revisedonly)) {
-            $filter .= " AND (ggh.finalgrade != ggh2.finalgrade
-                             OR (ggh2.finalgrade IS NULL AND ggh.finalgrade IS NOT NULL)
-                             OR (ggh2.finalgrade IS NOT NULL AND ggh.finalgrade IS NULL))";
-        }
+
         return array($filter, $params);
     }
 
@@ -323,7 +319,7 @@ class tablelog extends \table_sql implements \renderable {
      * @return array containing sql to use and an array of params.
      */
     protected function get_sql_and_params($count = false) {
-        $fields = 'ggh.timemodified, ggh.itemid, ggh.userid, ggh.finalgrade, ggh.usermodified,
+        $fields = 'ggh.id, ggh.timemodified, ggh.itemid, ggh.userid, ggh.finalgrade, ggh.usermodified,
                    ggh.source, ggh.overridden, ggh.locked, ggh.excluded, ggh.feedback, ggh.feedbackformat,
                    gi.itemtype, gi.itemmodule, gi.iteminstance, gi.itemnumber, ';
 
@@ -340,41 +336,56 @@ class tablelog extends \table_sql implements \renderable {
         $fields .= get_all_user_name_fields(true, 'ug', '', 'grader');
         $groupby .= get_all_user_name_fields(true, 'ug');
 
-        if (!$count) {
-            // Max removes duplicates. Aliased and conditional fields added here.
-            $select = 'MAX(ggh.id) AS id, ' . $fields . ',
-                       ggh2.finalgrade AS prevgrade,
-                       CASE WHEN gi.itemname IS NULL THEN gi.itemtype ELSE gi.itemname END AS itemname';
+        // Filtering on revised grades only.
+        $revisedonly = !empty($this->filters->revisedonly);
+
+        if ($count && !$revisedonly) {
+            // We can only directly use count when not using the filter revised only.
+            $select = "COUNT(1)";
         } else {
-            $select = 'COUNT(1)';
+            // Fetching the previous grade. We use MAX() to ensure that we only get one result if
+            // more than one histories happened at the same second.
+            $prevgrade = "SELECT MAX(finalgrade)
+                            FROM {grade_grades_history} h
+                           WHERE h.itemid = ggh.itemid
+                             AND h.userid = ggh.userid
+                             AND h.timemodified < ggh.timemodified
+                             AND NOT EXISTS (
+                              SELECT 1
+                                FROM {grade_grades_history} h2
+                               WHERE h2.itemid = ggh.itemid
+                                 AND h2.userid = ggh.userid
+                                 AND h2.timemodified < ggh.timemodified
+                                 AND h.timemodified < h2.timemodified)";
+
+            $select = "$fields, ($prevgrade) AS prevgrade,
+                      CASE WHEN gi.itemname IS NULL THEN gi.itemtype ELSE gi.itemname END AS itemname";
         }
 
         list($where, $params) = $this->get_filters_sql_and_params();
 
-        // Group by removes duplicates, non-aliased fields added here.
-        $groupby = 'GROUP BY ' . $groupby . ', ggh2.finalgrade,  gi.itemname';
+        $sql =  "SELECT $select
+                   FROM {grade_grades_history} ggh
+              LEFT JOIN {grade_items} gi ON gi.id = ggh.itemid
+                   JOIN {user} u ON u.id = ggh.userid
+                   JOIN {user} ug ON ug.id = ggh.usermodified
+                  WHERE $where";
 
-        $sql = "SELECT $select
-                FROM {grade_grades_history} ggh
-                LEFT JOIN {grade_items} gi ON gi.id = ggh.itemid
-                LEFT JOIN {grade_grades_history} ggh2 ON ggh2.id = (SELECT MAX(h.id)
-                                                                    FROM {grade_grades_history} h
-                                                                    WHERE h.itemid = ggh.itemid
-                                                                        AND h.userid = ggh.userid
-                                                                        AND (h.id < ggh.id))
-                JOIN {user} u ON u.id = ggh.userid
-                JOIN {user} ug ON ug.id = ggh.usermodified";
-        $sql .= " WHERE $where";
-        $sql .= " $groupby";
+        // As prevgrade is a dynamic field, we need to wrap the query. This is the only filtering
+        // that should be defined outside the method self::get_filters_sql_and_params().
+        if ($revisedonly) {
+            $allorcount = $count ? 'COUNT(1)' : '*';
+            $sql = "SELECT $allorcount FROM ($sql) pg
+                     WHERE pg.finalgrade != pg.prevgrade
+                        OR (pg.prevgrade IS NULL AND pg.finalgrade IS NOT NULL)
+                        OR (pg.prevgrade IS NOT NULL AND pg.finalgrade IS NULL)";
+        }
 
         // Add order by if needed.
         if (!$count && $this->get_sql_sort()) {
             $sql .= " ORDER BY " . $this->get_sql_sort();
         }
 
-        if ($count) {
-            return array("SELECT COUNT(1) FROM ($sql) res", $params);
-        }
         return array($sql, $params);
     }
 

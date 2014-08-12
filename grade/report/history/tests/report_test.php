@@ -59,6 +59,7 @@ class gradereport_history_report_testcase extends advanced_testcase {
         $c1m2 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
         $c1m3 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
         $c2m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c2));
+        $c2m2 = $this->getDataGenerator()->create_module('assign', array('course' => $c2));
 
         // Creating fake history data.
         $giparams = array('itemtype' => 'mod', 'itemmodule' => 'assign');
@@ -91,12 +92,28 @@ class gradereport_history_report_testcase extends advanced_testcase {
             'usermodified' => $grader2->id));
 
         // Histories where grades have not been revised..
-        $grades['c2m1u5'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u5->id,
+        $grades['c2m1u5a'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u5->id,
             'timemodified' => time() - 60));
-        $grades['c2m1u5'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u5->id,
+        $grades['c2m1u5b'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u5->id,
             'timemodified' => time()));
-        $grades['c2m1u5'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u5->id,
+        $grades['c2m1u5c'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u5->id,
             'timemodified' => time() + 60));
+
+        // Histories where grades have been revised and not revised.
+        $now = time();
+        $gi = grade_item::fetch($giparams + array('iteminstance' => $c2m2->id));
+        $grades['c2m2u1a'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
+            'timemodified' => $now - 60, 'finalgrade' => 50));
+        $grades['c2m2u1b'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
+            'timemodified' => $now - 50, 'finalgrade' => 50));      // Not revised.
+        $grades['c2m2u1c'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
+            'timemodified' => $now, 'finalgrade' => 75));
+        $grades['c2m2u1d'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
+            'timemodified' => $now + 10, 'finalgrade' => 75));      // Not revised.
+        $grades['c2m2u1e'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
+            'timemodified' => $now + 60, 'finalgrade' => 25));
+        $grades['c2m2u1f'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
+            'timemodified' => $now + 70, 'finalgrade' => 25));      // Not revised.
 
         // TODO MDL-46737 Handle deleted/non-existing grade items.
         // Histories with missing grade items, considered as deleted.
@@ -105,7 +122,7 @@ class gradereport_history_report_testcase extends advanced_testcase {
 
         // Basic filtering based on course id.
         $this->assertEquals(8, $this->get_tablelog_results($c1ctx, array(), true));
-        $this->assertEquals(7, $this->get_tablelog_results($c2ctx, array(), true));
+        $this->assertEquals(13, $this->get_tablelog_results($c2ctx, array(), true));
 
         // Filtering on 1 user.
         $this->assertEquals(3, $this->get_tablelog_results($c1ctx, array('userids' => $u1->id), true));
@@ -135,6 +152,17 @@ class gradereport_history_report_testcase extends advanced_testcase {
         // Filtering based on revised only.
         $this->assertEquals(3, $this->get_tablelog_results($c2ctx, array('userids' => $u5->id), true));
         $this->assertEquals(1, $this->get_tablelog_results($c2ctx, array('userids' => $u5->id, 'revisedonly' => true), true));
+
+        // More filtering based on revised only.
+        $gi = grade_item::fetch($giparams + array('iteminstance' => $c2m2->id));
+        $this->assertEquals(6, $this->get_tablelog_results($c2ctx, array('userids' => $u1->id, 'itemid' => $gi->id), true));
+        $results = $this->get_tablelog_results($c2ctx, array('userids' => $u1->id, 'itemid' => $gi->id, 'revisedonly' => true));
+        $this->assertGradeHistoryIds(array($grades['c2m2u1a']->id, $grades['c2m2u1c']->id, $grades['c2m2u1e']->id), $results);
+
+        // Checking the value of the previous grade.
+        $this->assertEquals(null, $results[$grades['c2m2u1a']->id]->prevgrade);
+        $this->assertEquals($grades['c2m2u1a']->finalgrade, $results[$grades['c2m2u1c']->id]->prevgrade);
+        $this->assertEquals($grades['c2m2u1c']->finalgrade, $results[$grades['c2m2u1e']->id]->prevgrade);
     }
 
     /**
