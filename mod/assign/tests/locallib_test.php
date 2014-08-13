@@ -1777,5 +1777,28 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $plugin = $assign->get_feedback_plugin_by_type('comments');
         $this->assertEquals(1, $plugin->is_enabled('enabled'));
     }
+
+    /**
+     * Testing if gradebook feedback plugin is enabled.
+     */
+    public function test_is_gradebook_feedback_enabled() {
+        $adminconfig = get_config('assign');
+        $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
+
+        // Create assignment with gradebook feedback enabled and grade = 0.
+        $assign = $this->create_instance(array($gradebookplugin . '_enabled' => 1, 'grades' => 0));
+
+        // Get gradebook feedback plugin.
+        $gradebookplugintype = str_replace('assignfeedback_', '', $gradebookplugin);
+        $plugin = $assign->get_feedback_plugin_by_type($gradebookplugintype);
+        $this->assertEquals(1, $plugin->is_enabled('enabled'));
+        $this->assertEquals(1, $assign->is_gradebook_feedback_enabled());
+
+        // Create assignment with gradebook feedback disabled and grade = 0.
+        $assign = $this->create_instance(array($gradebookplugin . '_enabled' => 0, 'grades' => 0));
+        $plugin = $assign->get_feedback_plugin_by_type($gradebookplugintype);
+        $this->assertEquals(0, $plugin->is_enabled('enabled'));
+    }
+
 }
 
