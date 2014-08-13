@@ -26,22 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtextarea(
+$settings->add(new admin_setting_configtextarea(
         'cachestore_memcache/testservers',
         new lang_string('testservers', 'cachestore_memcache'),
         new lang_string('testservers_desc', 'cachestore_memcache'),
         '', PARAM_RAW, 60, 3));
-
-    // This is an ugly hack, but the env page skips the warning if server not set...
-    require_once("$CFG->libdir/environmentlib.php");
-    $result = new environment_results('custom_check');
-    $result = cachestore_memcache_environment_check::check_memcache_version($result);
-    if ($result and $feedbackstr = $result->getFeedbackStr()) {
-        $settings->add(new admin_setting_heading(
-            'cachestoremucwarning',
-            new lang_string('warning'),
-            $result->strToReport($feedbackstr, 'statuswarning')));
-    }
-    unset($result);
-}
