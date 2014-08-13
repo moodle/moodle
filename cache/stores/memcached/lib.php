@@ -491,24 +491,24 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         }
 
         $clustered = false;
+        $setservers = array();
         if (isset($data->clustered)) {
             $clustered = true;
-        }
 
-        $lines = explode("\n", $data->setservers);
-        $setservers = array();
-        foreach ($lines as $line) {
-            // Trim surrounding colons and default whitespace.
-            $line = trim(trim($line), ":");
-            if ($line === '') {
-                continue;
+            $lines = explode("\n", $data->setservers);
+            foreach ($lines as $line) {
+                // Trim surrounding colons and default whitespace.
+                $line = trim(trim($line), ":");
+                if ($line === '') {
+                    continue;
+                }
+                $setserver = explode(':', $line, 3);
+                // We don't use weights, so display a debug message.
+                if (count($setserver) > 2) {
+                    debugging('Memcached Set Server '.$setserver[0].' has too many parameters.');
+                }
+                $setservers[] = $setserver;
             }
-            $setserver = explode(':', $line, 3);
-            // We don't use weights, so display a debug message.
-            if (count($setserver) > 2) {
-                debugging('Memcached Set Server '.$setserver[0].' has too many parameters.');
-            }
-            $setservers[] = $setserver;
         }
 
         return array(
