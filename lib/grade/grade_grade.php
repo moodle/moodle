@@ -50,7 +50,7 @@ class grade_grade extends grade_object {
     public $required_fields = array('id', 'itemid', 'userid', 'rawgrade', 'rawgrademax', 'rawgrademin',
                                  'rawscaleid', 'usermodified', 'finalgrade', 'hidden', 'locked',
                                  'locktime', 'exported', 'overridden', 'excluded', 'timecreated',
-                                 'timemodified', 'usedinaggregation');
+                                 'timemodified', 'aggregationstatus', 'aggregationweight');
 
     /**
      * Array of optional fields with default values (these should match db defaults)
@@ -161,11 +161,16 @@ class grade_grade extends grade_object {
     public $timemodified = null;
 
     /**
-     * Used in aggregation flag. Can be one of 'unknown', 'dropped', 'novalue' or a specific weighting.
-     * @var string $usedinaggregation
+     * Aggregation status flag. Can be one of 'unknown', 'dropped', 'novalue' or 'used'.
+     * @var string $aggregationstatus
      */
-    public $usedinaggregation = 'unknown';
+    public $aggregationstatus = 'unknown';
 
+    /**
+     * Aggregation weight is the specific weight used in the aggregation calculation for this grade.
+     * @var float $aggregationweight
+     */
+    public $aggregationweight = null;
 
     /**
      * Returns array of grades for given grade_item+users
@@ -293,22 +298,42 @@ class grade_grade extends grade_object {
     }
 
     /**
+     * Returns the weight this grade contributed to the aggregated grade
+     *
+     * @return float|null
+     */
+    public function get_aggregationweight() {
+        return $this->aggregationweight;
+    }
+
+    /**
+     * Set aggregationweight.
+     *
+     * @param float $aggregationweight
+     * @return void
+     */
+    public function set_aggregationweight($aggregationweight) {
+        $this->aggregationweight = $aggregationweight;
+        $this->update();
+    }
+
+    /**
      * Returns the info on how this value was used in the aggregated grade
      *
      * @return string One of 'dropped', 'excluded', 'novalue' or a specific weighting
      */
-    public function get_usedinaggregation() {
-        return $this->usedinaggregation;
+    public function get_aggregationstatus() {
+        return $this->aggregationstatus;
     }
 
     /**
-     * Set usedinaggregation flag
+     * Set aggregationstatus flag
      *
-     * @param string $usedinaggregation
+     * @param string $aggregationstatus
      * @return void
      */
-    public function set_usedinaggregation($usedinaggregation) {
-        $this->usedinaggregation = $usedinaggregation;
+    public function set_aggregationstatus($aggregationstatus) {
+        $this->aggregationstatus = $aggregationstatus;
         $this->update();
     }
 
@@ -991,13 +1016,13 @@ class grade_grade extends grade_object {
 
         // Is it dropped?
         if ($hint == '') {
-            $aggr = $this->get_usedinaggregation();
+            $aggr = $this->get_aggregationstatus();
             if ($aggr == 'dropped') {
                 $hint = get_string('dropped', 'grades');
-            } else if ($aggr == 'novalue') {
-                $hint = '-';
+            } else if ($aggr == 'used') {
+                $hint = $this->get_aggregationweight();
             } else if ($aggr != 'unknown') {
-                $hint = $aggr;
+                $hint = '-';
             }
         }
 

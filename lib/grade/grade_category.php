@@ -675,14 +675,22 @@ class grade_category extends grade_object {
         if (!empty($usedweights)) {
             // The usedweights items are updated individually to record the weights.
             foreach ($usedweights as $gradeitemid => $contribution) {
-                // Convert contribution to a 4 digit integer so there are no localization problems.
-                $contribution = intval($contribution * 10000);
                 $DB->set_field_select('grade_grades',
-                                      'usedinaggregation',
+                                      'aggregationweight',
                                       $contribution,
                                       "itemid = :itemid AND userid = :userid",
                                       array('itemid'=>$gradeitemid, 'userid'=>$userid));
             }
+
+            // Now set the status flag for all these weights.
+            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($usedweights), SQL_PARAMS_NAMED, 'g');
+            $itemlist['userid'] = $userid;
+
+            $DB->set_field_select('grade_grades',
+                                  'aggregationstatus',
+                                  'used',
+                                  "itemid $itemsql AND userid = :userid",
+                                  $itemlist);
         }
 
         // No value.
@@ -692,7 +700,7 @@ class grade_category extends grade_object {
             $itemlist['userid'] = $userid;
 
             $DB->set_field_select('grade_grades',
-                                  'usedinaggregation',
+                                  'aggregationstatus',
                                   'novalue',
                                   "itemid $itemsql AND userid = :userid",
                                   $itemlist);
@@ -705,7 +713,7 @@ class grade_category extends grade_object {
             $itemlist['userid'] = $userid;
 
             $DB->set_field_select('grade_grades',
-                                  'usedinaggregation',
+                                  'aggregationstatus',
                                   'dropped',
                                   "itemid $itemsql AND userid = :userid",
                                   $itemlist);

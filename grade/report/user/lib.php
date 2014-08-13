@@ -474,8 +474,8 @@ class grade_report_user extends grade_report {
                     $hint = $grade_grade->get_aggregation_hint($grade_object);
                     if ($hint) {
                         // This obliterates the weight because it provides a more informative description.
-                        if (intval($hint)) {
-                            $hint = format_float(intval($hint) / 100.0, 2) . ' %';
+                        if (is_numeric($hint)) {
+                            $hint = format_float($hint * 100.0, 2) . ' %';
                         }
                         $data['weight']['content'] = $hint;
                     }
@@ -616,7 +616,7 @@ class grade_report_user extends grade_report {
                         $hint = $grade_grade->get_aggregation_hint($grade_object);
                         if ($hint && is_numeric($hint)) {
                             $me = $grade_grade->grade_item;
-                            $percentoftotal = intval($hint) / 10000.0;
+                            $percentoftotal = $hint;
                             $validpercent = true;
                             $limit = 0;
                             $parent = null;
@@ -641,7 +641,7 @@ class grade_report_user extends grade_report {
                                     $validpercent = $parentgradeitem->is_course_item();
                                     continue;
                                 }
-                                $thispercent = intval($hint) / 10000.0;
+                                $thispercent = $hint;
                                 $percentoftotal *= $thispercent;
                                 $limit++;
                                 if ($limit > 20) {
