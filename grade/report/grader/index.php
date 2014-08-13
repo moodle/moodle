@@ -125,14 +125,6 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('pluginname', 'gradereport_grader');
 
-$event = \gradereport_grader\event\report_viewed::create(
-    array(
-        'context' => $context,
-        'courseid' => $courseid,
-    )
-);
-$event->trigger();
-
 // Print header
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 
@@ -205,4 +197,13 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
 if (!empty($studentsperpage) && $studentsperpage >= 20) {
     echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
+
+$event = \gradereport_grader\event\grade_report_viewed::create(
+    array(
+        'context' => $context,
+        'courseid' => $courseid,
+    )
+);
+$event->trigger();
+
 echo $OUTPUT->footer();

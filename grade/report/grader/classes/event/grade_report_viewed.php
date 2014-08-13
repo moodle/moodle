@@ -15,26 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * User report viewed event.
+ * Grader report viewed event.
  *
- * @package    gradereport_user
+ * @package    gradereport_grader
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace gradereport_user\event;
+namespace gradereport_grader\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * User report viewed event class.
+ * Grader report viewed event class.
  *
- * @package    gradereport_user
+ * @package    gradereport_grader
  * @since      Moodle 2.8
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed extends \core\event\grade_report_viewed {
+class grade_report_viewed extends \core\event\grade_report_viewed {
 
     /**
      * Returns localised general event name.
@@ -42,19 +42,6 @@ class report_viewed extends \core\event\grade_report_viewed {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventreportviewed', 'gradereport_user');
-    }
-
-    /**
-     * Custom validation.
-     *
-     * Throw \coding_exception notice in case of any problems.
-     */
-    protected function validate_data() {
-        parent::validate_data();
-
-        if (!isset($this->relateduserid)) {
-            throw new \coding_exception('The \'relateduserid\' value must be set.');
-        }
+        return get_string('eventgradereportviewed', 'gradereport_grader');
     }
 }

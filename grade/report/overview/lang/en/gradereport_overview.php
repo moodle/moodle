@@ -22,6 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['eventreportviewed'] = 'Overview report viewed';
+$string['eventgradereportviewed'] = 'Grade overview report viewed';
 $string['pluginname'] = 'Overview report';
 $string['overview:view'] = 'View the overview report';

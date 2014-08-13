@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_viewed extends \core\event\grade_report_viewed {
+class grade_report_viewed extends \core\event\grade_report_viewed {
 
     /**
      * Returns localised general event name.
@@ -42,7 +42,7 @@ class report_viewed extends \core\event\grade_report_viewed {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventreportviewed', 'gradereport_overview');
+        return get_string('eventgradereportviewed', 'gradereport_overview');
     }
 
     /**
