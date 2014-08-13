@@ -754,7 +754,13 @@ class OAuthUtil {
         if (function_exists('apache_request_headers')) {
             // we need this to get the actual Authorization: header
             // because apache tends to tell us it doesn't exist
-            return apache_request_headers();
+            $in = apache_request_headers();
+            $out = array();
+            foreach ($in as $key => $value) {
+                $key = str_replace(" ", "-", ucwords(strtolower(str_replace("-", " ", $key))));
+                $out[$key] = $value;
+            }
+            return $out;
         }
         // otherwise we don't have apache and are just going to have to hope
         // that $_SERVER actually contains what we need
