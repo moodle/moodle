@@ -110,7 +110,7 @@ foreach ($allowedusers as $alloweduser) {
 if (!empty($courseid)) {
     if (empty($dodownload)) {
         // Get the events from this course and display them as a table.
-        $events = $DB->get_records('courseclassroom', array('course' => $courseid));
+        $events = $DB->get_records('trainingevent', array('course' => $courseid));
         foreach ($events as $event) {
             $eventtable = new html_table();
             $location = $DB->get_record('classroom', array('id' => $event->classroomid));
@@ -135,8 +135,8 @@ if (!empty($courseid)) {
                                            get_string('department', 'block_iomad_company_admin'),
                                            get_string('email'));
 
-            if ($users = $DB->get_records_sql('SELECT userid AS id FROM {courseclassroom_users}
-                                               WHERE courseclassroomid='.$event->id.'
+            if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
+                                               WHERE trainingeventid='.$event->id.'
                                                AND userid IN ('.$allowedlist.')')) {
                 foreach ($users as $user) {
                     $fulluserdata = $DB->get_record('user', array('id' => $user->id));
@@ -155,7 +155,7 @@ if (!empty($courseid)) {
             echo html_writer::table($attendancetable);
         }
     } else {
-        if (!$event = $DB->get_record('courseclassroom', array('id' => $dodownload))) {
+        if (!$event = $DB->get_record('trainingevent', array('id' => $dodownload))) {
             die;
         }
         $location = $DB->get_record('classroom', array('id' => $event->classroomid));
@@ -169,8 +169,8 @@ if (!empty($courseid)) {
         $locationinfo .= " $location->country, $location->postcode";
         echo "\"$event->name, $locationinfo\"\n";
         echo "\"".get_string('fullname')."\",\"". get_string('email')."\"\n";
-        if ($users = $DB->get_records_sql('SELECT userid AS id FROM {courseclassroom_users}
-                                           WHERE courseclassroomid='.$event->id.'
+        if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
+                                           WHERE trainingeventid='.$event->id.'
                                            AND userid IN ('.$allowedlist.')')) {
             foreach ($users as $user) {
                 $fulluserdata = $DB->get_record('user', array('id' => $user->id));
