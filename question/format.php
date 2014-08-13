@@ -426,7 +426,7 @@ class qformat_default {
 
             if (!empty($CFG->usetags) && isset($question->tags)) {
                 require_once($CFG->dirroot . '/tag/lib.php');
-                tag_set('question', $question->id, $question->tags, 'core_question', $question->context);
+                tag_set('question', $question->id, $question->tags, 'core_question', $question->context->id);
             }
 
             if (!empty($result->error)) {
