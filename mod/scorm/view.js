@@ -82,8 +82,14 @@ M.mod_scormform.init = function(Y) {
     }
 
     var setlaunchoptions = function() {
-        var mode = Y.one('#scormviewform input[name=mode]:checked').get('value');
-        launch_url += '&mode=' + (mode ? mode : 'normal');
+        var mode = Y.one('#scormviewform input[name=mode]:checked');
+        if (mode) {
+            var modevalue = mode.get('value');
+            launch_url += '&mode=' + (modevalue ? modevalue : 'normal');
+        } else {
+            launch_url += '&mode=normal';
+        }
+
         var newattempt = Y.one('#scormviewform #a');
         launch_url += (newattempt && newattempt.get('checked') ? '&newattempt=on' : '');
     }
