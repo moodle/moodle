@@ -8,6 +8,7 @@ information provided here is intended especially for theme designer.
 * The following render methods were renamed, if you have overridden any of these you will need to update your renderer:
   - report_log_renderer::render_report_log_renderable         => report_log_renderer::render_report_log
   - report_loglive_renderer::render_report_loglive_renderable => report_loglive_renderer::render_report_log
+* On calendar view screen the course selector and new event button have been swapped, custom CSS for .path-calendar might be affected.
 
 === 2.7 ===
 
