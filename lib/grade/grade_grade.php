@@ -977,9 +977,12 @@ class grade_grade extends grade_object {
             $item = $this->grade_item;
 
             if (!$item->is_course_item()) {
-                $parent_category = $item->get_parent_category();
-                $parent_category->apply_forced_settings();
-                if ($parent_category->is_extracredit_used() && ($item->aggregationcoef > 0)) {
+                $parentcategory = $item->get_parent_category();
+                // This is needed because get_parent_category() does not do the "parent" bit very well.
+                if ($item->is_category_item()) {
+                    $parentcategory = $parentcategory->load_parent_category();
+                }
+                if ($parentcategory->is_extracredit_used() && ($item->aggregationcoef > 0)) {
                     $hint = get_string('aggregationcoefextra', 'grades');
                 }
             }

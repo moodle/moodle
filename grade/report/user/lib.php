@@ -130,6 +130,12 @@ class grade_report_user extends grade_report {
     public $showlettergrade = false;
 
     /**
+     * Show the calculated contribution to the course total column.
+     * @var bool
+     */
+    public $showcontributiontocoursetotal = false;
+
+    /**
      * Show average grades in the report, default false.
      * @var false
      */
@@ -191,6 +197,7 @@ class grade_report_user extends grade_report {
         $this->showrange       = grade_get_setting($this->courseid, 'report_user_showrange',       !empty($CFG->grade_report_user_showrange));
         $this->showfeedback    = grade_get_setting($this->courseid, 'report_user_showfeedback',    !empty($CFG->grade_report_user_showfeedback));
         $this->showweight      = grade_get_setting($this->courseid, 'report_user_showweight',      !empty($CFG->grade_report_user_showweight));
+        $this->showcontributiontocoursetotal      = grade_get_setting($this->courseid, 'report_user_showcontributiontocoursetotal',      !empty($CFG->grade_report_user_showcontributiontocoursetotal));
         $this->showlettergrade = grade_get_setting($this->courseid, 'report_user_showlettergrade', !empty($CFG->grade_report_user_showlettergrade));
         $this->showaverage     = grade_get_setting($this->courseid, 'report_user_showaverage',     !empty($CFG->grade_report_user_showaverage));
 
@@ -327,6 +334,11 @@ class grade_report_user extends grade_report {
             $this->tablecolumns[] = 'feedback';
             $this->tableheaders[] = $this->get_lang_string('feedback', 'grades');
         }
+
+        if ($this->showcontributiontocoursetotal) {
+            $this->tablecolumns[] = 'contributiontocoursetotal';
+            $this->tableheaders[] = $this->get_lang_string('contributiontocoursetotal', 'grades');
+        }
     }
 
     function fill_table() {
@@ -459,13 +471,13 @@ class grade_report_user extends grade_report {
                     $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
 
-                    $hints = $grade_grade->get_aggregation_hint($grade_object);
-                    if ($hints) {
+                    $hint = $grade_grade->get_aggregation_hint($grade_object);
+                    if ($hint) {
                         // This obliterates the weight because it provides a more informative description.
-                        if (intval($hints)) {
-                            $hints = format_float(intval($hints) / 100.0, 2) . ' %';
+                        if (intval($hint)) {
+                            $hint = format_float(intval($hint) / 100.0, 2) . ' %';
                         }
-                        $data['weight']['content'] = $hints;
+                        $data['weight']['content'] = $hint;
                     }
                 }
 
@@ -593,6 +605,54 @@ class grade_report_user extends grade_report {
                         $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
                     }
                     $data['feedback']['headers'] = "$header_cat $header_row feedback";
+                }
+                // Contribution to the course total column.
+                if ($this->showcontributiontocoursetotal) {
+                    $data['contributiontocoursetotal']['class'] = $class;
+                    $data['contributiontocoursetotal']['content'] = '-';
+                    $data['contributiontocoursetotal']['headers'] = "$header_cat $header_row contributiontocoursetotal";
+
+                    if (($type != 'categoryitem') && ($type != 'courseitem')) {
+                        $hint = $grade_grade->get_aggregation_hint($grade_object);
+                        if ($hint && is_numeric($hint)) {
+                            $me = $grade_grade->grade_item;
+                            $percentoftotal = intval($hint) / 10000.0;
+                            $validpercent = true;
+                            $limit = 0;
+                            $parent = null;
+                            while ((!$me->is_course_item()) && ($validpercent)) {
+                                // The parent of a category grade item is itself (yes - how odd).
+                                // This means we need to use the parent of the grade_category if it exists.
+                                if (!empty($parent)) {
+                                    $parent = $parent->get_parent_category();
+                                } else {
+                                    $parent = $me->get_parent_category();
+                                }
+                                $parentgradeitem = $parent->load_grade_item();
+                                $parentgradegrade = grade_grade::fetch(array('itemid'=>$parentgradeitem->id, 'userid'=>$this->user->id));
+                                if (!$parentgradegrade) {
+                                    $validpercent = false;
+                                    continue;
+                                }
+                                $hint = $parentgradegrade->get_aggregation_hint($parentgradeitem);
+                                $me = $parentgradeitem;
+                                if (!is_numeric($hint)) {
+                                    // It's OK for the course grade item to not have a usedinaggregation value.
+                                    $validpercent = $parentgradeitem->is_course_item();
+                                    continue;
+                                }
+                                $thispercent = intval($hint) / 10000.0;
+                                $percentoftotal *= $thispercent;
+                                $limit++;
+                                if ($limit > 20) {
+                                    die();
+                                }
+                            }
+                            if ($validpercent) {
+                                $data['contributiontocoursetotal']['content'] = format_float($percentoftotal * 100.0, 2) . ' %';
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -909,6 +969,14 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showlettergrade', get_string('showlettergrade', 'grades'), $options);
+    if (empty($CFG->grade_report_user_showcontributiontocoursetotal)) {
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[$CFG->grade_report_user_showcontributiontocoursetotal]);
+    }
+
+    $mform->addElement('select', 'report_user_showcontributiontocoursetotal', get_string('showcontributiontocoursetotal', 'grades'), $options);
+    $mform->addHelpButton('report_user_showcontributiontocoursetotal', 'showcontributiontocoursetotal', 'grades');
 
     if (empty($CFG->grade_report_user_showrange)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
@@ -952,6 +1020,7 @@ function grade_report_user_settings_definition(&$mform) {
 
     $mform->addElement('select', 'report_user_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'), $options);
     $mform->addHelpButton('report_user_showtotalsifcontainhidden', 'hidetotalifhiddenitems', 'grades');
+
 }
 
 /**

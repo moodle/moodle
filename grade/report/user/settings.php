@@ -47,4 +47,5 @@ if ($ADMIN->fulltree) {
                                                       array(GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN => get_string('hide'),
                                                             GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
                                                             GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades'))));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showcontributiontocoursetotal', get_string('showcontributiontocoursetotal', 'grades'), get_string('showcontributiontocoursetotal_help', 'grades'), 0));
 }
