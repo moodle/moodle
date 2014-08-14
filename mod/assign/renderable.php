@@ -758,26 +758,6 @@ class assign_files implements renderable {
 
         }
 
-        // Plagiarism check if it is enabled.
-        $output = '';
-        if (!empty($CFG->enableplagiarism)) {
-            require_once($CFG->libdir . '/plagiarismlib.php');
-
-            // For plagiarism_get_links.
-            $assignment = new assign($this->context, null, null);
-            foreach ($files as $file) {
-
-                $linkparams = array('userid' => $sid,
-                                    'file' => $file,
-                                    'cmid' => $this->cm->id,
-                                    'course' => $this->course,
-                                    'assignment' => $assignment->get_instance());
-                $output .= plagiarism_get_links($linkparams);
-
-                $output .= '<br />';
-            }
-        }
-
         $this->preprocess($this->dir, $filearea, $component);
     }
 
