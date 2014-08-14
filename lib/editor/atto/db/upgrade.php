@@ -53,7 +53,7 @@ function xmldb_editor_atto_upgrade($oldversion) {
 
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion < 2014070301) {
+    if ($oldversion < 2014081400) {
 
         // Define table editor_atto_autosave to be created.
         $table = new xmldb_table('editor_atto_autosave');
@@ -78,7 +78,7 @@ function xmldb_editor_atto_upgrade($oldversion) {
         }
 
         // Atto savepoint reached.
-        upgrade_plugin_savepoint(true, 2014070301, 'editor', 'atto');
+        upgrade_plugin_savepoint(true, 2014081400, 'editor', 'atto');
     }
 
     return true;
