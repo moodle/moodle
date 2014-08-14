@@ -169,7 +169,8 @@ class atto_texteditor extends texteditor {
             'language' => $lang,
             'directionality' => $directionality,
             'filepickeroptions' => array(),
-            'plugins' => $plugins
+            'plugins' => $plugins,
+            'pageHash' => sha1($PAGE->url)
         );
         if ($fpoptions) {
             $params['filepickeroptions'] = $fpoptions;

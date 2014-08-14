@@ -62,7 +62,7 @@ function xmldb_editor_atto_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('elementid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('pagedomid', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('pagehash', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('drafttext', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('draftid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
@@ -70,7 +70,7 @@ function xmldb_editor_atto_upgrade($oldversion) {
 
         // Adding keys to table editor_atto_autosave.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('autosave_uniq_key', XMLDB_KEY_UNIQUE, array('elementid', 'contextid', 'userid', 'pagedomid'));
+        $table->add_key('autosave_uniq_key', XMLDB_KEY_UNIQUE, array('elementid', 'contextid', 'userid', 'pagehash'));
 
         // Conditionally launch create table for editor_atto_autosave.
         if (!$dbman->table_exists($table)) {

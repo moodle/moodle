@@ -28,7 +28,7 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 
 $contextid = required_param('contextid', PARAM_INT);
 $elementid = required_param('elementid', PARAM_ALPHANUMEXT);
-$pagedomid = required_param('pagedomid', PARAM_ALPHANUMEXT);
+$pagehash = required_param('pagehash', PARAM_ALPHANUMEXT);
 $pageinstance = required_param('pageinstance', PARAM_ALPHANUMEXT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
@@ -44,7 +44,7 @@ if ($action === 'save') {
     $drafttext = required_param('drafttext', PARAM_RAW);
     $params = array('elementid' => $elementid,
                     'userid' => $USER->id,
-                    'pagedomid' => $pagedomid,
+                    'pagehash' => $pagehash,
                     'contextid' => $contextid);
 
     $record = $DB->get_record('editor_atto_autosave', $params);
@@ -57,7 +57,7 @@ if ($action === 'save') {
         $record = new stdClass();
         $record->elementid = $elementid;
         $record->userid = $USER->id;
-        $record->pagedomid = $pagedomid;
+        $record->pagehash = $pagehash;
         $record->contextid = $contextid;
         $record->drafttext = $drafttext;
         $record->pageinstance = $pageinstance;
@@ -76,8 +76,9 @@ if ($action === 'save') {
 } else if ($action == 'resume') {
     $params = array('elementid' => $elementid,
                     'userid' => $USER->id,
-                    'pagedomid' => $pagedomid,
+                    'pagehash' => $pagehash,
                     'contextid' => $contextid);
+
     $newdraftid = required_param('draftid', PARAM_INT);
 
     $record = $DB->get_record('editor_atto_autosave', $params);
@@ -86,10 +87,10 @@ if ($action === 'save') {
         $record = new stdClass();
         $record->elementid = $elementid;
         $record->userid = $USER->id;
-        $record->pagedomid = $pagedomid;
+        $record->pagehash = $pagehash;
         $record->contextid = $contextid;
         $record->pageinstance = $pageinstance;
-        $record->pagedomid = $pagedomid;
+        $record->pagehash = $pagehash;
         $record->draftid = $newdraftid;
         $record->drafttext = '';
 
@@ -132,7 +133,7 @@ if ($action === 'save') {
 } else if ($action == 'reset') {
     $params = array('elementid' => $elementid,
                     'userid' => $USER->id,
-                    'pagedomid' => $pagedomid,
+                    'pagehash' => $pagehash,
                     'contextid' => $contextid);
 
     $DB->delete_records('editor_atto_autosave', $params);
