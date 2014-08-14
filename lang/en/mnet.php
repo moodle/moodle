@@ -132,7 +132,6 @@ $string['mnetidprovider'] = 'MNet ID provider';
 $string['mnetidproviderdesc'] = 'You can use this facility to retrieve a link that you can log in at, if you can provide the correct email address to match the username you previously tried to log in with.';
 $string['mnetidprovidermsg'] = 'You should be able to login at your {$a} provider.';
 $string['mnetidprovidernotfound'] = 'Sorry, but no further information could be found.';
-$string['mnetlog'] = 'Logs';
 $string['mnetpeers'] = 'Peers';
 $string['mnetservices'] = 'Services';
 $string['mnet_session_prohibited'] = 'Users from your home server are not currently permitted to roam to {$a}.';
