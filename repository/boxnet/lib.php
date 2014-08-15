@@ -334,7 +334,7 @@ class repository_boxnet extends repository {
 
         $mform->addElement('static', null, '',  get_string('information', 'repository_boxnet'));
 
-        if (strpos($CFG->wwwroot, 'https') !== 0) {
+        if (!is_https()) {
             $mform->addElement('static', null, '',  get_string('warninghttps', 'repository_boxnet'));
         }
 

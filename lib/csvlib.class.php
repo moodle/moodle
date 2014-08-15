@@ -476,7 +476,7 @@ class csv_export_writer {
             // For text based formats - we cannot test the output with behat if we force a file download.
             return;
         }
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: max-age=10');
             header('Pragma: ');
         } else { //normal http - prevent caching at all cost

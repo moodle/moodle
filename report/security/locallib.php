@@ -381,7 +381,7 @@ function report_security_check_emailchangeconfirmation($detailed=false) {
 function report_security_check_cookiesecure($detailed=false) {
     global $CFG;
 
-    if (strpos($CFG->wwwroot, 'https://') !== 0) {
+    if (!is_https()) {
         return null;
     }
 

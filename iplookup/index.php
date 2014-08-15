@@ -94,7 +94,7 @@ if (empty($CFG->googlemapkey3)) {
     echo '<div id="note">'.$info['note'].'</div>';
 
 } else {
-    if (strpos($CFG->wwwroot, 'https:') === 0) {
+    if (is_https()) {
         $PAGE->requires->js(new moodle_url('https://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));
     } else {
         $PAGE->requires->js(new moodle_url('http://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));

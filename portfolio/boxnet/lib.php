@@ -114,7 +114,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         $mform->addElement('static', 'setupinfo', get_string('setupinfo', 'portfolio_boxnet'),
             get_string('setupinfodetails', 'portfolio_boxnet', $a));
 
-        if (strpos($CFG->wwwroot, 'https') !== 0) {
+        if (!is_https()) {
             $mform->addElement('static', 'warninghttps', '', get_string('warninghttps', 'portfolio_boxnet'));
         }
     }
@@ -207,7 +207,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         global $CFG;
         if (!$this->get_config('clientid') || !$this->get_config('clientsecret')) {
             return 'missingoauthkeys';
-        } else if (strpos($CFG->wwwroot, 'https') !== 0) {
+        } else if (!is_https()) {
             return 'missinghttps';
         }
     }

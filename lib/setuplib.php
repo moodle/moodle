@@ -816,6 +816,7 @@ function initialise_fullme() {
             throw new coding_exception('Must use https address in wwwroot when ssl proxy enabled!');
         }
         $rurl['scheme'] = 'https'; // make moodle believe it runs on https, squid or something else it doing it
+        $_SERVER['HTTPS'] = 'on'; // Override $_SERVER to help external libraries with their HTTPS detection.
     }
 
     // hopefully this will stop all those "clever" admins trying to set up moodle
