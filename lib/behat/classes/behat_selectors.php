@@ -111,6 +111,9 @@ XPATH
 //div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]
     /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
+        , 'table' => <<<XPATH
+.//table[(./@id = %locator% or contains(.//caption, %locator%) or contains(concat(' ', normalize-space(@class), ' '), %locator% ))]
+XPATH
     );
 
     /**
