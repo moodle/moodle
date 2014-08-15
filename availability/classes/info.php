@@ -613,7 +613,12 @@ abstract class info {
         $info = preg_replace_callback('~<AVAILABILITY_CMNAME_([0-9]+)/>~',
                 function($matches) use($modinfo, $context) {
                     $cm = $modinfo->get_cm($matches[1]);
-                    return format_string($cm->name, true, array('context' => $context));
+                    if ($cm->has_view() and $cm->uservisible) {
+                        // Help student by providing a link to the module which is preventing availability.
+                        return \html_writer::link($cm->url, format_string($cm->name, true, array('context' => $context)));
+                    } else {
+                        return format_string($cm->name, true, array('context' => $context));
+                    }
                 }, $info);
 
         return $info;
