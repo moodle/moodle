@@ -69,11 +69,11 @@
             choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
         }
         echo $OUTPUT->header();
-        echo $OUTPUT->heading($choice->name, 2, null);
+        echo $OUTPUT->heading(format_string($choice->name), 2, null);
         echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->heading($choice->name, 2, null);
+        echo $OUTPUT->heading(format_string($choice->name), 2, null);
     }
 
 
