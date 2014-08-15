@@ -31,7 +31,8 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchElement as NoSuchElement,
-    WebDriver\Exception\StaleElementReference as StaleElementReference;
+    WebDriver\Exception\StaleElementReference as StaleElementReference,
+    Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Cross component steps definitions.
@@ -1009,6 +1010,132 @@ class behat_general extends behat_base {
             throw new ExpectationException('The attribute "' . $attribute .
                     '" contains "' . $text . '" (value: "' . $value . '")',
                     $this->getSession());
+        }
+    }
+
+    /**
+     * Checks the provided value exists in specific row/column of table.
+     *
+     * @Then /^"(?P<row_string>[^"]*)" row "(?P<column_string>[^"]*)" column of "(?P<table_string>[^"]*)" table should contain "(?P<value_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @param string $row row text which will be looked in.
+     * @param string $column column text to search
+     * @param string $table table id/class/caption
+     * @param string $value text to check.
+     */
+    public function row_column_of_table_should_contain($row, $column, $table, $value) {
+        $tablenode = $this->get_selected_node('table', $table);
+        $tablexpath = $tablenode->getXpath();
+
+        // Check if column exists, it can be in thead or tbody first row.
+        $columnheaderxpath = $tablexpath . "[thead/tr/th[normalize-space(.)='$column'] | "
+                . "tbody/tr[1]/th[normalize-space(.)='" . $column . "']]";
+        $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
+        if (empty($columnheader)) {
+            $columnexceptionmsg = $column . '" in table "' . $table . '"';
+            throw new ElementNotFoundException($this->getSession(), 'Column', null, $columnexceptionmsg);
+        }
+
+        // Check if value exists in specific row/column.
+        // Get row xpath.
+        $rowxpath = $tablexpath."/tbody/tr[th[normalize-space(.)='" . $row . "'] | td[normalize-space(.)='" . $row . "']]";
+
+        // Following conditions were considered before finding column count.
+        // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
+        // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
+        $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/thead/tr[1]/th[normalize-space(.)='" .
+            $column . "']/preceding-sibling::*) + 1]";
+        $columnvaluexpath = $rowxpath . $columnpositionxpath . "[text()[contains(normalize-space(.),'" . $value . "')]]";
+
+        // Looks for the requested node inside the container node.
+        $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
+        if (empty($coumnnode)) {
+            // Check if tbody/tr[1] contains header selector.
+            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/tbody/tr[1]/td[normalize-space(.)='" .
+                $column . "']/preceding-sibling::*) + 1]";
+            $columnvaluexpath = $rowxpath . $columnpositionxpath . "[text()[contains(normalize-space(.),'" . $value . "')]]";
+            $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
+            if (empty($coumnnode)) {
+                $locatorexceptionmsg = $value . '" in "' . $row . '" row with column "' . $column;
+                throw new ElementNotFoundException($this->getSession(), 'Column value', null, $locatorexceptionmsg);
+            }
+        }
+    }
+
+    /**
+     * Checks the provided value should not exist in specific row/column of table.
+     *
+     * @Then /^"(?P<row_string>[^"]*)" row "(?P<column_string>[^"]*)" column of "(?P<table_string>[^"]*)" table should not contain "(?P<value_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @param string $row row text which will be looked in.
+     * @param string $column column text to search
+     * @param string $table table id/class/caption
+     * @param string $value text to check.
+     */
+    public function row_column_of_table_should_not_contain($row, $column, $table, $value) {
+        try {
+            $this->row_column_of_table_should_contain($row, $column, $table, $value);
+            // Throw exception if found.
+            throw new ExpectationException(
+                '"' . $column . '" with value "' . $value . '" is present in "' . $row . '"  row for table "' . $table . '"',
+                $this->getSession()
+            );
+        } catch (ElementNotFoundException $e) {
+            // Table row/column doesn't contain this value. Nothing to do.
+            return;
+        }
+    }
+
+    /**
+     * Checks that the provided value exist in table.
+     * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     *
+     * @Then /^the following should exist in the "(?P<table_string>[^"]*)" table:$/
+     * @throws ExpectationException
+     * @param string $table name of table
+     * @param TableNode $data table with first row as header and following values
+     *        | Header 1 | Header 2 | Header 3 |
+     *        | Value 1 | Value 2 | Value 3|
+     */
+    public function following_should_exit_in_the_table($table, TableNode $data) {
+        $datahash = $data->getHash();
+
+        foreach ($datahash as $value) {
+            $row = array_shift($value);
+            foreach ($value as $column => $value) {
+                $this->row_column_of_table_should_contain($row, $column, $table, $value);
+            }
+        }
+    }
+
+    /**
+     * Checks that the provided value exist in table.
+     * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     *
+     * @Then /^the following should not exist in the "(?P<table_string>[^"]*)" table:$/
+     * @throws ExpectationException
+     * @param string $table name of table
+     * @param TableNode $data table with first row as header and following values
+     *        | Header 1 | Header 2 | Header 3 |
+     *        | Value 1 | Value 2 | Value 3|
+     */
+    public function following_should_not_exit_in_the_table($table, TableNode $data) {
+        $datahash = $data->getHash();
+
+        foreach ($datahash as $value) {
+            $row = array_shift($value);
+            foreach ($value as $column => $value) {
+                try {
+                    $this->row_column_of_table_should_contain($row, $column, $table, $value);
+                    // Throw exception if found.
+                    throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
+                        $row . '"  row for table "' . $table . '"', $this->getSession()
+                    );
+                } catch (ElementNotFoundException $e) {
+                    // Table row/column doesn't contain this value. Nothing to do.
+                    continue;
+                }
+            }
         }
     }
 }
