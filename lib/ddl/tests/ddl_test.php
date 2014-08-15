@@ -1608,6 +1608,11 @@ class core_ddl_testcase extends database_driver_testcase {
                   JOIN {test_temp} t ON t.name = n.name";
         $records = $DB->get_records_sql($sql);
         $this->assertCount(1, $records);
+
+        // Drop temp table.
+        $dbman->drop_temp_table($table2);
+        $this->assertFalse($dbman->table_exists('test_temp'));
+        $this->assertDebuggingCalled();
     }
 
     public function test_concurrent_temp_tables() {
