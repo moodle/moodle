@@ -1447,12 +1447,12 @@ function forum_print_overview($courses,&$htmlarray) {
 
         // If the user has never entered into the course all posts are pending
         if ($course->lastaccess == 0) {
-            $coursessqls[] = '(d.course = ?)';
+            $coursessqls[] = '(f.course = ?)';
             $params[] = $course->id;
 
         // Only posts created after the course last access
         } else {
-            $coursessqls[] = '(d.course = ? AND p.created > ?)';
+            $coursessqls[] = '(f.course = ? AND p.created > ?)';
             $params[] = $course->id;
             $params[] = $course->lastaccess;
         }
@@ -1460,12 +1460,13 @@ function forum_print_overview($courses,&$htmlarray) {
     $params[] = $USER->id;
     $coursessql = implode(' OR ', $coursessqls);
 
-    $sql = "SELECT d.id, d.forum, d.course, d.groupid, COUNT(*) as count "
-                .'FROM {forum_discussions} d '
+    $sql = "SELECT d.id, d.forum, f.course, d.groupid, COUNT(*) as count "
+                .'FROM {forum} f '
+                .'JOIN {forum_discussions} d ON d.forum = f.id '
                 .'JOIN {forum_posts} p ON p.discussion = d.id '
                 ."WHERE ($coursessql) "
                 .'AND p.userid != ? '
-                .'GROUP BY d.id, d.forum, d.course, d.groupid';
+                .'GROUP BY d.id, d.forum, f.course, d.groupid';
 
     // Avoid warnings.
     if (!$discussions = $DB->get_records_sql($sql, $params)) {
