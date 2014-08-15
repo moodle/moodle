@@ -33,26 +33,25 @@ function xmldb_scorm_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Moodle v2.2.0 release upgrade line.
-    // Put any upgrade step following this.
+
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
 
     if ($oldversion < 2012032100) {
         unset_config('updatetime', 'scorm');
         upgrade_mod_savepoint(true, 2012032100, 'scorm');
     }
 
-    // Adding completion fields to scorm table.
+    // Adding completion fields to scorm table
     if ($oldversion < 2012032101) {
         $table = new xmldb_table('scorm');
 
-        $field = new xmldb_field('completionstatusrequired', XMLDB_TYPE_INTEGER, '1',
-                                    XMLDB_UNSIGNED, null, null, null, 'timemodified');
+        $field = new xmldb_field('completionstatusrequired', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, 'timemodified');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new xmldb_field('completionscorerequired', XMLDB_TYPE_INTEGER, '2',
-                                    XMLDB_UNSIGNED, null, null, null, 'completionstatusrequired');
+        $field = new xmldb_field('completionscorerequired', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null, 'completionstatusrequired');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -60,20 +59,21 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012032101, 'scorm');
     }
 
-    // Moodle v2.3.0 release upgrade line.
-    // Put any upgrade step following this.
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
 
-    // Rename config var from maxattempts to maxattempt.
+    //rename config var from maxattempts to maxattempt
     if ($oldversion < 2012061701) {
         $maxattempts = get_config('scorm', 'maxattempts');
-        $maxattemptsadv = get_config('scorm', 'maxattempts_adv');
+        $maxattempts_adv = get_config('scorm', 'maxattempts_adv');
         set_config('maxattempt', $maxattempts, 'scorm');
-        set_config('maxattempt_adv', $maxattemptsadv, 'scorm');
+        set_config('maxattempt_adv', $maxattempts_adv, 'scorm');
 
-        unset_config('maxattempts', 'scorm'); // Remove old setting.
-        unset_config('maxattempts_adv', 'scorm'); // Remove old setting.
+        unset_config('maxattempts', 'scorm'); //remove old setting.
+        unset_config('maxattempts_adv', 'scorm'); //remove old setting.
         upgrade_mod_savepoint(true, 2012061701, 'scorm');
     }
+
 
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this.

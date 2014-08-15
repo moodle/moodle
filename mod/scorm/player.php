@@ -20,12 +20,12 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
-$id = optional_param('cm', '', PARAM_INT);       // Course Module ID, or
-$a = optional_param('a', '', PARAM_INT);         // scorm ID
-$scoid = required_param('scoid', PARAM_INT);  // sco ID
-$mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
-$currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organization
-$newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt.
+$id = optional_param('cm', '', PARAM_INT);                          // Course Module ID, or
+$a = optional_param('a', '', PARAM_INT);                            // scorm ID
+$scoid = required_param('scoid', PARAM_INT);                        // sco ID
+$mode = optional_param('mode', 'normal', PARAM_ALPHA);              // navigation mode
+$currentorg = optional_param('currentorg', '', PARAM_RAW);          // selected organization
+$newattempt = optional_param('newattempt', 'off', PARAM_ALPHA);     // the user request to start a new attempt.
 $displaymode = optional_param('display', '', PARAM_ALPHA);
 
 if (!empty($id)) {
@@ -211,8 +211,8 @@ if (empty($scorm->popup) || $displaymode == 'popup') {
                     $scorm->course, get_string('finishscormlinkname', 'scorm'));
     echo $OUTPUT->box(get_string('finishscorm', 'scorm', $linkcourse), 'generalbox', 'altfinishlink');
 }
-echo html_writer::end_div(); // ...<!-- toctree -->.
-echo html_writer::end_div(); // ...<!--  tocbox -->.
+echo html_writer::end_div(); // Toc tree ends.
+echo html_writer::end_div(); // Toc box ends.
 echo html_writer::tag('noscript', html_writer::div(get_string('noscriptnoscorm', 'scorm'), '', array('id' => 'noscript')));
 
 if ($result->prerequisites) {
@@ -235,7 +235,7 @@ if ($result->prerequisites) {
 } else {
     echo $OUTPUT->box(get_string('noprerequisites', 'scorm'));
 }
-echo html_writer::end_div(); // ...<!-- SCORM page -->.
+echo html_writer::end_div(); // Scorm page ends.
 
 $scoes = scorm_get_toc_object($USER, $scorm, $currentorg, $sco->id, $mode, $attempt);
 $adlnav = scorm_get_adlnav_json($scoes['scoes']);

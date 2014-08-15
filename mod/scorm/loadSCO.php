@@ -237,8 +237,7 @@ echo html_writer::tag('title', 'LoadSCO');
                                                 e.innerHTML = --cSeconds;
                                             } else {
                                                 clearInterval(timer);
-                                                document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', " +
-                                                                            s"'scorm');?></p>";
+                                                document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', 'scorm');?></p>";
                                                 location = "<?php echo $result ?>";
                                             }
                                         }, 1000);

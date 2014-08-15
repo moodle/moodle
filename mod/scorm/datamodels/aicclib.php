@@ -191,8 +191,7 @@ function scorm_parse_aicc(&$scorm) {
                         if (!isset($courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)])) {
                             $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)] = new stdClass();
                         }
-                        $temp = substr(trim($matches[$j + 1]), 1, -1);
-                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)]->$column = $temp;
+                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1 , -1)]->$column = substr(trim($matches[$j + 1]), 1, -1);
                     }
                 }
             }
@@ -206,8 +205,7 @@ function scorm_parse_aicc(&$scorm) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
                     for ($j = 0; $j < count($columns->columns); $j++) {
                         $column = $columns->columns[$j];
-                        $temp = substr(trim($matches[$j + 1]), 1, -1);
-                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1, -1)]->$column = $temp;
+                        $courses[$courseid]->elements[substr(trim($matches[$columns->mastercol + 1]), 1, -1)]->$column = substr(trim($matches[$j + 1]), 1, -1);
                     }
                 }
             }
@@ -223,8 +221,7 @@ function scorm_parse_aicc(&$scorm) {
                         if ($j != $columns->mastercol) {
                             $element = substr(trim($matches[$j + 1]), 1 , -1);
                             if (!empty($element)) {
-                                $temp = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
-                                $courses[$courseid]->elements[$element]->parent = $temp;
+                                $courses[$courseid]->elements[$element]->parent = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
                             }
                         }
                     }
@@ -240,8 +237,7 @@ function scorm_parse_aicc(&$scorm) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
                     for ($j = 0; $j < count($matches) - 1; $j++) {
                         if ($j != $columns->mastercol) {
-                            $temp = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
-                            $courses[$courseid]->elements[substr(trim($matches[$j + 1]), 1, -1)]->parent = $temp;
+                            $courses[$courseid]->elements[substr(trim($matches[$j + 1]), 1, -1)]->parent = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
                         }
                     }
                 }
@@ -254,8 +250,7 @@ function scorm_parse_aicc(&$scorm) {
             $regexp = scorm_forge_cols_regexp($columns->columns, '(.+),');
             for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    $temp = substr(trim($matches[2 - $columns->mastercol]), 1, -1);
-                    $courses[$courseid]->elements[$columns->mastercol + 1]->prerequisites = $temp;
+                    $courses[$courseid]->elements[$columns->mastercol + 1]->prerequisites = substr(trim($matches[2 - $columns->mastercol]), 1, -1);
                 }
             }
         }
