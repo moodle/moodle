@@ -701,7 +701,7 @@ function stats_cron_weekly() {
 
                 SELECT 'logins', timeend, courseid, userid, SUM(statsreads)
                   FROM (
-                           SELECT $nextstartweek AS timeend, courseid, statsreads
+                           SELECT $nextstartweek AS timeend, courseid, userid, statsreads
                              FROM {stats_user_daily} sd
                             WHERE stattype = 'logins' AND $stattimesql
                        ) inline_view
@@ -843,7 +843,7 @@ function stats_cron_monthly() {
 
                 SELECT 'logins', timeend, courseid, userid, SUM(statsreads)
                   FROM (
-                           SELECT $nextstartmonth AS timeend, courseid, statsreads
+                           SELECT $nextstartmonth AS timeend, courseid, userid, statsreads
                              FROM {stats_user_daily} sd
                             WHERE stattype = 'logins' AND $stattimesql
                        ) inline_view
