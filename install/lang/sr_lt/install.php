@@ -34,7 +34,7 @@ $string['admindirname'] = 'Administratorski direktorijum';
 $string['availablelangs'] = 'Dostupni jezički paketi';
 $string['chooselanguagehead'] = 'Izaberite jezik';
 $string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti tokom instalacije. Ovaj jezik će, takođe, biti korišćen na nivou sajta kao podrazumevani, mada to naknadno može biti promenjeno.';
-$string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate ovaj sajt.';
+$string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, upotrebite komandu admin/cli/install_database.php ako želite da instalirate Moodle na ovaj sajt.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrebite admin/cli/install_database.php ako želite da nadogradite svoj sajt.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz komandne linije';
 $string['databasehost'] = 'Server baze podataka';
@@ -67,12 +67,15 @@ $string['pathshead'] = 'Potvrdi putanje';
 $string['pathsrodataroot'] = 'U direktorijum za podatke nije moguć upis';
 $string['pathsroparentdataroot'] = 'Nije moguć upis u nadređeni direktorijum ({$a->parent}).  Instalacioni program ne može da kreira direktorijum za podatke ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Vrlo mali broj veb servera koristi /admin kao specijalni URL za pristup raznim podešavanjima (kontrolni panel i sl.). Nažalost, to dovodi do konflikta sa standardnom lokacijom za administratorske stranice u Moodleu. Ovaj problem možete rešiti tako što ćete promeniti ime administratorskog direktorijuma u vašoj instalaciji, i ovde upisati to novo ime. Na primer <em>moodleadmin</em>. Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
-$string['pathssubdataroot'] = 'Potreban vam je prostor gde će Moodle čuvati postavljene datoteke. Ovaj direktorijum treba da bude podešen tako da se može čitati i u njega upisivati od strane korisnika veb servera (obično \'nobody\' ili \'apache\'), ali istovremeno mora biti dostupan direktno preko veba. Ukoliko ovaj direktorijum ne postoji Moodle će pokušati da ga kreira tokom instalacije.';
+$string['pathssubdataroot'] = '<p>Direktorijum u kojem  će Moodle čuvati sadržaj svih datoteka koje su korisnici postavili na server.</p>
+<p>Ovaj direktorijum mora da ima odobrena ovlašćenja za čitanje i upisivanje od strane korisnika veb servera (obično \'www-data\', \'nobody\', ili \'apache\').</p>
+<p>Direktorijum ne sme da bude direktno dostupan preko interneta.</p>
+<p>Ako direktorijum trenutno ne postoji proces za instalaciju će pokušati da ga kreira.</p>';
 $string['pathssubdirroot'] = '<p>Puna putanja do direktorijuma koji sadrži kod Moodlea.</p>';
-$string['pathssubwwwroot'] = 'Puna veb adresa putem koje će se pristupati Moodleu. Nije moguće pristupati Moodleu koristeći više adresa.
-Ako vaš sajt ima više javnih adresa onda na svima morate da podesite permanentne redirekcije osim na ovoj.
-Ako je vaš sajt dostupan sa interneta ali i iz intranet okruženja ovde upotrebite javnu adresu i podesite DNS tako da i intranet korisnici mogu da koriste javnu adresu.
-Ako je adresa netačna promenite URL u svom veb čitaču da biste ponovo pokrenuli instalaciju sa drugačijom vrednošću.';
+$string['pathssubwwwroot'] = '<p> Puna internet adresa putem koje će se pristupati Moodleu tj. adresa koju će korisnici uneti u  polje za veb adresu svojih čitača  kako bi pristupili sajtu.</p>
+<p> Nije moguće pristupati Moodleu korišćenjem više adresa. Ako se vašem sajtu može pristupiti preko više adresa onda izaberite najlakšu i podesite permanentnu redirekciju za sve preostale adrese.</p>
+<p>Ako je vaš sajt dostupan i preko interneta i unutar lokalne mreže (intranet), onda ovde unesite javnu adresu.</p>
+<p>Ako trenutna adresa nije ispravna, molimo vas promenite URL u polju za adresu vašeg čitača i ponovo pokrenite instalaciju.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot lokacija nije bezbedna';
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
