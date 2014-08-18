@@ -101,6 +101,7 @@ class core_grading_external extends external_api {
             $area['cmid'] = $cmid;
             $area['contextid'] = $context->id;
             $area['component'] = $componentname;
+            $area['areaname'] = $params['areaname'];
             $area['activemethod'] = $gradingmanager->get_active_method();
             $area['definitions'] = array();
 
