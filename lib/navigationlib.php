@@ -4132,8 +4132,16 @@ class settings_navigation extends navigation_node {
                 }
                 $canaccessallgroups = has_capability('moodle/site:accessallgroups', $coursecontext);
                 if (!$canaccessallgroups && groups_get_course_groupmode($course) == SEPARATEGROUPS) {
-                    // If groups are in use, make sure we can see that group
-                    return false;
+                    // If groups are in use, make sure we can see that group (MDL-45874).
+                    if ($courseid == $this->page->course->id) {
+                        $mygroups = get_fast_modinfo($this->page->course)->groups;
+                    } else {
+                        $mygroups = groups_get_user_groups($courseid);
+                    }
+                    $usergroups = groups_get_user_groups($courseid, $userid);
+                    if (!array_intersect_key($mygroups[0], $usergroups[0])) {
+                        return false;
+                    }
                 }
             }
         }
