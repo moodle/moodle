@@ -2262,6 +2262,12 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($user->id, $event->relateduserid);
         $this->assertEquals(context_user::instance($user->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
+
+        // Verify recovery of property 'auth'.
+        unset($user->auth);
+        update_internal_user_password($user, 'newpassword');
+        $this->assertDebuggingNotCalled();
+        $this->assertEquals('manual', $user->auth);
     }
 
     public function test_fullname() {
