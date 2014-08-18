@@ -1987,21 +1987,3 @@ function scorm_isset($userdata, $param, $ifempty = '') {
         return $ifempty;
     }
 }
-
-/**
- * Check for a parameter in userdata and return it with or without slashes it it's not empty
- * or return the value from $ifempty if its empty
- *
- * @param stdClass $userdata Contains user's data
- * @param string $param parameter that should be checked
- * @param string $ifempty value to be replaced with if $param is not set
- * @param bool $addslash if True - add slashes, if False - Don't add slash
- * @return string value from $userdata->$param with or without if its not empty, or $ifempty
- */
-function scorm_empty($userdata, $param, $ifempty = '', $addslash = false) {
-    if (!empty($userdata->$param)) {
-        return $addslash ? '\''.$userdata->$param.'\'' : $userdata->$param;
-    } else {
-        return $ifempty;
-    }
-}

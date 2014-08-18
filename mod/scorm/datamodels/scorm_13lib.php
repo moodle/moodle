@@ -1260,27 +1260,26 @@ function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     $def['cmi.learner_name'] = $userdata->student_name;
     $def['cmi.mode'] = $userdata->mode;
     $def['cmi.entry'] = $userdata->entry;
-    $def['cmi.exit'] = scorm_empty($userdata, 'cmi.exit');
-    $def['cmi.credit'] = scorm_empty($userdata, 'credit');
-    $def['cmi.completion_status'] = scorm_empty($userdata, 'cmi.completion_status', 'unknown');
-    $def['cmi.completion_threshold'] = scorm_empty($userdata, 'threshold', 'null', true);
-    $def['cmi.learner_preference.audio_level'] = scorm_empty($userdata, 'cmi.learner_preference.audio_level', '\'1\'', true);
-    $def['cmi.learner_preference.language'] = scorm_empty($userdata, 'cmi.learner_preference.language', '\'\'', true);
-    $def['cmi.learner_preference.delivery_speed'] = scorm_empty($userdata, 'cmi.learner_preference.delivery_speed', '\'1\'', true);
-    $def['cmi.learner_preference.audio_captioning'] = scorm_empty($userdata, 'cmi.learner_preference.audio_captioning',
-                                                                    '\'0\'', true);
-    $def['cmi.location'] = scorm_empty($userdata, 'cmi.location', 'null', true);
-    $def['cmi.max_time_allowed'] = scorm_empty($userdata, 'attemptAbsoluteDurationLimit', 'null', true);
-    $def['cmi.progress_measure'] = scorm_empty($userdata, 'cmi.progress_measure', 'null', true);
-    $def['cmi.scaled_passing_score'] = scorm_empty($userdata, 'cmi.scaled_passing_score', 'null', true);
-    $def['cmi.score.scaled'] = scorm_empty($userdata, 'cmi.score.scaled', 'null', true);
-    $def['cmi.score.raw'] = scorm_empty($userdata, 'cmi.score.raw', 'null', true);
-    $def['cmi.score.min'] = scorm_empty($userdata, 'cmi.score.min', 'null', true);
-    $def['cmi.score.max'] = scorm_empty($userdata, 'cmi.score.max', 'null', true);
-    $def['cmi.success_status'] = scorm_empty($userdata, 'cmi.success_status', 'unknown');
-    $def['cmi.suspend_data'] = scorm_empty($userdata, 'cmi.suspend_data', 'null', true);
-    $def['cmi.time_limit_action'] = scorm_empty($userdata, 'timelimitaction', 'null', true);
-    $def['cmi.total_time'] = scorm_empty($userdata, 'cmi.total_time', 'PT0H0M0S');
+    $def['cmi.exit'] = scorm_isset($userdata, 'cmi.exit');
+    $def['cmi.credit'] = scorm_isset($userdata, 'credit');
+    $def['cmi.completion_status'] = scorm_isset($userdata, 'cmi.completion_status', 'unknown');
+    $def['cmi.completion_threshold'] = scorm_isset($userdata, 'threshold', 'null');
+    $def['cmi.learner_preference.audio_level'] = scorm_isset($userdata, 'cmi.learner_preference.audio_level', "'1'");
+    $def['cmi.learner_preference.language'] = scorm_isset($userdata, 'cmi.learner_preference.language', "''");
+    $def['cmi.learner_preference.delivery_speed'] = scorm_isset($userdata, 'cmi.learner_preference.delivery_speed', "'1'");
+    $def['cmi.learner_preference.audio_captioning'] = scorm_isset($userdata, 'cmi.learner_preference.audio_captioning', "'0'");
+    $def['cmi.location'] = scorm_isset($userdata, 'cmi.location', 'null');
+    $def['cmi.max_time_allowed'] = scorm_isset($userdata, 'attemptAbsoluteDurationLimit', 'null');
+    $def['cmi.progress_measure'] = scorm_isset($userdata, 'cmi.progress_measure', 'null');
+    $def['cmi.scaled_passing_score'] = scorm_isset($userdata, 'cmi.scaled_passing_score', 'null');
+    $def['cmi.score.scaled'] = scorm_isset($userdata, 'cmi.score.scaled', 'null');
+    $def['cmi.score.raw'] = scorm_isset($userdata, 'cmi.score.raw', 'null');
+    $def['cmi.score.min'] = scorm_isset($userdata, 'cmi.score.min', 'null');
+    $def['cmi.score.max'] = scorm_isset($userdata, 'cmi.score.max', 'null');
+    $def['cmi.success_status'] = scorm_isset($userdata, 'cmi.success_status', 'unknown');
+    $def['cmi.suspend_data'] = scorm_isset($userdata, 'cmi.suspend_data', 'null');
+    $def['cmi.time_limit_action'] = scorm_isset($userdata, 'timelimitaction', 'null');
+    $def['cmi.total_time'] = scorm_isset($userdata, 'cmi.total_time', 'PT0H0M0S');
 
     return $def;
 }
