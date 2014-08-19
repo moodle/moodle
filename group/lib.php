@@ -375,7 +375,9 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
     $context = context_course::instance($data->courseid);
 
     $data->timemodified = time();
-    $data->name         = trim($data->name);
+    if (isset($data->name)) {
+        $data->name = trim($data->name);
+    }
     if (isset($data->idnumber)) {
         $data->idnumber = trim($data->idnumber);
         if (($existing = groups_get_group_by_idnumber($data->courseid, $data->idnumber)) && $existing->id != $data->id) {
@@ -420,7 +422,9 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 function groups_update_grouping($data, $editoroptions=null) {
     global $DB;
     $data->timemodified = time();
-    $data->name         = trim($data->name);
+    if (isset($data->name)) {
+        $data->name = trim($data->name);
+    }
     if (isset($data->idnumber)) {
         $data->idnumber = trim($data->idnumber);
         if (($existing = groups_get_grouping_by_idnumber($data->courseid, $data->idnumber)) && $existing->id != $data->id) {
