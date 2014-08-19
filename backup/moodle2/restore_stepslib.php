@@ -224,6 +224,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         global $DB;
 
         $data = (object)$data;
+        $oldid = $data->id;
         $olduserid = $data->userid;
 
         $data->itemid = $this->get_new_parentid('grade_item');
@@ -243,6 +244,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
                 $this->log($message, backup::LOG_DEBUG);
             } else {
                 $newitemid = $DB->insert_record('grade_grades', $data);
+                $this->set_mapping('grade_grades', $oldid, $newitemid);
             }
         } else {
             $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
@@ -443,6 +445,85 @@ class restore_gradebook_structure_step extends restore_structure_step {
         // Restore marks items as needing update. Update everything now.
         grade_regrade_final_grades($this->get_courseid());
     }
+}
+
+/**
+ * Step in charge of restoring the grade history of a course.
+ *
+ * The execution conditions are itendical to {@link restore_gradebook_structure_step} because
+ * we do not want to restore the history if the gradebook and its content has not been
+ * restored. At least for now.
+ */
+class restore_grade_history_structure_step extends restore_structure_step {
+
+     protected function execute_condition() {
+        global $CFG, $DB;
+
+        // No gradebook info found, don't execute.
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+
+        // Some module present in backup file isn't available to restore in this site, don't execute.
+        if ($this->task->is_missing_modules()) {
+            return false;
+        }
+
+        // Some activity has been excluded to be restored, don't execute.
+        if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+
+        // There should only be one grade category (the 1 associated with the course itself).
+        $category = new stdclass();
+        $category->courseid  = $this->get_courseid();
+        $catcount = $DB->count_records('grade_categories', (array)$category);
+        if ($catcount > 1) {
+            return false;
+        }
+
+        // Arrived here, execute the step.
+        return true;
+     }
+
+    protected function define_structure() {
+        $paths = array();
+
+        // Settings to use.
+        $userinfo = $this->get_setting_value('users');
+        $history = $this->get_setting_value('grade_histories');
+
+        if ($userinfo && $history) {
+            $paths[] = new restore_path_element('grade_grade',
+               '/grade_history/grade_grades/grade_grade');
+        }
+
+        return $paths;
+    }
+
+    protected function process_grade_grade($data) {
+        global $DB;
+
+        $data = (object)($data);
+        $olduserid = $data->userid;
+        unset($data->id);
+
+        $data->userid = $this->get_mappingid('user', $data->userid, null);
+        if (!empty($data->userid)) {
+            // Do not apply the date offsets as this is history.
+            $data->itemid = $this->get_mappingid('grade_item', $data->itemid);
+            $data->oldid = $this->get_mappingid('grade_grades', $data->oldid);
+            $data->usermodified = $this->get_mappingid('user', $data->usermodified, null);
+            $data->rawscaleid = $this->get_mappingid('scale', $data->rawscaleid);
+            $DB->insert_record('grade_grades_history', $data);
+        } else {
+            $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
+            $this->log($message, backup::LOG_DEBUG);
+        }
+    }
+
 }
 
 /**
@@ -2895,6 +2976,7 @@ class restore_activity_grades_structure_step extends restore_structure_step {
     protected function process_grade_grade($data) {
         $data = (object)($data);
         $olduserid = $data->userid;
+        $oldid = $data->id;
         unset($data->id);
 
         $data->itemid = $this->get_new_parentid('grade_item');
@@ -2908,7 +2990,7 @@ class restore_activity_grades_structure_step extends restore_structure_step {
 
             $grade = new grade_grade($data, false);
             $grade->insert('restore');
-            // no need to save any grade_grade mapping
+            $this->set_mapping('grade_grades', $oldid, $grade->id);
         } else {
             debugging("Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'");
         }
@@ -2941,6 +3023,52 @@ class restore_activity_grades_structure_step extends restore_structure_step {
     }
 }
 
+/**
+ * Step in charge of restoring the grade history of an activity.
+ *
+ * This step is added to the task regardless of the setting 'grade_histories'.
+ * The reason is to allow for a more flexible step in case the logic needs to be
+ * split accross different settings to control the history of items and/or grades.
+ */
+class restore_activity_grade_history_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+        $paths = array();
+
+        // Settings to use.
+        $userinfo = $this->get_setting_value('userinfo');
+        $history = $this->get_setting_value('grade_histories');
+
+        if ($userinfo && $history) {
+            $paths[] = new restore_path_element('grade_grade',
+               '/grade_history/grade_grades/grade_grade');
+        }
+
+        return $paths;
+    }
+
+    protected function process_grade_grade($data) {
+        global $DB;
+
+        $data = (object) $data;
+        $olduserid = $data->userid;
+        unset($data->id);
+
+        $data->userid = $this->get_mappingid('user', $data->userid, null);
+        if (!empty($data->userid)) {
+            // Do not apply the date offsets as this is history.
+            $data->itemid = $this->get_mappingid('grade_item', $data->itemid);
+            $data->oldid = $this->get_mappingid('grade_grades', $data->oldid);
+            $data->usermodified = $this->get_mappingid('user', $data->usermodified, null);
+            $data->rawscaleid = $this->get_mappingid('scale', $data->rawscaleid);
+            $DB->insert_record('grade_grades_history', $data);
+        } else {
+            $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
+            $this->log($message, backup::LOG_DEBUG);
+        }
+    }
+
+}
 
 /**
  * This structure steps restores one instance + positions of one block

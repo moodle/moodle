@@ -163,6 +163,9 @@ abstract class restore_activity_task extends restore_task {
         // Advanced grading methods attached to the module
         $this->add_step(new restore_activity_grading_structure_step('activity_grading', 'grading.xml'));
 
+        // Grade history. The setting 'grade_history' is handled in the step.
+        $this->add_step(new restore_activity_grade_history_structure_step('activity_grade_history', 'grade_history.xml'));
+
         // Userscompletion (conditionally)
         if ($this->get_setting_value('userscompletion')) {
             $this->add_step(new restore_userscompletion_structure_step('activity_userscompletion', 'completion.xml'));

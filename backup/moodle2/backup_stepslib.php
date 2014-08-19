@@ -1023,6 +1023,65 @@ class backup_gradebook_structure_step extends backup_structure_step {
 }
 
 /**
+ * Step in charge of constructing the grade_history.xml file containing the grade histories.
+ */
+class backup_grade_history_structure_step extends backup_structure_step {
+
+    /**
+     * Limit the execution.
+     *
+     * This applies the same logic than the one applied to {@link backup_gradebook_structure_step},
+     * because we do not want to save the history of items which are not backed up. At least for now.
+     */
+    protected function execute_condition() {
+        return backup_plan_dbops::require_gradebook_backup($this->get_courseid(), $this->get_backupid());
+    }
+
+    protected function define_structure() {
+
+        // Settings to use.
+        $userinfo = $this->get_setting_value('users');
+        $history = $this->get_setting_value('grade_histories');
+
+        // Create the nested elements.
+        $bookhistory = new backup_nested_element('grade_history');
+        $grades = new backup_nested_element('grade_grades');
+        $grade = new backup_nested_element('grade_grade', array('id'), array(
+            'action', 'oldid', 'source', 'loggeduser', 'itemid', 'userid',
+            'rawgrade', 'rawgrademax', 'rawgrademin', 'rawscaleid',
+            'usermodified', 'finalgrade', 'hidden', 'locked', 'locktime', 'exported', 'overridden',
+            'excluded', 'feedback', 'feedbackformat', 'information',
+            'informationformat', 'timemodified'));
+
+        // Build the tree.
+        $bookhistory->add_child($grades);
+        $grades->add_child($grade);
+
+        // This only happens if we are including user info and history.
+        if ($userinfo && $history) {
+            // Only keep the history of grades related to items which have been backed up, The query is
+            // similar (but not identical) to the one used in backup_gradebook_structure_step::define_structure().
+            $gradesql = "SELECT ggh.*
+                           FROM {grade_grades_history} ggh
+                           JOIN {grade_items} gi ON ggh.itemid = gi.id
+                          WHERE gi.courseid = :courseid
+                            AND (gi.itemtype = 'manual' OR gi.itemtype = 'course' OR gi.itemtype = 'category')";
+            $grade->set_source_sql($gradesql, array('courseid' => backup::VAR_COURSEID));
+        }
+
+        // Annotations. (Final annotations as this step is part of the final task).
+        $grade->annotate_ids('scalefinal', 'rawscaleid');
+        $grade->annotate_ids('userfinal', 'loggeduser');
+        $grade->annotate_ids('userfinal', 'userid');
+        $grade->annotate_ids('userfinal', 'usermodified');
+
+        // Return the root element.
+        return $bookhistory;
+    }
+
+}
+
+/**
  * structure step in charge if constructing the completion.xml file for all the users completion
  * information in a given activity
  */
@@ -2159,6 +2218,56 @@ class backup_activity_grades_structure_step extends backup_structure_step {
         // Return the root element (book)
 
         return $book;
+    }
+}
+
+/**
+ * Structure step in charge of constructing the grade history of an activity.
+ *
+ * This step is added to the task regardless of the setting 'grade_histories'.
+ * The reason is to allow for a more flexible step in case the logic needs to be
+ * split accross different settings to control the history of items and/or grades.
+ */
+class backup_activity_grade_history_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // Settings to use.
+        $userinfo = $this->get_setting_value('userinfo');
+        $history = $this->get_setting_value('grade_histories');
+
+        // Create the nested elements.
+        $bookhistory = new backup_nested_element('grade_history');
+        $grades = new backup_nested_element('grade_grades');
+        $grade = new backup_nested_element('grade_grade', array('id'), array(
+            'action', 'oldid', 'source', 'loggeduser', 'itemid', 'userid',
+            'rawgrade', 'rawgrademax', 'rawgrademin', 'rawscaleid',
+            'usermodified', 'finalgrade', 'hidden', 'locked', 'locktime', 'exported', 'overridden',
+            'excluded', 'feedback', 'feedbackformat', 'information',
+            'informationformat', 'timemodified'));
+
+        // Build the tree.
+        $bookhistory->add_child($grades);
+        $grades->add_child($grade);
+
+        // This only happens if we are including user info and history.
+        if ($userinfo && $history) {
+            // Define sources. Only select the history related to existing activity items.
+            $grade->set_source_sql("SELECT ggh.*
+                                     FROM {grade_grades_history} ggh
+                                     JOIN {backup_ids_temp} bi ON ggh.itemid = bi.itemid
+                                    WHERE bi.backupid = ?
+                                      AND bi.itemname = 'grade_item'", array(backup::VAR_BACKUPID));
+        }
+
+        // Annotations.
+        $grade->annotate_ids('scalefinal', 'rawscaleid'); // Straight as scalefinal because it's > 0.
+        $grade->annotate_ids('user', 'loggeduser');
+        $grade->annotate_ids('user', 'userid');
+        $grade->annotate_ids('user', 'usermodified');
+
+        // Return the root element.
+        return $bookhistory;
     }
 }
 
