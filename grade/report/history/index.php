@@ -96,9 +96,8 @@ if ($table->is_downloading()) {
     die();
 }
 
-$reportname = $output->report_title($table->get_selected_users());
 // Print header.
-print_grade_page_head($COURSE->id, 'report', 'history', $reportname, false, '');
+print_grade_page_head($COURSE->id, 'report', 'history', get_string('pluginname', 'gradereport_history'), false, '');
 $mform->display();
 
 // Render table.

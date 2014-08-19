@@ -40,6 +40,8 @@ if ($course->id == SITEID) {
 
 require_sesskey();
 require_login($course);
+require_capability('gradereport/history:view', $context);
+require_capability('moodle/grade:viewall', $context);
 
 $outcome = new stdClass();
 $outcome->success = true;

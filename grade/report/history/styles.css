@@ -1,18 +1,5 @@
 /* History */
 
-th#excludedheader {
-    white-space: normal;
-}
-
-th#excludedheader p {
-    width: 75px;
-}
-
-table#gradestable th.header.selected {
-    font-size: 12px;
-    font-weight: bold;
-}
-
 .path-grade-report-history div.gradeparent {
     overflow-x: scroll;
 }

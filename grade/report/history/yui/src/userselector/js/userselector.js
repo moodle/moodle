@@ -92,7 +92,6 @@ var SELECTORS = {
     USERIDS: 'input[name="userids"]',
     USERSELECT: '.' + CSS.CHECKBOX + ' input[type=checkbox]'
 };
-var create = Y.Node.create;
 
 /**
  * User Selector.
@@ -176,7 +175,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                 '</div>' +
             '</div>');
 
-        content = create(
+        content = Y.Node.create(
             tpl({
                 COMPONENT: COMPONENT,
                 CSS: CSS,
@@ -185,7 +184,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         );
 
         // Set the title and content.
-        this.getStdModNode(Y.WidgetStdMod.HEADER).prepend(create('<h1>' + this.get('title') + '</h1>'));
+        this.getStdModNode(Y.WidgetStdMod.HEADER).prepend(Y.Node.create('<h1>' + this.get('title') + '</h1>'));
         this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
 
         // Use standard dialogue class name. This removes the default styling of the footer.
@@ -375,7 +374,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         // Create the div containing the users when it is a fresh search.
         if (!args.append) {
-            users = create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="'+CSS.USERS+'"></div>');
+            users = Y.Node.create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="'+CSS.USERS+'"></div>');
         } else {
             users = bb.one(SELECTORS.RESULTSUSERS);
         }
@@ -415,7 +414,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                 selected = false;
             }
 
-            node = create(userTemplate({
+            node = Y.Node.create(userTemplate({
                 checkboxId: Y.guid(),
                 COMPONENT: COMPONENT,
                 count: count,
@@ -453,10 +452,10 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                     bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('foundnusers', COMPONENT, totalUsers));
                 }
 
-                content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
+                content = Y.Node.create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                     .append(users);
                 if (result.response.totalusers > (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                    fetchmore = create('<div class="'+CSS.MORERESULTS+'">' +
+                    fetchmore = Y.Node.create('<div class="'+CSS.MORERESULTS+'">' +
                         '<a href="#" role="button">'+M.util.get_string('loadmoreusers', COMPONENT)+'</a></div>');
                     fetchmore.one('a').on('click', this.search, this, true);
                     fetchmore.one('a').on('key', this.search, 'space', this, true);
@@ -489,7 +488,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
      * @method applySelection
      * @param {EventFacade} e The event.
      */
-    applySelection: function(e) {
+    applySelection: function() {
         var userIds = Y.Object.keys(this._usersBufferList);
         this.set(USP.SELECTEDUSERS, Y.clone(this._usersBufferList))
             .setNameDisplay();
@@ -611,7 +610,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         var index = users.indexOf(user);
 
         if (users.size() < 1) {
-            Y.log('The users list is empty');
+            Y.log('The users list is empty', 'debug', COMPONENT);
             return null;
         }
 

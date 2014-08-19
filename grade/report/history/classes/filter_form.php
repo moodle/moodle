@@ -45,7 +45,7 @@ class filter_form extends \moodleform {
      */
     public function definition() {
 
-        $mform    =& $this->_form;
+        $mform    = $this->_form;
         $course   = $this->_customdata['course'];
         $itemids  = $this->_customdata['itemids'];
         $graders  = $this->_customdata['graders'];
@@ -84,7 +84,7 @@ class filter_form extends \moodleform {
      * This method implements changes to the form that need to be made once the form data is set.
      */
     public function definition_after_data() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         if ($userfullnames = $mform->getElementValue('userfullnames')) {
             $mform->getElement('selectednames')->setValue(\html_writer::span($userfullnames, 'selectednames'));

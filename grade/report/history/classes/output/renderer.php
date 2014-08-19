@@ -95,37 +95,6 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Title to display on the report page.
-     *
-     * @param array $users list of selected users.
-     *
-     * @return string HTML to display
-     */
-    public function report_title($users = array()) {
-        $name = get_string('pluginname', 'gradereport_history');
-        if (empty($users)) {
-            return $name;
-        }
-
-        $i = 0;
-        $names = array();
-        foreach ($users as $user) {
-            $names[] = $user->firstname.' '.$user->lastname;
-            $i++;
-            if ($i > 4) {
-                $count = count($users) - $i;
-                if ($count > 0) {
-                    $names[] = ' ... and '.$count.' others';
-                }
-                break;
-            }
-        }
-        $name .= ': '.implode($names, ', ');
-
-        return $name;
-    }
-
-    /**
      * Get the html for the table.
      *
      * @param tablelog $tablelog table object.

@@ -64,26 +64,24 @@ class user_button extends \single_button implements \renderable {
      * @param string $method Either post or get
      */
     public function __construct(\moodle_url $url, $label, $method = 'post') {
-        static $count = 0; // The number of select user buttons already created.
-        $count ++;
         parent::__construct($url, $label, $method);
         $this->class = 'singlebutton selectusersbutton';
-        $this->formid = 'selectusersbutton-'.$count;
+        $this->formid = \html_writer::random_id('selectusersbutton');
     }
 
     /**
      * Adds a YUI module call that will be added to the page when the button is used.
      *
      * @param string|array $modules One or more modules to require
-     * @param string $function The JS function to call
+     * @param string $jsfunction The JS function to call
      * @param array $arguments An array of arguments to pass to the function
      * @param string $galleryversion The YUI gallery version of any modules required
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      */
-    public function require_yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
+    public function require_yui_module($modules, $jsfunction, array $arguments = null, $galleryversion = null, $ondomready = false) {
         $js = new \stdClass;
         $js->modules = (array)$modules;
-        $js->function = $function;
+        $js->function = $jsfunction;
         $js->arguments = $arguments;
         $js->galleryversion = $galleryversion;
         $js->ondomready = $ondomready;
@@ -93,14 +91,14 @@ class user_button extends \single_button implements \renderable {
     /**
      * Adds a JS initialisation call to the page when the button is used.
      *
-     * @param string $function The function to call
+     * @param string $jsfunction The function to call
      * @param array $extraarguments An array of arguments to pass to the function
      * @param bool $ondomready If true the call is postponed until the DOM is finished loading
      * @param array $module A module definition
      */
-    public function require_js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
+    public function require_js_init_call($jsfunction, array $extraarguments = null, $ondomready = false, array $module = null) {
         $js = new \stdClass;
-        $js->function = $function;
+        $js->function = $jsfunction;
         $js->extraarguments = $extraarguments;
         $js->ondomready = $ondomready;
         $js->module = $module;

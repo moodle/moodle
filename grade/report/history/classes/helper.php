@@ -57,8 +57,8 @@ class helper {
             'selectedUsers'       => $currentusers,
         );
 
-        $function = 'Y.M.gradereport_history.UserSelector.init';
-        $button->require_yui_module($module, $function, array($arguments));
+        $jsfunction = 'Y.M.gradereport_history.UserSelector.init';
+        $button->require_yui_module($module, $jsfunction, array($arguments));
         $button->strings_for_js(array(
             'errajaxsearch',
             'finishselectingusers',

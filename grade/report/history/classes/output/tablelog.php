@@ -175,7 +175,7 @@ class tablelog extends \table_sql implements \renderable {
      * @return string HTML to display
      */
     public function col_timemodified(\stdClass $history) {
-        return userdate($history->timemodified, '%d/%m/%Y %H:%M');
+        return userdate($history->timemodified);
     }
 
     /**
@@ -253,7 +253,7 @@ class tablelog extends \table_sql implements \renderable {
      * @return string HTML to display
      */
     public function col_excluded(\stdClass $history) {
-        return $history->excluded ? get_string('yes', 'gradereport_history') : get_string('no', 'gradereport_history');
+        return $history->excluded ? get_string('yesshort', 'gradereport_history') : get_string('noshort', 'gradereport_history');
     }
 
     /**
