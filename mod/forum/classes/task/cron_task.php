@@ -15,15 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * A scheduled task for forum cron.
  *
- * @package   mod_forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo MDL-44734 This job will be split up properly.
+ *
+ * @package    mod_forum
+ * @copyright  2014 Dan Poltawski <dan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_forum\task;
 
-defined('MOODLE_INTERNAL') || die();
+class cron_task extends \core\task\scheduled_task {
 
-$plugin->version   = 2014082100;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800;       // Requires this Moodle version
-$plugin->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
+    /**
+     * Get a descriptive name for this task (shown to admins).
+     *
+     * @return string
+     */
+    public function get_name() {
+        return get_string('crontask', 'mod_forum');
+    }
+
+    /**
+     * Run forum cron.
+     */
+    public function execute() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/forum/lib.php');
+        forum_cron();
+    }
+
+}
