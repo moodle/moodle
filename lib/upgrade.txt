@@ -7,6 +7,11 @@ information provided here is intended especially for developers.
 * renderers: We now remove the suffix _renderable when looking for a render method for a renderable.
   If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"
   you will need to change the name of your render method to "render_blah" instead, as renderable at the end is no longer accepted.
+* New functions get_course_and_cm_from_cmid($cmorid, $modulename) and
+  get_course_and_cm_from_instance($instanceorid, $modulename) can be used to
+  more efficiently load these basic data objects at the start of a script.
+* New function cm_info::create($cm) can be used when you need a cm_info
+  object, but have a $cm which might only be a standard database record.
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
