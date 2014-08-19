@@ -157,7 +157,22 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014051201, 'forum');
     }
 
-    if ($oldversion < 2014051202) {
+    if ($oldversion < 2014081500) {
+
+        // Define index course (not unique) to be added to forum_discussions.
+        $table = new xmldb_table('forum_discussions');
+        $index = new xmldb_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+
+        // Conditionally launch add index course.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2014081500, 'forum');
+    }
+
+    if ($oldversion < 2014081900) {
 
         // Define table forum_discussion_subs to be created.
         $table = new xmldb_table('forum_discussion_subs');
@@ -182,22 +197,7 @@ function xmldb_forum_upgrade($oldversion) {
         }
 
         // Forum savepoint reached.
-        upgrade_mod_savepoint(true, 2014051202, 'forum');
-    }
-
-    if ($oldversion < 2014081500) {
-
-        // Define index course (not unique) to be added to forum_discussions.
-        $table = new xmldb_table('forum_discussions');
-        $index = new xmldb_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-
-        // Conditionally launch add index course.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Forum savepoint reached.
-        upgrade_mod_savepoint(true, 2014081500, 'forum');
+        upgrade_mod_savepoint(true, 2014081900, 'forum');
     }
 
     return true;
