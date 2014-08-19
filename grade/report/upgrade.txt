@@ -1,6 +1,14 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
+=== 2.6.5, 2.7.2 ===
+
+* The callback function grade_report_*_profilereport now takes one more parameter $viewasuser. This parameter
+  is set to true when the report must be viewed as the user whose grades are being displayed. For instance,
+  when a mentor/parent is viewing the report, they should see the same grades, not more, not less. When the
+  setting is set to false (default), the capability checks, visibility and access levels are using the
+  currently logged in user.
+
 === 2.6 ===
 * grade_report_grader::get_toggles_html() and grade_report_grader::print_toggle()
   can not be used any more
