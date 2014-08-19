@@ -4,3 +4,5 @@ This files describes API changes in the mod_scorm code.
 
 * Coding style fixes. A large number of coding style issues were fixed in MDL-45887. This means any local modifications
  to mod_scorm are likely to conflict.
+
+* All scorm report plugins should use namespaced classnames now. Refer MDL-46469 for details.
