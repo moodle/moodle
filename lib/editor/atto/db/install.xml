@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/editor/atto/db" VERSION="20140703" COMMENT="XMLDB file for Moodle lib/editor/atto"
+<XMLDB PATH="lib/editor/atto/db" VERSION="20140819" COMMENT="XMLDB file for Moodle lib/editor/atto"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -14,6 +14,7 @@
         <FIELD NAME="drafttext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The draft text"/>
         <FIELD NAME="draftid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Optional draft area id containing draft files."/>
         <FIELD NAME="pageinstance" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The browser tab instance that last saved the draft text. This is to prevent multiple tabs from the same user saving different text alternately."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Store the last modified time for the auto save text."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

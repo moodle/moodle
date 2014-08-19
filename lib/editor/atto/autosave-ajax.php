@@ -30,6 +30,11 @@ $contextid = required_param('contextid', PARAM_INT);
 $elementid = required_param('elementid', PARAM_ALPHANUMEXT);
 $pagehash = required_param('pagehash', PARAM_ALPHANUMEXT);
 $pageinstance = required_param('pageinstance', PARAM_ALPHANUMEXT);
+$now = time();
+// This is the oldest time any autosave text will be recovered from.
+// This is so that there is a good chance the draft files will still exist (there are many variables so
+// this is impossible to guarantee).
+$before = $now - 60*60*24*4;
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 $PAGE->set_url('/lib/editor/atto/autosave-ajax.php');
@@ -61,6 +66,7 @@ if ($action === 'save') {
         $record->contextid = $contextid;
         $record->drafttext = $drafttext;
         $record->pageinstance = $pageinstance;
+        $record->timemodified = $now;
 
         $DB->insert_record('editor_atto_autosave', $record);
 
@@ -68,6 +74,7 @@ if ($action === 'save') {
         die();
     } else {
         $record->drafttext = $drafttext;
+        $record->timemodified = time();
         $DB->update_record('editor_atto_autosave', $record);
 
         // No response means no error.
@@ -92,6 +99,7 @@ if ($action === 'save') {
         $record->pageinstance = $pageinstance;
         $record->pagehash = $pagehash;
         $record->draftid = $newdraftid;
+        $record->timemodified = time();
         $record->drafttext = '';
 
         $DB->insert_record('editor_atto_autosave', $record);
@@ -101,6 +109,7 @@ if ($action === 'save') {
     } else {
         // Copy all draft files from the old draft area.
         $usercontext = context_user::instance($USER->id);
+        $stale = $record->timemodified < $before;
         require_once($CFG->libdir . '/filelib.php');
 
         // This function copies all the files in one draft area, to another area (in this case it's
@@ -124,10 +133,13 @@ if ($action === 'save') {
 
         $record->pageinstance = $pageinstance;
         $record->draftid = $newdraftid;
+        $record->timemodified = time();
         $DB->update_record('editor_atto_autosave', $record);
 
         // A response means the draft has been restored and here is the auto-saved text.
-        echo $record->drafttext;
+        if (!$stale) {
+            echo $record->drafttext;
+        }
         die();
     }
 } else if ($action == 'reset') {

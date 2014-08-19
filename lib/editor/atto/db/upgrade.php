@@ -81,5 +81,21 @@ function xmldb_editor_atto_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014081400, 'editor', 'atto');
     }
 
+    if ($oldversion < 2014081900) {
+
+        // Define field timemodified to be added to editor_atto_autosave.
+        $table = new xmldb_table('editor_atto_autosave');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'pageinstance');
+
+        // Conditionally launch add field timemodified.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Atto savepoint reached.
+        upgrade_plugin_savepoint(true, 2014081900, 'editor', 'atto');
+    }
+
+
     return true;
 }
