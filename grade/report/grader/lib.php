@@ -923,7 +923,7 @@ class grade_report_grader extends grade_report {
 
                 $hidden = '';
                 if ($grade->is_hidden()) {
-                    $hidden = ' hidden ';
+                    $hidden = ' dimmed_text ';
                 }
 
                 $gradepass = ' gradefail ';
@@ -1266,7 +1266,7 @@ class grade_report_grader extends grade_report {
 
                 $hidden = '';
                 if ($item->is_hidden()) {
-                    $hidden = ' hidden ';
+                    $hidden = ' dimmed_text ';
                 }
 
                 $formattedrange = $item->get_formatted_range($rangesdisplaytype, $rangesdecimalpoints);
