@@ -1611,7 +1611,13 @@ class html_writer {
                         $row->attributes['class'] .= ' lastrow';
                     }
 
-                    $output .= html_writer::start_tag('tr', array('class' => trim($row->attributes['class']), 'style' => $row->style, 'id' => $row->id)) . "\n";
+                    // Explicitly assigned properties should override those defined in the attributes.
+                    $row->attributes['class'] = trim($row->attributes['class']);
+                    $trattributes = array_merge($row->attributes, array(
+                            'id'            => $row->id,
+                            'style'         => $row->style,
+                        ));
+                    $output .= html_writer::start_tag('tr', $trattributes) . "\n";
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
 
