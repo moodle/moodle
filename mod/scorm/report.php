@@ -22,7 +22,7 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 require_once($CFG->dirroot.'/mod/scorm/reportsettings_form.php');
 require_once($CFG->dirroot.'/mod/scorm/report/reportlib.php');
 require_once($CFG->libdir.'/formslib.php');
-require_once($CFG->dirroot.'/mod/scorm/report/default.php'); // Parent class.
+
 define('SCORM_REPORT_DEFAULT_PAGE_SIZE', 20);
 define('SCORM_REPORT_ATTEMPTS_ALL_STUDENTS', 0);
 define('SCORM_REPORT_ATTEMPTS_STUDENTS_WITH', 1);
@@ -91,8 +91,9 @@ if (empty($noheader)) {
 }
 
 // Open the selected Scorm report and display it.
-$reportclassname = "scorm_{$mode}_report";
-$report = new $reportclassname();
+$classname = "scormreport_{$mode}\\report";
+$legacyclassname = "scorm_{$mode}_report";
+$report = class_exists($classname) ? new $classname() : new $legacyclassname();
 $report->display($scorm, $cm, $course, $download); // Run the report!
 
 // Print footer.
