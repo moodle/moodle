@@ -38,7 +38,7 @@ class unknown_service_api_called extends \core\event\base {
     /**
      * Set method for legacy data.
      *
-     * @param stdClass $data legacy event data.
+     * @param \stdClass $data legacy event data.
      */
     public function set_legacy_data($data) {
         // This function is not used and will be removed in 2.7.
@@ -54,8 +54,8 @@ class unknown_service_api_called extends \core\event\base {
         if ($this->is_restored()) {
             throw new \coding_exception('Function get_message_data() can not be used on restored events.');
         }
-        $data = (object)$this->eventdata['other'];
-        $data->xml = new SimpleXMLElement($data->rawbody);
+        $data = (object)$this->data['other'];
+        $data->xml = new \SimpleXMLElement($data->rawbody);
         return $data;
     }
 
@@ -63,10 +63,9 @@ class unknown_service_api_called extends \core\event\base {
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'lti';
         $this->data['crud'] = 'r';
         $this->data['level'] = self::LEVEL_OTHER;
-        $this->data['context'] = \context_system::instance();
+        $this->context = \context_system::instance();
     }
 
     /**
