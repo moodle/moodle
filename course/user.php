@@ -79,6 +79,9 @@ $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalco
 
 $modes = array();
 
+// Used for grade reports, it represents whether we should be viewing the report as ourselves, or as the targetted user.
+$viewasuser = false;
+
 if (has_capability('moodle/grade:viewall', $coursecontext)) {
     //ok - can view all course grades
     $modes[] = 'grade';
@@ -90,10 +93,12 @@ if (has_capability('moodle/grade:viewall', $coursecontext)) {
 } else if ($course->showgrades and has_capability('moodle/grade:viewall', $personalcontext)) {
     // ok - can view grades of this user - parent most probably
     $modes[] = 'grade';
+    $viewasuser = true;
 
 } else if ($course->showgrades and $anyreport) {
     // ok - can view grades of this user - parent most probably
     $modes[] = 'grade';
+    $viewasuser = true;
 }
 
 if (empty($modes)) {
@@ -132,7 +137,7 @@ switch ($mode) {
 
         $functionname = 'grade_report_'.$CFG->grade_profilereport.'_profilereport';
         if (function_exists($functionname)) {
-            $functionname($course, $user);
+            $functionname($course, $user, $viewasuser);
         }
         break;
 

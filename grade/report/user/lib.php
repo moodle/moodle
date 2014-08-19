@@ -152,13 +152,33 @@ class grade_report_user extends grade_report {
     public $pbarurl;
 
     /**
+     * The modinfo object to be used.
+     *
+     * @var course_modinfo
+     */
+    protected $modinfo = null;
+
+    /**
+     * View as user.
+     *
+     * When this is set to true, the visibility checks, and capability checks will be
+     * applied to the user whose grades are being displayed. This is very useful when
+     * a mentor/parent is viewing the report of their mentee because they need to have
+     * access to the same information, but not more, not less.
+     *
+     * @var boolean
+     */
+    protected $viewasuser = false;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
      * @param string $context
      * @param int $userid The id of the user
+     * @param bool $viewasuser Set this to true when the current user is a mentor/parent of the targetted user.
      */
-    public function __construct($courseid, $gpr, $context, $userid) {
+    public function __construct($courseid, $gpr, $context, $userid, $viewasuser = null) {
         global $DB, $CFG;
         parent::__construct($courseid, $gpr, $context);
 
@@ -173,6 +193,8 @@ class grade_report_user extends grade_report {
         $this->showweight      = grade_get_setting($this->courseid, 'report_user_showweight',      !empty($CFG->grade_report_user_showweight));
         $this->showlettergrade = grade_get_setting($this->courseid, 'report_user_showlettergrade', !empty($CFG->grade_report_user_showlettergrade));
         $this->showaverage     = grade_get_setting($this->courseid, 'report_user_showaverage',     !empty($CFG->grade_report_user_showaverage));
+
+        $this->viewasuser = $viewasuser;
 
         // The default grade decimals is 2
         $defaultdecimals = 2;
@@ -203,10 +225,18 @@ class grade_report_user extends grade_report {
 
         $this->tabledata = array();
 
-        $this->canviewhidden = has_capability('moodle/grade:viewhidden', context_course::instance($this->courseid));
-
-        // get the user (for full name)
+        // Get the user (for full name).
         $this->user = $DB->get_record('user', array('id' => $userid));
+
+        // What user are we viewing this as?
+        $coursecontext = context_course::instance($this->courseid);
+        if ($viewasuser) {
+            $this->modinfo = new course_modinfo($this->course, $this->user->id);
+            $this->canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext, $this->user->id);
+        } else {
+            $this->modinfo = $this->gtree->modinfo;
+            $this->canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
+        }
 
         // base url for sorting by first/last name
         $this->baseurl = $CFG->wwwroot.'/grade/report?id='.$courseid.'&amp;userid='.$userid;
@@ -363,7 +393,7 @@ class grade_report_user extends grade_report {
                 // The grade object can be marked visible but still be hidden if
                 // the student cannot see the activity due to conditional access
                 // and it's set to be hidden entirely.
-                $instances = $this->gtree->modinfo->get_instances_of($grade_object->itemmodule);
+                $instances = $this->modinfo->get_instances_of($grade_object->itemmodule);
                 if (!empty($instances[$grade_object->iteminstance])) {
                     $cm = $instances[$grade_object->iteminstance];
                     if (!$cm->uservisible) {
@@ -904,7 +934,14 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->addHelpButton('report_user_showtotalsifcontainhidden', 'hidetotalifhiddenitems', 'grades');
 }
 
-function grade_report_user_profilereport($course, $user) {
+/**
+ * Profile report callback.
+ *
+ * @param object $course The course.
+ * @param object $user The user.
+ * @param boolean $viewasuser True when we are viewing this as the targetted user sees it.
+ */
+function grade_report_user_profilereport($course, $user, $viewasuser = false) {
     global $OUTPUT;
     if (!empty($course->showgrades)) {
 
@@ -916,7 +953,7 @@ function grade_report_user_profilereport($course, $user) {
         /// return tracking object
         $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$user->id));
         // Create a report instance
-        $report = new grade_report_user($course->id, $gpr, $context, $user->id);
+        $report = new grade_report_user($course->id, $gpr, $context, $user->id, $viewasuser);
 
         // print the page
         echo '<div class="grade-report-user">'; // css fix to share styles with real report page
