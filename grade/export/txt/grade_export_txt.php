@@ -33,6 +33,9 @@ class grade_export_txt extends grade_export {
     public function __construct($course, $groupid, $formdata) {
         parent::__construct($course, $groupid, $formdata);
         $this->separator = $formdata->separator;
+
+        // Overrides.
+        $this->usercustomfields = true;
     }
 
     public function get_export_params() {

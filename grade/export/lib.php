@@ -182,6 +182,13 @@ abstract class grade_export {
             $this->previewrows = $formdata->previewrows;
         }
 
+        if (isset($formdata->display)) {
+            $this->displaytype = $formdata->display;
+        }
+
+        if (isset($formdata->updatedgradesonly)) {
+            $this->updatedgradesonly = $formdata->updatedgradesonly;
+        }
     }
 
     /**

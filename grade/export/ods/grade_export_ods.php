@@ -22,6 +22,19 @@ class grade_export_ods extends grade_export {
     public $plugin = 'ods';
 
     /**
+     * Constructor should set up all the private variables ready to be pulled
+     * @param object $course
+     * @param int $groupid id of selected group, 0 means all
+     * @param stdClass $formdata The validated data from the grade export form.
+     */
+    public function __construct($course, $groupid, $formdata) {
+        parent::__construct($course, $groupid, $formdata);
+
+        // Overrides.
+        $this->usercustomfields = true;
+    }
+
+    /**
      * To be implemented by child classes
      */
     function print_grades() {

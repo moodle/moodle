@@ -16,23 +16,9 @@ Feature: I need to export grades as text
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
-      | assignsubmission_onlinetext_enabled | 1 |
-    And I log out
-    And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Test assignment name"
-    When I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | This is a submission |
-    And I press "Save changes"
-    Then I should see "Submitted for grading"
-    And I log out
+    And the following "activities" exist:
+      | activity | course | idnumber | name | intro | assignsubmission_onlinetext_enabled |
+      | assign | C1 | a1 | Test assignment name | Submit your online text | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
@@ -51,3 +37,13 @@ Feature: I need to export grades as text
     And I should see "80.0"
     And I should not see "Course total"
     And I should not see "80.00"
+
+  @javascript
+  Scenario: Export grades as text using percentages
+    When I set the field "Grade report" to "Plain text file"
+    And I expand all fieldsets
+    And I set the field "Grade export display type" to "Percent"
+    And I click on "Course total" "checkbox"
+    And I press "Download"
+    Then I should see "Student,1"
+    And I should see "80.00 %"
