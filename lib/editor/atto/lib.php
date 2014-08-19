@@ -125,7 +125,14 @@ class atto_texteditor extends texteditor {
                 'editor_command_keycode',
                 'editor_control_keycode',
                 'plugin_title_shortcut',
+                'textrecovered',
+                'autosavefailed',
+                'autosavesucceeded'
             ), 'editor_atto');
+        $PAGE->requires->strings_for_js(array(
+                'warning',
+                'info'
+            ), 'moodle');
         $PAGE->requires->yui_module($modules,
                                     'Y.M.editor_atto.Editor.init',
                                     array($this->get_init_params($elementid, $options, $fpoptions, $jsplugins)));
@@ -146,15 +153,24 @@ class atto_texteditor extends texteditor {
         $strtime        = get_string('strftimetime');
         $strdate        = get_string('strftimedaydate');
         $lang           = current_language();
+        $autosave       = true;
+        $autosavefrequency = get_config('editor_atto', 'autosavefrequency');
+        if (isset($options['autosave'])) {
+            $autosave       = $options['autosave'];
+        }
         $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
         $params = array(
             'elementid' => $elementid,
             'content_css' => $contentcss,
+            'contextid' => $options['context']->id,
+            'autosaveEnabled' => $autosave,
+            'autosaveFrequency' => $autosavefrequency,
             'language' => $lang,
             'directionality' => $directionality,
             'filepickeroptions' => array(),
-            'plugins' => $plugins
+            'plugins' => $plugins,
+            'pageHash' => sha1($PAGE->url)
         );
         if ($fpoptions) {
             $params['filepickeroptions'] = $fpoptions;
