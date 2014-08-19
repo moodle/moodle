@@ -207,7 +207,7 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
             $option = new stdClass;
             $option->attributes = new stdClass;
             $option->attributes->value = $optionid;
-            $option->text = $text;
+            $option->text = format_string($text);
             $option->maxanswers = $choice->maxanswers[$optionid];
             $option->displaylayout = $choice->display;
 
