@@ -798,7 +798,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
     public function get_item_cell($item, $params) {
         global $DB, $OUTPUT;
 
-        // If the parent aggregation is Sum of Grades, we should show the number, even for scales, as that value is used...
+        // If the parent aggregation is Natural, we should show the number, even for scales, as that value is used...
         // ...in the computation. For text grades, the grademax is not used, so we can still show the no value string.
         $parent_cat = $item->get_parent_category();
         if ($item->gradetype == GRADE_TYPE_TEXT) {
