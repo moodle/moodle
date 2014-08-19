@@ -860,6 +860,9 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
 function groups_filter_users_by_course_module_visible($cm, $users) {
     global $CFG, $DB;
 
+    if (empty($users)) {
+        return $users;
+    }
     if (empty($CFG->enablegroupmembersonly)) {
         return $users;
     }
