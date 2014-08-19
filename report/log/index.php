@@ -44,8 +44,11 @@ $logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader wh
 $edulevel    = optional_param('edulevel', -1, PARAM_INT); // Educational level.
 
 $params = array();
-if ($id !== 0) {
+if (!empty($id)) {
     $params['id'] = $id;
+} else {
+    $site = get_site();
+    $id = $site->id;
 }
 if ($group !== 0) {
     $params['group'] = $group;
