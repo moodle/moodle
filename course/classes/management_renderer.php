@@ -1215,13 +1215,13 @@ class core_course_management_renderer extends plugin_renderer_base {
             if ($course->can_change_visibility()) {
                     $actions[] = $this->output->action_icon(
                         new moodle_url($baseurl, array('action' => 'hidecourse')),
-                        new pix_icon('t/show', get_string('hide')),
+                        new pix_icon('t/hide', get_string('hide')),
                         null,
                         array('data-action' => 'hide', 'class' => 'action-hide')
                     );
                     $actions[] = $this->output->action_icon(
                         new moodle_url($baseurl, array('action' => 'showcourse')),
-                        new pix_icon('t/hide', get_string('show')),
+                        new pix_icon('t/show', get_string('show')),
                         null,
                         array('data-action' => 'show', 'class' => 'action-show')
                     );
