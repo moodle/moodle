@@ -906,6 +906,8 @@ function assign_cron() {
             $class::cron();
         }
     }
+
+    return true;
 }
 
 /**
