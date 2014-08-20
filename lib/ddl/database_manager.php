@@ -497,7 +497,7 @@ class database_manager {
 
         // Check new table doesn't exist
         if ($this->table_exists($check)) {
-            throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName(), 'can not rename table');
+            throw new ddl_exception('ddltablealreadyexists', $check->getName(), 'can not rename table');
         }
 
         if (!$sqlarr = $this->generator->getRenameTableSQL($xmldb_table, $newname)) {
