@@ -265,9 +265,9 @@ function url_export_contents($cm, $baseurl) {
     $context = context_module::instance($cm->id);
 
     $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-    $url = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $urlrecord = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
 
-    $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));
+    $fullurl = str_replace('&amp;', '&', url_get_full_url($urlrecord, $cm, $course));
     $isurl = clean_param($fullurl, PARAM_URL);
     if (empty($isurl)) {
         return null;
@@ -275,12 +275,12 @@ function url_export_contents($cm, $baseurl) {
 
     $url = array();
     $url['type'] = 'url';
-    $url['filename']     = $url->name;
+    $url['filename']     = $urlrecord->name;
     $url['filepath']     = null;
     $url['filesize']     = 0;
     $url['fileurl']      = $fullurl;
     $url['timecreated']  = null;
-    $url['timemodified'] = $url->timemodified;
+    $url['timemodified'] = $urlrecord->timemodified;
     $url['sortorder']    = null;
     $url['userid']       = null;
     $url['author']       = null;
