@@ -170,6 +170,35 @@ class core_group_lib_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
     }
 
+    public function test_group_updated_event_does_not_require_names() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        $sink = $this->redirectEvents();
+        $data = new stdClass();
+        $data->id = $group->id;
+        $data->courseid = $course->id;
+        $this->setCurrentTimeStart();
+        groups_update_group($data);
+        $group = $DB->get_record('groups', array('id'=>$group->id)); // Fetch record with modified timestamp.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertTimeCurrent($group->timemodified);
+
+        $this->assertInstanceOf('\core\event\group_updated', $event);
+        $this->assertEventLegacyData($group, $event);
+        $this->assertSame('groups_group_updated', $event->get_legacy_eventname());
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($group->id, $event->objectid);
+        $url = new moodle_url('/group/group.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
+    }
+
     public function test_grouping_updated_event() {
         global $DB;
 
@@ -199,6 +228,46 @@ class core_group_lib_testcase extends advanced_testcase {
         $data->descriptionformat = $grouping->descriptionformat;
         $data->configdata = $grouping->configdata;
         $data->idnumber = $grouping->idnumber;
+        $data->timecreated = $grouping->timecreated;
+        // Assert legacy event data.
+        $this->assertEventLegacyData($data, $event);
+        $this->assertSame('groups_grouping_updated', $event->get_legacy_eventname());
+
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($grouping->id, $event->objectid);
+        $url = new moodle_url('/group/grouping.php', array('id' => $event->objectid));
+        $this->assertEquals($url, $event->get_url());
+    }
+
+    public function test_grouping_updated_event_does_not_require_names() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $grouping = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id));
+
+        $sink = $this->redirectEvents();
+        $data = new stdClass();
+        $data->id = $grouping->id;
+        $data->courseid = $course->id;
+        $this->setCurrentTimeStart();
+        groups_update_grouping($data);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\grouping_updated', $event);
+
+        // Get the timemodified from DB for comparison with snapshot.
+        $data->timemodified = $DB->get_field('groupings', 'timemodified', array('id'=>$grouping->id));
+        $this->assertTimeCurrent($data->timemodified);
+        // Following fields were not updated so the snapshot should have them the same as in original group.
+        $data->description = $grouping->description;
+        $data->descriptionformat = $grouping->descriptionformat;
+        $data->configdata = $grouping->configdata;
+        $data->idnumber = $grouping->idnumber;
+        $data->name = $grouping->name;
         $data->timecreated = $grouping->timecreated;
         // Assert legacy event data.
         $this->assertEventLegacyData($data, $event);
