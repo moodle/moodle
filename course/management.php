@@ -499,7 +499,7 @@ if ($displaycourselisting) {
     } else {
         list($courses, $coursescount, $coursestotal) =
             \core_course\management\helper::search_courses($search, $blocklist, $modulelist, $page, $perpage);
-        echo $renderer->search_listing($courses, $coursestotal, $course, $page, $perpage);
+        echo $renderer->search_listing($courses, $coursestotal, $course, $page, $perpage, $search);
     }
     echo $renderer->grid_column_end();
     if ($displaycoursedetail) {
