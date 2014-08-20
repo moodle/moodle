@@ -285,7 +285,7 @@ function edit_module_post_actions($moduleinfo, $course) {
                     $outcome_item->set_parent($moduleinfo->gradecat);
                 }
                 $gradecategory = $outcome_item->get_parent_category();
-                if (!empty($moduleinfo->add)) {
+                if ($outcomeexists == false) {
                     if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
                         if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
                             $outcome_item->aggregationcoef = 1;
