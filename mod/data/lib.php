@@ -1162,9 +1162,10 @@ function data_grade_item_delete($data) {
  * @param string $search
  * @param int $page
  * @param bool $return
+ * @param object $jumpurl a moodle_url by which to jump back to the record list (can be null)
  * @return mixed
  */
-function data_print_template($template, $records, $data, $search='', $page=0, $return=false) {
+function data_print_template($template, $records, $data, $search='', $page=0, $return=false, moodle_url $jumpurl=null) {
     global $CFG, $DB, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
@@ -1191,6 +1192,11 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     if (empty($records)) {
         return;
     }
+
+    if (!$jumpurl) {
+        $jumpurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
+    }
+    $jumpurl = new moodle_url($jumpurl, array('page' => $page, 'sesskey' => sesskey()));
 
     // Check whether this activity is read-only at present
     $readonly = data_in_readonly_period($data);
@@ -1268,8 +1274,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##approve##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)) {
-            $approveurl = new moodle_url('/mod/data/view.php',
-                    array('d' => $data->id, 'approve' => $record->id, 'sesskey' => sesskey()));
+            $approveurl = new moodle_url($jumpurl, array('approve' => $record->id));
             $approveicon = new pix_icon('t/approve', get_string('approve', 'data'), '', array('class' => 'iconsmall'));
             $replacement[] = html_writer::tag('span', $OUTPUT->action_icon($approveurl, $approveicon),
                     array('class' => 'approve'));
@@ -1279,8 +1284,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##disapprove##';
         if (has_capability('mod/data:approve', $context) && ($data->approval) && ($record->approved)) {
-            $disapproveurl = new moodle_url('/mod/data/view.php',
-                    array('d' => $data->id, 'disapprove' => $record->id, 'sesskey' => sesskey()));
+            $disapproveurl = new moodle_url($jumpurl, array('disapprove' => $record->id));
             $disapproveicon = new pix_icon('t/block', get_string('disapprove', 'data'), '', array('class' => 'iconsmall'));
             $replacement[] = html_writer::tag('span', $OUTPUT->action_icon($disapproveurl, $disapproveicon),
                     array('class' => 'disapprove'));
