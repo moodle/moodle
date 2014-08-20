@@ -214,4 +214,32 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $task = \core\task\manager::get_next_scheduled_task($now);
         $this->assertNull($task);
     }
+
+    public function test_get_broken_scheduled_task() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        // Delete all existing scheduled tasks.
+        $DB->delete_records('task_scheduled');
+        // Add a scheduled task.
+
+        // A broken task that runs all the time.
+        $record = new stdClass();
+        $record->blocking = true;
+        $record->minute = '*';
+        $record->hour = '*';
+        $record->dayofweek = '*';
+        $record->day = '*';
+        $record->month = '*';
+        $record->component = 'test_scheduled_task';
+        $record->classname = '\core\task\scheduled_test_task_broken';
+
+        $DB->insert_record('task_scheduled', $record);
+
+        $now = time();
+        // Should not get any task.
+        $task = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertDebuggingCalled();
+        $this->assertNull($task);
+    }
 }
