@@ -59,8 +59,6 @@ class renderer extends \plugin_renderer_base {
                 $this->add_action_handler($action, $id);
             }
         }
-        $button->initialise_js($this->page);
-
         // First the input element.
         $output = \html_writer::empty_tag('input', $attributes);
 

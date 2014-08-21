@@ -37,29 +37,18 @@ defined('MOODLE_INTERNAL') || die;
 class helper {
 
     /**
-     * Get an instance of the user select button {@link gradereport_history_user_button}.
+     * Initialise the js to handle the user selection {@link gradereport_history_user_button}.
      *
      * @param int $courseid       course id.
      * @param array $currentusers List of currently selected users.
      *
      * @return output\user_button the user select button.
      */
-    public static function get_user_select_button($courseid, array $currentusers = null) {
+    public static function init_js($courseid, array $currentusers = null) {
         global $PAGE;
-        $button = new output\user_button($PAGE->url, get_string('selectusers', 'gradereport_history'), 'get');
-        $button->class .= ' gradereport_history_plugin';
 
-        $module = array('moodle-gradereport_history-userselector');
-        $arguments = array(
-            'courseid'            => $courseid,
-            'ajaxurl'             => '/grade/report/history/users_ajax.php',
-            'url'                 => $PAGE->url->out(false),
-            'selectedUsers'       => $currentusers,
-        );
-
-        $jsfunction = 'Y.M.gradereport_history.UserSelector.init';
-        $button->require_yui_module($module, $jsfunction, array($arguments));
-        $button->strings_for_js(array(
+        // Load the strings for js.
+        $PAGE->requires->strings_for_js(array(
             'errajaxsearch',
             'finishselectingusers',
             'foundoneuser',
@@ -67,15 +56,27 @@ class helper {
             'loadmoreusers',
             'selectusers',
         ), 'gradereport_history');
-        $button->strings_for_js(array(
+        $PAGE->requires->strings_for_js(array(
             'loading'
         ), 'admin');
-        $button->strings_for_js(array(
+        $PAGE->requires->strings_for_js(array(
             'noresults',
             'search'
-        ));
+        ), 'moodle');
 
-        return $button;
+        $arguments = array(
+            'courseid'            => $courseid,
+            'ajaxurl'             => '/grade/report/history/users_ajax.php',
+            'url'                 => $PAGE->url->out(false),
+            'selectedUsers'       => $currentusers,
+        );
+
+        // Load the yui module.
+        $PAGE->requires->yui_module(
+            'moodle-gradereport_history-userselector',
+            'Y.M.gradereport_history.UserSelector.init',
+            array($arguments)
+        );
     }
 
     /**
