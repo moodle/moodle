@@ -5,6 +5,8 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 === 2.8 ===
 * The activity chooser now uses M.course.format.get_sectionwrapperclass()
   to determine the section selector, rather than a hard-coded `li.section`.
+* Activity duplication in /course/modduplicate.php is deprecated and is now done in /course/mod.php.  Deprecated calls will be honored by
+  redirecting to /course/mod.php for 3rd party plugin support.
 
 === 2.7 ===
 * The ->testedbrowsers array no longer needs to be defined in supports_ajax().
