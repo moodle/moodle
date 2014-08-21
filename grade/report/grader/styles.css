@@ -77,7 +77,7 @@ table#user-grades {
     background-color: transparent;
     border-style: solid;
     border-width: 1px;
-    margin: 20px 0 0;
+    margin: 0;
 }
 .path-grade-report-grader #overDiv table {
     margin: 0;
@@ -343,7 +343,6 @@ table#user-grades th.fixedcolumn {
 .path-grade-report-grader .left_scroller {
     float: left;
     clear: none;
-    padding-top: 22px;
 }
 .path-grade-report-grader.dir-rtl .left_scroller {
     float: right;
@@ -617,13 +616,6 @@ table#user-grades th.category {
 .path-grade-report-grader .gradeparent {
     border-top: 1px solid #cecece;
 }
-#page-grade-report-grader-index .topscrollcontent {
-    background-color: #cecece;
-    height: 1px;
-}
-#page-grade-report-grader-index #user-grades {
-    margin-top: 4px;
-}
 .path-grade-report-grader div.left_scroller tr,
 .path-grade-report-grader div.right_scroller tr,
 .path-grade-report-grader div.left_scroller td,
@@ -634,4 +626,19 @@ table#user-grades th.category {
 }
 .path-grade-report-grader td.grade.overridden {
     line-height: 20px;
+}
+
+/** MDL-46812 **/
+#page-grade-report-grader-index.jsenabled .right_scroller.topscroll {
+    background-color: #ececec;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+}
+#page-grade-report-grader-index.jsenabled .topscrollcontent {
+    background-color: #ececec;
+    height: 20px;
+}
+.jsenabled.path-grade-report-grader .left_scroller {
+    border-top: 20px solid #ececec;
 }
