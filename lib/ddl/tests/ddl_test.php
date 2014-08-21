@@ -563,6 +563,17 @@ class core_ddl_testcase extends database_driver_testcase {
             'secondname' => 'not important',
             'intro'      => 'not important');
         $this->assertSame($insertedrows+1, $DB->insert_record('test_table_cust1', $rec));
+
+        // Verify behavior when target table already exists.
+        $sourcetable = $this->create_deftable('test_table0');
+        $targettable = $this->create_deftable('test_table1');
+        try {
+            $dbman->rename_table($sourcetable, $targettable->getName());
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('ddl_exception', $e);
+            $this->assertEquals('Table "test_table1" already exists (can not rename table)', $e->getMessage());
+        }
     }
 
     /**
