@@ -368,7 +368,7 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
     // Enrol the user on the courses.
     if (!empty($createcourses)) {
         $userdata = $DB->get_record('user', array('id' => $userid));
-        company_user::enrol($userdata, $createcourses);
+        company_user::enrol($userdata, $createcourses, $companyid);
     }
     if (isset($data->submitandback)) {
         redirect($dashboardurl);
