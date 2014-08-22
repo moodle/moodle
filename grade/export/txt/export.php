@@ -41,7 +41,8 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
 $params = array(
     'includeseparator'=>true,
     'publishing' => true,
-    'simpleui' => true
+    'simpleui' => true,
+    'multipledisplaytypes' => true
 );
 $mform = new grade_export_form(null, $params);
 $data = $mform->get_data();

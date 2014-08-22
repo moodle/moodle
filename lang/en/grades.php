@@ -708,3 +708,5 @@ $string['writinggradebookinfo'] = 'Writing gradebook settings';
 $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
+$string['gradeexportdisplaytypes'] = 'Grade export display types';
+$string['gradeexportcolumntype'] = '{$a->name} ({$a->extra})';

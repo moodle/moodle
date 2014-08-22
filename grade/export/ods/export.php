@@ -37,7 +37,7 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
         print_error('cannotaccessgroup', 'grades');
     }
 }
-$mform = new grade_export_form(null, array('publishing' => true, 'simpleui' => true));
+$mform = new grade_export_form(null, array('publishing' => true, 'simpleui' => true, 'multipledisplaytypes' => true));
 $data = $mform->get_data();
 
 // print all the exported data here

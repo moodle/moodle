@@ -43,7 +43,8 @@ if (!empty($CFG->gradepublishing)) {
 $actionurl = new moodle_url('/grade/export/xls/export.php');
 $formoptions = array(
     'publishing' => true,
-    'simpleui' => true
+    'simpleui' => true,
+    'multipledisplaytypes' => true
 );
 
 $mform = new grade_export_form($actionurl, $formoptions);
