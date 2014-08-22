@@ -1027,9 +1027,14 @@ class behat_general extends behat_base {
         $tablenode = $this->get_selected_node('table', $table);
         $tablexpath = $tablenode->getXpath();
 
-        // Check if column exists, it can be in thead or tbody first row.
-        $columnheaderxpath = $tablexpath . "[thead/tr/th[normalize-space(.)='$column'] | "
-                . "tbody/tr[1]/th[normalize-space(.)='" . $column . "']]";
+        // Header can be in thead or tbody (first row), following xpath should work.
+        $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)='" . $column . "' or a[normalize-space(text())='" .
+            $column . "'])]";
+        $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)='" . $column . "' or a[normalize-space(text())='" .
+            $column . "'])]";
+
+        // Check if column exists.
+        $columnheaderxpath = $tablexpath . "[" . $theadheaderxpath . " | " . $tbodyheaderxpath . "]";
         $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
         if (empty($columnheader)) {
             $columnexceptionmsg = $column . '" in table "' . $table . '"';
@@ -1043,17 +1048,16 @@ class behat_general extends behat_base {
         // Following conditions were considered before finding column count.
         // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
         // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
-        $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/thead/tr[1]/th[normalize-space(.)='" .
-            $column . "']/preceding-sibling::*) + 1]";
-        $columnvaluexpath = $rowxpath . $columnpositionxpath . "[text()[contains(normalize-space(.),'" . $value . "')]]";
-
+        $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $theadheaderxpath .
+            "/preceding-sibling::*) + 1]";
+        $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.),'" . $value . "')]";
         // Looks for the requested node inside the container node.
         $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
         if (empty($coumnnode)) {
             // Check if tbody/tr[1] contains header selector.
-            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/tbody/tr[1]/td[normalize-space(.)='" .
-                $column . "']/preceding-sibling::*) + 1]";
-            $columnvaluexpath = $rowxpath . $columnpositionxpath . "[text()[contains(normalize-space(.),'" . $value . "')]]";
+            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $tbodyheaderxpath .
+                "/preceding-sibling::*) + 1]";
+            $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.),'" . $value . "')]";
             $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
             if (empty($coumnnode)) {
                 $locatorexceptionmsg = $value . '" in "' . $row . '" row with column "' . $column;
