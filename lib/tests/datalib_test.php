@@ -346,4 +346,311 @@ class core_datalib_testcase extends advanced_testcase {
         $this->assertTimeCurrent($record1->cacherev);
         $this->assertEquals($record1->cacherev, $record2->cacherev);
     }
+
+    public function test_get_coursemodule_from_id() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser(); // Some generators have bogus access control.
+
+        $this->assertFileExists("$CFG->dirroot/mod/folder/lib.php");
+        $this->assertFileExists("$CFG->dirroot/mod/glossary/lib.php");
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $folder1a = $this->getDataGenerator()->create_module('folder', array('course' => $course1, 'section' => 3));
+        $folder1b = $this->getDataGenerator()->create_module('folder', array('course' => $course1));
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', array('course' => $course1));
+
+        $folder2 = $this->getDataGenerator()->create_module('folder', array('course' => $course2));
+
+        $cm = get_coursemodule_from_id('folder', $folder1a->cmid);
+        $this->assertInstanceOf('stdClass', $cm);
+        $this->assertSame('folder', $cm->modname);
+        $this->assertSame($folder1a->id, $cm->instance);
+        $this->assertSame($folder1a->course, $cm->course);
+        $this->assertObjectNotHasAttribute('sectionnum', $cm);
+
+        $this->assertEquals($cm, get_coursemodule_from_id('', $folder1a->cmid));
+        $this->assertEquals($cm, get_coursemodule_from_id('folder', $folder1a->cmid, $course1->id));
+        $this->assertEquals($cm, get_coursemodule_from_id('folder', $folder1a->cmid, 0));
+        $this->assertFalse(get_coursemodule_from_id('folder', $folder1a->cmid, -10));
+
+        $cm2 = get_coursemodule_from_id('folder', $folder1a->cmid, 0, true);
+        $this->assertEquals(3, $cm2->sectionnum);
+        unset($cm2->sectionnum);
+        $this->assertEquals($cm, $cm2);
+
+        $this->assertFalse(get_coursemodule_from_id('folder', -11));
+
+        try {
+            get_coursemodule_from_id('folder', -11, 0, false, MUST_EXIST);
+            $this->fail('dml_missing_record_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_missing_record_exception', $e);
+        }
+
+        try {
+            get_coursemodule_from_id('', -11, 0, false, MUST_EXIST);
+            $this->fail('dml_missing_record_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_missing_record_exception', $e);
+        }
+
+        try {
+            get_coursemodule_from_id('a b', $folder1a->cmid, 0, false, MUST_EXIST);
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            get_coursemodule_from_id('abc', $folder1a->cmid, 0, false, MUST_EXIST);
+            $this->fail('dml_read_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_read_exception', $e);
+        }
+    }
+
+    public function test_get_coursemodule_from_instance() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser(); // Some generators have bogus access control.
+
+        $this->assertFileExists("$CFG->dirroot/mod/folder/lib.php");
+        $this->assertFileExists("$CFG->dirroot/mod/glossary/lib.php");
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $folder1a = $this->getDataGenerator()->create_module('folder', array('course' => $course1, 'section' => 3));
+        $folder1b = $this->getDataGenerator()->create_module('folder', array('course' => $course1));
+
+        $folder2 = $this->getDataGenerator()->create_module('folder', array('course' => $course2));
+
+        $cm = get_coursemodule_from_instance('folder', $folder1a->id);
+        $this->assertInstanceOf('stdClass', $cm);
+        $this->assertSame('folder', $cm->modname);
+        $this->assertSame($folder1a->id, $cm->instance);
+        $this->assertSame($folder1a->course, $cm->course);
+        $this->assertObjectNotHasAttribute('sectionnum', $cm);
+
+        $this->assertEquals($cm, get_coursemodule_from_instance('folder', $folder1a->id, $course1->id));
+        $this->assertEquals($cm, get_coursemodule_from_instance('folder', $folder1a->id, 0));
+        $this->assertFalse(get_coursemodule_from_instance('folder', $folder1a->id, -10));
+
+        $cm2 = get_coursemodule_from_instance('folder', $folder1a->id, 0, true);
+        $this->assertEquals(3, $cm2->sectionnum);
+        unset($cm2->sectionnum);
+        $this->assertEquals($cm, $cm2);
+
+        $this->assertFalse(get_coursemodule_from_instance('folder', -11));
+
+        try {
+            get_coursemodule_from_instance('folder', -11, 0, false, MUST_EXIST);
+            $this->fail('dml_missing_record_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_missing_record_exception', $e);
+        }
+
+        try {
+            get_coursemodule_from_instance('a b', $folder1a->cmid, 0, false, MUST_EXIST);
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            get_coursemodule_from_instance('', $folder1a->cmid, 0, false, MUST_EXIST);
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            get_coursemodule_from_instance('abc', $folder1a->cmid, 0, false, MUST_EXIST);
+            $this->fail('dml_read_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_read_exception', $e);
+        }
+    }
+
+    public function test_get_coursemodules_in_course() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser(); // Some generators have bogus access control.
+
+        $this->assertFileExists("$CFG->dirroot/mod/folder/lib.php");
+        $this->assertFileExists("$CFG->dirroot/mod/glossary/lib.php");
+        $this->assertFileExists("$CFG->dirroot/mod/label/lib.php");
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $folder1a = $this->getDataGenerator()->create_module('folder', array('course' => $course1, 'section' => 3));
+        $folder1b = $this->getDataGenerator()->create_module('folder', array('course' => $course1));
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', array('course' => $course1));
+
+        $folder2 = $this->getDataGenerator()->create_module('folder', array('course' => $course2));
+        $glossary2a = $this->getDataGenerator()->create_module('glossary', array('course' => $course2));
+        $glossary2b = $this->getDataGenerator()->create_module('glossary', array('course' => $course2));
+
+        $modules = get_coursemodules_in_course('folder', $course1->id);
+        $this->assertCount(2, $modules);
+
+        $cm = $modules[$folder1a->cmid];
+        $this->assertSame('folder', $cm->modname);
+        $this->assertSame($folder1a->id, $cm->instance);
+        $this->assertSame($folder1a->course, $cm->course);
+        $this->assertObjectNotHasAttribute('sectionnum', $cm);
+        $this->assertObjectNotHasAttribute('revision', $cm);
+        $this->assertObjectNotHasAttribute('display', $cm);
+
+        $cm = $modules[$folder1b->cmid];
+        $this->assertSame('folder', $cm->modname);
+        $this->assertSame($folder1b->id, $cm->instance);
+        $this->assertSame($folder1b->course, $cm->course);
+        $this->assertObjectNotHasAttribute('sectionnum', $cm);
+        $this->assertObjectNotHasAttribute('revision', $cm);
+        $this->assertObjectNotHasAttribute('display', $cm);
+
+        $modules = get_coursemodules_in_course('folder', $course1->id, 'revision, display');
+        $this->assertCount(2, $modules);
+
+        $cm = $modules[$folder1a->cmid];
+        $this->assertSame('folder', $cm->modname);
+        $this->assertSame($folder1a->id, $cm->instance);
+        $this->assertSame($folder1a->course, $cm->course);
+        $this->assertObjectNotHasAttribute('sectionnum', $cm);
+        $this->assertObjectHasAttribute('revision', $cm);
+        $this->assertObjectHasAttribute('display', $cm);
+
+        $modules = get_coursemodules_in_course('label', $course1->id);
+        $this->assertCount(0, $modules);
+
+        try {
+            get_coursemodules_in_course('a b', $course1->id);
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            get_coursemodules_in_course('abc', $course1->id);
+            $this->fail('dml_read_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_read_exception', $e);
+        }
+    }
+
+    public function test_get_all_instances_in_courses() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser(); // Some generators have bogus access control.
+
+        $this->assertFileExists("$CFG->dirroot/mod/folder/lib.php");
+        $this->assertFileExists("$CFG->dirroot/mod/glossary/lib.php");
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $folder1a = $this->getDataGenerator()->create_module('folder', array('course' => $course1, 'section' => 3));
+        $folder1b = $this->getDataGenerator()->create_module('folder', array('course' => $course1));
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', array('course' => $course1));
+
+        $folder2 = $this->getDataGenerator()->create_module('folder', array('course' => $course2));
+        $glossary2a = $this->getDataGenerator()->create_module('glossary', array('course' => $course2));
+        $glossary2b = $this->getDataGenerator()->create_module('glossary', array('course' => $course2));
+
+        $folder3 = $this->getDataGenerator()->create_module('folder', array('course' => $course3));
+
+        $modules = get_all_instances_in_courses('folder', array($course1->id => $course1, $course2->id => $course2));
+        $this->assertCount(3, $modules);
+
+        foreach ($modules as $cm) {
+            if ($folder1a->cmid == $cm->coursemodule) {
+                $folder = $folder1a;
+            } else if ($folder1b->cmid == $cm->coursemodule) {
+                $folder = $folder1b;
+            } else if ($folder2->cmid == $cm->coursemodule) {
+                $folder = $folder2;
+            } else {
+                $this->fail('Unexpected cm'. $cm->coursemodule);
+            }
+            $this->assertSame($folder->name, $cm->name);
+            $this->assertSame($folder->course, $cm->course);
+        }
+
+        try {
+            get_all_instances_in_courses('a b', array($course1->id => $course1, $course2->id => $course2));
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            get_all_instances_in_courses('', array($course1->id => $course1, $course2->id => $course2));
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+    }
+
+    public function test_get_all_instances_in_course() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser(); // Some generators have bogus access control.
+
+        $this->assertFileExists("$CFG->dirroot/mod/folder/lib.php");
+        $this->assertFileExists("$CFG->dirroot/mod/glossary/lib.php");
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+
+        $folder1a = $this->getDataGenerator()->create_module('folder', array('course' => $course1, 'section' => 3));
+        $folder1b = $this->getDataGenerator()->create_module('folder', array('course' => $course1));
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', array('course' => $course1));
+
+        $folder2 = $this->getDataGenerator()->create_module('folder', array('course' => $course2));
+        $glossary2a = $this->getDataGenerator()->create_module('glossary', array('course' => $course2));
+        $glossary2b = $this->getDataGenerator()->create_module('glossary', array('course' => $course2));
+
+        $folder3 = $this->getDataGenerator()->create_module('folder', array('course' => $course3));
+
+        $modules = get_all_instances_in_course('folder', $course1);
+        $this->assertCount(2, $modules);
+
+        foreach ($modules as $cm) {
+            if ($folder1a->cmid == $cm->coursemodule) {
+                $folder = $folder1a;
+            } else if ($folder1b->cmid == $cm->coursemodule) {
+                $folder = $folder1b;
+            } else {
+                $this->fail('Unexpected cm'. $cm->coursemodule);
+            }
+            $this->assertSame($folder->name, $cm->name);
+            $this->assertSame($folder->course, $cm->course);
+        }
+
+        try {
+            get_all_instances_in_course('a b', $course1);
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            get_all_instances_in_course('', $course1);
+            $this->fail('coding_exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+    }
 }
