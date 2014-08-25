@@ -41,15 +41,12 @@ class filter_glossary extends moodle_text_filter {
     protected $cacheconceptlist = null;
 
     public function setup($page, $context) {
-        // This only requires execution once per request.
-        static $jsinitialised = false;
-        if (empty($jsinitialised)) {
+        if ($page->requires->should_create_one_time_item_now('filter_glossary_autolinker')) {
             $page->requires->yui_module(
                     'moodle-filter_glossary-autolinker',
                     'M.filter_glossary.init_filter_autolinking',
                     array(array('courseid' => 0)));
             $page->requires->strings_for_js(array('ok'), 'moodle');
-            $jsinitialised = true;
         }
     }
 
