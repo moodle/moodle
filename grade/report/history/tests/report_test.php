@@ -115,7 +115,7 @@ class gradereport_history_report_testcase extends advanced_testcase {
         $grades['c2m2u1f'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
             'timemodified' => $now + 70, 'finalgrade' => 25));      // Not revised.
 
-        // TODO MDL-46737 Handle deleted/non-existing grade items.
+        // TODO MDL-46736 Handle deleted/non-existing grade items.
         // Histories with missing grade items, considered as deleted.
         // $grades['c2x1u5'] = $this->create_grade_history($giparams + array('itemid' => -1, 'userid' => $u5->id, 'courseid' => $c1->id));
         // $grades['c2x2u5'] = $this->create_grade_history($giparams + array('itemid' => 999999, 'userid' => $u5->id, 'courseid' => $c1->id));

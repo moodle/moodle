@@ -45,7 +45,6 @@ require_capability('moodle/grade:viewall', $context);
 
 $outcome = new stdClass();
 $outcome->success = true;
-$outcome->response = new stdClass();
 $outcome->error = '';
 
 $users = \gradereport_history\helper::get_users($context, $search, $page, 25);
@@ -71,4 +70,6 @@ foreach ($users as $user) {
 
 $outcome->success = true;
 
+echo $OUTPUT->header();
 echo json_encode($outcome);
+echo $OUTPUT->footer();

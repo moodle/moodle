@@ -45,7 +45,7 @@ class renderer extends \plugin_renderer_base {
      *
      * @return string HTML to display
      */
-    public function render_user_button(user_button $button) {
+    protected function render_user_button(user_button $button) {
         $attributes = array('type'     => 'button',
                             'class'    => 'selectortrigger',
                             'value'    => $button->label,

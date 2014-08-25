@@ -1034,7 +1034,7 @@ class core_plugin_manager {
             ),
 
             'gradereport' => array(
-                'grader', 'outcomes', 'overview', 'user'
+                'grader', 'history', 'outcomes', 'overview', 'user'
             ),
 
             'gradingform' => array(

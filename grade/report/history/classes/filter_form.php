@@ -55,7 +55,7 @@ class filter_form extends \moodleform {
         $mform->addElement('static', 'userselect', get_string('selectusers', 'gradereport_history'), $userbutton);
         $mform->addElement('static', 'selectednames', get_string('selectedusers', 'gradereport_history'), $names);
 
-        $mform->addElement('select', 'itemid', get_string('gradeitem', 'gradereport_history'), $itemids);
+        $mform->addElement('select', 'itemid', get_string('gradeitem', 'grades'), $itemids);
         $mform->setType('itemid', PARAM_INT);
 
         $mform->addElement('select', 'grader', get_string('grader', 'gradereport_history'), $graders);
