@@ -1070,7 +1070,7 @@ class behat_general extends behat_base {
      *        | Header 1 | Header 2 | Header 3 |
      *        | Value 1 | Value 2 | Value 3|
      */
-    public function following_should_exit_in_the_table($table, TableNode $data) {
+    public function following_should_exist_in_the_table($table, TableNode $data) {
         $datahash = $data->getHash();
 
         foreach ($datahash as $value) {
@@ -1092,7 +1092,7 @@ class behat_general extends behat_base {
      *        | Header 1 | Header 2 | Header 3 |
      *        | Value 1 | Value 2 | Value 3|
      */
-    public function following_should_not_exit_in_the_table($table, TableNode $data) {
+    public function following_should_not_exist_in_the_table($table, TableNode $data) {
         $datahash = $data->getHash();
 
         foreach ($datahash as $value) {
