@@ -30,10 +30,6 @@
 .gradetreebox #gradetreesubmit {margin-bottom:1em;text-align: center;}
 .gradetreebox .hidden {display: none;}
 
-/*adjustments to grader report (with static student cols) to make things line up in IE and Safari*/
-#page-grade-report-grader-index .right_scroller #user-grades td {padding-top:0;padding-bottom:2px;}
-#page-grade-report-grader-index #fixed_column td {padding-top:0;padding-bottom:2px;}
-
 /** Advanced grading **/
 #page-grade-grading-manage #activemethodselector {text-align:center;margin-bottom:1em;}
 #page-grade-grading-manage #activemethodselector select {margin:0px 1em;}
@@ -75,12 +71,4 @@
 }
 #page-grade-edit-outcome-course .courseoutcomes td {
     text-align:center;
-}
-
-#page-grade-report-grader-index .topscrollcontent {
-    height: 1px;
-}
-
-#page-grade-report-grader-index #user-grades {
-    margin-top: 4px;
 }
