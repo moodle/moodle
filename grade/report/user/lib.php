@@ -380,7 +380,7 @@ class grade_report_user extends grade_report {
 
             /// Hidden Items
             if ($grade_grade->grade_item->is_hidden()) {
-                $hidden = ' hidden';
+                $hidden = ' dimmed_text';
             }
 
             $hide = false;
@@ -461,7 +461,7 @@ class grade_report_user extends grade_report {
                         $data['grade']['content'] = get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort')));
 
                     } elseif ($grade_grade->is_hidden()) {
-                            $data['grade']['class'] = $class.' hidden';
+                            $data['grade']['class'] = $class.' dimmed_text';
                             $data['grade']['content'] = '-';
                     } else {
                         $data['grade']['class'] = $class;
@@ -493,7 +493,7 @@ class grade_report_user extends grade_report {
                         $data['percentage']['class'] = $class.' gradingerror';
                         $data['percentage']['content'] = get_string('error');
                     } else if ($grade_grade->is_hidden()) {
-                        $data['percentage']['class'] = $class.' hidden';
+                        $data['percentage']['class'] = $class.' dimmed_text';
                         $data['percentage']['content'] = '-';
                     } else {
                         $data['percentage']['class'] = $class;
@@ -508,7 +508,7 @@ class grade_report_user extends grade_report {
                         $data['lettergrade']['class'] = $class.' gradingerror';
                         $data['lettergrade']['content'] = get_string('error');
                     } else if ($grade_grade->is_hidden()) {
-                        $data['lettergrade']['class'] = $class.' hidden';
+                        $data['lettergrade']['class'] = $class.' dimmed_text';
                         if (!$this->canviewhidden) {
                             $data['lettergrade']['content'] = '-';
                         } else {
@@ -527,7 +527,7 @@ class grade_report_user extends grade_report {
                         $data['rank']['class'] = $class.' gradingerror';
                         $data['rank']['content'] = get_string('error');
                         } elseif ($grade_grade->is_hidden()) {
-                            $data['rank']['class'] = $class.' hidden';
+                            $data['rank']['class'] = $class.' dimmed_text';
                             $data['rank']['content'] = '-';
                     } else if (is_null($gradeval)) {
                         // no grade, no rank
