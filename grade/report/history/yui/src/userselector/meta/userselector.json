@@ -1,0 +1,13 @@
+{
+    "moodle-gradereport_history-userselector": {
+        "requires": [
+            "escape",
+            "event-delegate",
+            "event-key",
+            "handlebars",
+            "io-base",
+            "json-parse",
+            "moodle-core-notification-dialogue"
+        ]
+    }
+}
