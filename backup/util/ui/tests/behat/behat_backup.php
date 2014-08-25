@@ -27,6 +27,7 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../../lib/behat/behat_field_manager.php');
+require_once(__DIR__ . '/../../../../../lib/tests/behat/behat_navigation.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
@@ -41,6 +42,19 @@ use Behat\Gherkin\Node\TableNode as TableNode,
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_backup extends behat_base {
+
+    /**
+     * Follow a link like 'Backup' or 'Import', where the link name comes from
+     * a language string, in the settings nav block of a course.
+     * @param string $langstring the lang string to look for. E.g. 'backup' or 'import'.
+     * @param string $component (optional) second argument to {@link get_string}.
+     */
+    protected function navigate_to_course_settings_link($langstring, $component = '') {
+        $behatnavigation = new behat_navigation();
+        $behatnavigation->setMink($this->getMink());
+        $behatnavigation->i_navigate_to_node_in(get_string($langstring, $component),
+                get_string('courseadministration'));
+    }
 
     /**
      * Backups the specified course using the provided options. If you are interested in restoring this backup would be useful to provide a 'Filename' option.
@@ -60,7 +74,7 @@ class behat_backup extends behat_base {
         $this->find_link($backupcourse)->click();
 
         // Click the backup link.
-        $this->find_link(get_string('backup'))->click();
+        $this->navigate_to_course_settings_link('backup');
         $this->wait();
 
         // Initial settings.
@@ -110,7 +124,7 @@ class behat_backup extends behat_base {
         $this->wait();
 
         // Click the import link.
-        $this->find_link(get_string('import'))->click();
+        $this->navigate_to_course_settings_link('import');
         $this->wait();
 
         // Select the course.
