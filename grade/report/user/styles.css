@@ -5,8 +5,6 @@
 #graded_users_selector {float: right;text-align: right;}
 
 /* this must be last if we want to override other category and course item colors */
-.path-grade-report-user .user-grade .hidden,
-.path-grade-report-user .user-grade .hidden a {color:#aaaaaa;}
 .user-grade {border: 1px solid black;margin: auto;padding: 0.25em;font-size: 0.8em;}
 .user-grade td {margin: 1px;padding: 0.25em;min-width: 2em;vertical-align: top;}
 .user-grade thead {border-bottom: 3px double black;}
@@ -53,7 +51,6 @@
 .user-grade td.item,
 .user-grade th.item {border-left: 1px solid gray;border-right: 1px solid gray}
 .user-grade td.excluded {background-color: #666;}
-.user-grade td.hidden {color: #aaa;}
 .user-grade td.feedbacktext {max-width:600px;padding:2px 2px;}
 .pagelayout-report .user-grade .feedbacktext .no-overflow {overflow:auto;padding:0.25em;}
 
