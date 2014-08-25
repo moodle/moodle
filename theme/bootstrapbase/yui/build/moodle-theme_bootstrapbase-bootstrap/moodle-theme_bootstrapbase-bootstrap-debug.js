@@ -708,7 +708,7 @@ NS.setup_toggle_show = function() {
 NS.toggle_show = function(e) {
     // Toggle the active class on both the clicked .btn-navbar and the .nav-collapse.
     // Our CSS will set the height for these.
-    Y.one(SELECTORS.NAV_COLLAPSE).toggleClass(CSS.ACTIVE);
+    Y.all(SELECTORS.NAV_COLLAPSE).toggleClass(CSS.ACTIVE);
     e.currentTarget.toggleClass(CSS.ACTIVE);
 };
 
