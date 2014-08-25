@@ -131,6 +131,10 @@ class assign_submission_file extends assign_submission_plugin {
                                 'maxfiles'=>$this->get_config('maxfilesubmissions'),
                                 'accepted_types'=>'*',
                                 'return_types'=>FILE_INTERNAL);
+        if ($fileoptions['maxbytes'] == 0) {
+            // Use module default.
+            $fileoptions['maxbytes'] = get_config('assignsubmission_file', 'maxbytes');
+        }
         return $fileoptions;
     }
 
