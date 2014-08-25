@@ -1818,13 +1818,18 @@ class assign {
         }
         $result = $DB->update_record('assign_grades', $grade);
 
-        // Only push to gradebook if the update is for the latest attempt.
+        // If the conditions are met, allow another attempt.
         $submission = null;
         if ($this->get_instance()->teamsubmission) {
             $submission = $this->get_group_submission($grade->userid, 0, false);
         } else {
             $submission = $this->get_user_submission($grade->userid, false);
         }
+        $this->reopen_submission_if_required($grade->userid,
+                                             $submission,
+                                             false);
+
+        // Only push to gradebook if the update is for the latest attempt.
         // Not the latest attempt.
         if ($submission && $submission->attemptnumber != $grade->attemptnumber) {
             return true;
@@ -4959,17 +4964,6 @@ class assign {
             }
             $this->update_grade($grade);
 
-            // If the conditions are met, allow another attempt.
-            $submission = null;
-            if ($this->get_instance()->teamsubmission) {
-                $submission = $this->get_group_submission($userid, 0, false, -1);
-            } else {
-                $submission = $this->get_user_submission($userid, false, -1);
-            }
-            $this->reopen_submission_if_required($userid,
-                                                 $submission,
-                                                 false);
-
             // Allow teachers to skip sending notifications.
             if (optional_param('sendstudentnotifications', true, PARAM_BOOL)) {
                 $this->notify_grade_modified($grade);
@@ -6470,12 +6464,7 @@ class assign {
 
             $this->process_outcomes($userid, $data);
         }
-        if ($data->attemptnumber == -1) {
-            // We only allow another attempt when grading the latest submission.
-            $this->reopen_submission_if_required($userid,
-                                                 $submission,
-                                                 !empty($data->addattempt));
-        }
+
         return true;
     }
 
