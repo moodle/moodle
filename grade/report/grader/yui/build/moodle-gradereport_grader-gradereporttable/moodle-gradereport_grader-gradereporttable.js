@@ -436,6 +436,11 @@ FloatingHeaders.prototype = {
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
         this.container = Y.one(SELECTORS.GRADEPARENT);
 
+        if (!this.firstUserCell) {
+            // No need for floating elements, there are no users.
+            return this;
+        }
+
         // Generate floating elements.
         this._setupFloatingUserColumn();
         this._setupFloatingUserHeader();
