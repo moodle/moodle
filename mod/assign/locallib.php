@@ -1803,9 +1803,10 @@ class assign {
      * Update a grade in the grade table for the assignment and in the gradebook.
      *
      * @param stdClass $grade a grade record keyed on id
+     * @param bool $reopenattempt If the attempt reopen method is manual, allow another attempt at this assignment.
      * @return bool true for success
      */
-    public function update_grade($grade) {
+    public function update_grade($grade, $reopenattempt = false) {
         global $DB;
 
         $grade->timemodified = time();
@@ -1850,9 +1851,11 @@ class assign {
         } else {
             $submission = $this->get_user_submission($grade->userid, false);
         }
-        $this->reopen_submission_if_required($grade->userid,
-                                             $submission,
-                                             false);
+        if ($submission && $submission->attemptnumber == $grade->attemptnumber) {
+            $this->reopen_submission_if_required($grade->userid,
+                                                 $submission,
+                                                 $reopenattempt);
+        }
 
         // Only push to gradebook if the update is for the latest attempt.
         // Not the latest attempt.
@@ -6392,7 +6395,7 @@ class assign {
                 }
             }
         }
-        $this->update_grade($grade);
+        $this->update_grade($grade, !empty($formdata->addattempt));
         // Note the default if not provided for this option is true (e.g. webservices).
         // This is for backwards compatibility.
         if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
