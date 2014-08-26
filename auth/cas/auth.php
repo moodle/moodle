@@ -169,7 +169,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         global $CFG, $USER, $DB;
 
         if (!empty($this->config->logoutcas) && $USER->auth == $this->authtype) {
-            $backurl = $CFG->wwwroot;
+            $backurl = !empty($this->config->logout_return_url) ? $this->config->logout_return_url : $CFG->wwwroot;
             $this->connectCAS();
             // Note: Hack to stable versions to trigger the event before it redirect to CAS logout.
             $sid = session_id();
