@@ -239,4 +239,23 @@ class condition extends \core_availability\condition {
         }
         return $result;
     }
+
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param int $groupingid Required grouping id (0 = grouping linked to activity)
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($groupingid = 0) {
+        $result = (object)array('type' => 'grouping');
+        if ($groupingid) {
+            $result->id = (int)$groupingid;
+        } else {
+            $result->activity = true;
+        }
+        return $result;
+    }
 }
