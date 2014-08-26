@@ -139,7 +139,7 @@ if (!empty($options['info'])) {
         try {
             $DB->execute("SET GLOBAL innodb_file_per_table=1");
         } catch (dml_exception $e) {
-            echo "Cannot enable GLOBAL innodb_file_per_table setting, use --sqhowsql option and execute the statements manually.";
+            echo "Cannot enable GLOBAL innodb_file_per_table setting, use --showsql option and execute the statements manually.";
             throw $e;
         }
     }
@@ -147,7 +147,7 @@ if (!empty($options['info'])) {
         try {
             $DB->execute("SET GLOBAL innodb_file_format=Barracuda");
         } catch (dml_exception $e) {
-            echo "Cannot change GLOBAL innodb_file_format setting, use --sqhowsql option and execute the statements manually.";
+            echo "Cannot change GLOBAL innodb_file_format setting, use --showsql option and execute the statements manually.";
             throw $e;
         }
     }
