@@ -88,31 +88,6 @@ Y.extend(ReportTable, Y.Base, {
 
         // Setup the mouse tooltips.
         this.setupTooltips();
-
-        // Hide the loading spinner - we've finished for the moment.
-        this._hideSpinner();
-    },
-
-    /**
-     * Show the loading spinner.
-     *
-     * @method showSpinner
-     * @protected
-     */
-    showSpinner: function() {
-        // Show the grading spinner.
-        Y.one(SELECTORS.SPINNER).show();
-    },
-
-    /**
-     * Hide the loading spinner.
-     *
-     * @method hideSpinner
-     * @protected
-     */
-    hideSpinner: function() {
-        // Hide the grading spinner.
-        Y.one(SELECTORS.SPINNER).hide();
     },
 
     /**
@@ -438,12 +413,6 @@ FloatingHeaders.prototype = {
     setupFloatingHeaders: function() {
         // Grab references to commonly used Nodes.
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
-
-        if (!this.firstUserCell) {
-            // There was no first user cell - no need to do anything at this stage.
-            this._hideSpinner();
-            return;
-        }
 
         // Generate floating elements.
         this._setupFloatingUserColumn();

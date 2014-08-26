@@ -166,12 +166,6 @@ FloatingHeaders.prototype = {
         // Grab references to commonly used Nodes.
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
 
-        if (!this.firstUserCell) {
-            // There was no first user cell - no need to do anything at this stage.
-            this._hideSpinner();
-            return;
-        }
-
         // Generate floating elements.
         this._setupFloatingUserColumn();
         this._setupFloatingUserHeader();
