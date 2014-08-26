@@ -1389,6 +1389,7 @@ function &get_mimetypes_array() {
     static $mimearray = array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown'),
         '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'quicktime', 'groups'=>array('video'), 'string'=>'video'),
+        '7z'  => array ('type'=>'application/x-7z-compressed', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive'),
         'aac'  => array ('type'=>'audio/aac', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'accdb'  => array ('type'=>'application/msaccess', 'icon'=>'base'),
         'ai'   => array ('type'=>'application/postscript', 'icon'=>'eps', 'groups'=>array('image'), 'string'=>'image'),
@@ -1523,6 +1524,7 @@ function &get_mimetypes_array() {
         'qt'   => array ('type'=>'video/quicktime', 'icon'=>'quicktime', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio','web_audio'), 'string'=>'audio'),
         'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'rar'  => array ('type'=>'application/x-rar-compressed', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive'),
         'rhb'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'rmvb' => array ('type'=>'application/vnd.rn-realmedia-vbr', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
