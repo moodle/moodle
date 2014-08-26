@@ -575,7 +575,10 @@ FloatingHeaders.prototype = {
      * @return {Number} Height of the scrollbar.
      */
     _getScrollBarHeight: function() {
-        if (Y.config.doc.body.scrollWidth > Y.config.doc.body.clientWidth) {
+        if (Y.UA.ie && Y.UA.ie >= 10) {
+            // IE has transparent scrollbars, which sometimes disappear... it's better to ignore them.
+            return 0;
+        } else if (Y.config.doc.body.scrollWidth > Y.config.doc.body.clientWidth) {
             // The document can be horizontally scrolled.
             return Y.DOM.getScrollbarWidth();
         }
@@ -617,12 +620,32 @@ FloatingHeaders.prototype = {
         // Generate the new fields.
         userColumn.each(function(node) {
             // Create and configure the new container.
-            var containerNode = Y.Node.create('<div aria-hidden="true" class="gradebook-user-cell"></div>');
+            var containerNode = Y.Node.create('<div aria-hidden="true" class="gradebook-user-cell"></div>'),
+                height,
+                width;
+
+            // IE madness...
+            if (Y.UA.ie) {
+                var bb = parseInt(node.getComputedStyle('borderBottomWidth'), 10),
+                    bt = parseInt(node.getComputedStyle('borderTopWidth'), 10),
+                    bl = parseInt(node.getComputedStyle('borderLeftWidth'), 10),
+                    br = parseInt(node.getComputedStyle('borderRightWidth'), 10),
+                    pb = parseInt(node.getComputedStyle('paddingBottom'), 10),
+                    pt = parseInt(node.getComputedStyle('paddingTop'), 10),
+                    pl = parseInt(node.getComputedStyle('paddingLeft'), 10),
+                    pr = parseInt(node.getComputedStyle('paddingRight'), 10);
+                height = node.get(OFFSETHEIGHT) - bb - bt - pb - pt;
+                width = node.get(OFFSETWIDTH) - bl - br - pl - pr;
+            } else {
+                height = node.getComputedStyle(HEIGHT);
+                width = node.getComputedStyle(WIDTH);
+            }
+
             containerNode.set('innerHTML', node.get('innerHTML'))
                     .setAttribute('data-uid', node.ancestor('tr').getData('uid'))
                     .setStyles({
-                        height: node.getComputedStyle(HEIGHT),
-                        width:  node.getComputedStyle(WIDTH)
+                        height: height,
+                        width:  width
                     });
 
             // Add the new nodes to our floating table.
