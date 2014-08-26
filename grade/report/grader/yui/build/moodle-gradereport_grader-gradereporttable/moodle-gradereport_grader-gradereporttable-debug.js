@@ -887,6 +887,17 @@ FloatingHeaders.prototype = {
         // Simulate a scroll.
         this._handleScrollEvent();
 
+        // Resize user cells.
+        var userWidth = this.firstUserCell.getComputedStyle(WIDTH);
+        var userCells = Y.all(SELECTORS.USERCELL);
+        this.userColumnHeader.setStyle('width', userWidth);
+        this.userColumn.all('.gradebook-user-cell').each(function(cell, idx) {
+            cell.setStyles({
+                width: userWidth,
+                height: userCells.item(idx).getComputedStyle(HEIGHT)
+            });
+        }, this);
+
         // Resize headers & footers.
         // This is an expensive operation, not expected to happen often.
         var headers = this.gradeItemHeadingContainer.all(SELECTORS.HEADERCELL);
