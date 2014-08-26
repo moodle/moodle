@@ -50,6 +50,18 @@ FloatingHeaders.prototype = {
     pageHeaderHeight: 0,
 
     /**
+     * A Node representing the container div.
+     *
+     * Positioning will be based on this element, which must have
+     * the CSS rule 'position: relative'.
+     *
+     * @property container
+     * @type Node
+     * @protected
+     */
+    container: null,
+
+    /**
      * A Node representing the header cell.
      *
      * @property headerCell
@@ -57,6 +69,15 @@ FloatingHeaders.prototype = {
      * @protected
      */
     headerCell: null,
+
+    /**
+     * A Node representing the header row.
+     *
+     * @property headerRow
+     * @type Node
+     * @protected
+     */
+    headerRow: null,
 
     /**
      * A Node representing the first cell which contains user name information.
@@ -165,6 +186,7 @@ FloatingHeaders.prototype = {
     setupFloatingHeaders: function() {
         // Grab references to commonly used Nodes.
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
+        this.container = Y.one(SELECTORS.GRADEPARENT);
 
         // Generate floating elements.
         this._setupFloatingUserColumn();
@@ -194,7 +216,7 @@ FloatingHeaders.prototype = {
      */
     _calculateCellPositions: function() {
         // The header row shows the grade item headers and is floated to the top of the window.
-        this.headerCellTop = this.headerCell.getY();
+        this.headerRowTop = this.headerRow.getY();
 
         // The footer row shows the grade averages and will be floated to the page bottom.
         if (this.tableFooterRow) {
@@ -203,13 +225,14 @@ FloatingHeaders.prototype = {
 
         var userCellList = Y.all(SELECTORS.USERCELL);
 
-        // The left of the user cells matches the left of the headerCell.
-        this.firstUserCellLeft = this.headerCell.getX();
+        // The left of the user cells matches the left of the headerRow.
+        this.firstUserCellLeft = this.headerRow.getX();
 
         if (userCellList.size() > 1) {
             // Use the top of the second cell for the bottom of the first cell.
             // This is used when scrolling to fix the footer to the top edge of the window.
-            this.firstUserCellBottom = userCellList.item(1).getY();
+            var firstUserCell = userCellList.item(1);
+            this.firstUserCellBottom = firstUserCell.getY() + parseInt(firstUserCell.getComputedStyle(HEIGHT), 10);
 
             // Use the top of the penultimate cell when scrolling the header.
             // The header is the same size as the cells.
@@ -221,7 +244,7 @@ FloatingHeaders.prototype = {
 
             if (this.tableFooterRow) {
                 // The footer is present so we can use that.
-                this.firstUserCellBottom = this.footerRowPosition;
+                this.firstUserCellBottom = this.footerRowPosition + parseInt(this.tableFooterRow.getComputedStyle(HEIGHT), 10);
             } else {
                 // No other clues - calculate the top instead.
                 this.firstUserCellBottom = firstItem.getY() + firstItem.get('offsetHeight');
@@ -236,6 +259,74 @@ FloatingHeaders.prototype = {
                 this.pageHeaderHeight = header.get(OFFSETHEIGHT);
             }
         }
+    },
+
+    /**
+     * Get the relative XY of the node.
+     *
+     * @method _getRelativeXY
+     * @protected
+     * @param {Node} node The node to get the position of.
+     * @return {Array} Containing X and Y.
+     */
+    _getRelativeXY: function(node) {
+        return this._getRelativeXYFromXY(node.getX(), node.getY());
+    },
+
+    /**
+     * Get the relative positioning from coordinates.
+     *
+     * This gives the position according to the parent of the table, which must
+     * be set as position: relative.
+     *
+     * @method _getRelativeXYFromXY
+     * @protected
+     * @param {Number} x X position.
+     * @param {Number} y Y position.
+     * @return {Array} Containing X and Y.
+     */
+    _getRelativeXYFromXY: function(x, y) {
+        var parentXY = this.container.getXY();
+        return [Math.floor(x - parentXY[0]), Math.floor(y - parentXY[1])];
+    },
+
+    /**
+     * Get the relative positioning of an elements from coordinates.
+     *
+     * @method _getRelativeXFromX
+     * @protected
+     * @param {Number} pos X position.
+     * @return {Number} relative X position.
+     */
+    _getRelativeXFromX: function(pos) {
+        return this._getRelativeXYFromXY(pos, 0)[0];
+    },
+
+    /**
+     * Get the relative positioning of an elements from coordinates.
+     *
+     * @method _getRelativeYFromY
+     * @protected
+     * @param {Number} pos Y position.
+     * @return {Number} relative Y position.
+     */
+    _getRelativeYFromY: function(pos) {
+        return this._getRelativeXYFromXY(0, pos)[1];
+    },
+
+    /**
+     * Return the size of the horizontal scrollbar.
+     *
+     * @method _getScrollBarHeight
+     * @protected
+     * @return {Number} Height of the scrollbar.
+     */
+    _getScrollBarHeight: function() {
+        if (Y.config.doc.body.scrollWidth > Y.config.doc.body.clientWidth) {
+            // The document can be horizontally scrolled.
+            return Y.DOM.getScrollbarWidth();
+        }
+        return 0;
     },
 
     /**
@@ -265,7 +356,10 @@ FloatingHeaders.prototype = {
         var userColumn = Y.all(SELECTORS.USERCELL),
 
         // Create a floating table.
-            floatingUserColumn = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-user-container"></div>');
+            floatingUserColumn = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-user-container"></div>'),
+
+        // Get the XY for the floating element.
+            coordinates = this._getRelativeXY(this.firstUserCell);
 
         // Generate the new fields.
         userColumn.each(function(node) {
@@ -284,9 +378,9 @@ FloatingHeaders.prototype = {
 
         // Style the floating user container.
         floatingUserColumn.setStyles({
-            left:       this.firstUserCell.getX() + 'px',
+            left:       coordinates[0] + 'px',
             position:   'absolute',
-            top:        this.firstUserCell.getY() + 'px'
+            top:        coordinates[1] + 'px'
         });
 
         // Append to the grader region.
@@ -304,18 +398,21 @@ FloatingHeaders.prototype = {
      */
     _setupFloatingUserHeader: function() {
         // We make various references to the this header cell. Store it for later.
+        this.headerRow = Y.one(SELECTORS.HEADERROW);
         this.headerCell = Y.one(SELECTORS.STUDENTHEADER);
 
         // Float the 'user name' header cell.
-        var floatingUserCell = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-user-header-container"></div>');
+        var floatingUserCell = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-user-header-container"></div>'),
+            firstUserXY = this._getRelativeXY(this.firstUserCell),
+            headerXY = this._getRelativeXY(this.headerRow);
 
         // Append node contents
         floatingUserCell.set('innerHTML', this.headerCell.getHTML());
         floatingUserCell.setStyles({
             height:     this.headerCell.getComputedStyle(HEIGHT),
-            left:       this.firstUserCell.getX() + 'px',
+            left:       firstUserXY[0] + 'px',
             position:   'absolute',
-            top:        this.headerCell.getY() + 'px',
+            top:        headerXY[1] + 'px',
             width:      this.firstUserCell.getComputedStyle(WIDTH)
         });
 
@@ -333,17 +430,21 @@ FloatingHeaders.prototype = {
      * @protected
      */
     _setupFloatingAssignmentHeaders: function() {
+        this.headerRow = Y.one('#user-grades tr.heading');
+
         var gradeHeaders = Y.all('#user-grades tr.heading .cell');
 
         // Generate a floating headers
         var floatingGradeHeaders = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-header-container"></div>');
 
+        var coordinates = this._getRelativeXY(this.headerRow);
+
         var floatingGradeHeadersWidth = 0;
         var floatingGradeHeadersHeight = 0;
-        var gradeHeadersOffset = this.headerCell.getX();
+        var gradeHeadersOffset = coordinates[0];
 
         gradeHeaders.each(function(node) {
-            var nodepos = node.getX();
+            var nodepos = this._getRelativeXY(node)[0];
 
             var newnode = Y.Node.create('<div class="gradebook-header-cell"></div>');
             newnode.append(node.getHTML())
@@ -369,9 +470,9 @@ FloatingHeaders.prototype = {
         // Position header table.
         floatingGradeHeaders.setStyles({
             height:     floatingGradeHeadersHeight + 'px',
-            left:       this.headerCell.getX() + 'px',
+            left:       coordinates[0] + 'px',
             position:   'absolute',
-            top:        this.headerCell.getY() + 'px',
+            top:        coordinates[1] + 'px',
             width:      floatingGradeHeadersWidth + 'px'
         });
 
@@ -401,15 +502,17 @@ FloatingHeaders.prototype = {
         // Create a container.
         var floatingGraderFooter = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-footer-container"></div>');
         var footerWidth = 0;
-        var footerRowOffset = this.tableFooterRow.getX();
+        var coordinates = this._getRelativeXY(this.tableFooterRow);
+        var footerRowOffset = coordinates[0];
 
         // Copy cell content.
         footerCells.each(function(node) {
             var newnode = Y.Node.create('<div class="gradebook-footer-cell"></div>');
+            var nodepos = this._getRelativeXY(node)[0];
             newnode.set('innerHTML', node.getHTML());
             newnode.setStyles({
                 height:     this._getHeight(node),
-                left:       (node.getX() - footerRowOffset) + 'px',
+                left:       (nodepos - footerRowOffset) + 'px',
                 position:   'absolute',
                 width:      this._getWidth(node)
             });
@@ -432,11 +535,10 @@ FloatingHeaders.prototype = {
         // Position the row
         floatingGraderFooter.setStyles({
             position:   'absolute',
-            left:       this.tableFooterRow.getX() + 'px',
+            left:       coordinates[0] + 'px',
             bottom:     0,
             height:     this._getHeight(this.tableFooterRow),
             width:      footerWidth + 'px',
-            borderBottomWidth: Y.DOM.getScrollbarWidth() + 'px'
         });
 
         // Append to the grader region.
@@ -460,51 +562,55 @@ FloatingHeaders.prototype = {
         var gradeItemHeadingContainerStyles = {},
             userColumnHeaderStyles = {},
             userColumnStyles = {},
-            footerStyles = {};
+            footerStyles = {},
+            coord = 0;
 
         // Header position.
-        gradeItemHeadingContainerStyles.left = this.headerCell.getX();
-        if (Y.config.win.pageYOffset + this.pageHeaderHeight > this.headerCellTop) {
+        gradeItemHeadingContainerStyles.left = this._getRelativeXFromX(this.headerRow.getX());
+        if (Y.config.win.pageYOffset + this.pageHeaderHeight > this.headerRowTop) {
             if (Y.config.win.pageYOffset + this.pageHeaderHeight < this.lastUserCellTop) {
-                gradeItemHeadingContainerStyles.top = Y.config.win.pageYOffset + this.pageHeaderHeight + 'px';
-                userColumnHeaderStyles.top = Y.config.win.pageYOffset + this.pageHeaderHeight + 'px';
+                coord = this._getRelativeYFromY(Y.config.win.pageYOffset + this.pageHeaderHeight);
+                gradeItemHeadingContainerStyles.top = coord + 'px';
+                userColumnHeaderStyles.top = coord + 'px';
             } else {
-                gradeItemHeadingContainerStyles.top = this.lastUserCellTop + 'px';
-                userColumnHeaderStyles.top = this.lastUserCellTop + 'px';
+                coord = this._getRelativeYFromY(this.lastUserCellTop);
+                gradeItemHeadingContainerStyles.top = coord + 'px';
+                userColumnHeaderStyles.top = coord + 'px';
             }
         } else {
-            gradeItemHeadingContainerStyles.top = this.headerCellTop + 'px';
-            userColumnHeaderStyles.top = this.headerCellTop + 'px';
+            coord = this._getRelativeYFromY(this.headerRowTop);
+            gradeItemHeadingContainerStyles.top = coord + 'px';
+            userColumnHeaderStyles.top = coord + 'px';
         }
 
         // User column position.
         if (Y.config.win.pageXOffset > this.firstUserCellLeft) {
-            userColumnStyles.left = Y.config.win.pageXOffset + 'px';
-            userColumnHeaderStyles.left = Y.config.win.pageXOffset + 'px';
+            coord = this._getRelativeXFromX(Y.config.win.pageXOffset);
+            userColumnStyles.left = coord + 'px';
+            userColumnHeaderStyles.left = coord + 'px';
         } else {
-            userColumnStyles.left = this.firstUserCellLeft + 'px';
-            userColumnHeaderStyles.left = this.firstUserCellLeft + 'px';
+            coord = this._getRelativeXFromX(this.firstUserCellLeft);
+            userColumnStyles.left = coord + 'px';
+            userColumnHeaderStyles.left = coord + 'px';
         }
 
         // Update footer.
         if (this.footerRow) {
-            footerStyles.left = this.headerCell.getX();
+            footerStyles.left = this._getRelativeXFromX(this.headerRow.getX());
 
             // Determine whether the footer should now be shown as sticky.
-            var pageHeight = Y.config.win.pageYOffset + Y.config.win.innerHeight,
-                usablePageHeight = pageHeight - Y.DOM.getScrollbarWidth();
-            if (usablePageHeight - this.pageHeaderHeight < this.footerRowPosition) {
-                // The footer is off the bottom of the page.
-                this.footerRow.addClass(CSS.STICKYFOOTER);
-                if (usablePageHeight - this.pageHeaderHeight > this.firstUserCellBottom) {
-                    // The footer is above the bottom of the first user.
-                    footerStyles.top = (pageHeight - this.footerRow.get(OFFSETHEIGHT)) + 'px';
-                } else {
-                    footerStyles.top = this.firstUserCellBottom;
-                }
+            var pageHeight = Y.config.win.innerHeight,
+                pageOffset = Y.config.win.pageYOffset,
+                bottomScrollPosition = pageHeight - this._getScrollBarHeight() + pageOffset,
+                footerRowHeight = parseInt(this.footerRow.getComputedStyle(HEIGHT), 10),
+                footerBottomPosition = footerRowHeight + this.footerRowPosition;
+
+            if (bottomScrollPosition < footerBottomPosition && bottomScrollPosition > this.firstUserCellBottom) {
+                // We have not scrolled below the footer, nor above the first row.
+                footerStyles.bottom = Math.ceil(footerBottomPosition - bottomScrollPosition) + 'px';
             } else {
-                footerStyles.top = this.footerRowPosition + 'px';
-                this.footerRow.removeClass(CSS.STICKYFOOTER);
+                // The footer should not float any more.
+                footerStyles.bottom = 0;
             }
         }
 
@@ -533,7 +639,7 @@ FloatingHeaders.prototype = {
         var headers = this.gradeItemHeadingContainer.all(SELECTORS.HEADERCELL);
         var resizedcells = Y.all('#user-grades .heading .cell');
 
-        var headeroffsetleft = this.headerCell.getX();
+        var headeroffsetleft = this.headerRow.getX();
         var newcontainerwidth = 0;
         resizedcells.each(function(cell, idx) {
             var headercell = headers.item(idx);

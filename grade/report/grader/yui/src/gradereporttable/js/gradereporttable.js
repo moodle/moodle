@@ -33,12 +33,12 @@ var SELECTORS = {
         GRADERTABLE: '.gradeparent table',
         GRADEPARENT: '.gradeparent',
         HEADERCELL: '.gradebook-header-cell',
+        HEADERROW: '#user-grades tr.heading',
         STUDENTHEADER: '#studentheader',
         USERCELL: '#user-grades .user.cell'
     },
     CSS = {
         OVERRIDDEN: 'overridden',
-        STICKYFOOTER: 'gradebook-footer-row-sticky',
         TOOLTIPACTIVE: 'tooltipactive'
     };
 

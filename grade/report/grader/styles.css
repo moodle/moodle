@@ -1,4 +1,7 @@
-/* The grade information tooltip */
+.gradeparent {
+    position: relative;
+}
+
 .gradeparent .grader-information-tooltip {
     min-width: 200px;
 }
@@ -67,9 +70,13 @@
 }
 
 /* The username cells */
+.gradebook-user-cell {
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+}
+
 .gradebook-user-cell,
 .gradeparent th.user {
-    border-top: 0;
     padding: 4px;
     min-width: 200px;
     max-width: 200px;
@@ -135,10 +142,6 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
-
-#gradebook-footer-container {
-    display: none;
 }
 
 #gradebook-footer-container.gradebook-footer-row-sticky {
