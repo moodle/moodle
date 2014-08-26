@@ -108,7 +108,7 @@ class enrol_ldap_plugin extends enrol_plugin {
      */
     public function can_delete_instance($instance) {
         $context = context_course::instance($instance->courseid);
-        if (!has_capability('enrol/database:config', $context)) {
+        if (!has_capability('enrol/ldap:manage', $context)) {
             return false;
         }
 
@@ -122,6 +122,17 @@ class enrol_ldap_plugin extends enrol_plugin {
 
         // TODO: connect to external system and make sure no users are to be enrolled in this course
         return false;
+    }
+
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/ldap:config', $context);
     }
 
     /**

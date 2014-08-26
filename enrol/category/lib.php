@@ -42,7 +42,7 @@ class enrol_category_plugin extends enrol_plugin {
         global $DB;
 
         $context = context_course::instance($instance->courseid);
-        if (!has_capability('enrol/database:config', $context)) {
+        if (!has_capability('enrol/category:config', $context)) {
             return false;
         }
 
@@ -51,6 +51,17 @@ class enrol_category_plugin extends enrol_plugin {
         }
         // Allow delete only when no synced users here.
         return !$DB->record_exists('user_enrolments', array('enrolid'=>$instance->id));
+    }
+
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/category:config', $context);
     }
 
     /**
