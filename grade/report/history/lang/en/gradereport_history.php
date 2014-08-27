@@ -32,6 +32,7 @@ $string['deleteditemid'] = 'Delete item with id {$a}';
 $string['errajaxsearch'] = 'Error when searching users';
 $string['eventgradereportviewed'] = 'Grade history report viewed';
 $string['excluded'] = 'Excluded from calculations';
+$string['exportfilename'] = 'grade_history';
 $string['foundoneuser'] = '1 user found';
 $string['foundnusers'] = '{$a} users found';
 $string['feedbacktext'] = 'Feedback text';

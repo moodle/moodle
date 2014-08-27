@@ -103,8 +103,8 @@ class tablelog extends \table_sql implements \renderable {
         // Define configs.
         $this->define_table_configs($url);
 
-        // Set download satus.
-        $this->is_downloading($download);
+        // Set download status.
+        $this->is_downloading($download, get_string('exportfilename', 'gradereport_history'));
     }
 
     /**
