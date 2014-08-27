@@ -764,74 +764,6 @@ class auth_plugin_mnet extends auth_plugin_base {
                           join("\n", $mnet_request->error));
                 break;
             }
-            $mnethostlogssql = "
-            SELECT
-                l.id as remoteid, l.time, l.userid, l.ip, l.course, l.module, l.cmid,
-                l.action, l.url, l.info, u.username
-            FROM
-                {user} u
-                INNER JOIN {log} l on l.userid = u.id
-            WHERE
-                u.mnethostid = ?
-                AND l.id > ?
-                AND l.course IS NOT NULL
-             ORDER by l.id ASC";
-
-            $mnethostlogs = $DB->get_records_sql($mnethostlogssql, array($mnethostid, $mnet_request->response['last log id']), 0, 500);
-
-            if ($mnethostlogs == false) {
-                continue;
-            }
-
-            $processedlogs = array();
-
-            foreach($mnethostlogs as $hostlog) {
-                try {
-                    // Get impersonalised course information. If it is cached there will be no DB queries.
-                    $modinfo = get_fast_modinfo($hostlog->course, -1);
-                    $hostlog->coursename = $modinfo->get_course()->fullname;
-                    if (!empty($hostlog->cmid) && isset($modinfo->cms[$hostlog->cmid])) {
-                        $hostlog->resource_name = $modinfo->cms[$hostlog->cmid]->name;
-                    } else {
-                        $hostlog->resource_name = '';
-                    }
-                } catch (moodle_exception $e) {
-                    // Course not found
-                    continue;
-                }
-
-                $processedlogs[] = array (
-                                    'remoteid'      => $hostlog->remoteid,
-                                    'time'          => $hostlog->time,
-                                    'userid'        => $hostlog->userid,
-                                    'ip'            => $hostlog->ip,
-                                    'course'        => $hostlog->course,
-                                    'coursename'    => $hostlog->coursename,
-                                    'module'        => $hostlog->module,
-                                    'cmid'          => $hostlog->cmid,
-                                    'action'        => $hostlog->action,
-                                    'url'           => $hostlog->url,
-                                    'info'          => $hostlog->info,
-                                    'resource_name' => $hostlog->resource_name,
-                                    'username'      => $hostlog->username
-                                 );
-            }
-
-            unset($hostlog);
-
-            $mnet_request = new mnet_xmlrpc_client();
-            $mnet_request->set_method('auth/mnet/auth.php/refresh_log');
-
-            // set $token and $useragent parameters
-            $mnet_request->add_param($processedlogs);
-
-            if ($mnet_request->send($mnet_peer) === true) {
-                if ($mnet_request->response['code'] > 0) {
-                    debugging($mnet_request->response['message']);
-                }
-            } else {
-                debugging("Server side error has occured on host $mnet_peer->ip: " .join("\n", $mnet_request->error));
-            }
         }
     }
 
@@ -839,52 +771,13 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Receives an array of log entries from an SP and adds them to the mnet_log
      * table
      *
+     * @deprecated since Moodle 2.8 Please don't use this function for recording mnet logs.
      * @param   array   $array      An array of usernames
      * @return  string              "All ok" or an error message
      */
     function refresh_log($array) {
-        global $CFG, $DB;
-        $remoteclient = get_mnet_remote_client();
-
-        // We don't want to output anything to the client machine
-        $start = ob_start();
-
-        $returnString = '';
-        $transaction = $DB->start_delegated_transaction();
-        $useridarray = array();
-
-        foreach($array as $logEntry) {
-            $logEntryObj = (object)$logEntry;
-            $logEntryObj->hostid = $remoteclient->id;
-
-            if (isset($useridarray[$logEntryObj->username])) {
-                $logEntryObj->userid = $useridarray[$logEntryObj->username];
-            } else {
-                $logEntryObj->userid = $DB->get_field('user', 'id', array('username'=>$logEntryObj->username, 'mnethostid'=>(int)$logEntryObj->hostid));
-                if ($logEntryObj->userid == false) {
-                    $logEntryObj->userid = 0;
-                }
-                $useridarray[$logEntryObj->username] = $logEntryObj->userid;
-            }
-
-            unset($logEntryObj->username);
-
-            $logEntryObj = $this->trim_logline($logEntryObj);
-            $insertok = $DB->insert_record('mnet_log', $logEntryObj, false);
-
-            if ($insertok) {
-                $remoteclient->last_log_id = $logEntryObj->remoteid;
-            } else {
-                $returnString .= 'Record with id '.$logEntryObj->remoteid." failed to insert.\n";
-            }
-        }
-        $remoteclient->commit();
-        $transaction->allow_commit();
-
-        $end = ob_end_clean();
-
-        if (empty($returnString)) return array('code' => 0, 'message' => 'All ok');
-        return array('code' => 1, 'message' => $returnString);
+        debugging('refresh_log() is deprecated, The transfer of logs through mnet are no longer recorded.', DEBUG_DEVELOPER);
+        return array('code' => 0, 'message' => 'All ok');
     }
 
     /**
