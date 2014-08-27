@@ -2276,6 +2276,44 @@ class core_moodlelib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Testing that if the password is not cached, that it does not update
+     * the user table and fire event.
+     */
+    public function test_update_internal_user_password_no_cache() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user(array('auth' => 'cas'));
+        $this->assertEquals(AUTH_PASSWORD_NOT_CACHED, $user->password);
+
+        // Update the field to see if it was needlessly overwritten.
+        $DB->set_field('user', 'password', 'doNotOverwrite');
+
+        update_internal_user_password($user, 'wonkawonka');
+
+        $this->assertEquals('doNotOverwrite', $DB->get_field('user', 'password', array('id' => $user->id)));
+    }
+
+    /**
+     * Test if the user has a password hash, but now their auth method
+     * says not to cache it.  Then it should update.
+     */
+    public function test_update_internal_user_password_update_no_cache() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user(array('password' => 'test'));
+        $this->assertNotEquals(AUTH_PASSWORD_NOT_CACHED, $user->password);
+        $user->auth = 'cas'; // Change to a auth that does not store passwords.
+
+        update_internal_user_password($user, 'wonkawonka');
+
+        $this->assertEquals(AUTH_PASSWORD_NOT_CACHED, $DB->get_field('user', 'password', array('id' => $user->id)));
+    }
+
     public function test_fullname() {
         global $CFG;
 
