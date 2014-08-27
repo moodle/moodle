@@ -351,6 +351,7 @@ table#user-grades th.fixedcolumn {
     width: auto;
     clear: none;
     overflow-x: scroll;
+    overflow-y: hidden;
 }
 .path-grade-report-grader table tr.avg,
 .path-grade-report-grader table tr.groupavg td,
