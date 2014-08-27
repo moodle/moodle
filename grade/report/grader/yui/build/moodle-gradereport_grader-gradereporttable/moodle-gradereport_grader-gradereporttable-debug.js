@@ -479,7 +479,7 @@ FloatingHeaders.prototype = {
         var userCellList = Y.all(SELECTORS.USERCELL);
 
         // The left of the user cells matches the left of the headerRow.
-        this.firstUserCellLeft = this.headerRow.getX();
+        this.firstUserCellLeft = this.firstUserCell.getX();
 
         if (userCellList.size() > 1) {
             // Use the top of the second cell for the bottom of the first cell.
@@ -839,7 +839,11 @@ FloatingHeaders.prototype = {
             userColumnHeaderStyles = {},
             userColumnStyles = {},
             footerStyles = {},
-            coord = 0;
+            coord = 0,
+            userCellWidth = 0,
+            floatUserColumn = false,            // Whether or not the user column should float.
+            floatingUserTriggerPoint = 0,       // The X position at which the floating should start.
+            floatingUserRelativePoint = 0;      // The point to use when calculating the new position.
 
         // Header position.
         gradeItemHeadingContainerStyles.left = this._getRelativeXFromX(this.headerRow.getX());
@@ -860,8 +864,18 @@ FloatingHeaders.prototype = {
         }
 
         // User column position.
-        if (Y.config.win.pageXOffset > this.firstUserCellLeft) {
-            coord = this._getRelativeXFromX(Y.config.win.pageXOffset);
+        if (right_to_left()) {
+            userCellWidth = this.firstUserCell.get(OFFSETWIDTH);
+            floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset;
+            floatingUserRelativePoint = floatingUserTriggerPoint - userCellWidth;
+            floatUserColumn = floatingUserTriggerPoint < (this.firstUserCellLeft + userCellWidth);
+        } else {
+            floatingUserTriggerPoint = Y.config.win.pageXOffset;
+            floatingUserRelativePoint = floatingUserTriggerPoint;
+            floatUserColumn = floatingUserTriggerPoint > this.firstUserCellLeft;
+        }
+        if (floatUserColumn) {
+            coord = this._getRelativeXFromX(floatingUserRelativePoint);
             userColumnStyles.left = coord + 'px';
             userColumnHeaderStyles.left = coord + 'px';
         } else {
