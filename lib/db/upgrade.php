@@ -3859,5 +3859,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014082700.00);
     }
 
+    if ($oldversion < 2014082700.01) {
+
+        // Define field aggregationcoef2 to be added to grade_items.
+        $table = new xmldb_table('grade_items');
+        $field = new xmldb_field('aggregationcoef2', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field aggregationcoef2.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014082700.01);
+    }
+
+
     return true;
 }

@@ -50,8 +50,8 @@ class grade_item extends grade_object {
     public $required_fields = array('id', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
                                  'itemnumber', 'iteminfo', 'idnumber', 'calculation', 'gradetype', 'grademax', 'grademin',
                                  'scaleid', 'outcomeid', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef',
-                                 'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime', 'needsupdate', 'timecreated',
-                                 'timemodified');
+                                 'aggregationcoef2', 'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
+                                 'needsupdate', 'timecreated', 'timemodified');
 
     /**
      * The course this grade_item belongs to.
@@ -199,10 +199,16 @@ class grade_item extends grade_object {
     public $plusfactor = 0;
 
     /**
-     * Aggregation coeficient used for weighted averages
+     * Aggregation coeficient used for weighted averages or extra credit
      * @var float $aggregationcoef
      */
     public $aggregationcoef = 0;
+
+    /**
+     * Aggregation coeficient used for weighted averages only
+     * @var float $aggregationcoef2
+     */
+    public $aggregationcoef2 = 0;
 
     /**
      * Sorting order of the columns.
@@ -277,6 +283,7 @@ class grade_item extends grade_object {
         $this->multfactor      = grade_floatval($this->multfactor);
         $this->plusfactor      = grade_floatval($this->plusfactor);
         $this->aggregationcoef = grade_floatval($this->aggregationcoef);
+        $this->aggregationcoef2 = grade_floatval($this->aggregationcoef2);
 
         return parent::update($source);
     }
@@ -306,13 +313,14 @@ class grade_item extends grade_object {
         $multfactordiff  = grade_floats_different($db_item->multfactor,      $this->multfactor);
         $plusfactordiff  = grade_floats_different($db_item->plusfactor,      $this->plusfactor);
         $acoefdiff       = grade_floats_different($db_item->aggregationcoef, $this->aggregationcoef);
+        $acoefdiff2       = grade_floats_different($db_item->aggregationcoef2, $this->aggregationcoef2);
 
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
         $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
 
         return ($calculationdiff || $categorydiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
              || $outcomeiddiff || $multfactordiff || $plusfactordiff || $needsupdatediff
-             || $lockeddiff || $acoefdiff || $locktimediff);
+             || $lockeddiff || $acoefdiff || $acoefdiff2 || $locktimediff);
     }
 
     /**

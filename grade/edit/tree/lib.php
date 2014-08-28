@@ -46,6 +46,8 @@ class grade_edit_tree {
 
     public $uses_weight = false;
 
+    public $uses_weight2 = false;
+
     public $table;
 
     public $categories = array();
@@ -72,6 +74,10 @@ class grade_edit_tree {
 
         $this->columns = array(grade_edit_tree_column::factory('name', array('deepest_level' => $this->deepest_level)),
                                grade_edit_tree_column::factory('aggregation', array('flag' => true)));
+
+        if ($this->uses_weight2) {
+            $this->columns[] = grade_edit_tree_column::factory('weight', array('adv' => 'aggregationcoef2'));
+        }
 
         if ($this->uses_weight) {
             $this->columns[] = grade_edit_tree_column::factory('weight', array('adv' => 'aggregationcoef'));
@@ -389,6 +395,11 @@ class grade_edit_tree {
                 <label class="accesshide" for="extracredit_'.$item->id.'">'.
                 get_string('extracreditvalue', 'grades', $item->itemname).'</label>
                 <input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" value="1" '."$checked />\n";
+        } else if ($aggcoef == 'aggregationcoefextrasum' && $type == 'weight') {
+            return '<label class="accesshide" for="aggregationcoef_'.$item->id.'">'.
+                get_string('weight', 'grades', $item->itemname).'</label>'.
+                '<input type="text" size="6" id="aggregationcoef2_'.$item->id.'" name="aggregationcoef2_'.$item->id.'"
+                value="'.grade_edit_tree::format_number($item->aggregationcoef2).'" />';
         } else {
             return '';
         }
@@ -490,6 +501,9 @@ class grade_edit_tree {
                 $this->uses_weight = true;
             } elseif ($coefstring ==  'aggregationcoefextraweight' || $coefstring == 'aggregationcoefextrasum') {
                 $this->uses_extra_credit = true;
+            }
+            if ($coefstring == 'aggregationcoefextrasum') { // TODO: coefstring2?
+                $this->uses_weight2 = true;
             }
 
             foreach($element['children'] as $child_el) {

@@ -716,6 +716,7 @@ $string['weighteddescending'] = 'Sort by weighted percent descending';
 $string['weightedpct'] = 'weighted %';
 $string['weightedpctcontribution'] = 'weighted % contribution';
 $string['weightorextracredit'] = 'Weight or extra credit';
+$string['weight'] = 'Weight';
 $string['weights'] = 'Weights';
 $string['weightsedit'] = 'Edit weights and extra credits';
 $string['weightuc'] = 'Calculated weight';

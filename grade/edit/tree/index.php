@@ -260,7 +260,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $recreatetree = true;
 
         // Grade item text inputs
-        } elseif (preg_match('/^(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]+)$/', $key, $matches)) {
+        } elseif (preg_match('/^(grademax|aggregationcoef|aggregationcoef2|multfactor|plusfactor)_([0-9]+)$/', $key, $matches)) {
             $param = $matches[1];
             $aid   = $matches[2];
 
