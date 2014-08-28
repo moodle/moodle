@@ -561,12 +561,13 @@ class grade_category extends grade_object {
         // can not use own final category grade in calculation
         unset($grade_values[$this->grade_item->id]);
 
+        // TODO
         // sum is a special aggregation types - it adjusts the min max, does not use relative values
-        if ($this->aggregation == GRADE_AGGREGATE_SUM) {
-            $this->sum_grades($grade, $oldfinalgrade, $items, $grade_values, $excluded, $usedweights);
-            $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped);
-            return;
-        }
+        //if ($this->aggregation == GRADE_AGGREGATE_SUM) {
+        //    $this->sum_grades($grade, $oldfinalgrade, $items, $grade_values, $excluded, $usedweights);
+        //    $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped);
+        //    return;
+        //}
 
         // if no grades calculation possible or grading not allowed clear final grade
         if (empty($grade_values) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
@@ -584,26 +585,23 @@ class grade_category extends grade_object {
 
         // normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggregation
-        foreach ($grade_values as $itemid=>$v) {
+        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
+            foreach ($grade_values as $itemid=>$v) {
 
-            if (is_null($v)) {
-                // null means no grade
-                unset($grade_values[$itemid]);
-                $novalue[$itemid] = 0;
-                continue;
+                if (is_null($v)) {
+                    // null means no grade
+                    unset($grade_values[$itemid]);
+                    $novalue[$itemid] = 0;
+                    continue;
 
-            } else if (in_array($itemid, $excluded)) {
-                unset($grade_values[$itemid]);
-                $dropped[$itemid] = 0;
-                continue;
+                } else if (in_array($itemid, $excluded)) {
+                    unset($grade_values[$itemid]);
+                    $dropped[$itemid] = 0;
+                    continue;
+                }
+                $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
             }
-            // If grademin is hidden, set it to 0.
-            if (!$minvisible and $items[$itemid]->gradetype != GRADE_TYPE_SCALE) {
-                $items[$itemid]->grademin = 0;
-            }
-            $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
         }
-
         // use min grade if grade missing for these types
         if (!$this->aggregateonlygraded) {
 
@@ -646,7 +644,11 @@ class grade_category extends grade_object {
         }
 
         // recalculate the grade back to requested range
-        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
+        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
+            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
+        } else {
+            $finalgrade = $agg_grade;
+        }
 
         $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
 
@@ -928,18 +930,26 @@ class grade_category extends grade_object {
 
             case GRADE_AGGREGATE_SUM:    // Add up all the items.
                 $num = count($grade_values);
+                $total = 0;
+                foreach ($grade_values as $itemid => $grade_value) {
+                    $total += $items[$itemid]->grademax;
+                    if ($weights !== null && $num > 0) {
+                        $weights[$itemid] = $items[$itemid]->aggregationcoef2*1;
+                    }
+                }
+                // TODO mins?
+                $sum = 0;
                 // Excluded items can affect the grademax for this grade_item.
                 $grademin = 0;
                 $grademax = 0;
                 $sum = 0;
                 foreach ($grade_values as $itemid => $grade_value) {
-                    $sum += $grade_value * ($items[$itemid]->grademax - $items[$itemid]->grademin);
+                    //print_object(array('grade' => $grade_value, 'item' => $items[$itemid]));
+                    $sum += ($grade_value / $items[$itemid]->grademax) * ($items[$itemid]->aggregationcoef2*1) * $total;
                     $grademin += $items[$itemid]->grademin;
                     $grademax += $items[$itemid]->grademax;
-                    if ($weights !== null && $num > 0) {
-                        $weights[$itemid] = 1.0 / $num;
-                    }
                 }
+                $agg_grade = $sum;
 
                 break;
 
@@ -1000,7 +1010,12 @@ class grade_category extends grade_object {
         }
 
         //find max grade possible
+        $maxsum = 0;
         $maxes = array();
+
+        foreach ($items as $item) {
+            $maxsum += $item->grademax; 
+        }
 
         foreach ($items as $item) {
 
@@ -1009,11 +1024,14 @@ class grade_category extends grade_object {
                 continue;
             }
 
+            // TODO: Only for sum of grades
+            //$maxsum = $this->aggregation == GRADE_AGGREGATE_SUM ? 1 : $item->aggregationcoef2*1 ;
             if ($item->gradetype == GRADE_TYPE_VALUE) {
-                $maxes[$item->id] = $item->grademax;
+                $maxes[$item->id] = $maxsum * ($item->aggregationcoef2*1);
 
             } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-                $maxes[$item->id] = $item->grademax; // 0 = nograde, 1 = first scale item, 2 = second scale item
+                // 0 = nograde, 1 = first scale item, 2 = second scale item
+                $maxes[$item->id] = $maxsum * ($item->aggregationcoef2*1);
             }
         }
         // apply droplow and keephigh
