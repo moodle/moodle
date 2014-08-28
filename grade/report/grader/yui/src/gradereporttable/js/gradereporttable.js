@@ -28,10 +28,12 @@
  */
 
 var SELECTORS = {
+        FOOTERCELLS: '#user-grades .avg .cell',
         FOOTERROW: '#user-grades .avg',
         GRADECELL: 'td.grade',
         GRADERTABLE: '.gradeparent table',
         GRADEPARENT: '.gradeparent',
+        HEADERCELLS: '#user-grades .heading .cell',
         HEADERCELL: '.gradebook-header-cell',
         HEADERROW: '#user-grades tr.heading',
         STUDENTHEADER: '#studentheader',

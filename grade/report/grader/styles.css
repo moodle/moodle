@@ -1,157 +1,142 @@
+/**
+ * Container.
+ */
 .gradeparent {
     position: relative;
 }
 
+/**
+ * Tooltip and overlay.
+ */
 .gradeparent .grader-information-tooltip {
     min-width: 200px;
 }
-
 .gradeparent .graderreportoverlay {
     background-color: white;
     width: auto;
     padding: 10px;
-    border-color: #ddd;
     font-size: 12px;
-    box-shadow: #999999 2px 2px 3px;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.gradebook-header-cell,
-.gradeparent table th {
-    font-size: 14px;
-    font-weight: normal;
-    padding: 4px 5px 4px 5px;
-    border: 0 solid #ddd;
-    border-left-width: 1px;
-    border-top-width: 1px;
+/**
+ * The table.
+ */
+.gradeparent table {
+    border: 1px solid #ccc;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-bottom-width: 0;
+    border-right-width: 0;
 }
 
-/* General table properties */
-.gradeparent table td,
-.gradeparent table th,
-.gradeparent .cell,
-.gradebook-footer-cell,
-.gradebook-user-cell {
+/**
+ * All the cells.
+ */
+.gradeparent .cell {
+    border: 1px solid #ccc;
+    border-top-width: 0;
+    border-left-width: 0;
     padding: 4px 5px;
     vertical-align: middle;
 }
 
-/* Grade Item titles */
-.gradebook-header-cell,
-.gradebook-header-cell,
-#gradebook-user-header-container,
-.gradeparent tr.heading th.item,
-.gradeparent tr.heading th.courseitem,
-.gradeparent tr.heading th.userfield,
-#studentheader {
+/**
+ * All the floating divs.
+ */
+.gradeparent .floater {
+    display: none;
+}
+.gradeparent .floating {
+    display: block;
+}
+
+/**
+ * All the header/floating cells.
+ */
+.gradeparent .heading .cell,
+.gradeparent .avg .cell,
+.gradeparent .user.cell {
+    font-size: 14px;
+    font-weight: normal;
+    background-color: #eee;
+}
+
+/**
+ * The header and footer.
+ */
+.gradeparent .heading .cell,
+.gradeparent .avg .cell {
     white-space: nowrap;
-    background-color: #333;
 }
 
-.gradeparent .gradebook-header-cell.item,
-.gradeparent .gradebook-header-cell.item a,
-.gradeparent .gradebook-header-cell.courseitem,
-.gradeparent .gradebook-header-cell.courseitem a,
-.gradeparent .gradebook-header-cell.userfield,
-.gradeparent .gradebook-header-cell.userfield a,
-.gradeparent #gradebook-user-header-container,
-.gradeparent #gradebook-user-header-container a,
-.gradeparent .gradebook-user-cell,
-.gradeparent .gradebook-user-cell a,
-.gradeparent tr.heading th.item,
-.gradeparent tr.heading th.item a,
-.gradeparent tr.heading th.courseitem,
-.gradeparent tr.heading th.courseitem a,
-.gradeparent tr.heading th.userfield,
-.gradeparent tr.heading th.userfield a,
-.gradeparent th a,
-.gradeparent #studentheader a {
-    color: #fff;
-}
-
-/* The username cells */
-.gradebook-user-cell {
-    border-width: 1px 0 0 1px;
-    border-style: solid;
-}
-
-.gradebook-user-cell,
-.gradeparent th.user {
-    padding: 4px;
+/**
+ * The user cells.
+ */
+.gradeparent .user.cell {
     min-width: 200px;
     width: 200px;
-    border-color: #666666;
-    border-right-width: 1px;
-    border-left: none;
-    background-color: #333;
-    color: #ddd;
 }
-
-.gradebook-user-cell:nth-child(odd),
-.gradeparent tr:nth-child(odd) th.user {
-    background-color: #777;
-}
-
-.gradebook-user-cell:nth-child(even),
-.gradeparent tr:nth-child(even) th.user {
-    background-color: #5c5c5c;
-}
-
-.gradebook-user-cell .userpicture,
-.gradeparent th.user .userpicture {
-    margin-right: 4px;
-    border-radius: 50px;
+.gradeparent .user.cell .userpicture {
+    margin: 0 4px;
     border: none;
     vertical-align: top;
 }
 
-/* The top-left user header cell */
-#gradebook-user-header-container,
-#studentheader {
-    padding: 4px 5px;
-    border-top: 1px solid #ddd;
+/**
+ * The additional user fields.
+ */
+.gradeparent .userfield {
+    font-weight: normal;
 }
 
-#studentheader {
-    border-left: none;
-}
-
-/* The footer row */
-.gradebook-footer-cell,
-.gradeparent .gradevalue,
-.gradeparent .avg .cell {
-    text-align: center;
-    width: 100%;
-}
-
-.gradeparent .gradevalue {
-    display: inline-block;
-}
-
-.gradeparent table#user-grades tr.avg th,
-.gradeparent table#user-grades tr.avg td,
-.gradebook-footer-cell {
-    padding: 8px;
-    background-color: #333;
-    color: white;
+/**
+ * The footer's header.
+ */
+.gradeparent .avg .header {
     font-weight: bold;
     text-align: center;
-    border: 1px solid #444;
-    border-right: 0;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 
-#gradebook-footer-container.gradebook-footer-row-sticky {
-    background-color: #444;
-    display: block;
-    border-bottom: 0px solid #444;
+/**
+ * The footer's cells.
+ */
+.gradeparent .avg.floating .cell {
+    border-top-width: 1px;
 }
-
-.gradebook-footer-cell:first-child,
-.gradeparent table#user-grades tr.avg th.range {
+/**
+ * The footer's range field.
+ */
+.gradeparent .avg .range {
     text-align: right;
+}
+
+/**
+ * The header and user fields.
+ */
+.gradeparent .heading .cell,
+.gradeparent .user.cell {
+    text-align: left;
+}
+
+/**
+ * Content styling.
+ */
+.gradeparent .heading .cell .iconsmall {
+    /* Fixes inconsistencies in cell height on IE. */
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.gradeparent .sorticon {
+    margin-left: 3px;
+}
+.dir-rlt .gradeparent .sorticon {
+    margin-left: 0;
+    margin-right: 3px;
+}
+.gradeparent .gradevalue {
+    display: inline-block;
 }
 
 /** MDL-46812 **/

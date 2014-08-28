@@ -35,8 +35,8 @@ function Highlighter() {}
 Highlighter.ATTRS= {
 };
 
-var ROWFIELDS = 'th.user, th.userreport, th.userfield, .gradebook-user-cell',
-    COLFIELDS = 'tr[data-itemid] th.item, .gradebook-header-cell';
+var ROWFIELDS = '.user.cell, th.userreport, th.userfield',
+    COLFIELDS = 'tr[data-itemid] th.item, .heading .cell';
 
 Highlighter.prototype = {
     /**

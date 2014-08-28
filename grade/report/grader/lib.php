@@ -1122,7 +1122,7 @@ class grade_report_grader extends grade_report {
         $html = '';
 
         $fulltable = new html_table();
-        $fulltable->attributes['class'] = 'table table-bordered table-striped table-condensed';
+        $fulltable->attributes['class'] = 'gradereport-grader-table';
         $fulltable->id = 'user-grades';
 
         // Extract rows from each side (left and right) and collate them into one row each

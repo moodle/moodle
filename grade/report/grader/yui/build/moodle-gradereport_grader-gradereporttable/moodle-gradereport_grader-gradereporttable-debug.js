@@ -30,10 +30,12 @@ YUI.add('moodle-gradereport_grader-gradereporttable', function (Y, NAME) {
  */
 
 var SELECTORS = {
+        FOOTERCELLS: '#user-grades .avg .cell',
         FOOTERROW: '#user-grades .avg',
         GRADECELL: 'td.grade',
         GRADERTABLE: '.gradeparent table',
         GRADEPARENT: '.gradeparent',
+        HEADERCELLS: '#user-grades .heading .cell',
         HEADERCELL: '.gradebook-header-cell',
         HEADERROW: '#user-grades tr.heading',
         STUDENTHEADER: '#studentheader',
@@ -177,8 +179,8 @@ function Highlighter() {}
 Highlighter.ATTRS= {
 };
 
-var ROWFIELDS = 'th.user, th.userreport, th.userfield, .gradebook-user-cell',
-    COLFIELDS = 'tr[data-itemid] th.item, .gradebook-header-cell';
+var ROWFIELDS = '.user.cell, th.userreport, th.userfield',
+    COLFIELDS = 'tr[data-itemid] th.item, .heading .cell';
 
 Highlighter.prototype = {
     /**
@@ -279,6 +281,8 @@ var HEIGHT = 'height',
     WIDTH = 'width',
     OFFSETWIDTH = 'offsetWidth',
     OFFSETHEIGHT = 'offsetHeight';
+
+CSS.FLOATING = 'floating';
 
 function FloatingHeaders() {}
 
@@ -540,7 +544,7 @@ FloatingHeaders.prototype = {
      */
     _getRelativeXYFromXY: function(x, y) {
         var parentXY = this.container.getXY();
-        return [Math.floor(x - parentXY[0]), Math.floor(y - parentXY[1])];
+        return [x - parentXY[0], y - parentXY[1]];
     },
 
     /**
@@ -612,7 +616,7 @@ FloatingHeaders.prototype = {
         var userColumn = Y.all(SELECTORS.USERCELL),
 
         // Create a floating table.
-            floatingUserColumn = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-user-container"></div>'),
+            floatingUserColumn = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater"></div>'),
 
         // Get the XY for the floating element.
             coordinates = this._getRelativeXY(this.firstUserCell);
@@ -620,32 +624,13 @@ FloatingHeaders.prototype = {
         // Generate the new fields.
         userColumn.each(function(node) {
             // Create and configure the new container.
-            var containerNode = Y.Node.create('<div aria-hidden="true" class="gradebook-user-cell"></div>'),
-                height,
-                width;
-
-            // IE madness...
-            if (Y.UA.ie) {
-                var bb = parseInt(node.getComputedStyle('borderBottomWidth'), 10),
-                    bt = parseInt(node.getComputedStyle('borderTopWidth'), 10),
-                    bl = parseInt(node.getComputedStyle('borderLeftWidth'), 10),
-                    br = parseInt(node.getComputedStyle('borderRightWidth'), 10),
-                    pb = parseInt(node.getComputedStyle('paddingBottom'), 10),
-                    pt = parseInt(node.getComputedStyle('paddingTop'), 10),
-                    pl = parseInt(node.getComputedStyle('paddingLeft'), 10),
-                    pr = parseInt(node.getComputedStyle('paddingRight'), 10);
-                height = node.get(OFFSETHEIGHT) - bb - bt - pb - pt;
-                width = node.get(OFFSETWIDTH) - bl - br - pl - pr;
-            } else {
-                height = node.getComputedStyle(HEIGHT);
-                width = node.getComputedStyle(WIDTH);
-            }
-
+            var containerNode = Y.Node.create('<div></div>');
             containerNode.set('innerHTML', node.get('innerHTML'))
+                    .setAttribute('class', node.getAttribute('class'))
                     .setAttribute('data-uid', node.ancestor('tr').getData('uid'))
                     .setStyles({
-                        height: height,
-                        width:  width
+                        height: node.getComputedStyle(HEIGHT),
+                        width:  node.getComputedStyle(WIDTH)
                     });
 
             // Add the new nodes to our floating table.
@@ -673,30 +658,41 @@ FloatingHeaders.prototype = {
      * @protected
      */
     _setupFloatingUserHeader: function() {
-        // We make various references to the this header cell. Store it for later.
+        // We make various references to the header cells. Store it for later.
         this.headerRow = Y.one(SELECTORS.HEADERROW);
         this.headerCell = Y.one(SELECTORS.STUDENTHEADER);
 
-        // Float the 'user name' header cell.
-        var floatingUserCell = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-user-header-container"></div>'),
-            firstUserXY = this._getRelativeXY(this.firstUserCell),
-            headerXY = this._getRelativeXY(this.headerRow);
+        // Create the floating row and cell.
+        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater heading"></div>'),
+            floatingUserHeaderCell = Y.Node.create('<div></div>'),
+            nodepos = this._getRelativeXY(this.headerCell)[0],
+            coordinates = this._getRelativeXY(this.headerRow);
+            gradeHeadersOffset = coordinates[0];
 
-        // Append node contents
-        floatingUserCell.set('innerHTML', this.headerCell.getHTML());
-        floatingUserCell.setStyles({
-            height:     this.headerCell.getComputedStyle(HEIGHT),
-            left:       firstUserXY[0] + 'px',
-            position:   'absolute',
-            top:        headerXY[1] + 'px',
-            width:      this.firstUserCell.getComputedStyle(WIDTH)
-        });
+        // Append the content and style to the floating cell.
+        floatingUserHeaderCell
+            .set('innerHTML', this.headerCell.getHTML())
+            .setAttribute('class', this.headerCell.getAttribute('class'))
+            .setStyles({
+                // The header is larger than the user cells, so we take the user cell.
+                width:      this.firstUserCell.getComputedStyle(WIDTH),
+                left:       (nodepos - gradeHeadersOffset) + 'px'
+            });
 
-        // Append to the grader region.
-        this.graderRegion.append(floatingUserCell);
+        // Style the floating row.
+        floatingUserHeaderRow
+            .setStyles({
+                left:       coordinates[0] + 'px',
+                position:   'absolute',
+                top:        coordinates[1] + 'px'
+            });
+
+        // Append the cell to the row, and finally to the region.
+        floatingUserHeaderRow.append(floatingUserHeaderCell);
+        this.graderRegion.append(floatingUserHeaderRow);
 
         // Store a reference to this for later - we use it in the event handlers.
-        this.userColumnHeader = floatingUserCell;
+        this.userColumnHeader = floatingUserHeaderRow;
     },
 
     /**
@@ -711,7 +707,7 @@ FloatingHeaders.prototype = {
         var gradeHeaders = Y.all('#user-grades tr.heading .cell');
 
         // Generate a floating headers
-        var floatingGradeHeaders = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-header-container"></div>');
+        var floatingGradeHeaders = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater heading"></div>');
 
         var coordinates = this._getRelativeXY(this.headerRow);
 
@@ -722,16 +718,16 @@ FloatingHeaders.prototype = {
         gradeHeaders.each(function(node) {
             var nodepos = this._getRelativeXY(node)[0];
 
-            var newnode = Y.Node.create('<div class="gradebook-header-cell"></div>');
+            var newnode = Y.Node.create('<div></div>');
             newnode.append(node.getHTML())
-                    .addClass(node.getAttribute('class'))
-                    .setData('itemid', node.getData('itemid'))
-                    .setStyles({
-                        height:     node.getComputedStyle(HEIGHT),
-                        left:       (nodepos - gradeHeadersOffset) + 'px',
-                        position:   'absolute',
-                        width:      node.getComputedStyle(WIDTH)
-                    });
+                .setAttribute('class', node.getAttribute('class'))
+                .setData('itemid', node.getData('itemid'))
+                .setStyles({
+                    height:     node.getComputedStyle(HEIGHT),
+                    left:       (nodepos - gradeHeadersOffset) + 'px',
+                    position:   'absolute',
+                    width:      node.getComputedStyle(WIDTH)
+                });
 
             // Sum up total widths - these are used in the container styles.
             // Use the offsetHeight and Width here as this contains the
@@ -776,24 +772,27 @@ FloatingHeaders.prototype = {
         var footerCells = this.tableFooterRow.all('.cell');
 
         // Create a container.
-        var floatingGraderFooter = Y.Node.create('<div aria-hidden="true" role="presentation" id="gradebook-footer-container"></div>');
+        var floatingGraderFooter = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater avg"></div>');
         var footerWidth = 0;
         var coordinates = this._getRelativeXY(this.tableFooterRow);
         var footerRowOffset = coordinates[0];
+        var floatingGraderFooterHeight = 0;
 
         // Copy cell content.
         footerCells.each(function(node) {
-            var newnode = Y.Node.create('<div class="gradebook-footer-cell"></div>');
+            var newnode = Y.Node.create('<div></div>');
             var nodepos = this._getRelativeXY(node)[0];
-            newnode.set('innerHTML', node.getHTML());
-            newnode.setStyles({
-                height:     this._getHeight(node),
-                left:       (nodepos - footerRowOffset) + 'px',
-                position:   'absolute',
-                width:      this._getWidth(node)
-            });
+            newnode.set('innerHTML', node.getHTML())
+                .setAttribute('class', node.getAttribute('class'))
+                .setStyles({
+                    height:     node.getComputedStyle(HEIGHT),
+                    left:       (nodepos - footerRowOffset) + 'px',
+                    position:   'absolute',
+                    width:      node.getComputedStyle(WIDTH)
+                });
 
             floatingGraderFooter.append(newnode);
+            floatingGraderFooterHeight = node.get(OFFSETHEIGHT);
             footerWidth += parseInt(node.get(OFFSETWIDTH), 10);
         }, this);
 
@@ -805,16 +804,16 @@ FloatingHeaders.prototype = {
             button.on('click', function() {
                     updateButton.simulate('click');
             });
-            floatingGraderFooter.one('.gradebook-footer-cell').append(button);
+            floatingGraderFooter.one('div').append(button);
         }
 
         // Position the row
         floatingGraderFooter.setStyles({
             position:   'absolute',
             left:       coordinates[0] + 'px',
-            bottom:     0,
-            height:     this._getHeight(this.tableFooterRow),
-            width:      footerWidth + 'px',
+            bottom:     '1px',
+            height:     floatingGraderFooterHeight + 'px',
+            width:      footerWidth + 'px'
         });
 
         // Append to the grader region.
@@ -841,13 +840,16 @@ FloatingHeaders.prototype = {
             footerStyles = {},
             coord = 0,
             userCellWidth = 0,
-            floatUserColumn = false,            // Whether or not the user column should float.
             floatingUserTriggerPoint = 0,       // The X position at which the floating should start.
-            floatingUserRelativePoint = 0;      // The point to use when calculating the new position.
+            floatingUserRelativePoint = 0,      // The point to use when calculating the new position.
+            headerFloats = false,
+            userFloats = false,
+            footerFloats = false;
 
         // Header position.
         gradeItemHeadingContainerStyles.left = this._getRelativeXFromX(this.headerRow.getX());
         if (Y.config.win.pageYOffset + this.pageHeaderHeight > this.headerRowTop) {
+            headerFloats = true;
             if (Y.config.win.pageYOffset + this.pageHeaderHeight < this.lastUserCellTop) {
                 coord = this._getRelativeYFromY(Y.config.win.pageYOffset + this.pageHeaderHeight);
                 gradeItemHeadingContainerStyles.top = coord + 'px';
@@ -858,6 +860,7 @@ FloatingHeaders.prototype = {
                 userColumnHeaderStyles.top = coord + 'px';
             }
         } else {
+            headerFloats = false;
             coord = this._getRelativeYFromY(this.headerRowTop);
             gradeItemHeadingContainerStyles.top = coord + 'px';
             userColumnHeaderStyles.top = coord + 'px';
@@ -868,13 +871,13 @@ FloatingHeaders.prototype = {
             userCellWidth = this.firstUserCell.get(OFFSETWIDTH);
             floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset;
             floatingUserRelativePoint = floatingUserTriggerPoint - userCellWidth;
-            floatUserColumn = floatingUserTriggerPoint < (this.firstUserCellLeft + userCellWidth);
+            userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + userCellWidth);
         } else {
             floatingUserTriggerPoint = Y.config.win.pageXOffset;
             floatingUserRelativePoint = floatingUserTriggerPoint;
-            floatUserColumn = floatingUserTriggerPoint > this.firstUserCellLeft;
+            userFloats = floatingUserTriggerPoint > this.firstUserCellLeft;
         }
-        if (floatUserColumn) {
+        if (userFloats) {
             coord = this._getRelativeXFromX(floatingUserRelativePoint);
             userColumnStyles.left = coord + 'px';
             userColumnHeaderStyles.left = coord + 'px';
@@ -898,17 +901,40 @@ FloatingHeaders.prototype = {
             if (bottomScrollPosition < footerBottomPosition && bottomScrollPosition > this.firstUserCellBottom) {
                 // We have not scrolled below the footer, nor above the first row.
                 footerStyles.bottom = Math.ceil(footerBottomPosition - bottomScrollPosition) + 'px';
+                footerFloats = true;
             } else {
                 // The footer should not float any more.
                 footerStyles.bottom = 0;
+                footerFloats = false;
             }
         }
 
-        // Finally, apply the styles.
+        // Apply the styles.
         this.gradeItemHeadingContainer.setStyles(gradeItemHeadingContainerStyles);
         this.userColumnHeader.setStyles(userColumnHeaderStyles);
         this.userColumn.setStyles(userColumnStyles);
         this.footerRow.setStyles(footerStyles);
+
+        // Mark the elements as floating, or not.
+        if (headerFloats) {
+            this.gradeItemHeadingContainer.addClass(CSS.FLOATING);
+        } else {
+            this.gradeItemHeadingContainer.removeClass(CSS.FLOATING);
+        }
+
+        if (userFloats) {
+            this.userColumnHeader.addClass(CSS.FLOATING);
+            this.userColumn.addClass(CSS.FLOATING);
+        } else {
+            this.userColumnHeader.removeClass(CSS.FLOATING);
+            this.userColumn.removeClass(CSS.FLOATING);
+        }
+
+        if (footerFloats) {
+            this.footerRow.addClass(CSS.FLOATING);
+        } else {
+            this.footerRow.removeClass(CSS.FLOATING);
+        }
     },
 
     /**
@@ -927,8 +953,8 @@ FloatingHeaders.prototype = {
         // Resize user cells.
         var userWidth = this.firstUserCell.getComputedStyle(WIDTH);
         var userCells = Y.all(SELECTORS.USERCELL);
-        this.userColumnHeader.setStyle('width', userWidth);
-        this.userColumn.all('.gradebook-user-cell').each(function(cell, idx) {
+        this.userColumnHeader.one('.cell').setStyle('width', userWidth);
+        this.userColumn.all('.cell').each(function(cell, idx) {
             cell.setStyles({
                 width: userWidth,
                 height: userCells.item(idx).getComputedStyle(HEIGHT)
@@ -937,8 +963,8 @@ FloatingHeaders.prototype = {
 
         // Resize headers & footers.
         // This is an expensive operation, not expected to happen often.
-        var headers = this.gradeItemHeadingContainer.all(SELECTORS.HEADERCELL);
-        var resizedcells = Y.all('#user-grades .heading .cell');
+        var headers = this.gradeItemHeadingContainer.all('.cell');
+        var resizedcells = Y.all(SELECTORS.HEADERCELLS);
 
         var headeroffsetleft = this.headerRow.getX();
         var newcontainerwidth = 0;
@@ -953,60 +979,25 @@ FloatingHeaders.prototype = {
             headercell.setStyles(styles);
         });
 
-        var footers = Y.all('#gradebook-footer-container .gradebook-footer-cell');
-        if (footers.size() !== 0) {
-            var resizedavgcells = Y.all('#user-grades .avg .cell');
+        if (this.footerRow) {
+            var footers = this.footerRow.all('.cell');
+            if (footers.size() !== 0) {
+                var resizedavgcells = Y.all(SELECTORS.FOOTERCELLS);
 
-            resizedavgcells.each(function(cell, idx) {
-                var footercell = footers.item(idx);
-                var styles = {
-                    width: cell.getComputedStyle(WIDTH),
-                    left: cell.getX() - headeroffsetleft + 'px'
-                };
-                footercell.setStyles(styles);
-            });
+                resizedavgcells.each(function(cell, idx) {
+                    var footercell = footers.item(idx);
+                    var styles = {
+                        width: cell.getComputedStyle(WIDTH),
+                        left: cell.getX() - headeroffsetleft + 'px'
+                    };
+                    footercell.setStyles(styles);
+                });
+            }
         }
 
         this.gradeItemHeadingContainer.setStyle('width', newcontainerwidth);
-    },
-
-    /**
-     * Determine the height of the specified Node.
-     *
-     * With IE, the height used when setting a height is the offsetHeight.
-     * All other browsers set this as this inner height.
-     *
-     * @method _getHeight
-     * @protected
-     * @param {Node} node
-     * @return String
-     */
-    _getHeight: function(node) {
-        if (Y.UA.ie) {
-            return node.get(OFFSETHEIGHT) + 'px';
-        } else {
-            return node.getComputedStyle(HEIGHT);
-        }
-    },
-
-    /**
-     * Determine the width of the specified Node.
-     *
-     * With IE, the width used when setting a width is the offsetWidth.
-     * All other browsers set this as this inner width.
-     *
-     * @method _getWidth
-     * @protected
-     * @param {Node} node
-     * @return String
-     */
-    _getWidth: function(node) {
-        if (Y.UA.ie) {
-            return node.get(OFFSETWIDTH) + 'px';
-        } else {
-            return node.getComputedStyle(WIDTH);
-        }
     }
+
 };
 
 Y.Base.mix(Y.M.gradereport_grader.ReportTable, [FloatingHeaders]);
