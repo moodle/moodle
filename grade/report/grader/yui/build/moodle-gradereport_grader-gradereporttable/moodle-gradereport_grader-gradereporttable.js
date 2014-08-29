@@ -795,18 +795,7 @@ FloatingHeaders.prototype = {
             footerWidth += parseInt(node.get(OFFSETWIDTH), 10);
         }, this);
 
-        // Attach 'Update' button.
-        var updateButton = Y.one('#gradersubmit');
-        if (updateButton) {
-            // TODO decide what to do with classes here to make them compatible with the base themes.
-            var button = Y.Node.create('<button class="btn btn-sm btn-default">' + updateButton.getAttribute('value') + '</button>');
-            button.on('click', function() {
-                    updateButton.simulate('click');
-            });
-            floatingGraderFooter.one('div').append(button);
-        }
-
-        // Position the row
+        // Position the row.
         floatingGraderFooter.setStyles({
             position:   'absolute',
             left:       coordinates[0] + 'px',
@@ -1172,4 +1161,4 @@ Tooltip.prototype = {
 Y.Base.mix(Y.M.gradereport_grader.ReportTable, [Tooltip]);
 
 
-}, '@VERSION@', {"requires": ["base", "node", "event", "handlebars", "overlay", "event-hover", "node-event-simulate"]});
+}, '@VERSION@', {"requires": ["base", "node", "event", "handlebars", "overlay", "event-hover"]});
