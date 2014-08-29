@@ -43,6 +43,13 @@
 }
 
 /**
+ * Stripped table.
+ */
+.gradeparent tr:nth-of-type(even) .cell {
+    background-color: #f9f9f9;
+}
+
+/**
  * All the floating divs.
  */
 .gradeparent .floater {
@@ -53,14 +60,20 @@
 }
 
 /**
- * All the header/floating cells.
+ * All the headers + floating cells.
  */
 .gradeparent .heading .cell,
 .gradeparent .avg .cell,
 .gradeparent .user.cell {
     font-size: 14px;
     font-weight: normal;
-    background-color: #eee;
+}
+
+/**
+ * All the floating cells.
+ */
+.gradeparent .floater .cell {
+    background-color: #f9f9f9;
 }
 
 /**

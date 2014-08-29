@@ -230,3 +230,22 @@
         }
     }
 }
+
+/**
+ * Grader report.
+ */
+.path-grade-report {
+    .gradeparent {
+        table {
+            .border-radius(@baseBorderRadius);
+        }
+        table,
+        .cell {
+            border-color: @tableBorder;
+        }
+        tr:nth-of-type(even) .cell,
+        .floater .cell {
+            background-color: @tableBackgroundAccent;
+        }
+    }
+}
