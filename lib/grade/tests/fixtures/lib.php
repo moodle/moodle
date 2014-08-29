@@ -973,3 +973,13 @@ abstract class grade_base_testcase extends advanced_testcase {
         $this->grade_items[17] = $grade_item;
     }
 }
+
+/**
+ * Allow calling protected method.
+ */
+class test_grade_grade_flatten_dependencies_array extends grade_grade {
+    public static function test_flatten_dependencies_array(&$a,&$b) {
+        return self::flatten_dependencies_array($a, $b);
+    }
+}
+
