@@ -29,6 +29,7 @@
     border-spacing: 0;
     border-bottom-width: 0;
     border-right-width: 0;
+    margin-bottom: 2em;
 }
 .dir-rtl .gradeparent table {
     border-left-width: 0;
@@ -44,10 +45,13 @@
     border-left-width: 0;
     padding: 4px 5px;
     vertical-align: middle;
+    text-align: right;
+    white-space: nowrap;
 }
 .dir-rtl .gradeparent .cell {
     border-left-width: 1px;
     border-right-width: 0;
+    text-align: left;
 }
 
 /**
@@ -75,6 +79,12 @@
 .gradeparent .user.cell {
     font-size: 14px;
     font-weight: normal;
+    text-align: left;
+}
+.dir-rtl .gradeparent .heading .cell,
+.dir-rtl .gradeparent .avg .cell,
+.dir-rtl .gradeparent .user.cell {
+    text-align: right;
 }
 
 /**
@@ -85,24 +95,18 @@
 }
 
 /**
- * The header and footer.
- */
-.gradeparent .heading .cell,
-.gradeparent .avg .cell {
-    white-space: nowrap;
-}
-
-/**
  * The user cells.
  */
 .gradeparent .user.cell {
     min-width: 200px;
     width: 200px;
+    white-space: normal;
+    vertical-align: top;
 }
 .gradeparent .user.cell .userpicture {
     margin: 0 4px;
     border: none;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 /**
@@ -110,6 +114,10 @@
  */
 .gradeparent .userfield {
     font-weight: normal;
+    text-align: left;
+}
+.dir-rtl .gradeparent .userfield {
+    text-align: right;
 }
 
 /**
@@ -117,35 +125,23 @@
  */
 .gradeparent .avg .header {
     font-weight: bold;
-    text-align: center;
+}
+
+/**
+ * The footer's floating cells.
+ */
+.gradeparent .avg.floating .cell {
+    border-top-width: 1px;
 }
 
 /**
  * The footer's cells.
  */
-.gradeparent .avg.floating .cell {
-    border-top-width: 1px;
-}
-/**
- * The footer's range field.
- */
-.gradeparent .avg .range {
+.gradeparent .avg .cell {
     text-align: right;
 }
-.dir-rtl .gradeparent .avg .range {
+.dir-rtl .gradeparent .avg .cell {
     text-align: left;
-}
-
-/**
- * The header and user fields.
- */
-.gradeparent .heading .cell,
-.gradeparent .user.cell {
-    text-align: left;
-}
-.dir-rtl .gradeparent .heading .cell,
-.dir-rtl .gradeparent .user.cell {
-    text-align: right;
 }
 
 /**
@@ -166,18 +162,50 @@
 .gradeparent .gradevalue {
     display: inline-block;
 }
+.gradeparent .overridden {
+    background-color: #efd9a4;
+}
+.gradeparent .excludedfloater {
+    font-weight: bold;
+    color: red;
+    font-size: 9px;
+    float: left;
+}
+.dir-rtl .gradeparent .excludedfloater {
+    float: right;
+}
+.gradeparent .controls {
+    background-color: #f3ead8;
+}
+.gradeparent .category {
+    text-align: left;
+}
+.dir-rtl .gradeparent .category {
+    text-align: right;
+}
 
-/** MDL-46812 **/
-#page-grade-report-grader-index.jsenabled .right_scroller.topscroll {
-    background-color: #ececec;
-    height: 20px;
+/**
+ * Editing fields.
+ */
+.gradeparent select {
     margin: 0;
     padding: 0;
 }
-#page-grade-report-grader-index.jsenabled .topscrollcontent {
-    background-color: #ececec;
-    height: 20px;
+.gradeparent .text {
+    border: 1px solid #666;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
-.jsenabled.path-grade-report-grader .left_scroller {
-    border-top: 20px solid #ececec;
+.gradeparent .quickfeedback {
+    border: 1px dashed #000;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    margin-left: 10px;
+}
+.dir-rtl .gradeparent .quickfeedback {
+    margin-left: 0;
+    margin-right: 10px;
 }

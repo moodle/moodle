@@ -936,7 +936,9 @@ class grade_report_grader extends grade_report {
                 }
 
                 if ($grade->is_excluded()) {
-                    $itemcell->text .= "<span class='excludedfloater'>" . $strexcludedgrades . "</span>";
+                    // Adding white spaces before and after to prevent a screenreader from
+                    // thinking that the words are attached to the next/previous <span> or text.
+                    $itemcell->text .= " <span class='excludedfloater'>" . $strexcludedgrades . "</span> ";
                 }
 
                 // Do not show any icons if no grade (no record in DB to match)
