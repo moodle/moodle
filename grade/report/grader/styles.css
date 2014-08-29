@@ -30,6 +30,10 @@
     border-bottom-width: 0;
     border-right-width: 0;
 }
+.dir-rtl .gradeparent table {
+    border-left-width: 0;
+    border-right-width: 1px;
+}
 
 /**
  * All the cells.
@@ -40,6 +44,10 @@
     border-left-width: 0;
     padding: 4px 5px;
     vertical-align: middle;
+}
+.dir-rtl .gradeparent .cell {
+    border-left-width: 1px;
+    border-right-width: 0;
 }
 
 /**
@@ -124,6 +132,9 @@
 .gradeparent .avg .range {
     text-align: right;
 }
+.dir-rtl .gradeparent .avg .range {
+    text-align: left;
+}
 
 /**
  * The header and user fields.
@@ -131,6 +142,10 @@
 .gradeparent .heading .cell,
 .gradeparent .user.cell {
     text-align: left;
+}
+.dir-rtl .gradeparent .heading .cell,
+.dir-rtl .gradeparent .user.cell {
+    text-align: right;
 }
 
 /**
@@ -144,7 +159,7 @@
 .gradeparent .sorticon {
     margin-left: 3px;
 }
-.dir-rlt .gradeparent .sorticon {
+.dir-rtl .gradeparent .sorticon {
     margin-left: 0;
     margin-right: 3px;
 }
