@@ -332,12 +332,66 @@ class core_backup_moodle2_testcase extends advanced_testcase {
     }
 
     /**
+     * When restoring a course, you can change the start date, which shifts other
+     * dates. This test checks that certain dates are correctly modified.
+     */
+    public function test_restore_dates() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enableavailability = true;
+
+        // Create a course with specific start date.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(array(
+                'startdate' => strtotime('1 Jan 2014 00:00 GMT')));
+
+        // Add a forum with conditional availability date restriction, including
+        // one of them nested inside a tree.
+        $availability = '{"op":"&","showc":[true,true],"c":[' .
+                '{"op":"&","c":[{"type":"date","d":">=","t":DATE1}]},' .
+                '{"type":"date","d":"<","t":DATE2}]}';
+        $before = str_replace(
+                array('DATE1', 'DATE2'),
+                array(strtotime('1 Feb 2014 00:00 GMT'), strtotime('10 Feb 2014 00:00 GMT')),
+                $availability);
+        $forum = $generator->create_module('forum', array('course' => $course->id,
+                'availability' => $before));
+
+        // Add an assign with defined start date.
+        $assign = $generator->create_module('assign', array('course' => $course->id,
+                'allowsubmissionsfromdate' => strtotime('7 Jan 2014 16:00 GMT')));
+
+        // Do backup and restore.
+        $newcourseid = $this->backup_and_restore($course, strtotime('3 Jan 2015 00:00 GMT'));
+
+        $modinfo = get_fast_modinfo($newcourseid);
+
+        // Check forum dates are modified by the same amount as the course start.
+        $newforums = $modinfo->get_instances_of('forum');
+        $newforum = reset($newforums);
+        $after = str_replace(
+            array('DATE1', 'DATE2'),
+            array(strtotime('3 Feb 2015 00:00 GMT'), strtotime('12 Feb 2015 00:00 GMT')),
+            $availability);
+        $this->assertEquals($after, $newforum->availability);
+
+        // Check assign date.
+        $newassigns = $modinfo->get_instances_of('assign');
+        $newassign = reset($newassigns);
+        $this->assertEquals(strtotime('9 Jan 2015 16:00 GMT'), $DB->get_field(
+                'assign', 'allowsubmissionsfromdate', array('id' => $newassign->instance)));
+    }
+
+    /**
      * Backs a course up and restores it.
      *
      * @param stdClass $course Course object to backup
+     * @param int $newdate If non-zero, specifies custom date for new course
      * @return int ID of newly restored course
      */
-    protected function backup_and_restore($course) {
+    protected function backup_and_restore($course, $newdate = 0) {
         global $USER, $CFG;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
@@ -358,6 +412,9 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         $rc = new restore_controller($backupid, $newcourseid,
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
                 backup::TARGET_NEW_COURSE);
+        if ($newdate) {
+            $rc->get_plan()->get_setting('course_startdate')->set_value($newdate);
+        }
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
         $rc->destroy();
