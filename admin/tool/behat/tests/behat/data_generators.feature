@@ -271,3 +271,20 @@ Feature: Set up contextual data for tests
       | Name               | Cohort size |
       | Cohort in category | 1           |
       | Empty cohort       | 0           |
+
+  Scenario: Add grade categories with data generator
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "grade categories" exist:
+      | fullname | course |
+      | Grade category 1 | C1|
+    And the following "grade categories" exist:
+      | fullname | course | gradecategory |
+      | Grade sub category 2 | C1 | Grade category 1|
+    When I log in as "admin"
+    And I follow "Courses"
+    And I follow "Course 1"
+    And I navigate to "Grades" node in "Course administration"
+    Then I should see "Grade category 1"
+    And I should see "Grade sub category 2"

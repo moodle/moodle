@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testing_data_generator {
+    protected $gradecategorycounter = 0;
     protected $usercounter = 0;
     protected $categorycount = 0;
     protected $cohortcount = 0;
@@ -740,6 +741,39 @@ EOD;
         return role_assign($roleid, $userid, $contextid);
     }
 
+    /**
+     * Create a grade_category.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the grade category record
+     */
+    public function create_grade_category($record = null) {
+        global $CFG;
+
+        $this->gradecategorycounter++;
+        $i = $this->gradecategorycounter;
+
+        if (!isset($record['fullname'])) {
+            $record['fullname'] = 'Grade category ' . $i;
+        }
+
+        // For gradelib classes.
+        require_once($CFG->libdir . '/gradelib.php');
+        // Create new grading category in this course.
+        $gradecategory = new grade_category($record, false);
+        $gradecategory->apply_default_settings();
+        $gradecategory->apply_forced_settings();
+        $gradecategory->insert();
+        // This creates a default grade item for the category
+        $gradeitem = $gradecategory->load_grade_item();
+
+        if (isset($record->parentcategory)) {
+            $gradecategory->set_parent($data->parentcategory);
+        }
+
+        $gradecategory->update_from_db();
+        return $gradecategory->get_record_data();
+    }
 }
 
 /**
