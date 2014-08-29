@@ -139,6 +139,10 @@ $CFG->admin = 'admin';
 // any existing key.
 //      $CFG->mnetkeylifetime = 28;
 //
+// Not recommended: Set the following to true to allow the use
+// off non-Moodle standard characters in usernames.
+//      $CFG->extendedusernamechars = true;
+//
 // Allow user passwords to be included in backup files. Very dangerous
 // setting as far as it publishes password hashes that can be unencrypted
 // if the backup file is publicy available. Use it only if you can guarantee
