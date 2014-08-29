@@ -461,6 +461,9 @@ class grade_category extends grade_object {
         // needed mostly for SUM agg type
         $this->auto_update_max($items);
 
+        // Needed for Natural aggregation type.
+        $this->auto_update_weights();
+
         $grade_inst = new grade_grade();
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
@@ -1023,6 +1026,46 @@ class grade_category extends grade_object {
             $this->grade_item->grademin  = 0;
             $this->grade_item->gradetype = GRADE_TYPE_VALUE;
             $this->grade_item->update('aggregation');
+        }
+    }
+
+    /**
+     * Recalculate the weights of the grade items in this category.
+     * THIS DOES NOT TAKE INTO ACCOUNT HIDDEN ACTIVITIES, GROUPS.
+     */
+    private function auto_update_weights() {
+        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
+            // This is only required if we are using natural weights.
+            return;
+        }
+        $children = $this->get_children();
+
+        $grade_item = null;
+
+        // Calculate the sum of the grademax's of all the items within this category.
+        $totalgrademax = 0;
+        foreach ($children as $sortorder => $child) {
+            $grade_item = null;
+
+            if ($child['type'] == 'item') {
+                $grade_item = $child['object'];
+            } else if ($child['type'] == 'category') {
+                $grade_item = $child['object']->load_grade_item();
+            }
+            $totalgrademax += $grade_item->grademax;
+        }
+
+        reset($children);
+        foreach ($children as $sortorder => $child) {
+            $grade_item = null;
+
+            if ($child['type'] == 'item') {
+                $grade_item = $child['object'];
+            } else if ($child['type'] == 'category') {
+                $grade_item = $child['object']->load_grade_item();
+            }
+            $grade_item->aggregationcoef2 = $grade_item->grademax/$totalgrademax;
+            $grade_item->update();
         }
     }
 
