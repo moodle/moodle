@@ -737,6 +737,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     do {
                         $value = ldap_get_values_len($ldapconnection, $entry, $this->config->user_attribute);
                         $value = core_text::convert($value[0], $this->config->ldapencoding, 'utf-8');
+                        $value = trim($value);
                         $this->ldap_bulk_insert($value);
                     } while ($entry = ldap_next_entry($ldapconnection, $entry));
                 }
