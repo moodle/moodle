@@ -396,10 +396,14 @@ class grade_edit_tree {
                 get_string('extracreditvalue', 'grades', $item->itemname).'</label>
                 <input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" value="1" '."$checked />\n";
         } else if ($aggcoef == 'aggregationcoefextrasum' && $type == 'weight') {
+            $label = '';
+            if ($item->weightoverride) {
+                $label = get_string('adjusted', 'grades');
+            }
             return '<label class="accesshide" for="aggregationcoef_'.$item->id.'">'.
                 get_string('weight', 'grades', $item->itemname).'</label>'.
                 '<input type="text" size="6" id="aggregationcoef2_'.$item->id.'" name="aggregationcoef2_'.$item->id.'"
-                value="'.grade_edit_tree::format_number($item->aggregationcoef2).'" />';
+                value="'.grade_edit_tree::format_number($item->aggregationcoef2).'" />'.$label;
         } else {
             return '';
         }

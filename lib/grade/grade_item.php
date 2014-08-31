@@ -51,7 +51,7 @@ class grade_item extends grade_object {
                                  'itemnumber', 'iteminfo', 'idnumber', 'calculation', 'gradetype', 'grademax', 'grademin',
                                  'scaleid', 'outcomeid', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef',
                                  'aggregationcoef2', 'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
-                                 'needsupdate', 'timecreated', 'timemodified');
+                                 'needsupdate', 'weightoverride', 'timecreated', 'timemodified');
 
     /**
      * The course this grade_item belongs to.
@@ -245,6 +245,11 @@ class grade_item extends grade_object {
      * @var bool $needsupdate
      */
     public $needsupdate = 1;
+
+    /**
+     * If set, the grade item's weight has been overridden by a user and should not be automatically adjusted.
+     */
+    public $weightoverride = 0;
 
     /**
      * Cached dependson array

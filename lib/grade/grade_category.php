@@ -1044,6 +1044,10 @@ class grade_category extends grade_object {
 
         // Calculate the sum of the grademax's of all the items within this category.
         $totalgrademax = 0;
+
+        // Out of 1, how much weight has been manually overriden by a user?
+        $totaloverriddenweight  = 0;
+        $totaloverriddengrademax  = 0;
         foreach ($children as $sortorder => $child) {
             $grade_item = null;
 
@@ -1052,8 +1056,15 @@ class grade_category extends grade_object {
             } else if ($child['type'] == 'category') {
                 $grade_item = $child['object']->load_grade_item();
             }
+
             $totalgrademax += $grade_item->grademax;
+            if ($grade_item->weightoverride) {
+                $totaloverriddenweight += $grade_item->aggregationcoef2;
+                $totaloverriddengrademax += $grade_item->grademax;
+            }
         }
+
+        $totalgrademax -= $totaloverriddengrademax;
 
         reset($children);
         foreach ($children as $sortorder => $child) {
@@ -1064,8 +1075,12 @@ class grade_category extends grade_object {
             } else if ($child['type'] == 'category') {
                 $grade_item = $child['object']->load_grade_item();
             }
-            $grade_item->aggregationcoef2 = $grade_item->grademax/$totalgrademax;
-            $grade_item->update();
+            if (!$grade_item->weightoverride) {
+                // Calculate this item's weight as a percentage of the non-overridden total grade maxes
+                // then convert it to a proportion of the available non-overriden weight.
+                $grade_item->aggregationcoef2 = ($grade_item->grademax/$totalgrademax) * (1 - $totaloverriddenweight);
+                $grade_item->update();
+            }
         }
     }
 

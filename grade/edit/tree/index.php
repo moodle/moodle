@@ -240,6 +240,21 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $grade_edit_tree->move_elements($elements, $returnurl);
     }
 
+    // Preload grade_items so we can determine if weights have been manually changed or been automatically adjusted.
+    // As soon as we touch one grade item the others will be re-weighted automatically.
+    $oldgradeitems = Array();
+    foreach ($data as $key => $value) {
+        if (preg_match('/^(aggregationcoef2)_([0-9]+)$/', $key, $matches)) {
+            $param = $matches[1];
+            $aid   = $matches[2];
+
+            $value = unformat_float($value);
+            $value = clean_param($value, PARAM_FLOAT);
+
+            $oldgradeitems[$aid] = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
+        }
+    }
+
     // Category and item field updates
     foreach ($data as $key => $value) {
         // Grade category text inputs
@@ -267,12 +282,17 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $value = unformat_float($value);
             $value = clean_param($value, PARAM_FLOAT);
 
-            $grade_item = grade_item::fetch(array('id'=>$aid, 'courseid'=>$courseid));
+            $grade_item = $oldgradeitems[$aid];
 
             if ($param === 'grademax' and $value < $grade_item->grademin) {
                 // better not allow values lower than grade min
                 $value = $grade_item->grademin;
             }
+
+            if ($param === 'aggregationcoef2' && round($grade_item->aggregationcoef2, 4) != round($value, 4)) {
+                $grade_item->weightoverride = 1;
+            }
+
             $grade_item->$param = $value;
 
             $grade_item->update();

@@ -3874,6 +3874,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014082700.01);
     }
 
+    if ($oldversion < 2014082700.02) {
+
+        // Define the field weightoverride to be added to grade_items.
+        $table = new xmldb_table('grade_items');
+
+        $field = new xmldb_field('weightoverride', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'needsupdate');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2014082700.02);
+    }
 
     return true;
 }

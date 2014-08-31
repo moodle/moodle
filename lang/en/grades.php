@@ -34,6 +34,7 @@ $string['additem'] = 'Add grade item';
 $string['addoutcome'] = 'Add an outcome';
 $string['addoutcomeitem'] = 'Add outcome item';
 $string['addscale'] = 'Add a scale';
+$string['adjusted'] = 'Adjusted';
 $string['aggregateextracreditmean'] = 'Mean of grades (with extra credits)';
 $string['aggregatemax'] = 'Highest grade';
 $string['aggregatemean'] = 'Mean of grades';
