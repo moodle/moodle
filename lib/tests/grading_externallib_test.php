@@ -141,6 +141,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $cmids = array ($cm->cmid);
         $areaname = 'submissions';
         $result = core_grading_external::get_definitions($cmids, $areaname);
+        $result = external_api::clean_returnvalue(core_grading_external::get_definitions_returns(), $result);
 
         $this->assertEquals(1, count($result['areas']));
         $this->assertEquals(1, count($result['areas'][0]['definitions']));
@@ -285,6 +286,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         $result = core_grading_external::get_gradingform_instances($definitionid, 0);
+        $result = external_api::clean_returnvalue(core_grading_external::get_gradingform_instances_returns(), $result);
 
         $this->assertEquals(1, count($result['instances']));
         $this->assertEquals($USER->id, $result['instances'][0]['raterid']);
@@ -294,9 +296,9 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($result['instances'][0]['rubric']));
         $this->assertEquals(1, count($result['instances'][0]['rubric']['criteria']));
         $criteria = $result['instances'][0]['rubric']['criteria'];
-        $this->assertEquals($criterionid, $criteria[$criterionid]['criterionid']);
-        $this->assertEquals($levelid, $criteria[$criterionid]['levelid']);
-        $this->assertEquals('excellent work', $criteria[$criterionid]['remark']);
+        $this->assertEquals($criterionid, $criteria[0]['criterionid']);
+        $this->assertEquals($levelid, $criteria[0]['levelid']);
+        $this->assertEquals('excellent work', $criteria[0]['remark']);
     }
 
     /**
