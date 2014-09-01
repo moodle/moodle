@@ -319,6 +319,7 @@ $string['workshop:viewauthornames'] = 'View author names';
 $string['workshop:viewauthorpublished'] = 'View authors of published submissions';
 $string['workshop:viewpublishedsubmissions'] = 'View published submissions';
 $string['workshop:viewreviewernames'] = 'View reviewer names';
+$string['resetworkshopall'] = 'Reset all';
 $string['yourassessment'] = 'Your assessment';
 $string['yourgrades'] = 'Your grades';
 $string['yoursubmission'] = 'Your submission';
