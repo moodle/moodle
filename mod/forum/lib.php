@@ -5632,6 +5632,11 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
     }
 
     foreach ($discussions as $discussion) {
+        if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $context) &&
+            !forum_user_has_posted($forum->id,$discussion->discussion, $USER->id)) {
+            $canviewparticipants = false;
+        }
+        
         if (!empty($replies[$discussion->discussion])) {
             $discussion->replies = $replies[$discussion->discussion]->replies;
             $discussion->lastpostid = $replies[$discussion->discussion]->lastpostid;
