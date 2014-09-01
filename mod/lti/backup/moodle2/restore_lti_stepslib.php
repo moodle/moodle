@@ -74,6 +74,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $data->course = $this->get_courseid();
         $data->servicesalt = uniqid('', true);
 
+         // Grade used to be a float (whole numbers only), restore as int.
+        $data->grade = (int) $data->grade;
+
         // Clean any course or site typeid. All modules
         // are restored as self-contained. Note this is
         // an interim solution until the issue below is implemented.
