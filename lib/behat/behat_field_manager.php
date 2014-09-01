@@ -218,6 +218,11 @@ class behat_field_manager {
      */
     protected static function get_field_node_type(NodeElement $fieldnode, Session $session) {
 
+        // Special handling for availability field which requires custom JavaScript.
+        if ($fieldnode->getAttribute('name') === 'availabilityconditionsjson') {
+            return 'availability';
+        }
+
         // We look for a parent node with 'felement' class.
         if ($class = $fieldnode->getParent()->getAttribute('class')) {
 
