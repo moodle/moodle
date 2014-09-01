@@ -1050,9 +1050,11 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param course_in_list $course The currently selected course if there is one.
      * @param int $page The current page, starting at 0.
      * @param int $perpage The number of courses to display per page.
+     * @param string $search The string we are searching for.
      * @return string
      */
-    public function search_listing(array $courses, $totalcourses, course_in_list $course = null, $page = 0, $perpage = 20) {
+    public function search_listing(array $courses, $totalcourses, course_in_list $course = null, $page = 0, $perpage = 20,
+        $search = '') {
         $page = max($page, 0);
         $perpage = max($perpage, 2);
         $totalpages = ceil($totalcourses / $perpage);
@@ -1082,7 +1084,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $first = false;
         }
         $html .= html_writer::end_tag('ul');
-        $html .= $this->search_pagination($totalcourses, $page, $perpage, true);
+        $html .= $this->search_pagination($totalcourses, $page, $perpage, true, $search);
         $html .= html_writer::end_div();
         return $html;
     }
@@ -1094,13 +1096,16 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param int $page The current page.
      * @param int $perpage The number of courses being displayed.
      * @param bool $showtotals Whether or not to print total information.
+     * @param string $search The string we are searching for.
      * @return string
      */
-    protected function search_pagination($totalcourses, $page, $perpage, $showtotals = false) {
+    protected function search_pagination($totalcourses, $page, $perpage, $showtotals = false, $search = '') {
         $html = '';
         $totalpages = ceil($totalcourses / $perpage);
         if ($showtotals) {
-            if ($totalpages == 1) {
+            if ($totalpages == 0) {
+                $str = get_string('nocoursesfound', 'moodle', $search);
+            } else if ($totalpages == 1) {
                 $str = get_string('showingacourses', 'moodle', $totalcourses);
             } else {
                 $a = new stdClass;
