@@ -1695,3 +1695,40 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
         $oldevent->delete();
     }
 }
+
+/** Started MDL-31936 Reset work*/
+function workshop_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'workshopheader', get_string('modulenameplural', 'workshop'));
+    $mform->addElement('checkbox', 'reset_workshop_all', get_string('resetworkshopall', 'workshop'));
+    // ... @todo selective reset.
+
+}
+
+function workshop_reset_course_form_defaults($course) {
+    return array(
+            'reset_workshop_all' => 1
+            );
+}
+
+function workshop_reset_userdata($data) {
+    global $CFG, $DB;
+
+    // Only if we have workshop modules.
+    if (!$workshops = $DB->get_records('workshop', array('course' => $data->courseid))) {
+        return false;
+    }
+    require_once($CFG->dirroot . '/mod/workshop/locallib.php');
+    $course = $DB->get_record('course', array('id' => $data->courseid));
+    $componentstr = get_string('modulenameplural', 'workshop');
+
+    $status = array();
+
+    foreach ($workshops as $workshop) {
+        $cm = get_coursemodule_from_instance("workshop", $workshop->id, $data->courseid);
+        $wx = new workshop($workshop, $cm, $course);
+        $status = array_merge($status, $wx->reset_userdata($data));
+    }
+
+    return $status;
+}
+
