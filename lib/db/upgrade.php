@@ -3734,5 +3734,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014080801.00);
     }
 
+    if ($oldversion < 2014082900.01) {
+        // Fixing possible wrong MIME type for 7-zip and Rar files.
+        $filetypes = array(
+                '%.7z' => 'application/x-7z-compressed',
+                '%.rar' => 'application/x-rar-compressed');
+        upgrade_mimetypes($filetypes);
+        upgrade_main_savepoint(true, 2014082900.01);
+    }
+
     return true;
 }
