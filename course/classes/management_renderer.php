@@ -1067,7 +1067,9 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html = '';
         $totalpages = ceil($totalcourses / $perpage);
         if ($showtotals) {
-            if ($totalpages == 1) {
+            if ($totalpages == 0) {
+                $str = get_string('nocourses');
+            } else if ($totalpages == 1) {
                 $str = get_string('showingacourses', 'moodle', $totalcourses);
             } else {
                 $a = new stdClass;
