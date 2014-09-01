@@ -4706,7 +4706,7 @@ function update_internal_user_password($user, $password) {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    if ($legacyhash) {
+    if ($legacyhash || $hashedpassword == AUTH_PASSWORD_NOT_CACHED) {
         $passwordchanged = ($user->password !== $hashedpassword);
         $algorithmchanged = false;
     } else {
