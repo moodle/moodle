@@ -140,7 +140,6 @@ $string['generalgradehistories'] = 'Include histories';
 $string['generallogs'] = 'Include logs';
 $string['generalquestionbank'] = 'Include question bank';
 $string['generalroleassignments'] = 'Include role assignments';
-$string['generalquestionbank'] = 'Include question bank';
 $string['generalsettings'] = 'General backup settings';
 $string['generaluserscompletion'] = 'Include user completion information';
 $string['generalusers'] = 'Include users';
