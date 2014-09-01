@@ -1739,13 +1739,13 @@ class cm_info implements IteratorAggregate {
      * Creates a cm_info object from a database record (also accepts cm_info
      * in which case it is just returned unchanged).
      *
-     * @param stdClass|cm_info|null $cm Stdclass or cm_info (or null)
+     * @param stdClass|cm_info|null|bool $cm Stdclass or cm_info (or null or false)
      * @param int $userid Optional userid (default to current)
-     * @return cm_info|null Object as cm_info, or null if input was null
+     * @return cm_info|null Object as cm_info, or null if input was null/false
      */
     public static function create($cm, $userid = 0) {
-        // Nulls get passed through.
-        if (is_null($cm)) {
+        // Null, false, etc. gets passed through as null.
+        if (!$cm) {
             return null;
         }
         // If it is already a cm_info object, just return it.
