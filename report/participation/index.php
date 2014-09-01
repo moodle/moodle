@@ -117,9 +117,11 @@ if ($onlyuselegacyreader) {
     if (empty($minlog) || ($minloginternalreader <= $minlog)) {
         $uselegacyreader = false;
         $minlog = $minloginternalreader;
-    } else if (!empty($timefrom) && ($minloginternalreader > $timefrom)) {
-        // If timefrom is less then first record in sql_internal_reader then get record from legacy log only.
-        $onlyuselegacyreader = true;
+    }
+
+    // If timefrom is greater then first record in sql_internal_reader then get record from sql_internal_reader only.
+    if (!empty($timefrom) && ($minloginternalreader < $timefrom)) {
+        $uselegacyreader = false;
     }
 }
 
