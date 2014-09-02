@@ -879,6 +879,9 @@ function feedback_get_incomplete_users($cm,
                                             true)) {
         return false;
     }
+    // Filter users that are not in the correct group/grouping.
+    $allusers = groups_filter_users_by_course_module_visible($cm, $allusers);
+
     $allusers = array_keys($allusers);
 
     //now get all completeds
