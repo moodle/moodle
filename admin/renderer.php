@@ -1039,19 +1039,28 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         foreach ($plugin->get_other_required_plugins() as $component => $requiredversion) {
-            $ok = true;
             $otherplugin = $pluginman->get_plugin_info($component);
+            $actions = array();
 
             if (is_null($otherplugin)) {
-                $ok = false;
-            } else if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
-                $ok = false;
-            }
+                // The required plugin is not installed.
+                $class = 'requires-failed requires-missing';
+                $installurl = new moodle_url('https://moodle.org/plugins/view.php', array('plugin' => $component));
+                $uploadurl = new moodle_url('/admin/tool/installaddon/');
+                $actions[] = html_writer::link($installurl, get_string('dependencyinstall', 'core_plugin'));
+                $actions[] = html_writer::link($uploadurl, get_string('dependencyupload', 'core_plugin'));
 
-            if ($ok) {
-                $class = 'requires-ok';
+            } else if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
+                // The required plugin is installed but needs to be updated.
+                $class = 'requires-failed requires-outdated';
+                if (!$otherplugin->is_standard()) {
+                    $updateurl = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'fetchupdates' => 1));
+                    $actions[] = html_writer::link($updateurl, get_string('checkforupdates', 'core_plugin'));
+                }
+
             } else {
-                $class = 'requires-failed';
+                // Already installed plugin with sufficient version.
+                $class = 'requires-ok';
             }
 
             if ($requiredversion != ANY_VERSION) {
@@ -1059,11 +1068,11 @@ class core_admin_renderer extends plugin_renderer_base {
             } else {
                 $str = 'otherplugin';
             }
-            $componenturl = new moodle_url('https://moodle.org/plugins/view.php?plugin='.$component);
-            $componenturl = html_writer::tag('a', $component, array('href' => $componenturl->out()));
+
             $requires[] = html_writer::tag('li',
-                    get_string($str, 'core_plugin',
-                            array('component' => $componenturl, 'version' => $requiredversion)),
+                    html_writer::div(get_string($str, 'core_plugin',
+                            array('component' => $component, 'version' => $requiredversion)), 'component').
+                    html_writer::div(implode(' | ', $actions), 'actions'),
                     array('class' => $class));
         }
 
