@@ -162,8 +162,13 @@
 .gradeparent .gradevalue {
     display: inline-block;
 }
-.gradeparent .overridden {
+.gradeparent tr:nth-child(n) td.overridden:nth-child(n) {
+    /* Made very specific to override the default stripped style of the table. */
     background-color: #efd9a4;
+}
+.gradeparent tr:nth-child(n) td.ajaxoverridden:nth-child(n) {
+    /* Made very specific to override the default stripped style of the table. */
+    background-color: #ffe3a0;
 }
 .gradeparent .excludedfloater {
     font-weight: bold;
