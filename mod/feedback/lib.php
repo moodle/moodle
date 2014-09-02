@@ -860,14 +860,14 @@ function feedback_check_is_switchrole() {
  *
  * @global object
  * @uses CONTEXT_MODULE
- * @param object $cm
+ * @param cm_info $cm Course-module object
  * @param int $group single groupid
  * @param string $sort
  * @param int $startpage
  * @param int $pagecount
  * @return object the userrecords
  */
-function feedback_get_incomplete_users($cm,
+function feedback_get_incomplete_users(cm_info $cm,
                                        $group = false,
                                        $sort = '',
                                        $startpage = false,
@@ -892,7 +892,8 @@ function feedback_get_incomplete_users($cm,
         return false;
     }
     // Filter users that are not in the correct group/grouping.
-    $allusers = groups_filter_users_by_course_module_visible($cm, $allusers);
+    $info = new \core_availability\info_module($cm);
+    $allusers = $info->filter_user_list($allusers);
 
     $allusers = array_keys($allusers);
 
