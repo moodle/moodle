@@ -28,6 +28,7 @@
  */
 
 var SELECTORS = {
+        FOOTERTITLE: '#user-grades .avg .header',
         FOOTERCELLS: '#user-grades .avg .cell',
         FOOTERROW: '#user-grades .avg',
         GRADECELL: 'td.grade',
@@ -37,7 +38,8 @@ var SELECTORS = {
         HEADERCELL: '.gradebook-header-cell',
         HEADERROW: '#user-grades tr.heading',
         STUDENTHEADER: '#studentheader',
-        USERCELL: '#user-grades .user.cell'
+        USERCELL: '#user-grades .user.cell',
+        USERMAIL: '#user-grades .useremail'
     },
     CSS = {
         OVERRIDDEN: 'overridden',

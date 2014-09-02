@@ -91,6 +91,27 @@ FloatingHeaders.prototype = {
     firstUserCell: null,
 
     /**
+     * A Node representing the first cell which does not contain a user header.
+     *
+     * @property firstNonUserCell
+     * @type Node
+     * @protected
+     */
+    firstNonUserCell: null,
+
+    /**
+     * The position of the left of the first non-header cell in a row - the one after the email address.
+     * This is used when processing the scroll event as an optimisation. It must be updated when
+     * additional rows are loaded, or the window changes in some fashion.
+     *
+     * @property firstNonUserCellLeft
+     * @type Node
+     * @protected
+     */
+    firstNonUserCellLeft: 0,
+
+
+    /**
      * A Node representing the original table footer row.
      *
      * @property tableFooterRow
@@ -136,6 +157,15 @@ FloatingHeaders.prototype = {
      * @protected
      */
     userColumn: null,
+
+    /**
+     * A Node representing the floating footer title header. This is the header with the "Overage Average" title.
+     *
+     * @property floatingFooterTitleRow
+     * @type Node
+     * @protected
+     */
+    floatingFooterTitleRow: null,
 
     /**
      * The position of the bottom of the first user cell.
@@ -189,6 +219,7 @@ FloatingHeaders.prototype = {
         // Grab references to commonly used Nodes.
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
         this.container = Y.one(SELECTORS.GRADEPARENT);
+        this.firstNonUserCell = Y.one(SELECTORS.USERMAIL).next();
 
         if (!this.firstUserCell) {
             // No need for floating elements, there are no users.
@@ -200,6 +231,7 @@ FloatingHeaders.prototype = {
         this._setupFloatingUserHeader();
         this._setupFloatingAssignmentHeaders();
         this._setupFloatingAssignmentFooter();
+        this._setupFloatingAssignmentFooterTitle();
 
         // Calculate the positions of edge cells. These are used for positioning of the floating headers.
         // This must be called after the floating headers are setup, but before the scroll event handler is invoked.
@@ -234,6 +266,9 @@ FloatingHeaders.prototype = {
 
         // The left of the user cells matches the left of the headerRow.
         this.firstUserCellLeft = this.firstUserCell.getX();
+
+        // The left of the user cells matches the left of the footer title.
+        this.firstNonUserCellLeft = this.firstNonUserCell.getX();
 
         if (userCellList.size() > 1) {
             // Use the top of the second cell for the bottom of the first cell.
@@ -416,7 +451,7 @@ FloatingHeaders.prototype = {
         var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater heading"></div>'),
             floatingUserHeaderCell = Y.Node.create('<div></div>'),
             nodepos = this._getRelativeXY(this.headerCell)[0],
-            coordinates = this._getRelativeXY(this.headerRow);
+            coordinates = this._getRelativeXY(this.headerRow),
             gradeHeadersOffset = coordinates[0];
 
         // Append the content and style to the floating cell.
@@ -562,6 +597,50 @@ FloatingHeaders.prototype = {
     },
 
     /**
+     * Create and setup the floating footer title cell.
+     *
+     * @method _setupFloatingAssignmentFooterTitle
+     * @protected
+     */
+    _setupFloatingAssignmentFooterTitle: function() {
+        // We make various references to the header cells. Store it for later.
+        this.footerCell = Y.one(SELECTORS.FOOTERTITLE);
+
+        // Create the floating row and cell.
+        var floatingFooterRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater avg"></div>'),
+            floatingFooterCell = Y.Node.create('<div></div>'),
+            coordinates = this._getRelativeXY(this.headerRow),
+            width = this.firstUserCell.getComputedStyle(WIDTH),
+            height = this.footerCell.get(OFFSETHEIGHT);
+
+        // Append the content and style to the floating cell.
+        floatingFooterCell
+            .set('innerHTML', this.footerCell.getHTML())
+            .setAttribute('class', this.footerCell.getAttribute('class'))
+            .setStyles({
+                // The header is larger than the user cells, so we take the user cell.
+                width:      width
+            });
+
+        // Style the floating row.
+        floatingFooterRow
+            .setStyles({
+                position:   'absolute',
+                left:       coordinates[0] + 'px',
+                bottom:     '1px',
+                height:     height + 'px',
+                width:      width
+            });
+
+        // Append the cell to the row, and finally to the region.
+        floatingFooterRow.append(floatingFooterCell);
+        this.graderRegion.append(floatingFooterRow);
+
+        // Store a reference to this for later - we use it in the event handlers.
+        this.floatingFooterTitleRow = floatingFooterRow;
+    },
+
+    /**
      * Process a Scroll Event on the window.
      *
      * @method _handleScrollEvent
@@ -577,13 +656,15 @@ FloatingHeaders.prototype = {
             userColumnHeaderStyles = {},
             userColumnStyles = {},
             footerStyles = {},
+            footerTitleStyles = {},
             coord = 0,
             userCellWidth = 0,
             floatingUserTriggerPoint = 0,       // The X position at which the floating should start.
             floatingUserRelativePoint = 0,      // The point to use when calculating the new position.
             headerFloats = false,
             userFloats = false,
-            footerFloats = false;
+            footerFloats = false,
+            footerTitleFloats = false;
 
         // Header position.
         gradeItemHeadingContainerStyles.left = this._getRelativeXFromX(this.headerRow.getX());
@@ -606,20 +687,24 @@ FloatingHeaders.prototype = {
         }
 
         // User column position.
+        userCellWidth = this.firstUserCell.get(OFFSETWIDTH);
         if (right_to_left()) {
-            userCellWidth = this.firstUserCell.get(OFFSETWIDTH);
             floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset;
             floatingUserRelativePoint = floatingUserTriggerPoint - userCellWidth;
             userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + userCellWidth);
+            footerTitleFloats = floatingUserTriggerPoint < (this.firstNonUserCellLeft + userCellWidth);
         } else {
             floatingUserTriggerPoint = Y.config.win.pageXOffset;
             floatingUserRelativePoint = floatingUserTriggerPoint;
             userFloats = floatingUserTriggerPoint > this.firstUserCellLeft;
+            footerTitleFloats = floatingUserTriggerPoint > (this.firstNonUserCellLeft - userCellWidth);
         }
+
         if (userFloats) {
             coord = this._getRelativeXFromX(floatingUserRelativePoint);
             userColumnStyles.left = coord + 'px';
             userColumnHeaderStyles.left = coord + 'px';
+            footerTitleStyles.left = userColumnStyles.left;
         } else {
             coord = this._getRelativeXFromX(this.firstUserCellLeft);
             userColumnStyles.left = coord + 'px';
@@ -639,12 +724,15 @@ FloatingHeaders.prototype = {
 
             if (bottomScrollPosition < footerBottomPosition && bottomScrollPosition > this.firstUserCellBottom) {
                 // We have not scrolled below the footer, nor above the first row.
-                footerStyles.bottom = Math.ceil(footerBottomPosition - bottomScrollPosition) + 'px';
+                footerStyles.bottom = footerTitleStyles.bottom = Math.ceil(footerBottomPosition - bottomScrollPosition) + 'px';
                 footerFloats = true;
             } else {
                 // The footer should not float any more.
-                footerStyles.bottom = 0;
+                footerStyles.bottom = '1px';
                 footerFloats = false;
+
+                // The footer title may float if the page scrolls right.
+                footerTitleStyles.bottom = '1px';
             }
         }
 
@@ -653,6 +741,7 @@ FloatingHeaders.prototype = {
         this.userColumnHeader.setStyles(userColumnHeaderStyles);
         this.userColumn.setStyles(userColumnStyles);
         this.footerRow.setStyles(footerStyles);
+        this.floatingFooterTitleRow.setStyles(footerTitleStyles);
 
         // Mark the elements as floating, or not.
         if (headerFloats) {
@@ -673,6 +762,12 @@ FloatingHeaders.prototype = {
             this.footerRow.addClass(CSS.FLOATING);
         } else {
             this.footerRow.removeClass(CSS.FLOATING);
+        }
+
+        if (this.footerRow && footerTitleFloats) {
+            this.floatingFooterTitleRow.addClass(CSS.FLOATING);
+        } else {
+            this.floatingFooterTitleRow.removeClass(CSS.FLOATING);
         }
     },
 
@@ -731,6 +826,9 @@ FloatingHeaders.prototype = {
                     };
                     footercell.setStyles(styles);
                 });
+
+                // Resize the title area too.
+                this.floatingFooterTitleRow.one('div').setStyle('width', userWidth);
             }
         }
 
