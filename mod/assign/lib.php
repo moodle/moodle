@@ -1039,7 +1039,8 @@ function assign_update_grades($assign, $userid=0, $nullifnone=true) {
 function assign_get_file_areas($course, $cm, $context) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
-    $areas = array();
+
+    $areas = array(ASSIGN_INTROATTACHMENT_FILEAREA => get_string('introattachments', 'mod_assign'));
 
     $assignment = new assign($context, $cm, $course);
     foreach ($assignment->get_submission_plugins() as $plugin) {
@@ -1094,12 +1095,33 @@ function assign_get_file_info($browser,
         return null;
     }
 
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
     $fs = get_file_storage();
     $filepath = is_null($filepath) ? '/' : $filepath;
     $filename = is_null($filename) ? '.' : $filename;
 
-    // Need to find the plugin this belongs to.
+    // Need to find where this belongs to.
     $assignment = new assign($context, $cm, $course);
+    if ($filearea === ASSIGN_INTROATTACHMENT_FILEAREA) {
+        if (!has_capability('moodle/course:managefiles', $context)) {
+            // Students can not peak here!
+            return null;
+        }
+        if (!($storedfile = $fs->get_file($assignment->get_context()->id,
+                                          'mod_assign', $filearea, 0, $filepath, $filename))) {
+            return null;
+        }
+        return new file_info_stored($browser,
+                        $assignment->get_context(),
+                        $storedfile,
+                        $urlbase,
+                        $filearea,
+                        $itemid,
+                        true,
+                        true,
+                        false);
+    }
+
     $pluginowner = null;
     foreach ($assignment->get_submission_plugins() as $plugin) {
         if ($plugin->is_visible()) {
@@ -1210,4 +1232,60 @@ function assign_get_completion_state($course, $cm, $userid, $type) {
         // Completion option is not enabled so just return $type.
         return $type;
     }
+}
+
+/**
+ * Serves intro attachment files.
+ *
+ * @param mixed $course course or id of the course
+ * @param mixed $cm course module or id of the course module
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - just send the file
+ */
+function assign_pluginfile($course,
+                $cm,
+                context $context,
+                $filearea,
+                $args,
+                $forcedownload,
+                array $options=array()) {
+    global $CFG;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_login($course, false, $cm);
+    if (!has_capability('mod/assign:view', $context)) {
+        return false;
+    }
+
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+    $assign = new assign($context, $cm, $course);
+
+    if ($filearea !== ASSIGN_INTROATTACHMENT_FILEAREA) {
+        return false;
+    }
+    if (!$assign->show_intro()) {
+        return false;
+    }
+
+    $itemid = (int)array_shift($args);
+    if ($itemid != 0) {
+        return false;
+    }
+
+    $relativepath = implode('/', $args);
+
+    $fullpath = "/{$context->id}/mod_assign/$filearea/$itemid/$relativepath";
+
+    $fs = get_file_storage();
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
