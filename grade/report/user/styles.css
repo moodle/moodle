@@ -12,20 +12,21 @@
 .user-grade thead {border-bottom: 3px double black;}
 .user-grade thead th {padding: 0.25em 0.75em;}
 .user-grade tbody th {text-align:left;}
-.user-grade td.oddd1,
-.user-grade th.oddd1 {background-color: #f3dfd0;}
-.user-grade td.oddd2,
-.user-grade th.oddd2 {background-color: #d0dbf3;}
-.user-grade td.oddd3,
-.user-grade th.oddd3 {background-color: #d0f3d6;}
-.user-grade td.oddd4,
-.user-grade th.oddd4 {background-color: #f0f0aa;}
-.user-grade td.evend2,
-.user-grade th.evend2 {background-color: #b0bbd3;}
-.user-grade td.evend3,
-.user-grade th.evend3 {background-color: #b0dfb6;}
-.user-grade td.evend4,
-.user-grade th.evend4 {background-color: #cac8be;}
+/* These need to be this specific to override the css from .generaltable */
+.user-grade tbody > tr:nth-child(n) > td.oddd1,
+.user-grade tbody > tr:nth-child(n) > th.oddd1 {background-color: #f3dfd0;}
+.user-grade tbody > tr:nth-child(n) > td.oddd2,
+.user-grade tbody > tr:nth-child(n) > th.oddd2 {background-color: #d0dbf3;}
+.user-grade tbody > tr:nth-child(n) > td.oddd3,
+.user-grade tbody > tr:nth-child(n) > th.oddd3 {background-color: #d0f3d6;}
+.user-grade tbody > tr:nth-child(n) > td.oddd4,
+.user-grade tbody > tr:nth-child(n) > th.oddd4 {background-color: #f0f0aa;}
+.user-grade tbody > tr:nth-child(n) > td.evend2,
+.user-grade tbody > tr:nth-child(n) > th.evend2 {background-color: #b0bbd3;}
+.user-grade tbody > tr:nth-child(n) > td.evend3,
+.user-grade tbody > tr:nth-child(n) > th.evend3 {background-color: #b0dfb6;}
+.user-grade tbody > tr:nth-child(n) > td.evend4,
+.user-grade tbody > tr:nth-child(n) > th.evend4 {background-color: #cac8be;}
 .user-grade td.b1t,
 .user-grade td.b2t,
 .user-grade th.b1t,
