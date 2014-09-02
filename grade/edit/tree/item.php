@@ -132,7 +132,7 @@ if ($mform->is_cancelled()) {
     unset($data->locked);
     unset($data->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
@@ -147,6 +147,16 @@ if ($mform->is_cancelled()) {
     if (!property_exists($data, 'decimals') or $data->decimals < 0) {
         $grade_item->decimals = null;
     }
+
+    // Change weightoverride flag.
+    if (!isset($data->weightoverride)) {
+        $data->weightoverride = 0; // Checkbox unticked.
+    }
+    // If we are using natural weight and the weight has been un-overriden, force parent category to recalculate weights.
+    if ($grade_item->weightoverride != $data->weightoverride && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+        $parent_category->force_regrading();
+    }
+    $grade_item->weightoverride = $data->weightoverride;
 
     if (empty($grade_item->id)) {
         $grade_item->itemtype = 'manual'; // all new items to be manual only

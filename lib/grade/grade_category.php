@@ -1031,7 +1031,6 @@ class grade_category extends grade_object {
 
     /**
      * Recalculate the weights of the grade items in this category.
-     * THIS DOES NOT TAKE INTO ACCOUNT HIDDEN ACTIVITIES, GROUPS.
      */
     private function auto_update_weights() {
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
