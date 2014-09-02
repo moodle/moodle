@@ -937,17 +937,9 @@ class grade_category extends grade_object {
                         $weights[$itemid] = $items[$itemid]->aggregationcoef2*1;
                     }
                 }
-                // TODO mins?
-                $sum = 0;
-                // Excluded items can affect the grademax for this grade_item.
-                $grademin = 0;
-                $grademax = 0;
                 $sum = 0;
                 foreach ($grade_values as $itemid => $grade_value) {
-                    //print_object(array('grade' => $grade_value, 'item' => $items[$itemid]));
                     $sum += ($grade_value / $items[$itemid]->grademax) * ($items[$itemid]->aggregationcoef2*1) * $total;
-                    $grademin += $items[$itemid]->grademin;
-                    $grademax += $items[$itemid]->grademax;
                 }
                 $agg_grade = $sum;
 
@@ -991,8 +983,9 @@ class grade_category extends grade_object {
      * Some aggregation types may automatically update max grade
      *
      * @param array $items sub items
+     * @param int    $userid The User ID
      */
-    private function auto_update_max($items) {
+    private function auto_update_max($items, $userid) {
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             // not needed at all
             return;
@@ -1009,31 +1002,29 @@ class grade_category extends grade_object {
             return;
         }
 
-        //find max grade possible
+        // Find maximum grade possible.
         $maxsum = 0;
         $maxes = array();
 
         foreach ($items as $item) {
-            $maxsum += $item->grademax; 
-        }
 
-        foreach ($items as $item) {
-
-            if ($item->aggregationcoef > 0) {
-                // extra credit from this activity - does not affect total
-                continue;
-            }
-
-            // TODO: Only for sum of grades
-            //$maxsum = $this->aggregation == GRADE_AGGREGATE_SUM ? 1 : $item->aggregationcoef2*1 ;
-            if ($item->gradetype == GRADE_TYPE_VALUE) {
-                $maxes[$item->id] = $maxsum * ($item->aggregationcoef2*1);
-
-            } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-                // 0 = nograde, 1 = first scale item, 2 = second scale item
-                $maxes[$item->id] = $maxsum * ($item->aggregationcoef2*1);
+            //$grade_item = new grade_item(array('id' => $item->id)); // TODO: only once.
+            // TODO: empty($grade_item->get_final($userid)->finalgrade).
+            // Only add maxes that aren't from extra credit items.
+            if (empty($item->aggregationcoef) || $item->aggregationcoef < 1) {
+                $maxsum += $item->grademax;
+                if ($item->gradetype == GRADE_TYPE_VALUE) {
+                    $maxes[$item->id] = ($item->aggregationcoef2*1);
+                } else if ($item->gradetype == GRADE_TYPE_SCALE) {
+                    // 0 = nograde, 1 = first scale item, 2 = second scale item.
+                    $maxes[$item->id] = ($item->aggregationcoef2*1);
+                }
             }
         }
+        foreach ($maxes as $id => $max) {
+            $maxes[$id] = $maxsum*$max;
+        }
+
         // apply droplow and keephigh
         $this->apply_limit_rules($maxes, $items);
         $max = array_sum($maxes);
