@@ -3792,15 +3792,19 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     echo '<td class="lastpost">';
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
-    $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
+    $parenturl = '';
     $usermodified = new stdClass();
     $usermodified->id        = $post->usermodified;
     $usermodified->firstname = $post->umfirstname;
     $usermodified->lastname  = $post->umlastname;
+
+    // Show link to last poster and their post if user can see them.
     if ($canviewparticipants) {
         echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
              fullname($usermodified).'</a><br />';
+        $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     }
+
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
