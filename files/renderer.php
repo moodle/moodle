@@ -798,7 +798,7 @@ class core_files_renderer extends plugin_renderer_base {
             <div class="fp-author">'.get_string('author', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-dimensions">'.get_string('dimensions', 'repository').'<span class="fp-value"></span></div>
         </div>
-    <div>
+    </div>
 </div>';
         return $rv;
     }
