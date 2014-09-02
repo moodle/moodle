@@ -126,7 +126,7 @@ if (substr($viewing, 0, 7) == MESSAGE_VIEW_COURSE) {
     require_capability('moodle/course:viewparticipants', context_course::instance($courseid));
     $PAGE->set_pagelayout('incourse');
 } else {
-    $PAGE->set_pagelayout('course');
+    $PAGE->set_pagelayout('standard');
     $PAGE->set_context(context_user::instance($user1->id));
 }
 if (!empty($user1->id) && $user1->id != $USER->id) {

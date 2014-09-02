@@ -34,7 +34,7 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 require_login($course);
 
 $PAGE->set_url('/course/publish/hubselector.php', array('id' => $course->id));
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
