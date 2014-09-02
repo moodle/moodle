@@ -208,6 +208,7 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     list($twhere, $tparams) = $table->get_sql_where();
     if ($twhere) {
+        $params = array_merge($params, $tparams);
         $matchcount = $DB->count_records_sql($countsql.' AND '.$twhere, $params);
     } else {
         $matchcount = $totalcount;
@@ -252,7 +253,6 @@ if (!empty($instanceid) && !empty($roleid)) {
                 " GROUP BY userid) l ON (l.userid = ra.userid)";
         if ($twhere) {
             $sql .= ' WHERE '.$twhere; // Initial bar.
-            $params = array_merge($params, $tparams);
         }
 
         if ($table->get_sql_sort()) {
@@ -285,7 +285,6 @@ if (!empty($instanceid) && !empty($roleid)) {
 
         if ($twhere) {
             $sql .= ' WHERE '.$twhere; // Initial bar.
-            $params = array_merge($params, $tparams);
         }
 
         if ($table->get_sql_sort()) {
