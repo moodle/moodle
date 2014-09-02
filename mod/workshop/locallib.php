@@ -196,22 +196,19 @@ class workshop {
             }
         }
         if (is_null($cm) || is_null($course)) {
-            if (!PHPUNIT_TEST) {
-                throw new coding_exception('Must specify $cm and $course');
-            }
+            throw new coding_exception('Must specify $cm and $course');
+        }
+        $this->course = $course;
+        if ($cm instanceof cm_info) {
+            $this->cm = $cm;
         } else {
-            $this->course = $course;
-            if ($cm instanceof cm_info) {
-                $this->cm = $cm;
-            } else {
-                $modinfo = get_fast_modinfo($course);
-                $this->cm = $modinfo->get_cm($cm->id);
-            }
-            if (is_null($context)) {
-                $this->context = context_module::instance($this->cm->id);
-            } else {
-                $this->context = $context;
-            }
+            $modinfo = get_fast_modinfo($course);
+            $this->cm = $modinfo->get_cm($cm->id);
+        }
+        if (is_null($context)) {
+            $this->context = context_module::instance($this->cm->id);
+        } else {
+            $this->context = $context;
         }
     }
 
