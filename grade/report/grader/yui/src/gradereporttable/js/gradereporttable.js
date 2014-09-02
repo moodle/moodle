@@ -87,9 +87,6 @@ Y.extend(ReportTable, Y.Base, {
 
         // Setup the floating headers.
         this.setupFloatingHeaders();
-
-        // Setup the mouse tooltips.
-        this.setupTooltips();
     },
 
     /**
