@@ -3707,8 +3707,10 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $usermodified = new stdClass();
     $usermodified->id = $post->usermodified;
     $usermodified = username_load_fields_from_object($usermodified, $post, 'um');
-    echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
-         fullname($usermodified).'</a><br />';
+    if ($canviewparticipants) {
+        echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
+             fullname($usermodified).'</a><br />';
+    }
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
