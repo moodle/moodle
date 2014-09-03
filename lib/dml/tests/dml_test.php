@@ -5252,6 +5252,88 @@ class core_dml_testcase extends database_driver_testcase {
         $totaldbqueries = $DB->perf_get_reads() + $DB->perf_get_writes();
         $this->assertEquals($totaldbqueries, $DB->perf_get_queries());
     }
+
+    public function test_sql_intersect() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $tables = array();
+        for ($i = 0; $i < 3; $i++) {
+            $table = $this->get_test_table('i'.$i);
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('ival', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+            $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, '0');
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+            $dbman->create_table($table);
+            $tables[$i] = $table;
+        }
+        $DB->insert_record($tables[0]->getName(), array('ival' => 1, 'name' => 'One'), false);
+        $DB->insert_record($tables[0]->getName(), array('ival' => 2, 'name' => 'Two'), false);
+        $DB->insert_record($tables[0]->getName(), array('ival' => 3, 'name' => 'Three'), false);
+        $DB->insert_record($tables[0]->getName(), array('ival' => 4, 'name' => 'Four'), false);
+
+        $DB->insert_record($tables[1]->getName(), array('ival' => 1, 'name' => 'One'), false);
+        $DB->insert_record($tables[1]->getName(), array('ival' => 2, 'name' => 'Two'), false);
+        $DB->insert_record($tables[1]->getName(), array('ival' => 3, 'name' => 'Three'), false);
+
+        $DB->insert_record($tables[2]->getName(), array('ival' => 1, 'name' => 'One'), false);
+        $DB->insert_record($tables[2]->getName(), array('ival' => 2, 'name' => 'Two'), false);
+        $DB->insert_record($tables[2]->getName(), array('ival' => 5, 'name' => 'Five'), false);
+
+        // Intersection on the int column.
+        $params = array('excludename' => 'Two');
+        $sql1 = 'SELECT ival FROM {'.$tables[0]->getName().'}';
+        $sql2 = 'SELECT ival FROM {'.$tables[1]->getName().'} WHERE name <> :excludename';
+        $sql3 = 'SELECT ival FROM {'.$tables[2]->getName().'}';
+
+        $sql = $DB->sql_intersect(array($sql1), 'ival') . ' ORDER BY ival';
+        $this->assertEquals(array(1, 2, 3, 4), $DB->get_fieldset_sql($sql, $params));
+
+        $sql = $DB->sql_intersect(array($sql1, $sql2), 'ival') . ' ORDER BY ival';
+        $this->assertEquals(array(1, 3), $DB->get_fieldset_sql($sql, $params));
+
+        $sql = $DB->sql_intersect(array($sql1, $sql2, $sql3), 'ival') . ' ORDER BY ival';
+        $this->assertEquals(array(1),
+            $DB->get_fieldset_sql($sql, $params));
+
+        // Intersection on the char column.
+        $params = array('excludeival' => 2);
+        $sql1 = 'SELECT name FROM {'.$tables[0]->getName().'}';
+        $sql2 = 'SELECT name FROM {'.$tables[1]->getName().'} WHERE ival <> :excludeival';
+        $sql3 = 'SELECT name FROM {'.$tables[2]->getName().'}';
+
+        $sql = $DB->sql_intersect(array($sql1), 'name') . ' ORDER BY name';
+        $this->assertEquals(array('Four', 'One', 'Three', 'Two'), $DB->get_fieldset_sql($sql, $params));
+
+        $sql = $DB->sql_intersect(array($sql1, $sql2), 'name') . ' ORDER BY name';
+        $this->assertEquals(array('One', 'Three'), $DB->get_fieldset_sql($sql, $params));
+
+        $sql = $DB->sql_intersect(array($sql1, $sql2, $sql3), 'name') . ' ORDER BY name';
+        $this->assertEquals(array('One'), $DB->get_fieldset_sql($sql, $params));
+
+        // Intersection on the several columns.
+        $params = array('excludename' => 'Two');
+        $sql1 = 'SELECT ival, name FROM {'.$tables[0]->getName().'}';
+        $sql2 = 'SELECT ival, name FROM {'.$tables[1]->getName().'} WHERE name <> :excludename';
+        $sql3 = 'SELECT ival, name FROM {'.$tables[2]->getName().'}';
+
+        $sql = $DB->sql_intersect(array($sql1), 'ival, name') . ' ORDER BY ival';
+        $this->assertEquals(array(1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four'),
+            $DB->get_records_sql_menu($sql, $params));
+
+        $sql = $DB->sql_intersect(array($sql1, $sql2), 'ival, name') . ' ORDER BY ival';
+        $this->assertEquals(array(1 => 'One', 3 => 'Three'),
+            $DB->get_records_sql_menu($sql, $params));
+
+        $sql = $DB->sql_intersect(array($sql1, $sql2, $sql3), 'ival, name') . ' ORDER BY ival';
+        $this->assertEquals(array(1 => 'One'),
+            $DB->get_records_sql_menu($sql, $params));
+
+        // Drop temporary tables.
+        foreach ($tables as $table) {
+            $dbman->drop_table($table);
+        }
+    }
 }
 
 /**

@@ -351,6 +351,7 @@ class tree extends tree_node {
     }
 
     public function get_user_list_sql($not, info $info, $onlyactive) {
+        global $DB;
         // Get logic flags from operator.
         list($innernot, $andoperator) = $this->get_logic_flags($not);
 
@@ -381,17 +382,16 @@ class tree extends tree_node {
 
         // Combine results using INTERSECT or UNION.
         $outsql = null;
-        $outparams = null;
+        $subsql = array();
+        $outparams = array();
         foreach ($childresults as $childresult) {
-            if (!$outsql) {
-                $outsql = '(' . $childresult[0] . ')';
-                $outparams = $childresult[1];
-            } else {
-                $outsql .= $andoperator ? ' INTERSECT (' : ' UNION (';
-                $outsql .= $childresult[0];
-                $outsql .= ')';
-                $outparams = array_merge($outparams, $childresult[1]);
-            }
+            $subsql[] = $childresult[0];
+            $outparams = array_merge($outparams, $childresult[1]);
+        }
+        if ($andoperator) {
+            $outsql = $DB->sql_intersect($subsql, 'id');
+        } else {
+            $outsql = '(' . join(') UNION (', $subsql) . ')';
         }
         return array($outsql, $outparams);
     }

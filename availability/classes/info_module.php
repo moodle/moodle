@@ -129,7 +129,7 @@ class info_module extends info {
             return $sectionresult;
         }
 
-        return array('(' . $sectionresult[0] . ') INTERSECT (' . $moduleresult[0] . ')',
+        return array($DB->sql_intersect(array($sectionresult[0], $moduleresult[0]), 'id'),
                 array_merge($sectionresult[1], $moduleresult[1]));
     }
 

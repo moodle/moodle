@@ -1602,6 +1602,37 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns the SQL that allows to find intersection of two or more queries
+     *
+     * @since Moodle 2.8
+     *
+     * @param array $selects array of SQL select queries, each of them only returns fields with the names from $fields
+     * @param string $fields comma-separated list of fields
+     * @return string SQL query that will return only values that are present in each of selects
+     */
+    public function sql_intersect($selects, $fields) {
+        if (count($selects) <= 1) {
+            return parent::sql_intersect($selects, $fields);
+        }
+        $fields = preg_replace('/\s/', '', $fields);
+        static $aliascnt = 0;
+        $falias = 'intsctal'.($aliascnt++);
+        $rv = "SELECT $falias.".
+            preg_replace('/,/', ','.$falias.'.', $fields).
+            " FROM ($selects[0]) $falias";
+        for ($i = 1; $i < count($selects); $i++) {
+            $alias = 'intsctal'.($aliascnt++);
+            $rv .= " JOIN (".$selects[$i].") $alias ON ".
+                join(' AND ',
+                    array_map(
+                        create_function('$a', 'return "'.$falias.'.$a = '.$alias.'.$a";'),
+                        preg_split('/,/', $fields))
+                );
+        }
+        return $rv;
+    }
+
+    /**
      * Does this driver support tool_replace?
      *
      * @since Moodle 2.6.1
