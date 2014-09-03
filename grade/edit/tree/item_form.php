@@ -305,7 +305,6 @@ class edit_item_form extends moodleform {
 
             // Remove fields used by natural weighting if the parent category is not using natural weighting.
             if ($parent_category->aggregation != GRADE_AGGREGATE_SUM) {
-                print_object('removing');
                 if ($mform->elementExists('weightoverride')) {
                     $mform->removeElement('weightoverride');
                 }
