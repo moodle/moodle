@@ -1055,6 +1055,11 @@ class grade_category extends grade_object {
                 $grade_item = $child['object']->load_grade_item();
             }
 
+            // An extra credit grade item doesn't contribute to $totaloverriddengrademax.
+            if ($grade_item->aggregationcoef > 0) {
+                continue;
+            }
+
             $totalgrademax += $grade_item->grademax;
             if ($grade_item->weightoverride) {
                 $totaloverriddenweight += $grade_item->aggregationcoef2;

@@ -397,7 +397,7 @@ class grade_edit_tree {
                 <input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" value="1" '."$checked />\n";
         } else if ($aggcoef == 'aggregationcoefextrasum' && $type == 'weight') {
             $label = '';
-            if ($item->weightoverride) {
+            if ($item->weightoverride && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
                 $label = get_string('adjusted', 'grades');
             }
             return '<label class="accesshide" for="aggregationcoef_'.$item->id.'">'.
