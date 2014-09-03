@@ -256,17 +256,12 @@
         $table->colclasses = array();
         $table->head[] = $fullnamedisplay;
         $table->attributes['class'] = 'admintable generaltable';
-        $table->colclasses[] = 'leftalign';
         foreach ($extracolumns as $field) {
             $table->head[] = ${$field};
-            $table->colclasses[] = 'leftalign';
         }
         $table->head[] = $city;
-        $table->colclasses[] = 'leftalign';
         $table->head[] = $country;
-        $table->colclasses[] = 'leftalign';
         $table->head[] = $lastaccess;
-        $table->colclasses[] = 'leftalign';
         $table->head[] = get_string('edit');
         $table->colclasses[] = 'centeralign';
         $table->head[] = "";
