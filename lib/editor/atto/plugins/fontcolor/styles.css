@@ -1,3 +1,33 @@
 .atto_fontcolor_button .dropdown-menu {
     min-width: inherit;
 }
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry div {
+    border: 1px solid #ccc;
+    width: 20px;
+    height: 20px;
+}
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry .white {
+    background-color: #fff;
+}
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry .red {
+    background-color: #ef4540;
+}
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry .yellow {
+    background-color: #ffcf35;
+}
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry .green {
+    background-color: #98ca3e;
+}
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry .blue {
+    background-color: #7d9fd3;
+}
+
+.atto_fontcolor_button .dropdown-menu .atto_menuentry .black {
+    background-color: #000;
+}
