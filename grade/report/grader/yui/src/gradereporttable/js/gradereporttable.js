@@ -28,7 +28,7 @@
  */
 
 var SELECTORS = {
-        FOOTERTITLE: '#user-grades .avg .header',
+        FOOTERTITLE: '.avg .header',
         FOOTERCELLS: '#user-grades .avg .cell',
         FOOTERROW: '#user-grades .avg',
         GRADECELL: 'td.grade',
