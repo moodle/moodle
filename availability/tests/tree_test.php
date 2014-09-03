@@ -644,6 +644,68 @@ class tree_testcase extends \advanced_testcase {
     }
 
     /**
+     * Tests get_user_list_sql.
+     */
+    public function test_get_user_list_sql() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a test course with 2 groups and users in each combination of them.
+        $course = $generator->create_course();
+        $group1 = $generator->create_group(array('courseid' => $course->id));
+        $group2 = $generator->create_group(array('courseid' => $course->id));
+        $userin1 = $generator->create_user();
+        $userin2 = $generator->create_user();
+        $userinboth = $generator->create_user();
+        $userinneither = $generator->create_user();
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        foreach (array($userin1, $userin2, $userinboth, $userinneither) as $user) {
+            $generator->enrol_user($user->id, $course->id, $studentroleid);
+        }
+        groups_add_member($group1, $userin1);
+        groups_add_member($group2, $userin2);
+        groups_add_member($group1, $userinboth);
+        groups_add_member($group2, $userinboth);
+        $info = new \core_availability\mock_info($course);
+
+        // Tree with single group condition.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id)
+            )));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userin1->id, $userinboth->id), $result);
+
+        // Tree with 'AND' of both group conditions.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id),
+            \availability_group\condition::get_json($group2->id)
+        )));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userinboth->id), $result);
+
+        // Tree with 'AND' of both group conditions.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id),
+            \availability_group\condition::get_json($group2->id)
+        ), tree::OP_OR));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userin1->id, $userin2->id, $userinboth->id), $result);
+
+        // Check with flipped logic (NOT above level of tree).
+        list($sql, $params) = $tree->get_user_list_sql(true, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userinneither->id), $result);
+    }
+
+    /**
      * Utility function to build the PHP structure representing a mock condition.
      *
      * @param array $params Mock parameters
