@@ -282,6 +282,10 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $value = unformat_float($value);
             $value = clean_param($value, PARAM_FLOAT);
 
+            if (preg_match('/^(aggregationcoef2)_([0-9]+)$/', $key, $matches)) {
+                $value = $value / 100.0;
+            }
+
             $grade_item = $oldgradeitems[$aid];
 
             if ($param === 'grademax' and $value < $grade_item->grademin) {

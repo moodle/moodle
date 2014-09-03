@@ -400,10 +400,29 @@ class grade_edit_tree {
             if ($item->weightoverride && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
                 $label = get_string('adjusted', 'grades');
             }
-            return '<label class="accesshide" for="aggregationcoef_'.$item->id.'">'.
-                get_string('weight', 'grades', $item->itemname).'</label>'.
-                '<input type="text" size="6" id="aggregationcoef2_'.$item->id.'" name="aggregationcoef2_'.$item->id.'"
-                value="'.grade_edit_tree::format_number($item->aggregationcoef2).'" />'.$label;
+
+            $name = 'aggregationcoef2_' . $item->id;
+            $hiddenlabel = html_writer::tag(
+                'label',
+                get_string('weight', 'grades', $item->itemname),
+                array(
+                    'class' => 'accesshide',
+                    'for' => $name
+                )
+            );
+
+            $input = html_writer::empty_tag(
+                'input',
+                array(
+                    'type' =>   'text',
+                    'size' =>   6,
+                    'id' =>     $name,
+                    'name' =>   $name,
+                    'value' =>  grade_edit_tree::format_number($item->aggregationcoef2 * 100.0)
+                )
+            );
+
+            return $hiddenlabel . $input . $label;
         } else {
             return '';
         }
