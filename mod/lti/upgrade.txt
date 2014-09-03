@@ -9,3 +9,8 @@ This files describes API changes in the lti code.
 
 * mod_lti\event\unknown_service_api_called now has less data stored in 'other'
   but everything is still available for event observers via method get_message_data()
+
+=== 2.8 ===
+
+* Support for LTI 2 added, including extensible services implemented as ltiservice plugins.
+* Function sendOAuthBodyPOST removed from OAuthBody.php because it was not being used.

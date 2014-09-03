@@ -1052,6 +1052,10 @@ class core_plugin_manager {
                 'database', 'legacy', 'standard',
             ),
 
+            'ltiservice' => array(
+                'profile', 'toolproxy', 'toolsettings'
+            ),
+
             'message' => array(
                 'airnotifier', 'email', 'jabber', 'popup'
             ),

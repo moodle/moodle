@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains submissions-specific code for the lti module

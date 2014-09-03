@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains a library of functions and constants for the lti module
@@ -63,17 +63,20 @@ function lti_get_extra_capabilities() {
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
 function lti_supports($feature) {
-    switch($feature) {
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
+    switch ($feature) {
+        case FEATURE_GROUPS:
+        case FEATURE_GROUPINGS:
+            return false;
+        case FEATURE_MOD_INTRO:
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+        case FEATURE_GRADE_HAS_GRADE:
+        case FEATURE_GRADE_OUTCOMES:
+        case FEATURE_BACKUP_MOODLE2:
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -89,6 +92,10 @@ function lti_supports($feature) {
 function lti_add_instance($lti, $mform) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
+    if (!isset($lti->toolurl)) {
+        $lti->toolurl = '';
+    }
 
     $lti->timecreated = time();
     $lti->timemodified = $lti->timecreated;
@@ -177,8 +184,12 @@ function lti_delete_instance($id) {
 
     $result = true;
 
-    # Delete any dependent records here #
+    // Delete any dependent records here.
     lti_grade_item_delete($basiclti);
+
+    $ltitype = $DB->get_record('lti_types', array('id' => $basiclti->typeid));
+    $DB->delete_records('lti_tool_settings',
+        array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
 
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
@@ -313,7 +324,7 @@ function lti_user_complete($course, $user, $mod, $basiclti) {
  * @TODO: implement this moodle function
  **/
 function lti_print_recent_activity($course, $isteacher, $timestart) {
-    return false;  //  True if anything was printed, otherwise false
+    return false;  //  True if anything was printed, otherwise false.
 }
 
 /**
@@ -361,11 +372,11 @@ function lti_grades($basicltiid) {
 function lti_scale_used ($basicltiid, $scaleid) {
     $return = false;
 
-    //$rec = get_record("basiclti","id","$basicltiid","scale","-$scaleid");
+    // $rec = get_record("basiclti","id","$basicltiid","scale","-$scaleid");
     //
-    //if (!empty($rec)  && !empty($scaleid)) {
-    //    $return = true;
-    //}
+    // if (!empty($rec)  && !empty($scaleid)) {
+    //     $return = true;
+    // }
 
     return $return;
 }
@@ -428,11 +439,11 @@ function lti_get_lti_types() {
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function lti_grade_item_update($basiclti, $grades=null) {
+function lti_grade_item_update($basiclti, $grades = null) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    $params = array('itemname'=>$basiclti->name, 'idnumber'=>$basiclti->cmidnumber);
+    $params = array('itemname' => $basiclti->name, 'idnumber' => $basiclti->cmidnumber);
 
     if ($basiclti->grade > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
@@ -444,10 +455,10 @@ function lti_grade_item_update($basiclti, $grades=null) {
         $params['scaleid']   = -$basiclti->grade;
 
     } else {
-        $params['gradetype'] = GRADE_TYPE_TEXT; // allow text comments only
+        $params['gradetype'] = GRADE_TYPE_TEXT; // Allow text comments only.
     }
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
         $grades = null;
     }
@@ -466,7 +477,7 @@ function lti_grade_item_delete($basiclti) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update('mod/lti', $basiclti->course, 'mod', 'lti', $basiclti->id, 0, null, array('deleted'=>1));
+    return grade_update('mod/lti', $basiclti->course, 'mod', 'lti', $basiclti->id, 0, null, array('deleted' => 1));
 }
 
 function lti_extend_settings_navigation($settings, $parentnode) {
@@ -476,7 +487,7 @@ function lti_extend_settings_navigation($settings, $parentnode) {
         $keys = $parentnode->get_children_key_list();
 
         $node = navigation_node::create('Submissions',
-            new moodle_url('/mod/lti/grade.php', array('id'=>$PAGE->cm->id)),
+            new moodle_url('/mod/lti/grade.php', array('id' => $PAGE->cm->id)),
             navigation_node::TYPE_SETTING, null, 'mod_lti_submissions');
 
         $parentnode->add_node($node, $keys[1]);

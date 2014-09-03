@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains all the backup steps that will be used
@@ -57,10 +57,10 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
 
         // TODO: MDL-34161 - Fix restore to support course/site tools & submissions.
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $lti = new backup_nested_element('lti', array('id'), array(
             'name',
             'intro',
@@ -88,21 +88,22 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
         );
 
         // Build the tree
-        // (none)
+        // (none).
 
-        // Define sources
+        // Define sources.
         $lti->set_source_table('lti', array('id' => backup::VAR_ACTIVITYID));
 
         // Define id annotations
-        // (none)
+        // (none).
 
-        // Define file annotations
-        $lti->annotate_files('mod_lti', 'intro', null); // This file areas haven't itemid
+        // Define file annotations.
+        $lti->annotate_files('mod_lti', 'intro', null); // This file areas haven't itemid.
 
-        // Add support for subplugin structure.
+        // Add support for subplugin structures.
         $this->add_subplugin_structure('ltisource', $lti, true);
+        $this->add_subplugin_structure('ltiservice', $lti, true);
 
-        // Return the root element (lti), wrapped into standard activity structure
+        // Return the root element (lti), wrapped into standard activity structure.
         return $this->prepare_activity_structure($lti);
     }
 }

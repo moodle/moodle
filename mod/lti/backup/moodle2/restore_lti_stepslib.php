@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains all the restore steps that will be used
@@ -59,8 +59,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $lti = new restore_path_element('lti', '/activity/lti');
         $paths[] = $lti;
 
-        // Add support for subplugin structure.
+        // Add support for subplugin structures.
         $this->add_subplugin_structure('ltisource', $lti);
+        $this->add_subplugin_structure('ltiservice', $lti);
 
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);

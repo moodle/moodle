@@ -57,7 +57,7 @@ $capabilities = array(
     ),
 
     // When the user arrives at the external tool, if they have this capability
-    // in Moodle, then they given the Instructor role in the remote system,
+    // in Moodle, then they are given the Instructor role in the remote system,
     // otherwise they are given Learner. See the lti_get_ims_role function.
     'mod/lti:manage' => array(
         'riskbitmask' => RISK_PERSONAL, // A bit of a guess, but seems likely.
@@ -81,7 +81,7 @@ $capabilities = array(
         )
     ),
 
-    // The ability to request the adminstirator to configure a particular
+    // The ability to request the administrator to configure a particular
     // External tool globally.
     'mod/lti:requesttooladd' => array(
         'captype' => 'write',

@@ -15,10 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * AJAX service used when adding an External Tool to provide immediate feedback
+ * AJAX service used when adding an External Tool.
+ *
+ * It is used to provide immediate feedback
  * of which tool provider is to be used based on the Launch URL.
  *
- * @package    mod
+ * @package    mod_lti
  * @subpackage xml
  * @copyright Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,10 +43,10 @@ switch ($action) {
         $toolurl = required_param('toolurl', PARAM_RAW);
         $toolid = optional_param('toolid', 0, PARAM_INT);
 
-        if(empty($toolid) && !empty($toolurl)){
+        if (empty($toolid) && !empty($toolurl)) {
             $tool = lti_get_tool_by_url_match($toolurl, $courseid);
 
-            if(!empty($tool)){
+            if (!empty($tool)) {
                 $toolid = $tool->id;
 
                 $response->toolid = $tool->id;
@@ -56,7 +58,7 @@ switch ($action) {
         }
 
         if (!empty($toolid)) {
-            // Look up privacy settings
+            // Look up privacy settings.
             $query = '
                 SELECT name, value
                 FROM {lti_types_config}
@@ -66,7 +68,7 @@ switch ($action) {
             ';
 
             $privacyconfigs = $DB->get_records_sql($query, array('typeid' => $toolid));
-            foreach($privacyconfigs as $config){
+            foreach ($privacyconfigs as $config) {
                 $configname = $config->name;
                 $response->$configname = $config->value;
             }
