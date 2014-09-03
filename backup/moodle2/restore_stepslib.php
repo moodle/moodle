@@ -2042,7 +2042,13 @@ class restore_badges_structure_step extends restore_structure_step {
 
         $data = (object)$data;
         $data->usercreated = $this->get_mappingid('user', $data->usercreated);
+        if (empty($data->usercreated)) {
+            $data->usercreated = $this->task->get_userid();
+        }
         $data->usermodified = $this->get_mappingid('user', $data->usermodified);
+        if (empty($data->usermodified)) {
+            $data->usermodified = $this->task->get_userid();
+        }
 
         // We'll restore the badge image.
         $restorefiles = true;
@@ -2139,6 +2145,12 @@ class restore_badges_structure_step extends restore_structure_step {
                 'issuerrole'  => $role,
                 'datemet'     => $this->apply_date_offset($data->datemet)
             );
+
+            // Skip the manual award if recipient or issuer can not be mapped to.
+            if (empty($award['recipientid']) || empty($award['issuerid'])) {
+                return;
+            }
+
             $DB->insert_record('badge_manual_award', $award);
         }
     }
