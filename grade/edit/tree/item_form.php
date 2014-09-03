@@ -103,7 +103,7 @@ class edit_item_form extends moodleform {
         $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
         $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
         $mform->setType('aggregationcoef2', PARAM_RAW);
-        $mform->hardFreeze('aggregationcoef2');
+        $mform->disabledIf('aggregationcoef2', 'weightoverride');
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
