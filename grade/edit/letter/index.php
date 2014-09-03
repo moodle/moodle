@@ -146,7 +146,8 @@ if (!$edit) {
                 if ($letter == '') {
                     continue;
                 }
-                $letters[$data->$gradeboundaryname] = $letter;
+                // The keys need to be strings so floats are not truncated.
+                $letters[strval($data->$gradeboundaryname)] = $letter;
             }
         }
         krsort($letters, SORT_NUMERIC);

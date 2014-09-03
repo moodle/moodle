@@ -46,36 +46,32 @@ class edit_letter_form extends moodleform {
         $gradeletter       = get_string('gradeletter', 'grades');
         $gradeboundary     = get_string('gradeboundary', 'grades');
 
-        $percentages = array(-1 => get_string('unused', 'grades'));
-        for ($i=100; $i > -1; $i--) {
-            $percentages[$i] = "$i %";
-        }
-
-        for($i=1; $i<$num+1; $i++) {
+        for ($i=1; $i<$num+1; $i++) {
             $gradelettername = 'gradeletter'.$i;
             $gradeboundaryname = 'gradeboundary'.$i;
 
-            $mform->addElement('text', $gradelettername, $gradeletter." $i");
-            if ($i == 1) {
-                $mform->addHelpButton($gradelettername, 'gradeletter', 'grades');
-            }
+            $entry = array();
+            $entry[] = $mform->createElement('text', $gradelettername, $gradeletter . " $i");
             $mform->setType($gradelettername, PARAM_TEXT);
 
             if (!$admin) {
                 $mform->disabledIf($gradelettername, 'override', 'notchecked');
-                $mform->disabledIf($gradelettername, $gradeboundaryname, 'eq', -1);
             }
 
-            $mform->addElement('select', $gradeboundaryname, $gradeboundary." $i", $percentages);
-            if ($i == 1) {
-                $mform->addHelpButton($gradeboundaryname, 'gradeboundary', 'grades');
-            }
-            $mform->setDefault($gradeboundaryname, -1);
-            $mform->setType($gradeboundaryname, PARAM_INT);
+            $entry[] = $mform->createElement('static', '', '', '&ge;');
+            $entry[] = $mform->createElement('text', $gradeboundaryname, $gradeboundary." $i");
+            $entry[] = $mform->createElement('static', '', '', '%');
+            $mform->addGroup($entry, 'gradeentry'.$i, $gradeletter." $i", array(' '), false);
+
+            $mform->setType($gradeboundaryname, PARAM_FLOAT);
 
             if (!$admin) {
                 $mform->disabledIf($gradeboundaryname, 'override', 'notchecked');
             }
+        }
+
+        if ($num > 0) {
+            $mform->addHelpButton('gradeentry1', 'gradeletter', 'grades');
         }
 
         // hidden params
