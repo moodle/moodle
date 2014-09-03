@@ -112,9 +112,6 @@ class core_files_external extends external_api {
         if (empty($fileinfo['filearea'])) {
             $fileinfo['filearea'] = null;
         }
-        if (empty($fileinfo['itemid'])) {
-            $fileinfo['itemid'] = null;
-        }
         if (empty($fileinfo['filename'])) {
             $fileinfo['filename'] = null;
         }
