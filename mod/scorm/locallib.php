@@ -291,7 +291,6 @@ function scorm_parse($scorm, $full) {
                 $scorm->version = 'ERROR';
             } else {
                 $scorm->version = 'AICC';
-                $scorm->launch = $result;
             }
         }
 
@@ -311,7 +310,6 @@ function scorm_parse($scorm, $full) {
             $scorm->version = 'ERROR';
         } else {
             $scorm->version = 'AICC';
-            $scorm->launch = $result;
         }
 
     } else {
