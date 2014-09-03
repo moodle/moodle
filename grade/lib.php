@@ -1466,6 +1466,34 @@ class grade_structure {
     }
 
     /**
+     * Return a reset icon for the given element.
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @return string
+     */
+    public function get_reset_icon($element, $gpr) {
+        global $CFG, $OUTPUT;
+
+        // Limit to category items set to use the natural weights aggregation method, and users
+        // with the capability to manage grades.
+        if ($element['type'] != 'category' || $element['object']->aggregation != GRADE_AGGREGATE_SUM ||
+                !has_capability('moodle/grade:manage', $this->context)) {
+            return '';
+        }
+
+        $str = get_string('resetweights', 'grades', $this->get_params_for_iconstr($element));
+        $url = new moodle_url('/grade/edit/tree/action.php', array(
+            'id' => $this->courseid,
+            'action' => 'resetweights',
+            'eid' => $element['eid'],
+            'sesskey' => sesskey(),
+        ));
+
+        return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/reset', $str));
+    }
+
+    /**
      * Return edit icon for give element
      *
      * @param array  $element An array representing an element in the grade_tree

@@ -170,6 +170,7 @@ class grade_edit_tree {
 
         $actions .= $this->gtree->get_hiding_icon($element, $this->gpr);
         $actions .= $this->gtree->get_locking_icon($element, $this->gpr);
+        $actions .= $this->gtree->get_reset_icon($element, $this->gpr);
 
         $mode = ($USER->gradeediting[$COURSE->id]) ? 'advanced' : 'simple';
 
