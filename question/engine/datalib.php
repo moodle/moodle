@@ -17,27 +17,18 @@
 /**
  * Code for loading and saving question attempts to and from the database.
  *
- * A note for future reference. This code is pretty efficient but there are two
+ * A note for future reference. This code is pretty efficient but there are some
  * potential optimisations that could be contemplated, at the cost of making the
  * code more complex:
  *
- * 1. (This is the easier one, but probably not worth doing.) In the unit-of-work
- *    save method, we could get all the ids for steps due to be deleted or modified,
+ * 1. (This is probably not worth doing.) In the unit-of-work save method, we
+ *    could get all the ids for steps due to be deleted or modified,
  *    and delete all the question_attempt_step_data for all of those steps in one
  *    query. That would save one DB query for each ->stepsupdated. However that number
  *    is 0 except when re-grading, and when regrading, there are many more inserts
  *    into question_attempt_step_data than deletes, so it is really hardly worth it.
  *
- * 2. A more significant optimisation would be to write an efficient
- *    $DB->insert_records($arrayofrecords) method (for example using functions
- *    like pg_copy_from) and then whenever we save stuff (unit_of_work->save and
- *    insert_questions_usage_by_activity) collect together all the records that
- *    need to be inserted into question_attempt_step_data, and insert them with
- *    a single call to $DB->insert_records. This is likely to be the biggest win.
- *    We do a lot of separate inserts into question_attempt_step_data.
- *
- * @package    moodlecore
- * @subpackage questionengine
+ * @package    core_question
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -86,8 +77,17 @@ class question_engine_data_mapper {
         $newid = $this->db->insert_record('question_usages', $record);
         $quba->set_id_from_database($newid);
 
+        // Initially an array of array of question_attempt_step_objects.
+        // Built as a nested array for efficiency, then flattened.
+        $stepdata = array();
+
         foreach ($quba->get_attempt_iterator() as $qa) {
-            $this->insert_question_attempt($qa, $quba->get_owning_context());
+            $stepdata[] = $this->insert_question_attempt($qa, $quba->get_owning_context());
+        }
+
+        $stepdata = call_user_func_array('array_merge', $stepdata);
+        if ($stepdata) {
+            $this->insert_all_step_data($stepdata);
         }
     }
 
@@ -96,6 +96,7 @@ class question_engine_data_mapper {
      * including all the question_attempt_steps that comprise it.
      * @param question_attempt $qa the question attempt to store.
      * @param context $context the context of the owning question_usage_by_activity.
+     * @return array of question_attempt_step_data rows, that still need to be inserted.
      */
     public function insert_question_attempt(question_attempt $qa, $context) {
         $record = new stdClass();
@@ -120,9 +121,15 @@ class question_engine_data_mapper {
         $record->id = $this->db->insert_record('question_attempts', $record);
         $qa->set_database_id($record->id);
 
+        // Initially an array of array of question_attempt_step_objects.
+        // Built as a nested array for efficiency, then flattened.
+        $stepdata = array();
+
         foreach ($qa->get_step_iterator() as $seq => $step) {
-            $this->insert_question_attempt_step($step, $record->id, $seq, $context);
+            $stepdata[] = $this->insert_question_attempt_step($step, $record->id, $seq, $context);
         }
+
+        return call_user_func_array('array_merge', $stepdata);
     }
 
     /**
@@ -148,8 +155,10 @@ class question_engine_data_mapper {
      * @param question_attempt_step $step the step to store.
      * @param int $stepid the id of the step.
      * @param context $context the context of the owning question_usage_by_activity.
+     * @return array of question_attempt_step_data rows, that still need to be inserted.
      */
-    protected function insert_step_data(question_attempt_step $step, $stepid, $context) {
+    protected function prepare_step_data(question_attempt_step $step, $stepid, $context) {
+        $rows = array();
         foreach ($step->get_all_data() as $name => $value) {
             if ($value instanceof question_file_saver) {
                 $value->save_files($stepid, $context);
@@ -162,8 +171,20 @@ class question_engine_data_mapper {
             $data->attemptstepid = $stepid;
             $data->name = $name;
             $data->value = $value;
-            $this->db->insert_record('question_attempt_step_data', $data, false);
+            $rows[] = $data;
         }
+        return $rows;
+    }
+
+    /**
+     * Insert a lot of records into question_attempt_step_data in one go.
+     * @param array $rows the rows to insert.
+     */
+    public function insert_all_step_data(array $rows) {
+        if (!$rows) {
+            return;
+        }
+        $this->db->insert_records('question_attempt_step_data', $rows);
     }
 
     /**
@@ -172,6 +193,7 @@ class question_engine_data_mapper {
      * @param int $questionattemptid the question attept id this step belongs to.
      * @param int $seq the sequence number of this stop.
      * @param context $context the context of the owning question_usage_by_activity.
+     * @return array of question_attempt_step_data rows, that still need to be inserted.
      */
     public function insert_question_attempt_step(question_attempt_step $step,
             $questionattemptid, $seq, $context) {
@@ -179,7 +201,7 @@ class question_engine_data_mapper {
         $record = $this->make_step_record($step, $questionattemptid, $seq);
         $record->id = $this->db->insert_record('question_attempt_steps', $record);
 
-        $this->insert_step_data($step, $record->id, $context);
+        return $this->prepare_step_data($step, $record->id, $context);
     }
 
     /**
@@ -188,6 +210,7 @@ class question_engine_data_mapper {
      * @param int $questionattemptid the question attept id this step belongs to.
      * @param int $seq the sequence number of this stop.
      * @param context $context the context of the owning question_usage_by_activity.
+     * @return array of question_attempt_step_data rows, that still need to be inserted.
      */
     public function update_question_attempt_step(question_attempt_step $step,
             $questionattemptid, $seq, $context) {
@@ -198,7 +221,7 @@ class question_engine_data_mapper {
 
         $this->db->delete_records('question_attempt_step_data',
                 array('attemptstepid' => $record->id));
-        $this->insert_step_data($step, $record->id, $context);
+        return $this->prepare_step_data($step, $record->id, $context);
     }
 
     /**
@@ -1263,20 +1286,25 @@ class question_engine_unit_of_work implements question_usage_observer {
     public function save(question_engine_data_mapper $dm) {
         $dm->delete_steps(array_keys($this->stepsdeleted), $this->quba->get_owning_context());
 
+        // Initially an array of array of question_attempt_step_objects.
+        // Built as a nested array for efficiency, then flattened.
+        $stepdata = array();
+
         foreach ($this->stepsmodified as $stepinfo) {
             list($step, $questionattemptid, $seq) = $stepinfo;
-            $dm->update_question_attempt_step($step, $questionattemptid, $seq,
-                    $this->quba->get_owning_context());
+            $stepdata[] = $dm->update_question_attempt_step(
+                    $step, $questionattemptid, $seq, $this->quba->get_owning_context());
         }
 
         foreach ($this->stepsadded as $stepinfo) {
             list($step, $questionattemptid, $seq) = $stepinfo;
-            $dm->insert_question_attempt_step($step, $questionattemptid, $seq,
-                    $this->quba->get_owning_context());
+            $stepdata[] = $dm->insert_question_attempt_step(
+                    $step, $questionattemptid, $seq, $this->quba->get_owning_context());
         }
 
         foreach ($this->attemptsadded as $qa) {
-            $dm->insert_question_attempt($qa, $this->quba->get_owning_context());
+            $stepdata[] = $dm->insert_question_attempt(
+                    $qa, $this->quba->get_owning_context());
         }
 
         foreach ($this->attemptsmodified as $qa) {
@@ -1286,6 +1314,11 @@ class question_engine_unit_of_work implements question_usage_observer {
         if ($this->modified) {
             $dm->update_questions_usage_by_activity($this->quba);
         }
+
+        if (!$stepdata) {
+            return;
+        }
+        $dm->insert_all_step_data(call_user_func_array('array_merge', $stepdata));
     }
 }
 
