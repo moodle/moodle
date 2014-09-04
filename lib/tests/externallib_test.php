@@ -147,6 +147,28 @@ class core_externallib_testcase extends advanced_testcase {
         $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextlevel" => "course", "instanceid" => $course->id));
         $this->assertEquals($realcontext, $fetchedcontext);
 
+        // Passing empty values.
+        try {
+            $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextid" => 0));
+            $this->fail('Exception expected from get_context_wrapper()');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+        }
+
+        try {
+            $fetchedcontext = test_exernal_api::get_context_wrapper(array("instanceid" => 0));
+            $this->fail('Exception expected from get_context_wrapper()');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+        }
+
+        try {
+            $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextid" => null));
+            $this->fail('Exception expected from get_context_wrapper()');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+        }
+
         // Passing wrong level.
         $this->setExpectedException('invalid_parameter_exception');
         $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextlevel" => "random", "instanceid" => $course->id));
