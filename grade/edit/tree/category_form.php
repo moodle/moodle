@@ -162,6 +162,14 @@ class edit_category_form extends moodleform {
             $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
         }
 
+        $mform->addElement('checkbox', 'grade_item_weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addHelpButton('grade_item_weightoverride', 'weightoverride', 'grades');
+
+        $mform->addElement('text', 'grade_item_aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('grade_item_aggregationcoef2', 'weight', 'grades');
+        $mform->setType('grade_item_aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('grade_item_aggregationcoef2', 'grade_item_weightoverride');
+
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->setType('grade_item_gradepass', PARAM_RAW);
         $mform->addHelpButton('grade_item_gradepass', 'gradepass', 'grades');
@@ -422,6 +430,12 @@ class edit_category_form extends moodleform {
                     $mform->removeElement('grade_item_aggregationcoef');
                 }
 
+                if ($mform->elementExists('grade_item_weightoverride')) {
+                    $mform->removeElement('grade_item_weightoverride');
+                }
+                if ($mform->elementExists('grade_item_aggregationcoef2')) {
+                    $mform->removeElement('grade_item_aggregationcoef2');
+                }
             } else {
                 if ($grade_item->is_category_item()) {
                     $category = $grade_item->get_item_category();
@@ -448,6 +462,16 @@ class edit_category_form extends moodleform {
                     }
                     $mform->insertElementBefore($element, 'parentcategory');
                     $mform->addHelpButton('grade_item_aggregationcoef', $coefstring, 'grades');
+                }
+
+                // Remove fields used by natural weighting if the parent category is not using natural weighting.
+                if ($parent_category->aggregation != GRADE_AGGREGATE_SUM) {
+                    if ($mform->elementExists('grade_item_weightoverride')) {
+                        $mform->removeElement('grade_item_weightoverride');
+                    }
+                    if ($mform->elementExists('grade_item_aggregationcoef2')) {
+                        $mform->removeElement('grade_item_aggregationcoef2');
+                    }
                 }
             }
         }

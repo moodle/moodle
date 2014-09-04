@@ -75,6 +75,7 @@ if ($id) {
     $category->grade_item_gradepass  = format_float($category->grade_item_gradepass, $decimalpoints);
     $category->grade_item_multfactor = format_float($category->grade_item_multfactor, 4);
     $category->grade_item_plusfactor = format_float($category->grade_item_plusfactor, 4);
+    $category->grade_item_aggregationcoef2 = format_float($category->grade_item_aggregationcoef2, 4);
 
     if (!$parent_category) {
         // keep as is
@@ -160,7 +161,7 @@ if ($mform->is_cancelled()) {
     unset($itemdata->locked);
     unset($itemdata->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($itemdata, $param)) {
             $itemdata->$param = unformat_float($itemdata->$param);
@@ -194,6 +195,14 @@ if ($mform->is_cancelled()) {
     if (!property_exists($itemdata, 'decimals') or $itemdata->decimals < 0) {
         $grade_item->decimals = null;
     }
+
+    // Change weightoverride flag. Check if the value is set, because it is not when the checkbox is not ticked.
+    $itemdata->weightoverride = isset($itemdata->weightoverride) ? $itemdata->weightoverride : 0;
+    if ($grade_item->weightoverride != $itemdata->weightoverride && $grade_category->aggregation == GRADE_AGGREGATE_SUM) {
+        // If we are using natural weight and the weight has been un-overriden, force parent category to recalculate weights.
+        $grade_category->force_regrading();
+    }
+    $grade_item->weightoverride = $itemdata->weightoverride;
 
     $grade_item->outcomeid = null;
 
