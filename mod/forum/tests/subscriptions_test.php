@@ -1433,4 +1433,53 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         )));
     }
 
+    /**
+     * Test that providing a context_module instance to is_subscribed does not result in additional lookups to retrieve
+     * the context_module.
+     */
+    public function test_is_subscribed_cm() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create a user enrolled in the course as a student.
+        list($user) = $this->helper_create_users($course, 1);
+
+        // Retrieve the $cm now.
+        $cm = get_fast_modinfo($forum->course)->instances['forum'][$forum->id];
+
+        // Reset get_fast_modinfo.
+        get_fast_modinfo(0, 0, true);
+
+        // Call is_subscribed without passing the $cmid - this should result in a lookup and filling of some of the
+        // caches. This provides us with consistent data to start from.
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
+
+        // Make a note of the number of DB calls.
+        $basecount = $DB->perf_get_reads();
+
+        // Call is_subscribed - it should give return the correct result (False), and result in no additional queries.
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum, null, $cm));
+
+        // The capability check does require some queries, so we don't test it directly.
+        // We don't assert here because this is dependant upon linked code which could change at any time.
+        $suppliedcmcount = $DB->perf_get_reads() - $basecount;
+
+        // Call is_subscribed without passing the $cmid now - this should result in a lookup.
+        get_fast_modinfo(0, 0, true);
+        $basecount = $DB->perf_get_reads();
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
+        $calculatedcmcount = $DB->perf_get_reads() - $basecount;
+
+        // There should be more queries than when we performed the same check a moment ago.
+        $this->assertGreaterThan($suppliedcmcount, $calculatedcmcount);
+    }
+
 }

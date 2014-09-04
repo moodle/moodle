@@ -46,7 +46,7 @@ if (!\mod_forum\subscriptions::is_subscribable($forum)) {
     die;
 }
 
-if (\mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id)) {
+if (\mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, $cm)) {
     // The user is subscribed, unsubscribe them.
     \mod_forum\subscriptions::unsubscribe_user_from_discussion($USER->id, $discussion, $context);
 } else {
