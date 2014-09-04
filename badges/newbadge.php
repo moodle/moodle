@@ -47,7 +47,7 @@ if (($type == BADGE_TYPE_COURSE) && ($course = $DB->get_record('course', array('
     require_login($course);
     $coursecontext = context_course::instance($course->id);
     $PAGE->set_context($coursecontext);
-    $PAGE->set_pagelayout('course');
+    $PAGE->set_pagelayout('incourse');
     $PAGE->set_url('/badges/newbadge.php', array('type' => $type, 'id' => $course->id));
     $heading = format_string($course->fullname, true, array('context' => $coursecontext)) . ": " . $title;
     $PAGE->set_heading($heading);
