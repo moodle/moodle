@@ -3,10 +3,6 @@
  */
 M.gradereport_grader = {
     /**
-     * @param {Array} reports An array of instantiated report objects
-     */
-    reports : [],
-    /**
      * @namespace M.gradereport_grader
      * @param {Object} reports A collection of classes used by the grader report module
      */
@@ -16,16 +12,15 @@ M.gradereport_grader = {
      *
      * @function
      * @param {YUI} Y
-     * @param {String} id The id attribute of the reports table
      * @param {Object} cfg A configuration object
      * @param {Array} An array of items in the report
      * @param {Array} An array of users on the report
      * @param {Array} An array of feedback objects
      * @param {Array} An array of student grades
      */
-    init_report : function(Y, id, cfg, items, users, feedback, grades) {
+    init_report : function(Y, cfg, items, users, feedback, grades) {
         // Create the actual report
-        this.reports[id] = new this.classes.report(Y, id, cfg, items, users, feedback, grades);
+        new this.classes.report(Y, cfg, items, users, feedback, grades);
     }
 };
 
@@ -41,13 +36,12 @@ M.gradereport_grader = {
  * @constructor
  * @this {M.gradereport_grader}
  * @param {YUI} Y
- * @param {int} id The id of the table to attach the report to
  * @param {Object} cfg Configuration variables
  * @param {Array} items An array containing grade items
  * @param {Array} users An array containing user information
  * @param {Array} feedback An array containing feedback information
  */
-M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedback, grades) {
+M.gradereport_grader.classes.report = function(Y, cfg, items, users, feedback, grades) {
     this.Y = Y;
     this.isediting = (cfg.isediting);
     this.ajaxenabled = (cfg.ajaxenabled);
