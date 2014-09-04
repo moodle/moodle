@@ -97,6 +97,11 @@ if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->ag
 } else {
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }
+if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+    $item->weight = format_float($item->aggregationcoef2 * 100.0);
+} else if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+    $item->weight = format_float($item->aggregationcoef);
+}
 $item->cancontrolvisibility = $grade_item->can_control_visibility();
 
 $mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
@@ -105,6 +110,10 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
+    if (isset($data->weight)) {
+        $data->aggregationcoef2 = $data->weight / 100.0;
+        unset($data->weight);
+    }
     // If unset, give the aggregationcoef a default based on parent aggregation method
     if (!isset($data->aggregationcoef) || $data->aggregationcoef == '') {
         if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
@@ -132,7 +141,7 @@ if ($mform->is_cancelled()) {
     unset($data->locked);
     unset($data->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'weight');
     foreach ($convert as $param) {
         if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
@@ -140,6 +149,7 @@ if ($mform->is_cancelled()) {
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
+    $previouslyoverridden = $grade_item->weightoverride;
     grade_item::set_properties($grade_item, $data);
     $grade_item->outcomeid = null;
 
@@ -148,15 +158,11 @@ if ($mform->is_cancelled()) {
         $grade_item->decimals = null;
     }
 
-    // Change weightoverride flag.
-    if (!isset($data->weightoverride)) {
-        $data->weightoverride = 0; // Checkbox unticked.
-    }
     // If we are using natural weight and the weight has been un-overriden, force parent category to recalculate weights.
-    if ($grade_item->weightoverride != $data->weightoverride && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+    if (isset($data->weightoverride) && $previouslyoverridden != $data->weightoverride &&
+            $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
         $parent_category->force_regrading();
     }
-    $grade_item->weightoverride = $data->weightoverride;
 
     if (empty($grade_item->id)) {
         $grade_item->itemtype = 'manual'; // all new items to be manual only

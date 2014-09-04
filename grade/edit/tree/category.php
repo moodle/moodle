@@ -75,12 +75,15 @@ if ($id) {
     $category->grade_item_gradepass  = format_float($category->grade_item_gradepass, $decimalpoints);
     $category->grade_item_multfactor = format_float($category->grade_item_multfactor, 4);
     $category->grade_item_plusfactor = format_float($category->grade_item_plusfactor, 4);
-    $category->grade_item_aggregationcoef2 = format_float($category->grade_item_aggregationcoef2, 4);
 
     if (!$parent_category) {
         // keep as is
     } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
         $category->grade_item_aggregationcoef = $category->grade_item_aggregationcoef == 0 ? 0 : 1;
+        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+            $category->grade_item_weight = format_float($category->grade_item_aggregationcoef2 * 100, 4);
+        }
+        unset($category->grade_item_aggregationcoef2);
     } else {
         $category->grade_item_aggregationcoef = format_float($category->grade_item_aggregationcoef, 4);
     }
@@ -105,6 +108,10 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
+    if (isset($data->grade_item_weight)) {
+        $data->grade_item_aggregationcoef2 = $data->grade_item_weight / 100.0;
+        unset($data->grade_item_weight);
+    }
     // If no fullname is entered for a course category, put ? in the DB
     if (!isset($data->fullname) || $data->fullname == '') {
         $data->fullname = '?';
@@ -161,7 +168,7 @@ if ($mform->is_cancelled()) {
     unset($itemdata->locked);
     unset($itemdata->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'weight');
     foreach ($convert as $param) {
         if (property_exists($itemdata, $param)) {
             $itemdata->$param = unformat_float($itemdata->$param);

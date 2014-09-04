@@ -164,10 +164,10 @@ class edit_category_form extends moodleform {
         $mform->addElement('checkbox', 'grade_item_weightoverride', get_string('adjustedweight', 'grades'));
         $mform->addHelpButton('grade_item_weightoverride', 'weightoverride', 'grades');
 
-        $mform->addElement('text', 'grade_item_aggregationcoef2', get_string('weight', 'grades'));
-        $mform->addHelpButton('grade_item_aggregationcoef2', 'weight', 'grades');
-        $mform->setType('grade_item_aggregationcoef2', PARAM_RAW);
-        $mform->disabledIf('grade_item_aggregationcoef2', 'grade_item_weightoverride');
+        $mform->addElement('text', 'grade_item_weight', get_string('weight', 'grades'));
+        $mform->addHelpButton('grade_item_weight', 'weight', 'grades');
+        $mform->setType('grade_item_weight', PARAM_RAW);
+        $mform->disabledIf('grade_item_weight', 'grade_item_weightoverride');
 
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->setType('grade_item_gradepass', PARAM_RAW);
@@ -444,8 +444,8 @@ class edit_category_form extends moodleform {
                 if ($mform->elementExists('grade_item_weightoverride')) {
                     $mform->removeElement('grade_item_weightoverride');
                 }
-                if ($mform->elementExists('grade_item_aggregationcoef2')) {
-                    $mform->removeElement('grade_item_aggregationcoef2');
+                if ($mform->elementExists('grade_item_weight')) {
+                    $mform->removeElement('grade_item_weight');
                 }
             } else {
                 if ($grade_item->is_category_item()) {
@@ -465,8 +465,9 @@ class edit_category_form extends moodleform {
 
                     $coefstring = $grade_item->get_coefstring();
 
-                    if ($coefstring == 'aggregationcoefextrasum') {
+                    if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
                         // advcheckbox is not compatible with disabledIf!
+                        $coefstring = 'aggregationcoefextrasum';
                         $element =& $mform->createElement('checkbox', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
                     } else {
                         $element =& $mform->createElement('text', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
@@ -480,8 +481,8 @@ class edit_category_form extends moodleform {
                     if ($mform->elementExists('grade_item_weightoverride')) {
                         $mform->removeElement('grade_item_weightoverride');
                     }
-                    if ($mform->elementExists('grade_item_aggregationcoef2')) {
-                        $mform->removeElement('grade_item_aggregationcoef2');
+                    if ($mform->elementExists('grade_item_weight')) {
+                        $mform->removeElement('grade_item_weight');
                     }
                 }
             }
