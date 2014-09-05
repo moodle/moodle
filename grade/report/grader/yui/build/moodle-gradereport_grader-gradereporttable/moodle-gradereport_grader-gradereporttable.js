@@ -423,6 +423,10 @@ FloatingHeaders.prototype = {
         // Setup the event handlers.
         this._setupEventHandlers();
 
+        // Listen for a resize event globally - other parts of the code not in this YUI wrapper may make changes to the
+        // fields which result in size changes.
+        Y.Global.on('moodle-gradereport_grader:resized', this._handleResizeEvent, this);
+
         return this;
     },
 
