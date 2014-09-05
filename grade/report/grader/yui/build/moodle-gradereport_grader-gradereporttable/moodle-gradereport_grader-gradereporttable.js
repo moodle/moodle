@@ -488,7 +488,7 @@ FloatingHeaders.prototype = {
             } else {
                 var navbar = Y.one('.navbar');
 
-                if (navbar) {
+                if (navbar && navbar.getComputedStyle('position') === 'fixed') {
                     // If the navbar exists and isn't fixed, we need to offset the page header to accommodate for it.
                     this.pageHeaderHeight = navbar.get(OFFSETHEIGHT);
                 }
