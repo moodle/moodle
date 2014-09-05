@@ -38,4 +38,19 @@ class testable_workshop extends workshop {
         parent::aggregate_grading_grades_process($assessments, $timegraded);
     }
 
+    public function reset_submissions() {
+        parent::reset_submissions();
+    }
+
+    public function reset_allocators() {
+        parent::reset_allocators();
+    }
+
+    public function reset_strategies() {
+        parent::reset_strategies();
+    }
+
+    public function reset_evaluators() {
+        parent::reset_evaulators();
+    }
 }

@@ -528,5 +528,45 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->assertEquals(array($student1->id, $student2->id), $userids);
         $users = $workshoprestricted->get_potential_authors(false, $group2->id);
         $this->assertEquals(array($student2->id), array_keys($users));
+    
+    public function test_reset_userdata() {
+        $this->resetAfterTest(true);
+        // $this->workshop is the instance we can use to test.
+        $this->workshop->switch_phase(workshop::PHASE_CLOSED);    // Ensure workshop is a state that indicates work done 
+        $this->assertEquals(workshop::PHASE_CLOSED, $this->workshop->phase);
+        $originaleventcount = $DB->count_records('event', array('modulename' => 'workshop', 'instance' => $this->workshop->id));
+
+        // Setup some data
+        /*
+         * Need to :
+         * 1. Setup (already done)
+         * 2. Move to submission phase
+         * 3. Submit
+         * 4. Move to assessmetn phase.
+         * 5. Record Assess
+         * 6. Move to Evaulation phase
+         * 7. Evaluate
+         */
+        
+        // Setup reset data
+        $data = new stdClass();
+        $data->reset_workshop_all = 1;
+        $data->reset_gradebook_grades = 1;
+        $data->courseid = $this->course->id;
+        $data->timeshift = 24 * 60 * 60;
+        $this->setUser($this->editingteachers[0]);
+
+        // Get various counts.
+        $status = $this->workshop->reset_userdata($data);
+        $posteventcount = $DB->count_records('event', array('modulename' => 'workshop', 'instance' => $this->workshop->id));
+        $countaggregations = $DB->count_records('workshop_aggregations', array('workshopid' => $this->workshop->id));
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($this->context, 'mod_workshop', 'submission_attachment', false);
+
+        // Check results 
+        $this->assertEquals(0, $countaggregations, 'Aggregations should be empty');
+        $this->assertEquals(workshop::PHASE_SETUP, $this->workshop->phase, 'Phase should have changed to SETUP');
+        $this->assertEquals(0, $posteventcount, 'Calendar event count should equal 0.');
+        $this->assertEqual(0, count($files), 'Number of files should be 0.');
     }
 }
