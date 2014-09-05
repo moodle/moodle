@@ -447,8 +447,8 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
         outcome = this.report.Y.JSON.parse(outcome.responseText);
     } catch(e) {
         var message = M.str.gradereport_grader.ajaxfailedupdate;
-        message.replace(/\[1\]/, args.type);
-        message.replace(/\[2\]/, this.report.users[args.properties.userid]);
+        message = message.replace(/\[1\]/, args.type);
+        message = message.replace(/\[2\]/, this.report.users[args.properties.userid]);
 
         this.display_submission_error(message, args.properties.cell);
         return;

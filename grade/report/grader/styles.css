@@ -217,3 +217,19 @@
     margin-left: 0;
     margin-right: 10px;
 }
+
+.path-grade-report-grader .yui3-overlay {
+  border: 0;
+  background: none;
+  background-color: initial;
+  min-width: 200px;
+}
+
+.path-grade-report-grader .yui3-overlay {
+    background-color: white;
+    width: auto;
+    padding: 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
