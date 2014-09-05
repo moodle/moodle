@@ -31,7 +31,7 @@
     border-right-width: 0;
     margin-bottom: 2em;
 }
-.dir-rtl .path-grade-report-grader .gradeparent table {
+.dir-rtl.path-grade-report-grader .gradeparent table {
     border-left-width: 0;
     border-right-width: 1px;
 }
@@ -48,7 +48,7 @@
     text-align: right;
     white-space: nowrap;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .cell {
+.dir-rtl.path-grade-report-grader .gradeparent .cell {
     border-left-width: 1px;
     border-right-width: 0;
     text-align: left;
@@ -81,9 +81,9 @@
     font-weight: normal;
     text-align: left;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .heading .cell,
-.dir-rtl .path-grade-report-grader .gradeparent .avg .cell,
-.dir-rtl .path-grade-report-grader .gradeparent .user.cell {
+.dir-rtl.path-grade-report-grader .gradeparent .heading .cell,
+.dir-rtl.path-grade-report-grader .gradeparent .avg .cell,
+.dir-rtl.path-grade-report-grader .gradeparent .user.cell {
     text-align: right;
 }
 
@@ -116,7 +116,7 @@
     font-weight: normal;
     text-align: left;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .userfield {
+.dir-rtl.path-grade-report-grader .gradeparent .userfield {
     text-align: right;
 }
 
@@ -141,7 +141,7 @@
 .path-grade-report-grader .gradeparent .avg .cell {
     text-align: right;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .avg .cell {
+.dir-rtl.path-grade-report-grader .gradeparent .avg .cell {
     text-align: left;
 }
 
@@ -156,7 +156,7 @@
 .path-grade-report-grader .gradeparent .sorticon {
     margin-left: 3px;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .sorticon {
+.dir-rtl.path-grade-report-grader .gradeparent .sorticon {
     margin-left: 0;
     margin-right: 3px;
 }
@@ -177,7 +177,7 @@
     font-size: 9px;
     float: left;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .excludedfloater {
+.dir-rtl.path-grade-report-grader .gradeparent .excludedfloater {
     float: right;
 }
 
@@ -188,7 +188,7 @@
 .path-grade-report-grader .gradeparent .category {
     text-align: left;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .category {
+.dir-rtl.path-grade-report-grader .gradeparent .category {
     text-align: right;
 }
 
@@ -213,7 +213,7 @@
     padding: 0;
     margin-left: 10px;
 }
-.dir-rtl .path-grade-report-grader .gradeparent .quickfeedback {
+.dir-rtl.path-grade-report-grader .gradeparent .quickfeedback {
     margin-left: 0;
     margin-right: 10px;
 }
