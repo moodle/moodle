@@ -230,7 +230,7 @@ class qformat_default {
         echo "<strong>$message</strong>\n";
         echo "</div>";
 
-         $this->importerrors++;
+        $this->importerrors++;
     }
 
     /**
