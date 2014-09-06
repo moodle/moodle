@@ -221,7 +221,7 @@ function lesson_save_question_options($question, $lesson) {
                 $totalfraction = round($totalfraction,2);
                 if ($totalfraction != 1) {
                     $totalfraction = $totalfraction * 100;
-                    $result->notice = get_string("fractionsaddwrong", "quiz", $totalfraction);
+                    $result->notice = get_string("fractionsaddwrong", "qtype_multichoice", $totalfraction);
                     return $result;
                 }
             }
