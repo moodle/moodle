@@ -286,7 +286,7 @@ if ($groupmode) {
     }
     echo $OUTPUT->single_button($overrideediturl->out(true,
             array('action' => 'adduser', 'cmid' => $cm->id)),
-            get_string('addnewuseroverride', 'quiz'), 'post', $options);
+            get_string('addnewuseroverride', 'quiz'), 'get', $options);
 }
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
