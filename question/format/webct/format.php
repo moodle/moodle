@@ -518,7 +518,7 @@ class qformat_webct extends qformat_default {
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
                                         $errors[] = "'{$question->name}': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
-                                                .' '.get_string('fractionsaddwrong', 'question', $totalfraction);
+                                                .' '.get_string('fractionsaddwrong', 'qtype_multichoice', $totalfraction);
                                         $questionok = false;
                                     }
                                 }
