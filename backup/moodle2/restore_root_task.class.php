@@ -246,5 +246,9 @@ class restore_root_task extends restore_task {
         $gradehistories->get_ui()->set_changeable($changeable);
         $this->add_setting($gradehistories);
         $users->add_dependency($gradehistories);
+
+        // The restore does not process the grade histories when some activities are ignored.
+        // So let's define a dependency to prevent false expectations from our users.
+        $activities->add_dependency($gradehistories);
     }
 }
