@@ -362,7 +362,7 @@ class question_attempt_step {
      * Get all the data. behaviour variables have the - at the start of
      * their name. This is only intended for internal use, for example by
      * {@link question_engine_data_mapper::insert_question_attempt_step()},
-     * however, it can ocasionally be useful in test code. It should not be
+     * however, it can occasionally be useful in test code. It should not be
      * considered part of the public API of this class.
      * @param array name => value pairs.
      */
