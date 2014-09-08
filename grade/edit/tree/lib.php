@@ -671,6 +671,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
         } else {
             $attributes = array();
             $attributes['id'] = 'aggregation_'.$category->id;
+            $attributes['class'] = 'ignoredirty';
             $aggregation = html_writer::label(get_string('aggregation', 'grades'), 'aggregation_'.$category->id, false, array('class' => 'accesshide'));
             $aggregation .= html_writer::select($options, 'aggregation_'.$category->id, $category->aggregation, null, $attributes);
             $action = new component_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
