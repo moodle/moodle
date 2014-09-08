@@ -62,7 +62,7 @@ class filter_form extends \moodleform {
         $mform->setType('grader', PARAM_INT);
 
         $mform->addElement('date_selector', 'datefrom', get_string('datefrom', 'gradereport_history'), array('optional' => true));
-        $mform->addElement('date_selector', 'datetill', get_string('datetill', 'gradereport_history'), array('optional' => true));
+        $mform->addElement('date_selector', 'datetill', get_string('dateto', 'gradereport_history'), array('optional' => true));
 
         $mform->addElement('checkbox', 'revisedonly', get_string('revisedonly', 'gradereport_history'));
         $mform->addHelpButton('revisedonly', 'revisedonly', 'gradereport_history');
