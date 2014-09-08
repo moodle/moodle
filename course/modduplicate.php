@@ -23,6 +23,7 @@
  *
  * @package    core
  * @subpackage course
+ * @deprecated Moodle 2.8 MDL-46428 - Now redirects to mod.php.
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,54 +31,13 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 
 $cmid           = required_param('cmid', PARAM_INT);
-$courseid       = required_param('course', PARAM_INT);
+$courseid       = optional_param('course', PARAM_INT);
 $sectionreturn  = optional_param('sr', null, PARAM_INT);
 
-$course     = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$cm         = get_coursemodule_from_id('', $cmid, $course->id, true, MUST_EXIST);
-$cmcontext  = context_module::instance($cm->id);
-$context    = context_course::instance($courseid);
-$section    = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
+debugging('Please use moodle_url(\'/course/mod.php\', array(\'duplicate\' => $cmid
+    , \'id\' => $courseid, \'sesskey\' => sesskey(), \'sr\' => $sectionreturn)))
+    instead of new moodle_url(\'/course/modduplicate.php\', array(\'cmid\' => $cmid
+    , \'course\' => $courseid, \'sr\' => $sectionreturn))', DEBUG_DEVELOPER);
 
-require_login($course);
-require_sesskey();
-require_capability('moodle/course:manageactivities', $context);
-// Require both target import caps to be able to duplicate, see course_get_cm_edit_actions()
-require_capability('moodle/backup:backuptargetimport', $context);
-require_capability('moodle/restore:restoretargetimport', $context);
-
-$PAGE->set_title(get_string('duplicate'));
-$PAGE->set_heading($course->fullname);
-$PAGE->set_url(new moodle_url('/course/modduplicate.php', array('cmid' => $cm->id, 'courseid' => $course->id)));
-$PAGE->set_pagelayout('incourse');
-
-$output = $PAGE->get_renderer('core', 'backup');
-
-// Duplicate the module.
-$newcm = duplicate_module($course, $cm);
-
-echo $output->header();
-
-$a          = new stdClass();
-$a->modtype = get_string('modulename', $cm->modname);
-$a->modname = format_string($cm->name);
-
-if (!empty($newcm)) {
-    echo $output->confirm(
-        get_string('duplicatesuccess', 'core', $a),
-        new single_button(
-            new moodle_url('/course/modedit.php', array('update' => $newcm->id, 'sr' => $sectionreturn)),
-            get_string('duplicatecontedit'),
-            'get'),
-        new single_button(
-            course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)),
-            get_string('duplicatecontcourse'),
-            'get')
-    );
-
-} else {
-    echo $output->notification(get_string('duplicatesuccess', 'core', $a), 'notifysuccess');
-    echo $output->continue_button(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
-}
-
-echo $output->footer();
+redirect(new moodle_url('/course/mod.php', array('duplicate' => $cmid, 'id' => $courseid,
+                                                 'sesskey' => sesskey(), 'sr' => $sectionreturn)));
