@@ -143,7 +143,7 @@ function theme_clean_get_html_for_settings(renderer_base $output, moodle_page $p
 
     $return->footnote = '';
     if (!empty($page->theme->settings->footnote)) {
-        $return->footnote = '<div class="footnote text-center">'.$page->theme->settings->footnote.'</div>';
+        $return->footnote = '<div class="footnote text-center">'.format_text($page->theme->settings->footnote).'</div>';
     }
 
     return $return;
