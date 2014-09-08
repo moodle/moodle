@@ -44,6 +44,7 @@ class message_output_airnotifier extends message_output {
      */
     public function send_message($eventdata) {
         global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
 
         if (!empty($CFG->noemailever)) {
             // Hidden setting for development sites, set in config.php if needed.
