@@ -243,16 +243,8 @@ class course_enrolment_manager {
                       JOIN {enrol} e ON (e.id = ue.enrolid)
                  LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
                  LEFT JOIN {groups_members} gm ON u.id = gm.userid
-                     WHERE $filtersql";
-            if ($sort === 'firstname') {
-                $sql .= " ORDER BY u.firstname $direction, u.lastname $direction";
-            } else if ($sort === 'lastname') {
-                $sql .= " ORDER BY u.lastname $direction, u.firstname $direction";
-            } else if ($sort === 'email') {
-                $sql .= " ORDER BY u.email $direction, u.lastname $direction, u.firstname $direction";
-            } else if ($sort === 'lastseen') {
-                $sql .= " ORDER BY ul.timeaccess $direction, u.lastname $direction, u.firstname $direction";
-            }
+                     WHERE $filtersql
+                  ORDER BY u.$sort $direction";
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->users[$key];
