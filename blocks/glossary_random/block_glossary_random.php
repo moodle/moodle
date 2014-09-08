@@ -245,12 +245,5 @@ class block_glossary_random extends block_base {
 
         return $this->content;
     }
-
-    function hide_header() {
-        if (empty($this->config->title)) {
-            return true;
-        }
-        return false;
-    }
 }
 
