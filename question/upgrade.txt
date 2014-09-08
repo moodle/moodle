@@ -1,5 +1,16 @@
 This files describes API changes for code that uses the question API.
 
+=== 2.8 ===
+
+1) This is jsut a warning that some methods of the question_engine_data_mapper
+   class have changed. All these methods are ones that you should not have been
+   calling directly from your code, so this should not cause any problems.
+   The changed methods are:
+    * insert_question_attempt
+    * insert_step_data
+    * update_question_attempt_step
+
+
 === 2.7 ===
 
 1)  Changes to class question_bank_view:
@@ -25,6 +36,7 @@ To add filters, local plugins can now implement the function local_[pluginname]_
 4) Because of the move to autoloading, $knowncolumntypes and known_field_types() are no longer used.
 
 5) question_bank_column_base and it's derived classes have been namespaced to core_question\bank\column_base.
+
 
 === 2.6 ===
 

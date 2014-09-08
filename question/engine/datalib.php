@@ -17,6 +17,17 @@
 /**
  * Code for loading and saving question attempts to and from the database.
  *
+ * Note that many of the methods of this class should be considered private to
+ * the question engine. They should be accessed through the
+ * {@link question_engine} class. For example, you should call
+ * {@link question_engine::save_questions_usage_by_activity()} rather than
+ * {@link question_engine_data_mapper::insert_questions_usage_by_activity()}.
+ * The exception to this is some of the reporting methods, like
+ * {@link question_engine_data_mapper::load_attempts_at_question()}.
+ *
+ * (TODO, probably we should split this class up, so that it has no public
+ * methods. They should all be moved to a new public class.)
+ *
  * A note for future reference. This code is pretty efficient but there are some
  * potential optimisations that could be contemplated, at the cost of making the
  * code more complex:
@@ -66,6 +77,10 @@ class question_engine_data_mapper {
     /**
      * Store an entire {@link question_usage_by_activity} in the database,
      * including all the question_attempts that comprise it.
+     *
+     * You should not call this method directly. You should use
+     * @link question_engine::save_questions_usage_by_activity()}.
+     *
      * @param question_usage_by_activity $quba the usage to store.
      */
     public function insert_questions_usage_by_activity(question_usage_by_activity $quba) {
@@ -94,6 +109,10 @@ class question_engine_data_mapper {
     /**
      * Store an entire {@link question_attempt} in the database,
      * including all the question_attempt_steps that comprise it.
+     *
+     * You should not call this method directly. You should use
+     * @link question_engine::save_questions_usage_by_activity()}.
+     *
      * @param question_attempt $qa the question attempt to store.
      * @param context $context the context of the owning question_usage_by_activity.
      * @return array of question_attempt_step_data rows, that still need to be inserted.
@@ -178,6 +197,9 @@ class question_engine_data_mapper {
 
     /**
      * Insert a lot of records into question_attempt_step_data in one go.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
      * @param array $rows the rows to insert.
      */
     public function insert_all_step_data(array $rows) {
@@ -189,6 +211,9 @@ class question_engine_data_mapper {
 
     /**
      * Store a {@link question_attempt_step} in the database.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
      * @param question_attempt_step $step the step to store.
      * @param int $questionattemptid the question attept id this step belongs to.
      * @param int $seq the sequence number of this stop.
@@ -206,6 +231,9 @@ class question_engine_data_mapper {
 
     /**
      * Update a {@link question_attempt_step} in the database.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
      * @param question_attempt_step $qa the step to store.
      * @param int $questionattemptid the question attept id this step belongs to.
      * @param int $seq the sequence number of this stop.
@@ -226,6 +254,9 @@ class question_engine_data_mapper {
 
     /**
      * Load a {@link question_attempt_step} from the database.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
      * @param int $stepid the id of the step to load.
      * @param question_attempt_step the step that was loaded.
      */
@@ -267,6 +298,11 @@ WHERE
     /**
      * Load a {@link question_attempt} from the database, including all its
      * steps.
+     *
+     * Normally, you should use {@link question_engine::load_questions_usage_by_activity()}
+     * but there may be rare occasions where for performance reasons, you only
+     * wish to load one qa, in which case you may call this method.
+     *
      * @param int $questionattemptid the id of the question attempt to load.
      * @param question_attempt the question attempt that was loaded.
      */
@@ -325,6 +361,10 @@ ORDER BY
     /**
      * Load a {@link question_usage_by_activity} from the database, including
      * all its {@link question_attempt}s and all their steps.
+     *
+     * You should call {@link question_engine::load_questions_usage_by_activity()}
+     * rather than calling this method directly.
+     *
      * @param int $qubaid the id of the usage to load.
      * @param question_usage_by_activity the usage that was loaded.
      */
@@ -384,6 +424,9 @@ ORDER BY
     /**
      * Load all {@link question_usage_by_activity} from the database for one qubaid_condition
      * Include all its {@link question_attempt}s and all their steps.
+     *
+     * This method may be called publicly.
+     *
      * @param qubaid_condition $qubaids the condition that tells us which usages to load.
      * @return question_usage_by_activity[] the usages that were loaded.
      */
@@ -449,6 +492,8 @@ ORDER BY
     /**
      * Load information about the latest state of each question from the database.
      *
+     * This method may be called publicly.
+     *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      *                                  in the query. See {@link qubaid_condition}.
      * @param array            $slots   A list of slots for the questions you want to know about.
@@ -503,6 +548,8 @@ WHERE
      * Load summary information about the state of each question in a group of
      * attempts. This is used, for example, by the quiz manual grading report,
      * to show how many attempts at each question need to be graded.
+     *
+     * This method may be called publicly.
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
@@ -584,6 +631,8 @@ ORDER BY
      * $limitnum. A special value 'random' can be passed as $orderby, in which case
      * $limitfrom is ignored.
      *
+     * This method may be called publicly.
+     *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
      * @param int $slot The slot for the questions you want to konw about.
@@ -663,12 +712,16 @@ $sqlorderby
     }
 
     /**
-     * Load a {@link question_usage_by_activity} from the database, including
-     * all its {@link question_attempt}s and all their steps.
+     * Load the average mark, and number of attempts, for each slot in a set of
+     * question usages..
+     *
+     * This method may be called publicly.
+     *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
      * @param array $slots if null, load info for all quesitions, otherwise only
      * load the averages for the specified questions.
+     * @return array of objects with fields ->slot, ->averagefraction and ->numaveraged.
      */
     public function load_average_marks(qubaid_condition $qubaids, $slots = null) {
         if (!empty($slots)) {
@@ -712,8 +765,10 @@ ORDER BY qa.slot
     }
 
     /**
-     * Load a {@link question_attempt} from the database, including all its
+     * Load all the attempts at a given queston from a set of question_usages.
      * steps.
+     *
+     * This method may be called publicly.
      *
      * @param int $questionid the question to load all the attempts fors.
      * @param qubaid_condition $qubaids used to restrict which usages are included
@@ -784,6 +839,10 @@ ORDER BY
     /**
      * Update a question_usages row to refect any changes in a usage (but not
      * any of its question_attempts.
+     *
+     * You should not call this method directly. You should use
+     * @link question_engine::save_questions_usage_by_activity()}.
+     *
      * @param question_usage_by_activity $quba the usage that has changed.
      */
     public function update_questions_usage_by_activity(question_usage_by_activity $quba) {
@@ -799,6 +858,10 @@ ORDER BY
     /**
      * Update a question_attempts row to refect any changes in a question_attempt
      * (but not any of its steps).
+     *
+     * You should not call this method directly. You should use
+     * @link question_engine::save_questions_usage_by_activity()}.
+     *
      * @param question_attempt $qa the question attempt that has changed.
      */
     public function update_question_attempt(question_attempt $qa) {
@@ -818,6 +881,10 @@ ORDER BY
 
     /**
      * Delete a question_usage_by_activity and all its associated
+     *
+     * You should not call this method directly. You should use
+     * @link question_engine::delete_questions_usage_by_activities()}.
+     *
      * {@link question_attempts} and {@link question_attempt_steps} from the
      * database.
      * @param qubaid_condition $qubaids identifies which question useages to delete.
@@ -890,6 +957,9 @@ ORDER BY
 
     /**
      * Delete all the steps for a question attempt.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
      * @param int $qaids question_attempt id.
      * @param context $context the context that the $quba belongs to.
      */
@@ -925,6 +995,9 @@ ORDER BY
 
     /**
      * Delete all the previews for a given question.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
      * @param int $questionid question id.
      */
     public function delete_previews($questionid) {
@@ -942,6 +1015,10 @@ ORDER BY
 
     /**
      * Update the flagged state of a question in the database.
+     *
+     * You should call {@link question_engine::update_flag()()}
+     * rather than calling this method directly.
+     *
      * @param int $qubaid the question usage id.
      * @param int $questionid the question id.
      * @param int $sessionid the question_attempt id.
@@ -973,6 +1050,9 @@ ORDER BY
     /**
      * Get the SQL needed to test that question_attempt_steps.state is in a
      * state corresponding to $summarystate.
+     *
+     * This method may be called publicly.
+     *
      * @param string $summarystate one of
      * inprogress, needsgrading, manuallygraded or autograded
      * @param bool $equal if false, do a NOT IN test. Default true.
@@ -987,6 +1067,10 @@ ORDER BY
     /**
      * Change the maxmark for the question_attempt with number in usage $slot
      * for all the specified question_attempts.
+     *
+     * You should call {@link question_engine::set_max_mark_in_attempts()}
+     * rather than calling this method directly.
+     *
      * @param qubaid_condition $qubaids Selects which usages are updated.
      * @param int $slot the number is usage to affect.
      * @param number $newmaxmark the new max mark to set.
@@ -1004,6 +1088,8 @@ ORDER BY
      *
      * See {@link quiz_update_all_attempt_sumgrades()} for an example of the usage of
      * this method.
+     *
+     * This method may be called publicly.
      *
      * @param string $qubaid SQL fragment that controls which usage is summed.
      * This will normally be the name of a column in the outer query. Not that this
@@ -1034,6 +1120,9 @@ ORDER BY
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
      * {@link quiz_attempts_report_table::add_latest_state_join()}.
+     *
+     * This method may be called publicly.
+     *
      * @param string $alias alias to use for this inline-view.
      * @param qubaid_condition $qubaids restriction on which question_usages we
      *      are interested in. This is important for performance.
@@ -1078,9 +1167,14 @@ ORDER BY
     }
 
     /**
+     * Are any of these questions are currently in use?
+     *
+     * You should call {@link question_engine::questions_in_use()}
+     * rather than calling this method directly.
+     *
      * @param array $questionids of question ids.
      * @param qubaid_condition $qubaids ids of the usages to consider.
-     * @return boolean whether any of these questions are being used by any of
+     * @return bool whether any of these questions are being used by any of
      *      those usages.
      */
     public function questions_in_use(array $questionids, qubaid_condition $qubaids) {
