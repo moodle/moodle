@@ -3035,6 +3035,18 @@ class restore_activity_grades_structure_step extends restore_structure_step {
  */
 class restore_activity_grade_history_structure_step extends restore_structure_step {
 
+    /**
+     * This step is executed only if the grade history file is present.
+     */
+     protected function execute_condition() {
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+        return true;
+    }
+
     protected function define_structure() {
         $paths = array();
 
