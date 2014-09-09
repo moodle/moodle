@@ -72,7 +72,7 @@ class mod_forum_observer {
         require_once($CFG->dirroot . '/mod/forum/lib.php');
 
         $userid = $event->relateduserid;
-        $sql = "SELECT f.id, cm.id AS cmid, f.forcesubscribe
+        $sql = "SELECT f.id, f.course as course, cm.id AS cmid, f.forcesubscribe
                   FROM {forum} f
                   JOIN {course_modules} cm ON (cm.instance = f.id)
                   JOIN {modules} m ON (m.id = cm.module)

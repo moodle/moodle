@@ -192,7 +192,7 @@ if (!is_null($subscribe)) {
             $cansub = false;
         }
         if (!\mod_forum\subscriptions::is_forcesubscribed($forum)) {
-            $subscribed = \mod_forum\subscriptions::is_subscribed($USER->id, $forum);
+            $subscribed = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, null, $cm);
             $canmanageactivities = has_capability('moodle/course:manageactivities', $coursecontext, $USER->id);
             if (($canmanageactivities || \mod_forum\subscriptions::is_subscribable($forum)) && $subscribe && !$subscribed && $cansub) {
                 \mod_forum\subscriptions::subscribe_user($USER->id, $forum, $modcontext, true);

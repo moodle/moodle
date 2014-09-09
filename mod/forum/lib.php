@@ -615,7 +615,7 @@ function forum_cron() {
                     continue;
                 }
 
-                if (!\mod_forum\subscriptions::is_subscribed($userto->id, $forum, $post->discussion)) {
+                if (!\mod_forum\subscriptions::is_subscribed($userto->id, $forum, $post->discussion, $coursemodules[$forum->id])) {
                     // The user does not subscribe to this forum, or to this specific discussion.
                     continue;
                 }

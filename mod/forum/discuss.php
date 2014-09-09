@@ -114,7 +114,7 @@
         $subscriptionchanges = array();
         foreach ($potentialsubscribers as $subuser) {
             $userid = $subuser->id;
-            $targetsubscription = \mod_forum\subscriptions::is_subscribed($userid, $forumto);
+            $targetsubscription = \mod_forum\subscriptions::is_subscribed($userid, $forumto, null, $cmto);
             if (\mod_forum\subscriptions::is_subscribed($userid, $forum, $discussion->id)) {
                 if (!$targetsubscription) {
                     $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;

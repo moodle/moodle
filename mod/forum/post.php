@@ -573,7 +573,8 @@ $mform_post = new mod_forum_post_form('post.php', array('course' => $course,
                                                         'modcontext' => $modcontext,
                                                         'forum' => $forum,
                                                         'post' => $post,
-                                                        'subscribe' => \mod_forum\subscriptions::is_subscribed($USER->id, $forum),
+                                                        'subscribe' => \mod_forum\subscriptions::is_subscribed($USER->id, $forum,
+                                                                null, $cm),
                                                         'thresholdwarning' => $thresholdwarning,
                                                         'edit' => $edit), 'post', '', array('id' => 'mformforum'));
 
@@ -616,7 +617,7 @@ $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_fo
 // which case use their existing preference.
 $discussionsubscribe = true;
 if (isset($discussion) && forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
-    $discussionsubscribe = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id);
+    $discussionsubscribe = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, $cm);
 }
 $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     'general'=>$heading,
