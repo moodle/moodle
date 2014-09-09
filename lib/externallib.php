@@ -379,7 +379,7 @@ class external_api {
         $levels = context_helper::get_all_levels();
         if (!empty($param['contextid'])) {
             return context::instance_by_id($param['contextid'], IGNORE_MISSING);
-        } else if (!empty($param['contextlevel']) && !empty($param['instanceid'])) {
+        } else if (!empty($param['contextlevel']) && isset($param['instanceid'])) {
             $contextlevel = "context_".$param['contextlevel'];
             if (!array_search($contextlevel, $levels)) {
                 throw new invalid_parameter_exception('Invalid context level = '.$param['contextlevel']);
