@@ -111,7 +111,7 @@ class behat_data_generators extends behat_base {
         'activities' => array(
             'datagenerator' => 'activity',
             'required' => array('activity', 'idnumber', 'course'),
-            'switchids' => array('course' => 'course')
+            'switchids' => array('course' => 'course', 'gradecategory' => 'gradecat')
         ),
         'group members' => array(
             'datagenerator' => 'group_member',
@@ -135,6 +135,11 @@ class behat_data_generators extends behat_base {
         'roles' => array(
             'datagenerator' => 'role',
             'required' => array('shortname')
+        ),
+        'grade categories' => array(
+            'datagenerator' => 'grade_category',
+            'required' => array('fullname', 'course'),
+            'switchids' => array('course' => 'courseid', 'gradecategory' => 'parent')
         )
     );
 
@@ -425,6 +430,21 @@ class behat_data_generators extends behat_base {
      */
     protected function process_cohort_member($data) {
         cohort_add_member($data['cohortid'], $data['userid']);
+    }
+
+    /**
+     * Gets the grade category id from the grade category fullname
+     * @throws Exception
+     * @param string $username
+     * @return int
+     */
+    protected function get_gradecategory_id($fullname) {
+        global $DB;
+
+        if (!$id = $DB->get_field('grade_categories', 'id', array('fullname' => $fullname))) {
+            throw new Exception('The specified grade category with fullname "' . $fullname . '" does not exist');
+        }
+        return $id;
     }
 
     /**
