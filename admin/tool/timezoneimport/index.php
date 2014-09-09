@@ -45,7 +45,7 @@
         $message = '<br /><br />';
         $message .= $CFG->tempdir.'/olson.txt<br />';
         $message .= $CFG->tempdir.'/timezone.txt<br />';
-        $message .= '<a href="http://download.moodle.org/timezone/">http://download.moodle.org/timezone/</a><br />';
+        $message .= '<a href="https://download.moodle.org/timezone/">https://download.moodle.org/timezone/</a><br />';
         $message .= '<a href="'.$CFG->wwwroot.'/lib/timezone.txt">'.$CFG->dirroot.'/lib/timezone.txt</a><br />';
         $message .= '<br />';
 
@@ -83,7 +83,7 @@
     }
 
 /// Otherwise, let's try moodle.org's copy
-    $source = 'http://download.moodle.org/timezone/';
+    $source = 'https://download.moodle.org/timezone/';
     if (!$importdone && ($content=download_file_content($source))) {
         if ($file = fopen($CFG->tempdir.'/timezone.txt', 'w')) {            // Make local copy
             fwrite($file, $content);
