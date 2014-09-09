@@ -193,4 +193,41 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $grade->hidden = time()+666;
         $this->assertTrue($grade->is_hidden());
     }
+
+    public function test_flatten_dependencies() {
+        // First test a simple normal case.
+        $a = array(1 => array(2, 3), 2 => array(), 3 => array(4), 4 => array());
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 2 => array(), 3 => array(4), 4 => array());
+        $expectedb = array(1 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Edge case - empty arrays.
+        $a = $b = $expecteda = $expectedb = array();
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Circular dependency.
+        $a = array(1 => array(2), 2 => array(3), 3 => array(1));
+        $b = array();
+        $expecteda = array(1 => array(1, 2, 3), 2 => array(1, 2, 3), 3 => array(1, 2, 3));
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        // Note - we don't test the depth when we got circular dependencies - the main thing we wanted to test was that there was
+        // no ka-boom. The result would be hard to understand and doesn't matter.
+
+        // Circular dependency 2.
+        $a = array(1 => array(2), 2 => array(3), 3 => array(4), 4 => array(2, 1));
+        $b = array();
+        $expecteda = array(1 => array(1, 2, 3, 4), 2 => array(1, 2, 3, 4), 3 => array(1, 2, 3, 4), 4 => array(1, 2, 3, 4));
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+    }
 }
