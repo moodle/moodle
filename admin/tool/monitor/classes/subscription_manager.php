@@ -73,7 +73,7 @@ class subscription_manager {
      */
     public static function delete_subscription($subscriptionorid, $checkuser = true) {
         global $DB, $USER;
-        if (get_class($subscriptionorid) === 'tool_monitor\subscription') {
+        if (is_object($subscriptionorid)) {
             $subscription = $subscriptionorid;
         } else {
             $subscription = self::get_subscription($subscriptionorid);
@@ -120,21 +120,44 @@ class subscription_manager {
      * Get an array of subscriptions for a given user in a given course.
      *
      * @param int $courseid course id.
+     * @param int $limitfrom Limit from which to fetch rules.
+     * @param int $limitto  Limit to which rules need to be fetched.
      * @param int $userid Id of the user for which the subscription needs to be fetched. Defaults to $USER;
      * @param string $order Order to sort the subscriptions.
      *
      * @return array list of subscriptions
      */
-    public static function get_user_subscriptions_for_course($courseid, $userid = 0, $order = 's.timecreated DESC') {
+    public static function get_user_subscriptions_for_course($courseid, $limitfrom = 0, $limitto = 0, $userid = 0,
+            $order = 's.timecreated DESC' ) {
         global $DB, $USER;
         if ($userid == 0) {
             $userid = $USER->id;
         }
         $sql = self::get_subscription_join_rule_sql();
-        $sql .= "WHERE s.courseid = :courseid AND s.userid = :userid $order";
+        $sql .= "WHERE s.courseid = :courseid AND s.userid = :userid ORDER BY $order";
 
-        return $DB->get_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid));
+        return $DB->get_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid), $limitfrom, $limitto);
     }
+
+    /**
+     * Get count of subscriptions for a given user in a given course.
+     *
+     * @param int $courseid course id.
+     * @param int $userid Id of the user for which the subscription needs to be fetched. Defaults to $USER;
+     *
+     * @return array list of subscriptions
+     */
+    public static function count_user_subscriptions_for_course($courseid, $userid = 0) {
+        global $DB, $USER;
+        if ($userid == 0) {
+            $userid = $USER->id;
+        }
+        $sql = self::get_subscription_join_rule_sql(true);
+        $sql .= "WHERE s.courseid = :courseid AND s.userid = :userid";
+
+        return $DB->count_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid));
+    }
+
 
     /**
      * Return a list of subscriptions for a given event.
@@ -160,11 +183,18 @@ class subscription_manager {
     /**
      * Return sql to join rule and subscription table.
      *
+     * @param bool $count Weather if this is a count query or not.
+     *
      * @return string the sql.
      */
-    public static function get_subscription_join_rule_sql() {
-        $sql = "SELECT s.*, r.description, r.name, r.userid as ruleuserid, r.courseid as rulecourseid, r.plugin,
-                    r.eventname, r.message_template, r.frequency, r.timewindow
+    public static function get_subscription_join_rule_sql($count = false) {
+        if ($count) {
+            $select = "SELECT COUNT(s.id) ";
+        } else {
+            $select = "SELECT s.*, r.description, r.descriptionformat, r.name, r.userid as ruleuserid, r.courseid as rulecourseid,
+            r.plugin, r.eventname, r.template, r.templateformat, r.frequency, r.timewindow";
+        }
+        $sql = $select . "
                   FROM {tool_monitor_rules} r
                   JOIN {tool_monitor_subscriptions} s
                         ON r.id = s.ruleid ";
