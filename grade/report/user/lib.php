@@ -433,6 +433,18 @@ class grade_report_user extends grade_report {
 
                 /// Actual Grade
                 $gradeval = $grade_grade->finalgrade;
+                if (!$this->canviewhidden) {
+                    /// Virtual Grade (may be calculated excluding hidden items etc).
+                    $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
+                                                                                 $grade_grade->grade_item,
+                                                                                 $gradeval);
+                    $gradeval = $adjustedgrade['grade'];
+
+                    // We temporarily adjust the view of this grade item - because the min and
+                    // max are affected by the hidden values in the aggregation.
+                    $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
+                    $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
+                }
 
                 if ($this->showfeedback) {
                     // Copy $class before appending itemcenter as feedback should not be centered
@@ -460,20 +472,17 @@ class grade_report_user extends grade_report {
                         $data['grade']['class'] = $class;
                         $data['grade']['content'] = get_string('submittedon', 'grades', userdate($grade_grade->get_datesubmitted(), get_string('strftimedatetimeshort')));
 
-                    } elseif ($grade_grade->is_hidden()) {
-                            $data['grade']['class'] = $class.' dimmed_text';
-                            $data['grade']['content'] = '-';
+                    } else if ($grade_grade->is_hidden()) {
+                        $data['grade']['class'] = $class.' dimmed_text';
+                        $data['grade']['content'] = '-';
+                        if ($this->canviewhidden) {
+                            $data['grade']['content'] = grade_format_gradevalue($gradeval,
+                                                                                $grade_grade->grade_item,
+                                                                                true);
+                        }
                     } else {
                         $data['grade']['class'] = $class;
-                        $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
-                                                                                     $grade_grade->grade_item,
-                                                                                     $gradeval);
-
-                        // We temporarily adjust the view of this grade item - because the min and
-                        // max are affected by the hidden values in the aggregation.
-                        $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
-                        $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
-                        $data['grade']['content'] = grade_format_gradevalue($adjustedgrade['grade'],
+                        $data['grade']['content'] = grade_format_gradevalue($gradeval,
                                                                             $grade_grade->grade_item,
                                                                             true);
                     }
@@ -495,6 +504,9 @@ class grade_report_user extends grade_report {
                     } else if ($grade_grade->is_hidden()) {
                         $data['percentage']['class'] = $class.' dimmed_text';
                         $data['percentage']['content'] = '-';
+                        if ($this->canviewhidden) {
+                            $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+                        }
                     } else {
                         $data['percentage']['class'] = $class;
                         $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);

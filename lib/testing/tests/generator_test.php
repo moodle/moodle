@@ -105,6 +105,15 @@ class core_test_generator_testcase extends advanced_testcase {
 
         $scale = $generator->create_scale();
         $this->assertNotEmpty($scale);
+
+        // Note we only count grade cats with depth > 1 because the course grade category
+        // is lazily created.
+        $count = $DB->count_records_select('grade_categories', 'depth <> 1');
+        $gradecategory = $generator->create_grade_category(array('courseid'=>$course->id));
+        $this->assertEquals($count+1, $DB->count_records_select('grade_categories', 'depth <> 1'));
+        $this->assertEquals(2, $gradecategory->depth);
+        $this->assertEquals($course->id, $gradecategory->courseid);
+        $this->assertEquals('Grade category 1', $gradecategory->fullname);
     }
 
     public function test_create_module() {
