@@ -525,7 +525,7 @@ class qformat_webct extends qformat_default {
                                 break;
 
                             case 'calculated':
-                                foreach ($question->answers as $answer) {
+                                foreach ($question->answer as $answer) {
                                     if ($formulaerror = qtype_calculated_find_formula_errors($answer)) {
                                         $warnings[] = "'$question->name': ". $formulaerror;
                                         $questionok = false;
@@ -535,7 +535,6 @@ class qformat_webct extends qformat_default {
                                     $dataset->itemcount = count($dataset->datasetitem);
                                 }
                                 $question->import_process = true;
-                                unset($question->answer); // Not used in calculated question.
                                 break;
                             case 'match':
                                 // MDL-10680:
