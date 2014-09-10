@@ -102,6 +102,11 @@ class dndupload_handler {
     protected $filehandlers = array();
 
     /**
+     * @var context_course|null
+     */
+    protected $context = null;
+
+    /**
      * Gather a list of dndupload handlers from the different mods
      *
      * @param object $course The course this is being added to (to check course_allowed_module() )
@@ -118,6 +123,8 @@ class dndupload_handler {
                         get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 20);
         $this->register_type('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), get_string('whatforpage', 'moodle'), 30);
+
+        $this->context = context_course::instance($course->id);
 
         // Loop through all modules to find handlers.
         $mods = get_plugin_list_with_function('mod', 'dndupload_register');
@@ -383,7 +390,7 @@ class dndupload_handler {
         }
 
         $ret->filehandlers = $this->filehandlers;
-        $uploadrepo = repository::get_instances(array('type' => 'upload'));
+        $uploadrepo = repository::get_instances(array('type' => 'upload', 'currentcontext' => $this->context));
         if (empty($uploadrepo)) {
             $ret->filehandlers = array(); // No upload repo => no file handlers.
         }
