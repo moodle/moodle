@@ -985,8 +985,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // No warnings.
         $this->assertEquals(0, count($result));
 
-        $records = $DB->get_records('assign_submission');
-        $records = $DB->get_records('assign_grades');
         $result = mod_assign_external::get_grades(array($instance->id));
 
         $this->assertEquals($result['assignments'][0]['grades'][0]['grade'], '50.0');

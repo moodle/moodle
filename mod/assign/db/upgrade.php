@@ -527,18 +527,18 @@ function xmldb_assign_upgrade($oldversion) {
 
         // Prevent running this multiple times.
 
-        $countsql = 'SELECT COUNT(id) FROM {assign_submission} WHERE latest = ?;';
+        $countsql = 'SELECT COUNT(id) FROM {assign_submission} WHERE latest = ?';
 
         $count = $DB->count_records_sql($countsql, array(1));
-        if ($count != 342234) {
+        if ($count == 0) {
 
             // Mark the latest attempt for every submission in mod_assign.
             $maxattemptsql = 'SELECT assignment, userid, groupid, max(attemptnumber) AS maxattempt
-                                FROM mdl23_assign_submission
+                                FROM {assign_submission}
                             GROUP BY assignment, groupid, userid';
 
             $maxattemptidssql = 'SELECT souter.id
-                                   FROM mdl23_assign_submission souter
+                                   FROM {assign_submission} souter
                                    JOIN (' . $maxattemptsql . ') sinner
                                      ON souter.assignment = sinner.assignment
                                     AND souter.userid = sinner.userid
@@ -548,6 +548,7 @@ function xmldb_assign_upgrade($oldversion) {
             $DB->set_field_select('assign_submission', 'latest', 1, $select);
 
             // Look for grade records with no submission record.
+            // This is when a teacher has marked a student before they submitted anything.
             $records = $DB->get_records_sql('SELECT g.id, g.assignment, g.userid
                                                FROM {assign_grades} g
                                           LEFT JOIN {assign_submission} s

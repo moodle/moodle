@@ -136,6 +136,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $data->groupid = 0;
         }
 
+        // We will correct this in set_latest_submission_field() once all submissions are restored.
+        $data->latest = 0;
+
         $newitemid = $DB->insert_record('assign_submission', $data);
 
         // Note - the old contextid is required in order to be able to restore files stored in
@@ -232,7 +235,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
     }
 
     /**
-     * For all submissions in this assignment, either set the submission->latest field to 1 for the latest attempts.
+     * For all submissions in this assignment, either set the
+     * submission->latest field to 1 for the latest attempts
+     * or create a new submission record for grades with no submission.
      *
      * @return void
      */
@@ -282,7 +287,8 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         }
 
         // Now check for records with a grade, but no submission record.
-        $records = $DB->get_records_sql('SELECT g.id, g.userid
+        // This happens when a teacher marks a student before they have submitted anything.
+        $records = $DB->get_recordset_sql('SELECT g.id, g.userid
                                            FROM {assign_grades} g
                                       LEFT JOIN {assign_submission} s
                                              ON s.assignment = g.assignment
@@ -301,6 +307,8 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $submission->timemodified = time();
             array_push($submissions, $submission);
         }
+
+        $records->close();
 
         $DB->insert_records('assign_submission', $submissions);
     }
