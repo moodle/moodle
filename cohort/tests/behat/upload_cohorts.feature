@@ -19,13 +19,13 @@ Feature: A privileged user can create cohorts using a CSV file
     And I upload "cohort/tests/fixtures/uploadcohorts1.csv" file to "File" filemanager
     And I click on "Preview" "button"
     Then the following should exist in the "previewuploadedcohorts" table:
-      | name          | idnumber  | description       | Context       | Status |
-      | cohort name 1 | cohortid1 | first description | System        |        |
-      | cohort name 2 | cohortid2 |                   | System        |        |
-      | cohort name 3 | cohortid3 |                   | Miscellaneous |        |
-      | cohort name 4 | cohortid4 |                   | Cat 1         |        |
-      | cohort name 5 | cohortid5 |                   | Cat 2         |        |
-      | cohort name 6 | cohortid6 |                   | Cat 3         |        |
+      | name          | idnumber  | description       | Context       | visible | Status |
+      | cohort name 1 | cohortid1 | first description | System        | 1       |        |
+      | cohort name 2 | cohortid2 |                   | System        | 1       |        |
+      | cohort name 3 | cohortid3 |                   | Miscellaneous | 0       |        |
+      | cohort name 4 | cohortid4 |                   | Cat 1         | 1       |        |
+      | cohort name 5 | cohortid5 |                   | Cat 2         | 0       |        |
+      | cohort name 6 | cohortid6 |                   | Cat 3         | 1       |        |
     And I press "Upload cohorts"
     And I should see "Uploaded 6 cohorts"
     And I press "Continue"
@@ -42,6 +42,12 @@ Feature: A privileged user can create cohorts using a CSV file
       | Cat 1         | cohort name 4 | cohortid4 |                   | 0           | Created manually |
       | Cat 2         | cohort name 5 | cohortid5 |                   | 0           | Created manually |
       | Cat 3         | cohort name 6 | cohortid6 |                   | 0           | Created manually |
+    And the "class" attribute of "cohort name 1" "table_row" should not contain "dimmed_text"
+    And the "class" attribute of "cohort name 2" "table_row" should not contain "dimmed_text"
+    And the "class" attribute of "cohort name 3" "table_row" should contain "dimmed_text"
+    And the "class" attribute of "cohort name 4" "table_row" should not contain "dimmed_text"
+    And the "class" attribute of "cohort name 5" "table_row" should contain "dimmed_text"
+    And the "class" attribute of "cohort name 6" "table_row" should not contain "dimmed_text"
 
   @javascript
   Scenario: Upload cohorts with default category context as admin

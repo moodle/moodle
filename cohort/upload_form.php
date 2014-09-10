@@ -359,7 +359,7 @@ class cohort_upload_form extends moodleform {
         $columns = $cir->get_columns();
 
         // Check that columns include 'name' and warn about extra columns.
-        $allowedcolumns = array('contextid', 'name', 'idnumber', 'description', 'descriptionformat');
+        $allowedcolumns = array('contextid', 'name', 'idnumber', 'description', 'descriptionformat', 'visible');
         $additionalcolumns = array('context', 'category', 'category_id', 'category_idnumber', 'category_path');
         $displaycolumns = array();
         $extracolumns = array();
@@ -453,6 +453,19 @@ class cohort_upload_form extends moodleform {
                 case 'idnumber': $hash[$key] = core_text::substr(clean_param($value, PARAM_RAW), 0, 254); break;
                 case 'description': $hash[$key] = clean_param($value, PARAM_RAW); break;
                 case 'descriptionformat': $hash[$key] = clean_param($value, PARAM_INT); break;
+                case 'visible':
+                    $tempstr = trim(core_text::strtolower($value));
+                    if ($tempstr === '') {
+                        // Empty string is treated as "YES" (the default value for cohort visibility).
+                        $hash[$key] = 1;
+                    } else {
+                        if ($tempstr === core_text::strtolower(get_string('no')) || $tempstr === 'n') {
+                            // Special treatment for 'no' string that is not included in clean_param().
+                            $value = 0;
+                        }
+                        $hash[$key] = clean_param($value, PARAM_BOOL) ? 1 : 0;
+                    }
+                    break;
             }
         }
     }
