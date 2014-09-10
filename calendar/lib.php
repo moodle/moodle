@@ -821,7 +821,7 @@ function calendar_get_events_by_id($eventids) {
  * @return string $content return available control for the calender in html
  */
 function calendar_top_controls($type, $data) {
-    global $PAGE;
+    global $PAGE, $OUTPUT;
 
     // Get the calendar type we are using.
     $calendartype = \core_calendar\type_factory::get_calendar_instance();
@@ -949,7 +949,8 @@ function calendar_top_controls($type, $data) {
             }
 
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left . '<span class="hide"> | </span><h1 class="current">'.userdate($time, get_string('strftimemonthyear'))."</h1>";
+            $content .= $left . '<span class="hide"> | </span>';
+            $content .= $OUTPUT->heading(userdate($time, get_string('strftimemonthyear')), 2, 'current');
             $content .= '<span class="hide"> | </span>' . $right;
             $content .= '<span class="clearer"><!-- --></span>';
             $content .= html_writer::end_tag('div')."\n";
