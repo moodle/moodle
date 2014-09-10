@@ -3606,7 +3606,7 @@ function get_default_enrol_roles(context $context, $addroleid = null) {
          LEFT JOIN {role_context_levels} rcl ON (rcl.roleid = r.id AND rcl.contextlevel = :contextlevel)
          LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id)
              WHERE rcl.id IS NOT NULL $addrole
-          ORDER BY r.sortorder";
+          ORDER BY sortorder DESC";
 
     $roles = $DB->get_records_sql($sql, $params);
 
