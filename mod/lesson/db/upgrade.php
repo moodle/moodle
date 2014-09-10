@@ -78,7 +78,19 @@ function xmldb_lesson_upgrade($oldversion) {
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014091001) {
+        $table = new xmldb_table('lesson');
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2014091001, 'lesson');
+    }
+
     return true;
 }
-
-
