@@ -104,10 +104,10 @@ class subscriptions {
      * @param int $userid The user ID
      * @param \stdClass $forum The record of the forum to test
      * @param int $discussionid The ID of the discussion to check
-     * @param \cm_info $cm The coursemodule record. If not supplied, this will be calculated using get_fast_modinfo instead.
+     * @param $cm The coursemodule record. If not supplied, this will be calculated using get_fast_modinfo instead.
      * @return boolean
      */
-    public static function is_subscribed($userid, $forum, $discussionid = null, cm_info $cm = null) {
+    public static function is_subscribed($userid, $forum, $discussionid = null, $cm = null) {
         // If forum is force subscribed and has allowforcesubscribe, then user is subscribed.
         if (self::is_forcesubscribed($forum)) {
             if (!$cm) {
