@@ -67,6 +67,8 @@ class core_component {
     protected static $version = null;
     /** @var array list of the files to map. */
     protected static $filestomap = array('lib.php', 'settings.php');
+    /** @var array cache of PSR loadable systems */
+    protected static $psrclassmap = null;
 
     /**
      * Class loader for Frankenstyle named classes in standard locations.
@@ -99,6 +101,14 @@ class core_component {
             $debugging = "Class '%s' has been renamed for the autoloader and is now deprecated. Please use '%s' instead.";
             debugging(sprintf($debugging, $classname, $newclassname), DEBUG_DEVELOPER);
             class_alias($newclassname, $classname);
+            return;
+        }
+
+        // Attempt to normalize the classname.
+        $normalizedclassname = str_replace(array('/', '\\'), '_', $classname);
+        if (isset(self::$psrclassmap[$normalizedclassname])) {
+            // Function include would be faster, but for BC it is better to include only once.
+            include_once(self::$psrclassmap[$normalizedclassname]);
             return;
         }
     }
@@ -142,6 +152,7 @@ class core_component {
                 self::$classmap         = $cache['classmap'];
                 self::$classmaprenames  = $cache['classmaprenames'];
                 self::$filemap          = $cache['filemap'];
+                self::$psrclassmap      = $cache['psrclassmap'];
                 return;
             }
 
@@ -182,6 +193,7 @@ class core_component {
                     self::$classmap         = $cache['classmap'];
                     self::$classmaprenames  = $cache['classmaprenames'];
                     self::$filemap          = $cache['filemap'];
+                    self::$psrclassmap      = $cache['psrclassmap'];
                     return;
                 }
                 // Note: we do not verify $CFG->admin here intentionally,
@@ -269,6 +281,7 @@ class core_component {
             'classmaprenames'   => self::$classmaprenames,
             'filemap'           => self::$filemap,
             'version'           => self::$version,
+            'psrclassmap'       => self::$psrclassmap,
         );
 
         return '<?php
@@ -292,6 +305,7 @@ $cache = '.var_export($cache, true).';
         self::fill_classmap_cache();
         self::fill_classmap_renames_cache();
         self::fill_filemap_cache();
+        self::fill_psr_cache();
         self::fetch_core_version();
     }
 
@@ -656,6 +670,77 @@ $cache = '.var_export($cache, true).';
             }
             // New namespaced classes.
             self::$classmap[$component.$namespace.'\\'.$classname] = "$fulldir/$filename";
+        }
+        unset($item);
+        unset($items);
+    }
+
+    /**
+     * Fill caches for classes following the PSR-0 standard for the
+     * specified Vendors.
+     *
+     * PSR Autoloading is detailed at http://www.php-fig.org/psr/psr-0/.
+     */
+    protected static function fill_psr_cache() {
+        global $CFG;
+
+        $psrsystems = array(
+        );
+        self::$psrclassmap = array();
+
+        foreach ($psrsystems as $system => $fulldir) {
+            if (!$fulldir) {
+                continue;
+            }
+            self::load_psr_classes($CFG->libdir . DIRECTORY_SEPARATOR . $fulldir);
+        }
+    }
+
+    /**
+     * Find all PSR-0 style classes in within the base directory.
+     *
+     * @param string $basedir The base directory that the PSR-type library can be found in.
+     * @param string $subdir The directory within the basedir to search for classes within.
+     */
+    protected static function load_psr_classes($basedir, $subdir = null) {
+        if ($subdir) {
+            $fulldir = implode(DIRECTORY_SEPARATOR, array($basedir, $subdir));
+            $classnameprefix = preg_replace('/\//', '_', $subdir);
+        } else {
+            $fulldir = $basedir;
+        }
+        if (!is_dir($fulldir)) {
+            return;
+        }
+
+        $items = new \DirectoryIterator($fulldir);
+        foreach ($items as $item) {
+            if ($item->isDot()) {
+                continue;
+            }
+            if ($item->isDir()) {
+                $dirname = $item->getFilename();
+                $newsubdir = $dirname;
+                if ($subdir) {
+                    $newsubdir = implode(DIRECTORY_SEPARATOR, array($subdir, $dirname));
+                }
+                self::load_psr_classes($basedir, $newsubdir);
+                continue;
+            }
+
+            $filename = $item->getFilename();
+            $classname = preg_replace('/\.php$/', '', $filename);
+
+            if ($filename === $classname) {
+                // Not a php file.
+                continue;
+            }
+
+            if ($classnameprefix) {
+                $classname = $classnameprefix . '_' . $classname;
+            }
+
+            self::$psrclassmap[$classname] = $fulldir . DIRECTORY_SEPARATOR . $filename;
         }
         unset($item);
         unset($items);
