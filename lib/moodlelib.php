@@ -5888,7 +5888,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         } else {
             require_once($CFG->libdir.'/filelib.php');
             $mimetype = mimeinfo('type', $attachname);
-            $mail->addAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
+
+            $attachmentpath = $attachment;
+
+            // If the attachment is a full path to a file in the tempdir, use it as is,
+            // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
+            if (strpos($attachmentpath, $CFG->tempdir) !== 0) {
+                $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
+            }
+
+            $mail->addAttachment($attachmentpath, $attachname, 'base64', $mimetype);
         }
     }
 
