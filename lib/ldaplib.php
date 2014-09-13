@@ -337,7 +337,7 @@ function ldap_get_dn_special_chars() {
     return array (
         LDAP_DN_SPECIAL_CHARS              => array('\\',  ' ',   '"',   '#',   '+',   ',',   ';',   '<',   '=',   '>',   "\0"),
         LDAP_DN_SPECIAL_CHARS_QUOTED_NUM   => array('\\5c','\\20','\\22','\\23','\\2b','\\2c','\\3b','\\3c','\\3d','\\3e','\\00'),
-        LDAP_DN_SPECIAL_CHARS_QUOTED_ALPHA => array('\\\\','\\ ', '\\"', '\\#', '\\+', '\\,', '\\;', '\\<', '\\>', '\\=', '\\00'),
+        LDAP_DN_SPECIAL_CHARS_QUOTED_ALPHA => array('\\\\','\\ ', '\\"', '\\#', '\\+', '\\,', '\\;', '\\<', '\\=', '\\>', '\\00'),
         );
 }
 
