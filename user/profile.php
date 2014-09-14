@@ -49,7 +49,14 @@ if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
         $SESSION->wantsurl = $PAGE->url->out(false);
-        redirect(get_login_url());
+
+        $PAGE->set_context(context_system::instance());
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
+                              get_login_url(),
+                              $CFG->wwwroot);
+        echo $OUTPUT->footer();
+        die;
     }
 } else if (!empty($CFG->forcelogin)) {
     require_login();
