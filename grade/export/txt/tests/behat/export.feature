@@ -39,11 +39,36 @@ Feature: I need to export grades as text
     And I should not see "80.00"
 
   @javascript
-  Scenario: Export grades as text using percentages
+  Scenario: Export grades as text using real
     When I set the field "Grade report" to "Plain text file"
     And I expand all fieldsets
-    And I set the field "Grade export display type" to "Percent"
+    And  I set the following fields to these values:
+      | Real        | 1                        |
     And I click on "Course total" "checkbox"
     And I press "Download"
     Then I should see "Student,1"
+    And I should see "80.00"
+
+  @javascript
+  Scenario: Export grades as text using percentages and letters
+    When I set the field "Grade report" to "Plain text file"
+    And  I set the following fields to these values:
+      | Percentage   | 1                        |
+      | Letter       | 1                        |
+    And I press "Download"
+    Then I should see "Student,1"
     And I should see "80.00 %"
+    And I should see "B-"
+
+  @javascript
+  Scenario: Export grades as text using real, percentages and letters
+    When I set the field "Grade report" to "Plain text file"
+    And  I set the following fields to these values:
+      | Real         | 1                        |
+      | Percentage   | 1                        |
+      | Letter       | 1                        |
+    And I press "Download"
+    Then I should see "Student,1"
+    And I should see "80.00"
+    And I should see "80.00 %"
+    And I should see "B-"

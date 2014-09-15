@@ -44,7 +44,8 @@ $actionurl = new moodle_url('/grade/export/txt/export.php');
 $formoptions = array(
     'includeseparator'=>true,
     'publishing' => true,
-    'simpleui' => true
+    'simpleui' => true,
+    'multipledisplaytypes' => true
 );
 
 $mform = new grade_export_form($actionurl, $formoptions);
