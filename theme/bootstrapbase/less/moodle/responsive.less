@@ -458,6 +458,24 @@
             }
         }
     }
+
+    .navbar {
+        .nav-collapse.active {
+            .nav,
+            .nav .dropdown-menu {
+                .divider {
+                    width: auto;
+                    display: block;
+                    height: 0px;
+                    margin: 4px 1px;
+                    border-left: 0px none;
+                    border-right: 0px none;
+                    border-top: 1px solid @navbarBorder;
+                    border-bottom: 1px solid @navbarBackgroundHighlight;
+                }
+            }
+        }
+    }
 }
 
 @media (max-width: 767px) {
