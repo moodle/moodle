@@ -655,7 +655,11 @@ class grade_report_user extends grade_report {
                                 }
                             }
                             if ($validpercent) {
-                                $data['contributiontocoursetotal']['content'] = format_float($percentoftotal * 100.0, 2) . ' %';
+                                $grademin = $grade_grade->grade_item->grademin;
+                                $grademax = $grade_grade->grade_item->grademax;
+                                $finalgrade = $grade_grade->finalgrade;
+                                $contribution = format_float(((($finalgrade-$grademin)/($grademax-$grademin)*($percentoftotal * 100.0))),2);
+                                $data['contributiontocoursetotal']['content'] = $contribution;
                             }
                         }
                     }
