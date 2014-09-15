@@ -418,6 +418,12 @@ function cohort_edit_controls(context $context, moodle_url $currenturl) {
         if ($currenturl->get_path() === $addurl->get_path() && !$currenturl->param('id')) {
             $currenttab = 'addcohort';
         }
+
+        $uploadurl = new moodle_url('/cohort/upload.php', array('contextid' => $context->id));
+        $tabs[] = new tabobject('uploadcohorts', $uploadurl, get_string('uploadcohorts', 'cohort'));
+        if ($currenturl->get_path() === $uploadurl->get_path()) {
+            $currenttab = 'uploadcohorts';
+        }
     }
     if (count($tabs) > 1) {
         return new tabtree($tabs, $currenttab);
