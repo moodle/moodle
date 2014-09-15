@@ -331,6 +331,18 @@ class edit_category_form extends moodleform {
 
             }
 
+            // Prevent the user from using drop lowest/keep highest when the aggregation method cannot handle it.
+            if (!$grade_category->can_apply_limit_rules()) {
+                if ($mform->elementExists('keephigh')) {
+                    $mform->setConstant('keephigh', 0);
+                    $mform->hardFreeze('keephigh');
+                }
+                if ($mform->elementExists('droplow')) {
+                    $mform->setConstant('droplow', 0);
+                    $mform->hardFreeze('droplow');
+                }
+            }
+
             if ($grade_item->is_calculated()) {
                 // following elements are ignored when calculation formula used
                 if ($mform->elementExists('aggregation')) {
