@@ -358,7 +358,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         2 => get_string('showmarkandmax', 'question'),
     );
     $settings->add(new admin_setting_configselect('question_preview/marks',
-            get_string('marks', 'question'), '', 1, $marksoptions));
+            get_string('marks', 'question'), '', 2, $marksoptions));
 
     $settings->add(new admin_setting_configselect('question_preview/markdp',
             get_string('decimalplacesingrades', 'question'), '', 2, array(0, 1, 2, 3, 4, 5, 6, 7)));
