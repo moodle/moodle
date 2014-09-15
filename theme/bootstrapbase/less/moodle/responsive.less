@@ -449,6 +449,69 @@
             }
         }
     }
+
+    .navbar {
+        .nav-collapse.active {
+            border-top: 1px solid @navbarBorder;
+            box-shadow: 0px -8px 24px rgba(0, 0, 0, 0.125);
+            &.pull-left,
+            &.pull-right {
+                float: none;
+            }
+            > .nav {
+                margin: 0;
+
+                // Add padding to first-level links.
+                > li > a {
+                    padding-left: 20px;
+                    border-radius: 0px;
+                }
+                .dropdown-menu {
+                    margin: 0px 0px 0px 15px;
+                    li > a {
+                        border-radius: 0px;
+                    }
+                }
+            }
+
+            .nav, .nav .dropdown-menu {
+                .dropdown-submenu {
+                    .dropdown-toggle {
+                        &:after {
+                            display: inline-block;
+                            float: none;
+                            .caret();
+                            border-top-color: @navbarBorder;
+                            margin-left: 4px;
+                            margin-top: 8px;
+                        }
+                    }
+
+                    &.open {
+                        > a {
+                            background-color: @navbarBackground;
+                        }
+                    }
+
+                    // Suppress showing of submenu menu content on hover.
+                    &:hover {
+                        .dropdown-menu {
+                            display: none;
+                        }
+                        &.open {
+                            > a {
+                                background: @navbarBackground;
+                            }
+                            > .dropdown-menu,
+                            .open > .dropdown-menu {
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @media (max-width: 767px) {
