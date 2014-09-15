@@ -256,6 +256,10 @@ M.mod_quiz.secure_window = {
             // Left click on a button or similar. No worries.
             return;
         }
+        if (e.button == 1 && e.target.test('[contenteditable=true]')) {
+            // Left click in Atto or similar.
+            return;
+        }
         e.halt();
     },
 
