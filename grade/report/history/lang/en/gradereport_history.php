@@ -26,7 +26,7 @@
 $string['allgradeitems'] = 'All grade items';
 $string['allgraders'] = 'All graders';
 $string['datefrom'] = 'Date from';
-$string['datetill'] = 'Date till';
+$string['dateto'] = 'Date to';
 $string['datetime'] = 'Date and time';
 $string['deleteditemid'] = 'Delete item with id {$a}';
 $string['errajaxsearch'] = 'Error when searching users';
