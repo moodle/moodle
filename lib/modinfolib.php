@@ -1791,8 +1791,12 @@ class cm_info implements IteratorAggregate {
             // but we know that this function does not need anything more than basic data.
             $this->available = $ci->is_available($this->availableinfo, true,
                     $userid, $this->modinfo);
+        } else {
+            $this->available = true;
+        }
 
-            // Check parent section
+        // Check parent section.
+        if ($this->available) {
             $parentsection = $this->modinfo->get_section_info($this->sectionnum);
             if (!$parentsection->available) {
                 // Do not store info from section here, as that is already
@@ -1800,11 +1804,9 @@ class cm_info implements IteratorAggregate {
                 // the flag
                 $this->available = false;
             }
-        } else {
-            $this->available = true;
         }
 
-        // Update visible state for current user
+        // Update visible state for current user.
         $this->update_user_visible();
 
         // Let module make dynamic changes at this point
@@ -2678,15 +2680,22 @@ class section_info implements IteratorAggregate {
             // Has already been calculated or does not need calculation.
             return $this->_available;
         }
+        $this->_available = true;
+        $this->_availableinfo = '';
         if (!empty($CFG->enableavailability)) {
             require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
                     $userid, $this->modinfo);
-        } else {
-            $this->_available = true;
-            $this->_availableinfo = '';
+        }
+        // Execute the hook from the course format that may override the available/availableinfo properties.
+        $currentavailable = $this->_available;
+        course_get_format($this->modinfo->get_course())->
+            section_get_available_hook($this, $this->_available, $this->_availableinfo);
+        if (!$currentavailable && $this->_available) {
+            debugging('section_get_available_hook() can not make unavailable section available', DEBUG_DEVELOPER);
+            $this->_available = $currentavailable;
         }
         return $this->_available;
     }
