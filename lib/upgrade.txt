@@ -30,8 +30,9 @@ DEPRECATIONS:
   deprecated.
 * cohort_get_visible_list() is deprecated. There is a better function cohort_get_available_cohorts()
   that respects user capabilities to view cohorts.
-* enrol_cohort_get_cohorts() is deprecated; replace with enrol_cohort_search_cohorts() or
-  cohort_get_available_cohorts()
+* enrol_cohort_get_cohorts() and enrol_cohort_search_cohorts() are deprecated since
+  functionality is removed. Please use cohort_get_available_cohorts()
+* enrol_cohort_enrol_all_users() is deprecated; enrol_manual is now responsible for this action
 * enrol_cohort_can_view_cohort() is deprecated; replace with cohort_can_view_cohort()
 
 === 2.6.4 / 2.7.1 ===
