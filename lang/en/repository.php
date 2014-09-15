@@ -126,7 +126,6 @@ $string['foldernotfound'] = 'Folder not found';
 $string['folderrecurse'] = 'Folder can not be moved to it\'s own subfolder';
 $string['getfile'] = 'Select this file';
 $string['getfiletimeout'] = 'Get file timeout';
-$string['hidden'] = 'Hidden';
 $string['help'] = 'Help';
 $string['choosealink'] = 'Choose a link...';
 $string['chooselicense'] = 'Choose license';
@@ -238,3 +237,7 @@ $string['unzipped'] = 'Unzipped successfully';
 $string['wrongcontext'] = 'You cannot access to this context';
 $string['xhtmlerror'] = 'You are probably using XHTML strict header, some YUI Component doesn\'t work in this mode, please turn it off in moodle';
 $string['ziped'] = 'Compress folder successfully';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'Hidden';

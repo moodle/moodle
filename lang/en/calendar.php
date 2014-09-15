@@ -111,7 +111,6 @@ $string['gotocalendar'] = 'Go to calendar';
 $string['group'] = 'Group';
 $string['groupevent'] = 'Group event';
 $string['groupevents'] = 'Group events';
-$string['hidden'] = 'hidden';
 $string['hidecourseevents'] = 'Hide course events';
 $string['hideglobalevents'] = 'Hide global events';
 $string['hidegroupsevents'] = 'Hide group events';
@@ -217,3 +216,7 @@ $string['weeknext'] = 'Next week';
 $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'hidden';
