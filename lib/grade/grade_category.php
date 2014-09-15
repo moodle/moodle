@@ -628,7 +628,12 @@ class grade_category extends grade_object {
             $grade->finalgrade = null;
 
             if (!is_null($oldfinalgrade)) {
-                $grade->update('aggregation');
+                $success = $grade->update('aggregation');
+
+                // If successful trigger a user_graded event.
+                if ($success) {
+                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                }
             }
             $dropped = $grade_values;
             $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
@@ -707,7 +712,12 @@ class grade_category extends grade_object {
             $grade->finalgrade = null;
 
             if (!is_null($oldfinalgrade)) {
-                $grade->update('aggregation');
+                $success = $grade->update('aggregation');
+
+                // If successful trigger a user_graded event.
+                if ($success) {
+                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                }
             }
             $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
             return;
@@ -744,7 +754,12 @@ class grade_category extends grade_object {
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade) ||
                 grade_floats_different($grade->rawgrademax, $oldrawgrademax) ||
                 grade_floats_different($grade->rawgrademin, $oldrawgrademin)) {
-            $grade->update('aggregation');
+            $success = $grade->update('aggregation');
+
+            // If successful trigger a user_graded event.
+            if ($success) {
+                \core\event\user_graded::create_from_grade($grade)->trigger();
+            }
         }
 
         $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
