@@ -187,6 +187,13 @@ class info_module extends info {
         // As a result we cannot take short cuts any longer and must get
         // standard modinfo.
         $modinfo = get_fast_modinfo($cm->course, $userid);
-        return $modinfo->get_cm($cm->id)->uservisible;
+        $cms = $modinfo->get_cms();
+        if (!isset($cms[$cm->id])) {
+            // In some cases this might get called with a cmid that is no longer
+            // available, for example when a module is hidden at system level.
+            debugging('info_module::is_user_visible called with invalid cmid ' . $cm->id, DEBUG_DEVELOPER);
+            return false;
+        }
+        return $cms[$cm->id]->uservisible;
     }
 }
