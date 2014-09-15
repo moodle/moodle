@@ -128,10 +128,10 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "</script>\n";
     echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
 } else {
-    // Request the launch content with an object tag
-    echo '<object id="contentframe" height="600px" width="100%" type="text/html" data="launch.php?id='.$cm->id.'"></object>';
+    // Request the launch content with an iframe tag.
+    echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';
 
-    //Output script to make the object tag be as large as possible
+    // Output script to make the iframe be as large as possible.
     $resize = '
         <script type="text/javascript">
         //<![CDATA[
