@@ -581,6 +581,7 @@ $cache = '.var_export($cache, true).';
         // Note: Add extra deprecated legacy classes here as necessary.
         self::$classmap['textlib'] = "$CFG->dirroot/lib/classes/text.php";
         self::$classmap['collatorlib'] = "$CFG->dirroot/lib/classes/collator.php";
+        ksort(self::$classmap);
     }
 
 
