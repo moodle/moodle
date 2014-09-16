@@ -2321,6 +2321,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Back up config settings for restore later.
         $originalcfg = new stdClass();
         $originalcfg->fullnamedisplay = $CFG->fullnamedisplay;
+        $originalcfg->alternativefullnameformat = $CFG->alternativefullnameformat;
 
         // Testing existing fullnamedisplay settings.
         $CFG->fullnamedisplay = 'firstname';
@@ -2345,6 +2346,25 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Test override parameter.
         $CFG->fullnamedisplay = 'firstname';
         $expectedname = "$user->firstname $user->lastname";
+        $testname = fullname($user, true);
+        $this->assertSame($expectedname, $testname);
+
+        // Test alternativefullnameformat setting.
+        // Test alternativefullnameformat that has been set to nothing.
+        $CFG->alternativefullnameformat = '';
+        $expectedname = "$user->firstname $user->lastname";
+        $testname = fullname($user, true);
+        $this->assertSame($expectedname, $testname);
+
+        // Test alternativefullnameformat that has been set to 'language'.
+        $CFG->alternativefullnameformat = 'language';
+        $expectedname = "$user->firstname $user->lastname";
+        $testname = fullname($user, true);
+        $this->assertSame($expectedname, $testname);
+
+        // Test customising the alternativefullnameformat setting with all additional name fields.
+        $CFG->alternativefullnameformat = 'firstname lastname firstnamephonetic lastnamephonetic middlename alternatename';
+        $expectedname = "$user->firstname $user->lastname $user->firstnamephonetic $user->lastnamephonetic $user->middlename $user->alternatename";
         $testname = fullname($user, true);
         $this->assertSame($expectedname, $testname);
 
@@ -2428,6 +2448,7 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Tidy up after we finish testing.
         $CFG->fullnamedisplay = $originalcfg->fullnamedisplay;
+        $CFG->alternativefullnameformat = $originalcfg->alternativefullnameformat;
     }
 
     public function test_get_all_user_name_fields() {
