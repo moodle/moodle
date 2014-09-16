@@ -862,6 +862,22 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * Normalize the component name.
+     *
+     * Note: this does not verify the validity of the plugin or component.
+     *
+     * @param string $component
+     * @return string
+     */
+    public static function normalize_componentname($componentname) {
+        list($plugintype, $pluginname) = self::normalize_component($componentname);
+        if ($plugintype === 'core' && is_null($pluginname)) {
+            return $plugintype;
+        }
+        return $plugintype . '_' . $pluginname;
+    }
+
+    /**
      * Normalize the component name using the "frankenstyle" rules.
      *
      * Note: this does not verify the validity of plugin or type names.
