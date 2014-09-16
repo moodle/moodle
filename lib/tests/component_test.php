@@ -292,13 +292,13 @@ class core_component_testcase extends advanced_testcase {
         $this->assertSame(array('local', 'admin'), core_component::normalize_component('local_admin'));
 
         // Unknown words without underscore are supposed to be activity modules.
-        $this->assertSame(array('mod', 'whothefuckwouldcomewithsuchastupidnameofcomponent'),
-            core_component::normalize_component('whothefuckwouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(array('mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'),
+            core_component::normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent'));
         // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame(array('whothefuck', 'wouldcomewithsuchastupidnameofcomponent'),
-            core_component::normalize_component('whothefuck_wouldcomewithsuchastupidnameofcomponent'));
-        $this->assertSame(array('whothefuck', 'would_come_withsuchastupidnameofcomponent'),
-            core_component::normalize_component('whothefuck_would_come_withsuchastupidnameofcomponent'));
+        $this->assertSame(array('whoonearth', 'wouldcomewithsuchastupidnameofcomponent'),
+            core_component::normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(array('whoonearth', 'would_come_withsuchastupidnameofcomponent'),
+            core_component::normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent'));
     }
 
     public function test_deprecated_normalize_component() {
@@ -330,13 +330,13 @@ class core_component_testcase extends advanced_testcase {
         $this->assertSame(array('local', 'admin'), normalize_component('local_admin'));
 
         // Unknown words without underscore are supposed to be activity modules.
-        $this->assertSame(array('mod', 'whothefuckwouldcomewithsuchastupidnameofcomponent'),
-            normalize_component('whothefuckwouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(array('mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'),
+            normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent'));
         // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame(array('whothefuck', 'wouldcomewithsuchastupidnameofcomponent'),
-            normalize_component('whothefuck_wouldcomewithsuchastupidnameofcomponent'));
-        $this->assertSame(array('whothefuck', 'would_come_withsuchastupidnameofcomponent'),
-            normalize_component('whothefuck_would_come_withsuchastupidnameofcomponent'));
+        $this->assertSame(array('whoonearth', 'wouldcomewithsuchastupidnameofcomponent'),
+            normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(array('whoonearth', 'would_come_withsuchastupidnameofcomponent'),
+            normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent'));
     }
 
     public function test_get_component_directory() {
