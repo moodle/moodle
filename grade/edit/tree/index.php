@@ -32,12 +32,8 @@ $action          = optional_param('action', 0, PARAM_ALPHA);
 $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
 $category        = optional_param('category', null, PARAM_INT);
 $aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
-$showadvanced    = optional_param('showadvanced', -1, PARAM_BOOL); // sticky editing mode
 
 $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid));
-if($showadvanced!=-1) {
-    $url->param("showadvanced",$showadvanced);
-}
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 
@@ -56,37 +52,6 @@ $PAGE->requires->js('/grade/edit/tree/functions.js');
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
 $returnurl = $gpr->get_return_url(null);
-
-/// Build editing on/off buttons
-if (!isset($USER->gradeediting)) {
-    $USER->gradeediting = array();
-}
-
-if (has_capability('moodle/grade:manage', $context)) {
-    if (!isset($USER->gradeediting[$course->id])) {
-        $USER->gradeediting[$course->id] = 0;
-    }
-
-    if ($showadvanced == 1) {
-        $USER->gradeediting[$course->id] = 1;
-    } else if ($showadvanced == 0) {
-        $USER->gradeediting[$course->id] = 0;
-    }
-
-    // page params for the turn editing on
-    $options = $gpr->get_options();
-    $options['sesskey'] = sesskey();
-
-    if ($USER->gradeediting[$course->id]) {
-        $options['showadvanced'] = 0;
-    } else {
-        $options['showadvanced'] = 1;
-    }
-
-} else {
-    $USER->gradeediting[$course->id] = 0;
-    $buttons = '';
-}
 
 // Change category aggregation if requested
 if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
@@ -198,12 +163,6 @@ switch ($action) {
 
     default:
         break;
-}
-
-// Hide advanced columns if moving
-if ($grade_edit_tree->moving) {
-    $original_gradeediting = $USER->gradeediting[$course->id];
-    $USER->gradeediting[$course->id] = 0;
 }
 
 //if we go straight to the db to update an element we need to recreate the tree as
@@ -376,11 +335,6 @@ $PAGE->requires->yui_module('moodle-core-formchangechecker',
 $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
 
 echo $OUTPUT->footer();
-
-// Restore original show/hide preference if moving
-if ($moving) {
-    $USER->gradeediting[$course->id] = $original_gradeediting;
-}
 die;
 
 

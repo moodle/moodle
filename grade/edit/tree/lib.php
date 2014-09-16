@@ -91,21 +91,12 @@ class grade_edit_tree {
         $this->columns[] = grade_edit_tree_column::factory('actions');
         $this->columns[] = grade_edit_tree_column::factory('select');
 
-        $mode = ($USER->gradeediting[$COURSE->id]) ? 'advanced' : 'simple';
-
-        $widthstyle = '';
-        if ($mode == 'simple') {
-            $widthstyle = ' style="width:auto;" ';
-        }
-
         $this->table = new html_table();
         $this->table->id = "grade_edit_tree_table";
-        $this->table->cellpadding = 5;
-        $this->table->attributes['class'] = 'generaltable ' . $mode;
-        $this->table->style = $widthstyle;
+        $this->table->attributes['class'] = 'generaltable simple';
 
         foreach ($this->columns as $column) {
-            if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden($mode)) {
+            if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
                 $this->table->head[] = $column->get_header_cell();
             }
         }
@@ -165,8 +156,6 @@ class grade_edit_tree {
         $actions .= $this->gtree->get_hiding_icon($element, $this->gpr);
         $actions .= $this->gtree->get_locking_icon($element, $this->gpr);
         $actions .= $this->gtree->get_reset_icon($element, $this->gpr);
-
-        $mode = ($USER->gradeediting[$COURSE->id]) ? 'advanced' : 'simple';
 
         $returnrows = array();
         $root = false;
@@ -308,7 +297,7 @@ class grade_edit_tree {
             $row->cells[] = $headercell;
 
             foreach ($this->columns as $column) {
-                if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden($mode)) {
+                if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
                     $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id, 'name' => $object->name, 'level' => $level, 'actions' => $actions, 'eid' => $eid));
                 }
             }
@@ -343,7 +332,7 @@ class grade_edit_tree {
             }
 
             foreach ($this->columns as $column) {
-                if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden($mode)) {
+                if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
                     $gradeitemrow->cells[] = $column->get_item_cell($item, array('id' => $id, 'name' => $object->name, 'level' => $level, 'actions' => $actions,
                                                                  'element' => $element, 'eid' => $eid, 'itemtype' => $object->itemtype));
                 }
