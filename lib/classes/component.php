@@ -591,6 +591,7 @@ $cache = '.var_export($cache, true).';
                 self::load_classes($plugintype.'_'.$pluginname, "$fulldir/classes");
             }
         }
+        ksort(self::$classmap);
     }
 
     /**
