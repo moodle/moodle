@@ -1044,6 +1044,13 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         }
     }
 
+    // Categories might have to run some processing before we fetch the grade items.
+    // This gives them a final opportunity to update and mark their children to be updated.
+    $cats = grade_category::fetch_all(array('courseid' => $courseid));
+    foreach ($cats as $cat) {
+        $cat->pre_regrade_final_grades();
+    }
+
     $grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
     $depends_on = array();
 

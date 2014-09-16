@@ -418,6 +418,16 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Something that should be called before we start regrading the whole course.
+     *
+     * @return void
+     */
+    public function pre_regrade_final_grades() {
+        $this->auto_update_max();
+        $this->auto_update_weights();
+    }
+
+    /**
      * Generates and saves final grades in associated category grade item.
      * These immediate children must already have their own final grades.
      * The category's aggregation method is used to generate final grades.
@@ -457,12 +467,6 @@ class grade_category extends grade_object {
                      WHERE id $usql";
             $items = $DB->get_records_sql($sql, $params);
         }
-
-        // needed mostly for SUM agg type
-        $this->auto_update_max($items);
-
-        // Needed for Natural aggregation type.
-        $this->auto_update_weights();
 
         $grade_inst = new grade_grade();
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
@@ -930,7 +934,7 @@ class grade_category extends grade_object {
 
             case GRADE_AGGREGATE_SUM:    // Add up all the items.
                 $num = count($grade_values);
-                $total = $this->grade_item->grademax;
+                $total = $category_item->grademax;
                 $sum = 0;
                 foreach ($grade_values as $itemid => $grade_value) {
                     $sum += ($grade_value / $items[$itemid]->grademax) * ($items[$itemid]->aggregationcoef2*1) * $total;
@@ -977,14 +981,28 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Some aggregation types may automatically update max grade
+     * Some aggregation types may need to update their max grade.
      *
-     * @param array $items sub items
+     * @return void
      */
-    private function auto_update_max($items) {
+    private function auto_update_max() {
+        global $DB;
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             // not needed at all
             return;
+        }
+
+        // Find grade items of immediate children (category or grade items) and force site settings.
+        $this->load_grade_item();
+        $depends_on = $this->grade_item->depends_on();
+
+        $items = false;
+        if (!empty($depends_on)) {
+            list($usql, $params) = $DB->get_in_or_equal($depends_on);
+            $sql = "SELECT *
+                      FROM {grade_items}
+                     WHERE id $usql";
+            $items = $DB->get_records_sql($sql, $params);
         }
 
         if (!$items) {
@@ -1030,6 +1048,8 @@ class grade_category extends grade_object {
 
     /**
      * Recalculate the weights of the grade items in this category.
+     *
+     * @return void
      */
     private function auto_update_weights() {
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
