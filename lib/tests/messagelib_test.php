@@ -188,6 +188,11 @@ class core_messagelib_testcase extends advanced_testcase {
         $email = reset($emails);
         $this->assertTrue(strpos($email->body, 'Content-Disposition: attachment;') !== false);
         $this->assertTrue(strpos($email->body, 'emailtest.txt') !== false);
+
+        // Check if the stored file still exists after remove the temporary attachment.
+        $storedfileexists = $fs->file_exists($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'],
+                                             $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename']);
+        $this->assertTrue($storedfileexists);
     }
 
     /**
