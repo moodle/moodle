@@ -240,22 +240,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $grade_edit_tree->move_elements($elements, $returnurl);
     }
 
-    // Preload grade_items so we can determine if weights in particular have been manually changed or been automatically adjusted.
-    // As soon as we touch one grade item the others will be re-weighted automatically so retrieving these from the database later
-    // will result in them all being marked as adjusted.
-    $oldgradeitems = Array();
-    foreach ($data as $key => $value) {
-        if (preg_match('/^(aggregationcoef2)_([0-9]+)$/', $key, $matches)) {
-            $param = $matches[1];
-            $aid   = $matches[2];
-
-            $value = unformat_float($value);
-            $value = clean_param($value, PARAM_FLOAT);
-
-            $oldgradeitems[$aid] = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
-        }
-    }
-
     // Category and item field updates
     foreach ($data as $key => $value) {
         // Grade category text inputs
@@ -271,7 +255,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $grade_category->$param = $value;
 
             $grade_category->update();
-            grade_regrade_final_grades($courseid);
 
             $recreatetree = true;
 
@@ -287,7 +270,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
                 $value = $value / 100.0;
             }
 
-            $grade_item = $oldgradeitems[$aid];
+            $grade_item = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
 
             if ($param === 'grademax' and $value < $grade_item->grademin) {
                 // better not allow values lower than grade min
@@ -301,11 +284,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $grade_item->$param = $value;
 
             $grade_item->update();
-            if ($param === 'aggregationcoef') {
-                // Put the updated object back to avoid extracredit changes (below) reinstating the old value.
-                $oldgradeitems[$aid] = $grade_item;
-            }
-            grade_regrade_final_grades($courseid);
 
             $recreatetree = true;
 
@@ -314,16 +292,11 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $aid   = $matches[1];
             $value = clean_param($value, PARAM_BOOL);
 
-            $grade_item = $oldgradeitems[$aid];
+            $grade_item = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
 
             $grade_item->aggregationcoef = $value;
 
             $grade_item->update();
-
-            // Put the updated object back to avoid aggregationcoef changes (above) reinstating the old value.
-            $oldgradeitems[$aid] = $grade_item;
-
-            grade_regrade_final_grades($courseid);
 
             $recreatetree = true;
 
@@ -337,11 +310,12 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $grade_category->$param = $value;
 
             $grade_category->update();
-            grade_regrade_final_grades($courseid);
 
             $recreatetree = true;
         }
     }
+
+    grade_regrade_final_grades($courseid);
 }
 
 print_grade_page_head($courseid, 'edittree', $current_view, get_string('categoriesedit', 'grades') . ': ' . $current_view_str);
