@@ -3717,7 +3717,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
-    if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
+    if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
             echo '<td class="discussionsubscription">';
