@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    Block Approve Enroll
+ * @package    Block IOMAD Company Admin
  * @copyright  2011 onwards E-Learn Design Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,12 +36,24 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
         // Check if there is an instance of the company select block on the dashboard.
         if ($DB->get_record('block_instances', array('blockname' => 'iomad_company_selector',
                                                     'pagetypepattern' => 'local-iomad-dashboard-index'))) {
-            $DB->delete_records('block_instances', array('blockname' => 'iomad_company_selector', 
+            $DB->delete_records('block_instances', array('blockname' => 'iomad_company_selector',
                                                         'pagetypepattern' => 'local-iomad-dashboard-index'));
         }
 
         // Iomad_company_admin savepoint reached.
         upgrade_block_savepoint(true, 2014041200, 'iomad_company_admin');
+    }
+
+    // add new role capability
+    if ($oldversion < 2014041201) {
+        $systemcontext = context_system::instance();
+        $clientadministrator = $DB->get_record('role', array('shortname' => 'clientadministrator'), '*', MUST_EXIST);
+        assign_capability(
+            'block/iomad_company_admin:restrict_capabilities',
+            CAP_ALLOW,
+            $clientadministrator->id,
+            $systemcontext->id
+        );
     }
 
     return true;

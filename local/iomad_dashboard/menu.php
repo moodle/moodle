@@ -110,6 +110,16 @@ class iomad_admin_menu {
                 'icon' => 'fa-file-text',
                 'iconsmall' => 'fa-chevron-circle-right'
             ),
+            'assigncourses' => array(
+                'category' => 'CompanyAdmin',
+                'tab' => 1,
+                'name' => get_string('restrictcapabilities', 'block_iomad_company_admin'),
+                'url' => 'company_capabilities.php',
+                'cap' => 'block/iomad_company_admin:restrict_capabilities',
+                'icondefault' => 'useredit',
+                'icon' => 'fa-user',
+                'iconsmall' => 'fa-gear'
+            ),
             'createuser' => array(
                 'category' => 'UserAdmin',
                 'tab' => 2,

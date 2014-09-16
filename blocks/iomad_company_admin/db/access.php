@@ -231,6 +231,10 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
     ),
+    'block/iomad_company_admin:restrict_capabilities' => array(
+                    'captype' => 'write',
+                    'contextlevel' => CONTEXT_BLOCK,
+    ),
 
 );
 

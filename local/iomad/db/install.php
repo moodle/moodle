@@ -126,6 +126,7 @@ function xmldb_local_iomad_install() {
         'block/iomad_company_admin:user_create',
         'block/iomad_company_admin:user_upload',
         'block/iomad_company_admin:view',
+        'block/iomad_company_admin:restrict_capabilities',
         'block/iomad_link:view',
 
         'block/iomad_online_users:viewlist',
