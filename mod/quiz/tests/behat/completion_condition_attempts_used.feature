@@ -49,12 +49,12 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | Feedback for the response 'False'. | So you think it is false                |
     And I follow "Course 1"
     And I follow "Grades"
-    And I follow "Simple view"
+    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
     And I follow "Edit  quiz Test quiz name"
     Then I should see "Edit grade item"
     And I set the field "gradepass" to "5"
     And I press "Save changes"
-    And I should see "Simple view"
+    And I should see "Set up grades layout"
     Then I log out
 
     And I log in as "student1"

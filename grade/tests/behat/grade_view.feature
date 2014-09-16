@@ -82,13 +82,13 @@ Feature: We can enter in grades and view reports from the gradebook
 
   @javascript
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
-    When I set the field "Grade report" to "Full view"
+    When I set the field "Grade report" to "Set up grades layout"
     And I set the following settings for grade item "Course 1":
       | Aggregation | Weighted mean of grades |
     And I set the field "Extra credit value for Test assignment name" to "0.72"
     And I press "Save changes"
     And I set the field "Grade report" to "User report"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the following fields to these values:
       | Show weightings | Show |
     And I press "Save changes"

@@ -609,13 +609,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         $plugin_info['report'] = $reports;
     }
 
-    //showing grade categories and items make no sense if we're not within a course
-    if ($courseid!=$SITE->id) {
-        if ($edittree = grade_helper::get_info_edit_structure($courseid)) {
-            $plugin_info['edittree'] = $edittree;
-        }
-    }
-
     if ($scale = grade_helper::get_info_scales($courseid)) {
         $plugin_info['scale'] = array('view'=>$scale);
     }
@@ -650,11 +643,9 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         }
     }
 
-    //hide course settings if we're not in a course
-    if ($courseid!=$SITE->id) {
-        if ($setting = grade_helper::get_info_manage_settings($courseid)) {
-            $plugin_info['settings'] = array('course'=>$setting);
-        }
+    // Hide course settings if we're not in a course
+    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
+        $plugin_info['settings'] = $settings;
     }
 
     // Put preferences last
@@ -2382,8 +2373,11 @@ function grade_extend_settings($plugininfo, $courseid) {
         }
     }
 
-    if ($setting = grade_helper::get_info_manage_settings($courseid)) {
-        $gradenode->add(get_string('coursegradesettings', 'grades'), $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
+    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
+        $settingsnode = $gradenode->add($strings['settings'], null, navigation_node::TYPE_CONTAINER);
+        foreach ($settings as $setting) {
+            $settingsnode->add($setting->string, $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
+        }
     }
 
     if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
@@ -2405,13 +2399,6 @@ function grade_extend_settings($plugininfo, $courseid) {
 
     if ($scales = grade_helper::get_info_scales($courseid)) {
         $gradenode->add($strings['scale'], $scales->link, navigation_node::TYPE_SETTING, null, $scales->id, new pix_icon('i/scales', ''));
-    }
-
-    if ($categories = grade_helper::get_info_edit_structure($courseid)) {
-        $categoriesnode = $gradenode->add(get_string('categoriesanditems','grades'), null, navigation_node::TYPE_CONTAINER);
-        foreach ($categories as $category) {
-            $categoriesnode->add($category->string, $category->link, navigation_node::TYPE_SETTING, null, $category->id, new pix_icon('i/report', ''));
-        }
     }
 
     if ($gradenode->contains_active_node()) {
@@ -2464,11 +2451,6 @@ abstract class grade_helper {
      */
     protected static $outcomeinfo = null;
     /**
-     * Cached info on edit structure {@see get_info_edit_structure}
-     * @var array|false
-     */
-    protected static $edittree = null;
-    /**
      * Cached leftter info {@see get_info_letters}
      * @var grade_plugin_info|false
      */
@@ -2498,7 +2480,6 @@ abstract class grade_helper {
      * Gets strings commonly used by the describe plugins
      *
      * report => get_string('view'),
-     * edittree => get_string('edittree', 'grades'),
      * scale => get_string('scales'),
      * outcome => get_string('outcomes', 'grades'),
      * letter => get_string('letters', 'grades'),
@@ -2513,7 +2494,6 @@ abstract class grade_helper {
         if (self::$pluginstrings === null) {
             self::$pluginstrings = array(
                 'report' => get_string('view'),
-                'edittree' => get_string('edittree', 'grades'),
                 'scale' => get_string('scales'),
                 'outcome' => get_string('outcomes', 'grades'),
                 'letter' => get_string('letters', 'grades'),
@@ -2552,17 +2532,21 @@ abstract class grade_helper {
      * Get grade_plugin_info object for managing settings if the user can
      *
      * @param int $courseid
-     * @return grade_plugin_info
+     * @return grade_plugin_info[]
      */
     public static function get_info_manage_settings($courseid) {
         if (self::$managesetting !== null) {
             return self::$managesetting;
         }
         $context = context_course::instance($courseid);
-        if (has_capability('moodle/grade:manage', $context)) {
-            self::$managesetting = new grade_plugin_info('coursesettings', new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)), get_string('course'));
-        } else {
-            self::$managesetting = false;
+        self::$managesetting = array();
+        if ($courseid != SITEID && has_capability('moodle/grade:manage', $context)) {
+            self::$managesetting['coursesettings'] = new grade_plugin_info('coursesettings',
+                new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)),
+                get_string('coursegradesettings', 'grades'));
+            self::$managesetting['setup'] = new grade_plugin_info('setup',
+                new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)),
+                get_string('setupgradeslayout', 'grades'));
         }
         return self::$managesetting;
     }
@@ -2682,26 +2666,6 @@ abstract class grade_helper {
             self::$outcomeinfo = false;
         }
         return self::$outcomeinfo;
-    }
-    /**
-     * Get information on editing structures
-     * @param int $courseid
-     * @return array
-     */
-    public static function get_info_edit_structure($courseid) {
-        if (self::$edittree !== null) {
-            return self::$edittree;
-        }
-        if (has_capability('moodle/grade:manage', context_course::instance($courseid))) {
-            $url = new moodle_url('/grade/edit/tree/index.php', array('sesskey'=>sesskey(), 'showadvanced'=>'0', 'id'=>$courseid));
-            self::$edittree = array(
-                'simpleview' => new grade_plugin_info('simpleview', $url, get_string('simpleview', 'grades')),
-                'fullview' => new grade_plugin_info('fullview', new moodle_url($url, array('showadvanced'=>'1')), get_string('fullview', 'grades'))
-            );
-        } else {
-            self::$edittree = false;
-        }
-        return self::$edittree;
     }
     /**
      * Get information on letters

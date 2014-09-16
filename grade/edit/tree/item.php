@@ -183,7 +183,7 @@ if ($mform->is_cancelled()) {
 $return = false;
 $buttons = false;
 $shownavigation = false;
-print_grade_page_head($courseid, 'edittree', null, $heading, $return, $buttons, $shownavigation);
+print_grade_page_head($courseid, 'settings', null, $heading, $return, $buttons, $shownavigation);
 
 $mform->display();
 

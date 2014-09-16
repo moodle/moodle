@@ -62,8 +62,6 @@ if (!isset($USER->gradeediting)) {
     $USER->gradeediting = array();
 }
 
-$current_view = '';
-
 if (has_capability('moodle/grade:manage', $context)) {
     if (!isset($USER->gradeediting[$course->id])) {
         $USER->gradeediting[$course->id] = 0;
@@ -81,10 +79,8 @@ if (has_capability('moodle/grade:manage', $context)) {
 
     if ($USER->gradeediting[$course->id]) {
         $options['showadvanced'] = 0;
-        $current_view = 'fullview';
     } else {
         $options['showadvanced'] = 1;
-        $current_view = 'simpleview';
     }
 
 } else {
@@ -128,8 +124,6 @@ $switch = grade_get_setting($course->id, 'aggregationposition', $CFG->grade_aggr
 
 $strgrades             = get_string('grades');
 $strgraderreport       = get_string('graderreport', 'grades');
-$strcategoriesedit     = get_string('categoriesedit', 'grades');
-$strcategoriesanditems = get_string('categoriesanditems', 'grades');
 
 $moving = false;
 $movingeid = false;
@@ -210,15 +204,6 @@ switch ($action) {
 if ($grade_edit_tree->moving) {
     $original_gradeediting = $USER->gradeediting[$course->id];
     $USER->gradeediting[$course->id] = 0;
-}
-
-$current_view_str = '';
-if ($current_view != '') {
-    if ($current_view == 'simpleview') {
-        $current_view_str = get_string('simpleview', 'grades');
-    } elseif ($current_view == 'fullview') {
-        $current_view_str = get_string('fullview', 'grades');
-    }
 }
 
 //if we go straight to the db to update an element we need to recreate the tree as
@@ -324,7 +309,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
     grade_regrade_final_grades($courseid);
 }
 
-print_grade_page_head($courseid, 'edittree', $current_view, get_string('categoriesedit', 'grades') . ': ' . $current_view_str);
+print_grade_page_head($courseid, 'settings', 'setup', get_string('setupgradeslayout', 'grades'));
 
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');

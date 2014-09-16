@@ -45,8 +45,6 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'settings', 'cour
 $strgrades = get_string('grades');
 $pagename  = get_string('coursesettings', 'grades');
 
-$navigation = grade_build_nav(__FILE__, $pagename, $courseid);
-
 $returnurl = $CFG->wwwroot.'/grade/index.php?id='.$course->id;
 
 $mform = new course_settings_form();
@@ -76,7 +74,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-print_grade_page_head($courseid, 'settings', 'coursesettings', get_string('coursesettings', 'grades'));
+print_grade_page_head($courseid, 'settings', 'coursesettings', get_string('coursegradesettings', 'grades'));
 
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal centerpara');
 echo get_string('coursesettingsexplanation', 'grades');

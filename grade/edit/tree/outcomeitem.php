@@ -214,7 +214,7 @@ if ($data = $mform->get_data()) {
     redirect($returnurl);
 }
 
-print_grade_page_head($courseid, 'edittree', null, $heading);
+print_grade_page_head($courseid, 'settings', null, $heading);
 
 if (!grade_outcome::fetch_all_available($COURSE->id)) {
     echo $OUTPUT->confirm(get_string('nooutcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$courseid, $returnurl);
