@@ -253,9 +253,9 @@ Feature: We can understand the gradebook user report
     And "//td[contains(@headers,'contributiontocoursetotal') and contains(., '0.00 %')]" "xpath_element" should exist in the "Test assignment six" "table_row"
 
   @javascript
-  Scenario: Sum of grades aggregation
+  Scenario: Natural aggregation
     And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Sum of grades"
+    And I set the field "Aggregation" to "Natural"
     And I press "Save changes"
     And I click on "Extra credit value for Test assignment three" "checkbox"
     And I press "Save changes"
