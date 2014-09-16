@@ -222,7 +222,7 @@ M.mod_quiz.secure_window = {
         Y.delegate('mousedown',   M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
         Y.delegate('mouseup',     M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
         Y.delegate('dragstart',   M.mod_quiz.secure_window.prevent, document, '*');
-        Y.delegate('selectstart', M.mod_quiz.secure_window.prevent, document, '*');
+        Y.delegate('selectstart', M.mod_quiz.secure_window.prevent_selection, document, '*');
         Y.delegate('cut',         M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('copy',        M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('paste',       M.mod_quiz.secure_window.prevent, document, '*');
@@ -244,6 +244,16 @@ M.mod_quiz.secure_window = {
     clear_status: function() {
         window.status = '';
         setTimeout(M.mod_quiz.secure_window.clear_status, 10);
+    },
+
+    /**
+     * Prevent the selection event without showing an alert.
+     *
+     * @method prevent_selection
+     * @param {EventFacade} e
+     */
+    prevent_selection: function(e) {
+        return false;
     },
 
     prevent: function(e) {
