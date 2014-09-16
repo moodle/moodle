@@ -77,8 +77,7 @@ class message_output_email extends message_output {
             } else {
                 // Copy attachment file to a temporary directory and get the file path.
                 $attachment = $eventdata->attachment->copy_content_to_temp();
-                // Function email_to_user() adds $CFG->dataroot to file path, so removing it here.
-                $attachment = str_replace($CFG->dataroot, '', $attachment);
+
                 // Get attachment file name.
                 $attachname = clean_filename($eventdata->attachname);
             }
@@ -88,7 +87,9 @@ class message_output_email extends message_output {
                                 $eventdata->fullmessagehtml, $attachment, $attachname);
 
         // Remove an attachment file if any.
-        @unlink($attachment);
+        if (!empty($attachment) && file_exists($attachment)) {
+            unlink($attachment);
+        }
 
         return $result;
     }
