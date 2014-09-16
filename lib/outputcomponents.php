@@ -1019,6 +1019,23 @@ class html_writer {
      * @return string HTML fragment
      */
     public static function tag($tagname, $contents, array $attributes = null) {
+        global $PAGE;
+        if ($PAGE->theme->doctype == 'xhtml'
+            || $PAGE->theme->doctype == 'xhtml5'
+            || $PAGE->theme->doctype == 'html5') {
+            // Deal with invalid use of tag function (when empty_tag should have been used).
+            // Void tags copied directly from HTML5 specification.
+            // http://www.w3.org/TR/html5/syntax.html#elements-0
+            $voidtags = 'area,base,br,col,embed,hr,img,input,keygen,link,meta,param,source,track,wbr';
+            $voidtags = explode(',', $voidtags);
+            if (in_array(strtolower($tagname), $voidtags)) {
+                if (!empty($contents)) {
+                    throw new coding_exception('Void tag '.$tagname.' cannot have contents');
+                } else {
+                    return self::empty_tag($tagname, $attributes);
+                }
+            }
+        }
         return self::start_tag($tagname, $attributes) . $contents . self::end_tag($tagname);
     }
 
