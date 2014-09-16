@@ -17,6 +17,10 @@ Feature: We can enter in grades and view reports from the gradebook
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
+    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on

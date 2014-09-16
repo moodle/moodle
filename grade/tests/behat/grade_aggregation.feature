@@ -36,6 +36,10 @@ Feature: We can use calculated grade totals
       | assign | C1 | a8 | Test assignment eight | Submit something! | Sub category 2 | 200
       | assign | C1 | a9 | Test assignment nine | Submit something! | Sub category 2 | 100
       | assign | C1 | 10 | Test assignment ten | Submit nothing! | Sub category 2 | 150
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
+    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
