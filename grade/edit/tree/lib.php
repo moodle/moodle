@@ -134,6 +134,7 @@ class grade_edit_tree {
         }
 
         $actions = '';
+        $moveaction = '';
 
         if (!$is_category_item) {
             $actions .= $this->gtree->get_edit_icon($element, $this->gpr);
@@ -150,11 +151,11 @@ class grade_edit_tree {
             }
 
             $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
-            $actions .= $OUTPUT->action_icon($aurl, new pix_icon('t/move', get_string('move')));
+            $moveaction .= $OUTPUT->action_icon($aurl, new pix_icon('t/move', get_string('move')));
         }
 
         $actions .= $this->gtree->get_hiding_icon($element, $this->gpr);
-        $actions .= $this->gtree->get_locking_icon($element, $this->gpr);
+
         $actions .= $this->gtree->get_reset_icon($element, $this->gpr);
 
         $returnrows = array();
@@ -215,7 +216,7 @@ class grade_edit_tree {
 
                     $strmove     = get_string('move');
                     $strmovehere = get_string('movehere');
-                    $actions = ''; // no action icons when moving
+                    $actions = $moveaction = ''; // no action icons when moving
 
                     $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'move', 'eid' => $this->moving, 'moveafter' => $child_eid, 'sesskey' => sesskey()));
                     if ($first) {
@@ -298,7 +299,9 @@ class grade_edit_tree {
 
             foreach ($this->columns as $column) {
                 if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
-                    $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id, 'name' => $object->name, 'level' => $level, 'actions' => $actions, 'eid' => $eid));
+                    $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id,
+                        'name' => $object->name, 'level' => $level, 'actions' => $actions,
+                        'moveaction' => $moveaction, 'eid' => $eid));
                 }
             }
 
@@ -333,8 +336,9 @@ class grade_edit_tree {
 
             foreach ($this->columns as $column) {
                 if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
-                    $gradeitemrow->cells[] = $column->get_item_cell($item, array('id' => $id, 'name' => $object->name, 'level' => $level, 'actions' => $actions,
-                                                                 'element' => $element, 'eid' => $eid, 'itemtype' => $object->itemtype));
+                    $gradeitemrow->cells[] = $column->get_item_cell($item, array('id' => $id, 'name' => $object->name,
+                        'level' => $level, 'actions' => $actions, 'element' => $element, 'eid' => $eid,
+                        'moveaction' => $moveaction, 'itemtype' => $object->itemtype));
                 }
             }
 
@@ -633,10 +637,11 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         if (empty($params['name']) || empty($params['level'])) {
             throw new Exception('Array key (name or level) missing from 3rd param of grade_edit_tree_column_name::get_category_cell($category, $levelclass, $params)');
         }
+        $moveaction = isset($params['moveaction']) ? $params['moveaction'] : '';
         $categorycell = clone($this->categorycell);
         $categorycell->attributes['class'] .= ' name ' . $levelclass;
         $categorycell->colspan = ($this->deepest_level +1) - $params['level'];
-        $categorycell->text = $OUTPUT->heading($params['name'], 4);
+        $categorycell->text = $OUTPUT->heading($moveaction . $params['name'], 4);
         return $categorycell;
     }
 
@@ -648,11 +653,12 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         }
 
         $name = $params['name'];
+        $moveaction = isset($params['moveaction']) ? $params['moveaction'] : '';
 
         $itemcell = clone($this->itemcell);
         $itemcell->attributes['class'] .= ' name';
         $itemcell->colspan = ($this->deepest_level + 1) - $params['level'];
-        $itemcell->text = $name;
+        $itemcell->text = $moveaction . $name;
         return $itemcell;
     }
 
