@@ -67,7 +67,7 @@ if ($ADMIN->fulltree) {
     // What to do with overdue attempts.
     $quizsettings->add(new mod_quiz_admin_setting_overduehandling('quiz/overduehandling',
             get_string('overduehandling', 'quiz'), get_string('overduehandling_desc', 'quiz'),
-            array('value' => 'autoabandon', 'adv' => false), null));
+            array('value' => 'autosubmit', 'adv' => false), null));
 
     // Grace period time.
     $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/graceperiod',
