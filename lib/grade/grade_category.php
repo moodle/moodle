@@ -772,8 +772,10 @@ class grade_category extends grade_object {
                 $sum = 0;
                 foreach ($grade_values as $itemid => $grade_value) {
                     $sum += $grade_value * ($items[$itemid]->grademax - $items[$itemid]->grademin);
-                    $grademin += $items[$itemid]->grademin;
-                    $grademax += $items[$itemid]->grademax;
+                    if ($items[$itemid]->aggregationcoef == 0) {
+                        $grademin += $items[$itemid]->grademin;
+                        $grademax += $items[$itemid]->grademax;
+                    }
                 }
 
                 $agg_grade = $sum / ($grademax - $grademin);
