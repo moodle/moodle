@@ -36,6 +36,8 @@ if ($id !== 0) {
 }
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php',
+    array('id'=>$courseid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -229,10 +231,8 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$return = false;
-$buttons = false;
-$shownavigation = false;
-print_grade_page_head($courseid, 'settings', null, $heading, $return, $buttons, $shownavigation);
+$PAGE->navbar->add($heading);
+print_grade_page_head($courseid, 'settings', null, $heading, false, false, false);
 
 $mform->display();
 

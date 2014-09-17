@@ -35,6 +35,9 @@ if ($id !== 0) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php',
+    array('id'=>$courseid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -214,7 +217,8 @@ if ($data = $mform->get_data()) {
     redirect($returnurl);
 }
 
-print_grade_page_head($courseid, 'settings', null, $heading);
+$PAGE->navbar->add($heading);
+print_grade_page_head($courseid, 'settings', null, $heading, false, false, false);
 
 if (!grade_outcome::fetch_all_available($COURSE->id)) {
     echo $OUTPUT->confirm(get_string('nooutcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$courseid, $returnurl);
