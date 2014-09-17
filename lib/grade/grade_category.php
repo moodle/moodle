@@ -589,22 +589,21 @@ class grade_category extends grade_object {
 
         // normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggregation
-        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
-            foreach ($grade_values as $itemid=>$v) {
-
+        foreach ($grade_values as $itemid=>$v) {
+            // Natural weighting currently cannot exclude empty grades, or grades from excluded items.
+            if ($this->aggregation != GRADE_AGGREGATE_SUM) {
                 if (is_null($v)) {
                     // null means no grade
                     unset($grade_values[$itemid]);
                     $novalue[$itemid] = 0;
                     continue;
-
                 } else if (in_array($itemid, $excluded)) {
                     unset($grade_values[$itemid]);
                     $dropped[$itemid] = 0;
                     continue;
                 }
-                $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
             }
+            $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
         }
         // use min grade if grade missing for these types
         if (!$this->aggregateonlygraded) {
@@ -643,16 +642,8 @@ class grade_category extends grade_object {
         $result = $this->aggregate_values_and_adjust_bounds($grade_values, $items, $usedweights);
         $agg_grade = $result['grade'];
 
-        if (!$minvisible and $this->grade_item->gradetype != GRADE_TYPE_SCALE) {
-            $this->grade_item->grademin = 0;
-        }
-
-        // recalculate the grade back to requested range
-        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
-            $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
-        } else {
-            $finalgrade = $agg_grade;
-        }
+        // Recalculate the grade back to requested range.
+        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
 
         $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
 
@@ -934,12 +925,11 @@ class grade_category extends grade_object {
 
             case GRADE_AGGREGATE_SUM:    // Add up all the items.
                 $num = count($grade_values);
-                $total = $category_item->grademax;
                 $sum = 0;
                 foreach ($grade_values as $itemid => $grade_value) {
-                    $sum += ($grade_value / $items[$itemid]->grademax) * ($items[$itemid]->aggregationcoef2*1) * $total;
+                    $sum += $grade_value * $items[$itemid]->aggregationcoef2;
                     if ($weights !== null && $num > 0) {
-                        $weights[$itemid] = $items[$itemid]->aggregationcoef2*1;
+                        $weights[$itemid] = $items[$itemid]->aggregationcoef2;
                     }
                 }
                 $agg_grade = $sum;

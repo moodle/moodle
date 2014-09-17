@@ -18,8 +18,8 @@ Feature: We can use calculated grade totals
       | student1 | C1 | student |
     And the following "grade categories" exist:
       | fullname | course |
-      | Sub category 1 | C1|
-      | Sub category 2 | C1|
+      | Sub category 1 | C1 |
+      | Sub category 2 | C1 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | grade |
       | assign | C1 | a1 | Test assignment one | Submit something! | 300 |
@@ -28,14 +28,14 @@ Feature: We can use calculated grade totals
       | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | gradecategory | grade |
-      | assign | C1 | a5 | Test assignment five | Submit something! | Sub category 1 | 200
-      | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 100
-      | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 150
+      | assign | C1 | a5 | Test assignment five | Submit something! | Sub category 1 | 20 |
+      | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 10 |
+      | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | gradecategory | grade |
-      | assign | C1 | a8 | Test assignment eight | Submit something! | Sub category 2 | 200
-      | assign | C1 | a9 | Test assignment nine | Submit something! | Sub category 2 | 100
-      | assign | C1 | 10 | Test assignment ten | Submit nothing! | Sub category 2 | 150
+      | assign | C1 | a8 | Test assignment eight | Submit something! | Sub category 2 | 20 |
+      | assign | C1 | a9 | Test assignment nine | Submit something! | Sub category 2 | 10 |
+      | assign | C1 | 10 | Test assignment ten | Submit nothing! | Sub category 2 | 15 |
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
@@ -313,4 +313,4 @@ Feature: We can use calculated grade totals
     And I follow "Course 1"
     And I follow "Grades"
     And I set the field "Grade report" to "Overview report"
-    And I should see "110.00 (16.92 %)" in the "overview-grade" "table"
+    And I should see "110.00 (13.92 %)" in the "overview-grade" "table"
