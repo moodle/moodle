@@ -3507,10 +3507,10 @@ class workshop_assessment extends workshop_assessment_base implements renderable
             return null;
         }
 
-        $content = format_text($this->feedbackauthor, $this->feedbackauthorformat,
-            array('overflowdiv' => true, 'context' => $this->workshop->context));
-        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->workshop->context->id,
+        $content = file_rewrite_pluginfile_urls($this->feedbackauthor, 'pluginfile.php', $this->workshop->context->id,
             'mod_workshop', 'overallfeedback_content', $this->id);
+        $content = format_text($content, $this->feedbackauthorformat,
+            array('overflowdiv' => true, 'context' => $this->workshop->context));
 
         return $content;
     }
