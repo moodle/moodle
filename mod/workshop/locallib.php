@@ -1048,6 +1048,11 @@ class workshop {
         global $DB;
         $assessments = $DB->get_records('workshop_assessments', array('submissionid' => $submission->id), '', 'id');
         $this->delete_assessment(array_keys($assessments));
+
+        $fs = get_file_storage();
+        $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_content', $submission->id);
+        $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
+
         $DB->delete_records('workshop_submissions', array('id' => $submission->id));
     }
 
@@ -1251,21 +1256,39 @@ class workshop {
     }
 
     /**
-     * Delete assessment record or records
+     * Delete assessment record or records.
      *
-     * @param mixed $id int|array assessment id or array of assessments ids
-     * @return bool false if $id not a valid parameter, true otherwise
+     * Removes associated records from the workshop_grades table, too.
+     *
+     * @param int|array $id assessment id or array of assessments ids
+     * @todo Give grading strategy plugins a chance to clean up their data, too.
+     * @return bool true
      */
     public function delete_assessment($id) {
         global $DB;
 
-        // todo remove all given grades from workshop_grades;
+        if (empty($id)) {
+            return true;
+        }
+
+        $fs = get_file_storage();
 
         if (is_array($id)) {
-            return $DB->delete_records_list('workshop_assessments', 'id', $id);
+            $DB->delete_records_list('workshop_grades', 'assessmentid', $id);
+            foreach ($id as $itemid) {
+                $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_content', $itemid);
+                $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment', $itemid);
+            }
+            $DB->delete_records_list('workshop_assessments', 'id', $id);
+
         } else {
-            return $DB->delete_records('workshop_assessments', array('id' => $id));
+            $DB->delete_records('workshop_grades', array('assessmentid' => $id));
+            $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_content', $id);
+            $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment', $id);
+            $DB->delete_records('workshop_assessments', array('id' => $id));
         }
+
+        return true;
     }
 
     /**
