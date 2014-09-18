@@ -137,3 +137,8 @@ span.unread {
 .path-mod-forum .discussion-nav .prev-discussion {
     float: left;
 }
+
+.path-mod-forum .discussiontoggle {
+    display: inline-block;
+    width: 12px;
+}
