@@ -712,7 +712,6 @@ $string['useweighted'] = 'Use weighted';
 $string['verbosescales'] = 'Verbose scales';
 $string['viewbygroup'] = 'Group';
 $string['viewgrades'] = 'View grades';
-$string['warningexcludedsum'] = 'Warning: excluding of grades is not compatible with natural weights.';
 $string['weight'] = 'weight';
 $string['weight_help'] = 'A value used to determine the relative value of multiple grade items in a category or course.';
 $string['weightcourse'] = 'Use weighted grades for course';

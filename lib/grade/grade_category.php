@@ -495,17 +495,29 @@ class grade_category extends grade_object {
             $grade_values = array();
             $excluded     = array();
             $oldgrade     = null;
+            $grademaxoverrides = array();
+            $grademinoverrides = array();
 
             foreach ($rs as $used) {
 
                 if ($used->userid != $prevuser) {
-                    $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);
+                    $this->aggregate_grades($prevuser,
+                                            $items,
+                                            $grade_values,
+                                            $oldgrade,
+                                            $excluded,
+                                            $grademinoverrides,
+                                            $grademaxoverrides);
                     $prevuser = $used->userid;
                     $grade_values = array();
                     $excluded     = array();
                     $oldgrade     = null;
+                    $grademaxoverrides = array();
+                    $grademinoverrides = array();
                 }
                 $grade_values[$used->itemid] = $used->finalgrade;
+                $grademaxoverrides[$used->itemid] = $used->rawgrademax;
+                $grademinoverrides[$used->itemid] = $used->rawgrademin;
 
                 if ($used->excluded) {
                     $excluded[] = $used->itemid;
@@ -515,7 +527,13 @@ class grade_category extends grade_object {
                     $oldgrade = $used;
                 }
             }
-            $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
+            $this->aggregate_grades($prevuser,
+                                    $items,
+                                    $grade_values,
+                                    $oldgrade,
+                                    $excluded,
+                                    $grademinoverrides,
+                                    $grademaxoverrides);//the last one
         }
         $rs->close();
 
@@ -530,8 +548,16 @@ class grade_category extends grade_object {
      * @param array  $grade_values Array of grade values
      * @param object $oldgrade Old grade
      * @param array  $excluded Excluded
+     * @param array  $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
+     * @param array  $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
      */
-    private function aggregate_grades($userid, $items, $grade_values, $oldgrade, $excluded) {
+    private function aggregate_grades($userid,
+                                      $items,
+                                      $grade_values,
+                                      $oldgrade,
+                                      $excluded,
+                                      $grademinoverrides,
+                                      $grademaxoverrides) {
         global $CFG;
 
         // Remember these so we can set flags on them to describe how they were used in the aggregation.
@@ -565,14 +591,6 @@ class grade_category extends grade_object {
         // can not use own final category grade in calculation
         unset($grade_values[$this->grade_item->id]);
 
-        // TODO
-        // sum is a special aggregation types - it adjusts the min max, does not use relative values
-        //if ($this->aggregation == GRADE_AGGREGATE_SUM) {
-        //    $this->sum_grades($grade, $oldfinalgrade, $items, $grade_values, $excluded, $usedweights);
-        //    $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped);
-        //    return;
-        //}
-
         // if no grades calculation possible or grading not allowed clear final grade
         if (empty($grade_values) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
             $grade->finalgrade = null;
@@ -603,7 +621,16 @@ class grade_category extends grade_object {
                     continue;
                 }
             }
-            $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
+            // Check for user specific grade min/max overrides.
+            $usergrademin = $items[$itemid]->grademin;
+            $usergrademax = $items[$itemid]->grademax;
+            if (isset($grademinoverrides[$itemid])) {
+                $usergrademin = $grademinoverrides[$itemid];
+            }
+            if (isset($grademaxoverrides[$itemid])) {
+                $usergrademax = $grademaxoverrides[$itemid];
+            }
+            $grade_values[$itemid] = grade_grade::standardise_score($v, $usergrademin, $usergrademax, 0, 1);
         }
         // use min grade if grade missing for these types
         if (!$this->aggregateonlygraded) {
@@ -639,13 +666,18 @@ class grade_category extends grade_object {
         }
 
         // do the maths
-        $result = $this->aggregate_values_and_adjust_bounds($grade_values, $items, $usedweights);
+        $result = $this->aggregate_values_and_adjust_bounds($grade_values,
+                                                            $items,
+                                                            $usedweights,
+                                                            $grademinoverrides,
+                                                            $grademaxoverrides);
         $agg_grade = $result['grade'];
 
         // Recalculate the grade back to requested range.
         $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
 
         $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
+        $grade->rawgrademax = $result['grademax'];
 
         // update in db if changed
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
@@ -730,12 +762,18 @@ class grade_category extends grade_object {
      * @since Moodle 2.6.5, 2.7.2
      * @param array & $weights If provided, will be filled with the normalized weights
      *                         for each grade_item as used in the aggregation.
+     * @param array  $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
+     * @param array  $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
      * @return array containing values for:
      *                'grade' => the new calculated grade
      *                'grademin' => the new calculated min grade for the category
      *                'grademax' => the new calculated max grade for the category
      */
-    public function aggregate_values_and_adjust_bounds($grade_values, $items, & $weights = null) {
+    public function aggregate_values_and_adjust_bounds($grade_values,
+                                                       $items,
+                                                       & $weights = null,
+                                                       $grademinoverrides = array(),
+                                                       $grademaxoverrides = array()) {
         $category_item = $this->get_grade_item();
         $grademin = $category_item->grademin;
         $grademax = $category_item->grademax;
@@ -931,7 +969,16 @@ class grade_category extends grade_object {
                 $grademin = 0;
                 $grademax = 0;
                 foreach ($grade_values as $itemid => $gradevalue) {
-                    $gradeitemrange = $items[$itemid]->grademax - $items[$itemid]->grademin;
+                    // We need to check if the grademax/min was adjusted per user because of excluded items.
+                    $usergrademin = $items[$itemid]->grademax;
+                    $usergrademax = $items[$itemid]->grademax;
+                    if (isset($grademinoverrides[$itemid])) {
+                        $usergrademin = $grademinoverrides[$itemid];
+                    }
+                    if (isset($grademaxoverrides[$itemid])) {
+                        $usergrademax = $grademaxoverrides[$itemid];
+                    }
+                    $gradeitemrange = $usergrademin - $usergrademax;
 
                     // Extra credit.
                     if (!empty($items[$itemid]->aggregationcoef)) {
@@ -1117,67 +1164,6 @@ class grade_category extends grade_object {
                 $grade_item->update();
             }
         }
-    }
-
-    /**
-     * Internal function for category grades summing
-     *
-     * @param grade_grade $grade The grade item
-     * @param float $oldfinalgrade Old Final grade
-     * @param array $items Grade items
-     * @param array $grade_values Grade values
-     * @param array $excluded Excluded
-     * @param array & $weights For filling with the weights used in the aggregation.
-     */
-    private function sum_grades(&$grade, $oldfinalgrade, $items, $grade_values, $excluded, & $weights = null) {
-        if (empty($items)) {
-            return null;
-        }
-
-        if ($weights) {
-            foreach ($grade_values as $itemid => $value) {
-                $weights[$itemid] = 0;
-            }
-        }
-
-        // ungraded and excluded items are not used in aggregation
-        foreach ($grade_values as $itemid=>$v) {
-
-            if (is_null($v)) {
-                unset($grade_values[$itemid]);
-
-            } else if (in_array($itemid, $excluded)) {
-                unset($grade_values[$itemid]);
-            }
-        }
-
-        // use 0 if grade missing, droplow used and aggregating all items
-        if (!$this->aggregateonlygraded and !empty($this->droplow)) {
-
-            foreach ($items as $itemid=>$value) {
-
-                if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
-                    $grade_values[$itemid] = 0;
-                }
-            }
-        }
-
-        $this->apply_limit_rules($grade_values, $items);
-
-        $sum = array_sum($grade_values);
-        $grade->finalgrade = $this->grade_item->bounded_grade($sum);
-        if ($weights !== null && $sum > 0) {
-            foreach ($grade_values as $itemid => $value) {
-                $weights[$itemid] = $value / $sum;
-            }
-        }
-
-        // update in db if changed
-        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
-            $grade->update('aggregation');
-        }
-
-        return;
     }
 
     /**

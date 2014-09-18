@@ -54,7 +54,6 @@ class edit_category_form extends moodleform {
 
         $mform->addElement('checkbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         $mform->addHelpButton('aggregateonlygraded', 'aggregateonlygraded', 'grades');
-        $mform->disabledIf('aggregateonlygraded', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
         if ((int)$CFG->grade_aggregateonlygraded_flag & 2) {
             $mform->setAdvanced('aggregateonlygraded');

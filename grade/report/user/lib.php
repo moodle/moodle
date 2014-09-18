@@ -458,6 +458,12 @@ class grade_report_user extends grade_report {
                     // max are affected by the hidden values in the aggregation.
                     $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
                     $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
+                } else {
+                    // The max and min for an aggregation may be different to the grade_item.
+                    if (!is_null($gradeval)) {
+                        $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
+                        $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
+                    }
                 }
 
                 if ($this->showfeedback) {

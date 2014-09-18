@@ -1049,6 +1049,12 @@ class grade_report_grader extends grade_report {
                     if ($item->needsupdate) {
                         $itemcell->text .= "<span class='gradingerror{$hidden}{$gradepass}'>" . $error . "</span>";
                     } else {
+                        // The max and min for an aggregation may be different to the grade_item.
+                        if (!is_null($gradeval)) {
+                            $item->grademax = $grade->rawgrademax;
+                            $item->grademin = $grade->rawgrademin;
+                        }
+
                         $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>" .
                                 grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null) . "</span>";
                         if ($showanalysisicon) {

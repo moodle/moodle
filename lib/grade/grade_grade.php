@@ -717,6 +717,8 @@ class grade_grade extends grade_object {
                          'alteredgrademax' => array(),
                          'alteredgrademin' => array());
         }
+        // This line ensures that $dependencydepth has the same number of items as $todo.
+        $dependencydepth = array_intersect_key($dependencydepth, array_flip($todo));
         // We need to resort the todo list by the dependency depth. This guarantees we process the leaves, then the branches.
         array_multisort($dependencydepth, $todo);
 
