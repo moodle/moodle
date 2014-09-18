@@ -142,6 +142,39 @@ class condition extends \core_availability\condition {
         return $result;
     }
 
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param bool $customfield True if this is a custom field
+     * @param string $fieldname Field name
+     * @param string $operator Operator name (OP_xx constant)
+     * @param string|null $value Value (not required for some operator types)
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($customfield, $fieldname, $operator, $value = null) {
+        $result = (object)array('type' => 'profile', 'op' => $operator);
+        if ($customfield) {
+            $result->cf = $fieldname;
+        } else {
+            $result->sf = $fieldname;
+        }
+        switch ($operator) {
+            case self::OP_IS_EMPTY:
+            case self::OP_IS_NOT_EMPTY:
+                break;
+            default:
+                if (is_null($value)) {
+                    throw new \coding_exception('Operator requires value');
+                }
+                $result->v = $value;
+                break;
+        }
+        return $result;
+    }
+
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
         $uservalue = $this->get_cached_user_profile_field($userid);
         $allow = self::is_field_condition_met($this->operator, $uservalue, $this->value);
