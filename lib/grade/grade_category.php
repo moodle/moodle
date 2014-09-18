@@ -965,12 +965,11 @@ class grade_category extends grade_object {
                 $num = count($grade_values);
                 $sum = 0;
                 $sumweights = 0;
-                $weightsfix = 1;
                 $grademin = 0;
                 $grademax = 0;
                 foreach ($grade_values as $itemid => $gradevalue) {
                     // We need to check if the grademax/min was adjusted per user because of excluded items.
-                    $usergrademin = $items[$itemid]->grademax;
+                    $usergrademin = $items[$itemid]->grademin;
                     $usergrademax = $items[$itemid]->grademax;
                     if (isset($grademinoverrides[$itemid])) {
                         $usergrademin = $grademinoverrides[$itemid];
@@ -978,7 +977,7 @@ class grade_category extends grade_object {
                     if (isset($grademaxoverrides[$itemid])) {
                         $usergrademax = $grademaxoverrides[$itemid];
                     }
-                    $gradeitemrange = $usergrademin - $usergrademax;
+                    $gradeitemrange = $usergrademax - $usergrademin;
 
                     // Extra credit.
                     if (!empty($items[$itemid]->aggregationcoef)) {
@@ -986,13 +985,44 @@ class grade_category extends grade_object {
                         $sumweights += $items[$itemid]->aggregationcoef2;
                     }
                 }
-                if ($sumweights != 1 && $sumweights != 0) {
-                    $weightsfix = 1 / $sumweights;
-                }
+                $userweights = array();
+                $totaloverriddenweight = 0;
+                $totaloverriddengrademax = 0;
+                // We first need to rescale all manually assigned weights down by the
+                // percentage of weights missing from the category.
                 foreach ($grade_values as $itemid => $gradevalue) {
-                    $sum += $gradevalue * $items[$itemid]->aggregationcoef2 * $grademax * $weightsfix;
+                    if ($items[$itemid]->weightoverride) {
+                        $userweights[$itemid] = $items[$itemid]->aggregationcoef2 / $sumweights;
+                        $totaloverriddenweight += $userweights[$itemid];
+                        $usergrademax = $items[$itemid]->grademax;
+                        if (isset($grademaxoverrides[$itemid])) {
+                            $usergrademax = $grademaxoverrides[$itemid];
+                        }
+                        $totaloverriddengrademax += $usergrademax;
+                    }
+                }
+                $nonoverriddenpoints = $grademax - $totaloverriddengrademax;
+
+                // Then we need to recalculate the automatic weights.
+                foreach ($grade_values as $itemid => $gradevalue) {
+                    if (!$items[$itemid]->weightoverride) {
+                        if ($nonoverriddenpoints > 0) {
+                            $usergrademax = $items[$itemid]->grademax;
+                            if (isset($grademaxoverrides[$itemid])) {
+                                $usergrademax = $grademaxoverrides[$itemid];
+                            }
+                            $userweights[$itemid] = ($usergrademax/$nonoverriddenpoints) * (1 - $totaloverriddenweight);
+                        } else {
+                            $userweights[$itemid] = 0;
+                        }
+                    }
+                }
+
+                // We can use our freshly corrected weights below.
+                foreach ($grade_values as $itemid => $gradevalue) {
+                    $sum += $gradevalue * $userweights[$itemid] * $grademax;
                     if ($weights !== null) {
-                        $weights[$itemid] = $items[$itemid]->aggregationcoef2 * $weightsfix;
+                        $weights[$itemid] = $userweights[$itemid];
                     }
                 }
                 if ($grademax > 0) {
