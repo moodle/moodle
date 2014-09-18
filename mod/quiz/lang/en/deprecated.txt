@@ -1,0 +1,3 @@
+invalidnumericanswer,mod_quiz
+multiplier,mod_quiz
+invalidnumerictolerance,mod_quiz

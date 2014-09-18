@@ -419,8 +419,6 @@ $string['inprogress'] = 'In progress';
 $string['introduction'] = 'Description';
 $string['invalidattemptid'] = 'No such attempt ID exists';
 $string['invalidcategory'] = 'Category ID is invalid';
-$string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
-$string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
 $string['invalidoverrideid'] = 'Invalid override id';
 $string['invalidquestionid'] = 'Invalid question id';
 $string['invalidquizid'] = 'Invalid quiz ID';
@@ -476,7 +474,6 @@ $string['modulenameplural'] = 'Quizzes';
 $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['multichoice'] = 'Multiple choice';
 $string['multipleanswers'] = 'Choose at least one answer.';
-$string['multiplier'] = 'Multiplier';
 $string['mustbesubmittedby'] = 'This attempt must be submitted by {$a}.';
 $string['name'] = 'Name';
 $string['navmethod'] = 'Navigation method';
@@ -903,3 +900,9 @@ $string['wronguse'] = 'You can not use this page like that';
 $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
+
+// Deprecated since Moodle 2.8
+
+$string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
+$string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
+$string['multiplier'] = 'Multiplier';

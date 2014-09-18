@@ -191,7 +191,7 @@ class qtype_numerical extends question_type {
                 $answer->answer = $this->apply_unit($answerdata, $units,
                         !empty($question->unitsleft));
                 if ($answer->answer === false) {
-                    $result->notice = get_string('invalidnumericanswer', 'quiz');
+                    $result->notice = get_string('invalidnumericanswer', 'qtype_numerical');
                 }
             }
             $answer->fraction = $question->fraction[$key];
@@ -212,7 +212,7 @@ class qtype_numerical extends question_type {
                 $options->tolerance = $this->apply_unit($question->tolerance[$key],
                         $units, !empty($question->unitsleft));
                 if ($options->tolerance === false) {
-                    $result->notice = get_string('invalidnumerictolerance', 'quiz');
+                    $result->notice = get_string('invalidnumerictolerance', 'qtype_numerical');
                 }
             }
             if (isset($options->id)) {
