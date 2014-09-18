@@ -23,6 +23,7 @@
  */
 
 use core_availability\capability_checker;
+use \core_availability\tree;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -486,6 +487,21 @@ class tree_testcase extends \advanced_testcase {
         $tree = new \core_availability\tree($structure);
         $this->assertRegExp('~SA.*1.*hidden~',
                 $tree->get_full_information($info));
+    }
+
+    /**
+     * Tests the is_empty() function.
+     */
+    public function test_is_empty() {
+        // Tree with nothing in should be empty.
+        $structure = self::tree(array());
+        $tree = new tree($structure);
+        $this->assertTrue($tree->is_empty());
+
+        // Tree with something in is not empty.
+        $structure = self::tree(array(self::mock(array('m' => '1'))));
+        $tree = new tree($structure);
+        $this->assertFalse($tree->is_empty());
     }
 
     /**

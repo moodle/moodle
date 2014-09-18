@@ -460,12 +460,12 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Conditional activity.
         $coursegradeitem = grade_item::fetch_course_item($moduleinfo->course); //the activity will become available only when the user reach some grade into the course itself.
-        $moduleinfo->availability = '{"op":"&","showc":[true,true],"c":[' .
+        $moduleinfo->availability = '{"op":"&","showc":[true,true,true,true,true],"c":[' .
                 '{"type":"date","d":">=","t":' . time() . '},' .
-                '{"type":"date","d":"<","t":' . (time() + (7 * 24 * 3600)) . '}' .
+                '{"type":"date","d":"<","t":' . (time() + (7 * 24 * 3600)) . '},' .
                 '{"type":"grade","id":' . $coursegradeitem->id . ',"min":10,"max":80},' .
                 '{"type":"profile","sf":"email","op":"contains","v":"@"},'.
-                '{"type":"completion","id":'. $assigncm->id . ',"e":' . COMPLETION_COMPLETE . '}' .
+                '{"type":"completion","cm":'. $assigncm->id . ',"e":' . COMPLETION_COMPLETE . '}' .
                 ']}';
 
         // Grading and Advanced grading.
@@ -2496,5 +2496,44 @@ class core_course_courselib_testcase extends advanced_testcase {
         );
         $this->assertEventLegacyLogData($expectedlegacydata, $event);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Tests that when creating or updating a module, if the availability settings
+     * are present but set to an empty tree, availability is set to null in
+     * database.
+     */
+    public function test_empty_availability_settings() {
+        global $DB;
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        // Enable availability.
+        set_config('enableavailability', 1);
+
+        // Test add.
+        $emptyavailability = '{"op":"&","c":[],"showc":[]}';
+        $course = self::getDataGenerator()->create_course();
+        $label = self::getDataGenerator()->create_module('label', array(
+                'course' => $course, 'availability' => $emptyavailability));
+        $this->assertNull($DB->get_field('course_modules', 'availability',
+                array('id' => $label->cmid)));
+
+        // Test update.
+        $formdata = $DB->get_record('course_modules', array('id' => $label->cmid));
+        unset($formdata->availability);
+        $formdata->availabilityconditionsjson = $emptyavailability;
+        $formdata->modulename = 'label';
+        $formdata->coursemodule = $label->cmid;
+        $draftid = 0;
+        file_prepare_draft_area($draftid, context_module::instance($label->cmid)->id,
+                'mod_label', 'intro', 0);
+        $formdata->introeditor = array(
+            'itemid' => $draftid,
+            'text' => '<p>Yo</p>',
+            'format' => FORMAT_HTML);
+        update_module($formdata);
+        $this->assertNull($DB->get_field('course_modules', 'availability',
+                array('id' => $label->cmid)));
     }
 }

@@ -86,6 +86,15 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         } else if (property_exists($moduleinfo, 'availability')) {
             $newcm->availability = $moduleinfo->availability;
         }
+        // If there is any availability data, verify it.
+        if ($newcm->availability) {
+            $tree = new \core_availability\tree(json_decode($newcm->availability));
+            // Save time and database space by setting null if the only data
+            // is an empty tree.
+            if ($tree->is_empty()) {
+                $newcm->availability = null;
+            }
+        }
     }
     if (isset($moduleinfo->showdescription)) {
         $newcm->showdescription = $moduleinfo->showdescription;
@@ -501,6 +510,15 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
             }
         } else if (property_exists($moduleinfo, 'availability')) {
             $cm->availability = $moduleinfo->availability;
+        }
+        // If there is any availability data, verify it.
+        if ($cm->availability) {
+            $tree = new \core_availability\tree(json_decode($cm->availability));
+            // Save time and database space by setting null if the only data
+            // is an empty tree.
+            if ($tree->is_empty()) {
+                $cm->availability = null;
+            }
         }
     }
     if (isset($moduleinfo->showdescription)) {
