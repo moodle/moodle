@@ -926,13 +926,35 @@ class grade_category extends grade_object {
             case GRADE_AGGREGATE_SUM:    // Add up all the items.
                 $num = count($grade_values);
                 $sum = 0;
-                foreach ($grade_values as $itemid => $grade_value) {
-                    $sum += $grade_value * $items[$itemid]->aggregationcoef2;
-                    if ($weights !== null && $num > 0) {
-                        $weights[$itemid] = $items[$itemid]->aggregationcoef2;
+                $sumweights = 0;
+                $weightsfix = 1;
+                $grademin = 0;
+                $grademax = 0;
+                foreach ($grade_values as $itemid => $gradevalue) {
+                    $gradeitemrange = $items[$itemid]->grademax - $items[$itemid]->grademin;
+
+                    // Extra credit.
+                    if (!empty($items[$itemid]->aggregationcoef)) {
+                        $grademax += $gradeitemrange;
+                        $sumweights += $items[$itemid]->aggregationcoef2;
                     }
                 }
-                $agg_grade = $sum;
+                if ($sumweights != 1 && $sumweights != 0) {
+                    $weightsfix = 1 / $sumweights;
+                }
+                foreach ($grade_values as $itemid => $gradevalue) {
+                    $sum += $gradevalue * $items[$itemid]->aggregationcoef2 * $grademax * $weightsfix;
+                    if ($weights !== null) {
+                        $weights[$itemid] = $items[$itemid]->aggregationcoef2 * $weightsfix;
+                    }
+                }
+                if ($grademax > 0) {
+                    $agg_grade = $sum / $grademax; // Re-normalize score.
+                } else {
+                    // Every item in the category is extra credit.
+                    $agg_grade = $sum;
+                    $grademax = $sum;
+                }
 
                 break;
 
