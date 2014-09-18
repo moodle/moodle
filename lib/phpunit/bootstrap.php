@@ -26,6 +26,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    die; // No access from web!
+}
+
 // we want to know about all problems
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
