@@ -1805,10 +1805,10 @@ class grade_category extends grade_object {
         $aggrstrings = grade_helper::get_aggregation_strings();
         $allhelp[] = $aggrstrings[$this->aggregation];
 
-        if ($this->droplow) {
+        if ($this->droplow && $this->can_apply_limit_rules()) {
             $allhelp[] = get_string('droplowestvalues', 'grades', $this->droplow);
         }
-        if ($this->keephigh) {
+        if ($this->keephigh && $this->can_apply_limit_rules()) {
             $allhelp[] = get_string('keephighestvalues', 'grades', $this->keephigh);
         }
         if (!$this->aggregateonlygraded) {
