@@ -153,19 +153,12 @@ if ($mform->is_cancelled()) {
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
-    $previouslyoverridden = $grade_item->weightoverride;
     grade_item::set_properties($grade_item, $data);
     $grade_item->outcomeid = null;
 
     // Handle null decimals value
     if (!property_exists($data, 'decimals') or $data->decimals < 0) {
         $grade_item->decimals = null;
-    }
-
-    // If we are using natural weight and the weight has been un-overriden, force parent category to recalculate weights.
-    if (isset($data->weightoverride) && $previouslyoverridden != $data->weightoverride &&
-            $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-        $parent_category->force_regrading();
     }
 
     if (empty($grade_item->id)) {

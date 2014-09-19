@@ -318,14 +318,15 @@ class grade_item extends grade_object {
         $multfactordiff  = grade_floats_different($db_item->multfactor,      $this->multfactor);
         $plusfactordiff  = grade_floats_different($db_item->plusfactor,      $this->plusfactor);
         $acoefdiff       = grade_floats_different($db_item->aggregationcoef, $this->aggregationcoef);
-        $acoefdiff2       = grade_floats_different($db_item->aggregationcoef2, $this->aggregationcoef2);
+        $acoefdiff2      = grade_floats_different($db_item->aggregationcoef2, $this->aggregationcoef2);
+        $weightoverride  = grade_floats_different($db_item->weightoverride, $this->weightoverride);
 
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
         $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
 
         return ($calculationdiff || $categorydiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
              || $outcomeiddiff || $multfactordiff || $plusfactordiff || $needsupdatediff
-             || $lockeddiff || $acoefdiff || $acoefdiff2 || $locktimediff);
+             || $lockeddiff || $acoefdiff || $acoefdiff2 || $weightoverride || $locktimediff);
     }
 
     /**
