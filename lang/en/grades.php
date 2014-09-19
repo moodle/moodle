@@ -312,6 +312,7 @@ $string['gradetype_help'] = 'There are 4 grade types:
 * Text - Feedback only
 
 Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the activity settings page.';
+$string['gradevaluetoobig'] = 'One of the grade values is larger than the allowed grade maximum of {$a}';
 $string['gradeview'] = 'View grade';
 $string['gradeweighthelp'] = 'Grade weight help';
 $string['groupavg'] = 'Group average';
