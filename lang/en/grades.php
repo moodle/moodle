@@ -64,6 +64,10 @@ $string['aggregation_help'] = 'The aggregation determines how grades in a catego
 * Highest grade
 * Mode of grades - The grade that occurs the most frequently
 * Natural - The sum of all grade values scaled by weight';
+$string['aggregationhintnovalue'] = 'Empty';
+$string['aggregationhintdropped'] = 'Dropped';
+$string['aggregationhintexcluded'] = 'Excluded';
+$string['aggregationhintextra'] = 'Extra credit';
 $string['aggregation_link'] = 'grade/aggregation';
 $string['aggregationcoef'] = 'Aggregation coefficient';
 $string['aggregationcoefextra'] = 'Extra credit'; // for the header of the table at Edit categories and items page

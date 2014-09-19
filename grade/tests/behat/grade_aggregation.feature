@@ -246,7 +246,7 @@ Feature: We can use calculated grade totals
     And I set the field "Grade report" to "Overview report"
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
-  @javascript
+  @javascript @wip
   Scenario: Natural aggregation
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |

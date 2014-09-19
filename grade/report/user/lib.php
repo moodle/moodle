@@ -447,17 +447,21 @@ class grade_report_user extends grade_report {
 
                 /// Actual Grade
                 $gradeval = $grade_grade->finalgrade;
+                $hint = $grade_grade->get_aggregation_hint($grade_object);
                 if (!$this->canviewhidden) {
                     /// Virtual Grade (may be calculated excluding hidden items etc).
                     $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
                                                                                  $grade_grade->grade_item,
                                                                                  $gradeval);
+
                     $gradeval = $adjustedgrade['grade'];
 
                     // We temporarily adjust the view of this grade item - because the min and
                     // max are affected by the hidden values in the aggregation.
                     $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
                     $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
+                    $hint['status'] = $adjustedgrade['aggregationstatus'];
+                    $hint['weight'] = $adjustedgrade['aggregationweight'];
                 } else {
                     // The max and min for an aggregation may be different to the grade_item.
                     if (!is_null($gradeval)) {
@@ -477,13 +481,12 @@ class grade_report_user extends grade_report {
                     $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
 
-                    $hint = $grade_grade->get_aggregation_hint($grade_object);
-                    if ($hint) {
-                        // This obliterates the weight because it provides a more informative description.
-                        if (is_numeric($hint)) {
-                            $hint = format_float($hint * 100.0, 2) . ' %';
-                        }
-                        $data['weight']['content'] = $hint;
+                    // This obliterates the weight because it provides a more informative description.
+                    if (is_numeric($hint['weight'])) {
+                        $data['weight']['content'] = format_float($hint['weight'] * 100.0, 2) . ' %';
+                    }
+                    if ($hint['status'] != 'used' && $hint['status'] != 'unknown') {
+                        $data['weight']['content'] .= '<br/>( ' . get_string('aggregationhint' . $hint['status'], 'grades') . ' )';
                     }
                 }
 
@@ -617,14 +620,13 @@ class grade_report_user extends grade_report {
                     $data['contributiontocoursetotal']['class'] = $class;
                     $data['contributiontocoursetotal']['content'] = '-';
                     $data['contributiontocoursetotal']['headers'] = "$header_cat $header_row contributiontocoursetotal";
-
+                    /**
                     if (($type != 'categoryitem') && ($type != 'courseitem')) {
-                        $hint = $grade_grade->get_aggregation_hint($grade_object);
-                        if ($hint && is_numeric($hint)) {
+                        $weight = $grade_grade->get_aggregation_weight($grade_object);
+                        if (is_numeric($weight)) {
                             $me = $grade_grade->grade_item;
                             $percentoftotal = $hint;
                             $validpercent = true;
-                            $limit = 0;
                             $parent = null;
                             while ((!$me->is_course_item()) && ($validpercent)) {
                                 // The parent of a category grade item is itself (yes - how odd).
@@ -649,10 +651,6 @@ class grade_report_user extends grade_report {
                                 }
                                 $thispercent = $hint;
                                 $percentoftotal *= $thispercent;
-                                $limit++;
-                                if ($limit > 20) {
-                                    die();
-                                }
                             }
                             if ($validpercent) {
                                 $grademin = $grade_grade->grade_item->grademin;
@@ -662,6 +660,11 @@ class grade_report_user extends grade_report {
                                 $data['contributiontocoursetotal']['content'] = $contribution;
                             }
                         }
+                    } **/
+                    $hint = $grade_grade->get_aggregation_hint($grade_object);
+                    if ($hint && is_numeric($hint)) {
+                        $data['contributiontocoursetotal']['content'] = $hint;
+                        $data['contributiontocoursetotal']['content'] .= ' ' . $grade_grade->finalgrade . ' ' . $grade_grade->rawgrademin . ' ' . $grade_grade->rawgrademax;
                     }
                 }
             }

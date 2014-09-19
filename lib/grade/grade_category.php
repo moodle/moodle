@@ -569,6 +569,7 @@ class grade_category extends grade_object {
         // Remember these so we can set flags on them to describe how they were used in the aggregation.
         $novalue = array();
         $dropped = array();
+        $extracredit = array();
         $usedweights = array();
 
         if (empty($userid)) {
@@ -597,6 +598,19 @@ class grade_category extends grade_object {
         // can not use own final category grade in calculation
         unset($grade_values[$this->grade_item->id]);
 
+        // Make sure a grade_grade exists for every grade_item.
+        foreach ($items as $itemid => $gradeitem) {
+            $gradegrade = new grade_grade(array('itemid' => $gradeitem->id,
+                                                'userid' => $userid,
+                                                'rawgrademin' => $gradeitem->grademin,
+                                                'rawgrademax' => $gradeitem->grademax), false);
+            $gradegrade->grade_item = $this->grade_item;
+            if (!$gradegrade->fetch(array('itemid'=>$gradeitem->id, 'userid'=>$userid))) {
+                $gradegrade->insert('system');
+            }
+
+        }
+
         // if no grades calculation possible or grading not allowed clear final grade
         if (empty($grade_values) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
             $grade->finalgrade = null;
@@ -605,27 +619,25 @@ class grade_category extends grade_object {
                 $grade->update('aggregation');
             }
             $dropped = $grade_values;
-            $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped);
+            $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
             return;
         }
 
-        $minvisible = (bool) get_config('moodle', 'grade_report_showmin');
-
-        // normalize the grades first - all will have value 0...1
-        // ungraded items are not used in aggregation
+        // Normalize the grades first - all will have value 0...1
+        // ungraded items are not used in aggregation.
         foreach ($grade_values as $itemid=>$v) {
-            // Natural weighting currently cannot exclude empty grades, or grades from excluded items.
-            if ($this->aggregation != GRADE_AGGREGATE_SUM) {
-                if (is_null($v)) {
-                    // null means no grade
+            if (is_null($v)) {
+                // If null, it means no grade.
+                if ($this->aggregateonlygraded) {
                     unset($grade_values[$itemid]);
                     $novalue[$itemid] = 0;
                     continue;
-                } else if (in_array($itemid, $excluded)) {
-                    unset($grade_values[$itemid]);
-                    $dropped[$itemid] = 0;
-                    continue;
                 }
+            }
+            if (in_array($itemid, $excluded)) {
+                unset($grade_values[$itemid]);
+                $dropped[$itemid] = 0;
+                continue;
             }
             // Check for user specific grade min/max overrides.
             $usergrademin = $items[$itemid]->grademin;
@@ -638,13 +650,14 @@ class grade_category extends grade_object {
             }
             $grade_values[$itemid] = grade_grade::standardise_score($v, $usergrademin, $usergrademax, 0, 1);
         }
-        // use min grade if grade missing for these types
-        if (!$this->aggregateonlygraded) {
 
-            foreach ($items as $itemid=>$value) {
-
-                if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
+        // Use min grade if grade missing for these types.
+        foreach ($items as $itemid=>$value) {
+            if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
+                if (!$this->aggregateonlygraded) {
                     $grade_values[$itemid] = 0;
+                } else {
+                    $novalue[$itemid] = 0;
                 }
             }
         }
@@ -659,6 +672,13 @@ class grade_category extends grade_object {
         foreach ($moredropped as $drop => $unused) {
             $dropped[$drop] = 0;
         }
+
+        foreach ($grade_values as $itemid => $val) {
+            if (self::is_extracredit_used() && ($items[$itemid]->aggregationcoef > 0)) {
+                $extracredit[$itemid] = 0;
+            }
+        }
+
         asort($grade_values, SORT_NUMERIC);
 
         // let's see we have still enough grades to do any statistics
@@ -669,7 +689,7 @@ class grade_category extends grade_object {
             if (!is_null($oldfinalgrade)) {
                 $grade->update('aggregation');
             }
-            $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped);
+            $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
             return;
         }
 
@@ -694,7 +714,7 @@ class grade_category extends grade_object {
             $grade->update('aggregation');
         }
 
-        $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped);
+        $this->set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit);
 
         return;
     }
@@ -710,7 +730,7 @@ class grade_category extends grade_object {
      * @param array $dropped An array with keys for each of the grade_item columns dropped
      *                       because of any drop lowest/highest settings in the aggregation
      */
-    private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped) {
+    private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit) {
         global $DB;
 
         // Included.
@@ -757,6 +777,18 @@ class grade_category extends grade_object {
             $DB->set_field_select('grade_grades',
                                   'aggregationstatus',
                                   'dropped',
+                                  "itemid $itemsql AND userid = :userid",
+                                  $itemlist);
+        }
+        // Extra credit.
+        if (!empty($extracredit)) {
+            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($extracredit), SQL_PARAMS_NAMED, 'g');
+
+            $itemlist['userid'] = $userid;
+
+            $DB->set_field_select('grade_grades',
+                                  'aggregationstatus',
+                                  'extra',
                                   "itemid $itemsql AND userid = :userid",
                                   $itemlist);
         }

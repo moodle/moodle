@@ -433,6 +433,9 @@ abstract class grade_report {
             $grademin = $coursegradegrade->rawgrademin;
             $grademax = $coursegradegrade->rawgrademax;
         }
+        $hint = $coursegradegrade->get_aggregation_hint();
+        $aggregationstatus = $hint['status'];
+        $aggregationweight = $hint['weight'];
 
         if (!is_array($this->showtotalsifcontainhidden)) {
             debugging('showtotalsifcontainhidden should be an array', DEBUG_DEVELOPER);
@@ -476,18 +479,30 @@ abstract class grade_report {
         }
 
         //if the item definitely depends on a hidden item
-        if (array_key_exists($course_item->id, $hiding_affected['altered'])) {
+        if (array_key_exists($course_item->id, $hiding_affected['altered']) ||
+            array_key_exists($course_item->id, $hiding_affected['alteredgrademin']) ||
+            array_key_exists($course_item->id, $hiding_affected['alteredgrademax']) ||
+            array_key_exists($course_item->id, $hiding_affected['alteredaggregationstatus']) ||
+            array_key_exists($course_item->id, $hiding_affected['alteredaggregationweight'])) { 
             if (!$this->showtotalsifcontainhidden[$courseid]) {
                 //hide the grade
                 $finalgrade = null;
             } else {
                 //use reprocessed marks that exclude hidden items
-                $finalgrade = $hiding_affected['altered'][$course_item->id];
+                if (!empty($hiding_affected['altered'][$course_item->id])) {
+                    $finalgrade = $hiding_affected['altered'][$course_item->id];
+                }
                 if (!empty($hiding_affected['alteredgrademin'][$course_item->id])) {
                     $grademin = $hiding_affected['alteredgrademin'][$course_item->id];
                 }
                 if (!empty($hiding_affected['alteredgrademax'][$course_item->id])) {
                     $grademax = $hiding_affected['alteredgrademax'][$course_item->id];
+                }
+                if (!empty($hiding_affected['alteredaggregationstatus'][$course_item->id])) {
+                    $aggregationstatus = $hiding_affected['alteredaggregationstatus'][$course_item->id];
+                }
+                if (!empty($hiding_affected['alteredaggregationweight'][$course_item->id])) {
+                    $aggregationweight = $hiding_affected['alteredaggregationweight'][$course_item->id];
                 }
             }
         } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
@@ -505,10 +520,16 @@ abstract class grade_report {
                 if (!empty($hiding_affected['alteredgrademax'][$course_item->id])) {
                     $grademax = $hiding_affected['alteredgrademax'][$course_item->id];
                 }
+                if (!empty($hiding_affected['alteredaggregationstatus'][$course_item->id])) {
+                    $aggregationstatus = $hiding_affected['alteredaggregationstatus'][$course_item->id];
+                }
+                if (!empty($hiding_affected['alteredaggregationweight'][$course_item->id])) {
+                    $aggregationweight = $hiding_affected['alteredaggregationweight'][$course_item->id];
+                }
             }
         }
 
-        return array('grade' => $finalgrade, 'grademin' => $grademin, 'grademax' => $grademax);
+        return array('grade' => $finalgrade, 'grademin' => $grademin, 'grademax' => $grademax, 'aggregationstatus'=>$aggregationstatus, 'aggregationweight'=>$aggregationweight);
     }
 
     /**
