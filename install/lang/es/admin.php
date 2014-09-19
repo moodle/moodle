@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Error, valor incorrecto  "{$a->value}" para "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor, inténtelo de nuevo';
+$string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor inténtelo de nuevo';
 $string['clitypevalue'] = 'valor del tipo';
 $string['clitypevaluedefault'] = 'valor del tipo, pulse Enter para utilizar el valor por defecto ({$a})';
 $string['cliunknowoption'] = 'Opciones no reconocidas:
