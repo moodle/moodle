@@ -1034,7 +1034,7 @@ class core_plugin_manager {
             ),
 
             'gradeimport' => array(
-                'csv', 'xml'
+                'csv', 'direct', 'xml'
             ),
 
             'gradereport' => array(
