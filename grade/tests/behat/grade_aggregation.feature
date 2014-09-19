@@ -313,8 +313,11 @@ Feature: We can use calculated grade totals
     And I set the field "Weight adjusted" to "1"
     And I set the field "aggregationcoef2" to "0.5"
     And I press "Save changes"
+    And I click on "Edit  assign Test assignment three" "link"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
     And I turn editing mode off
-    Then I should see "152.68 (19.70 %)" in the ".course" "css_element"
+    Then I should see "152.68 (24.43 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
@@ -323,4 +326,4 @@ Feature: We can use calculated grade totals
     And I follow "Course 1"
     And I follow "Grades"
     And I set the field "Grade report" to "Overview report"
-    And I should see "113.75 (17.91 %)" in the "overview-grade" "table"
+    And I should see "113.75 (23.45 %)" in the "overview-grade" "table"

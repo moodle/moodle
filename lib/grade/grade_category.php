@@ -980,7 +980,7 @@ class grade_category extends grade_object {
                     $gradeitemrange = $usergrademax - $usergrademin;
 
                     // Extra credit.
-                    if (!empty($items[$itemid]->aggregationcoef)) {
+                    if (!($items[$itemid]->aggregationcoef > 0)) {
                         $grademax += $gradeitemrange;
                         $sumweights += $items[$itemid]->aggregationcoef2;
                     }
