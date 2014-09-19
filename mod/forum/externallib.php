@@ -470,8 +470,14 @@ class mod_forum_external extends external_api {
             }
 
             $user = new stdclass();
+            $user->id = $post->userid;
             $user = username_load_fields_from_object($user, $post);
-            $posts[$pid]->userfullname = fullname($user, $canviewfullname);
+            $post->userfullname = fullname($user, $canviewfullname);
+            $post->userpictureurl = moodle_url::make_pluginfile_url(
+                    context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1');
+            // Fix the pluginfile.php link.
+            $post->userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php",
+                $post->userpictureurl);
 
             // Rewrite embedded images URLs.
             list($post->message, $post->messageformat) =
@@ -543,7 +549,8 @@ class mod_forum_external extends external_api {
                                 'children' => new external_multiple_structure(new external_value(PARAM_INT, 'children post id')),
                                 'canreply' => new external_value(PARAM_BOOL, 'The user can reply to posts?'),
                                 'postread' => new external_value(PARAM_BOOL, 'The post was read'),
-                                'userfullname' => new external_value(PARAM_TEXT, 'Post author full name')
+                                'userfullname' => new external_value(PARAM_TEXT, 'Post author full name'),
+                                'userpictureurl' => new external_value(PARAM_URL, 'Post author picture.', VALUE_OPTIONAL)
                             ), 'post'
                         )
                     ),

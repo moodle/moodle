@@ -464,6 +464,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'posts' => array(),
             'warnings' => array(),
         );
+
+        $userpictureurl = moodle_url::make_pluginfile_url(
+            context_user::instance($discussion1reply2->userid)->id, 'user', 'icon', null, '/', 'f1');
+        // Fix the pluginfile.php link.
+        $userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php", $userpictureurl);
+
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply2->id,
             'discussion' => $discussion1reply2->discussion,
@@ -483,8 +489,15 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'children' => array(),
             'canreply' => true,
             'postread' => false,
-            'userfullname' => fullname($user3)
+            'userfullname' => fullname($user3),
+            'userpictureurl' => $userpictureurl
         );
+
+        $userpictureurl = moodle_url::make_pluginfile_url(
+            context_user::instance($discussion1reply1->userid)->id, 'user', 'icon', null, '/', 'f1');
+        // Fix the pluginfile.php link.
+        $userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php", $userpictureurl);
+
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply1->id,
             'discussion' => $discussion1reply1->discussion,
@@ -504,7 +517,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'children' => array($discussion1reply2->id),
             'canreply' => true,
             'postread' => false,
-            'userfullname' => fullname($user2)
+            'userfullname' => fullname($user2),
+            'userpictureurl' => $userpictureurl
         );
 
         // Test a discussion with two additional posts (total 3 posts).
