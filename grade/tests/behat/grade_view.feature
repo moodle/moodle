@@ -98,8 +98,8 @@ Feature: We can enter in grades and view reports from the gradebook
     And I follow "Grades"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage |
-      | Test assignment name 1 | 0.72 | 80.00 | 0–100 | 80.00 % |
-      | Test assignment name 2 | 1.00 | 90.00 | 0–100 | 90.00 % |
+      | Test assignment name 1 | 41.86 % | 80.00 | 0–100 | 80.00 % |
+      | Test assignment name 2 | 58.14 % | 90.00 | 0–100 | 90.00 % |
       | Course total | - | 85.81 | 0–100 | 85.81 % |
     And the following should not exist in the "user-grade" table:
       | Grade item | Calculated weight | Percentage |
