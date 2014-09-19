@@ -100,10 +100,10 @@ class edit_item_form extends moodleform {
         $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
         $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
 
-        $mform->addElement('text', 'weight', get_string('weight', 'grades'));
-        $mform->addHelpButton('weight', 'weight', 'grades');
-        $mform->setType('weight', PARAM_RAW);
-        $mform->disabledIf('weight', 'weightoverride');
+        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
+        $mform->setType('aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('aggregationcoef2', 'weightoverride');
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
@@ -291,17 +291,17 @@ class edit_item_form extends moodleform {
                         $coefstring = 'aggregationcoefextrasum';
                         $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
                     } else {
-                        $element =& $mform->createElement('text', 'weight', get_string($coefstring, 'grades'));
+                        $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
                     }
                     if ($mform->elementExists('parentcategory')) {
                         $mform->insertElementBefore($element, 'parentcategory');
                     } else {
                         $mform->insertElementBefore($element, 'id');
                     }
-                    $mform->addHelpButton('weight', $coefstring, 'grades');
+                    $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
                 }
 
-                $mform->disabledIf('weight', 'parentcategory', 'eq', $parent_category->id);
+                $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parent_category->id);
             }
 
             // Remove fields used by natural weighting if the parent category is not using natural weighting.
@@ -309,8 +309,8 @@ class edit_item_form extends moodleform {
                 if ($mform->elementExists('weightoverride')) {
                     $mform->removeElement('weightoverride');
                 }
-                if ($mform->elementExists('weight')) {
-                    $mform->removeElement('weight');
+                if ($mform->elementExists('aggregationcoef2')) {
+                    $mform->removeElement('aggregationcoef2');
                 }
             }
 

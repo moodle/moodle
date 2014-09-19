@@ -98,9 +98,7 @@ if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->ag
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }
 if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-    $item->weight = format_float($item->aggregationcoef2 * 100.0);
-} else if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-    $item->weight = format_float($item->aggregationcoef);
+    $item->aggregationcoef2 = format_float($item->aggregationcoef2 * 100.0);
 }
 $item->cancontrolvisibility = $grade_item->can_control_visibility();
 
@@ -137,19 +135,14 @@ if ($mform->is_cancelled()) {
     unset($data->locked);
     unset($data->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'weight');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
         }
     }
-    if (isset($data->weight)) {
-        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-            $data->aggregationcoef2 = $data->weight / 100.0;
-        } else if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-            $data->aggregationcoef = $data->weight;
-        }
-        unset($data->weight);
+    if (isset($data->aggregationcoef2) && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+        $data->aggregationcoef2 = $data->aggregationcoef2 / 100.0;
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));

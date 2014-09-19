@@ -75,15 +75,12 @@ if ($id) {
     $category->grade_item_gradepass  = format_float($category->grade_item_gradepass, $decimalpoints);
     $category->grade_item_multfactor = format_float($category->grade_item_multfactor, 4);
     $category->grade_item_plusfactor = format_float($category->grade_item_plusfactor, 4);
+    $category->grade_item_aggregationcoef2 = format_float($category->grade_item_aggregationcoef2 * 100.0, 4);
 
     if (!$parent_category) {
         // keep as is
     } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
         $category->grade_item_aggregationcoef = $category->grade_item_aggregationcoef == 0 ? 0 : 1;
-        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
-            $category->grade_item_weight = format_float($category->grade_item_aggregationcoef2 * 100, 4);
-        }
-        unset($category->grade_item_aggregationcoef2);
     } else {
         $category->grade_item_aggregationcoef = format_float($category->grade_item_aggregationcoef, 4);
     }
@@ -164,15 +161,14 @@ if ($mform->is_cancelled()) {
     unset($itemdata->locked);
     unset($itemdata->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'weight');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($itemdata, $param)) {
             $itemdata->$param = unformat_float($itemdata->$param);
         }
     }
-    if (isset($itemdata->weight)) {
-        $temdata->aggregationcoef2 = $itemdata->weight / 100.0;
-        unset($itemdata->weight);
+    if (isset($itemdata->aggregationcoef2)) {
+        $itemdata->aggregationcoef2 = $itemdata->aggregationcoef2 / 100.0;
     }
 
     // When creating a new category, a number of grade item fields are filled out automatically, and are required.
