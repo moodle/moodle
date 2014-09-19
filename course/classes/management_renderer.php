@@ -1180,6 +1180,15 @@ class core_course_management_renderer extends plugin_renderer_base {
                     array('class' => 'action-edit')
                 );
             }
+            // Delete.
+            if ($course->can_delete()) {
+                $actions[] = $this->output->action_icon(
+                    new moodle_url('/course/delete.php', array('id' => $course->id)),
+                    new pix_icon('t/delete', get_string('delete')),
+                    null,
+                    array('class' => 'action-delete')
+                );
+            }
             // Show/Hide.
             if ($course->can_change_visibility()) {
                     $actions[] = $this->output->action_icon(
