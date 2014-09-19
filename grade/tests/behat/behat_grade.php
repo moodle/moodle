@@ -27,7 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given;
+use Behat\Behat\Context\Step\Given as Given,
+    Behat\Gherkin\Node\TableNode as TableNode;
 
 class behat_grade extends behat_base {
 
@@ -45,5 +46,27 @@ class behat_grade extends behat_base {
         $fieldstr = get_string('useractivitygrade', 'gradereport_grader', $gradelabel);
 
         return new Given('I set the field "' . $this->escape($fieldstr) . '" to "' . $grade . '"');
+    }
+
+    /**
+     * Changes the settings of a grade item or category or the course.
+     *
+     * Teacher must be either on the grade setup page or on the Grader report page with editing mode turned on.
+     *
+     * @Given /^I set the following settings for grade item "(?P<grade_item_string>(?:[^"]|\\")*)":$/
+     * @param string $gradeitem
+     * @param TableNode $data
+     * @return Given[]
+     */
+    public function i_set_the_following_settings_for_grade_item($gradeitem, TableNode $data) {
+        $savechanges = get_string('savechanges', 'grades');
+        $edit = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('edit') . '  ');
+        $gradeitem = $this->getSession()->getSelectorsHandler()->xpathLiteral($gradeitem);
+        $linkxpath = "//a[./img[starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
+        return array(
+            new Given('I click on "' . $this->escape($linkxpath) . '" "xpath_element"'),
+            new Given('I set the following fields to these values:', $data),
+            new Given('I press "' . $this->escape($savechanges) . '"'),
+        );
     }
 }

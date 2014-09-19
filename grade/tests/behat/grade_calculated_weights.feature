@@ -57,9 +57,8 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Mean of grades |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -80,17 +79,16 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Weighted mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I press "Save changes"
-    And I set the field "Extra credit value for Test assignment one" to "2.0"
-    And I set the field "Extra credit value for Test assignment two" to "1.0"
-    And I set the field "Extra credit value for Test assignment three" to "1.0"
-    And I press "Save changes"
-    And I follow "Edit   Sub category"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "1.0"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Weighted mean of grades |
+    And I set the following settings for grade item "Test assignment one":
+      | Item weight | 2.0 |
+    And I set the following settings for grade item "Test assignment two":
+      | Item weight | 1.0 |
+    And I set the following settings for grade item "Test assignment three":
+      | Item weight | 1.0 |
+    And I set the following settings for grade item "Sub category":
+      | Item weight | 1.0 |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -111,11 +109,10 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Simple weighted mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I press "Save changes"
-    And I click on "Extra credit value for Test assignment three" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Simple weighted mean of grades |
+    And I set the following settings for grade item "Test assignment three":
+      | Extra credit | 1 |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -136,11 +133,10 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Mean of grades (with extra credits) aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I press "Save changes"
-    And I set the field "Extra credit value for Test assignment three" to "1.0"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Mean of grades (with extra credits) |
+    And I set the following settings for grade item "Test assignment three":
+      | Extra credit weight | 1.0 |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -161,9 +157,8 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Median of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Median of grades"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Median of grades |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -184,9 +179,8 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Lowest grade aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Lowest grade |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -208,9 +202,8 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Highest grade aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Highest grade"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Highest grade |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -231,9 +224,8 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Mode of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Mode of grades |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 
@@ -254,11 +246,10 @@ Feature: We can understand the gradebook user report
 
   @javascript
   Scenario: Natural aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Natural"
-    And I press "Save changes"
-    And I click on "Extra credit value for Test assignment three" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Natural |
+    And I set the following settings for grade item "Test assignment three":
+      | Extra credit | 1 |
     And I set the field "Grade report" to "User report"
     And I set the field "Select all or one user" to "Student 1"
 

@@ -52,32 +52,25 @@ Feature: We can use calculated grade totals
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment eight"
     And I give the grade "5.00" to the user "Student 1" for the grade item "Test assignment nine"
     And I press "Save changes"
-    And I click on "Edit  assign Test assignment two" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment five" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment eight" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Test assignment two":
+      | Hidden | 1 |
+    And I set the following settings for grade item "Test assignment five":
+      | Hidden | 1 |
+    And I set the following settings for grade item "Test assignment eight":
+      | Hidden | 1 |
     And I follow "Course grade settings"
     And I set the field "Grade display type" to "Real (percentage)"
     And I press "Save changes"
 
   @javascript
   Scenario: Mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Mean of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mean of grades |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Mean of grades |
+      | Exclude empty grades | 0              |
     And I turn editing mode off
     Then I should see "30.00 (30.00 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -92,24 +85,17 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Weighted mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "1"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "1"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "3"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Weighted mean of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Weighted mean of grades |
+      | Item weight          | 1                       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Weighted mean of grades |
+      | Item weight          | 1                       |
+      | Exclude empty grades | 0                       |
+    And I set the following settings for grade item "Test assignment one":
+      | Item weight | 3 |
     And I turn editing mode off
     Then I should see "27.14 (27.14 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -124,21 +110,15 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Simple weighted mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I expand all fieldsets
-    And I click on "Extra credit" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Simple weighted mean of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Simple weighted mean of grades |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Simple weighted mean of grades |
+      | Exclude empty grades | 0                              |
+    And I set the following settings for grade item "Test assignment one":
+      | Extra credit | 1 |
     And I turn editing mode off
     Then I should see "45.19 (45.19 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -153,21 +133,15 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Mean of grades (with extra credits) aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I expand all fieldsets
-    And I set the field "Extra credit weight" to "2"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Mean of grades (with extra credits) |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mean of grades (with extra credits) |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Mean of grades (with extra credits) |
+      | Exclude empty grades | 0                                   |
+    And I set the following settings for grade item "Test assignment one":
+      | Extra credit weight  | 2 |
     And I turn editing mode off
     Then I should see "42.50 (42.50 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -182,17 +156,13 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Median of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Median of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Median of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Median of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Median of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation | Median of grades |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Median of grades |
+      | Exclude empty grades | 0                |
     And I turn editing mode off
     Then I should see "26.67 (26.67 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -207,23 +177,17 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Lowest grade aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment five" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment four" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Lowest grade |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation | Lowest grade |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Lowest grade |
+      | Exclude empty grades | 0            |
+    And I set the following settings for grade item "Test assignment five":
+      | Hidden | 1 |
+    And I set the following settings for grade item "Test assignment four":
+      | Hidden | 1 |
     And I turn editing mode off
     Then I should see "0.00 (0.00 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -238,20 +202,15 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Highest grade aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Highest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Highest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Highest grade"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Highest grade |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Highest grade |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Highest grade |
+      | Exclude empty grades | 0             |
+    And I set the following settings for grade item "Test assignment one":
+      | Hidden | 1 |
     And I turn editing mode off
     Then I should see "50.00 (50.00 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -266,20 +225,15 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Mode of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Mode of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mode of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mode of grades |
+      | Exclude empty grades | 0              |
+    And I set the following settings for grade item "Test assignment one":
+      | Hidden | 1 |
     And I turn editing mode off
     Then I should see "50.00 (50.00 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
@@ -294,28 +248,20 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Natural"
-    And I click on "Show more..." "link"
-    And I set the field "Exclude empty grades" to "0"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Natural"
-    And I click on "Show more..." "link"
-    And I set the field "Exclude empty grades" to "1"
-    And I press "Save changes"
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Natural"
-    And I click on "Show more..." "link"
-    And I set the field "Exclude empty grades" to "0"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment six" "link"
-    And I set the field "Weight adjusted" to "1"
-    And I set the field "aggregationcoef2" to "0.5"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment three" "link"
-    And I set the field "Extra credit" to "1"
-    And I press "Save changes"
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 1       |
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Test assignment six":
+      | Weight adjusted  | 1   |
+      | aggregationcoef2 | 0.5 |
+    And I set the following settings for grade item "Test assignment three":
+      | Extra credit | 1 |
     And I turn editing mode off
     Then I should see "152.68 (24.43 %)" in the ".course" "css_element"
     And I follow "Course grade settings"
