@@ -273,3 +273,95 @@ Feature: We can use calculated grade totals
     And I follow "Grades"
     And I set the field "Grade report" to "Overview report"
     And I should see "113.75 (23.45 %)" in the "overview-grade" "table"
+
+  @javascript
+  Scenario: Natural aggregation with drop lowest
+    When I log out
+    And I log in as "admin"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I turn editing mode on
+    And I follow "Edit   Sub category 1"
+    And I set the field "Aggregation" to "Natural"
+    And I click on "Show more..." "link"
+    And I set the field "Exclude empty grades" to "0"
+    And I press "Save changes"
+    And I follow "Edit   Sub category 2"
+    And I set the field "Aggregation" to "Natural"
+    And I click on "Show more..." "link"
+    And I set the field "Exclude empty grades" to "0"
+    And I press "Save changes"
+    And I follow "Edit   Course 1"
+    And I set the field "Aggregation" to "Natural"
+    And I click on "Show more..." "link"
+    And I set the field "Exclude empty grades" to "0"
+    And I press "Save changes"
+    And I expand "Setup" node
+    And I follow "Simple view"
+    And I press "Add category"
+    And I click on "Show more" "link"
+    And I set the following fields to these values:
+      | Category name | Sub category 3 |
+      | Aggregation | Natural |
+      | Drop the lowest | 1 |
+    And I press "Save changes"
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | Manual item 1 |
+      | Grade category | Sub category 3 |
+    And I press "Save changes"
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | Manual item 2 |
+      | Grade category | Sub category 3 |
+    And I press "Save changes"
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | Manual item 3 |
+      | Grade category | Sub category 3 |
+    And I press "Save changes"
+    And I follow "Grades"
+    And I turn editing mode on
+    And I give the grade "60.00" to the user "Student 1" for the grade item "Manual item 1"
+    And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I give the grade "40.00" to the user "Student 1" for the grade item "Manual item 3"
+    And I press "Save changes"
+    And I turn editing mode off
+    Then I should see "250.00 (25.25 %)" in the ".course" "css_element"
+    And I turn editing mode on
+    And I follow "Edit   Manual item 2"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I turn editing mode off
+    And I should see "270.00 (27.27 %)" in the ".course" "css_element"
+    And I turn editing mode on
+    And I follow "Edit   Manual item 2"
+    And I set the field "Extra credit" to "0"
+    And I set the field "Maximum grade" to "200"
+    And I press "Save changes"
+    And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I turn editing mode off
+    And I should see "270.00 (22.69 %)" in the ".course" "css_element"
+    And I turn editing mode on
+    And I follow "Edit   Manual item 2"
+    And I set the field "Extra credit" to "0"
+    And I set the field "Maximum grade" to "100"
+    And I press "Save changes"
+    And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I turn editing mode off
+    And I should see "250.00 (25.25 %)" in the ".course" "css_element"
+    And I expand "Setup" node
+    And I follow "Simple view"
+    And I press "Add category"
+    And I set the following fields to these values:
+      | Category name | Sub sub category 1 |
+      | Parent category | Sub category 3 |
+    And I press "Save changes"
+    And I follow "Grades"
+    And I should see "270.00 (24.77 %)" in the ".course" "css_element"
