@@ -3487,6 +3487,8 @@ function print_password_policy() {
  * @param boolean $ajax Whether this help is called from an AJAX script.
  *                This is used to influence text formatting and determines
  *                which format to output the doclink in.
+ * @param string|object|array $a An object, string or number that can be used
+ *      within translation strings
  * @return Object An object containing:
  * - heading: Any heading that there may be for this help string.
  * - text: The wiki-formatted help string.
@@ -3494,7 +3496,7 @@ function print_password_policy() {
  *            CSS classes to apply to that link. Only present if $ajax = false.
  * - completedoclink: A text representation of the doclink. Only present if $ajax = true.
  */
-function get_formatted_help_string($identifier, $component, $ajax = false) {
+function get_formatted_help_string($identifier, $component, $ajax = false, $a = null) {
     global $CFG, $OUTPUT;
     $sm = get_string_manager();
 
@@ -3521,7 +3523,7 @@ function get_formatted_help_string($identifier, $component, $ajax = false) {
         $options->overflowdiv = !$ajax;
 
         // Should be simple wiki only MDL-21695.
-        $data->text =  format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
+        $data->text = format_text(get_string($identifier.'_help', $component, $a), FORMAT_MARKDOWN, $options);
 
         $helplink = $identifier . '_link';
         if ($sm->string_exists($helplink, $component)) {  // Link to further info in Moodle docs.
