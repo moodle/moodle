@@ -1866,12 +1866,12 @@ class restore_enrolments_structure_step extends restore_structure_step {
 
     protected function define_structure() {
 
-        $paths = array();
+        $enrol = new restore_path_element('enrol', '/enrolments/enrols/enrol');
+        $enrolment = new restore_path_element('enrolment', '/enrolments/enrols/enrol/user_enrolments/enrolment');
+        // Attach local plugin stucture to enrol element.
+        $this->add_plugin_structure('enrol', $enrol);
 
-        $paths[] = new restore_path_element('enrol', '/enrolments/enrols/enrol');
-        $paths[] = new restore_path_element('enrolment', '/enrolments/enrols/enrol/user_enrolments/enrolment');
-
-        return $paths;
+        return array($enrol, $enrolment);
     }
 
     /**
