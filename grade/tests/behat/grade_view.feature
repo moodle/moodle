@@ -72,7 +72,7 @@ Feature: We can enter in grades and view reports from the gradebook
       | Grade item | Grade | Range | Percentage |
       | Test assignment name 1 | 80.00 | 0–100 | 80.00 % |
       | Test assignment name 2 | 90.00 | 0–100 | 90.00 % |
-      | Course total | 85.00 | 0–100 | 85.00 % |
+      | Course totalSimple weighted mean of grades. | 85.00 | 0–100 | 85.00 % |
     And the following should not exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
       | Course total | 90.00 | 0–110 | 90.00 % |
@@ -100,7 +100,7 @@ Feature: We can enter in grades and view reports from the gradebook
       | Grade item | Calculated weight | Grade | Range | Percentage |
       | Test assignment name 1 | 41.86 % | 80.00 | 0–100 | 80.00 % |
       | Test assignment name 2 | 58.14 % | 90.00 | 0–100 | 90.00 % |
-      | Course total | - | 85.81 | 0–100 | 85.81 % |
+      | Course totalWeighted mean of grades. | - | 85.81 | 0–100 | 85.81 % |
     And the following should not exist in the "user-grade" table:
       | Grade item | Calculated weight | Percentage |
       | Test assignment name 1 | 0.72% | 0.72% |
