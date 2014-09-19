@@ -279,9 +279,10 @@ if ($data = data_submitted() and confirm_sesskey()) {
                 if (round($grade_item->aggregationcoef2, 4) != round($value, 4)) {
                     $grade_item->weightoverride = 1;
                 }
-                $param = 'aggregationcoef2';
+                $grade_item->aggregationcoef2 = $value;
+            } else {
+                $grade_item->$param = $value;
             }
-            $grade_item->$param = $value;
 
             $grade_item->update();
 

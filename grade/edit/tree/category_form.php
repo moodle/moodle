@@ -161,7 +161,7 @@ class edit_category_form extends moodleform {
             $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
         }
 
-        $mform->addElement('checkbox', 'grade_item_weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addElement('advcheckbox', 'grade_item_weightoverride', get_string('adjustedweight', 'grades'));
         $mform->addHelpButton('grade_item_weightoverride', 'weightoverride', 'grades');
 
         $mform->addElement('text', 'grade_item_weight', get_string('weight', 'grades'));

@@ -108,10 +108,6 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
-    if (isset($data->grade_item_weight)) {
-        $data->grade_item_aggregationcoef2 = $data->grade_item_weight / 100.0;
-        unset($data->grade_item_weight);
-    }
     // If no fullname is entered for a course category, put ? in the DB
     if (!isset($data->fullname) || $data->fullname == '') {
         $data->fullname = '?';
@@ -173,6 +169,10 @@ if ($mform->is_cancelled()) {
         if (property_exists($itemdata, $param)) {
             $itemdata->$param = unformat_float($itemdata->$param);
         }
+    }
+    if (isset($itemdata->weight)) {
+        $temdata->aggregationcoef2 = $itemdata->weight / 100.0;
+        unset($itemdata->weight);
     }
 
     // When creating a new category, a number of grade item fields are filled out automatically, and are required.

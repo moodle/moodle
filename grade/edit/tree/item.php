@@ -110,10 +110,6 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
-    if (isset($data->weight)) {
-        $data->aggregationcoef2 = $data->weight / 100.0;
-        unset($data->weight);
-    }
     // If unset, give the aggregationcoef a default based on parent aggregation method
     if (!isset($data->aggregationcoef) || $data->aggregationcoef == '') {
         if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
@@ -141,11 +137,19 @@ if ($mform->is_cancelled()) {
     unset($data->locked);
     unset($data->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'weight');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'weight');
     foreach ($convert as $param) {
         if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
         }
+    }
+    if (isset($data->weight)) {
+        if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+            $data->aggregationcoef2 = $data->weight / 100.0;
+        } else if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+            $data->aggregationcoef = $data->weight;
+        }
+        unset($data->weight);
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
