@@ -677,10 +677,12 @@ class grade_category extends grade_object {
         $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
 
         $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
+        $oldrawgrademax = $grade->rawgrademax;
         $grade->rawgrademax = $result['grademax'];
 
         // update in db if changed
-        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
+        if (grade_floats_different($grade->finalgrade, $oldfinalgrade) ||
+            grade_floats_different($grade->rawgrademax, $oldrawgrademax)) {
             $grade->update('aggregation');
         }
 
