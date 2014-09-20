@@ -49,6 +49,11 @@ class subs extends \table_sql implements \renderable {
     protected $context;
 
     /**
+     * @var \tool_monitor\output\helpicon\renderer the help icon renderer.
+     */
+    protected $helpiconrenderer;
+
+    /**
      * Sets up the table_log parameters.
      *
      * @param string $uniqueid unique id of form.
@@ -57,6 +62,8 @@ class subs extends \table_sql implements \renderable {
      * @param int $perpage Number of rules to display per page.
      */
     public function __construct($uniqueid, \moodle_url $url, $courseid = 0, $perpage = 100) {
+        global $PAGE;
+
         parent::__construct($uniqueid);
 
         $this->set_attribute('class', 'toolmonitor subscriptions generaltable generalbox');
@@ -76,6 +83,7 @@ class subs extends \table_sql implements \renderable {
         $this->pageable(true);
         $this->is_downloadable(false);
         $this->define_baseurl($url);
+        $this->helpiconrenderer = $PAGE->get_renderer('tool_monitor', 'helpicon');
     }
 
     /**
@@ -86,7 +94,11 @@ class subs extends \table_sql implements \renderable {
      * @return string html used to display the column field.
      */
     public function col_name(\tool_monitor\subscription $sub) {
-        return $sub->get_name($this->context);
+        $name = $sub->get_name($this->context);
+        $helpicon = new \tool_monitor\output\helpicon\renderable('subscription', $sub->id);
+        $helpicon = $this->helpiconrenderer->render($helpicon);
+
+        return $name . $helpicon;
     }
 
     /**
