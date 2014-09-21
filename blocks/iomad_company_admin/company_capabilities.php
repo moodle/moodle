@@ -20,10 +20,12 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
 $context = context_system::instance();
 require_login();
 $PAGE->set_context($context);
+$output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Correct the navbar.
 // Set the name for the page.
@@ -42,6 +44,9 @@ $blockpage->display_header();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
-echo "<p>$companyid</p>";
+
+// get the list of roles to choose from
+$roles = iomad_company_admin::get_roles();
+echo $output->role_select($roles, $linkurl);
 
 echo $OUTPUT->footer();
