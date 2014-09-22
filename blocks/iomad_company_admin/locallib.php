@@ -34,4 +34,29 @@ class iomad_company_admin {
         
         return $namedroles;
     }
+    
+    /**
+     * Get the Iomad capabilities for given role
+     * (We only need to worry about the ones that are SET
+     * so we can fish them out of the role_capabilities table
+     * directly)
+     */
+    public static function get_iomad_capabilities($roleid) {
+        global $DB;
+        
+        // We need capabilities defined in the site context
+        $context = context_system::instance();
+        $capabilities = $DB->get_records('role_capabilities', array('roleid' => $roleid, 'contextid' => $context->id));
+        
+        // Filter out caps. Only want 'local/report' and ones containing 'iomad'
+        $filtered_capabilities = array();
+        foreach ($capabilities as $capability) {
+            if ((strpos($capability->capability, 'local/report')===false) && (strpos($capability->capability, 'iomad')===false)) {
+                continue;
+            }
+            $filtered_capabilities[$capability->id] = $capability;
+        }
+        
+        return $filtered_capabilities;
+    }
 }

@@ -21,15 +21,22 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
      * @param array $roles
      */
     public function role_select($roles, $linkurl) {
-        $out = "<ul>";
+        $table = new html_table();
+        $table->head = array(
+            get_string('name'),
+            get_string('description'),
+        );
         foreach ($roles as $role) {
             $linkurl->params(array('roleid' => $role->id));
-            $out .= "<li><a href=\"$linkurl\">{$role->name}</a>";
-            $out .= "</li>";
+            $row = array(
+                '<b>' . $role->name . '</b>',
+                $role->description,
+                "<a class=\"btn btn-primary\" href=\"$linkurl\">" . get_string('edit') . "</a>",
+            );
+            $table->data[] = $row;
         }
-        $out .= "</ul>";
         
-        return $out;
+        return html_writer::table($table);
     }
     
 }
