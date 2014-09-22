@@ -3838,7 +3838,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014082700.00) {
-
         // Define field aggregationstatus to be added to grade_grades.
         $table = new xmldb_table('grade_grades');
         $field = new xmldb_field('aggregationstatus', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'unknown', 'timemodified');
@@ -3855,36 +3854,24 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014082700.00);
-    }
-
-    if ($oldversion < 2014082700.01) {
-
         // Define field aggregationcoef2 to be added to grade_items.
         $table = new xmldb_table('grade_items');
-        $field = new xmldb_field('aggregationcoef2', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+        $field = new xmldb_field('aggregationcoef2', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'aggregationcoef');
 
         // Conditionally launch add field aggregationcoef2.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014082700.01);
-    }
-
-    if ($oldversion < 2014082700.02) {
-
-        // Define the field weightoverride to be added to grade_items.
-        $table = new xmldb_table('grade_items');
-
         $field = new xmldb_field('weightoverride', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'needsupdate');
+
+        // Conditionally launch add field weightoverride.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_main_savepoint(true, 2014082700.02);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014091800.01);
     }
 
     return true;
