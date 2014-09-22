@@ -259,7 +259,7 @@ Feature: We can use calculated grade totals
       | Exclude empty grades | 0       |
     And I set the following settings for grade item "Test assignment six":
       | Weight adjusted  | 1   |
-      | aggregationcoef2 | 0.5 |
+      | aggregationcoef2 | 50  |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
     And I turn editing mode off

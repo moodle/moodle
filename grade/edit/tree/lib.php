@@ -382,7 +382,7 @@ class grade_edit_tree {
             ($aggcoef == 'aggregationcoefextraweight' && $type == 'extra')) {
             return '<label class="accesshide" for="weight_'.$item->id.'">'.
                 get_string('extracreditvalue', 'grades', $item->itemname).'</label>'.
-                '<input type="text" size="6" id="weight_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
+                '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'"
                 value="'.grade_edit_tree::format_number($item->aggregationcoef).'" />';
         } elseif (($aggcoef == 'aggregationcoefextrasum' || $aggcoef == 'aggregationcoefextraweightsum') && $type == 'extra') {
             $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
