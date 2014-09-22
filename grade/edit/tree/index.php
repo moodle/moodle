@@ -184,82 +184,29 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $grade_edit_tree->move_elements($elements, $returnurl);
     }
 
-    // Category and item field updates
+    // Update weights (extra credits) on categories and items.
     foreach ($data as $key => $value) {
-        // Grade category text inputs
-        if (preg_match('/^(aggregation|droplow|keephigh)_([0-9]+)$/', $key, $matches)) {
-            $param = $matches[1];
-            $aid   = $matches[2];
-
-            // Do not allow negative values
-            $value = clean_param($value, PARAM_INT);
-            $value = ($value < 0) ? 0 : $value;
-
-            $grade_category = grade_category::fetch(array('id'=>$aid, 'courseid'=>$courseid));
-            $grade_category->$param = $value;
-
-            $grade_category->update();
-
-            $recreatetree = true;
-
-        // Grade item text inputs
-        } elseif (preg_match('/^(weight|multfactor|plusfactor)_([0-9]+)$/', $key, $matches)) {
-            $param = $matches[1];
-            $aid   = $matches[2];
+        if (preg_match('/^weight_([0-9]+)$/', $key, $matches)) {
+            $aid   = $matches[1];
 
             $value = unformat_float($value);
             $value = clean_param($value, PARAM_FLOAT);
 
             $grade_item = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
 
-            if ($param === 'grademax' and $value < $grade_item->grademin) {
-                // better not allow values lower than grade min
-                $value = $grade_item->grademin;
-            }
-
             // Convert weight to aggregation coef2.
-            if ($param === 'weight') {
-                $aggcoef = $grade_item->get_coefstring();
-                if ($aggcoef == 'aggregationcoefextraweightsum') {
-                    $value = $value / 100.0;
-                    if (round($grade_item->aggregationcoef2, 4) != round($value, 4)) {
-                        $grade_item->weightoverride = 1;
-                    }
-                    $grade_item->aggregationcoef2 = $value;
-                } else if ($aggcoef == 'aggregationcoefweight') {
-                    $grade_item->aggregationcoef = $value;
+            $aggcoef = $grade_item->get_coefstring();
+            if ($aggcoef == 'aggregationcoefextraweightsum') {
+                $value = $value / 100.0;
+                if (round($grade_item->aggregationcoef2, 4) != round($value, 4)) {
+                    $grade_item->weightoverride = 1;
                 }
-            } else {
-                $grade_item->$param = $value;
+                $grade_item->aggregationcoef2 = $value;
+            } else if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoefextraweight') {
+                $grade_item->aggregationcoef = $value;
             }
 
             $grade_item->update();
-
-            $recreatetree = true;
-
-        // Grade item checkbox inputs
-        } elseif (preg_match('/^extracredit_([0-9]+)$/', $key, $matches)) { // Sum extra credit checkbox
-            $aid   = $matches[1];
-            $value = clean_param($value, PARAM_BOOL);
-
-            $grade_item = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
-
-            $grade_item->aggregationcoef = $value;
-
-            $grade_item->update();
-
-            $recreatetree = true;
-
-        // Grade category checkbox inputs
-        } elseif (preg_match('/^aggregate(onlygraded|subcats|outcomes)_([0-9]+)$/', $key, $matches)) {
-            $param = 'aggregate'.$matches[1];
-            $aid    = $matches[2];
-            $value = clean_param($value, PARAM_BOOL);
-
-            $grade_category = grade_category::fetch(array('id'=>$aid, 'courseid'=>$courseid));
-            $grade_category->$param = $value;
-
-            $grade_category->update();
 
             $recreatetree = true;
         }

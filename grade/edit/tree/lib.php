@@ -82,13 +82,6 @@ class grade_edit_tree {
         }
 
         $this->columns[] = grade_edit_tree_column::factory('range'); // This is not a setting... How do we deal with it?
-        /*$this->columns[] = grade_edit_tree_column::factory('aggregateonlygraded', array('flag' => true));
-        $this->columns[] = grade_edit_tree_column::factory('aggregatesubcats', array('flag' => true));
-        $this->columns[] = grade_edit_tree_column::factory('aggregateoutcomes', array('flag' => true));
-        $this->columns[] = grade_edit_tree_column::factory('droplow', array('flag' => true));
-        $this->columns[] = grade_edit_tree_column::factory('keephigh', array('flag' => true));
-        $this->columns[] = grade_edit_tree_column::factory('multfactor', array('adv' => true));
-        $this->columns[] = grade_edit_tree_column::factory('plusfactor', array('adv' => true));*/
         $this->columns[] = grade_edit_tree_column::factory('actions');
 
         if ($this->deepest_level > 1) {
@@ -100,7 +93,7 @@ class grade_edit_tree {
         $this->table->attributes['class'] = 'generaltable simple';
 
         foreach ($this->columns as $column) {
-            if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
+            if (!($this->moving && $column->hide_when_moving)) {
                 $this->table->head[] = $column->get_header_cell();
             }
         }
@@ -302,7 +295,7 @@ class grade_edit_tree {
             $row->cells[] = $headercell;
 
             foreach ($this->columns as $column) {
-                if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
+                if (!($this->moving && $column->hide_when_moving)) {
                     $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id,
                         'name' => $object->name, 'level' => $level, 'actions' => $actions,
                         'moveaction' => $moveaction, 'eid' => $eid));
@@ -339,7 +332,7 @@ class grade_edit_tree {
             }
 
             foreach ($this->columns as $column) {
-                if (!($this->moving && $column->hide_when_moving) && !$column->is_hidden()) {
+                if (!($this->moving && $column->hide_when_moving)) {
                     $gradeitemrow->cells[] = $column->get_item_cell($item, array('id' => $id, 'name' => $object->name,
                         'level' => $level, 'actions' => $actions, 'element' => $element, 'eid' => $eid,
                         'moveaction' => $moveaction, 'itemtype' => $object->itemtype));
@@ -532,6 +525,12 @@ class grade_edit_tree {
     }
 }
 
+/**
+ * Class grade_edit_tree_column
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class grade_edit_tree_column {
     public $forced;
     public $hidden;
@@ -570,8 +569,6 @@ abstract class grade_edit_tree_column {
 
     public abstract function get_item_cell($item, $params);
 
-    public abstract function is_hidden($mode='simple');
-
     public function __construct() {
         $this->headercell = new html_table_cell();
         $this->headercell->header = true;
@@ -586,32 +583,12 @@ abstract class grade_edit_tree_column {
     }
 }
 
-abstract class grade_edit_tree_column_category extends grade_edit_tree_column {
-
-    public $forced;
-    public $advanced;
-
-    public function __construct($name) {
-        global $CFG;
-        $this->forced = (int)$CFG->{"grade_$name"."_flag"} & 1;
-        $this->advanced = (int)$CFG->{"grade_$name"."_flag"} & 2;
-        parent::__construct();
-    }
-
-    public function is_hidden($mode='simple') {
-        global $CFG;
-        if ($mode == 'simple') {
-            return $this->advanced;
-        } elseif ($mode == 'advanced') {
-            if ($this->forced && $CFG->grade_hideforcedsettings) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-}
-
+/**
+ * Class grade_edit_tree_column_name
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_edit_tree_column_name extends grade_edit_tree_column {
     public $forced = false;
     public $hidden = false;
@@ -666,13 +643,15 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         $itemcell->text = $moveaction . $name;
         return $itemcell;
     }
-
-    public function is_hidden($mode='simple') {
-        return false;
-    }
 }
 
-class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category {
+/**
+ * Class grade_edit_tree_column_aggregation
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class grade_edit_tree_column_aggregation extends grade_edit_tree_column {
 
     public function __construct($params) {
         parent::__construct('aggregation');
@@ -708,6 +687,12 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
     }
 }
 
+/**
+ * Class grade_edit_tree_column_weight
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_edit_tree_column_weight extends grade_edit_tree_column {
 
     public function get_header_cell() {
@@ -739,17 +724,14 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
 
         return $itemcell;
     }
-
-    public function is_hidden($mode='simple') {
-        global $CFG;
-        if ($mode == 'simple') {
-            return strstr($CFG->grade_item_advanced, 'aggregationcoef');
-        } elseif ($mode == 'advanced') {
-            return false;
-        }
-    }
 }
 
+/**
+ * Class grade_edit_tree_column_range
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_edit_tree_column_range extends grade_edit_tree_column {
 
     public function get_header_cell() {
@@ -792,310 +774,14 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         $itemcell->text = $grademax;
         return $itemcell;
     }
-
-    public function is_hidden($mode='simple') {
-        global $CFG;
-        if ($mode == 'simple') {
-            return strstr($CFG->grade_item_advanced, 'grademax');
-        } elseif ($mode == 'advanced') {
-            return false;
-        }
-    }
 }
 
-class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_category {
-
-    public function __construct($params) {
-        parent::__construct('aggregateonlygraded');
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->style .= 'width: 40px;';
-        $headercell->text = get_string('aggregateonlygraded', 'grades')
-                . $OUTPUT->help_icon('aggregateonlygraded', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $onlygradedcheck = ($category->aggregateonlygraded == 1) ? 'checked="checked"' : '';
-        $hidden = '<input type="hidden" name="aggregateonlygraded_'.$category->id.'" value="0" />';
-        $aggregateonlygraded = '<label class="accesshide" for="aggregateonlygraded_'.$category->id.'">'.
-                get_string('aggregateonlygraded', 'grades').'</label>
-                <input type="checkbox" id="aggregateonlygraded_'.$category->id.'" name="aggregateonlygraded_'.
-                $category->id.'" value="1" '.$onlygradedcheck . ' />';
-
-        if ($this->forced) {
-            $aggregateonlygraded = ($category->aggregateonlygraded) ? get_string('yes') : get_string('no');
-        }
-
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' ' . $levelclass;
-        $categorycell->text = $hidden.$aggregateonlygraded;
-        return $categorycell;
-    }
-
-    public function get_item_cell($item, $params) {
-        $itemcell = clone($this->itemcell);
-        $itemcell->text = ' - ';
-        return $itemcell;
-    }
-}
-
-class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_category {
-
-    public function __construct($params) {
-        parent::__construct('aggregatesubcats');
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->style .= 'width: 40px;';
-        $headercell->text = get_string('aggregatesubcats', 'grades')
-              .$OUTPUT->help_icon('aggregatesubcats', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $subcatscheck = ($category->aggregatesubcats == 1) ? 'checked="checked"' : '';
-        $hidden = '<input type="hidden" name="aggregatesubcats_'.$category->id.'" value="0" />';
-        $aggregatesubcats = '<label class="accesshide" for="aggregatesubcats_'.$category->id.'">'.
-                get_string('aggregatesubcats', 'grades').'</label>
-                <input type="checkbox" id="aggregatesubcats_'.$category->id.'" name="aggregatesubcats_'.$category->id.
-                '" value="1" ' . $subcatscheck.' />';
-
-        if ($this->forced) {
-            $aggregatesubcats = ($category->aggregatesubcats) ? get_string('yes') : get_string('no');
-        }
-
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' ' . $levelclass;
-        $categorycell->text = $hidden.$aggregatesubcats;
-        return $categorycell;
-
-    }
-
-    public function get_item_cell($item, $params) {
-        $itemcell = clone($this->itemcell);
-        $itemcell->text = ' - ';
-        return $itemcell;
-    }
-}
-
-class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_category {
-
-    public function __construct($params) {
-        parent::__construct('aggregateoutcomes');
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->style .= 'width: 40px;';
-        $headercell->text = get_string('aggregateoutcomes', 'grades')
-              .$OUTPUT->help_icon('aggregateoutcomes', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $outcomescheck = ($category->aggregateoutcomes == 1) ? 'checked="checked"' : '';
-        $hidden = '<input type="hidden" name="aggregateoutcomes_'.$category->id.'" value="0" />';
-        $aggregateoutcomes = '<label class="accesshide" for="aggregateoutcomes_'.$category->id.'">'.
-                get_string('aggregateoutcomes', 'grades').'</label>
-                <input type="checkbox" id="aggregateoutcomes_'.$category->id.'" name="aggregateoutcomes_'.$category->id.
-                '" value="1" ' . $outcomescheck.' />';
-
-        if ($this->forced) {
-            $aggregateoutcomes = ($category->aggregateoutcomes) ? get_string('yes') : get_string('no');
-        }
-
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' ' . $levelclass;
-        $categorycell->text = $hidden.$aggregateoutcomes;
-        return $categorycell;
-    }
-
-    public function get_item_cell($item, $params) {
-        $itemcell = clone($this->itemcell);
-        $itemcell->text = ' - ';
-        return $itemcell;
-    }
-
-    public function is_hidden($mode='simple') {
-        global $CFG;
-        if ($CFG->enableoutcomes) {
-            return parent::is_hidden($mode);
-        } else {
-            return true;
-        }
-    }
-}
-
-class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
-
-    public function __construct($params) {
-        parent::__construct('droplow');
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->text = get_string('droplow', 'grades').$OUTPUT->help_icon('droplow', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $droplow = '<label class="accesshide" for="droplow_' . $category->id.'">' . get_string('droplowestvalue', 'grades') . '</label>';
-        $droplow .= '<input type="text" size="3" id="droplow_' . $category->id . '" name="droplow_' . $category->id . '" value="'
-                . $category->droplow.'" />';
-
-        if ($this->forced) {
-            $droplow = $category->droplow;
-        }
-
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class']  .= ' ' . $levelclass;
-        $categorycell->text = $droplow;
-        return $categorycell;
-    }
-
-    public function get_item_cell($item, $params) {
-        $itemcell = clone($this->itemcell);
-        $itemcell->text = ' - ';
-        return $itemcell;
-    }
-}
-
-class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
-
-    public function __construct($params) {
-        parent::__construct('keephigh');
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->text = get_string('keephigh', 'grades').$OUTPUT->help_icon('keephigh', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $keephigh = '<label class="accesshide" for="keephigh_'.$category->id.'">'.get_string('keephigh', 'grades').'</label>';
-        $keephigh .= '<input type="text" size="3" id="keephigh_'.$category->id.'" name="keephigh_'.$category->id.'" value="'.
-                $category->keephigh.'" />';
-
-        if ($this->forced) {
-            $keephigh = $category->keephigh;
-        }
-
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' ' . $levelclass;
-        $categorycell->text = $keephigh;
-        return $categorycell;
-    }
-
-    public function get_item_cell($item, $params) {
-        $itemcell = clone($this->itemcell);
-        $itemcell->text = ' - ';
-        return $itemcell;
-    }
-}
-
-class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
-
-    public function __construct($params) {
-        parent::__construct();
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->text = get_string('multfactor', 'grades').$OUTPUT->help_icon('multfactor', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' ' . $levelclass;
-        $categorycell->text = ' - ';
-        return $categorycell;
-    }
-
-    public function get_item_cell($item, $params) {
-        global $OUTPUT;
-
-        $itemcell = clone($this->itemcell);
-        if (!$item->is_raw_used()) {
-            $itemcell->text = '&nbsp;';
-            return $itemcell;
-        }
-        $multfactor = '<label class="accesshide" for="multfactor'.$item->id.'">'.
-                get_string('multfactorvalue', 'grades', $item->itemname).'</label>
-                <input type="text" size="4" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.
-                grade_edit_tree::format_number($item->multfactor).'" />';
-
-        $itemcell->text = $multfactor;
-        return $itemcell;
-    }
-
-    public function is_hidden($mode='simple') {
-        global $CFG;
-        if ($mode == 'simple') {
-            return strstr($CFG->grade_item_advanced, 'multfactor');
-        } elseif ($mode == 'advanced') {
-            return false;
-        }
-    }
-}
-
-class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->text = get_string('plusfactor', 'grades').$OUTPUT->help_icon('plusfactor', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' ' . $levelclass;
-        $categorycell->text = ' - ';
-        return $categorycell;
-
-    }
-
-    public function get_item_cell($item, $params) {
-        global $OUTPUT;
-
-        $itemcell = clone($this->itemcell);
-        if (!$item->is_raw_used()) {
-            $itemcell->text = '&nbsp;';
-            return $itemcell;
-        }
-
-        $plusfactor = '<label class="accesshide" for="plusfactor_'. $item->id . '">'.
-                get_string('plusfactorvalue', 'grades', $item->itemname).'</label>
-                <input type="text" size="4" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.
-                grade_edit_tree::format_number($item->plusfactor).'" />';
-
-        $itemcell->text = $plusfactor;
-        return $itemcell;
-
-    }
-
-    public function is_hidden($mode='simple') {
-        global $CFG;
-        if ($mode == 'simple') {
-            return strstr($CFG->grade_item_advanced, 'plusfactor');
-        } elseif ($mode == 'advanced') {
-            return false;
-        }
-    }
-}
-
+/**
+ * Class grade_edit_tree_column_actions
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_edit_tree_column_actions extends grade_edit_tree_column {
 
     public function __construct($params) {
@@ -1130,12 +816,14 @@ class grade_edit_tree_column_actions extends grade_edit_tree_column {
         $itemcell->text = $params['actions'];
         return $itemcell;
     }
-
-    public function is_hidden($mode='simple') {
-        return false;
-    }
 }
 
+/**
+ * Class grade_edit_tree_column_select
+ *
+ * @package   core_grades
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_edit_tree_column_select extends grade_edit_tree_column {
 
     public function get_header_cell() {
@@ -1174,10 +862,6 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         }
         //html_writer::table() will wrap the item cell contents in a <TD> so don't do it here
         return $itemselect;
-    }
-
-    public function is_hidden($mode='simple') {
-        return false;
     }
 }
 
