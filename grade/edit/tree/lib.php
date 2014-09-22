@@ -842,8 +842,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $selectnone = new action_link(new moodle_url('#'), get_string('none'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => false)));
 
         $categorycell = clone($this->categorycell);
-        $categorycell->attributes['class'] .= ' last ' . $levelclass;
-        $categorycell->style .= 'text-align: center;';
+        $categorycell->attributes['class'] .= ' selection ' . $levelclass;
         $categorycell->text = $OUTPUT->render($selectall) . '<br />' . $OUTPUT->render($selectnone);
         return $categorycell;
     }
@@ -852,16 +851,18 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         if (empty($params['itemtype']) || empty($params['eid'])) {
             error('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
         }
-        $itemselect = '';
+        $itemcell = clone($this->itemcell);
+        $itemcell->attributes['class'] .= ' selection';
+        $itemcell->text = '';
 
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
-            $itemselect = '<label class="accesshide" for="select_'.$params['eid'].'">'.
+            $itemcell->text = '<label class="accesshide" for="select_'.$params['eid'].'">'.
                 get_string('select', 'grades', $item->itemname).'</label>
                 <input class="itemselect ignoredirty" type="checkbox" name="select_'.$params['eid'].'" id="select_'.$params['eid'].
                 '" onchange="toggleCategorySelector();"/>'; // TODO: convert to YUI handler
         }
         //html_writer::table() will wrap the item cell contents in a <TD> so don't do it here
-        return $itemselect;
+        return $itemcell;
     }
 }
 
