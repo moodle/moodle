@@ -477,7 +477,7 @@ class grade_edit_tree {
             $eids = array($eids);
         }
 
-        if(!$after_el = $this->gtree->locate_element("c$moveafter")) {
+        if(!$after_el = $this->gtree->locate_element("cg$moveafter")) {
             print_error('invalidelementid', '', $returnurl);
         }
 

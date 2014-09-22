@@ -1427,7 +1427,7 @@ class grade_structure {
      * @return string eid
      */
     public function get_item_eid($grade_item) {
-        return 'i'.$grade_item->id;
+        return 'ig'.$grade_item->id;
     }
 
     /**
@@ -1818,7 +1818,7 @@ class grade_seq extends grade_structure {
             $userid = $matches[2];
 
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$itemid)) {
                 return null;
             }
 
@@ -1834,7 +1834,7 @@ class grade_seq extends grade_structure {
                 return null;
             }
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$grade->itemid)) {
                 return null;
             }
             $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
@@ -2032,9 +2032,9 @@ class grade_tree extends grade_structure {
 
         // prepare unique identifier
         if ($element['type'] == 'category') {
-            $element['eid'] = 'c'.$element['object']->id;
+            $element['eid'] = 'cg'.$element['object']->id;
         } else if (in_array($element['type'], array('item', 'courseitem', 'categoryitem'))) {
-            $element['eid'] = 'i'.$element['object']->id;
+            $element['eid'] = 'ig'.$element['object']->id;
             $this->items[$element['object']->id] =& $element['object'];
         }
 
@@ -2138,7 +2138,7 @@ class grade_tree extends grade_structure {
             $userid = $matches[2];
 
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$itemid)) {
                 return null;
             }
 
@@ -2154,7 +2154,7 @@ class grade_tree extends grade_structure {
                 return null;
             }
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$grade->itemid)) {
                 return null;
             }
             $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!

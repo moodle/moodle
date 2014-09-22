@@ -232,7 +232,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $elements = array();
 
         foreach ($data as $key => $value) {
-            if (preg_match('/select_(i[0-9]*)/', $key, $matches)) {
+            if (preg_match('/select_(ig[0-9]*)/', $key, $matches)) {
                 $elements[] = $matches[1];
             }
         }
