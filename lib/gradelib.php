@@ -1046,9 +1046,21 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
 
     // Categories might have to run some processing before we fetch the grade items.
     // This gives them a final opportunity to update and mark their children to be updated.
+    // We need to work on the children categories up to the parent ones, so that, for instance,
+    // if a category total is updated it will be reflected in the parent category.
     $cats = grade_category::fetch_all(array('courseid' => $courseid));
+    $flatcattree = array();
     foreach ($cats as $cat) {
-        $cat->pre_regrade_final_grades();
+        if (!isset($flatcattree[$cat->depth])) {
+            $flatcattree[$cat->depth] = array();
+        }
+        $flatcattree[$cat->depth][] = $cat;
+    }
+    krsort($flatcattree);
+    foreach ($flatcattree as $depth => $cats) {
+        foreach ($cats as $cat) {
+            $cat->pre_regrade_final_grades();
+        }
     }
 
     $grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
