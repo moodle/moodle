@@ -197,14 +197,26 @@ if ($data = data_submitted() and confirm_sesskey()) {
             // Convert weight to aggregation coef2.
             $aggcoef = $grade_item->get_coefstring();
             if ($aggcoef == 'aggregationcoefextraweightsum') {
+                // The field 'weight' should only be sent when the checkbox 'weighoverride' is checked,
+                // so there is not need to set weightoverride here, it is done below.
                 $value = $value / 100.0;
-                if (round($grade_item->aggregationcoef2, 4) != round($value, 4)) {
-                    $grade_item->weightoverride = 1;
-                }
                 $grade_item->aggregationcoef2 = $value;
             } else if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoefextraweight') {
                 $grade_item->aggregationcoef = $value;
             }
+
+            $grade_item->update();
+
+            $recreatetree = true;
+
+        // Grade item checkbox inputs.
+        } elseif (preg_match('/^(weightoverride)_([0-9]+)$/', $key, $matches)) {
+            $param   = $matches[1];
+            $aid     = $matches[2];
+            $value   = clean_param($value, PARAM_BOOL);
+
+            $grade_item = grade_item::fetch(array('id' => $aid, 'courseid' => $courseid));
+            $grade_item->$param = $value;
 
             $grade_item->update();
 

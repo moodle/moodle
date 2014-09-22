@@ -34,7 +34,6 @@ $string['additem'] = 'Add grade item';
 $string['addoutcome'] = 'Add an outcome';
 $string['addoutcomeitem'] = 'Add outcome item';
 $string['addscale'] = 'Add a scale';
-$string['adjusted'] = 'Adjusted';
 $string['adjustedweight'] = 'Weight adjusted';
 $string['aggregateextracreditmean'] = 'Mean of grades (with extra credits)';
 $string['aggregatemax'] = 'Highest grade';
@@ -512,6 +511,7 @@ When a grade is edited in the grader report, the overridden checkbox is ticked a
 $string['overriddennotice'] = 'Your final grade from this activity was manually adjusted.';
 $string['overridesitedefaultgradedisplaytype'] = 'Override site defaults';
 $string['overridesitedefaultgradedisplaytype_help'] = 'If ticked, grade letters and boundaries for the course may be set, rather than using the site defaults.';
+$string['overrideweight'] = 'Override weight';
 $string['parentcategory'] = 'Parent category';
 $string['pctoftotalgrade'] = '% of total grade';
 $string['percent'] = 'Percent';
