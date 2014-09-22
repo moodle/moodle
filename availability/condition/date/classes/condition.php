@@ -209,4 +209,15 @@ class condition extends \core_availability\condition {
     protected static function is_midnight($time) {
         return usergetmidnight($time) == $time;
     }
+
+    public function update_after_restore(
+            $restoreid, $courseid, \base_logger $logger, $name) {
+        // Update the date, if restoring with changed date.
+        $dateoffset = \core_availability\info::get_restore_date_offset($restoreid);
+        if ($dateoffset) {
+            $this->time += $dateoffset;
+            return true;
+        }
+        return false;
+    }
 }

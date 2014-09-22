@@ -49,6 +49,9 @@ abstract class info {
     /** @var tree Availability configuration, decoded from JSON; null if unset */
     protected $availabilitytree;
 
+    /** @var array|null Array of information about current restore if any */
+    protected static $restoreinfo = null;
+
     /**
      * Constructs with item details.
      *
@@ -307,9 +310,12 @@ abstract class info {
      * @param string $restoreid Restore identifier
      * @param int $courseid Target course id
      * @param \base_logger $logger Logger for any warnings
+     * @param int $dateoffset Date offset to be added to any dates (0 = none)
      */
-    public function update_after_restore($restoreid, $courseid, \base_logger $logger) {
+    public function update_after_restore($restoreid, $courseid, \base_logger $logger, $dateoffset) {
         $tree = $this->get_availability_tree();
+        // Set static data for use by get_restore_date_offset function.
+        self::$restoreinfo = array('restoreid' => $restoreid, 'dateoffset' => $dateoffset);
         $changed = $tree->update_after_restore($restoreid, $courseid, $logger,
                 $this->get_thing_name());
         if ($changed) {
@@ -317,6 +323,24 @@ abstract class info {
             $structure = $tree->save();
             $this->set_in_database(json_encode($structure));
         }
+    }
+
+    /**
+     * Gets the date offset (amount by which any date values should be
+     * adjusted) for the current restore.
+     *
+     * @param string $restoreid Restore identifier
+     * @return int Date offset (0 if none)
+     * @throws coding_exception If not in a restore (or not in that restore)
+     */
+    public static function get_restore_date_offset($restoreid) {
+        if (!self::$restoreinfo) {
+            throw new coding_exception('Only valid during restore');
+        }
+        if (self::$restoreinfo['restoreid'] !== $restoreid) {
+            throw new coding_exception('Data not available for that restore id');
+        }
+        return self::$restoreinfo['dateoffset'];
     }
 
     /**
