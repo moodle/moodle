@@ -209,6 +209,11 @@ class tablelog extends \table_sql implements \renderable {
      * @return string HTML to display
      */
     public function col_grader(\stdClass $history) {
+        if (empty($history->usermodified)) {
+            // Not every row has a valid usermodified.
+            return '';
+        }
+
         $grader = new \stdClass();
         $grader = username_load_fields_from_object($grader, $history, 'grader');
         $name = fullname($grader);
@@ -368,7 +373,7 @@ class tablelog extends \table_sql implements \renderable {
                    FROM {grade_grades_history} ggh
               LEFT JOIN {grade_items} gi ON gi.id = ggh.itemid
                    JOIN {user} u ON u.id = ggh.userid
-                   JOIN {user} ug ON ug.id = ggh.usermodified
+              LEFT JOIN {user} ug ON ug.id = ggh.usermodified
                   WHERE $where";
 
         // As prevgrade is a dynamic field, we need to wrap the query. This is the only filtering
