@@ -387,11 +387,29 @@ class tablelog extends \table_sql implements \renderable {
         }
 
         // Add order by if needed.
-        if (!$count && $this->get_sql_sort()) {
-            $sql .= " ORDER BY " . $this->get_sql_sort();
+        if (!$count && $sqlsort = $this->get_sql_sort()) {
+            $sql .= " ORDER BY " . $sqlsort;
         }
 
         return array($sql, $params);
+    }
+
+    /**
+     * Get the SQL fragment to sort by.
+     *
+     * This is overridden to sort by timemodified and ID by default. Many items happen at the same time
+     * and a second sorting by ID is valuable to distinguish the order in which the history happened.
+     *
+     * @return string SQL fragment.
+     */
+    public function get_sql_sort() {
+        $columns = $this->get_sort_columns();
+        if (count($columns) == 1 && isset($columns['timemodified']) && $columns['timemodified'] == SORT_DESC) {
+            // Add the 'id' column when we are using the default sorting.
+            $columns['id'] = SORT_DESC;
+            return self::construct_order_by($columns);
+        }
+        return parent::get_sql_sort();
     }
 
     /**
