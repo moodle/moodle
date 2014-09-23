@@ -30,7 +30,11 @@ $context = context_system::instance();
 require_capability('moodle/site:config', $context);
 
 $getpdf     = optional_param('getpdf', 0, PARAM_INT);
-$fontfamily = optional_param('fontfamily', PDF_DEFAULT_FONT, PARAM_ALPHA);  // to be configurable
+$fontfamily = optional_param('fontfamily', PDF_FONT_NAME_MAIN, PARAM_ALPHA);  // to be configurable
+
+if (!$fontfamily) {
+    $fontfamily = PDF_FONT_NAME_MAIN;
+}
 
 /**
  * Extend the standard PDF class to get access to some protected values we want to display
@@ -39,17 +43,8 @@ $fontfamily = optional_param('fontfamily', PDF_DEFAULT_FONT, PARAM_ALPHA);  // t
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class testable_pdf extends pdf {
-    public function returnFontsList() {
-        return $this->fontlist;
-    }
-    public function _getfontpath() {
-        return parent::_getfontpath();
-    }
-}
-
 if ($getpdf) {
-    $doc = new testable_pdf();
+    $doc = new pdf();
 
     $doc->SetTitle('Moodle PDF library test');
     $doc->SetAuthor('Moodle ' . $CFG->release);
@@ -81,48 +76,63 @@ if ($getpdf) {
     $c  = '<h3>General information</h3>';
     $c .= 'Moodle release: '            . $CFG->release . '<br />';
     $c .= 'PDF producer: TCPDF '        . TCPDF_STATIC::getTCPDFVersion() . ' (http://www.tcpdf.org) <br />';
-    $c .= 'Font of this test page: '    . $fontfamily   . '<br />';
+    $c .= 'Font family used: '          . $fontfamily   . '<br />';
 
     $c .= '<h3>Current settings</h3>';
     $c .= '<table border="1"  cellspacing="0" cellpadding="1">';
-    foreach (array('K_PATH_MAIN', 'K_PATH_URL', 'K_PATH_FONTS', 'K_PATH_CACHE', 'K_PATH_IMAGES', 'K_BLANK_IMAGE',
+    foreach (array('K_PATH_MAIN', 'K_PATH_URL', 'K_PATH_FONTS', 'PDF_FONT_NAME_MAIN', 'K_PATH_CACHE', 'K_PATH_IMAGES', 'K_BLANK_IMAGE',
                         'K_CELL_HEIGHT_RATIO', 'K_SMALL_RATIO', 'PDF_CUSTOM_FONT_PATH', 'PDF_DEFAULT_FONT') as $setting) {
         if (defined($setting)) {
             $c .= '<tr style="font-size: x-small;"><td>' . $setting . '</td><td>' . constant($setting) . '</td></tr>';
         }
     }
-    $c .= '<tr  style="font-size: x-small;"><td>Effective font path</td><td>' . $doc->_getfontpath() . '</td></tr>';
     $c .= '</table><br />';
 
-    $c .= '<h3>Available font files</h3>';
-    $fontfiles = $doc->returnFontsList();
-    sort($fontfiles);
-    $c .= implode(', ', $fontfiles);
-    $c .= '<br />';
+    $c .= '<h3>Available font families</h3>';
+    $fontfamilies = $doc->get_font_families();
+    $list = array();
+    foreach ($fontfamilies as $family => $fonts) {
+        $f = $family;
+        $spacer = '';
+        if ($doc->is_core_font_family($family)) {
+            $f .= '<sup>*</sup>';
+        } else {
+            $spacer = ' ';
+        }
+        if (count($fonts) > 1) {
+            $f .= $spacer . '<i>(' . implode(', ', $fonts) . ')</i>';
+        }
+        $list[] = $f;
+    }
+    $c .= implode($list, ', ');
+    $c .= '<p><i><small>Note: * Standard core fonts are not embedded in PDF files, PDF viewers are using local fonts.</small></i></p>';
 
     $c .= '<h3>Installed languages and their alphabets</h3>';
     $languages = array();
     $langdirs = get_list_of_plugins('lang', '', $CFG->dataroot);
     array_unshift($langdirs, 'en');
     foreach ($langdirs as $langdir) {
+        $enlangconfig = $CFG->dirroot . '/lang/en/langconfig.php';
         if ('en' == $langdir) {
-            $langconfig = $CFG->dirroot . '/lang/en/langconfig.php';
+            $langconfig = $enlangconfig;
         } else {
             $langconfig = $CFG->dataroot . '/lang/' . $langdir . '/langconfig.php';
         }
+        // Ignore parents here for now.
+        $string = array();
         if (is_readable($langconfig)) {
             include($langconfig);
             if (is_array($string)) {
                 $languages[$langdir] = new stdClass();
                 $languages[$langdir]->langname = isset($string['thislanguage']) ? $string['thislanguage'] : '(unknown)';
-                $languages[$langdir]->alphabet = isset($string['alphabet']) ? $string['alphabet'] : '(no alphabet defined)';
+                $languages[$langdir]->alphabet = isset($string['alphabet']) ? '"' . $string['alphabet'] . '"': '(no alphabet defined)';
             }
         }
     }
     $c .= '<dl>';
     foreach ($languages as $langcode => $language) {
         $c .= '<dt>' . $language->langname . ' (' . $langcode . ')</dt>';
-        $c .= '<dd>"' . $language->alphabet . '"</dd>';
+        $c .= '<dd>' . $language->alphabet . '</dd>';
     }
     $c .= '</dl>';
 
@@ -139,5 +149,5 @@ $PAGE->set_heading('PDF library test');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Press the button to generate test PDF', 2);
-echo $OUTPUT->continue_button(new moodle_url($PAGE->url, array('getpdf' => 1)));
+echo $OUTPUT->continue_button(new moodle_url($PAGE->url, array('getpdf' => 1, 'fontfamily' => PDF_FONT_NAME_MAIN)));
 echo $OUTPUT->footer();
