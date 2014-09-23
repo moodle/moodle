@@ -1,0 +1,563 @@
+<?php
+
+abstract class single_view_ui_factory {
+    public abstract function create($type);
+
+    protected function wrap($class) {
+        return new single_view_factory_class_wrap($class);
+    }
+}
+
+class single_view_grade_ui_factory extends single_view_ui_factory {
+    public function create($type) {
+        return $this->wrap("single_view_{$type}_ui");
+    }
+}
+
+class single_view_factory_class_wrap {
+    function __construct($class) {
+        $this->class = $class;
+    }
+
+    function format() {
+        $args = func_get_args();
+
+        $reflect = new ReflectionClass($this->class);
+        return $reflect->newInstanceArgs($args);
+    }
+}
+
+abstract class single_view_ui_element {
+    var $name;
+    var $value;
+
+    function __construct($name, $value) {
+        $this->name = $name;
+        $this->value = $value;
+    }
+
+    function is_checkbox() {
+        return false;
+    }
+
+    function is_textbox() {
+        return false;
+    }
+
+    function is_dropdown() {
+        return false;
+    }
+
+    abstract function html();
+}
+
+class single_view_empty_element extends single_view_ui_element {
+    function __construct($msg = null) {
+        if (is_null($msg)) {
+            $this->text = get_string('notavailable', 'gradereport_single_view');
+        } else {
+            $this->text = $msg;
+        }
+    }
+
+    function html() {
+        return $this->text;
+    }
+}
+
+class single_view_text_attribute extends single_view_ui_element {
+    var $is_disabled;
+    var $tabindex;
+
+    function __construct($name, $value, $is_disabled = false, $tabindex = null) {
+        $this->is_disabled = $is_disabled;
+        $this->tabindex = $tabindex;
+        parent::__construct($name, $value);
+    }
+
+    function is_textbox() {
+        return true;
+    }
+
+    function html() {
+        $attributes = array(
+            'type' => 'text',
+            'name' => $this->name,
+            'value' => $this->value
+        );
+
+        if (!empty($this->tabindex)) {
+            $attributes['tabindex'] = $this->tabindex;
+        }
+        if ($this->is_disabled) {
+            $attributes['disabled'] = 'DISABLED';
+        }
+
+        $hidden = array(
+            'type' => 'hidden',
+            'name' => 'old' . $this->name,
+            'value' => $this->value
+        );
+
+        return ( 
+            html_writer::empty_tag('input', $attributes) . 
+            html_writer::empty_tag('input', $hidden)
+        );
+    }
+}
+
+class single_view_checkbox_attribute extends single_view_ui_element {
+    var $is_checked;
+    var $tabindex;
+
+    // UCSB 2014-02-28 - add $locked to disable override checkbox when grade is locked 
+    function __construct($name, $is_checked = false, $tabindex = null, $locked=0) {
+        $this->is_checked = $is_checked;
+        $this->tabindex = $tabindex;
+        $this->locked = $locked;
+        parent::__construct($name, 1);
+    }
+
+    function is_checkbox() {
+        return true;
+    }
+
+    function html() {
+
+        $attributes = array(
+            'type' => 'checkbox',
+            'name' => $this->name,
+            'value' => 1
+        );
+
+        // UCSB fixed user should not be able to override locked grade
+        if ( $this->locked) {
+            $attributes['disabled'] = 'DISABLED';
+        }
+
+        $alt = array(
+            'type' => 'hidden',
+            'name' => $this->name,
+            'value' => 0
+        );
+
+        $hidden = array(
+            'type' => 'hidden',
+            'name' => 'old' . $this->name
+        );
+
+        if (!empty($this->tabindex)) {
+            $attributes['tabindex'] = $this->tabindex;
+        }
+
+        if ($this->is_checked) {
+            $attributes['checked'] = 'CHECKED';
+            $hidden['value'] = 1;
+        }
+
+        return (
+            html_writer::empty_tag('input', $alt) .
+            html_writer::empty_tag('input', $attributes) .
+            html_writer::empty_tag('input', $hidden)
+        );
+    }
+}
+
+class single_view_dropdown_attribute extends single_view_ui_element {
+    var $selected;
+    var $options;
+    var $is_disabled;
+
+    function __construct($name, $options, $selected = '', $is_disabled = false, $tabindex = null) {
+        $this->selected = $selected;
+        $this->options = $options;
+        $this->tabindex = $tabindex;
+        $this->is_disabled = $is_disabled;
+        parent::__construct($name, $selected);
+    }
+
+    function is_dropdown() {
+        return true;
+    }
+
+    function html() {
+        $old = array(
+            'type' => 'hidden',
+            'name' => 'old' . $this->name,
+            'value' => $this->selected
+        );
+
+        $attributes = array();
+        if (!empty($this->tabindex)) {
+            $attributes['tabindex'] = $this->tabindex;
+        }
+
+        if (!empty($this->is_disabled)) {
+            $attributes['disabled'] = 'DISABLED';
+        }
+
+        $select = html_writer::select(
+            $this->options, $this->name, $this->selected, false, $attributes
+        );
+
+        return ($select . html_writer::empty_tag('input', $old));
+    }
+}
+
+abstract class single_view_grade_attribute_format extends single_view_attribute_format implements unique_name, tabbable {
+    var $name;
+
+    function __construct() {
+        $args = func_get_args();
+
+        $this->get_arg_or_nothing($args, 0, 'grade');
+        $this->get_arg_or_nothing($args, 1, 'tabindex');
+    }
+
+    function get_name() {
+        return "{$this->name}_{$this->grade->itemid}_{$this->grade->userid}";
+    }
+
+    function get_tabindex() {
+        return isset($this->tabindex) ? $this->tabindex : null;
+    }
+
+    private function get_arg_or_nothing($args, $index, $field) {
+        if (isset($args[$index])) {
+            $this->$field = $args[$index];
+        }
+    }
+
+    public abstract function set($value);
+}
+
+interface unique_name {
+    function get_name();
+}
+
+interface unique_value {
+    function get_value();
+}
+
+interface be_disabled {
+    function is_disabled();
+}
+
+interface be_checked {
+    function is_checked();
+}
+
+interface tabbable {
+    function get_tabindex();
+}
+
+class single_view_bulk_insert_ui extends single_view_ui_element {
+    function __construct($item) {
+        $this->name = 'bulk_' . $item->id;
+        $this->applyname = $this->name_for('apply');
+        $this->selectname = $this->name_for('type');
+        $this->insertname = $this->name_for('value');
+    }
+
+    function is_applied($data) {
+        return isset($data->{$this->applyname});
+    }
+
+    function get_type($data) {
+        return $data->{$this->selectname};
+    }
+
+    function get_insert_value($data) {
+        return $data->{$this->insertname};
+    }
+
+    function html() {
+        $_s = function($key) {
+            return get_string($key, 'gradereport_single_view');
+        };
+
+        $apply = html_writer::checkbox($this->applyname, 1, false, ' ' . $_s('bulk'));
+
+        $insert_options = array(
+            'all' => $_s('all_grades'),
+            'blanks' => $_s('blanks')
+        );
+
+        $select = html_writer::select(
+            $insert_options, $this->selectname, 'blanks', false
+        );
+
+        $label = html_writer::tag('label', $_s('for'));
+        $text = new single_view_text_attribute($this->insertname, "0");
+        return implode(' ', array($apply, $text->html(), $label, $select));
+    }
+
+    private function name_for($extend) {
+        return "{$this->name}_$extend";
+    }
+}
+
+abstract class single_view_attribute_format {
+    abstract function determine_format();
+
+    function __toString() {
+        return $this->determine_format()->html();
+    }
+}
+
+class single_view_finalgrade_ui extends single_view_grade_attribute_format implements unique_value, be_disabled {
+
+    var $name = 'finalgrade';
+
+    function get_value() {
+        // Manual item raw grade support
+        $val = $this->grade->grade_item->is_manual_item() && (!is_null($this->grade->rawgrade)) ?
+            $this->grade->rawgrade : $this->grade->finalgrade;
+
+        if ($this->grade->grade_item->scaleid) {
+            return $val ? (int)$val : -1;
+        } else {
+            return $val ? format_float($val, $this->grade->grade_item->get_decimals()) : '';
+        }
+    }
+
+    function is_disabled() {
+        $locked = 0;
+        $gradeitemlocked = 0;
+        $overridden = 0;
+// UCSB - 2.24.2014 
+// disable editing if grade item or grade score is locked
+// if any of these items are set,  then we will disable editing
+// at some point, we might want to show the reason for the lock
+// this code could be simplified, but its more readable for steve's little mind
+        if (!empty($this->grade->locked))  $locked = 1;
+        if (!empty($this->grade->grade_item->locked))  $gradeitemlocked = 1;
+        if ($this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden()) $overridden = 1;
+        //$overridden = $this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden();
+        return ($locked || $gradeitemlocked || $overridden);
+    }
+
+    function determine_format() {
+        if ($this->grade->grade_item->load_scale()) {
+            $scale = $this->grade->grade_item->load_scale();
+
+            $options = array(-1 => get_string('nograde'));
+
+            foreach ($scale->scale_items as $i => $name) {
+                $options[$i + 1] = $name;
+            }
+
+            return new single_view_dropdown_attribute(
+                $this->get_name(),
+                $options,
+                $this->get_value(),
+                $this->is_disabled(),
+                $this->get_tabindex()
+            );
+        } else {
+            return new single_view_text_attribute(
+                $this->get_name(),
+                $this->get_value(),
+                $this->is_disabled(),
+                $this->get_tabindex()
+            );
+        }
+    }
+
+    function set($value) {
+        global $DB;
+
+        $userid = $this->grade->userid;
+        $grade_item = $this->grade->grade_item;
+
+        $feedback = false;
+        $feedbackformat = false;
+        if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+            if ($value == -1) {
+                $finalgrade = null;
+            } else {
+                $finalgrade = $value;
+            }
+        } else {
+            $finalgrade = unformat_float($value);
+        }
+
+        $errorstr = '';
+        if (is_null($finalgrade)) {
+            // ok
+        } else {
+            $bounded = $grade_item->bounded_grade($finalgrade);
+            if ($bounded > $finalgrade) {
+                $errorstr = 'lessthanmin';
+            } else if ($bounded < $finalgrade) {
+                $errorstr = 'morethanmax';
+            }
+        }
+
+        if ($errorstr) {
+            $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, alternatename, lastname');
+            $gradestr = new stdClass;
+            if (!empty($user->alternatename)) {
+                $gradestr->username = $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
+            } else {
+                $gradestr->username = $user->firstname . ' ' . $user->lastname;
+            }
+            $gradestr->itemname = $this->grade->grade_item->get_name();
+
+            $errorstr = get_string($errorstr, 'grades', $gradestr);
+        }
+
+        $grade_item->update_final_grade($userid, $finalgrade, 'single_view', $feedback, FORMAT_MOODLE);
+        return $errorstr;
+    }
+}
+
+class single_view_feedback_ui extends single_view_grade_attribute_format implements unique_value, be_disabled {
+
+    var $name = 'feedback';
+
+    function get_value() {
+        return $this->grade->feedback ? $this->grade->feedback : '';
+    }
+
+    function is_disabled() {
+        $locked = 0;
+        $gradeitemlocked = 0;
+        $overridden = 0;
+// UCSB - 2.24.2014 
+// disable editing if grade item or grade score is locked
+// if any of these items are set,  then we will disable editing
+// at some point, we might want to show the reason for the lock
+// this code could be simplified, but its more readable for steve's little mind
+        if (!empty($this->grade->locked))  $locked = 1;
+        if (!empty($this->grade->grade_item->locked))  $gradeitemlocked = 1;
+        if ($this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden()) $overridden = 1;
+        return ($locked || $gradeitemlocked || $overridden);
+    }
+
+    function determine_format() {
+        return new single_view_text_attribute(
+            $this->get_name(),
+            $this->get_value(),
+            $this->is_disabled(),
+            $this->get_tabindex()
+        );
+    }
+
+    function set($value) {
+        $finalgrade = false;
+        $trimmed = trim($value);
+        if (empty($trimmed)) {
+            $feedback = NULL;
+        } else {
+            $feedback = $value;
+        }
+
+        $this->grade->grade_item->update_final_grade(
+            $this->grade->userid, $finalgrade, 'single_view',
+            $feedback, FORMAT_MOODLE
+        );
+        return false;
+    }
+}
+
+// UCSB 2014-02-28 implement be_disabled to disable checkbox if grade/gradeitem is locked
+class single_view_override_ui extends single_view_grade_attribute_format implements be_checked, be_disabled {
+    var $name = 'override';
+
+    function is_checked() {
+        return $this->grade->is_overridden();
+    }
+
+    function is_disabled() {
+        $locked_grade =  $locked_grade_item = 0; 
+        if ( ! empty($this->grade->locked) )  $locked_grade = 1;
+        if ( ! empty($this->grade->grade_item->locked) ) $locked_grade_item = 1;
+        return ($locked_grade || $locked_grade_item);
+    }
+
+    function determine_format() {
+        if (!$this->grade->grade_item->is_overridable_item()) {
+            return new single_view_empty_element();
+        }
+       // UCSB 2014-02-28: add param is_disabled to disable override checkbox if grade is locked 
+        return new single_view_checkbox_attribute(
+            $this->get_name(),
+            $this->is_checked(),
+            null,
+            $this->is_disabled()
+        );
+    }
+
+    function set($value) {
+        if (empty($this->grade->id)) {
+            return false;
+        }
+
+        $state = $value == 0 ? false : true;
+
+        $this->grade->set_overridden($state);
+        $this->grade->grade_item->get_parent_category()->force_regrading();
+        return false;
+    }
+}
+
+class single_view_exclude_ui extends single_view_grade_attribute_format implements be_checked {
+    var $name = 'exclude';
+
+    function is_checked() {
+        return $this->grade->is_excluded();
+    }
+
+    function determine_format() {
+        return new single_view_checkbox_attribute(
+            $this->get_name(),
+            $this->is_checked()
+        );
+    }
+
+    function set($value) {
+        if (empty($this->grade->id)) {
+            if (empty($value)) {
+                return false;
+            }
+
+            $grade_item = $this->grade->grade_item;
+
+            // Fill in arbitrary grade to be excluded
+            $grade_item->update_final_grade(
+                $this->grade->userid, null, 'single_view', null, FORMAT_MOODLE
+            );
+
+            $grade_params = array(
+                'userid' => $this->grade->userid,
+                'itemid' => $this->grade->itemid
+            );
+
+            $this->grade = grade_grade::fetch($grade_params);
+            $this->grade->grade_item = $grade_item;
+        }
+
+        $state = $value == 0 ? false : true;
+
+        $this->grade->set_excluded($state);
+
+        $this->grade->grade_item->get_parent_category()->force_regrading();
+        return false;
+    }
+}
+
+class single_view_range_ui extends single_view_attribute_format {
+    function __construct($item) {
+        $this->item = $item;
+    }
+
+    function determine_format() {
+        $decimals = $this->item->get_decimals();
+
+        $min = format_float($this->item->grademin, $decimals);
+        $max = format_float($this->item->grademax, $decimals);
+
+        return new single_view_empty_element("$min - $max");
+    }
+}

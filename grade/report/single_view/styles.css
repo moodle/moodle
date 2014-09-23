@@ -1,0 +1,27 @@
+#page-grade-report-single_view-index div.generalbox {
+  margin: 0 20px 15px 20px;
+}
+
+#page-grade-report-single_view-index div.generalbox div.singleselect form div {
+  text-align: center;
+}
+
+#page-grade-report-single_view-index div.generalbox table.generaltable {
+  margin: 0 auto 15px auto;
+}
+
+#page-grade-report-single_view-index div.generalbox form div {
+  text-align: center;
+}
+
+#page-grade-report-single_view-index .single_view_buttons {
+    padding: 10px 0;
+}
+
+#page-grade-report-single_view-index table.generaltable .cell {
+   vertical-align: middle;
+}
+
+#page-grade-report-single_view-index div.generalbox h2 {
+   text-align: center;
+}
