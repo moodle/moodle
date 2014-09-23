@@ -121,7 +121,7 @@ class testable_available_update_checker extends \core\update\checker {
     private function get_fake_response() {
         $fakeresponse = array(
             'status' => 'OK',
-            'provider' => 'http://download.moodle.org/api/1.0/updates.php',
+            'provider' => 'https://download.moodle.org/api/1.0/updates.php',
             'apiver' => '1.0',
             'timegenerated' => time(),
             'forversion' => '2012010100.00',
@@ -133,15 +133,15 @@ class testable_available_update_checker extends \core\update\checker {
                         'version' => 2012060103.00,
                         'release' => '2.3.3 (Build: 20121201)',
                         'maturity' => 200,
-                        'url' => 'http://download.moodle.org/',
-                        'download' => 'http://download.moodle.org/download.php/MOODLE_23_STABLE/moodle-2.3.3-latest.zip',
+                        'url' => 'https://download.moodle.org/',
+                        'download' => 'https://download.moodle.org/download.php/MOODLE_23_STABLE/moodle-2.3.3-latest.zip',
                     ),
                     array(
                         'version' => 2012120100.00,
                         'release' => '2.4dev (Build: 20121201)',
                         'maturity' => 50,
-                        'url' => 'http://download.moodle.org/',
-                        'download' => 'http://download.moodle.org/download.php/MOODLE_24_STABLE/moodle-2.4.0-latest.zip',
+                        'url' => 'https://download.moodle.org/',
+                        'download' => 'https://download.moodle.org/download.php/MOODLE_24_STABLE/moodle-2.4.0-latest.zip',
                     ),
                 ),
                 'mod_foo' => array(
