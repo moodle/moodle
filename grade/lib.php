@@ -769,7 +769,9 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         $buttons = $OUTPUT->render($buttons);
     }
     $PAGE->set_button($buttons);
-    grade_extend_settings($plugin_info, $courseid);
+    if ($courseid != SITEID) {
+        grade_extend_settings($plugin_info, $courseid);
+    }
 
     $returnval = $OUTPUT->header();
     if (!$return) {
@@ -782,7 +784,8 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     }
 
     if ($shownavigation) {
-        if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN) {
+        if ($courseid != SITEID &&
+                ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN)) {
             $returnval .= print_grade_plugin_selector($plugin_info, $active_type, $active_plugin, $return);
         }
 
@@ -792,7 +795,8 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
             echo $OUTPUT->heading($heading);
         }
 
-        if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
+        if ($courseid != SITEID &&
+                ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS)) {
             $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return);
         }
     }
