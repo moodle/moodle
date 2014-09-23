@@ -17,7 +17,7 @@
 /**
  * Fetches language packages from download.moodle.org server
  *
- * Language packages are available at http://download.moodle.org/langpack/
+ * Language packages are available at https://download.moodle.org/langpack/
  * in ZIP format together with a file languages.md5 containing their hashes
  * and meta info.
  * Locally, language packs are saved into $CFG->dataroot/lang/
