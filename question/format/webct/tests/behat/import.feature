@@ -1,4 +1,4 @@
-@qtype @qformat_webct
+@qformat @qformat_webct
 Feature: Test importing questions from WebCT format.
   In order to reuse questions from am obsolete commercial LMS
   As an teacher

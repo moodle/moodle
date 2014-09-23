@@ -1,4 +1,4 @@
-@qtype @qformat_xml
+@qformat @qformat_xml
 Feature: Test importing questions from Moodle XML format.
   In order to reuse questions
   As an teacher
