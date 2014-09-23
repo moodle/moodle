@@ -367,17 +367,22 @@ class grade_edit_tree {
         $parent_category->apply_forced_settings();
         $aggcoef = $item->get_coefstring();
 
+        $itemname = $item->itemname;
+        if ($item->is_category_item()) {
+            // Remember, the parent category of a category item is the category itself.
+            $itemname = $parent_category->get_name();
+        }
         $str = '';
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef' || $aggcoef == 'aggregationcoefextraweight') {
             return '<label class="accesshide" for="weight_'.$item->id.'">'.
-                get_string('extracreditvalue', 'grades', $item->itemname).'</label>'.
+                get_string('extracreditvalue', 'grades', $itemname).'</label>'.
                 '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'"
                 value="'.grade_edit_tree::format_number($item->aggregationcoef).'" />';
         } else if ($aggcoef == 'aggregationcoefextraweightsum') {
 
             $checkboxname = 'weightoverride_' . $item->id;
-            $checkboxlbl = html_writer::tag('label', get_string('overrideweight', 'grades'),
+            $checkboxlbl = html_writer::tag('label', get_string('overrideweightofa', 'grades', $itemname),
                 array('for' => $checkboxname, 'class' => 'accesshide'));
             $checkbox = html_writer::empty_tag('input', array('name' => $checkboxname,
                 'type' => 'hidden', 'value' => 0));
@@ -388,7 +393,7 @@ class grade_edit_tree {
             $name = 'weight_' . $item->id;
             $hiddenlabel = html_writer::tag(
                 'label',
-                get_string('weight', 'grades', $item->itemname),
+                get_string('weightofa', 'grades', $itemname),
                 array(
                     'class' => 'accesshide',
                     'for' => $name
