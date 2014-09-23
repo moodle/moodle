@@ -1082,6 +1082,17 @@ class qtype_calculated extends question_type {
                 $ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $answer->tolerance);
                 $ans->tolerancetype = $answer->tolerancetype;
                 list($answer->min, $answer->max) = $ans->get_tolerance_interval($answer);
+
+                $formattedmin = qtype_calculated_calculate_answer(
+                    $answer->min, $data, $answer->tolerance,
+                    $answer->tolerancetype, $answer->correctanswerlength,
+                    $answer->correctanswerformat, $unit);
+                $answer->min = $formattedmin->answer;
+                $formattedmax = qtype_calculated_calculate_answer(
+                    $answer->max, $data, $answer->tolerance,
+                    $answer->tolerancetype, $answer->correctanswerlength,
+                    $answer->correctanswerformat, $unit);
+                $answer->max = $formattedmax->answer;
             }
             if ($answer->min === '') {
                 // This should mean that something is wrong.
