@@ -1099,18 +1099,25 @@ class course_enrolment_manager {
      */
     private function prepare_user_for_display($user, $extrafields, $now) {
         $details = array(
-            'userid'    => $user->id,
-            'courseid'  => $this->get_course()->id,
-            'picture'   => new user_picture($user),
-            'firstname' => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
-            'lastseen'  => get_string('never'),
+            'userid'           => $user->id,
+            'courseid'         => $this->get_course()->id,
+            'picture'          => new user_picture($user),
+            'firstname'        => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
+            'lastseen'         => get_string('never'),
+            'lastcourseaccess' => get_string('never'),
         );
         foreach ($extrafields as $field) {
             $details[$field] = $user->{$field};
         }
 
+        // Last time user has accessed the site.
         if ($user->lastaccess) {
             $details['lastseen'] = format_time($now - $user->lastaccess);
+        }
+
+        // Last time user has accessed the course.
+        if ($user->lastseen) {
+            $details['lastcourseaccess'] = format_time($now - $user->lastseen);
         }
         return $details;
     }
