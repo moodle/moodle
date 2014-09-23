@@ -109,7 +109,8 @@ class single_view_grade extends single_view_tablelike
 
     public function original_headers() {
         $headers = array(
-            '',
+            '', // for filter icon.
+            '', // for user picture.
             get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
@@ -142,7 +143,8 @@ class single_view_grade extends single_view_tablelike
 
         $item->imagealt = $fullname;
 
-        $line = array(
+        $line = array( 
+            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $fullname))),
             $OUTPUT->user_picture($item),
             $this->format_link('user', $item->id, $fullname),
             $this->item_range()

@@ -25,3 +25,7 @@
 #page-grade-report-single_view-index div.generalbox h2 {
    text-align: center;
 }
+
+input[name^="finalgrade"] {
+    width: 50px;
+}

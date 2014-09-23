@@ -47,7 +47,8 @@ class single_view_user extends single_view_tablelike implements selectable_items
 
     public function original_headers() {
         return array(
-            '',
+            '', // for filter icon.
+            '', // for activity icon.
             get_string('assessmentname', 'gradereport_single_view'),
             get_string('gradecategory', 'grades'),
             get_string('range', 'grades'),
@@ -72,6 +73,7 @@ class single_view_user extends single_view_tablelike implements selectable_items
              $lockicon =  $OUTPUT->pix_icon('t/locked', 'grade is locked');
 
         $line = array(
+            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $item->get_name()))),
             $this->format_icon($item) . $lockicon,
             $this->format_link('grade', $item->id, $item->get_name()),
             $this->category($item),

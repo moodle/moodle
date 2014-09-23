@@ -654,6 +654,7 @@ $string['showrank_help'] = 'Show the position of the student in relation to the 
 $string['showuserimage'] = 'Show user profile images';
 $string['showuserimage_help'] = 'Whether to show the user\'s profile image next to the name in the grader report.';
 $string['showverbose'] = 'Show {$a->category} {$a->itemmodule} {$a->itemname}';
+$string['simpleview'] = 'Single view';
 $string['sitewide'] = 'Site-wide';
 $string['sort'] = 'sort';
 $string['sortasc'] = 'Sort in ascending order';

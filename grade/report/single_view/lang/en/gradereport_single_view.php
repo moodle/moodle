@@ -27,7 +27,7 @@ $string['pluginname'] = 'Single view';
 $string['single_view:view'] = 'View the '.$string['pluginname'].' report';
 
 $string['not_allowed'] = 'Not allowed to quick edit this item';
-
+$string['filtergrades'] = 'Show grades for {$a}.';
 $string['no_screens'] = 'Could not find a suitable Single view screen.';
 
 $string['exclude'] = 'Exclude';
