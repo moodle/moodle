@@ -2706,25 +2706,9 @@ class section_info implements IteratorAggregate {
      * @return string
      */
     private function get_availableinfo() {
-        // Make sure $this->_available has been calculated, it may also fill the _availableinfo property.
+        // Calling get_available() will also fill the availableinfo property
+        // (or leave it null if there is no userid).
         $this->get_available();
-        $userid = $this->modinfo->get_user_id();
-        if ($this->_availableinfo !== null || $userid == -1) {
-            // It has been already calculated or does not need calculation.
-            return $this->_availableinfo;
-        }
-        $this->_availableinfo = '';
-        // Display grouping info if available & not already displaying
-        // (it would already display if current user doesn't have access)
-        // for people with managegroups - same logic/class as grouping label
-        // on individual activities.
-        $context = context_course::instance($this->get_course());
-        if ($this->_groupingid && has_capability('moodle/course:managegroups', $context, $userid)) {
-            $groupings = groups_get_all_groupings($this->get_course());
-            $this->_availableinfo = html_writer::tag('span', '(' . format_string(
-                    $groupings[$this->_groupingid]->name, true, array('context' => $context)) .
-                    ')', array('class' => 'groupinglabel'));
-        }
         return $this->_availableinfo;
     }
 
