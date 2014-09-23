@@ -1,4 +1,4 @@
-@qtype @qformat_gift
+@qformat @qformat_gift
 Feature: Test importing questions from GIFT format.
   In order to reuse questions
   As an teacher
