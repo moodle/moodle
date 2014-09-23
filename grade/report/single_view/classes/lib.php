@@ -1,5 +1,28 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The gradebook simple view - base class for the table
+ *
+ * @package   simple_view
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once $CFG->dirroot . '/grade/report/single_view/classes/uilib.php';
 
 interface selectable_items {
@@ -53,7 +76,7 @@ abstract class single_view_screen {
             'id' => $this->courseid,
             'item' => $screen,
             'itemid' => $itemid,
-            'group' => $this->groupid
+            'group' => $this->groupid,
         ));
 
         if ($display) {
@@ -198,20 +221,20 @@ abstract class single_view_screen {
                 $data->$name = null;
             }
 
-            // Same value; skip
+            // Same value; skip.
             if ($oldvalue == $posted) {
                 continue;
             }
 
             $msg = $element->set($posted);
 
-            // Optional type
+            // Optional type.
             if (!empty($msg)) {
                 $warnings[] = $msg;
             }
         }
 
-        // Some post-processing
+        // Some post-processing.
         $event_data = new stdClass;
         $event_data->warnings = $warnings;
         $event_data->post_data = $data;
@@ -258,17 +281,17 @@ abstract class single_view_tablelike extends single_view_screen implements tabba
         return (count($this->definition()) * $this->total) + $this->index;
     }
 
-    // Special injection for bulk operations
+    // Special injection for bulk operations.
     public function process($data) {
         $bulk = $this->factory()->create('bulk_insert')->format($this->item);
 
         // Bulk insert messages the data to be passed in
-        // ie: for all grades of empty grades apply the specified value
+        // ie: for all grades of empty grades apply the specified value.
         if ($bulk->is_applied($data)) {
             $filter = $bulk->get_type($data);
             $insert_value = $bulk->get_insert_value($data);
 
-            // Appropriately massage data that may not exist
+            // Appropriately massage data that may not exist.
             if ($this->supports_paging()) {
                 // TODO: this only works with the grade screen...
                 $grade_item = grade_item::fetch(array(
@@ -320,7 +343,7 @@ abstract class single_view_tablelike extends single_view_screen implements tabba
 
     public function format_definition($line, $grade) {
         foreach ($this->definition() as $i => $field) {
-            // Table tab index
+            // Table tab index.
             $tab = ($i * $this->total) + $this->index;
 
             $html = $this->factory()->create($field)->format($grade, $tab);
@@ -339,7 +362,7 @@ abstract class single_view_tablelike extends single_view_screen implements tabba
 
         $table->head = $this->headers();
 
-        // To be used for extra formatting
+        // To be used for extra formatting.
         $this->index = 0;
         $this->total = count($this->items);
 

@@ -1,5 +1,28 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The gradebook simple view - UI factory
+ *
+ * @package   simple_view
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 abstract class single_view_ui_factory {
     public abstract function create($type);
 
@@ -110,7 +133,6 @@ class single_view_checkbox_attribute extends single_view_ui_element {
     var $is_checked;
     var $tabindex;
 
-    // UCSB 2014-02-28 - add $locked to disable override checkbox when grade is locked 
     function __construct($name, $is_checked = false, $tabindex = null, $locked=0) {
         $this->is_checked = $is_checked;
         $this->tabindex = $tabindex;
@@ -130,7 +152,7 @@ class single_view_checkbox_attribute extends single_view_ui_element {
             'value' => 1
         );
 
-        // UCSB fixed user should not be able to override locked grade
+        // UCSB fixed user should not be able to override locked grade.
         if ( $this->locked) {
             $attributes['disabled'] = 'DISABLED';
         }
@@ -310,7 +332,7 @@ class single_view_finalgrade_ui extends single_view_grade_attribute_format imple
     var $name = 'finalgrade';
 
     function get_value() {
-        // Manual item raw grade support
+        // Manual item raw grade support.
         $val = $this->grade->grade_item->is_manual_item() && (!is_null($this->grade->rawgrade)) ?
             $this->grade->rawgrade : $this->grade->finalgrade;
 
@@ -325,15 +347,14 @@ class single_view_finalgrade_ui extends single_view_grade_attribute_format imple
         $locked = 0;
         $gradeitemlocked = 0;
         $overridden = 0;
-// UCSB - 2.24.2014 
-// disable editing if grade item or grade score is locked
-// if any of these items are set,  then we will disable editing
-// at some point, we might want to show the reason for the lock
-// this code could be simplified, but its more readable for steve's little mind
+        /* Disable editing if grade item or grade score is locked
+         * if any of these items are set,  then we will disable editing
+         * at some point, we might want to show the reason for the lock
+         * this code could be simplified, but its more readable for steve's little mind
+         */
         if (!empty($this->grade->locked))  $locked = 1;
         if (!empty($this->grade->grade_item->locked))  $gradeitemlocked = 1;
         if ($this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden()) $overridden = 1;
-        //$overridden = $this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden();
         return ($locked || $gradeitemlocked || $overridden);
     }
 
@@ -384,7 +405,6 @@ class single_view_finalgrade_ui extends single_view_grade_attribute_format imple
 
         $errorstr = '';
         if (is_null($finalgrade)) {
-            // ok
         } else {
             $bounded = $grade_item->bounded_grade($finalgrade);
             if ($bounded > $finalgrade) {
@@ -424,11 +444,11 @@ class single_view_feedback_ui extends single_view_grade_attribute_format impleme
         $locked = 0;
         $gradeitemlocked = 0;
         $overridden = 0;
-// UCSB - 2.24.2014 
-// disable editing if grade item or grade score is locked
-// if any of these items are set,  then we will disable editing
-// at some point, we might want to show the reason for the lock
-// this code could be simplified, but its more readable for steve's little mind
+        /* Disable editing if grade item or grade score is locked
+        * if any of these items are set,  then we will disable editing
+        * at some point, we might want to show the reason for the lock
+        * this code could be simplified, but its more readable for steve's little mind
+        */
         if (!empty($this->grade->locked))  $locked = 1;
         if (!empty($this->grade->grade_item->locked))  $gradeitemlocked = 1;
         if ($this->grade->grade_item->is_overridable_item() and !$this->grade->is_overridden()) $overridden = 1;
@@ -461,7 +481,6 @@ class single_view_feedback_ui extends single_view_grade_attribute_format impleme
     }
 }
 
-// UCSB 2014-02-28 implement be_disabled to disable checkbox if grade/gradeitem is locked
 class single_view_override_ui extends single_view_grade_attribute_format implements be_checked, be_disabled {
     var $name = 'override';
 
@@ -480,7 +499,6 @@ class single_view_override_ui extends single_view_grade_attribute_format impleme
         if (!$this->grade->grade_item->is_overridable_item()) {
             return new single_view_empty_element();
         }
-       // UCSB 2014-02-28: add param is_disabled to disable override checkbox if grade is locked 
         return new single_view_checkbox_attribute(
             $this->get_name(),
             $this->is_checked(),
@@ -524,7 +542,7 @@ class single_view_exclude_ui extends single_view_grade_attribute_format implemen
 
             $grade_item = $this->grade->grade_item;
 
-            // Fill in arbitrary grade to be excluded
+            // Fill in arbitrary grade to be excluded.
             $grade_item->update_final_grade(
                 $this->grade->userid, null, 'single_view', null, FORMAT_MOODLE
             );

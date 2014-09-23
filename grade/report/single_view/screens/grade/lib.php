@@ -1,5 +1,28 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The gradebook simple view - grades view (for an activity)
+ *
+ * @package   simple_view
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 class single_view_grade extends single_view_tablelike
     implements selectable_items, item_filtering {
 
@@ -69,7 +92,7 @@ class single_view_grade extends single_view_tablelike
             return;
         }
 
-        // Only page when necessary
+        // Only page when necessary.
         if (count($this->items) > $this->perpage) {
             $this->requires_paging = true;
 
@@ -125,14 +148,15 @@ class single_view_grade extends single_view_tablelike
 
         $grade = $this->fetch_grade_or_default($this->item, $item->id);
 
-        // UCSB add lock icon indicator
+        // UCSB add lock icon indicator.
         $lockicon = '';
 
-        // CODE to make steve happy for his simple mind
+        // CODE to make steve happy for his simple mind.
 	$locked_grade = $locked_grade_item = 0;
         if ( ! empty($grade->locked) )  $locked_grade = 1;
         if ( ! empty($grade->grade_item->locked) ) $locked_grade_item = 1;
-        if ( $locked_grade || $locked_grade_item )  // check both grade and grade item
+        // check both grade and grade item.
+        if ( $locked_grade || $locked_grade_item )
             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
 
         if (!empty($item->alternatename)) {
@@ -142,11 +166,12 @@ class single_view_grade extends single_view_tablelike
         }
 
         $item->imagealt = $fullname;
+        $url = new moodle_url("/user/view.php", array('id' => $item->id, 'course' => $this->courseid));
 
         $line = array( 
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $fullname))),
             $OUTPUT->user_picture($item),
-            $this->format_link('user', $item->id, $fullname),
+            html_writer::tag('a', $fullname, array('href' => $url)),
             $this->item_range()
         );
         return $this->format_definition($line, $grade);
