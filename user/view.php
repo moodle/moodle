@@ -272,7 +272,7 @@ if (!isset($hiddenfields['lastaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    echo html_writer::tag('dt', get_string('lastaccess'));
+    echo html_writer::tag('dt', get_string('lastcourseaccess'));
     echo html_writer::tag('dd', $datestring);
 }
 
