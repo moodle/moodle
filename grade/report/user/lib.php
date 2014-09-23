@@ -350,7 +350,7 @@ class grade_report_user extends grade_report {
         return true;
     }
 
-    private function fill_table_recursive(&$element) {
+    private function fill_table_recursive(&$element, &$aggregationhints = array()) {
         global $DB, $CFG;
 
         $type = $element['type'];
@@ -620,52 +620,16 @@ class grade_report_user extends grade_report {
                     $data['contributiontocoursetotal']['class'] = $class;
                     $data['contributiontocoursetotal']['content'] = '-';
                     $data['contributiontocoursetotal']['headers'] = "$header_cat $header_row contributiontocoursetotal";
-                    /**
-                    if (($type != 'categoryitem') && ($type != 'courseitem')) {
-                        $weight = $grade_grade->get_aggregation_weight($grade_object);
-                        if (is_numeric($weight)) {
-                            $me = $grade_grade->grade_item;
-                            $percentoftotal = $hint;
-                            $validpercent = true;
-                            $parent = null;
-                            while ((!$me->is_course_item()) && ($validpercent)) {
-                                // The parent of a category grade item is itself (yes - how odd).
-                                // This means we need to use the parent of the grade_category if it exists.
-                                if (!empty($parent)) {
-                                    $parent = $parent->get_parent_category();
-                                } else {
-                                    $parent = $me->get_parent_category();
-                                }
-                                $parentgradeitem = $parent->load_grade_item();
-                                $parentgradegrade = grade_grade::fetch(array('itemid'=>$parentgradeitem->id, 'userid'=>$this->user->id));
-                                if (!$parentgradegrade) {
-                                    $validpercent = false;
-                                    continue;
-                                }
-                                $hint = $parentgradegrade->get_aggregation_hint($parentgradeitem);
-                                $me = $parentgradeitem;
-                                if (!is_numeric($hint)) {
-                                    // It's OK for the course grade item to not have a usedinaggregation value.
-                                    $validpercent = $parentgradeitem->is_course_item();
-                                    continue;
-                                }
-                                $thispercent = $hint;
-                                $percentoftotal *= $thispercent;
-                            }
-                            if ($validpercent) {
-                                $grademin = $grade_grade->grade_item->grademin;
-                                $grademax = $grade_grade->grade_item->grademax;
-                                $finalgrade = $grade_grade->finalgrade;
-                                $contribution = format_float(((($finalgrade-$grademin)/($grademax-$grademin)*($percentoftotal * 100.0))),2);
-                                $data['contributiontocoursetotal']['content'] = $contribution;
-                            }
-                        }
-                    } **/
-                    $hint = $grade_grade->get_aggregation_hint($grade_object);
-                    if ($hint && is_numeric($hint)) {
-                        $data['contributiontocoursetotal']['content'] = $hint;
-                        $data['contributiontocoursetotal']['content'] .= ' ' . $grade_grade->finalgrade . ' ' . $grade_grade->rawgrademin . ' ' . $grade_grade->rawgrademax;
+
+                    $hint['grademax'] = $grade_grade->grade_item->grademax;
+                    $hint['grademin'] = $grade_grade->grade_item->grademin;
+                    $hint['grade'] = $gradeval;
+                    $parent = $grade_object->load_parent_category();
+                    if ($grade_object->is_category_item()) {
+                        $parent = $parent->load_parent_category();
                     }
+                    $hint['parent'] = $parent->load_grade_item()->id;
+                    $aggregationhints[$grade_grade->itemid] = $hint;
                 }
             }
         }
@@ -692,7 +656,57 @@ class grade_report_user extends grade_report {
         /// Recursively iterate through all child elements
         if (isset($element['children'])) {
             foreach ($element['children'] as $key=>$child) {
-                $this->fill_table_recursive($element['children'][$key]);
+                $this->fill_table_recursive($element['children'][$key], $aggregationhints);
+            }
+        }
+
+        if ($this->showcontributiontocoursetotal && ($type == 'category' && $depth == 1)) {
+            // We should have collected all the hints by now - walk the tree again and build the contributions column.
+
+            $this->fill_contributions_column($element, $aggregationhints);
+        }
+    }
+
+    public function fill_contributions_column($element, $aggregationhints) {
+
+        /// Recursively iterate through all child elements
+        if (isset($element['children'])) {
+            foreach ($element['children'] as $key=>$child) {
+                $this->fill_contributions_column($element['children'][$key], $aggregationhints);
+            }
+        } else if ($element['type'] == 'item') {
+            $grade_object = $element['object'];
+            $itemid = $grade_object->id;
+            if (isset($aggregationhints[$itemid])) {
+
+                $graderange = $aggregationhints[$itemid]['grademax'] - $aggregationhints[$itemid]['grademin'];
+                $gradeval = ($aggregationhints[$itemid]['grade'] - $aggregationhints[$itemid]['grademin']) / $graderange;
+
+                $parent = $aggregationhints[$itemid]['parent'];
+                do {
+                    if (!is_null($aggregationhints[$itemid]['weight'])) {
+                        $gradeval *= $aggregationhints[$itemid]['weight'];
+                    }
+
+                    if (isset($aggregationhints[$itemid]['parent']) &&
+                        $aggregationhints[$itemid]['parent'] != $itemid) {
+                        $parent = $aggregationhints[$itemid]['parent'];
+                        $itemid = $parent;
+                    } else {
+                        $parent = false;
+                    }
+                } while ($parent);
+                $gradeval *= $aggregationhints[$itemid]['grademax'];
+
+                $header_row = "row_{$grade_object->id}_{$this->user->id}";
+                foreach ($this->tabledata as $key => $row) {
+                    if (isset($row['itemname']) &&
+                        ($row['itemname']['id'] == $header_row)) {
+                        $decimals = $grade_object->get_decimals();
+                        $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true);
+                        break;
+                    }
+                }
             }
         }
     }

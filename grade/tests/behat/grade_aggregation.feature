@@ -265,14 +265,40 @@ Feature: We can use calculated grade totals
     And I turn editing mode off
     Then I should see "152.68 (24.43 %)" in the ".course" "css_element"
     And I navigate to "Course grade settings" node in "Grade administration > Settings"
-    And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
+    And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "Show contribution to course total" to "Show"
+    And I set the field "Show weightings" to "Show"
     And I press "Save changes"
+    And I set the field "Grade report" to "User report"
+    And the following should exist in the "user-grade" table:
+      | Grade item | Calculated weight | Grade | Range |
+      | Test assignment five | 28.57 % | 10.00 (50.00 %) | 0–20 |
+      | Test assignment six | 50.00 % | 5.00 (50.00 %) | 0–10 |
+      | Test assignment seven | 21.43 % | - | 0–15 |
+      | Test assignment eight | 66.67 % | 10.00 (50.00 %) | 0–20 |
+      | Test assignment nine | 33.33 % | 5.00 (50.00 %) | 0–10 |
+      | Test assignment ten | -( Empty ) | - | 0–15 |
+      | Test assignment one | 48.00 % | 60.00 (20.00 %) | 0–300 |
+      | Test assignment two | 16.00 % | 20.00 (20.00 %) | 0–100 |
+      | Test assignment three | 24.00 %( Extra credit ) | 40.00 (26.67 %) | 0–150 |
+      | Test assignment four | 24.00 % | - | 0–150 |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Grades"
     And I set the field "Grade report" to "Overview report"
     And I should see "113.75 (23.45 %)" in the "overview-grade" "table"
+    And I set the field "Grade report" to "User report"
+    And the following should exist in the "user-grade" table:
+      | Grade item | Calculated weight | Grade | Range |
+      | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 |
+      | Test assignment seven | 30.00 % | - | 0–15 |
+      | Test assignment nine | 100.00 % | 5.00 (50.00 %) | 0–10 |
+      | Test assignment ten | -( Empty ) | - | 0–15 |
+      | Test assignment one | 61.86 % | 60.00 (20.00 %) | 0–300 |
+      | Test assignment three | 30.93 %( Extra credit ) | 40.00 (26.67 %) | 0–150 |
+      | Test assignment four | 30.93 % | - | 0–150 |
 
   @javascript
   Scenario: Natural aggregation with drop lowest
