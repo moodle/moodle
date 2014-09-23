@@ -7,6 +7,7 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
   to determine the section selector, rather than a hard-coded `li.section`.
 * Activity duplication in /course/modduplicate.php is deprecated and is now done in /course/mod.php.  Deprecated calls will be honored by
   redirecting to /course/mod.php for 3rd party plugin support.
+* New method format_base::section_get_available_hook() allows plugins to override section availability.
 
 === 2.7 ===
 * The ->testedbrowsers array no longer needs to be defined in supports_ajax().
