@@ -171,7 +171,7 @@ function cli_problem($text) {
  * @return void (does not return)
  */
 function cli_error($text, $errorcode=1) {
-    fwrite(STDERR, $text);
+    fwrite(STDERR, "\xE2\x9D\x8C ". $text);
     fwrite(STDERR, "\n");
     die($errorcode);
 }
