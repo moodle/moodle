@@ -564,7 +564,7 @@ class grade_category extends grade_object {
                                       $excluded,
                                       $grademinoverrides,
                                       $grademaxoverrides) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Remember these so we can set flags on them to describe how they were used in the aggregation.
         $novalue = array();
@@ -601,16 +601,26 @@ class grade_category extends grade_object {
         // Make sure a grade_grade exists for every grade_item.
         // We need to do this so we can set the aggregationstatus
         // with a set_field call instead of checking if each one exists and creating/updating.
-        foreach ($items as $itemid => $gradeitem) {
-            $gradegrade = new grade_grade(array('itemid' => $gradeitem->id,
-                                                'userid' => $userid,
-                                                'rawgrademin' => $gradeitem->grademin,
-                                                'rawgrademax' => $gradeitem->grademax), false);
-            $gradegrade->grade_item = $this->grade_item;
-            if (!$gradegrade->fetch(array('itemid'=>$gradeitem->id, 'userid'=>$userid))) {
+        if (count($items) > 0) {
+            list($ggsql, $params) = $DB->get_in_or_equal(array_keys($items), SQL_PARAMS_NAMED, 'g');
+
+
+            $params['userid'] = $userid;
+            $sql = "SELECT itemid
+                      FROM {grade_grades}
+                     WHERE itemid $ggsql AND userid = :userid";
+            $existingitems = $DB->get_records_sql($sql, $params);
+
+            $notexisting = array_diff(array_keys($items), array_keys($existingitems));
+            foreach ($notexisting as $itemid) {
+                $gradeitem = $this->grade_item;
+                $gradegrade = new grade_grade(array('itemid' => $itemid,
+                                                    'userid' => $userid,
+                                                    'rawgrademin' => $gradeitem->grademin,
+                                                    'rawgrademax' => $gradeitem->grademax), false);
+                $gradegrade->grade_item = $gradeitem;
                 $gradegrade->insert('system');
             }
-
         }
 
         // if no grades calculation possible or grading not allowed clear final grade
@@ -632,7 +642,7 @@ class grade_category extends grade_object {
                 // If null, it means no grade.
                 if ($this->aggregateonlygraded) {
                     unset($grade_values[$itemid]);
-                    // Mark this item as dropped because it has no grade.
+                    // Mark this item as "excluded empty" because it has no grade.
                     $novalue[$itemid] = 0;
                     continue;
                 }
@@ -654,14 +664,13 @@ class grade_category extends grade_object {
             $grade_values[$itemid] = grade_grade::standardise_score($v, $usergrademin, $usergrademax, 0, 1);
         }
 
-        // Use min grade if grade missing for these types.
+        // For items with no value, and not excluded - either set their grade to 0 or exclude them.
         foreach ($items as $itemid=>$value) {
             if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
                 if (!$this->aggregateonlygraded) {
                     $grade_values[$itemid] = 0;
                 } else {
-                    // We are specifically marking these items that get dropped
-                    // because they are empty.
+                    // We are specifically marking these items as "excluded empty".
                     $novalue[$itemid] = 0;
                 }
             }
@@ -811,6 +820,10 @@ class grade_category extends grade_object {
      * @since Moodle 2.6.5, 2.7.2
      * @param array & $weights If provided, will be filled with the normalized weights
      *                         for each grade_item as used in the aggregation.
+     *                         Some rules for the weights are:
+     *                         1. The weights must add up to 1 (unless there are extra credit)
+     *                         2. The contributed points column must add up to the course
+     *                         final grade and this column is calculated from these weights.
      * @param array  $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
      * @param array  $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
      * @return array containing values for:

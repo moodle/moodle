@@ -177,6 +177,15 @@ class grade_report_user extends grade_report {
     protected $viewasuser = false;
 
     /**
+     * An array that collects the aggregationhints for every
+     * grade_item. The hints contain grade, grademin, grademax
+     * status, weight and parent.
+     *
+     * @var array
+     */
+    protected $aggregationhints = array();
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -354,11 +363,8 @@ class grade_report_user extends grade_report {
      * Fill the table with data.
      *
      * @param $element - An array containing the table data for the current row.
-     * @param $aggregationhints - An array that collects the aggregationhints for every
-     *                            grade_item. The hints contain grade, grademin, grademax
-     *                            status, weight and parent.
      */
-    private function fill_table_recursive(&$element, &$aggregationhints = array()) {
+    private function fill_table_recursive(&$element) {
         global $DB, $CFG;
 
         $type = $element['type'];
@@ -494,7 +500,7 @@ class grade_report_user extends grade_report {
                         $data['weight']['content'] = format_float($hint['weight'] * 100.0, 2) . ' %';
                     }
                     if ($hint['status'] != 'used' && $hint['status'] != 'unknown') {
-                        $data['weight']['content'] .= '<br/>( ' . get_string('aggregationhint' . $hint['status'], 'grades') . ' )';
+                        $data['weight']['content'] .= '<br>' . get_string('aggregationhint' . $hint['status'], 'grades');
                     }
                 }
 
@@ -637,7 +643,7 @@ class grade_report_user extends grade_report {
                         $parent = $parent->load_parent_category();
                     }
                     $hint['parent'] = $parent->load_grade_item()->id;
-                    $aggregationhints[$grade_grade->itemid] = $hint;
+                    $this->aggregationhints[$grade_grade->itemid] = $hint;
                 }
             }
         }
@@ -664,7 +670,7 @@ class grade_report_user extends grade_report {
         /// Recursively iterate through all child elements
         if (isset($element['children'])) {
             foreach ($element['children'] as $key=>$child) {
-                $this->fill_table_recursive($element['children'][$key], $aggregationhints);
+                $this->fill_table_recursive($element['children'][$key]);
             }
         }
 
@@ -673,7 +679,7 @@ class grade_report_user extends grade_report {
         if ($this->showcontributiontocoursetotal && ($type == 'category' && $depth == 1)) {
             // We should have collected all the hints by now - walk the tree again and build the contributions column.
 
-            $this->fill_contributions_column($element, $aggregationhints);
+            $this->fill_contributions_column($element);
         }
     }
 
@@ -683,16 +689,13 @@ class grade_report_user extends grade_report {
      * grade_item.
      *
      * @param $element - An array containing the table data for the current row.
-     * @param $aggregationhints - An array that collects the aggregationhints for every
-     *                            grade_item. The hints contain grade, grademin, grademax
-     *                            status, weight and parent.
      */
-    public function fill_contributions_column($element, $aggregationhints) {
+    public function fill_contributions_column($element) {
 
-        /// Recursively iterate through all child elements
+        // Recursively iterate through all child elements.
         if (isset($element['children'])) {
             foreach ($element['children'] as $key=>$child) {
-                $this->fill_contributions_column($element['children'][$key], $aggregationhints);
+                $this->fill_contributions_column($element['children'][$key]);
             }
         } else if ($element['type'] == 'item') {
             // This is a grade item (We don't do this for categories or we would double count).
@@ -700,40 +703,38 @@ class grade_report_user extends grade_report {
             $itemid = $grade_object->id;
 
             // Ignore anything with no hint - e.g. a hidden row.
-            if (isset($aggregationhints[$itemid])) {
+            if (isset($this->aggregationhints[$itemid])) {
 
                 // Normalise the gradeval.
-                $graderange = $aggregationhints[$itemid]['grademax'] - $aggregationhints[$itemid]['grademin'];
-                $gradeval = ($aggregationhints[$itemid]['grade'] - $aggregationhints[$itemid]['grademin']) / $graderange;
+                $graderange = $this->aggregationhints[$itemid]['grademax'] - $this->aggregationhints[$itemid]['grademin'];
+                $gradeval = ($this->aggregationhints[$itemid]['grade'] - $this->aggregationhints[$itemid]['grademin']) / $graderange;
 
                 // Multiply the normalised value by the weight
                 // of all the categories higher in the tree.
-                $parent = $aggregationhints[$itemid]['parent'];
                 do {
-                    if (!is_null($aggregationhints[$itemid]['weight'])) {
-                        $gradeval *= $aggregationhints[$itemid]['weight'];
+                    if (!is_null($this->aggregationhints[$itemid]['weight'])) {
+                        $gradeval *= $this->aggregationhints[$itemid]['weight'];
                     }
 
                     // The second part of this if is to prevent infinite loops
                     // in case of crazy data.
-                    if (isset($aggregationhints[$itemid]['parent']) &&
-                        $aggregationhints[$itemid]['parent'] != $itemid) {
-                        $parent = $aggregationhints[$itemid]['parent'];
+                    if (isset($this->aggregationhints[$itemid]['parent']) &&
+                            $this->aggregationhints[$itemid]['parent'] != $itemid) {
+                        $parent = $this->aggregationhints[$itemid]['parent'];
                         $itemid = $parent;
                     } else {
-                        // We are at the top of the tree
+                        // We are at the top of the tree.
                         $parent = false;
                     }
                 } while ($parent);
                 // Finally multiply by the course grademax.
-                $gradeval *= $aggregationhints[$itemid]['grademax'];
+                $gradeval *= $this->aggregationhints[$itemid]['grademax'];
 
                 // Now we need to loop through the "built" table data and update the
                 // contributions column for the current row.
                 $header_row = "row_{$grade_object->id}_{$this->user->id}";
                 foreach ($this->tabledata as $key => $row) {
-                    if (isset($row['itemname']) &&
-                        ($row['itemname']['id'] == $header_row)) {
+                    if (isset($row['itemname']) && ($row['itemname']['id'] == $header_row)) {
                         // Found it - update the column.
                         $decimals = $grade_object->get_decimals();
                         $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true);
