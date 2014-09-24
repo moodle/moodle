@@ -15,12 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 class block_iomad_company_admin_renderer extends plugin_renderer_base {
-    
+
     /**
-     * Display list of available roles 
+     * Display list of available roles
      * @param array $roles
      */
-    public function role_select($roles, $linkurl) {
+    public function role_select($roles, $linkurl, $companyid) {
+        global $DB;
+
+        // get company info for heading
+        $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+        echo '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+
         $table = new html_table();
         $table->head = array(
             get_string('name'),
@@ -35,8 +41,32 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             );
             $table->data[] = $row;
         }
-        
+
         return html_writer::table($table);
     }
-    
+
+    /**
+     * Display capabilities for role
+     */
+    public function capabilities($capabilities, $roleid, $companyid) {
+        global $DB;
+
+        // get heading
+        $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+        $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
+        echo '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+        echo '<p>' . get_string()
+
+        $table = new html_table();
+        foreach ($capabilities as $capability) {
+            $row = array(
+                $capability->capability,
+                $capability->permission,
+            );
+            $table->data[] = $row;
+        }
+
+        return html_writer::table($table);
+    }
+
 }

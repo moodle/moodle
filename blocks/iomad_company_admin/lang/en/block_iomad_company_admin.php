@@ -244,6 +244,7 @@ $string['profile_field_company_not_empty_does_not_match_selected'] = 'profile_fi
 $string['profile_field_company_not_set'] = 'profile_field_company is required when no company has been selected.';
 $string['return_to'] = 'Return to {$a}';
 $string['restrictcapabilities'] = 'Restrict capabilities';
+$string['restrictcapabilitiesfor'] = 'Restrict capabilities for \'{$a}\'';
 $string['saveasnewcompany'] = 'Save new company';
 $string['selectacompany'] = 'Select a company';
 $string['selectacountry'] = 'Select a country';

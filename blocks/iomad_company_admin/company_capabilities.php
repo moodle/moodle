@@ -25,14 +25,15 @@ require_once(dirname(__FILE__) . '/locallib.php');
 // parameters
 $roleid = optional_param('roleid', 0, PARAM_INT);
 
-// access stuff
+// Set the companyid
+// (before output in case it redirects)
 $context = context_system::instance();
+$companyid = iomad::get_my_companyid($context);
+
+// access stuff
 require_login();
 require_capability('block/iomad_company_admin:restrict_capabilities', $context);
 $PAGE->set_context($context);
-
-// get output renderer
-$output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Correct the navbar.
 // Set the name for the page.
@@ -40,25 +41,26 @@ $linktext = get_string('restrictcapabilities', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
 // Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+//company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Do mysterious blockpage thingy
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'restrictcapabilities');
 $blockpage->setup();
 $blockpage->display_header();
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
+
+// get output renderer
+$output = $PAGE->get_renderer('block_iomad_company_admin');
 
 if ($roleid) {
     $capabilities = iomad_company_admin::get_iomad_capabilities($roleid);
-    echo "<pre>"; var_dump($capabilities); die;
-    
+    echo $output->capabilities($capabilities, $roleid, $companyid);
+
 } else {
-    
+
     // get the list of roles to choose from
     $roles = iomad_company_admin::get_roles();
-    echo $output->role_select($roles, $linkurl);
+    echo $output->role_select($roles, $linkurl, $companyid);
 }
 
 echo $OUTPUT->footer();

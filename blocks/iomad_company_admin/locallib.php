@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 class iomad_company_admin {
-    
+
     /**
      * Get the roles for the company_capabilties screen
      */
     public static function get_roles() {
         global $DB;
-        
+
         $roles = $DB->get_records('role', array(), 'sortorder ASC');
-        
+
         // Only want the ones that have a 'name' defined please.
         $namedroles = array();
         foreach ($roles as $role) {
@@ -31,10 +31,10 @@ class iomad_company_admin {
                 $namedroles[$role->id] = $role;
             }
         }
-        
+
         return $namedroles;
     }
-    
+
     /**
      * Get the Iomad capabilities for given role
      * (We only need to worry about the ones that are SET
@@ -43,11 +43,11 @@ class iomad_company_admin {
      */
     public static function get_iomad_capabilities($roleid) {
         global $DB;
-        
+
         // We need capabilities defined in the site context
         $context = context_system::instance();
         $capabilities = $DB->get_records('role_capabilities', array('roleid' => $roleid, 'contextid' => $context->id));
-        
+
         // Filter out caps. Only want 'local/report' and ones containing 'iomad'
         $filtered_capabilities = array();
         foreach ($capabilities as $capability) {
@@ -56,7 +56,9 @@ class iomad_company_admin {
             }
             $filtered_capabilities[$capability->id] = $capability;
         }
-        
+
         return $filtered_capabilities;
     }
+
+
 }
