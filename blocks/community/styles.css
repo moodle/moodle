@@ -106,7 +106,7 @@
     width: 100px;
     height: 20px;
     position: relative;
-    background: url([[pix:i/star-rating]]) top left repeat-x;
+    background: url([[pix:moodle|i/star-rating]]) top left repeat-x;
     float: left;
 }
 #page-blocks-community-communitycourse .star-rating li{
@@ -117,7 +117,7 @@
     float: left;
 }
 #page-blocks-community-communitycourse .star-rating li.current-rating{
-    background: url([[pix:i/star-rating]]) left bottom;
+    background: url([[pix:moodle|i/star-rating]]) left bottom;
     position: absolute;
     height: 20px;
     display: block;
