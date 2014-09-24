@@ -29,3 +29,22 @@
 input[name^="finalgrade"] {
     width: 50px;
 }
+
+#page-grade-report-single_view-index #region-main h2, .paging{
+   text-align: center;
+}
+#page-grade-report-single_view-index itemnav.previtem {
+   float:left;
+}
+#page-grade-report-single_view-index itemnav.previtem {
+   float:left;
+}
+#page-grade-report-single_view-index.dir-rtl small.previtem {
+   float:right;
+}
+#page-grade-report-single_view-index small.nextitem {
+   float:right;
+}
+#page-grade-report-single_view-index.dir-rtl small.nextitem {
+   float:left;
+}
