@@ -15,7 +15,7 @@
 .block_navigation .block_tree .type_activity > p.tree_item.branch.hasicon.active_tree_node,
 .block_navigation .block_tree .tree_item {padding-left: 21px;margin:3px 0px;text-align:left;}
 
-.block_navigation .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 0;background-repeat: no-repeat;}
+.block_navigation .block_tree .tree_item.branch {background-image: url([[pix:moodle|t/expanded]]);background-position: 0 0;background-repeat: no-repeat;}
 .block_navigation .block_tree .tree_item.branch.navigation_node {background-image:none;padding-left:0;}
 .block_navigation .block_tree .type_activity > .tree_item.emptybranch,
 .block_navigation .block_tree .type_activity > .tree_item.branch {background-image:none;position:relative;}
@@ -28,11 +28,11 @@
 .dock .block_navigation .tree_item {white-space: nowrap;}
 
 .jsenabled .block_navigation .block_tree .tree_item.branch {cursor:pointer;}
-.jsenabled .block_navigation .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: 0 0;background-repeat: no-repeat;}
+.jsenabled .block_navigation .block_tree .tree_item.emptybranch {background-image: url([[pix:moodle|t/collapsed_empty]]);background-position: 0 0;background-repeat: no-repeat;}
 .jsenabled .block_navigation .block_tree .collapsed ul {display: none;}
-.jsenabled .block_navigation .block_tree .type_activity > .tree_item.branch {background-image: url([[pix:t/expanded]]);}
-.jsenabled .block_navigation .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}
-.jsenabled .block_navigation .block_tree .tree_item.branch.loadingbranch {background-image:url([[pix:i/loading_small]]);}
+.jsenabled .block_navigation .block_tree .type_activity > .tree_item.branch {background-image: url([[pix:moodle|t/expanded]]);}
+.jsenabled .block_navigation .block_tree .collapsed .tree_item.branch {background-image: url([[pix:moodle|t/collapsed]]);}
+.jsenabled .block_navigation .block_tree .tree_item.branch.loadingbranch {background-image:url([[pix:moodle|i/loading_small]]);}
 
 /** JavaScript state rules **/
 .jsenabled .block_navigation.dock_on_load,
@@ -62,5 +62,5 @@
 .dir-rtl .block_navigation .block_tree li.item_with_icon.contains_branch > .tree_item {padding-right:37px; padding-left: 0;}
 .dir-rtl .block_navigation .block_tree .type_activity > .tree_item.branch img {right: 16px; left: auto;}
 
-.jsenabled.dir-rtl .block_navigation .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty_rtl]]);background-position: center right;}
-.jsenabled.dir-rtl .block_navigation .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed_rtl]]);}
+.jsenabled.dir-rtl .block_navigation .block_tree .tree_item.emptybranch {background-image: url([[pix:moodle|t/collapsed_empty_rtl]]);background-position: center right;}
+.jsenabled.dir-rtl .block_navigation .block_tree .collapsed .tree_item.branch {background-image: url([[pix:moodle|t/collapsed_rtl]]);}
