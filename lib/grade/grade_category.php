@@ -599,6 +599,8 @@ class grade_category extends grade_object {
         unset($grade_values[$this->grade_item->id]);
 
         // Make sure a grade_grade exists for every grade_item.
+        // We need to do this so we can set the aggregationstatus
+        // with a set_field call instead of checking if each one exists and creating/updating.
         foreach ($items as $itemid => $gradeitem) {
             $gradegrade = new grade_grade(array('itemid' => $gradeitem->id,
                                                 'userid' => $userid,
@@ -630,6 +632,7 @@ class grade_category extends grade_object {
                 // If null, it means no grade.
                 if ($this->aggregateonlygraded) {
                     unset($grade_values[$itemid]);
+                    // Mark this item as dropped because it has no grade.
                     $novalue[$itemid] = 0;
                     continue;
                 }
@@ -657,6 +660,8 @@ class grade_category extends grade_object {
                 if (!$this->aggregateonlygraded) {
                     $grade_values[$itemid] = 0;
                 } else {
+                    // We are specifically marking these items that get dropped
+                    // because they are empty.
                     $novalue[$itemid] = 0;
                 }
             }
@@ -726,9 +731,11 @@ class grade_category extends grade_object {
      * @param int $userid The user we have aggregated the grades for.
      * @param array $usedweights An array with keys for each of the grade_item columns included in the aggregation. The value are the relative weight.
      * @param array $novalue An array with keys for each of the grade_item columns skipped because
-     *                       they had no value in the aggregation
+     *                       they had no value in the aggregation.
      * @param array $dropped An array with keys for each of the grade_item columns dropped
-     *                       because of any drop lowest/highest settings in the aggregation
+     *                       because of any drop lowest/highest settings in the aggregation.
+     * @param array $extracredit An array with keys for each of the grade_item columns
+     *                       considered extra credit by the aggregation.
      */
     private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit) {
         global $DB;

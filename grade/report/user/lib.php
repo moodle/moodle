@@ -350,6 +350,14 @@ class grade_report_user extends grade_report {
         return true;
     }
 
+    /**
+     * Fill the table with data.
+     *
+     * @param $element - An array containing the table data for the current row.
+     * @param $aggregationhints - An array that collects the aggregationhints for every
+     *                            grade_item. The hints contain grade, grademin, grademax
+     *                            status, weight and parent.
+     */
     private function fill_table_recursive(&$element, &$aggregationhints = array()) {
         global $DB, $CFG;
 
@@ -660,6 +668,8 @@ class grade_report_user extends grade_report {
             }
         }
 
+        // Check we are showing this column, and we are looking at the root of the table.
+        // This should be the very last thing this fill_table_recursive function does.
         if ($this->showcontributiontocoursetotal && ($type == 'category' && $depth == 1)) {
             // We should have collected all the hints by now - walk the tree again and build the contributions column.
 
@@ -667,6 +677,16 @@ class grade_report_user extends grade_report {
         }
     }
 
+    /**
+     * This function is called after the table has been built and the aggregationhints
+     * have been collected. We need this info to walk up the list of parents of each
+     * grade_item.
+     *
+     * @param $element - An array containing the table data for the current row.
+     * @param $aggregationhints - An array that collects the aggregationhints for every
+     *                            grade_item. The hints contain grade, grademin, grademax
+     *                            status, weight and parent.
+     */
     public function fill_contributions_column($element, $aggregationhints) {
 
         /// Recursively iterate through all child elements
@@ -675,33 +695,46 @@ class grade_report_user extends grade_report {
                 $this->fill_contributions_column($element['children'][$key], $aggregationhints);
             }
         } else if ($element['type'] == 'item') {
+            // This is a grade item (We don't do this for categories or we would double count).
             $grade_object = $element['object'];
             $itemid = $grade_object->id;
+
+            // Ignore anything with no hint - e.g. a hidden row.
             if (isset($aggregationhints[$itemid])) {
 
+                // Normalise the gradeval.
                 $graderange = $aggregationhints[$itemid]['grademax'] - $aggregationhints[$itemid]['grademin'];
                 $gradeval = ($aggregationhints[$itemid]['grade'] - $aggregationhints[$itemid]['grademin']) / $graderange;
 
+                // Multiply the normalised value by the weight
+                // of all the categories higher in the tree.
                 $parent = $aggregationhints[$itemid]['parent'];
                 do {
                     if (!is_null($aggregationhints[$itemid]['weight'])) {
                         $gradeval *= $aggregationhints[$itemid]['weight'];
                     }
 
+                    // The second part of this if is to prevent infinite loops
+                    // in case of crazy data.
                     if (isset($aggregationhints[$itemid]['parent']) &&
                         $aggregationhints[$itemid]['parent'] != $itemid) {
                         $parent = $aggregationhints[$itemid]['parent'];
                         $itemid = $parent;
                     } else {
+                        // We are at the top of the tree
                         $parent = false;
                     }
                 } while ($parent);
+                // Finally multiply by the course grademax.
                 $gradeval *= $aggregationhints[$itemid]['grademax'];
 
+                // Now we need to loop through the "built" table data and update the
+                // contributions column for the current row.
                 $header_row = "row_{$grade_object->id}_{$this->user->id}";
                 foreach ($this->tabledata as $key => $row) {
                     if (isset($row['itemname']) &&
                         ($row['itemname']['id'] == $header_row)) {
+                        // Found it - update the column.
                         $decimals = $grade_object->get_decimals();
                         $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true);
                         break;

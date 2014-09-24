@@ -672,6 +672,9 @@ class grade_grade extends grade_object {
      *      unknown => list of item ids that may be affected by hiding (with the calculated grade as the value)
      *      altered => list of item ids that are definitely affected by hiding (with the calculated grade as the value)
      *      alteredgrademax => for each item in altered or unknown, the new value of the grademax
+     *      alteredgrademin => for each item in altered or unknown, the new value of the grademin
+     *      alteredgradestatus => for each item with a modified status - the value of the new status
+     *      alteredgradeweight => for each item with a modified weight - the value of the new weight
      */
     public static function get_hiding_affected(&$grade_grades, &$grade_items) {
         global $CFG;
