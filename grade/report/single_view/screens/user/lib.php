@@ -100,7 +100,7 @@ class single_view_user extends single_view_tablelike implements selectable_items
         $line = array(
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $item->get_name()))),
             $this->format_icon($item) . $lockicon,
-            html_writer::tag('a', $item->get_name(), array('href' => $url)),
+            html_writer::link($url, $item->get_name()),
             $this->category($item),
             $this->factory()->create('range')->format($item)
         );

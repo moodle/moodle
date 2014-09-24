@@ -347,6 +347,7 @@ abstract class single_view_tablelike extends single_view_screen implements tabba
             $tab = ($i * $this->total) + $this->index;
 
             $html = $this->factory()->create($field)->format($grade, $tab);
+            
             if ($field == 'finalgrade' and !empty($this->structure)) {
                 $html .= $this->structure->get_grade_analysis_icon($grade);
             }
