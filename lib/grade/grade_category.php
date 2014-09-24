@@ -826,19 +826,26 @@ class grade_category extends grade_object {
                 $num = count($grade_values);
                 $grades = array_values($grade_values);
 
+                // The median gets 100% - others get 0.
+                if ($weights !== null && $num > 0) {
+                    $count = 0;
+                    foreach ($grade_values as $itemid=>$grade_value) {
+                        if (($num % 2 == 0) && ($count == intval($num/2)-1 || $count == intval($num/2))) {
+                            $weights[$itemid] = 0.5;
+                        } else if (($num % 2 != 0) && ($count == intval(($num/2)-0.5))) {
+                            $weights[$itemid] = 1.0;
+                        } else {
+                            $weights[$itemid] = 0;
+                        }
+                        $count++;
+                    }
+                }
                 if ($num % 2 == 0) {
                     $agg_grade = ($grades[intval($num/2)-1] + $grades[intval($num/2)]) / 2;
-
                 } else {
                     $agg_grade = $grades[intval(($num/2)-0.5)];
                 }
 
-                // Record the weights evenly.
-                if ($weights !== null && $num > 0) {
-                    foreach ($grade_values as $itemid=>$grade_value) {
-                        $weights[$itemid] = 1.0 / $num;
-                    }
-                }
                 break;
 
             case GRADE_AGGREGATE_MIN:
@@ -957,9 +964,9 @@ class grade_category extends grade_object {
                 // Record the weights as used.
                 if ($weights !== null) {
                     foreach ($grade_values as $itemid=>$grade_value) {
-                        if ($items[$itemid]->aggregationcoef == 0 && $weightsum > 0) {
+                        if ($weightsum > 0) {
                             $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
-                            $weights[$itemid] = ($items[$itemid]->grademax - $items[$itemid]->grademin) / $weightsum;
+                            $weights[$itemid] = $weight / $weightsum;
                         } else {
                             $weights[$itemid] = 0;
                         }
@@ -983,7 +990,7 @@ class grade_category extends grade_object {
                     } else if ($items[$itemid]->aggregationcoef > 0) {
                         $sum += $items[$itemid]->aggregationcoef * $grade_value;
                         if ($weights !== null) {
-                            $weights[$itemid] = 0;
+                            $weights[$itemid] = 1;
                         }
                     }
                 }
