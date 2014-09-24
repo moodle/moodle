@@ -129,6 +129,9 @@ class mod_assign_mod_form extends moodleform_mod {
         $name = get_string('teamsubmission', 'assign');
         $mform->addElement('selectyesno', 'teamsubmission', $name);
         $mform->addHelpButton('teamsubmission', 'teamsubmission', 'assign');
+        if ($assignment->has_submissions_or_grades()) {
+            $mform->freeze('teamsubmission');
+        }
 
         $name = get_string('requireallteammemberssubmit', 'assign');
         $mform->addElement('selectyesno', 'requireallteammemberssubmit', $name);
