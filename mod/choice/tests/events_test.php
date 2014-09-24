@@ -79,7 +79,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $events[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $events[0]->get_context());
         $this->assertEquals($this->choice->id, $events[0]->other['choiceid']);
-        $this->assertEquals(3, $events[0]->other['optionid']);
+        $this->assertEquals(array(3), $events[0]->other['optionid']);
         $expected = array($this->course->id, "choice", "choose", 'view.php?id=' . $this->cm->id, $this->choice->id, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $events[0]);
         $this->assertEventContextNotUsed($events[0]);

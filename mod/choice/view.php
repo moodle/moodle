@@ -56,17 +56,10 @@ $completion->set_module_viewed($cm);
 /// Submit any new data if there is any
 if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
     $timenow = time();
-    if (has_capability('mod/choice:deleteresponses', $context)) {
-        if ($action == 'delete') { //some responses need to be deleted
-            choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
-            redirect("view.php?id=$cm->id");
-        }
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(format_string($choice->name), 2, null);
-        echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
-    } else {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(format_string($choice->name), 2, null);
+    if (has_capability('mod/choice:deleteresponses', $context) && $action == 'delete') {
+        //some responses need to be deleted
+        choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
+        redirect("view.php?id=$cm->id");
     }
 
     if ($choice->allowmultiple) {
@@ -81,11 +74,11 @@ if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && conf
         choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
     }
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($choice->name, 2, null);
+    echo $OUTPUT->heading(format_string($choice->name), 2, null);
     echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
 } else {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($choice->name, 2, null);
+    echo $OUTPUT->heading(format_string($choice->name), 2, null);
 }
 
 

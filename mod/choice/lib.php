@@ -263,11 +263,11 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     $current = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
     $context = context_module::instance($cm->id);
 
+    $choicesexceeded = false;
     $countanswers = array();
     foreach ($formanswers as $val) {
         $countanswers[$val] = 0;
     }
-
     if($choice->limitanswers) {
         // Find out whether groups are being used and enabled
         if (groups_get_activity_groupmode($cm) > 0) {
@@ -284,26 +284,19 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
             global $CFG;
 
             $params['groupid'] = $currentgroup;
-            $answers = $DB->get_records_sql("
-SELECT
-    ca.*
-FROM
-    {choice_answers} ca
-    INNER JOIN {groups_members} gm ON ca.userid=gm.userid
-WHERE
-    optionid $insql
-    AND gm.groupid= :groupid", $params);
+            $sql = "SELECT ca.*
+                      FROM {choice_answers} ca
+                INNER JOIN {groups_members} gm ON ca.userid=gm.userid
+                     WHERE optionid $insql
+                       AND gm.groupid= :groupid";
         } else {
             // Groups are not used, retrieve all answers for this option ID
-            $answers = $DB->get_records_sql("
-SELECT
-    ca.*
-FROM
-    {choice_answers} ca
-WHERE
-    optionid $insql", $params);
+            $sql = "SELECT ca.*
+                      FROM {choice_answers} ca
+                     WHERE optionid $insql";
         }
 
+        $answers = $DB->get_records_sql($sql, $params);
         if ($answers) {
             foreach ($answers as $a) { //only return enrolled users.
                 if (is_enrolled($context, $a->userid, 'mod/choice:choose')) {
@@ -311,8 +304,6 @@ WHERE
                 }
             }
         }
-
-        $choicesexceeded = false;
         foreach ($countanswers as $opt => $count) {
             if ($count > $choice->maxanswers[$opt]) {
                 $choicesexceeded = true;
@@ -321,6 +312,7 @@ WHERE
         }
     }
 
+    // Check the user hasn't exceeded the maximum selections for the choice(s) they have selected.
     if (!($choice->limitanswers && $choicesexceeded)) {
         $answersnapshots = array();
         if ($current) {
@@ -329,10 +321,8 @@ WHERE
             foreach ($current as $c) {
                 if (in_array($c->optionid, $formanswers)) {
                     $existingchoices[] = $c->optionid;
-                    $newanswer = $c;
-                    $newanswer->timemodified = time();
-                    $DB->update_record("choice_answers", $newanswer);
-                    $answersnapshots[] = $newanswer;
+                    $DB->set_field('choice_answers', 'timemodified', time(), array('id' => $c->id));
+                    $answersnapshots[] = $c;
                 } else {
                     $DB->delete_records('choice_answers', array('id' => $c->id));
                 }
@@ -419,7 +409,6 @@ WHERE
  * @return void Output is echo'd
  */
 function choice_show_reportlink($user, $cm) {
-    $responsecount =0;
     $userschosen = array();
     foreach($user as $optionid => $userlist) {
         if ($optionid) {
