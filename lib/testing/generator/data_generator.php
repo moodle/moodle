@@ -896,6 +896,12 @@ EOD;
         $this->gradecategorycounter++;
         $i = $this->gradecategorycounter;
 
+        $record = (array)$record;
+
+        if (empty($record['courseid'])) {
+            throw new coding_exception('courseid must be present in testing::create_grade_category() $record');
+        }
+
         if (!isset($record['fullname'])) {
             $record['fullname'] = 'Grade category ' . $i;
         }
@@ -903,16 +909,14 @@ EOD;
         // For gradelib classes.
         require_once($CFG->libdir . '/gradelib.php');
         // Create new grading category in this course.
-        $gradecategory = new grade_category($record, false);
+        $gradecategory = new grade_category(array('courseid' => $record['courseid']), false);
         $gradecategory->apply_default_settings();
+        grade_category::set_properties($gradecategory, $record);
         $gradecategory->apply_forced_settings();
         $gradecategory->insert();
+
         // This creates a default grade item for the category
         $gradeitem = $gradecategory->load_grade_item();
-
-        if (isset($record->parentcategory)) {
-            $gradecategory->set_parent($data->parentcategory);
-        }
 
         $gradecategory->update_from_db();
         return $gradecategory->get_record_data();
