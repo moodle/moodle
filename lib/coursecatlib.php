@@ -552,7 +552,6 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * (category id => coursecat object) sorted by sortorder
      *
      * @see coursecat::get_children()
-     * @see coursecat::get_all_parents()
      *
      * @return cacheable_object_array array of coursecat objects
      */
