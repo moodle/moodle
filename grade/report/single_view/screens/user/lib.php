@@ -55,6 +55,12 @@ class single_view_user extends single_view_tablelike implements selectable_items
         $params = array('courseid' => $this->courseid);
 
         $seq = new grade_seq($this->courseid, true);
+        foreach ($seq->items as $key => $item) {
+            if (isset($item->itemmodule)) {
+                list($courseid, $cmid) = get_course_and_cm_from_instance($item->iteminstance, $item->itemmodule);
+                $seq->items[$key]->cmid = $cmid->id;
+            }
+        }
 
         $this->items = array_filter($seq->items, grade_report_single_view::filters());
 
@@ -95,7 +101,7 @@ class single_view_user extends single_view_tablelike implements selectable_items
         if ( $locked_grade || $locked_grade_item ) // check both grade and grade item.
              $lockicon =  $OUTPUT->pix_icon('t/locked', 'grade is locked');
 
-        $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $item->iteminstance));
+        $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $item->cmid));
 
         $line = array(
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $item->get_name()))),
