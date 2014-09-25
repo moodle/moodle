@@ -169,9 +169,9 @@ class singleview_grade extends singleview_tablelike
         $url = new moodle_url("/user/view.php", array('id' => $item->id, 'course' => $this->courseid));
 
         $line = array( 
-            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_singleview', $fullname))),
+            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_singleview', $fullname))),
             $OUTPUT->user_picture($item),
-            html_writer::tag('a', $fullname, array('href' => $url)),
+            html_writer::link($url, $fullname),
             $this->item_range()
         );
         return $this->format_definition($line, $grade);

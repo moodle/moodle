@@ -309,6 +309,7 @@ $string['gradereport'] = 'Grade report';
 $string['graderreport'] = 'Grader report';
 $string['grades'] = 'Grades';
 $string['gradesforuser'] = 'Grades for {$a->user}';
+$string['singleview'] = 'Single view for {$a}';
 $string['gradesonly'] = 'Grades only';
 $string['gradessettings'] = 'Grade settings';
 $string['gradetype'] = 'Grade type';
