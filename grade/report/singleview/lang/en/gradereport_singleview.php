@@ -24,7 +24,7 @@
 
 // General Strings
 $string['pluginname'] = 'Single view';
-$string['single_view:view'] = 'View the '.$string['pluginname'].' report';
+$string['singleview:view'] = 'View the '.$string['pluginname'].' report';
 
 $string['not_allowed'] = 'Not allowed to quick edit this item';
 $string['filtergrades'] = 'Show grades for {$a}.';

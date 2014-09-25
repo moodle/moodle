@@ -18,12 +18,12 @@
 /**
  * The gradebook simple view - base class for the table
  *
- * @package   simple_view
+ * @package   singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once $CFG->dirroot . '/grade/report/single_view/classes/uilib.php';
+require_once $CFG->dirroot . '/grade/report/singleview/classes/uilib.php';
 
 interface selectable_items {
     public function description();
@@ -37,7 +37,7 @@ interface item_filtering {
     public static function filter($item);
 }
 
-abstract class single_view_screen {
+abstract class singleview_screen {
     var $courseid;
 
     var $itemid;
@@ -72,7 +72,7 @@ abstract class single_view_screen {
     }
 
     public function format_link($screen, $itemid, $display = null) {
-        $url = new moodle_url('/grade/report/single_view/index.php', array(
+        $url = new moodle_url('/grade/report/singleview/index.php', array(
             'id' => $this->courseid,
             'item' => $screen,
             'itemid' => $itemid,
@@ -123,12 +123,12 @@ abstract class single_view_screen {
     }
 
     public function make_toggle_links($key) {
-        return get_string($key, 'gradereport_single_view') . ' ' .
+        return get_string($key, 'gradereport_singleview') . ' ' .
             $this->make_toggle($key);
     }
 
     public function heading() {
-        return get_string('pluginname', 'gradereport_single_view');
+        return get_string('pluginname', 'gradereport_singleview');
     }
 
     public abstract function init($self_item_is_empty = false);
@@ -146,11 +146,11 @@ abstract class single_view_screen {
 
         global $OUTPUT;
 
-        list($___, $item) = explode('single_view_', get_class($this));
+        list($___, $item) = explode('singleview_', get_class($this));
 
         return $OUTPUT->paging_bar(
             count($this->items), $this->page, $this->perpage,
-            new moodle_url('/grade/report/single_view/index.php', array(
+            new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
                 'groupid' => $this->groupid,
@@ -164,17 +164,17 @@ abstract class single_view_screen {
         global $PAGE;
 
         $module = array(
-            'name' => 'gradereport_single_view',
-            'fullpath' => '/grade/report/single_view/js/single_view.js',
+            'name' => 'gradereport_singleview',
+            'fullpath' => '/grade/report/singleview/js/singleview.js',
             'requires' => array('base', 'dom', 'event', 'event-simulate', 'io-base')
         );
 
-        $PAGE->requires->js_init_call('M.gradereport_single_view.init', array(), false, $module);
+        $PAGE->requires->js_init_call('M.gradereport_singleview.init', array(), false, $module);
     }
 
     public function factory() {
         if (empty($this->__factory)) {
-            $this->__factory = new single_view_grade_ui_factory();
+            $this->__factory = new singleview_grade_ui_factory();
         }
 
         return $this->__factory;
@@ -250,7 +250,7 @@ abstract class single_view_screen {
     }
 }
 
-abstract class single_view_tablelike extends single_view_screen implements tabbable {
+abstract class singleview_tablelike extends singleview_screen implements tabbable {
     var $items;
 
     protected $headers = array();
@@ -380,7 +380,7 @@ abstract class single_view_tablelike extends single_view_screen implements tabba
 
         qe_events_trigger($underlying . '_table_built', $data);
 
-        $button_attr = array('class' => 'single_view_buttons submit');
+        $button_attr = array('class' => 'singleview_buttons submit');
         $button_html = implode(' ', $this->buttons());
 
         $buttons = html_writer::tag('div', $button_html, $button_attr);
@@ -395,7 +395,7 @@ abstract class single_view_tablelike extends single_view_screen implements tabba
         return html_writer::tag(
             'div',
             $this->factory()->create('bulk_insert')->format($this->item)->html(),
-            array('class' => 'single_view_bulk')
+            array('class' => 'singleview_bulk')
         );
     }
 

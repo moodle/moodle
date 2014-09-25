@@ -18,12 +18,12 @@
 /**
  * The gradebook simple view - initial view to select your search options
  *
- * @package   simple_view
+ * @package   singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class single_view_select extends single_view_screen {
+class singleview_select extends singleview_screen {
     public function init($self_item_is_empty = false) {
         global $DB;
 
@@ -35,10 +35,10 @@ class single_view_select extends single_view_screen {
 
         $html = '';
 
-        $types = grade_report_single_view::valid_screens();
+        $types = grade_report_singleview::valid_screens();
 
         foreach ($types as $type) {
-            $class = grade_report_single_view::classname($type);
+            $class = grade_report_singleview::classname($type);
 
             $screen = new $class($this->courseid, null, $this->groupid);
 
@@ -58,14 +58,14 @@ class single_view_select extends single_view_screen {
                 'group' => $this->groupid
             );
 
-            $url = new moodle_url('/grade/report/single_view/index.php', $params);
+            $url = new moodle_url('/grade/report/singleview/index.php', $params);
             $html .= $OUTPUT->heading($screen->description());
 
             $html .= $OUTPUT->single_select($url, 'itemid', $options);
         }
 
         if (empty($html)) {
-            $OUTPUT->notification(get_string('no_screens', 'gradereport_single_view'));
+            $OUTPUT->notification(get_string('no_screens', 'gradereport_singleview'));
         }
 
         return $html;

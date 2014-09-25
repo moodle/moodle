@@ -1,6 +1,6 @@
-M.gradereport_single_view = {};
+M.gradereport_singleview = {};
 
-M.gradereport_single_view.init = function(Y) {
+M.gradereport_singleview.init = function(Y) {
     // Make toggle links
     Y.all('.include').each(function(link) {
         var type = link.getAttribute('class').split(" ")[2];

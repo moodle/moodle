@@ -25,7 +25,7 @@
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/lib/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
-require_once $CFG->dirroot.'/grade/report/single_view/lib.php';
+require_once $CFG->dirroot.'/grade/report/singleview/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', null, PARAM_INT);
@@ -40,14 +40,14 @@ $itemtype = optional_param('item', $default_type, PARAM_TEXT);
 
 $course_params = array('id' => $courseid);
 
-$PAGE->set_url(new moodle_url('/grade/report/single_view/index.php', $course_params));
+$PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $course_params));
 
 if (!$course = $DB->get_record('course', $course_params)) {
     print_error('nocourseid');
 }
 
-if (!in_array($itemtype, grade_report_single_view::valid_screens())) {
-    print_error('notvalid', 'gradereport_single_view', '', $itemtype);
+if (!in_array($itemtype, grade_report_singleview::valid_screens())) {
+    print_error('notvalid', 'gradereport_singleview', '', $itemtype);
 }
 
 require_login($course);
@@ -55,14 +55,14 @@ require_login($course);
 $context = context_course::instance($course->id);
 
 // This is the normal requirements
-require_capability('gradereport/single_view:view', $context);
+require_capability('gradereport/singleview:view', $context);
 require_capability('moodle/grade:viewall', $context);
 require_capability('moodle/grade:edit', $context);
 // End permission
 
 $gpr = new grade_plugin_return(array(
     'type' => 'report',
-    'plugin' => 'single_view',
+    'plugin' => 'singleview',
     'courseid' => $courseid
 ));
 
@@ -70,21 +70,21 @@ $gpr = new grade_plugin_return(array(
 if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = array();
 }
-$USER->grade_last_report[$course->id] = 'single_view';
+$USER->grade_last_report[$course->id] = 'singleview';
 
 grade_regrade_final_grades($courseid);
 
-$report = new grade_report_single_view(
+$report = new grade_report_singleview(
     $courseid, $gpr, $context,
     $itemtype, $itemid, $groupid
 );
 
 $reportname = $report->screen->heading();
 
-$pluginname = get_string('pluginname', 'gradereport_single_view');
+$pluginname = get_string('pluginname', 'gradereport_singleview');
 
 $report_url = new moodle_url('/grade/report/grader/index.php', $course_params);
-$edit_url = new moodle_url('/grade/report/single_view/index.php', $course_params);
+$edit_url = new moodle_url('/grade/report/singleview/index.php', $course_params);
 
 $PAGE->navbar->ignore_active(true);
 
@@ -116,7 +116,7 @@ if ($report->screen instanceof selectable_items
     $optionkeys = array_keys($report->screen->options());
     $optionitemid = array_shift($optionkeys); //just any one thanks
 
-    $relreport = new grade_report_single_view(
+    $relreport = new grade_report_singleview(
                 $courseid, $gpr, $context,
                 $report->screen->item_type(), $optionitemid, $groupid
     );
@@ -127,19 +127,20 @@ if ($report->screen instanceof selectable_items
     $navparams = array('item' => $itemtype, 'id' => $courseid, 'group' => $groupid);
     if ($i>0) {
         $navparams['itemid'] = $reloptionssorting[$i-1];
-        $link = new moodle_url('/grade/report/single_view/index.php', $navparams);
+        $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
         $navprev=html_writer::link($link, $reloptions[$reloptionssorting[$i-1]]);
         $graderleftnav = html_writer::tag('small', $navprev, array('class' => 'itemnav previtem'));
     }
     if ($i<count($reloptionssorting)-1) {
         $navparams['itemid'] = $reloptionssorting[$i+1];
-        $link = new moodle_url('/grade/report/single_view/index.php', $navparams);
+        $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
         $navnext=html_writer::link($link, $reloptions[$reloptionssorting[$i+1]]);
         $graderrightnav = html_writer::tag('small', $navnext, array('class' => 'itemnav nextitem'));
     }
 }
 
-print_grade_page_head($course->id, 'report', 'single_view', $reportname);
+print_grade_page_head($course->id, 'report', 'singleview', $reportname);
+
 if(!is_null($graderleftnav)) {
     echo $graderleftnav;
 }

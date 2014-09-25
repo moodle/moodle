@@ -18,12 +18,12 @@
 /**
  * The gradebook simple view - grades view (for an activity)
  *
- * @package   simple_view
+ * @package   singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class single_view_grade extends single_view_tablelike
+class singleview_grade extends singleview_tablelike
     implements selectable_items, item_filtering {
 
     private $requires_extra = false;
@@ -114,12 +114,12 @@ class single_view_grade extends single_view_tablelike
 
         $this->item = grade_item::fetch($params);
 
-        $filter_fun = grade_report_single_view::filters();
+        $filter_fun = grade_report_singleview::filters();
 
         $allowed = $filter_fun($this->item);
 
         if (empty($allowed)) {
-            print_error('not_allowed', 'gradereport_single_view');
+            print_error('not_allowed', 'gradereport_singleview');
         }
 
         $this->requires_extra = !$this->item->is_manual_item();
@@ -169,7 +169,7 @@ class single_view_grade extends single_view_tablelike
         $url = new moodle_url("/user/view.php", array('id' => $item->id, 'course' => $this->courseid));
 
         $line = array( 
-            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $fullname))),
+            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_singleview', $fullname))),
             $OUTPUT->user_picture($item),
             html_writer::tag('a', $fullname, array('href' => $url)),
             $this->item_range()
@@ -204,7 +204,7 @@ class single_view_grade extends single_view_tablelike
 
         return $OUTPUT->paging_bar(
             count($this->all_items), $this->page, $this->perpage,
-            new moodle_url('/grade/report/single_view/index.php', array(
+            new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
                 'groupid' => $this->groupid,

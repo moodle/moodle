@@ -1,0 +1,51 @@
+#page-grade-report-singleview-index div.generalbox {
+  margin: 0 20px 15px 20px;
+}
+
+#page-grade-report-singleview-index div.generalbox div.singleselect form div {
+  text-align: center;
+}
+
+#page-grade-report-singleview-index div.generalbox table.generaltable {
+  margin: 0 auto 15px auto;
+}
+
+#page-grade-report-singleview-index div.generalbox form div {
+  text-align: center;
+}
+
+#page-grade-report-singleview-index .singleview_buttons {
+    padding: 10px 0;
+}
+
+#page-grade-report-singleview-index table.generaltable .cell {
+   vertical-align: middle;
+}
+
+#page-grade-report-singleview-index div.generalbox h2 {
+   text-align: center;
+}
+
+input[name^="finalgrade"] {
+    width: 50px;
+}
+
+#page-grade-report-singleview-index #region-main h2, .paging{
+   text-align: center;
+}
+
+#page-grade-report-singleview-index itemnav.previtem {
+   float:left;
+}
+#page-grade-report-singleview-index itemnav.previtem {
+   float:left;
+}
+#page-grade-report-singleview-index.dir-rtl small.previtem {
+   float:right;
+}
+#page-grade-report-singleview-index small.nextitem {
+   float:right;
+}
+#page-grade-report-singleview-index.dir-rtl small.nextitem {
+   float:left;
+}

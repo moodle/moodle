@@ -18,12 +18,12 @@
 /**
  * The gradebook simple view - grades view (for a user)
  *
- * @package   simple_view
+ * @package   singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class single_view_user extends single_view_tablelike implements selectable_items {
+class singleview_user extends singleview_tablelike implements selectable_items {
 
     private $categories = array();
 
@@ -62,7 +62,7 @@ class single_view_user extends single_view_tablelike implements selectable_items
             }
         }
 
-        $this->items = array_filter($seq->items, grade_report_single_view::filters());
+        $this->items = array_filter($seq->items, grade_report_singleview::filters());
 
         unset($seq);
 
@@ -78,7 +78,7 @@ class single_view_user extends single_view_tablelike implements selectable_items
         return array(
             '', // for filter icon.
             '', // for activity icon.
-            get_string('assessmentname', 'gradereport_single_view'),
+            get_string('assessmentname', 'gradereport_singleview'),
             get_string('gradecategory', 'grades'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
@@ -104,7 +104,7 @@ class single_view_user extends single_view_tablelike implements selectable_items
         $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $item->cmid));
 
         $line = array(
-            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_single_view', $item->get_name()))),
+            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_singleview', $item->get_name()))),
             $this->format_icon($item) . $lockicon,
             html_writer::link($url, $item->get_name()),
             $this->category($item),

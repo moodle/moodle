@@ -23,9 +23,9 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once($CFG->dirroot . '/grade/report/lib.php');
-require_once($CFG->dirroot . '/grade/report/single_view/classes/lib.php');
+require_once($CFG->dirroot . '/grade/report/singleview/classes/lib.php');
 
-class grade_report_single_view extends grade_report {
+class grade_report_singleview extends grade_report {
 
     public static function valid_screens() {
         $screendir = dirname(__FILE__) . '/screens';
@@ -53,11 +53,11 @@ class grade_report_single_view extends grade_report {
 
         require_once $screendir . '/lib.php';
 
-        return 'single_view_' . $screen;
+        return 'singleview_' . $screen;
     }
 
     public static function filters() {
-        $classnames = array('grade_report_single_view', 'classname');
+        $classnames = array('grade_report_singleview', 'classname');
         $classes = array_map($classnames, self::valid_screens());
 
         $screens = array_filter($classes, function($screen) {
@@ -81,7 +81,7 @@ class grade_report_single_view extends grade_report {
     }
 
     function _s($key, $a = null) {
-        return get_string($key, 'gradereport_single_view', $a);
+        return get_string($key, 'gradereport_singleview', $a);
     }
 
     function __construct($courseid, $gpr, $context, $itemtype, $itemid, $groupid=null) {
@@ -97,7 +97,7 @@ class grade_report_single_view extends grade_report {
         // Load custom or predifined js
         $this->screen->js();
 
-        $base = '/grade/report/single_view/index.php';
+        $base = '/grade/report/singleview/index.php';
 
         $id_params = array('id' => $courseid);
 
@@ -117,7 +117,7 @@ class grade_report_single_view extends grade_report {
     }
 }
 
-function grade_report_single_view_profilereport($course, $user) {
+function grade_report_singleview_profilereport($course, $user) {
     global $CFG, $OUTPUT;
 
     if (!function_exists('grade_report_user_profilereport')) {
@@ -127,7 +127,7 @@ function grade_report_single_view_profilereport($course, $user) {
     $context = context_course::instance($course->id);
 
     $can_use = (
-        has_capability('gradereport/single_view:view', $context) and
+        has_capability('gradereport/singleview:view', $context) and
         has_capability('moodle/grade:viewall', $context) and
         has_capability('moodle/grade:edit', $context)
     );
@@ -137,12 +137,12 @@ function grade_report_single_view_profilereport($course, $user) {
     } else {
         $gpr = new grade_plugin_return(array(
             'type' => 'report',
-            'plugin' => 'single_view',
+            'plugin' => 'singleview',
             'courseid' => $course->id,
             'userid' => $user->id
         ));
 
-        $report = new grade_report_single_view($course->id, $gpr, $context, 'user', $user->id);
+        $report = new grade_report_singleview($course->id, $gpr, $context, 'user', $user->id);
 
         echo $OUTPUT->heading($report->screen->heading());
         echo $report->output();

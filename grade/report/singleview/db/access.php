@@ -26,7 +26,7 @@
 
 $capabilities = array(
 
-    'gradereport/single_view:view' => array(
+    'gradereport/singleview:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
