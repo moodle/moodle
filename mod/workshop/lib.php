@@ -254,6 +254,10 @@ function workshop_delete_instance($id) {
  * $return->time = the time they did it
  * $return->info = a short text description
  *
+ * @param stdClass $course The course record.
+ * @param stdClass $user The user record.
+ * @param cm_info|stdClass $mod The course module info object or record.
+ * @param stdClass $workshop The workshop instance record.
  * @return stdclass|null
  */
 function workshop_user_outline($course, $user, $mod, $workshop) {
@@ -293,6 +297,10 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
  * Print a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
  *
+ * @param stdClass $course The course record.
+ * @param stdClass $user The user record.
+ * @param cm_info|stdClass $mod The course module info object or record.
+ * @param stdClass $workshop The workshop instance record.
  * @return string HTML
  */
 function workshop_user_complete($course, $user, $mod, $workshop) {
