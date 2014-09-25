@@ -653,6 +653,10 @@ class core_plugin_manager {
             return 'git';
         }
 
+        if (is_file($pluginroot.'/.git')) {
+            return 'git-submodule';
+        }
+
         if (is_dir($pluginroot.'/CVS')) {
             return 'cvs';
         }
