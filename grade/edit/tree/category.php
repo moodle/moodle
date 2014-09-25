@@ -87,6 +87,16 @@ if ($id) {
         $category->grade_item_aggregationcoef = format_float($category->grade_item_aggregationcoef, 4);
     }
 
+    if ($category->aggregation == GRADE_AGGREGATE_SUM) {
+        // Input fields for grademin and grademax are disabled for the "Natural" category,
+        // this means they will be ignored if user does not change aggregation method.
+        // But if user does change aggregation method the default values should be used.
+        $category->grademax = 100;
+        $category->grade_item_grademax = 100;
+        $category->grademin = 0;
+        $category->grade_item_grademin = 0;
+    }
+
 } else {
     $heading = get_string('newcategory', 'grades');
     $grade_category = new grade_category(array('courseid'=>$courseid), false);
