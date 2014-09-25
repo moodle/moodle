@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains tests for the autosave code in the question_usage class.
+ * Unit tests for the parts of {@link question_engine_data_mapper} related to reporting.
  *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2013 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_question
+ * @category  test
+ * @copyright 2013 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,17 +32,12 @@ require_once(dirname(__FILE__) . '/helpers.php');
 
 
 /**
- * Unit tests for the autosave parts of the {@link question_usage} class.
- *
- * Note that many of the methods used when attempting questions, like
- * load_questions_usage_by_activity, insert_question_*, delete_steps are
- * tested elsewhere, e.g. by {@link question_usage_autosave_test}. We do not
- * re-test them here.
+ * Unit tests for the parts of {@link question_engine_data_mapper} related to reporting.
  *
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_base {
+class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthrough_test_base {
 
     /** @var question_engine_data_mapper */
     protected $dm;
@@ -132,6 +127,9 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $this->dotest_question_attempt_latest_state_view();
     }
 
+    /**
+     * This test is executed by {@link test_reporting_queries()}.
+     */
     protected function dotest_load_questions_usages_latest_steps() {
         $rawstates = $this->dm->load_questions_usages_latest_steps($this->bothusages, $this->allslots,
                 'qa.id AS questionattemptid, qa.questionusageid, qa.slot, ' .
@@ -178,6 +176,9 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         ), $state);
     }
 
+    /**
+     * This test is executed by {@link test_reporting_queries()}.
+     */
     protected function dotest_load_questions_usages_question_state_summary() {
         $summary = $this->dm->load_questions_usages_question_state_summary(
                 $this->bothusages, $this->allslots);
@@ -206,6 +207,9 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
                 ));
     }
 
+    /**
+     * This test is executed by {@link test_reporting_queries()}.
+     */
     protected function dotest_load_questions_usages_where_question_in_state() {
         $this->assertEquals(
                 array(array($this->usageids[0], $this->usageids[1]), 2),
@@ -223,6 +227,9 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
                 'needsgrading', $this->allslots[1], null, 'questionusageid'));
     }
 
+    /**
+     * This test is executed by {@link test_reporting_queries()}.
+     */
     protected function dotest_load_average_marks() {
         $averages = $this->dm->load_average_marks($this->bothusages);
 
@@ -240,6 +247,9 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         ), $averages);
     }
 
+    /**
+     * This test is executed by {@link test_reporting_queries()}.
+     */
     protected function dotest_sum_usage_marks_subquery() {
         global $DB;
 
@@ -253,6 +263,9 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $this->assertEquals(0, $totals[$this->usageids[1]]);
     }
 
+    /**
+     * This test is executed by {@link test_reporting_queries()}.
+     */
     protected function dotest_question_attempt_latest_state_view() {
         global $DB;
 
