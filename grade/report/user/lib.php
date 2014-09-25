@@ -461,7 +461,7 @@ class grade_report_user extends grade_report {
 
                 /// Actual Grade
                 $gradeval = $grade_grade->finalgrade;
-                $hint = $grade_grade->get_aggregation_hint($grade_object);
+                $hint = $grade_grade->get_aggregation_hint();
                 if (!$this->canviewhidden) {
                     /// Virtual Grade (may be calculated excluding hidden items etc).
                     $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,

@@ -613,7 +613,7 @@ class grade_category extends grade_object {
 
             $notexisting = array_diff(array_keys($items), array_keys($existingitems));
             foreach ($notexisting as $itemid) {
-                $gradeitem = $this->grade_item;
+                $gradeitem = $items[$itemid];
                 $gradegrade = new grade_grade(array('itemid' => $itemid,
                                                     'userid' => $userid,
                                                     'rawgrademin' => $gradeitem->grademin,

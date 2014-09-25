@@ -320,7 +320,7 @@ class grade_grade extends grade_object {
     /**
      * Returns the info on how this value was used in the aggregated grade
      *
-     * @return string One of 'dropped', 'excluded', 'novalue' or a specific weighting
+     * @return string One of 'dropped', 'excluded', 'novalue', 'used' or 'extra'
      */
     public function get_aggregationstatus() {
         return $this->aggregationstatus;
@@ -786,7 +786,7 @@ class grade_grade extends grade_object {
                                 if ($grade_grades[$itemid]->is_excluded()) {
                                     unset($values[$itemid]);
                                     $alteredaggregationstatus[$itemid] = 'excluded';
-                                    $alteredaggregationweight[$itemid] = 0;
+                                    $alteredaggregationweight[$itemid] = null;
                                     continue;
                                 }
                                 // The grade min/max may have been altered by hiding.
@@ -806,7 +806,7 @@ class grade_grade extends grade_object {
                                     if (is_null($value)) {
                                         unset($values[$itemid]);
                                         $alteredaggregationstatus[$itemid] = 'novalue';
-                                        $alteredaggregationweight[$itemid] = 0;
+                                        $alteredaggregationweight[$itemid] = null;
                                     }
                                 }
                             } else {
@@ -824,7 +824,7 @@ class grade_grade extends grade_object {
                             $moredropped = array_diff($allvalues, $values);
                             foreach ($moredropped as $drop => $unused) {
                                 $alteredaggregationstatus[$drop] = 'dropped';
-                                $alteredaggregationweight[$drop] = 0;
+                                $alteredaggregationweight[$drop] = null;
                             }
 
                             foreach ($values as $itemid => $val) {
@@ -1019,12 +1019,10 @@ class grade_grade extends grade_object {
      * for the grade_category. For example this could be an extra credit item, and it could be
      * dropped because it's in the X lowest or highest.
      *
-     * @param grade_item $gradeitem An optional grade_item, saves having to load the grade_grade's grade_item
      * @return array(status, weight) - A keyword and a numerical weight that represents how this grade was included in the aggregation.
      */
-    function get_aggregation_hint($gradeitem = null) {
-
+    function get_aggregation_hint() {
         return array('status' => $this->get_aggregationstatus(),
-                     'weight' => $this->aggregationweight);
+                     'weight' => $this->get_aggregationweight());
     }
 }
