@@ -302,6 +302,12 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
     require_once(dirname(__FILE__).'/locallib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
+    if ($mod instanceof cm_info) {
+        // We need to degrade here as the {@link workshop} class constructor
+        // expects the plain course module record.
+        $mod = get_coursemodule_from_id('workshop', $mod->id, $mod->course);
+    }
+
     $workshop   = new workshop($workshop, $mod, $course);
     $grades     = grade_get_grades($course->id, 'mod', 'workshop', $workshop->id, $user->id);
 
