@@ -245,6 +245,7 @@ $string['profile_field_company_not_set'] = 'profile_field_company is required wh
 $string['return_to'] = 'Return to {$a}';
 $string['restrictcapabilities'] = 'Restrict capabilities';
 $string['restrictcapabilitiesfor'] = 'Restrict capabilities for \'{$a}\'';
+$string['rolename'] = 'Role name \'{$a}\'';
 $string['saveasnewcompany'] = 'Save new company';
 $string['selectacompany'] = 'Select a company';
 $string['selectacountry'] = 'Select a country';

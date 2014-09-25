@@ -34,6 +34,7 @@ $companyid = iomad::get_my_companyid($context);
 require_login();
 require_capability('block/iomad_company_admin:restrict_capabilities', $context);
 $PAGE->set_context($context);
+$PAGE->requires->jquery();
 
 // Correct the navbar.
 // Set the name for the page.
@@ -53,7 +54,7 @@ $blockpage->display_header();
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 if ($roleid) {
-    $capabilities = iomad_company_admin::get_iomad_capabilities($roleid);
+    $capabilities = iomad_company_admin::get_iomad_capabilities($roleid, $companyid);
     echo $output->capabilities($capabilities, $roleid, $companyid);
 
 } else {
@@ -62,5 +63,14 @@ if ($roleid) {
     $roles = iomad_company_admin::get_roles();
     echo $output->role_select($roles, $linkurl, $companyid);
 }
-
+?>
+<script>
+$(".checkbox").change(function() {
+	if (this.checked) {
+		// something here
+		alert("YAYY");
+	}
+});
+</script>
+<?php
 echo $OUTPUT->footer();

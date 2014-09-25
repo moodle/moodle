@@ -968,5 +968,26 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014052700, 'local', 'iomad');
     }
 
+    if ($oldversion < 2014052702) {
+        
+        // Define new table company_role_restriction
+        $table = new xmldb_table('company_role_restriction');
+
+        // Adding fields to table department.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL,
+                           XMLDB_SEQUENCE, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table department.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('company_roleidcompanyid', XMLDB_KEY_UNIQUE, array('roleid', 'companyid'));
+
+        // Conditionally launch create table for company_role_restriction.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+    }
+
     return $result;
 }

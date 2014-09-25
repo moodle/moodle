@@ -55,13 +55,17 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
         $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
         echo '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
-        echo '<p>' . get_string()
+        echo '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
 
         $table = new html_table();
         foreach ($capabilities as $capability) {
+            $checked = '';
+            if (!$capability->iomad_restriction) {
+                $checked = 'checked="checked"';
+            }
             $row = array(
                 $capability->capability,
-                $capability->permission,
+                '<input class="checkbox" type="checkbox" ' . $checked. '/>' . get_string('allow'),
             );
             $table->data[] = $row;
         }

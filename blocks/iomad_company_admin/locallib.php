@@ -41,7 +41,7 @@ class iomad_company_admin {
      * so we can fish them out of the role_capabilities table
      * directly)
      */
-    public static function get_iomad_capabilities($roleid) {
+    public static function get_iomad_capabilities($roleid, $companyid) {
         global $DB;
 
         // We need capabilities defined in the site context
@@ -53,6 +53,13 @@ class iomad_company_admin {
         foreach ($capabilities as $capability) {
             if ((strpos($capability->capability, 'local/report')===false) && (strpos($capability->capability, 'iomad')===false)) {
                 continue;
+            }
+
+            // add the iomad restriction info
+            if ($restriction = $DB->get_record('company_role_restriction', array('roleid' => $roleid, 'companyid' => $companyid))) {
+                $capability->iomad_restriction = true;
+            } else {
+                $capability->iomad_restriction = false;
             }
             $filtered_capabilities[$capability->id] = $capability;
         }
