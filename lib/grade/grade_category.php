@@ -601,7 +601,7 @@ class grade_category extends grade_object {
         // Make sure a grade_grade exists for every grade_item.
         // We need to do this so we can set the aggregationstatus
         // with a set_field call instead of checking if each one exists and creating/updating.
-        if (count($items) > 0) {
+        if (!empty($items)) {
             list($ggsql, $params) = $DB->get_in_or_equal(array_keys($items), SQL_PARAMS_NAMED, 'g');
 
 
