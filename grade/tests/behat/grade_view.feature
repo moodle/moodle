@@ -72,12 +72,12 @@ Feature: We can enter in grades and view reports from the gradebook
       | Grade item | Grade | Range | Percentage |
       | Test assignment name 1 | 80.00 | 0–100 | 80.00 % |
       | Test assignment name 2 | 90.00 | 0–100 | 90.00 % |
-      | Course totalSimple weighted mean of grades. | 85.00 | 0–100 | 85.00 % |
+      | Course totalNatural. | 170.00 | 0–200 | 85.00 % |
     And the following should not exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
-      | Course total | 90.00 | 0–110 | 90.00 % |
+      | Course totalNatural. | 90.00 | 0–100 | 90.00 % |
     And I set the field "Grade report" to "Overview report"
-    And "C1" row "Grade" column of "overview-grade" table should contain "85.00"
+    And "C1" row "Grade" column of "overview-grade" table should contain "170.00"
     And "C1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
   @javascript

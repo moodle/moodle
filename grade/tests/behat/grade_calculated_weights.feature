@@ -101,6 +101,8 @@ Feature: We can understand the gradebook user report
   Scenario: Simple weighted mean of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Simple weighted mean of grades |
+    And I set the following settings for grade item "Sub category":
+      | Aggregation | Simple weighted mean of grades |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
     And I set the field "Grade report" to "User report"
@@ -204,9 +206,11 @@ Feature: We can understand the gradebook user report
       | Test assignment six | 33.33 % | 30.00 | 0.00 |
 
   @javascript
-  Scenario: Natural aggregation
+  Scenario: View user report with mixed aggregation methods
     And I set the following settings for grade item "Course 1":
       | Aggregation | Natural |
+    And I set the following settings for grade item "Sub category":
+      | Aggregation | Weighted mean of grades |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
     And I set the field "Grade report" to "User report"
@@ -221,3 +225,24 @@ Feature: We can understand the gradebook user report
       | Test assignment four | 33.33 % | 10.00 | 3.33 |
       | Test assignment five | 33.33 % | 70.00 | 23.33 |
       | Test assignment six | 33.33 % | 30.00 | 10.00 |
+      | Category totalWeighted mean of grades. | 33.33 % | 36.67 | - |
+      | Course totalNatural. | - | 156.67 | - |
+
+  @javascript
+  Scenario: View user report with natural aggregation
+    And I set the following settings for grade item "Test assignment three":
+      | Extra credit | 1 |
+    And I set the field "Grade report" to "User report"
+    And I set the field "Select all or one user" to "Student 1"
+
+    # Check the values in the weights column.
+    Then the following should exist in the "user-grade" table:
+      | Grade item | Calculated weight | Grade | Contribution to course total |
+      | Test assignment one | 20.00 % | 60.00 | 60.00 |
+      | Test assignment two | 20.00 % | 20.00 | 20.00 |
+      | Test assignment three | 20.00 %( Extra credit ) | 40.00 | 40.00 |
+      | Test assignment four | 33.33 % | 10.00 | 10.00 |
+      | Test assignment five | 33.33 % | 70.00 | 70.00 |
+      | Test assignment six | 33.33 % | 30.00 | 30.00 |
+      | Category totalNatural. | 60.00 % | 110.00 | - |
+      | Course totalNatural. | - | 230.00 | - |
