@@ -485,8 +485,8 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $grade = $assign->get_user_grade($this->students[0]->id, false, 0);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $this->assertCount(3, $events);
+        $event = $events[2];
         $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($grade->id, $event->objectid);
@@ -514,8 +514,8 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEquals('60.0', $grade->grade);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $this->assertCount(3, $events);
+        $event = $events[2];
         $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($grade->id, $event->objectid);
@@ -540,8 +540,8 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEquals('50.0', $grade->grade);
         $events = $sink->get_events();
 
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $this->assertCount(3, $events);
+        $event = $events[2];
         $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
         $this->assertEquals($assign->get_context(), $event->get_context());
         $this->assertEquals($grade->id, $event->objectid);
