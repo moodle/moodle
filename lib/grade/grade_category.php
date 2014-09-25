@@ -429,8 +429,8 @@ class grade_category extends grade_object {
      * @return void
      */
     public function pre_regrade_final_grades() {
-        $this->auto_update_max();
         $this->auto_update_weights();
+        $this->auto_update_max();
     }
 
     /**
@@ -1048,8 +1048,8 @@ class grade_category extends grade_object {
                     }
                     $gradeitemrange = $usergrademax - $usergrademin;
 
-                    // Extra credit.
-                    if (!($items[$itemid]->aggregationcoef > 0)) {
+                    // Ignore extra credit and items with a weight of 0.
+                    if ($items[$itemid]->aggregationcoef <= 0 && $items[$itemid]->aggregationcoef2 > 0) {
                         $grademax += $gradeitemrange;
                         $sumweights += $items[$itemid]->aggregationcoef2;
                     }
@@ -1061,6 +1061,11 @@ class grade_category extends grade_object {
                 // percentage of weights missing from the category.
                 foreach ($grade_values as $itemid => $gradevalue) {
                     if ($items[$itemid]->weightoverride) {
+                        if ($items[$itemid]->aggregationcoef2 <= 0) {
+                            // Records the weight of 0 and continue.
+                            $userweights[$itemid] = 0;
+                            continue;
+                        }
                         $userweights[$itemid] = $items[$itemid]->aggregationcoef2 / $sumweights;
                         $totaloverriddenweight += $userweights[$itemid];
                         $usergrademax = $items[$itemid]->grademax;
@@ -1075,14 +1080,19 @@ class grade_category extends grade_object {
                 // Then we need to recalculate the automatic weights.
                 foreach ($grade_values as $itemid => $gradevalue) {
                     if (!$items[$itemid]->weightoverride) {
+                        $usergrademax = $items[$itemid]->grademax;
+                        if (isset($grademaxoverrides[$itemid])) {
+                            $usergrademax = $grademaxoverrides[$itemid];
+                        }
                         if ($nonoverriddenpoints > 0) {
-                            $usergrademax = $items[$itemid]->grademax;
-                            if (isset($grademaxoverrides[$itemid])) {
-                                $usergrademax = $grademaxoverrides[$itemid];
-                            }
                             $userweights[$itemid] = ($usergrademax/$nonoverriddenpoints) * (1 - $totaloverriddenweight);
                         } else {
                             $userweights[$itemid] = 0;
+                            if ($items[$itemid]->aggregationcoef2 > 0) {
+                                // Items with a weight of 0 should not count for the grade max,
+                                // though this only applies if the weight was changed to 0.
+                                $grademax -= $usergrademax;
+                            }
                         }
                     }
                 }
@@ -1141,6 +1151,8 @@ class grade_category extends grade_object {
     /**
      * Some aggregation types may need to update their max grade.
      *
+     * This must be executed after updating the weights as it relies on them.
+     *
      * @return void
      */
     private function auto_update_max() {
@@ -1182,6 +1194,9 @@ class grade_category extends grade_object {
             if ($item->aggregationcoef > 0) {
                 // extra credit from this activity - does not affect total
                 continue;
+            } else if ($item->aggregationcoef2 <= 0) {
+                // Items with a weight of 0 do not affect the total.
+                continue;
             }
 
             if ($item->gradetype == GRADE_TYPE_VALUE) {
@@ -1210,6 +1225,9 @@ class grade_category extends grade_object {
     /**
      * Recalculate the weights of the grade items in this category.
      *
+     * The category total is not updated here, a further call to
+     * {@link self::auto_update_max()} is required.
+     *
      * @return void
      */
     private function auto_update_weights() {
@@ -1236,8 +1254,11 @@ class grade_category extends grade_object {
                 $grade_item = $child['object']->load_grade_item();
             }
 
-            // An extra credit grade item doesn't contribute to $totaloverriddengrademax.
             if ($grade_item->aggregationcoef > 0) {
+                // An extra credit grade item doesn't contribute to $totaloverriddengrademax.
+                continue;
+            } else if ($grade_item->weightoverride && $grade_item->aggregationcoef2 <= 0) {
+                // An overriden item that defines a weight of 0 does not contribute to $totaloverriddengrademax.
                 continue;
             }
 
@@ -1260,9 +1281,14 @@ class grade_category extends grade_object {
                 $grade_item = $child['object']->load_grade_item();
             }
             if (!$grade_item->weightoverride) {
-                // Calculate this item's weight as a percentage of the non-overridden total grade maxes
-                // then convert it to a proportion of the available non-overriden weight.
-                $grade_item->aggregationcoef2 = ($grade_item->grademax/$totalgrademax) * (1 - $totaloverriddenweight);
+                if ($totaloverriddenweight >= 1) {
+                    // There is no more weight to distribute.
+                    $grade_item->aggregationcoef2 = 0;
+                } else {
+                    // Calculate this item's weight as a percentage of the non-overridden total grade maxes
+                    // then convert it to a proportion of the available non-overriden weight.
+                    $grade_item->aggregationcoef2 = ($grade_item->grademax/$totalgrademax) * (1 - $totaloverriddenweight);
+                }
                 $grade_item->update();
             }
         }
