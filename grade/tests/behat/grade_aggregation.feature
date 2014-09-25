@@ -381,57 +381,115 @@ Feature: We can use calculated grade totals
     And I follow "Grader report"
     And I should see "270.00 (24.77 %)" in the ".course" "css_element"
 
-    @javascript
-    Scenario: Natural aggregation from the setup screen
-      And I set the field "Grade report" to "Set up grades layout"
-      And I follow "Edit   Course 1"
-      And I set the field "Aggregation" to "Natural"
-      And I press "Save changes"
-      And I follow "Edit   Sub category 1"
-      And I set the field "Aggregation" to "Natural"
-      And I press "Save changes"
-      And I follow "Edit   Sub category 2"
-      And I set the field "Aggregation" to "Natural"
-      And I press "Save changes"
+  @javascript
+  Scenario: Natural aggregation from the setup screen
+    And I set the field "Grade report" to "Set up grades layout"
+    And I follow "Edit   Course 1"
+    And I set the field "Aggregation" to "Natural"
+    And I press "Save changes"
+    And I follow "Edit   Sub category 1"
+    And I set the field "Aggregation" to "Natural"
+    And I press "Save changes"
+    And I follow "Edit   Sub category 2"
+    And I set the field "Aggregation" to "Natural"
+    And I press "Save changes"
 
-      And I set the field "Override weight of Test assignment one" to "1"
-      And the field "Weight of Test assignment one" matches value "37.975"
-      And I set the field "Weight of Test assignment one" to "10"
+    And I set the field "Override weight of Test assignment one" to "1"
+    And the field "Weight of Test assignment one" matches value "37.975"
+    And I set the field "Weight of Test assignment one" to "10"
 
-      And I set the field "Override weight of Test assignment two" to "1"
-      And the field "Weight of Test assignment two" matches value "12.658"
-      And I set the field "Override weight of Test assignment two" to "0"
+    And I set the field "Override weight of Test assignment two" to "1"
+    And the field "Weight of Test assignment two" matches value "12.658"
+    And I set the field "Override weight of Test assignment two" to "0"
 
-      And I set the field "Override weight of Test assignment six" to "1"
-      And the field "Weight of Test assignment six" matches value "22.222"
-      And I set the field "Weight of Test assignment six" to "50"
-      And I set the field "Override weight of Test assignment six" to "0"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And the field "Weight of Test assignment six" matches value "22.222"
+    And I set the field "Weight of Test assignment six" to "50"
+    And I set the field "Override weight of Test assignment six" to "0"
 
-      And I set the field "Override weight of Test assignment ten" to "1"
-      And the field "Weight of Test assignment ten" matches value "33.333"
-      And I set the field "Weight of Test assignment ten" to "50"
+    And I set the field "Override weight of Test assignment ten" to "1"
+    And the field "Weight of Test assignment ten" matches value "33.333"
+    And I set the field "Weight of Test assignment ten" to "50"
 
-      And I set the field "Override weight of Sub category 1" to "1"
-      And the field "Weight of Sub category 1" matches value "5.696"
-      And I set the field "Weight of Sub category 1" to "15"
+    And I set the field "Override weight of Sub category 1" to "1"
+    And the field "Weight of Sub category 1" matches value "5.696"
+    And I set the field "Weight of Sub category 1" to "15"
 
-      When I press "Save changes"
-      And I set the field "Override weight of Test assignment two" to "1"
-      And I set the field "Override weight of Test assignment six" to "1"
+    When I press "Save changes"
+    And I set the field "Override weight of Test assignment two" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
 
-      Then the field "Weight of Test assignment one" matches value "10.0"
-      And the field "Weight of Test assignment two" matches value "16.854"
-      And the field "Weight of Test assignment six" matches value "22.222"
-      And the field "Weight of Test assignment ten" matches value "50.0"
-      And the field "Weight of Sub category 1" matches value "15.0"
-      And I set the field "Override weight of Test assignment one" to "0"
-      And I set the field "Override weight of Test assignment two" to "0"
-      And I set the field "Override weight of Test assignment six" to "0"
-      And I set the field "Override weight of Sub category 1" to "0"
-      And I press "Save changes"
-      And I set the field "Override weight of Test assignment one" to "1"
-      And I set the field "Override weight of Sub category 1" to "1"
-      And the field "Weight of Test assignment one" matches value "37.975"
-      And the field "Weight of Sub category 1" matches value "5.696"
-      And I click on "Reset weights of Sub category 2" "link"
-      And the field "Weight of Test assignment ten" matches value "33.333"
+    Then the field "Weight of Test assignment one" matches value "10.0"
+    And the field "Weight of Test assignment two" matches value "16.854"
+    And the field "Weight of Test assignment six" matches value "22.222"
+    And the field "Weight of Test assignment ten" matches value "50.0"
+    And the field "Weight of Sub category 1" matches value "15.0"
+    And I set the field "Override weight of Test assignment one" to "0"
+    And I set the field "Override weight of Test assignment two" to "0"
+    And I set the field "Override weight of Test assignment six" to "0"
+    And I set the field "Override weight of Sub category 1" to "0"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment one" to "1"
+    And I set the field "Override weight of Sub category 1" to "1"
+    And the field "Weight of Test assignment one" matches value "37.975"
+    And the field "Weight of Sub category 1" matches value "5.696"
+    And I click on "Reset weights of Sub category 2" "link"
+    And the field "Weight of Test assignment ten" matches value "33.333"
+
+  @javascript
+  Scenario: Natural aggregation with weights of zero
+    When I set the following settings for grade item "Course 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I turn editing mode off
+    And I set the field "Grade report" to "Set up grades layout"
+    And I set the field "Override weight of Test assignment one" to "1"
+    And I set the field "Weight of Test assignment one" to "0"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment six" to "0"
+    And I set the field "Override weight of Test assignment nine" to "1"
+    And I set the field "Weight of Test assignment nine" to "100"
+    And I press "Save changes"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "Show contribution to course total" to "Show"
+    And I set the field "Show weightings" to "Show"
+    And I press "Save changes"
+    Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
+    And I set the field "Grade report" to "User report"
+    And I set the field "Select all or one user" to "Student 1"
+    And the following should exist in the "user-grade" table:
+      | Grade item            | Calculated weight | Grade           | Contribution to course total |
+      | Test assignment five  | 57.14 %           | 10.00 (50.00 %) | 10.00                        |
+      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00                         |
+      | Test assignment seven | 42.86 %           | -               | 0.00                         |
+      | Test assignment eight | 0.00 %            | 10.00 (50.00 %) | 0.00                         |
+      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 5.00                         |
+      | Test assignment ten   | 0.00 %            | -               | 0.00                         |
+      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00                         |
+      | Test assignment two   | 22.47 %           | 20.00 (20.00 %) | 20.00                        |
+      | Test assignment three | 33.71 %           | 40.00 (26.67 %) | 40.00                        |
+      | Test assignment four  | 33.71 %           | -               | 0.00                         |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I set the field "Grade report" to "Overview report"
+    And I should see "45.00 (13.85 %)" in the "overview-grade" "table"
+    And I set the field "Grade report" to "User report"
+    And the following should exist in the "user-grade" table:
+      | Grade item            | Calculated weight | Grade           | Contribution to course total |
+      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00                         |
+      | Test assignment seven | 100.00 %          | -               | 0.00                         |
+      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 5.00                         |
+      | Test assignment ten   | 0.00              | -               | 0.00                         |
+      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00                         |
+      | Test assignment three | 46.15 %           | 40.00 (26.67 %) | 40.00                        |
+      | Test assignment four  | 46.15 %           | -               | 0.00                         |
