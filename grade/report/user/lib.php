@@ -706,8 +706,15 @@ class grade_report_user extends grade_report {
             if (isset($this->aggregationhints[$itemid])) {
 
                 // Normalise the gradeval.
-                $graderange = $this->aggregationhints[$itemid]['grademax'] - $this->aggregationhints[$itemid]['grademin'];
-                $gradeval = ($this->aggregationhints[$itemid]['grade'] - $this->aggregationhints[$itemid]['grademin']) / $graderange;
+                $gradecat = $grade_object->load_parent_category();
+                if ($gradecat->aggregation == GRADE_AGGREGATE_SUM) {
+                    // Natural aggregation/Sum of grades does not consider the mingrade.
+                    $graderange = $this->aggregationhints[$itemid]['grademax'];
+                    $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
+                } else {
+                    $graderange = $this->aggregationhints[$itemid]['grademax'] - $this->aggregationhints[$itemid]['grademin'];
+                    $gradeval = ($this->aggregationhints[$itemid]['grade'] - $this->aggregationhints[$itemid]['grademin']) / $graderange;
+                }
 
                 // Multiply the normalised value by the weight
                 // of all the categories higher in the tree.

@@ -661,7 +661,13 @@ class grade_category extends grade_object {
             if (isset($grademaxoverrides[$itemid])) {
                 $usergrademax = $grademaxoverrides[$itemid];
             }
-            $grade_values[$itemid] = grade_grade::standardise_score($v, $usergrademin, $usergrademax, 0, 1);
+            if ($this->aggregation == GRADE_AGGREGATE_SUM) {
+                // Assume that the grademin is 0 when standardising the score, to preserve negative grades.
+                $grade_values[$itemid] = grade_grade::standardise_score($v, 0, $usergrademax, 0, 1);
+            } else {
+                $grade_values[$itemid] = grade_grade::standardise_score($v, $usergrademin, $usergrademax, 0, 1);
+            }
+
         }
 
         // For items with no value, and not excluded - either set their grade to 0 or exclude them.
@@ -715,16 +721,29 @@ class grade_category extends grade_object {
                                                             $grademaxoverrides);
         $agg_grade = $result['grade'];
 
+        // Set the actual grademin and max to bind the grade properly.
+        $this->grade_item->grademin = $result['grademin'];
+        $this->grade_item->grademax = $result['grademax'];
+
+        if ($this->aggregation == GRADE_AGGREGATE_SUM) {
+            // The natural aggregation always displays the range as coming from 0 for categories.
+            // However, when we bind the grade we allow for negative values.
+            $result['grademin'] = 0;
+        }
+
         // Recalculate the grade back to requested range.
         $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
-
         $grade->finalgrade = $this->grade_item->bounded_grade($finalgrade);
+
+        $oldrawgrademin = $grade->rawgrademin;
         $oldrawgrademax = $grade->rawgrademax;
+        $grade->rawgrademin = $result['grademin'];
         $grade->rawgrademax = $result['grademax'];
 
-        // update in db if changed
+        // Update in db if changed.
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade) ||
-            grade_floats_different($grade->rawgrademax, $oldrawgrademax)) {
+                grade_floats_different($grade->rawgrademax, $oldrawgrademax) ||
+                grade_floats_different($grade->rawgrademin, $oldrawgrademin)) {
             $grade->update('aggregation');
         }
 
@@ -1046,11 +1065,11 @@ class grade_category extends grade_object {
                     if (isset($grademaxoverrides[$itemid])) {
                         $usergrademax = $grademaxoverrides[$itemid];
                     }
-                    $gradeitemrange = $usergrademax - $usergrademin;
 
                     // Ignore extra credit and items with a weight of 0.
                     if ($items[$itemid]->aggregationcoef <= 0 && $items[$itemid]->aggregationcoef2 > 0) {
-                        $grademax += $gradeitemrange;
+                        $grademin += $usergrademin;
+                        $grademax += $usergrademax;
                         $sumweights += $items[$itemid]->aggregationcoef2;
                     }
                 }
