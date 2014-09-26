@@ -766,8 +766,6 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         $parent_cat = $item->get_parent_category();
         if ($item->gradetype == GRADE_TYPE_TEXT) {
             $grademax = ' - ';
-        } else if ($parent_cat->aggregation == GRADE_AGGREGATE_SUM) {
-            $grademax = format_float($item->grademax, $item->get_decimals());
         } else if ($item->gradetype == GRADE_TYPE_SCALE) {
             $scale = $DB->get_record('scale', array('id' => $item->scaleid));
             $scale_items = null;
@@ -776,7 +774,12 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             } else {
                 $scale_items = explode(',', $scale->scale);
             }
-            $grademax = end($scale_items) . ' (' . count($scale_items) . ')';
+            if ($parent_cat->aggregation == GRADE_AGGREGATE_SUM) {
+                $grademax = end($scale_items) . ' (' .
+                        format_float($item->grademax, $item->get_decimals()) . ')';
+            } else {
+                $grademax = end($scale_items) . ' (' . count($scale_items) . ')';
+            }
         } else {
             $grademax = format_float($item->grademax, $item->get_decimals());
         }
