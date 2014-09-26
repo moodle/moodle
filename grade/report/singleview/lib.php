@@ -1,26 +1,27 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards  Martin Dougiamas  http://moodle.com       //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Base lib class for singleview functionality.
+ *
+ * @package   gradereport_singleview
+ * @copyright 2014 Moodle 
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->dirroot . '/grade/report/singleview/classes/lib.php');
@@ -91,9 +92,6 @@ class grade_report_singleview extends grade_report {
 
         $this->screen = new $class($courseid, $itemid, $groupid);
 
-        // TODO update events to new model
-        qe_events_trigger($class . '_instantiated', $this->screen);
-
         // Load custom or predifined js
         $this->screen->js();
 
@@ -146,16 +144,5 @@ function grade_report_singleview_profilereport($course, $user) {
 
         echo $OUTPUT->heading($report->screen->heading());
         echo $report->output();
-    }
-}
-
-/**
- * qe_events_trigger hack for using legacy events without debug screaming at us
- */
-function qe_events_trigger($eventname, $eventdata) {
-    if (function_exists('events_trigger_legacy')) {
-        events_trigger_legacy($eventname, $eventdata);
-    } else {
-        events_trigger($eventname, $eventdata);
     }
 }

@@ -18,7 +18,7 @@
 /**
  * The gradebook simple view - grades view (for a user)
  *
- * @package   singleview
+ * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,14 +27,16 @@ class singleview_user extends singleview_tablelike implements selectable_items {
 
     private $categories = array();
 
-    var $structure;
+    public $structure;
 
     public function description() {
         return get_string('gradeitems', 'grades');;
     }
 
     public function options() {
-        return array_map(function($item) { return $item->get_name(); }, $this->items);
+        return array_map(function($item) {
+            return $item->get_name();
+        }, $this->items);
     }
 
     public function item_type() {
@@ -45,10 +47,10 @@ class singleview_user extends singleview_tablelike implements selectable_items {
         return false;
     }
 
-    public function init($self_item_is_empty = false) {
+    public function init($selfitemisempty = false) {
         global $DB;
 
-        if (!$self_item_is_empty) {
+        if (!$selfitemisempty) {
             $this->item = $DB->get_record('user', array('id' => $this->itemid));
         }
 
@@ -76,8 +78,8 @@ class singleview_user extends singleview_tablelike implements selectable_items {
 
     public function original_headers() {
         return array(
-            '', // for filter icon.
-            '', // for activity icon.
+            '', // For filter icon.
+            '', // For activity icon.
             get_string('assessmentname', 'gradereport_singleview'),
             get_string('gradecategory', 'grades'),
             get_string('range', 'grades'),
@@ -95,16 +97,22 @@ class singleview_user extends singleview_tablelike implements selectable_items {
         $lockicon = '';
 
         // UCSB add lock icon indicator.
-        $locked_grade = $locked_grade_item = 0;
-        if ( ! empty($grade->locked) )  $locked_grade = 1;
-        if ( ! empty($grade->grade_item->locked) ) $locked_grade_item = 1;
-        if ( $locked_grade || $locked_grade_item ) // check both grade and grade item.
-             $lockicon =  $OUTPUT->pix_icon('t/locked', 'grade is locked');
+        $lockeditem = $lockeditemgrade = 0;
+        if (!empty($grade->locked)) {
+            $lockeditem = 1;
+        }
+        if (!empty($grade->grade_item->locked)) {
+            $lockeditemgrade = 1;
+        }
+        // Check both grade and grade item.
+        if ( $lockeditem || $lockeditemgrade )
+             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked');
 
         $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $item->cmid));
+        $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
 
         $line = array(
-            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_singleview', $item->get_name()))),
+            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', $iconstring)),
             $this->format_icon($item) . $lockicon,
             html_writer::link($url, $item->get_name()),
             $this->category($item),
@@ -143,10 +151,10 @@ class singleview_user extends singleview_tablelike implements selectable_items {
     }
 
     public function heading() {
-            if (!empty($this->item->alternatename)) {
-                return $this->item->alternatename . ' (' . $this->item->firstname . ') ' . $this->item->lastname;
-            } else {
-                return fullname($this->item);
-            }
+        if (!empty($this->item->alternatename)) {
+            return $this->item->alternatename . ' (' . $this->item->firstname . ') ' . $this->item->lastname;
+        } else {
+            return fullname($this->item);
+        }
     }
 }

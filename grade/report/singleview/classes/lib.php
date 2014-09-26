@@ -18,7 +18,7 @@
 /**
  * The gradebook simple view - base class for the table
  *
- * @package   singleview
+ * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -213,7 +213,9 @@ abstract class singleview_screen {
             $oldname = "old$name";
 
             $posted = $data->$name;
-            $oldvalue = $data->$oldname;
+            if (isset($data->$oldname)) {
+                $oldvalue = $data->$oldname;
+            }
 
             $format = $element->determine_format();
 
@@ -239,8 +241,6 @@ abstract class singleview_screen {
         $event_data->warnings = $warnings;
         $event_data->post_data = $data;
         $event_data->instance = $this;
-
-        qe_events_trigger(get_class($this) . '_edited', $event_data);
 
         return $event_data->warnings;
     }
@@ -377,8 +377,6 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
         $data = new stdClass;
         $data->table = $table;
         $data->instance = $this;
-
-        qe_events_trigger($underlying . '_table_built', $data);
 
         $button_attr = array('class' => 'singleview_buttons submit');
         $button_html = implode(' ', $this->buttons());

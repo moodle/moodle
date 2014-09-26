@@ -18,13 +18,13 @@
 /**
  * The gradebook simple view - initial view to select your search options
  *
- * @package   singleview
+ * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class singleview_select extends singleview_screen {
-    public function init($self_item_is_empty = false) {
+    public function init($selfitemisempty = false) {
         global $DB;
 
         $this->item = $DB->get_record('course', array('id' => $this->courseid));

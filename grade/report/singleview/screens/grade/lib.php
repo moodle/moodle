@@ -18,7 +18,7 @@
 /**
  * The gradebook simple view - grades view (for an activity)
  *
- * @package   singleview
+ * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,25 +26,25 @@
 class singleview_grade extends singleview_tablelike
     implements selectable_items, item_filtering {
 
-    private $requires_extra = false;
+    private $requiresextra = false;
 
-    private $requires_paging = false;
+    private $requirespaging = false;
 
-    var $structure;
+    public $structure;
 
-    private static $allow_categories;
+    private static $allowcategories;
 
-    public static function allow_categories() {
-        if (is_null(self::$allow_categories)) {
-            self::$allow_categories = get_config('moodle', 'grade_overridecat');
+    public static function allowcategories() {
+        if (is_null(self::$allowcategories)) {
+            self::$allowcategories = get_config('moodle', 'grade_overridecat');
         }
 
-        return self::$allow_categories;
+        return self::$allowcategories;
     }
 
     public static function filter($item) {
         return (
-            self::allow_categories() or !(
+            self::allowcategories() or !(
                 $item->is_course_item() or $item->is_category_item()
             )
         );
@@ -55,13 +55,13 @@ class singleview_grade extends singleview_tablelike
     }
 
     public function options() {
-        return array_map(function($user) { 
+        return array_map(function($user) {
             if (!empty($user->alternatename)) {
                 return $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
             } else {
                 return fullname($user);
-            } 
-        }, $this->items); 
+            }
+        }, $this->items);
     }
 
     public function item_type() {
@@ -71,7 +71,7 @@ class singleview_grade extends singleview_tablelike
     public function original_definition() {
         $def = array('finalgrade', 'feedback');
 
-        if ($this->requires_extra) {
+        if ($this->requiresextra) {
             $def[] = 'override';
         }
 
@@ -80,21 +80,22 @@ class singleview_grade extends singleview_tablelike
         return $def;
     }
 
-    public function init($self_item_is_empty = false) {
+    public function init($selfitemisempty = false) {
         $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
         $this->items = get_role_users(
-            $roleids, $this->context, false, '',
-            'u.lastname, u.firstname', null, $this->groupid
-        );
+         $roleids, $this->context, false, '',
+         'u.lastname, u.firstname', null, $this->groupid,
+         $this->perpage * $this->page, $this->perpage
+         );
 
-        if ($self_item_is_empty) {
+        if ($selfitemisempty) {
             return;
         }
 
         // Only page when necessary.
         if (count($this->items) > $this->perpage) {
-            $this->requires_paging = true;
+            $this->requirespaging = true;
 
             $this->all_items = $this->items;
 
@@ -114,15 +115,15 @@ class singleview_grade extends singleview_tablelike
 
         $this->item = grade_item::fetch($params);
 
-        $filter_fun = grade_report_singleview::filters();
+        $filterfun = grade_report_singleview::filters();
 
-        $allowed = $filter_fun($this->item);
+        $allowed = $filterfun($this->item);
 
         if (empty($allowed)) {
             print_error('not_allowed', 'gradereport_singleview');
         }
 
-        $this->requires_extra = !$this->item->is_manual_item();
+        $this->requiresextra = !$this->item->is_manual_item();
 
         $this->setup_structure();
 
@@ -132,8 +133,8 @@ class singleview_grade extends singleview_tablelike
 
     public function original_headers() {
         $headers = array(
-            '', // for filter icon.
-            '', // for user picture.
+            '', // For filter icon.
+            '', // For user picture.
             get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
@@ -148,15 +149,17 @@ class singleview_grade extends singleview_tablelike
 
         $grade = $this->fetch_grade_or_default($this->item, $item->id);
 
-        // UCSB add lock icon indicator.
         $lockicon = '';
 
-        // CODE to make steve happy for his simple mind.
-	$locked_grade = $locked_grade_item = 0;
-        if ( ! empty($grade->locked) )  $locked_grade = 1;
-        if ( ! empty($grade->grade_item->locked) ) $locked_grade_item = 1;
-        // check both grade and grade item.
-        if ( $locked_grade || $locked_grade_item )
+        $lockedgrade = $lockedgradeitem = 0;
+        if (!empty($grade->locked)) {
+            $lockedgrade = 1;
+        }
+        if (!empty($grade->grade_item->locked)) {
+            $lockedgradeitem = 1;
+        }
+        // Check both grade and grade item.
+        if ( $lockedgrade || $lockedgradeitem )
             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
 
         if (!empty($item->alternatename)) {
@@ -167,9 +170,10 @@ class singleview_grade extends singleview_tablelike
 
         $item->imagealt = $fullname;
         $url = new moodle_url("/user/view.php", array('id' => $item->id, 'course' => $this->courseid));
+        $iconstring = get_string('filtergrades', 'gradereport_singleview', $fullname);
 
-        $line = array( 
-            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', get_string('filtergrades', 'gradereport_singleview', $fullname))),
+        $line = array(
+            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', $iconstring)),
             $OUTPUT->user_picture($item),
             html_writer::link($url, $fullname),
             $this->item_range()
@@ -178,7 +182,7 @@ class singleview_grade extends singleview_tablelike
     }
 
     public function additional_headers($headers) {
-        if ($this->requires_extra) {
+        if ($this->requiresextra) {
             $headers[] = $this->make_toggle_links('override');
         }
 
@@ -196,7 +200,7 @@ class singleview_grade extends singleview_tablelike
     }
 
     public function supports_paging() {
-        return $this->requires_paging;
+        return $this->requirespaging;
     }
 
     public function pager() {
