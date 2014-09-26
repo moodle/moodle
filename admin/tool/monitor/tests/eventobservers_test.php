@@ -18,13 +18,22 @@
  * Unit tests for event observers.
  *
  * @package    tool_monitor
- * @category   phpunit
+ * @category   test
  * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/blog/locallib.php');
+require_once($CFG->dirroot . '/blog/lib.php');
+
+/**
+ * Class tool_monitor_eventobservers_testcase
+ *
+ * Tests for event observers
+ */
 class tool_monitor_eventobservers_testcase extends advanced_testcase {
 
     /**
@@ -88,4 +97,271 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
         $coursesubs = \tool_monitor\subscription_manager::get_user_subscriptions_for_course($course->id, 0, 0, $user->id);
         $this->assertCount(0, $coursesubs); // Making sure all subscriptions are deleted.
     }
+
+    /**
+     * This tests if writing of the events to the table tool_monitor_events is working fine.
+     */
+    public function test_flush() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create events and verify data is fine.
+        $course = $this->getDataGenerator()->create_course();
+
+        $initialevents = $DB->get_records('tool_monitor_events');
+        $initalcount = count($initialevents);
+        $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+        $event->trigger();
+
+        $events = $DB->get_records('tool_monitor_events');
+        $count = count($events);
+        $this->assertEquals($initalcount + 1, $count);
+        $monitorevent = array_pop($events);
+
+        // Match values.
+        $this->assertEquals($event->eventname, $monitorevent->eventname);
+        $this->assertEquals($event->contextid, $monitorevent->contextid);
+        $this->assertEquals($event->contextlevel, $monitorevent->contextlevel);
+        $this->assertEquals($event->get_url()->out(), $monitorevent->link);
+        $this->assertEquals($event->courseid, $monitorevent->courseid);
+        $this->assertEquals($event->timecreated, $monitorevent->timecreated);
+    }
+
+    /**
+     * Test the notification sending features.
+     */
+    public function test_process_event() {
+
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $msgsink = $this->redirectMessages();
+
+        // Generate data.
+        $course = $this->getDataGenerator()->create_course();
+        $toolgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        $rulerecord = new stdClass();
+        $rulerecord->courseid = $course->id;
+        $rulerecord->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rulerecord->frequency = 1;
+
+        $rule = $toolgenerator->create_rule($rulerecord);
+
+        $subrecord = new stdClass();
+        $subrecord->courseid = $course->id;
+        $subrecord->ruleid = $rule->id;
+        $subrecord->userid = $USER->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        $recordexists = $DB->record_exists('task_adhoc', array('component' => 'tool_monitor'));
+        $this->assertFalse($recordexists);
+
+        // Now let us trigger the event.
+        $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+        $event->trigger();
+
+        $this->verify_processed_data($msgsink);
+
+        // Clean up.
+        \tool_monitor\rule_manager::delete_rule($rule->id);
+        $DB->delete_records('tool_monitor_events');
+
+        // Let us create a rule with more than 1 frequency.
+        $rulerecord->frequency = 5;
+        $rule = $toolgenerator->create_rule($rulerecord);
+        $subrecord->ruleid = $rule->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        // Let us trigger events.
+        for ($i = 0; $i < 5; $i++) {
+            $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+            $event->trigger();
+            if ($i != 4) {
+                $this->verify_message_not_sent_yet($msgsink);
+            }
+        }
+
+        $this->verify_processed_data($msgsink);
+
+        // Clean up.
+        \tool_monitor\rule_manager::delete_rule($rule->id);
+        $DB->delete_records('tool_monitor_events');
+
+        // Now let us create a rule specific to a module instance.
+        $cm = new stdClass();
+        $cm->course = $course->id;
+        $book = $this->getDataGenerator()->create_module('book', $cm);
+        $rulerecord->eventname = '\mod_book\event\course_module_viewed';
+        $rulerecord->cmid = $book->cmid;
+        $rule = $toolgenerator->create_rule($rulerecord);
+        $subrecord->ruleid = $rule->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        // Let us trigger events.
+        $params = array(
+            'context' => context_module::instance($book->cmid),
+            'objectid' => $book->id
+        );
+        for ($i = 0; $i < 5; $i++) {
+            $event = \mod_book\event\course_module_viewed::create($params);
+            $event->trigger();
+            if ($i != 4) {
+                $this->verify_message_not_sent_yet($msgsink);
+            }
+        }
+
+        $this->verify_processed_data($msgsink);
+
+        // Clean up.
+        \tool_monitor\rule_manager::delete_rule($rule->id);
+        $DB->delete_records('tool_monitor_events');
+
+        // Now let us create a rule for event that happens in category context events.
+        $rulerecord->eventname = '\core\event\course_category_created';
+        $rulerecord->courseid = 0;
+        $rule = $toolgenerator->create_rule($rulerecord);
+        $subrecord->courseid = 0;
+        $subrecord->ruleid = $rule->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        // Let us trigger events.
+        for ($i = 0; $i < 5; $i++) {
+            $this->getDataGenerator()->create_category();
+            if ($i != 4) {
+                $this->verify_message_not_sent_yet($msgsink);
+            }
+        }
+        $this->verify_processed_data($msgsink);
+
+        // Clean up.
+        \tool_monitor\rule_manager::delete_rule($rule->id);
+        $DB->delete_records('tool_monitor_events');
+
+        // Now let us create a rule at site level.
+        $rulerecord->eventname = '\core\event\blog_entry_created';
+        $rulerecord->courseid = 0;
+        $rule = $toolgenerator->create_rule($rulerecord);
+        $subrecord->courseid = 0;
+        $subrecord->ruleid = $rule->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        // Let us trigger events.
+        $blog = new blog_entry();
+        $blog->subject = "Subject of blog";
+        $blog->userid = $USER->id;
+        $states = blog_entry::get_applicable_publish_states();
+        $blog->publishstate = reset($states);
+        for ($i = 0; $i < 5; $i++) {
+            $newblog = fullclone($blog);
+            $newblog->add();
+            if ($i != 4) {
+                $this->verify_message_not_sent_yet($msgsink);
+            }
+        }
+
+        $this->verify_processed_data($msgsink);
+    }
+
+    /**
+     * Run adhoc tasks.
+     */
+    protected function run_adhock_tasks() {
+        while ($task = \core\task\manager::get_next_adhoc_task(time())) {
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+        }
+    }
+
+    /**
+     * Verify that task was scheduled and a message was sent as expected.
+     *
+     * @param phpunit_message_sink $msgsink Message sink
+     */
+    protected function verify_processed_data(phpunit_message_sink $msgsink) {
+        global $DB, $USER;
+
+        $recordexists = $DB->count_records('task_adhoc', array('component' => 'tool_monitor'));
+        $this->assertEquals(1, $recordexists); // We should have an adhock task now to send notifications.
+        $this->run_adhock_tasks();
+        $this->assertEquals(1, $msgsink->count());
+        $msgs = $msgsink->get_messages();
+        $msg = array_pop($msgs);
+        $this->assertEquals($USER->id, $msg->useridto);
+        $this->assertEquals(1, $msg->notification);
+        $msgsink->clear();
+    }
+
+    /**
+     * Verify that a message was not sent.
+     *
+     * @param phpunit_message_sink $msgsink Message sink
+     */
+    protected function verify_message_not_sent_yet(phpunit_message_sink $msgsink) {
+        $msgs = $msgsink->get_messages();
+        $this->assertCount(0, $msgs);
+        $msgsink->clear();
+    }
+
+    /**
+     * Tests for replace_placeholders method.
+     */
+    public function test_replace_placeholders() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $msgsink = $this->redirectMessages();
+
+        // Generate data.
+        $course = $this->getDataGenerator()->create_course();
+        $toolgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+        $context = \context_user::instance($USER->id, IGNORE_MISSING);
+
+        // Creating book.
+        $cm = new stdClass();
+        $cm->course = $course->id;
+        $book = $this->getDataGenerator()->create_module('book', $cm);
+
+        // Creating rule.
+        $rulerecord = new stdClass();
+        $rulerecord->courseid = $course->id;
+        $rulerecord->eventname = '\mod_book\event\course_module_viewed';
+        $rulerecord->cmid = $book->cmid;
+        $rulerecord->frequency = 1;
+        $rulerecord->template = '{link} {modulelink} {rulename} {description} {eventname}';
+
+        $rule = $toolgenerator->create_rule($rulerecord);
+
+        // Creating subscription.
+        $subrecord = new stdClass();
+        $subrecord->courseid = $course->id;
+        $subrecord->ruleid = $rule->id;
+        $subrecord->userid = $USER->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        // Now let us trigger the event.
+        $params = array(
+            'context' => context_module::instance($book->cmid),
+            'objectid' => $book->id
+        );
+
+        $event = \mod_book\event\course_module_viewed::create($params);
+        $event->trigger();
+        $this->run_adhock_tasks();
+        $msgs = $msgsink->get_messages();
+        $msg = array_pop($msgs);
+
+        $modurl = new moodle_url('/mod/book/view.php', array('id' => $book->cmid));
+        $expectedmsg = $event->get_url()->out() . ' ' .
+                        $modurl->out()  . ' ' .
+                        $rule->get_name($context) . ' ' .
+                        $rule->get_description($context) . ' ' .
+                        $rule->get_event_name();
+
+        $this->assertEquals($expectedmsg, $msg->fullmessage);
+    }
+
 }
