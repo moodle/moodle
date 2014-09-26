@@ -21,6 +21,6 @@ Added:
  * readme_moodle.txt - this file ;-)
 
 Our changes:
- * Removed random seed initialization from lib/adodb/adodb.inc.php:177
+ * Removed random seed initialization from lib/adodb/adodb.inc.php:177 (see 038f546 and MDL-41198).
 
 skodak, iarenaza, moodler, stronk7
