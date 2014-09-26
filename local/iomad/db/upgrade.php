@@ -978,10 +978,11 @@ function xmldb_local_iomad_upgrade($oldversion) {
                            XMLDB_SEQUENCE, null);
         $table->add_field('roleid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('companyid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('capability',  XMLDB_TYPE_CHAR, '255', null, null, null, null);
 
         // Adding keys to table department.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('company_roleidcompanyid', XMLDB_KEY_UNIQUE, array('roleid', 'companyid'));
+        $table->add_key('company_roleidcompanyid', XMLDB_KEY_UNIQUE, array('roleid', 'companyid', 'capability'));
 
         // Conditionally launch create table for company_role_restriction.
         if (!$dbman->table_exists($table)) {

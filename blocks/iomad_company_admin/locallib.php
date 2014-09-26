@@ -56,7 +56,11 @@ class iomad_company_admin {
             }
 
             // add the iomad restriction info
-            if ($restriction = $DB->get_record('company_role_restriction', array('roleid' => $roleid, 'companyid' => $companyid))) {
+            if ($restriction = $DB->get_record('company_role_restriction', array(
+                            'roleid' => $roleid,
+                            'companyid' => $companyid,
+                            'capability' => $capability->capability
+            ))) {
                 $capability->iomad_restriction = true;
             } else {
                 $capability->iomad_restriction = false;

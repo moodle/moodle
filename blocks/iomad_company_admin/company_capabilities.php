@@ -68,7 +68,7 @@ if ($roleid) {
 $(".checkbox").change(function() {
 	if (this.checked) {
 		// something here
-		alert("YAYY");
+		alert("YAYY" + this.value);
 	}
 });
 </script>
