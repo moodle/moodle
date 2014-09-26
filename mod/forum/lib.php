@@ -238,7 +238,6 @@ function forum_update_instance($forum, $mform) {
             \mod_forum\subscriptions::subscribe_user($user->id, $forum, $modcontext);
         }
     }
-
     forum_grade_item_update($forum);
 
     return true;
@@ -279,6 +278,7 @@ function forum_delete_instance($id) {
     $DB->delete_records('forum_digests', array('forum' => $forum->id));
     $DB->delete_records('forum_subscriptions', array('forum'=>$forum->id));
     $DB->delete_records('forum_discussion_subs', array('forum' => $forum->id));
+    $DB->delete_records('forum_grades', array('forum' => $forum->id));
 
     if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id))) {
         foreach ($discussions as $discussion) {
@@ -325,12 +325,22 @@ function forum_supports($feature) {
         case FEATURE_RATE:                    return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_ADVANCED_GRADING:        return true;
         case FEATURE_PLAGIARISM:              return true;
 
         default: return null;
     }
 }
 
+/**
+ * Lists all gradable areas for the advanced grading methods gramework
+ *
+ * @return array('string' => 'string') An array with area names as keys and descriptions as values
+ */
+function forum_grading_areas_list() {
+    return array('forum' => get_string('gradeforum', 'forum'),
+                 'posts' => get_string('gradeposts', 'forum'));
+}
 
 /**
  * Obtains the automatic completion state for this forum based on any conditions
@@ -1795,7 +1805,16 @@ function forum_grade_item_update($forum, $grades=NULL) {
 
     $params = array('itemname'=>$forum->name, 'idnumber'=>$forum->cmidnumber);
 
-    if (!$forum->assessed or $forum->scale == 0) {
+    if ($forum->grade > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $forum->grade;
+        $params['grademin']  = 0;
+
+    } else if ($forum->grade < 0) {
+        $params['gradetype'] = GRADE_TYPE_SCALE;
+        $params['scaleid']   = -$forum->grade;
+
+    } else if (!$forum->assessed or $forum->scale == 0) {
         $params['gradetype'] = GRADE_TYPE_NONE;
 
     } else if ($forum->scale > 0) {
@@ -1885,10 +1904,11 @@ function forum_get_post_full($postid) {
     global $CFG, $DB;
 
     $allnames = get_all_user_name_fields(true, 'u');
-    return $DB->get_record_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt
+    return $DB->get_record_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt, g.grade
                              FROM {forum_posts} p
                                   JOIN {forum_discussions} d ON p.discussion = d.id
                                   LEFT JOIN {user} u ON p.userid = u.id
+                                  LEFT JOIN {forum_grades} g ON g.postid = p.id AND g.userid = p.userid
                             WHERE p.id = ?", array($postid));
 }
 
@@ -1920,9 +1940,10 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
 
     $allnames = get_all_user_name_fields(true, 'u');
     $params[] = $discussionid;
-    if (!$posts = $DB->get_records_sql("SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel
+    if (!$posts = $DB->get_records_sql("SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel, g.grade
                                      FROM {forum_posts} p
                                           LEFT JOIN {user} u ON p.userid = u.id
+                                          LEFT JOIN {forum_grades} g ON g.postid = p.id AND g.userid = p.userid
                                           $tr_join
                                     WHERE p.discussion = ?
                                  ORDER BY $sort", $params)) {
@@ -2297,11 +2318,12 @@ function forum_get_user_posts($forumid, $userid) {
     }
 
     $allnames = get_all_user_name_fields(true, 'u');
-    return $DB->get_records_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt
+    return $DB->get_records_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt, g.grade
                               FROM {forum} f
                                    JOIN {forum_discussions} d ON d.forum = f.id
                                    JOIN {forum_posts} p       ON p.discussion = d.id
                                    JOIN {user} u              ON u.id = p.userid
+                                   LEFT JOIN {forum_grades} g ON g.postid = p.id AND g.userid = p.userid
                              WHERE f.id = ?
                                    AND p.userid = ?
                                    $timedsql
@@ -3158,7 +3180,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
  * @return void
  */
 function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=false, $reply=false, $link=false,
-                          $footer="", $highlight="", $postisread=null, $dummyifcantsee=true, $istracked=null, $return=false) {
+                          $footer="", $highlight="", $postisread=null, $dummyifcantsee=true, $istracked=null, $return=false, $showgrade = false) {
     global $USER, $CFG, $OUTPUT;
 
     require_once($CFG->libdir . '/filelib.php');
@@ -3167,6 +3189,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     static $str;
 
     $modcontext = context_module::instance($cm->id);
+
+    // Cache the check to see if users can grade these posts due to mod/forum:grade capability.
+    if ($forum->grade > 0 && has_capability('mod/forum:grade', $modcontext)) {
+        $showgradinglink = true;
+    }
 
     $post->course = $course->id;
     $post->forum  = $forum->id;
@@ -3484,6 +3511,15 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     // Output ratings
     if (!empty($post->rating)) {
         $output .= html_writer::tag('div', $OUTPUT->render($post->rating), array('class'=>'forum-post-rating'));
+    }
+
+    if ($showgradinglink || (isset($post->grade) && $post->grade >= 0 && $USER->id === $postuser->id)) {
+        $url = new moodle_url('/mod/forum/grade.php', array('id' => $cm->id, 'postid' => $post->id, 'userid' => $post->userid));
+        $grade = html_writer::tag('a', get_string('grade')." ", array('href' => $url));
+        if ($post->grade >= 0) {
+            $grade .= $post->grade;
+        }
+        $output .= html_writer::tag('div', $grade, array('class'=>'forum-post-grade'));
     }
 
     // Output the commands
@@ -5630,7 +5666,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     $postread = !empty($post->postread);
 
     forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, false,
-                         '', '', $postread, true, $forumtracked);
+                         '', '', $postread, true, $forumtracked, false, true);
 
     switch ($mode) {
         case FORUM_MODE_FLATOLDEST :
@@ -5686,7 +5722,7 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
         $postread = !empty($post->postread);
 
         forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
-                             '', '', $postread, true, $forumtracked);
+                             '', '', $postread, true, $forumtracked, false, true);
     }
 }
 
@@ -5719,7 +5755,7 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
                 $postread = !empty($post->postread);
 
                 forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
-                                     '', '', $postread, true, $forumtracked);
+                                     '', '', $postread, true, $forumtracked, false, true);
             } else {
                 if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
                     echo "</div>\n";
@@ -5777,7 +5813,7 @@ function forum_print_posts_nested($course, &$cm, $forum, $discussion, $parent, $
             $postread = !empty($post->postread);
 
             forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
-                                 '', '', $postread, true, $forumtracked);
+                                 '', '', $postread, true, $forumtracked, false, true);
             forum_print_posts_nested($course, $cm, $forum, $discussion, $post, $reply, $forumtracked, $posts);
             echo "</div>\n";
         }
@@ -7762,4 +7798,186 @@ function forum_get_context($forumid, $context = null) {
     }
 
     return $context;
+}
+
+/**
+ * Method returning an instance of the forum grading manager - we use a forum class to help override various settings.
+ *
+ * There are basically ways how to use this factory method. If the area record
+ * id is known to the caller, get the manager for that area by providing just
+ * the id. If the area record id is not know, the context, component and area name
+ * can be provided. Note that null values are allowed in the second case as the context,
+ * component and the area name can be set explicitly later.
+ *
+ * @category grading
+ * @example $manager = get_grading_manager($areaid);
+ * @example $manager = get_grading_manager(context_system::instance());
+ * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
+ * @param stdClass|int|null $context_or_areaid if $areaid is passed, no other parameter is needed
+ * @param string|null $component the frankenstyle name of the component
+ * @param string|null $area the name of the gradable area
+ * @return mod_forum_grading_manager
+ */
+function get_forum_grading_manager($context_or_areaid = null, $component = null, $area = null) {
+
+    $manager = new mod_forum_grading_manager();
+
+    if (is_object($context_or_areaid)) {
+        $context = $context_or_areaid;
+    } else {
+        $context = null;
+
+        if (is_numeric($context_or_areaid)) {
+            $manager->load($context_or_areaid);
+            return $manager;
+        }
+    }
+
+    if (!is_null($context)) {
+        $manager->set_context($context);
+    }
+
+    if (!is_null($component)) {
+        $manager->set_component($component);
+    }
+
+    if (!is_null($area)) {
+        $manager->set_area($area);
+    }
+
+    return $manager;
+}
+
+/**
+ * Get an instance of a grading form if advanced grading is enabled.
+ * This is specific to the forum, marker and student.
+ *
+ * @param int $userid - The student userid
+ * @param stdClass|false $grade - The grade record
+ * @param bool $gradingdisabled
+ * @return mixed gradingform_instance|null $gradinginstance
+ */
+function mod_forum_get_grading_instance($forum, $userid, $grade, $gradingdisabled, $context, $area = 'posts') {
+    global $USER;
+
+    $grademenu = make_grades_menu($forum->grade);
+    $allowgradedecimals = false;
+
+    $advancedgradingwarning = false;
+    $gradingmanager = get_grading_manager($context, 'mod_forum', $area);
+    $gradinginstance = null;
+    if ($gradingmethod = $gradingmanager->get_active_method()) {
+        $controller = $gradingmanager->get_controller($gradingmethod);
+        if ($controller->is_form_available()) {
+            $itemid = null;
+            if ($grade) {
+                $itemid = $grade->id;
+            }
+            if ($gradingdisabled && $itemid) {
+                $gradinginstance = $controller->get_current_instance($USER->id, $itemid);
+            } else if (!$gradingdisabled) {
+                $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
+                $gradinginstance = $controller->get_or_create_instance($instanceid,
+                    $USER->id,
+                    $itemid);
+            }
+        } else {
+            $advancedgradingwarning = $controller->form_unavailable_notification();
+        }
+    }
+    if ($gradinginstance) {
+        $gradinginstance->get_controller()->set_grade_range($grademenu, $allowgradedecimals);
+    }
+    return $gradinginstance;
+}
+
+/**
+ * Apply a grade from a grading form to a user
+ *
+ * @param stdClass $formdata - the data from the form
+ * @param int $userid - the user to apply the grade to
+ * @param int $attemptnumber - The attempt number to apply the grade to.
+ * @param string $area - the grading area to apply the grade to.
+ * @return void
+ */
+function forum_apply_grade_to_user($formdata, $userid, $area) {
+    global $DB;
+
+    $context = context_module::instance($formdata->cmid);
+    $forum = $DB->get_record('forum', array('id' => $formdata->forumid), '*', MUST_EXIST);
+    $forum->cmidnumber = $formdata->cmid;
+    $grade = forum_get_user_grade($userid, true, $formdata->forumid, $formdata->postid);
+    $gradinginstance = mod_forum_get_grading_instance($forum, $userid, $grade, false, $context, $area);
+    if ($gradinginstance) {
+        $grade->grade = $gradinginstance->submit_and_get_grade($formdata->advancedgrading, $grade->id);
+        $result = $DB->update_record('forum_grades', $grade);
+    } else {
+        // Handle the case when grade is set to No Grade.
+        if (isset($formdata->grade)) {
+            $grade->grade = grade_floatval(unformat_float($formdata->grade));
+            $result = $DB->update_record('forum_grades', $grade);
+        }
+    }
+    // TODO: Check if only forum grading enabled and just save existing grade to improve perf.
+
+    // Now get all grades for this forum, aggregate them and pass to gradebook.
+    // Currently we only support a simple average of all grades received.
+    $grades = $DB->get_recordset('forum_grades', array('forum' => $forum->id, 'userid' => $userid));
+    $gradecount = 0;
+    $gradetotal = 0;
+
+    foreach ($grades as $g) {
+        if ($g->grade >= 0) { // Only valid grades included in calculations.
+            $gradetotal = $gradetotal + $g->grade;
+            $gradecount++;
+        }
+    }
+
+    $gradefinal = new stdClass();
+    $gradefinal->userid   = $userid;
+    $gradefinal->rawgrade = $gradetotal / $gradecount;
+
+    forum_grade_item_update($forum, $gradefinal);
+
+    // TODO: Trigger event on grade save.
+}
+
+/**
+ * This will retrieve a grade object from the db, optionally creating it if required.
+ *
+ * @param int $userid The user we are grading
+ * @param bool $create If true the grade will be created if it does not exist
+ * @param int $postid The post to retrieve the grade for. 0 means the overal forum grade.
+ * @return stdClass The grade record
+ */
+function forum_get_user_grade($userid, $create, $forumid, $postid=0) {
+    global $DB, $USER;
+
+    // If the userid is not null then use userid.
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+
+    $params = array('forum'=>$forumid, 'userid' => $userid, 'postid' => $postid);
+
+    $grade = $DB->get_record('forum_grades', $params);
+
+    if (!empty($grade)) {
+        return $grade;
+    }
+    if ($create) {
+        $grade = new stdClass();
+        $grade->forum   = $forumid;
+        $grade->userid       = $userid;
+        $grade->timecreated = time();
+        $grade->timemodified = $grade->timecreated;
+        $grade->grade = -1;
+        $grade->grader = $USER->id;
+        $grade->postid = $postid;
+
+        $gid = $DB->insert_record('forum_grades', $grade);
+        $grade->id = $gid;
+        return $grade;
+    }
+    return false;
 }

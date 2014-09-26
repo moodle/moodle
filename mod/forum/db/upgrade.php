@@ -240,5 +240,47 @@ function xmldb_forum_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111000.1) {
+
+        // Define table forum_grades to be created.
+        $table = new xmldb_table('forum_grades');
+
+        // Adding fields to table forum_grades.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('forum', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('grader', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, '0');
+        $table->add_field('postid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+
+        // Adding keys to table forum_grades.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('forum', XMLDB_KEY_FOREIGN, array('forum'), 'forum', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('grader', XMLDB_KEY_FOREIGN, array('grader'), 'user', array('id'));
+        $table->add_key('postid', XMLDB_KEY_FOREIGN, array('postid'), 'forum_posts', array('id'));
+        $table->add_key('uniquegrade', XMLDB_KEY_UNIQUE, array('forum', 'userid', 'postid'));
+
+        // Conditionally launch create table for forum_grades.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define field grade to be added to forum.
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'displaywordcount');
+
+        // Conditionally launch add field grade.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2014111000.1, 'forum');
+    }
+
+
     return true;
 }

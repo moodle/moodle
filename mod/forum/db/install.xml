@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="mod/forum/db" VERSION="20141028" COMMENT="XMLDB file for Moodle mod/forum"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -30,6 +31,7 @@
         <FIELD NAME="completionreplies" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Nonzero if a certain number of replies are required to mark this forum complete for a user."/>
         <FIELD NAME="completionposts" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Nonzero if a certain number of posts or replies (total) are required to mark this forum complete for a user."/>
         <FIELD NAME="displaywordcount" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum grade for this forum. Can be negative to indicate the use of a scale."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -181,6 +183,26 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="discussion" TYPE="foreign" FIELDS="discussion" REFTABLE="forum_discussions" REFFIELDS="id"/>
         <KEY NAME="user_discussions" TYPE="unique" FIELDS="userid, discussion" COMMENT="Users may only have one discussion preferences per discussion"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="forum_grades" COMMENT="Grading information about a single post or forum">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="forum" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time this entry was first modified by a grader"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The most recent modification time for this grade."/>
+        <FIELD NAME="grader" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The numerical grade for this assignment submission."/>
+        <FIELD NAME="postid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Post that this grade relates to."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="forum" TYPE="foreign" FIELDS="forum" REFTABLE="forum" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="grader" TYPE="foreign" FIELDS="grader" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="postid" TYPE="foreign" FIELDS="postid" REFTABLE="forum_posts" REFFIELDS="id"/>
+        <KEY NAME="uniquegrade" TYPE="unique" FIELDS="forum, userid, postid" COMMENT="This is a grade for a unique entry."/>
       </KEYS>
     </TABLE>
   </TABLES>

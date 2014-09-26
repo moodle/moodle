@@ -46,6 +46,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $paths[] = new restore_path_element('forum_digest', '/activity/forum/digests/digest');
             $paths[] = new restore_path_element('forum_read', '/activity/forum/readposts/read');
             $paths[] = new restore_path_element('forum_track', '/activity/forum/trackedprefs/track');
+            $paths[] = new restore_path_element('forum_grade', '/activity/forum/grades/grade');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -64,7 +65,9 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         if ($data->scale < 0) { // scale found, get mapping
             $data->scale = -($this->get_mappingid('scale', abs($data->scale)));
         }
-
+        if ($data->grade < 0) { // Scale found, get mapping.
+            $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
+        }
         $newitemid = $DB->insert_record('forum', $data);
         $this->apply_activity_instance($newitemid);
     }
@@ -201,6 +204,32 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
 
         $newitemid = $DB->insert_record('forum_track_prefs', $data);
     }
+
+    /**
+     * Process a grade restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_forum_grade($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->forum = $this->get_new_parentid('forum');
+
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->grader = $this->get_mappingid('user', $data->grader);
+        if (!empty($data->postid)) {
+            $data->postid = $this->get_mappingid('post', $data->postid);
+        }
+
+        $newitemid = $DB->insert_record('forum_grades', $data);
+        $this->set_mapping('grade', $oldid, $newitemid, false, null, $this->task->get_old_contextid());
+    }
+
 
     protected function after_execute() {
         global $DB;

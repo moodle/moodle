@@ -392,6 +392,10 @@ abstract class moodleform_mod extends moodleform {
             $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
             $mform->disabledIf('assesstimefinish', 'assessed', 'eq', 0);
             $mform->disabledIf('assesstimefinish', 'ratingtime');
+            if ($this->_features->advancedgrading) {
+                // We need to disable ratings if grading is enabled.
+                $mform->disabledIf('assessed', "grade[modgrade_type]", 'noteq', 'none');
+            }
         }
 
         //doing this here means splitting up the grade related settings on the lesson settings page
@@ -606,7 +610,7 @@ abstract class moodleform_mod extends moodleform {
             }
 
             //if supports grades and grades arent being handled via ratings
-            if (!$this->_features->rating) {
+            if ($this->_features->advancedgrading || !$this->_features->rating) {
                 $mform->addElement('modgrade', 'grade', get_string('grade'));
                 $mform->addHelpButton('grade', 'modgrade', 'grades');
                 $mform->setDefault('grade', $CFG->gradepointdefault);

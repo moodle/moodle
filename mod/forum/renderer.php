@@ -157,5 +157,36 @@ class mod_forum_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Render the generic form
+     * @param forum_form $form The form to render
+     * @return string
+     */
+    public function render_forum_form(forum_form $form) {
+        $o = '';
+        if ($form->jsinitfunction) {
+            $this->page->requires->js_init_call($form->jsinitfunction, array());
+        }
+        $o .= $this->output->box_start('boxaligncenter ' . $form->classname);
+        $o .= $this->moodleform($form->form);
+        $o .= $this->output->box_end();
+        return $o;
+    }
 
+    /**
+     * Helper method dealing with the fact we can not just fetch the output of moodleforms
+     *
+     * @param moodleform $mform
+     * @return string HTML
+     */
+    protected function moodleform(moodleform $mform) {
+
+        $o = '';
+        ob_start();
+        $mform->display();
+        $o = ob_get_contents();
+        ob_end_clean();
+
+        return $o;
+    }
 }
