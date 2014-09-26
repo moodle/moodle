@@ -50,6 +50,7 @@ $string['manage'] = 'Manage';
 $string['managesubscriptions'] = 'Manage subscriptions';
 $string['managerules'] = 'Manage rules';
 $string['messageheader'] = 'Customize your notification message';
+$string['messageprovider:notification'] = 'Notifications of rule subscriptions';
 $string['messagetemplate'] = 'Message template';
 $string['messagetemplate_help'] = 'This is the content of the message that will be sent to users, when the given conditions of the rule are met. You are allowed to use following templates in this.
 <br /> {link} - Link to the location where the event happened.
