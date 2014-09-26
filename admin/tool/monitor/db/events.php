@@ -27,5 +27,9 @@ $observers = array(
     array(
         'eventname'   => '\core\event\course_deleted',
         'callback'    => '\tool_monitor\eventobservers::course_deleted',
+    ),
+    array(
+        'eventname'   => '*',
+        'callback'    => '\tool_monitor\eventobservers::process_event',
     )
 );

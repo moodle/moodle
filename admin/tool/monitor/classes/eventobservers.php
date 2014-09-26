@@ -36,6 +36,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 class eventobservers {
 
+    /** @var array $buffer buffer of events. */
+    protected $buffer = array();
+
+    /** @var int Number of entries in the buffer. */
+    protected $count = 0;
+
+    /** @var  eventobservers a reference to a self instance. */
+    protected static $instance;
+
     /**
      * Course delete event observer.
      * This observer monitors course delete event, and when a course is deleted it deletes any rules and subscriptions associated
@@ -48,5 +57,134 @@ class eventobservers {
         foreach ($rules as $rule) {
             rule_manager::delete_rule($rule->id);
         }
+    }
+
+    /**
+     * The observer monitoring all the events.
+     *
+     * This observers puts small event objects in buffer for later writing to the database. At the end of the request the buffer
+     * is cleaned up and all data dumped into the tool_monitor_events table.
+     *
+     * @param \core\event\base $event event object
+     */
+    public static function process_event(\core\event\base $event) {
+
+        if (empty(self::$instance)) {
+            self::$instance = new static();
+            // Register shutdown handler - this is useful for buffering, processing events, etc.
+            \core_shutdown_manager::register_function(array(self::$instance, 'process_buffer'));
+        }
+
+        self::$instance->buffer_event($event);
+
+        if (PHPUNIT_TEST) {
+            // Process buffer after every event when unit testing.
+            self::$instance->process_buffer();
+
+        }
+    }
+
+    /**
+     * Api to buffer events to store, to reduce db queries.
+     *
+     * @param \core\event\base $event
+     */
+    protected function buffer_event(\core\event\base $event) {
+
+        $eventdata = $event->get_data();
+        $eventobj = new \stdClass();
+        $eventobj->eventname = $eventdata['eventname'];
+        $eventobj->contextid = $eventdata['contextid'];
+        $eventobj->contextlevel = $eventdata['contextlevel'];
+        $eventobj->contextinstanceid = $eventdata['contextinstanceid'];
+        if ($event->get_url()) {
+            // Get link url if exists.
+            $eventobj->link = $event->get_url()->out();
+        } else {
+            $eventobj->link = '';
+        }
+        $eventobj->courseid = $eventdata['courseid'];
+        $eventobj->timecreated = $eventdata['timecreated'];
+
+        $this->buffer[] = $eventobj;
+        $this->count++;
+    }
+
+    /**
+     * This method process all events stored in the buffer.
+     *
+     * This is a multi purpose api. It does the following:-
+     * 1. Write event data to tool_monitor_events
+     * 2. Find out users that need to be notified about rule completion and schedule a task to send them messages.
+     */
+    public function process_buffer() {
+        global $DB;
+
+        $events = $this->flush(); // Flush data.
+
+        $select = "SELECT COUNT(id) FROM {tool_monitor_events} ";
+        $now = time();
+        $messagestosend = array();
+
+        // Let us now process the events and check for subscriptions.
+        foreach ($events as $eventobj) {
+            $subscriptions = subscription_manager::get_subscriptions_by_event($eventobj);
+            $idstosend = array();
+            foreach ($subscriptions as $subscription) {
+                $starttime = $now - $subscription->timewindow;
+                if ($subscription->courseid == 0) {
+                    // Site level subscription. Count all events.
+                    $where = "eventname = :eventname AND timecreated >  :starttime";
+                    $params = array('eventname' => $eventobj->eventname, 'starttime' => $starttime);
+                } else {
+                    // Course level subscription.
+                    if ($subscription->cmid == 0) {
+                        // All modules.
+                        $where = "eventname = :eventname AND courseid = :courseid AND timecreated > :starttime";
+                        $params = array('eventname' => $eventobj->eventname, 'courseid' => $eventobj->courseid,
+                                'starttime' => $starttime);
+                    } else {
+                        // Specific module.
+                        $where = "eventname = :eventname AND courseid = :courseid AND contextinstanceid = :cmid
+                                AND timecreated > :starttime";
+                        $params = array('eventname' => $eventobj->eventname, 'courseid' => $eventobj->courseid,
+                                'cmid' => $eventobj->contextinstanceid, 'starttime' => $starttime);
+
+                    }
+                }
+                $sql = $select . "WHERE " . $where;
+                $count = $DB->count_records_sql($sql, $params);
+                if (!empty($count) && $count >= $subscription->frequency) {
+                    $idstosend[] = $subscription->id;
+                }
+            }
+            if (!empty($idstosend)) {
+                $messagestosend[] = array('subscriptionids' => $idstosend, 'event' => $eventobj);
+            }
+        }
+
+        // Schedule a task to send notification.
+        if (!empty($messagestosend)) {
+            $adhocktask = new notification_task();
+            $adhocktask->set_custom_data($messagestosend);
+            $adhocktask->set_component('tool_monitor');
+            \core\task\manager::queue_adhoc_task($adhocktask);
+        }
+    }
+
+    /**
+     * Protected method that flushes the buffer of events and writes them to the database.
+     *
+     * @return array a copy of the events buffer.
+     */
+    protected function flush() {
+        global $DB;
+
+        // Flush the buffer to the db.
+        $events = $this->buffer;
+        $DB->insert_records('tool_monitor_events', $events); // Insert the whole chunk into the database.
+        $this->buffer = array();
+        $this->count = 0;
+        return $events;
     }
 }
