@@ -242,4 +242,35 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertDebuggingCalled();
         $this->assertNull($task);
     }
+
+    /**
+     * Tests the use of 'R' syntax in time fields of tasks to get
+     * tasks be configured with a non-uniform time.
+     */
+    public function test_random_time_specification() {
+
+        // Testing non-deterministic things in a unit test is not really
+        // wise, so we just test the values have changed within allowed bounds.
+        $testclass = new \core\task\scheduled_test_task();
+
+        // The test task defaults to '*'.
+        $this->assertInternalType('string', $testclass->get_minute());
+        $this->assertInternalType('string', $testclass->get_hour());
+
+        // Set a random value.
+        $testclass->set_minute('R');
+        $testclass->set_hour('R');
+
+        // Verify the minute has changed within allowed bounds.
+        $minute = $testclass->get_minute();
+        $this->assertInternalType('int', $minute);
+        $this->assertGreaterThanOrEqual(0, $minute);
+        $this->assertLessThanOrEqual(59, $minute);
+
+        // Verify the hour has changed within allowed bounds.
+        $hour = $testclass->get_hour();
+        $this->assertInternalType('int', $hour);
+        $this->assertGreaterThanOrEqual(0, $hour);
+        $this->assertLessThanOrEqual(23, $hour);
+    }
 }

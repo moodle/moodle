@@ -31,6 +31,15 @@ namespace core\task;
  */
 abstract class scheduled_task extends task_base {
 
+    /** Minimum minute value. */
+    const MINUTEMIN = 0;
+    /** Maximum minute value. */
+    const MINUTEMAX = 59;
+    /** Minimum hour value. */
+    const HOURMIN = 0;
+    /** Maximum hour value. */
+    const HOURMAX = 23;
+
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
 
@@ -88,10 +97,14 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
-     * Setter for $minute.
+     * Setter for $minute. Accepts a special 'R' value
+     * which will be translated to a random minute.
      * @param string $minute
      */
     public function set_minute($minute) {
+        if ($minute === 'R') {
+            $minute = mt_rand(self::HOURMIN, self::HOURMAX);
+        }
         $this->minute = $minute;
     }
 
@@ -104,10 +117,14 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
-     * Setter for $hour.
+     * Setter for $hour. Accepts a special 'R' value
+     * which will be translated to a random hour.
      * @param string $hour
      */
     public function set_hour($hour) {
+        if ($hour === 'R') {
+            $hour = mt_rand(self::HOURMIN, self::HOURMAX);
+        }
         $this->hour = $hour;
     }
 
@@ -302,8 +319,8 @@ abstract class scheduled_task extends task_base {
     public function get_next_scheduled_time() {
         global $CFG;
 
-        $validminutes = $this->eval_cron_field($this->minute, 0, 59);
-        $validhours = $this->eval_cron_field($this->hour, 0, 23);
+        $validminutes = $this->eval_cron_field($this->minute, self::MINUTEMIN, self::MINUTEMAX);
+        $validhours = $this->eval_cron_field($this->hour, self::HOURMIN, self::HOURMAX);
 
         // We need to change to the server timezone before using php date() functions.
         $origtz = date_default_timezone_get();
