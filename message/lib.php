@@ -130,9 +130,8 @@ function message_print_contact_selector($countunreadtotal, $viewing, $user1, $us
         }
     }
 
-    // Only show the search button if we're viewing our own messages.
-    // Search isn't currently able to deal with user A wanting to search user B's messages.
-    if ($showactionlinks) {
+    // Only show the search button if we're viewing our own contacts.
+    if ($viewing == MESSAGE_VIEW_CONTACTS && $user2 == null) {
         echo html_writer::start_tag('form', array('action' => 'index.php','method' => 'GET'));
         echo html_writer::start_tag('fieldset');
         $managebuttonclass = 'visible';
