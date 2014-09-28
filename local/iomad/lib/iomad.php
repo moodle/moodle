@@ -902,6 +902,11 @@ class iomad {
             return false;
         }
         
+        // If this is the admin then we'll believe it
+        if (is_siteadmin()) {
+            return true;
+        }
+        
         // Check user's company. If no company then it must be true.
         $companyid = self::companyid();
         
