@@ -60,7 +60,7 @@ $returnurl = $baseurl;
 if ($delete and confirm_sesskey()) {
     // Delete a selected override template, after confirmation.
 
-    require_capability('block/iomad_company_admin:classrooms_delete', $context);
+    iomad::require_capability('block/iomad_company_admin:classrooms_delete', $context);
 
     $classroom = $DB->get_record('classroom', array('id' => $delete), '*', MUST_EXIST);
 
@@ -97,7 +97,7 @@ $company = new company($companyid);
 echo get_string('classrooms_for', $block, $company->get_name() );
 
 // Check we can actually do anything on this page.
-require_capability('block/iomad_company_admin:classrooms', $context);
+iomad::require_capability('block/iomad_company_admin:classrooms', $context);
 
 // Get the number of templates.
 $objectcount = $DB->count_records('classroom', array('companyid' => $companyid));
@@ -116,14 +116,14 @@ if ($classrooms = $DB->get_recordset('classroom', array('companyid' => $companyi
     $table->width = "95%";
 
     foreach ($classrooms as $classroom) {
-        if (has_capability('block/iomad_company_admin:classrooms_delete', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $context)) {
             $deletebutton = "<a href=\"classroom_list.php?delete=$classroom->id&amp;sesskey=".
                              sesskey()."\">$strdelete</a>";
         } else {
             $deletebutton = "";
         }
 
-        if (has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
             $editbutton = "<a href='".
                            new moodle_url('classroom_edit_form.php', array("id" => $classroom->id)).
                            "'>$stredit</a>";
@@ -145,7 +145,7 @@ if ($classrooms = $DB->get_recordset('classroom', array('companyid' => $companyi
     $classrooms->close();
 }
 
-if (has_capability('block/iomad_company_admin:classrooms_add', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
     echo "<a href=\"classroom_edit_form.php\">" . get_string('classrooms_add', $block) . "</a>";
 }
 

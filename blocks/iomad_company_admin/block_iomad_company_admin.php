@@ -65,7 +65,7 @@ class block_iomad_company_admin extends block_base {
         $tabs[2] = get_string('usermanagement', 'block_iomad_company_admin');
         $tabs[3] = get_string('coursemanagement', 'block_iomad_company_admin');
         $tabs[4] = get_string('licensemanagement', 'block_iomad_company_admin');
-        if (has_capability('block/iomad_commerce:admin_view', $context)) {
+        if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
             $tabs[5] = get_string('blocktitle', 'block_iomad_commerce');
         }
         $tabhtml = $this->gettabs($tabs, $selectedtab);
@@ -84,7 +84,7 @@ class block_iomad_company_admin extends block_base {
             }
 
             // If no capability the move on.
-            if (!has_capability($menu['cap'], $context)) {
+            if (!iomad::has_capability($menu['cap'], $context)) {
                 continue;
             }
 
@@ -232,7 +232,7 @@ class block_iomad_company_admin extends block_base {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
         // Only display if you have the correct capability, or you are not in more than one company.
-        if (!has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
             if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
                 return;
             }

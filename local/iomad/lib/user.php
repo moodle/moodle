@@ -441,7 +441,7 @@ Thank you for your request.
         }
 
         if (!isset($USER->profile["company"]) or empty($USER->profile["company"]) or
-            has_capability('block/iomad_company_admin:company_add', $context)) {
+            iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             return true;
         }
 
@@ -590,7 +590,7 @@ class iomad_user_filter_form extends moodleform {
                 }
             }
         }
-        //if (has_capability('block/iomad_company_admin:viewsuspendedusers', context_system::instance())) {
+        //if (iomad::has_capability('block/iomad_company_admin:viewsuspendedusers', context_system::instance())) {
             $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_users', 'local_iomad'));
         /*} else {
             $mform->addElement('hidden', 'showsuspended');

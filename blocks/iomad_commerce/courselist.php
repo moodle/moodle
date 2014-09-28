@@ -48,7 +48,7 @@ $returnurl = $baseurl;
 
 if ($delete and confirm_sesskey()) {              // Delete a selected course from the shop, after confirmation.
 
-    require_capability('block/iomad_commerce:delete_course', $context);
+    iomad::require_capability('block/iomad_commerce:delete_course', $context);
 
     $invoiceableitem = $DB->get_record('course_shopsettings', array('id' => $delete), '*', MUST_EXIST);
 
@@ -99,7 +99,7 @@ if (!is_commerce_configured()) {
 }
 
 //  Check we can actually do anything on this page.
-require_capability('block/iomad_commerce:admin_view', $context);
+iomad::require_capability('block/iomad_commerce:admin_view', $context);
 
 // Get the number of companies.
 $objectcount = $DB->count_records('course_shopsettings');
@@ -123,14 +123,14 @@ if ($courses = $DB->get_recordset_sql('SELECT css.*, c.fullname
         $table->width = "600px";
 
         foreach ($courses as $course_shopsetting) {
-            if (has_capability('block/iomad_commerce:delete_course', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:delete_course', $context)) {
                 $deletebutton = "<a href=\"courselist.php?delete=$course_shopsetting->id&amp;sesskey=".
                                  sesskey()."\">$strdelete</a>";
             } else {
                 $deletebutton = "";
             }
 
-            if (has_capability('block/iomad_commerce:hide_course', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:hide_course', $context)) {
                 $strdisplay = $strshow;
                 if ($course_shopsetting->enabled) {
                     $strdisplay = $strhide;
@@ -141,7 +141,7 @@ if ($courses = $DB->get_recordset_sql('SELECT css.*, c.fullname
                 $hidebutton = "";
             }
 
-            if (has_capability('block/iomad_commerce:edit_course', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:edit_course', $context)) {
                 $editbutton = "<a href='" . new moodle_url('edit_course_shopsettings_form.php',
                                                             array("shopsettingsid" => $course_shopsetting->id)) .
                               "'>$stredit</a>";
@@ -167,7 +167,7 @@ if ($courses = $DB->get_recordset_sql('SELECT css.*, c.fullname
     $courses->close();
 }
 
-if (has_capability('block/iomad_commerce:add_course', $context)) {
+if (iomad::has_capability('block/iomad_commerce:add_course', $context)) {
     echo '<div class="buttons">';
 
     echo $OUTPUT->single_button(new moodle_url('edit_course_shopsettings_form.php?createnew=1'),

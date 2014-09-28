@@ -29,6 +29,7 @@ $string['emailfilter'] = 'Email address contains';
 $string['firstnamefilter'] = 'First name contains';
 $string['lastnamefilter'] = 'Last name contains';
 $string['missingaccesstocourse'] = 'You\'re not allowed to that.';
+$string['nopermissions'] = 'The Iomad administrator has not given you permission to do this.';
 $string['pluginname'] = 'Iomad';
 $string['setupiomad'] = 'Start setting up iomad';
 $string['show_suspended_users'] = 'Show suspended users?';

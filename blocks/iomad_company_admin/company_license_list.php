@@ -52,7 +52,7 @@ $returnurl = $baseurl;
 
 // Get the appropriate company department.
 $companydepartment = company::get_company_parentnode($companyid);
-if (has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
     $departmentid = $companydepartment->id;
 } else {
     $userlevel = company::get_userlevel($USER);
@@ -61,7 +61,7 @@ if (has_capability('block/iomad_company_admin:edit_licenses', context_system::in
 
 if ($delete and confirm_sesskey()) {              // Delete a selected company, after confirmation.
 
-    require_capability('block/iomad_company_admin:edit_licenses', $context);
+    iomad::require_capability('block/iomad_company_admin:edit_licenses', $context);
 
     $license = $DB->get_record('companylicense', array('id' => $delete), '*', MUST_EXIST);
 
@@ -86,7 +86,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
 $blockpage->display_header();
 
 // Check we can actually do anything on this page.
-require_capability('block/iomad_company_admin:view_licenses', $context);
+iomad::require_capability('block/iomad_company_admin:view_licenses', $context);
 
 $company = new company($companyid);
 echo "<h3>".$company->get_name()."</h3>";
@@ -125,7 +125,7 @@ if ($departmentid == $companydepartment->id) {
     // Cycle through the results.
     foreach ($licenses as $license) {
         // Set up the edit buttons.
-        if (has_capability('block/iomad_company_admin:edit_licenses', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
             $deletebutton = "<a href=\"company_license_list.php?delete=$license->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
             $editbutton = "<a href='" . new moodle_url('company_license_edit_form.php',
                            array("licenseid" => $license->id, 'departmentid' => $departmentid)) . "'>$stredit</a>";
@@ -163,7 +163,7 @@ if ($departmentid == $companydepartment->id) {
         $license = $DB->get_record('companylicense', array('id' => $licenseid->licenseid));
 
         // Set up the edit buttons.
-        if (has_capability('block/iomad_company_admin:edit_licenses', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
             $deletebutton = "<a href=\"company_license_list.php?delete=$license->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
             $editbutton = "<a href='" . new moodle_url('company_license_edit_form.php',
                                                         array("licenseid" => $license->id, 'departmentid' => $departmentid)) .

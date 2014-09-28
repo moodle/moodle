@@ -38,7 +38,7 @@ class department_display_form extends company_moodleform {
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
-        if (has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -197,7 +197,7 @@ $context = context_system::instance();
 require_login();
 $PAGE->set_context($context);
 
-require_capability('block/iomad_company_admin:edit_departments', $context);
+iomad::require_capability('block/iomad_company_admin:edit_departments', $context);
 
 $urlparams = array();
 if ($returnurl) {

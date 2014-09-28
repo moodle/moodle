@@ -42,7 +42,7 @@ class company_ccu_courses_form extends company_moodleform {
         $this->companydepartment = $parentlevel->id;
         $context = context_system::instance();
 
-        if (has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -140,7 +140,7 @@ class company_course_users_form extends moodleform {
         $this->companydepartment = $this->parentlevel->id;
         $context = context_system::instance();
 
-        if (has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -321,7 +321,7 @@ $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
 $blockpage->setup();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-require_capability('block/iomad_company_admin:company_course_users', $context);
+iomad::require_capability('block/iomad_company_admin:company_course_users', $context);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

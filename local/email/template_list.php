@@ -50,7 +50,7 @@ if (!empty($SESSION->currenteditingcompany)) {
     $companyid = $SESSION->currenteditingcompany;
 } else if (!empty($USER->company)) {
     $companyid = company_user::companyid();
-} else if (!has_capability('local/email:list', context_system::instance())) {
+} else if (!iomad::has_capability('local/email:list', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
     redirect(new moodle_url('/local/iomad_dashboard/index.php'),
@@ -66,7 +66,7 @@ $returnurl = $baseurl;
 if ($delete and confirm_sesskey()) {
     // Delete a selected override template, after confirmation.
 
-    require_capability('local/email:delete', $context);
+    iomad::require_capability('local/email:delete', $context);
 
     $template = $DB->get_record('email_template', array('id' => $delete), '*', MUST_EXIST);
 
@@ -102,7 +102,7 @@ $company = new company($companyid);
 echo get_string('email_templates_for', $block, $company->get_name() );
 
 // Check we can actually do anything on this page.
-require_capability('local/email:list', $context);
+iomad::require_capability('local/email:list', $context);
 
 // Get the number of templates.
 $objectcount = $DB->count_records('email_template');
@@ -148,22 +148,22 @@ function create_default_template_row($templatename, $strdefault, $stradd, $strse
 
 if ($templates = $DB->get_recordset('email_template', array('companyid' => $companyid),
                                     'name', '*', $page, $perpage)) {
-    if (has_capability('local/email:edit', $context)) {
+    if (iomad::has_capability('local/email:edit', $context)) {
         $stredit = get_string('edit');
     } else {
         $stredit = null;
     }
-    if (has_capability('local/email:add', $PAGE->context)) {
+    if (iomad::has_capability('local/email:add', $PAGE->context)) {
         $stradd = get_string('add_template_button', $block);
     } else {
         $stradd = null;
     }
-    if (has_capability('local/email:delete', $context)) {
+    if (iomad::has_capability('local/email:delete', $context)) {
         $strdelete = get_string('delete_template_button', $block);
     } else {
         $strdelete = null;
     }
-    if (has_capability('local/email:send', $context)) {
+    if (iomad::has_capability('local/email:send', $context)) {
         $strsend = get_string('send_button', $block);
     } else {
         $strsend = null;

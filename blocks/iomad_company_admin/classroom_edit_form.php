@@ -110,14 +110,14 @@ if ($classroomid) {
     $isadding = false;
 
     $classroomrecord = $DB->get_record('classroom', array('id' => $classroomid), '*', MUST_EXIST);
-    require_capability('block/iomad_company_admin:classrooms_edit', $context);
+    iomad::require_capability('block/iomad_company_admin:classrooms_edit', $context);
 
     $title = 'classrooms_edit';
 } else {
     $isadding = true;
     $classroomid = 0;
     $classroomrecord = new stdClass;
-    require_capability('block/iomad_company_admin:classrooms_add', $context);
+    iomad::require_capability('block/iomad_company_admin:classrooms_add', $context);
 
     $title = 'classrooms_add';
 }

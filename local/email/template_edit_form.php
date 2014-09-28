@@ -134,7 +134,7 @@ if (!empty($SESSION->currenteditingcompany)) {
     $companyid = $SESSION->currenteditingcompany;
 } else if (!empty($USER->company)) {
     $companyid = company_user::companyid();
-} else if (!has_capability('local/email:edit', context_system::instance())) {
+} else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
     $blockpage->display_header();
@@ -148,13 +148,13 @@ if (!$new) {
     if ($templateid) {
         $templaterecord = $DB->get_record('email_template', array('id' => $templateid),
                                                                   '*', MUST_EXIST);
-        require_capability('local/email:edit', $context);
+        iomad::require_capability('local/email:edit', $context);
     } else {
         $isadding = true;
         $templateid = 0;
         $templaterecord = (object) $email[$templatename];
         $templaterecord->name = $templatename;
-        require_capability('local/email:add', $context);
+        iomad::require_capability('local/email:add', $context);
     }
 } else {
     $isadding = true;
@@ -162,7 +162,7 @@ if (!$new) {
     $templaterecord = (object) $email[$templatename];
     $templaterecord->name = $templatename;
 
-    require_capability('local/email:add', $context);
+    iomad::require_capability('local/email:add', $context);
 }
 
 // Correct the navbar.

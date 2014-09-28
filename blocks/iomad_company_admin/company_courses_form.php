@@ -38,7 +38,7 @@ class company_courses_form extends moodleform {
         $this->companydepartment = $parentlevel->id;
         $syscontext = context_system::instance();
 
-        if (has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -124,7 +124,7 @@ class company_courses_form extends moodleform {
 
             // Can this user move courses with existing enrollments
             // (which unenrolls those users as a result)?
-            if (has_capability('block/iomad_company_admin:company_course_unenrol', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol', $context)) {
                 $mform->addElement('html', get_string('unenrollwarning',
                                                       'block_iomad_company_admin'));
                 $mform->addElement('checkbox', 'oktounenroll',
@@ -178,7 +178,7 @@ class company_courses_form extends moodleform {
                         // If company has enrollment then we must have BOTH
                         // oktounenroll true and the company_course_unenrol capability.
                         if (!empty($addcourse->has_enrollments)) {
-                            if (has_capability('block/iomad_company_admin:company_course_unenrol',
+                            if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol',
                                                 $context) and $oktounenroll) {
                                 $this->unenroll_all($addcourse->id);
                                 $company->add_course($addcourse);
@@ -226,7 +226,7 @@ class company_courses_form extends moodleform {
                         // If company has enrollment then we must have BOTH
                         // oktounenroll true and the company_course_unenrol capability.
                         if (!empty($removecourse->has_enrollments)) {
-                            if (has_capability('block/iomad_company_admin:company_course_unenrol',
+                            if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol',
                                                 $context) and $oktounenroll) {
                                 $this->unenroll_all($removecourse->id);
                                 if ($this->departmentid != $this->companydepartment) {
@@ -280,7 +280,7 @@ $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:company_course', $context);
+iomad::require_capability('block/iomad_company_admin:company_course', $context);
 
 $PAGE->set_context($context);
 

@@ -27,7 +27,7 @@ $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:user_upload', $context);
+iomad::require_capability('block/iomad_company_admin:user_upload', $context);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -54,7 +54,7 @@ if (company_user::is_company_user()) {
 $parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);

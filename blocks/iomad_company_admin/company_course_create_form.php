@@ -61,7 +61,7 @@ class course_edit_form extends moodleform {
         $mform->setType('shortname', PARAM_MULTILANG);
 
         // Create course as self enrolable.
-        if (has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
             $selectarray = array(get_string('selfenrolled', 'block_iomad_company_admin'),
                                  get_string('enrolled', 'block_iomad_company_admin'),
                                  get_string('licensedcourse', 'block_iomad_company_admin'));
@@ -137,7 +137,7 @@ $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:createcourse', $context);
+iomad::require_capability('block/iomad_company_admin:createcourse', $context);
 
 $PAGE->set_context($context);
 

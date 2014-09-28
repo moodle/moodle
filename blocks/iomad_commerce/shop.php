@@ -130,7 +130,7 @@ if (iomad::is_company_user()) {
     $sharedsql = " AND ( c.id in ( select courseid from {company_course} where companyid= $company->id)
 	               or c.id in ( select courseid from {iomad_courses} where shared=1)
 	               or c.id in ( select courseid from {company_shared_courses} where companyid = $company->id)) ";
-} else if (is_siteadmin() || has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+} else if (is_siteadmin() || iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
     $sharedsql = "";
 } else {
     $sharedsql = " AND c.id in ( select courseid from {iomad_courses} where shared=1) ";

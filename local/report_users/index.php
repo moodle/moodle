@@ -70,7 +70,7 @@ if ($showsuspended) {
 
 $systemcontext = context_system::instance();
 require_login(); // Adds to $PAGE, creates $OUTPUT.
-require_capability('local/report_completion:view', $systemcontext);
+iomad::require_capability('local/report_completion:view', $systemcontext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
@@ -165,7 +165,7 @@ if (!empty($fieldnames)) {
 $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
     !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
@@ -184,8 +184,8 @@ $select->formid = 'choosedepartment';
 echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select),
                                     array('id' => 'iomad_company_selector'));
-if (!(has_capability('block/iomad_company_admin:editusers', $systemcontext)
-    or has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
+    or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
     print_error('nopermissions', 'error', '', 'edit/delete users');
 }
 
@@ -246,7 +246,7 @@ if ($sort == "name") {
 
 $dbsort = "";
 // Check if has capability edit all users.
-if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     // Check we havent looked and discounted everyone.
     if ((empty($idlist) && !$foundfields) || (!empty($idlist) && $foundfields)) {
         // Make sure we dont display site admins.
@@ -319,7 +319,7 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
         $userrecords = array();
     }
 
-} else if (has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+} else if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
     // Check if has role edit company users.
 
     // Check we havent looked and discounted everyone.

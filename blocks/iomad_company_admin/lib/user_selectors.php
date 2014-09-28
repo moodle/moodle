@@ -721,7 +721,7 @@ class potential_license_user_selector extends user_selector_base {
                 $departments = $DB->get_records_sql($sql);
                 $shareddepartment = array();
                 if ($shared) {
-                    if (has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+                    if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
                         // Need to add the top level department.
                         $shareddepartment = company::get_company_parentnode($this->companyid);
                         $departments = $departments + array($shareddepartment->id => $shareddepartment->id);

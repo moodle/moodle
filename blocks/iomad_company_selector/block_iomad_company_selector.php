@@ -33,7 +33,7 @@ class block_iomad_company_selector extends block_base {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
         // Only display if you have the correct capability.
-        if (!has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
             return;
         }
 

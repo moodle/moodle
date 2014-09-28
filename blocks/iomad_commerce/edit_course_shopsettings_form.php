@@ -340,7 +340,7 @@ if (!$new) {
     $shopsettings->short_summary_editor = array('text' => $shopsettings->short_description);
     $shopsettings->summary_editor = array('text' => $shopsettings->long_description);
 
-    require_capability('block/iomad_commerce:edit_course', $context);
+    iomad::require_capability('block/iomad_commerce:edit_course', $context);
 } else {
     $isadding = true;
     $shopsettingsid = 0;
@@ -348,7 +348,7 @@ if (!$new) {
     $course = null;
     $priceblocks = null;
 
-    require_capability('block/iomad_commerce:add_course', $context);
+    iomad::require_capability('block/iomad_commerce:add_course', $context);
 
 
 }

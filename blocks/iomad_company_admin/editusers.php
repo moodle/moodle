@@ -115,7 +115,7 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);
@@ -132,8 +132,8 @@ $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
 echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
-if (!(has_capability('block/iomad_company_admin:editusers', $systemcontext)
-    or has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
+    or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
     print_error('nopermissions', 'error', '', 'edit/delete users');
 }
 // Set up the filter form.
@@ -228,7 +228,7 @@ if ($confirmuser and confirm_sesskey()) {
 
 } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
-    if (!has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
         print_error('nopermissions', 'error', '', 'delete a user');
     }
 
@@ -255,7 +255,7 @@ if ($confirmuser and confirm_sesskey()) {
 
 } else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
-    if (!has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
         print_error('nopermissions', 'error', '', 'suspend a user');
     }
 
@@ -283,7 +283,7 @@ if ($confirmuser and confirm_sesskey()) {
 } else if ($unsuspend and confirm_sesskey()) {
     // Unsuspends a selected user, after confirmation.
 
-    if (!has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
         print_error('nopermissions', 'error', '', 'suspend a user');
     }
 
@@ -309,7 +309,7 @@ if ($confirmuser and confirm_sesskey()) {
     }
 
 } else if ($acl and confirm_sesskey()) {
-    if (!has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
         // TODO: this should be under a separate capability.
         print_error('nopermissions', 'error', '', 'modify the NMET access control list');
     }
@@ -374,7 +374,7 @@ if ($sort == "name") {
 // Get all or company users depending on capability.
 
 //  Check if has capability edit all users.
-if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
     // Make sure we dont display site admins.
     // Set default search to something which cant happen.
     $sqlsearch = "id!='-1'";
@@ -426,7 +426,7 @@ if (has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
 
     $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch, $searchparams);
 
-} else if (has_capability('block/iomad_company_admin:editusers', $systemcontext)) {   // Check if has role edit company users.
+} else if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {   // Check if has role edit company users.
 
     // Get users company association.
     $departmentusers = company::get_recursive_department_users($departmentid);
@@ -529,8 +529,8 @@ if (!$users) {
             $deletebutton = "";
             $suspendbutton = "";
         } else {
-            if ((has_capability('block/iomad_company_admin:editusers', $systemcontext)
-                 or has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+            if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
+                 or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
                 $deletebutton = "<a href=\"editusers.php?delete=$user->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
                 if (!empty($user->suspended)) {
                     $suspendbutton = "<a href=\"editusers.php?unsuspend=$user->id&amp;sesskey=".sesskey()."\">$strunsuspend</a>";
@@ -542,16 +542,16 @@ if (!$users) {
                 $suspendbutton = "";
             }
         }
-        if ((has_capability('block/iomad_company_admin:editusers', $systemcontext)
-             or has_capability('block/iomad_company_admin:editallusers', $systemcontext))
+        if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
+             or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
             $editbutton = "<a href=\"$securewwwroot/blocks/iomad_company_admin/editadvanced.php?id=$user->id\">$stredit</a>";
         } else {
             $editbutton = "";
         }
 
-        if ((has_capability('block/iomad_company_admin:company_course_users', $systemcontext)
-             or has_capability('block/iomad_company_admin:editallusers', $systemcontext))
+        if ((iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)
+             or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id)
              and !is_mnet_remote_user($user)) {
             $enrolmentbutton = "<a href=\"company_users_course_form.php?userid=$user->id\">$strenrolment</a>";

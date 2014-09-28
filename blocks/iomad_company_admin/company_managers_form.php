@@ -38,7 +38,7 @@ class company_managers_form extends moodleform {
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
-        if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -87,7 +87,7 @@ class company_managers_form extends moodleform {
         $mform->addElement('select', 'managertype', get_string('managertype', 'block_iomad_company_admin'), $managertypes);
         $mform->addHelpButton('managertype', 'managertype', 'block_iomad_company_admin');
 
-        if (has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
             // This user can add other managers to this company.
             $mform->addElement('selectyesno', 'showothermanagers', get_string('showothermanagers', 'block_iomad_company_admin'));
             $mform->disabledIf('showothermanagers', 'managertype', 'neq', '1');
@@ -362,7 +362,7 @@ if ($roleid != 1) {
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:company_manager', $context);
+iomad::require_capability('block/iomad_company_admin:company_manager', $context);
 
 // Correct the navbar.
 // Set the name for the page.

@@ -106,7 +106,7 @@ $context = $PAGE->context;
 
 $blockpage->display_header();
 
-require_capability('block/iomad_company_admin:company_user_profiles', $context);
+iomad::require_capability('block/iomad_company_admin:company_user_profiles', $context);
 
 echo $OUTPUT->heading(get_string('companyprofilefields', 'block_iomad_company_admin'));
 
@@ -130,7 +130,7 @@ if (!empty($companyid)) {
     $categories[$company->profileid] = $profileinfo;
 } else {
     // Check if can view every company profile.
-    if (!has_capability('block/iomad_company_admin:allcompany_user_profiles', $context)) {
+    if (!iomad::has_capability('block/iomad_company_admin:allcompany_user_profiles', $context)) {
         // Get the company from the users profile.
         $categories = $DB->get_records('company', array('id' => $companyid), 'sortorder ASC', 'profileid');
     } else {

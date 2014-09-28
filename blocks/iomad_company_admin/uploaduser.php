@@ -61,7 +61,7 @@ $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'tool_uploaduser'
 raise_memory_limit(MEMORY_EXTRA);
 
 require_login();
-require_capability('block/iomad_company_admin:user_upload', context_system::instance());
+iomad::require_capability('block/iomad_company_admin:user_upload', context_system::instance());
 
 // Correct the navbar .
 // Set the name for the page.

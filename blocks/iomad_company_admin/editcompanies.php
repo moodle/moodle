@@ -86,7 +86,7 @@ if ($companyid) {
 $systemcontext = context_system::instance();
 
 require_login();
-require_capability('block/iomad_company_admin:company_add', $systemcontext);
+iomad::require_capability('block/iomad_company_admin:company_add', $systemcontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -133,7 +133,7 @@ if ($confirmcompany and confirm_sesskey()) {
 
 } else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
-    /* if (!has_capability('block/iomad_company_admin:suspendcompany', $systemcontext)) {
+    /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $systemcontext)) {
         print_error('nopermissions', 'error', '', 'delete a user');
     } */
 
@@ -157,7 +157,7 @@ if ($confirmcompany and confirm_sesskey()) {
 } else if ($unsuspend and confirm_sesskey()) {
     // Unsuspends a selected company, after confirmation.
 
-   /* if (!has_capability('block/iomad_company_admin:suspendcompany', $systemcontext)) {
+   /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $systemcontext)) {
         print_error('nopermissions', 'error', '', 'delete a user');
     } */
 
@@ -277,7 +277,7 @@ if (!$companies) {
     $table->align = array ("left", "left", "left", "center");
     $table->width = "95%";
     foreach ($companies as $company) {
-      //  if ((has_capability('block/iomad_company_admin:suspendcompanies', $systemcontext))) {
+      //  if ((iomad::has_capability('block/iomad_company_admin:suspendcompanies', $systemcontext))) {
             if (!empty($company->suspended)) {
                 $suspendbutton = "<a href=\"editcompanies.php?unsuspend=$company->id&amp;sesskey=".sesskey()."\">$strunsuspend</a>";
             } else {

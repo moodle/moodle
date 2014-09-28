@@ -146,13 +146,13 @@ class company_edit_form extends company_moodleform {
 
         // Only show the Appearence section if the theme is iomad or you have abilities
         // to change that.
-        if (has_capability('block/iomad_company_admin:company_add', $context) ||
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $context) ||
             $this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap') {
                 $mform->addElement('header', 'appearance',
                                     get_string('appearance', 'block_iomad_company_admin'));
 
             // If has the edit all companies capability we want to add a theme selector.
-            if (has_capability('block/iomad_company_admin:company_add', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
 
                 // Get the list of themes.
                 $themes = get_plugin_list('theme');
@@ -328,13 +328,13 @@ if (!$new) {
     $isadding = false;
     $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
 
-    require_capability('block/iomad_company_admin:company_edit', $context);
+    iomad::require_capability('block/iomad_company_admin:company_edit', $context);
 } else {
     $isadding = true;
     $companyid = 0;
     $companyrecord = new stdClass;
 
-    require_capability('block/iomad_company_admin:company_add', $context);
+    iomad::require_capability('block/iomad_company_admin:company_add', $context);
 }
 
 $urlparams = array('companyid' => $companyid);

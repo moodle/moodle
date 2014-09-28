@@ -199,6 +199,7 @@ $string['licensetotal'] = ' licenses can be allocated in total';
 $string['licenseusedwarning'] = '<center>* Users who are marked with an asterix are already using their license allocation for a course and so cannot have their license taken away from them.</br></center>';
 $string['license_users_for'] = 'Users for license \'{$a}\' ';
 $string['licenseusers'] = 'User license allocations';
+$string['listroles'] = 'Show Iomad roles';
 $string['managecompanies'] = 'Manage companies';
 $string['managecourses'] = 'Select';
 $string['managelicenses'] = 'License management';

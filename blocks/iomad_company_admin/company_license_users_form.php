@@ -41,7 +41,7 @@ class company_license_users_form extends moodleform {
         $this->licenseid = $licenseid;
         $this->license = $DB->get_record('companylicense', array('id' => $licenseid));
 
-        if (has_capability('block/iomad_company_admin:allocate_licenses', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', context_system::instance())) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -255,7 +255,7 @@ $error = optional_param('error', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:allocate_licenses', $context);
+iomad::require_capability('block/iomad_company_admin:allocate_licenses', $context);
 
 $PAGE->set_context($context);
 
@@ -285,7 +285,7 @@ if ($courseid) {
 $parentlevel = company::get_company_parentnode($companyid);
 
 $licenselist = array();
-if (has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
     // Get all the licenses.
     $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), null, 'id,name,expirydate');

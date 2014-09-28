@@ -47,7 +47,7 @@ $showchart = optional_param('showchart', false, PARAM_BOOL);
 
 require_login($SITE);
 $context = context_system::instance();
-require_capability('local/report_completion:view', $context);
+iomad::require_capability('local/report_completion:view', $context);
 
 if ($firstname) {
     $params['firstname'] = $firstname;
@@ -135,7 +135,7 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance()) ||
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance()) ||
     !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
@@ -176,8 +176,8 @@ $select->label = get_string('choosecompletiontype', 'block_iomad_company_admin')
 $select->formid = 'choosecompletiontype';
 $completiontypeselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_completiontype_selector'));
 
-if (!(has_capability('block/iomad_company_admin:editusers', $context) or
-      has_capability('block/iomad_company_admin:editallusers', $context))) {
+if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
+      iomad::has_capability('block/iomad_company_admin:editallusers', $context))) {
     print_error('nopermissions', 'error', '', 'report on users');
 }
 

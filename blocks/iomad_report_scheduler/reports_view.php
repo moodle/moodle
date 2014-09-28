@@ -175,7 +175,7 @@ $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_report_scheduler', 'block', 'u
 $blockpage->setup($urlparams);
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-require_capability('block/iomad_company_admin:user_create', $context);
+iomad::require_capability('block/iomad_company_admin:user_create', $context);
 
 // Set the companyid to bypass the company select form if possible.
 if ( $companyid == 0 ) {

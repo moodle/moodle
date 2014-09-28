@@ -31,7 +31,7 @@ class block_iomad_reports extends block_base {
             return $this->content;
         }
 
-        if (!has_capability('block/iomad_reports:view', $this->context)) {
+        if (!iomad::has_capability('block/iomad_reports:view', $this->context)) {
             return $this->content;
         }
 
@@ -45,7 +45,7 @@ class block_iomad_reports extends block_base {
         // Loop over reports.
         $this->content->text .= '<div class="iomadlink_container clearfix">';
         foreach ($reports as $report) {
-            if (has_capability("local/$report:view", $this->context)) {
+            if (iomad::has_capability("local/$report:view", $this->context)) {
                 $imgsrc = $OUTPUT->pix_url('logo', "local_$report");
                 $url = new moodle_url("/local/$report/index.php");
                 $name = get_string( 'pluginname', "local_$report" );

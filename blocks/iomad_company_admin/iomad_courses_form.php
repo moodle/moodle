@@ -62,7 +62,7 @@ if ($courseid) {
 
 $systemcontext = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:managecourses', $systemcontext);
+iomad::require_capability('block/iomad_company_admin:managecourses', $systemcontext);
 $PAGE->set_context($systemcontext);
 
 // Set the url.

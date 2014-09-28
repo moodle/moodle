@@ -39,7 +39,7 @@ class company_license_form extends company_moodleform {
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
 
-        if (has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -144,7 +144,7 @@ $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:edit_licenses', $context);
+iomad::require_capability('block/iomad_company_admin:edit_licenses', $context);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

@@ -27,7 +27,7 @@ $dodownload = optional_param('dodownload', 0, PARAM_INT);
 // Check permissions.
 require_login($SITE);
 $context = context_system::instance();
-require_capability('local/report_scorm_overview:view', $context);
+iomad::require_capability('local/report_scorm_overview:view', $context);
 
 // Url stuff.
 $url = new moodle_url('/local/report_scorm_overview/index.php',
@@ -50,7 +50,7 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', $context) ||
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context) ||
     !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;
 } else {

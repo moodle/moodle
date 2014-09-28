@@ -153,7 +153,7 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:company_user', $context);
+iomad::require_capability('block/iomad_company_admin:company_user', $context);
 
 $PAGE->set_context($context);
 

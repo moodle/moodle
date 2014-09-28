@@ -28,7 +28,7 @@ $dodownload = optional_param('dodownload', 0, PARAM_INT);
 // Check permissions.
 require_login($SITE);
 $context = context_system::instance();
-require_capability('local/report_completion:view', $context);
+iomad::require_capability('local/report_completion:view', $context);
 
 $linktext = get_string('user_detail_title', 'local_report_users');
 // Set the url.

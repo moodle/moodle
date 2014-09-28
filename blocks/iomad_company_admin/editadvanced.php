@@ -61,7 +61,7 @@ $blockpage->setup();
 
 if ($id == -1) {
     // Creating new user.
-    require_capability('block/iomad_company_admin:editusers', $systemcontext);
+    iomad::require_capability('block/iomad_company_admin:editusers', $systemcontext);
     $user = new object();
     $user->id = -1;
     $user->auth = 'manual';
@@ -69,7 +69,7 @@ if ($id == -1) {
     $user->deleted = 0;
 } else {
     // Editing existing user.
-    require_capability('block/iomad_company_admin:editusers', $systemcontext);
+    iomad::require_capability('block/iomad_company_admin:editusers', $systemcontext);
     if (!$user = $DB->get_record('user', array('id' => $id))) {
         print_error('invaliduserid');
     }
@@ -278,8 +278,8 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $userfullname     = fullname($user, true);
 
     $link = null;
-    if (has_capability('moodle/course:viewparticipants', $systemcontext) ||
-        has_capability('moodle/site:viewparticipants', $systemcontext)) {
+    if (iomad::has_capability('moodle/course:viewparticipants', $systemcontext) ||
+        iomad::has_capability('moodle/site:viewparticipants', $systemcontext)) {
         $link = new moodle_url("/user/index.php", array('id' => $course->id));
     }
     $PAGE->navbar->add($strparticipants, $link);

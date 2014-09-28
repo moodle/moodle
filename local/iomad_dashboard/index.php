@@ -28,7 +28,7 @@ $company = optional_param('company', '', PARAM_TEXT);
 
 // Check we are allowed to view this page.
 $systemcontext = context_system::instance();
-require_capability( 'local/iomad_dashboard:view', $systemcontext );
+iomad::require_capability( 'local/iomad_dashboard:view', $systemcontext );
 
 // Set the session to a user if they are editing a company other than their own.
 if (!empty($company)) {

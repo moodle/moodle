@@ -51,7 +51,10 @@ class iomad_company_admin {
         // Filter out caps. Only want 'local/report' and ones containing 'iomad'
         $filtered_capabilities = array();
         foreach ($capabilities as $capability) {
-            if ((strpos($capability->capability, 'local/report')===false) && (strpos($capability->capability, 'iomad')===false)) {
+            if ((strpos($capability->capability, 'local/report')===false)
+                    && (strpos($capability->capability, 'iomad')===false)
+                    && (strpos($capability->capability, 'local/email')===false)
+                    ) {
                 continue;
             }
 

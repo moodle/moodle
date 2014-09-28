@@ -24,6 +24,8 @@ require_once(dirname(__FILE__) . '/locallib.php');
 
 // parameters
 $roleid = optional_param('roleid', 0, PARAM_INT);
+$ajaxcap = optional_param('ajaxcap', '', PARAM_CLEAN);
+$ajaxvalue = optional_param('ajaxvalue', '', PARAM_CLEAN);
 
 // Set the companyid
 // (before output in case it redirects)
@@ -32,7 +34,38 @@ $companyid = iomad::get_my_companyid($context);
 
 // access stuff
 require_login();
-require_capability('block/iomad_company_admin:restrict_capabilities', $context);
+iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $context);
+
+// check if ajax callback
+if ($ajaxcap) {
+    error_log('Got it '.$ajaxcap.' '.$ajaxvalue);
+    $parts = explode('.', $ajaxcap);
+    list($companyid, $roleid, $capability) = $parts;
+    
+    // if box is unticked (false) an entry is created (or kept)
+    // if box is ticked (true) any entry is deleted
+    $restriction = $DB->get_record('company_role_restriction', array(
+            'roleid' => $roleid,
+            'companyid' => $companyid,
+            'capability' => $capability,
+    ));
+    if ($ajaxvalue=='false') {
+        if (!$restriction) {
+            $restriction = new stdClass();
+            $restriction->companyid = $companyid;
+            $restriction->roleid = $roleid;
+            $restriction->capability = $capability;
+            $DB->insert_record('company_role_restriction', $restriction);
+        }
+    } else {
+        if ($restriction) {
+            $DB->delete_records('company_role_restriction', array('id' => $restriction->id));
+        }
+    }
+    reload_all_capabilities();
+    die;
+}
+
 $PAGE->set_context($context);
 $PAGE->requires->jquery();
 
@@ -56,6 +89,7 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 if ($roleid) {
     $capabilities = iomad_company_admin::get_iomad_capabilities($roleid, $companyid);
     echo $output->capabilities($capabilities, $roleid, $companyid);
+    echo $output->roles_button($linkurl);
 
 } else {
 
@@ -66,10 +100,10 @@ if ($roleid) {
 ?>
 <script>
 $(".checkbox").change(function() {
-	if (this.checked) {
-		// something here
-		alert("YAYY" + this.value);
-	}
+	$.post("<?php echo $linkurl; ?>", {
+		ajaxcap:this.value,
+		ajaxvalue:this.checked
+	});
 });
 </script>
 <?php

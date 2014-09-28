@@ -25,7 +25,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
 
         // get company info for heading
         $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-        echo '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+        $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
 
         $table = new html_table();
         $table->head = array(
@@ -42,7 +42,8 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        return html_writer::table($table);
+        $out .= html_writer::table($table);
+        return $out;
     }
 
     /**
@@ -54,8 +55,8 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         // get heading
         $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
         $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
-        echo '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
-        echo '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
+        $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
+        $out .= '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
 
         $table = new html_table();
         foreach ($capabilities as $capability) {
@@ -71,7 +72,17 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        return html_writer::table($table);
+        $out .= html_writer::table($table);
+        return $out;
+    }
+    
+    /**
+     * Back to list of roles button
+     */
+    public function roles_button($link) {
+        $out = '<p><a class="btn btn-primary" href="'.$link.'">' . get_string('listroles', 'block_iomad_company_admin') . '</a></p>';
+        
+        return $out;
     }
 
 }

@@ -130,7 +130,7 @@ if (!empty($SESSION->currenteditingcompany)) {
     $companyid = $SESSION->currenteditingcompany;
 } else if (!empty($USER->company)) {
     $companyid = company_user::companyid();
-} else if (!has_capability('local/email:edit', context_system::instance())) {
+} else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
     $blockpage->display_header();
@@ -138,7 +138,7 @@ if (!empty($SESSION->currenteditingcompany)) {
                             'Please select a company from the dropdown first');
 }
 
-require_capability('local/email:send', $context);
+iomad::require_capability('local/email:send', $context);
 
 if ($templateid) {
     $templaterecord = $DB->get_record('email_template',

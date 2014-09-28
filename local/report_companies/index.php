@@ -21,7 +21,7 @@ require_once('lib.php');
 // Check permissions.
 require_login($SITE);
 $context = context_system::instance();
-require_capability('local/report_companies:view', $context);
+iomad::require_capability('local/report_companies:view', $context);
 
 
 // Url stuff.

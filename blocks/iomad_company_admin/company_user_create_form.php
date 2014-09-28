@@ -39,7 +39,7 @@ class user_edit_form extends company_moodleform {
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
 
-        if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = company::get_userlevel($USER);
@@ -131,11 +131,11 @@ class user_edit_form extends company_moodleform {
 
         // Add in company/department manager checkboxes.
         $managerarray = array();
-        if (has_capability('block/iomad_company_admin:assign_department_manager', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', context_system::instance())) {
             $managerarray['0'] = get_string('user', 'block_iomad_company_admin');
             $managerarray['2'] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
-        if (has_capability('block/iomad_company_admin:assign_company_manager', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', context_system::instance())) {
             if (empty($managearray)) {
                 $managerarray['0'] = get_string('user', 'block_iomad_company_admin');
             }
@@ -260,7 +260,7 @@ $createcourses = optional_param_array('currentcourses', null, PARAM_INT);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:user_create', $context);
+iomad::require_capability('block/iomad_company_admin:user_create', $context);
 
 $PAGE->set_context($context);
 
@@ -357,7 +357,7 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
     }
     // Assign the user to the default company department.
     $parentnode = company::get_company_parentnode($companyid);
-    if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+    if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
         $userhierarchylevel = $parentnode->id;
     } else {
         $userlevel = company::get_userlevel($USER);

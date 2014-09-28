@@ -89,10 +89,10 @@ class company {
 
         $returnarray = array('0' => get_string('user', 'block_iomad_company_admin'));
         $systemcontext = context_system::instance();
-        if (has_capability('block/iomad_company_admin:assign_company_manager', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $systemcontext)) {
             $returnarray['1'] = get_string('companymanager', 'block_iomad_company_admin');
         }
-        if (has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {
             $returnarray['2'] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
         return $returnarray;
@@ -168,7 +168,7 @@ class company {
         global $DB, $USER;
 
         // Is this an admin, or a normal user?
-        if (has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
             $companies = $DB->get_recordset('company', null, 'name', '*');
         } else {
             $companies = $DB->get_recordset_sql("SELECT * FROM {company}
@@ -1007,10 +1007,10 @@ class company {
      **/
     public static function can_manage_department($departmentid) {
         global $DB, $USER;
-        if (has_capability('block/iomad_company_admin:edit_all_departments',
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments',
                                     context_system::instance())) {
             return true;
-        } else if (!has_capability('block/iomad_company_admin:edit_departments',
+        } else if (!iomad::has_capability('block/iomad_company_admin:edit_departments',
                                     context_system::instance())) {
             return false;
         } else {

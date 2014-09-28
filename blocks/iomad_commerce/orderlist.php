@@ -46,7 +46,7 @@ $returnurl = $baseurl;
 $blockpage->display_header();
 
 //  Check we can actually do anything on this page.
-require_capability('block/iomad_commerce:admin_view', $context);
+iomad::require_capability('block/iomad_commerce:admin_view', $context);
 
 // Get the number of orders.
 $objectcount = $DB->count_records_sql("SELECT COUNT(*) FROM {invoice} WHERE Status != '" . INVOICESTATUS_BASKET . "'");
@@ -77,7 +77,7 @@ if ($orders = $DB->get_recordset_sql("SELECT
         $table->width = "95%";
 
         foreach ($orders as $order) {
-            if (has_capability('block/iomad_commerce:admin_view', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
                     $editbutton = "<a href='" . new moodle_url('edit_order_form.php', array("id" => $order->id)) . "'>$stredit</a>";
             } else {
                     $editbutton = "";

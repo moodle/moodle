@@ -109,7 +109,7 @@ $companylist = new moodle_url('/blocks/iomad_commerce/orderlist.php', $urlparams
 
 $invoice = get_invoice($invoiceid);
 
-require_capability('block/iomad_commerce:admin_view', $context);
+iomad::require_capability('block/iomad_commerce:admin_view', $context);
 
 // Correct the navbar.
 // Set the name for the page.

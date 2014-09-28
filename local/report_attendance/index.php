@@ -30,7 +30,7 @@ $departmentid = optional_param('departmentid', 0, PARAM_INT);
 // Check permissions.
 require_login($SITE);
 $context = context_system::instance();
-require_capability('local/report_attendance:view', $context);
+iomad::require_capability('local/report_attendance:view', $context);
 
 // Url stuff.
 $url = new moodle_url('/local/report_attendance/index.php');
@@ -52,7 +52,7 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments',
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments',
                     context_system::instance()) ||
     !empty($SESSION->currenteditingcompany)) {
     $userhierarchylevel = $parentlevel->id;

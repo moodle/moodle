@@ -30,7 +30,7 @@ require_once($CFG->dirroot."/local/email/lib.php");
 require_login();
 
 // Can I do this?
-require_capability('block/iomad_approve_access:approve', context_system::instance());
+iomad::require_capability('block/iomad_approve_access:approve', context_system::instance());
 
 $context = context_system::instance();
 $PAGE->set_context($context);

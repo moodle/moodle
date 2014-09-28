@@ -64,7 +64,7 @@ class block_iomad_online_users extends block_base {
         // Calculate if we are in separate groups.
         $isseparategroups = ($this->page->course->groupmode == SEPARATEGROUPS
                              && $this->page->course->groupmodeforce
-                             && !has_capability('moodle/site:accessallgroups', $this->page->context));
+                             && !iomad::has_capability('moodle/site:accessallgroups', $this->page->context));
 
         // Get the user current group.
         $currentgroup = $isseparategroups ? groups_get_course_group($this->page->course) : null;
@@ -150,7 +150,7 @@ class block_iomad_online_users extends block_base {
         $minutes  = floor($timetoshowusers / 60);
 
         // Verify if we can see the list of users, if not just print number of users.
-        if (!has_capability('block/online_users:viewlist', $this->page->context)) {
+        if (!iomad::has_capability('block/online_users:viewlist', $this->page->context)) {
             if (!$usercount = $DB->count_records_sql($csql, $params)) {
                 $usercount = get_string("none");
             }
@@ -184,7 +184,7 @@ class block_iomad_online_users extends block_base {
             // (existing lang string).
             // Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
             $this->content->text .= "<ul class='list'>\n";
-            if (isloggedin() && has_capability('moodle/site:sendmessage', $this->page->context)
+            if (isloggedin() && iomad::has_capability('moodle/site:sendmessage', $this->page->context)
                            && !empty($CFG->messaging) && !isguestuser()) {
                 $canshowicon = true;
             } else {

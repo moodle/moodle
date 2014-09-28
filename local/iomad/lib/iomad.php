@@ -39,7 +39,7 @@ class iomad {
             $companyid = $SESSION->currenteditingcompany;
         } else if (self::is_company_user()) {
             $companyid = self::companyid();
-        } else if (has_capability('block/iomad_company_admin:edit_departments', $context) && $required) {
+        } else if (self::has_capability('block/iomad_company_admin:edit_departments', $context) && $required) {
             redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                                      get_string('pleaseselect', 'block_iomad_company_admin'));
         } else {
@@ -255,7 +255,7 @@ class iomad {
         global $DB, $USER;
 
         // Check if its the client admin.
-        if (has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             return $categories;
         }
 
@@ -808,7 +808,133 @@ class iomad {
                                      WHERE $select $sort",
                                      $params, $page, $recordsperpage);
     }
+    
+    /**
+     * Copied from similarly named function in accesslib.php
+     * modified to check iomad restrictions database.
+     * @param unknown $capability
+     * @param context $context
+     * @param array $accessdata
+     * @return boolean
+     */
+    private static function has_capability_in_accessdata($companyid, $capability, context $context, array &$accessdata) {
+        global $CFG, $DB;
+    
+        // Build $paths as a list of current + all parent "paths" with order bottom-to-top
+        $path = $context->path;
+        $paths = array($path);
+        while($path = rtrim($path, '0123456789')) {
+            $path = rtrim($path, '/');
+            if ($path === '') {
+                break;
+            }
+            $paths[] = $path;
+        }
+    
+        $roles = array();
+        $switchedrole = false;
+    
+        // Find out if role switched
+        if (!empty($accessdata['rsw'])) {
+            // From the bottom up...
+            foreach ($paths as $path) {
+                if (isset($accessdata['rsw'][$path])) {
+                    // Found a switchrole assignment - check for that role _plus_ the default user role
+                    $roles = array($accessdata['rsw'][$path]=>null, $CFG->defaultuserroleid=>null);
+                    $switchedrole = true;
+                    break;
+                }
+            }
+        }
+    
+        if (!$switchedrole) {
+            // get all users roles in this context and above
+            foreach ($paths as $path) {
+                if (isset($accessdata['ra'][$path])) {
+                    foreach ($accessdata['ra'][$path] as $roleid) {
+                        $roles[$roleid] = null;
+                    }
+                }
+            }
+        }
+    
+        // Now find out what access is given to each role, going bottom-->up direction
+        $allowed = false;
+        foreach ($roles as $roleid => $ignored) {
+            foreach ($paths as $path) {
+                if (isset($accessdata['rdef']["{$path}:$roleid"][$capability])) {
+                    $perm = (int)$accessdata['rdef']["{$path}:$roleid"][$capability];
+                    if ($perm === CAP_PROHIBIT) {
+                        // any CAP_PROHIBIT found means no permission for the user
+                        return false;
+                    }
+                    if (is_null($roles[$roleid])) {
+                        $roles[$roleid] = $perm;
+                    }
+                }
+            }
+            // CAP_ALLOW in any role means the user has a permission, we continue only to detect prohibits
+            $restriction = $DB->get_record('company_role_restriction', array(
+                    'companyid' => $companyid,
+                    'roleid' => $roleid,
+                    'capability' => $capability,
+            ));
+            if ($restriction) {
+                return false;
+            }
+            $allowed = ($allowed or $roles[$roleid] === CAP_ALLOW);
+        }
+    
+        return $allowed;
+    }
+    
+    /**
+     * IOMAD version 
+     * @param unknown $capability
+     * @param context $context
+     */
+    public static function has_capability($capability, context $context) {
+        global $USER;
+        
+        // If original version says no then it's no.
+        // (We also rely on this doing a bunch of sanity checks, so we don't have to)
+        if (!has_capability($capability, $context)) {
+            return false;
+        }
+        
+        // Check user's company. If no company then it must be true.
+        $companyid = self::companyid();
+        
+        //echo "<pre>$companyid"; die;
+        //return true;
+        
+        if (!$companyid) {
+            return true;
+        }
+        
+        // Probably need to get accessdata (again), so...
+        if (!isset($USER->access)) {
+            load_all_capabilities();
+        }
+        $access =& $USER->access;
+        
+        return self::has_capability_in_accessdata($companyid, $capability, $context, $access);
+    }
+    
+    /**
+     * Iomad version of require_capability
+     * @param unknown $capability
+     * @param context $context
+     * @throws required_capability_exception
+     */
+    public static function require_capability($capability, context $context) {
+        if (!self::has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', 'local_iomad');
+        }
+    }
 }
+
+
 
 /**
  * User Filter form used on the Iomad pages.

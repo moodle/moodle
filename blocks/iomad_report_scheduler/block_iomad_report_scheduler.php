@@ -31,7 +31,7 @@ class block_iomad_report_scheduler extends block_base {
         global $USER, $CFG, $DB, $OUTPUT;
 
         // Only display if you have the correct capability.
-        if (!has_capability('block/iomad_report_scheduler:view', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_report_scheduler:view', context_system::instance())) {
             return;
         }
 
