@@ -928,20 +928,19 @@ M.core_availability.Item.prototype.pluginNode = null;
 M.core_availability.EyeIcon = function(individual, shown) {
     this.individual = individual;
     this.span = Y.Node.create('<a class="availability-eye" href="#" role="button">');
-    var iconBase = M.cfg.wwwroot + '/theme/image.php/' + M.cfg.theme + '/core/' + M.cfg.themerev;
     var icon = Y.Node.create('<img />');
     this.span.appendChild(icon);
 
     // Set up button text and icon.
     var suffix = individual ? '_individual' : '_all';
     var setHidden = function() {
-        icon.set('src', iconBase + '/i/show');
+        icon.set('src', M.util.image_url('i/show', 'core'));
         icon.set('alt', M.str.availability['hidden' + suffix]);
         this.span.set('title', M.str.availability['hidden' + suffix] + ' \u2022 ' +
                 M.str.availability.show_verb);
     };
     var setShown = function() {
-        icon.set('src', iconBase + '/i/hide');
+        icon.set('src', M.util.image_url('i/hide', 'core'));
         icon.set('alt', M.str.availability['shown' + suffix]);
         this.span.set('title', M.str.availability['shown' + suffix] + ' \u2022 ' +
                 M.str.availability.hide_verb);
@@ -1006,9 +1005,8 @@ M.core_availability.EyeIcon.prototype.isHidden = function() {
 M.core_availability.DeleteIcon = function(toDelete) {
     this.span = Y.Node.create('<a class="availability-delete" href="#" title="' +
             M.str.moodle['delete'] + '" role="button">');
-    var img = Y.Node.create('<img src="' +
-            M.cfg.wwwroot + '/theme/image.php/' + M.cfg.theme + '/core/' + M.cfg.themerev +
-            '/t/delete" alt="' + M.str.moodle['delete'] + '" />');
+    var img = Y.Node.create('<img src="' + M.util.image_url('t/delete', 'core') +
+            '" alt="' + M.str.moodle['delete'] + '" />');
     this.span.appendChild(img);
     var click = function(e) {
         e.preventDefault();
