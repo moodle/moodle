@@ -269,3 +269,38 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "Test post subject two"
     And I follow "Reply"
     And the field "Discussion subscription" matches value "I don't want email copies of posts to this discussion"
+
+ Scenario: A guest should not be able to subscribe to a discussion
+   Given I click on "Home" "link" in the "Navigation" "block" 
+   And I add a "Forum" to section "1" and I fill the form with:
+     | Forum name        | Test forum name |
+     | Forum type        | Standard forum for general use |
+     | Description       | Test forum description |
+   And I add a new discussion to "Test forum name" forum with:
+     | Subject | Test post subject one |
+     | Message | Test post message one |
+   And I log out
+   When I log in as "guest"
+   And I follow "Test forum name"
+   Then "Not subscribed. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
+   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
+   And I follow "Test post subject one"
+   And "Not subscribed. Click to subscribe." "link" should not exist
+   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
+
+ Scenario: A user who is not logged in should not be able to subscribe to a discussion
+   Given I click on "Home" "link" in the "Navigation" "block" 
+   And I add a "Forum" to section "1" and I fill the form with:
+     | Forum name        | Test forum name |
+     | Forum type        | Standard forum for general use |
+     | Description       | Test forum description |
+   And I add a new discussion to "Test forum name" forum with:
+     | Subject | Test post subject one |
+     | Message | Test post message one |
+   And I log out
+   When I follow "Test forum name"
+   Then "Not subscribed. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
+   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
+   And I follow "Test post subject one"
+   And "Not subscribed. Click to subscribe." "link" should not exist
+   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist

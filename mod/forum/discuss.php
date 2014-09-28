@@ -230,7 +230,7 @@
     echo $OUTPUT->header();
 
     $headingvalue = format_string($forum->name);
-    if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
+    if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
             $headingvalue .= '&nbsp;';
