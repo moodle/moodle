@@ -63,10 +63,11 @@ class controller {
      * Install language packs provided
      *
      * @param string|array $langs array of langcodes or individual langcodes
+     * @param bool $updating true if updating the langpacks
      * @return int false if an error encountered or
      * @throws \moodle_exception when error is encountered installing langpack
      */
-    public function install_languagepacks($langs) {
+    public function install_languagepacks($langs, $updating = false) {
         global $CFG;
 
         $this->installer->set_queue($langs);
@@ -84,8 +85,14 @@ class controller {
                     throw new \moodle_exception('remotedownloaderror', 'error', $a);
                     break;
                 case \lang_installer::RESULT_INSTALLED:
-                    $this->info[] = get_string('langpackinstalled', 'tool_langimport', $langcode);
                     $updatedpacks++;
+                    if ($updating) {
+                        event\langpack_updated::event_with_langcode($langcode)->trigger();
+                        $this->info[] = get_string('langpackupdated', 'tool_langimport', $langcode);
+                    } else {
+                        $this->info[] = get_string('langpackinstalled', 'tool_langimport', $langcode);
+                        event\langpack_imported::event_with_langcode($langcode)->trigger();
+                    }
                     break;
                 case \lang_installer::RESULT_UPTODATE:
                     $this->info[] = get_string('langpackuptodate', 'tool_langimport', $langcode);
@@ -118,6 +125,7 @@ class controller {
 
         if ($rm1 or $rm2) {
             $this->info[] = get_string('langpackremoved', 'tool_langimport', $lang);
+            event\langpack_removed::event_with_langcode($lang)->trigger();
             return true;
         } else {    // Nothing deleted, possibly due to permission error.
             $this->errors[] = 'An error has occurred, language pack is not completely uninstalled, please check file permissions';
@@ -195,7 +203,7 @@ class controller {
         }
 
         try {
-            $updated = $this->install_languagepacks($neededlangs);
+            $updated = $this->install_languagepacks($neededlangs, true);
         } catch (\moodle_exception $e) {
             return false;
         }
