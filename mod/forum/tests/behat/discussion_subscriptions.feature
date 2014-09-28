@@ -271,7 +271,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And the field "Discussion subscription" matches value "I don't want email copies of posts to this discussion"
 
  Scenario: A guest should not be able to subscribe to a discussion
-   Given I click on "Home" "link" in the "Navigation" "block" 
+   Given I click on "Home" "link" in the "Navigation" "block"
    And I add a "Forum" to section "1" and I fill the form with:
      | Forum name        | Test forum name |
      | Forum type        | Standard forum for general use |
@@ -289,7 +289,7 @@ Feature: A user can control their own subscription preferences for a discussion
    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
 
  Scenario: A user who is not logged in should not be able to subscribe to a discussion
-   Given I click on "Home" "link" in the "Navigation" "block" 
+   Given I click on "Home" "link" in the "Navigation" "block"
    And I add a "Forum" to section "1" and I fill the form with:
      | Forum name        | Test forum name |
      | Forum type        | Standard forum for general use |
