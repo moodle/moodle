@@ -473,11 +473,8 @@ class mod_forum_external extends external_api {
             $user->id = $post->userid;
             $user = username_load_fields_from_object($user, $post);
             $post->userfullname = fullname($user, $canviewfullname);
-            $post->userpictureurl = moodle_url::make_pluginfile_url(
-                    context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1');
-            // Fix the pluginfile.php link.
-            $post->userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php",
-                $post->userpictureurl);
+            $post->userpictureurl = moodle_url::make_webservice_pluginfile_url(
+                    context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1')->out(false);
 
             // Rewrite embedded images URLs.
             list($post->message, $post->messageformat) =
@@ -491,12 +488,13 @@ class mod_forum_external extends external_api {
                 if ($files = $fs->get_area_files($modcontext->id, 'mod_forum', 'attachment', $post->id, "filename", false)) {
                     foreach ($files as $file) {
                         $filename = $file->get_filename();
+                        $fileurl = moodle_url::make_webservice_pluginfile_url(
+                                        $modcontext->id, 'mod_forum', 'attachment', $post->id, '/', $filename);
 
                         $post->attachments[] = array(
                             'filename' => $filename,
                             'mimetype' => $file->get_mimetype(),
-                            'fileurl'  => file_encode_url($CFG->wwwroot.'/webservice/pluginfile.php',
-                                            '/'.$modcontext->id.'/mod_forum/attachment/'.$post->id.'/'.$filename)
+                            'fileurl'  => $fileurl->out(false)
                         );
                     }
                 }

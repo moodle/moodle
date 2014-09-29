@@ -465,10 +465,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'warnings' => array(),
         );
 
-        $userpictureurl = moodle_url::make_pluginfile_url(
-            context_user::instance($discussion1reply2->userid)->id, 'user', 'icon', null, '/', 'f1');
-        // Fix the pluginfile.php link.
-        $userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php", $userpictureurl);
+        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
+            context_user::instance($discussion1reply2->userid)->id, 'user', 'icon', null, '/', 'f1')->out(false);
 
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply2->id,
@@ -493,10 +491,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'userpictureurl' => $userpictureurl
         );
 
-        $userpictureurl = moodle_url::make_pluginfile_url(
-            context_user::instance($discussion1reply1->userid)->id, 'user', 'icon', null, '/', 'f1');
-        // Fix the pluginfile.php link.
-        $userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php", $userpictureurl);
+        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
+            context_user::instance($discussion1reply1->userid)->id, 'user', 'icon', null, '/', 'f1')->out(false);
 
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply1->id,
