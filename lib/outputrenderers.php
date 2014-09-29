@@ -2956,7 +2956,7 @@ EOD;
         $usertextcontents = $opts->metadata['userfullname'];
 
         // Other user.
-        if ($opts->metadata['asotheruser']) {
+        if (!empty($opts->metadata['asotheruser'])) {
             $avatarcontents .= html_writer::span(
                 $opts->metadata['realuseravatar'],
                 'avatar realuser'
@@ -2977,7 +2977,7 @@ EOD;
         }
 
         // Role.
-        if ($opts->metadata['asotherrole']) {
+        if (!empty($opts->metadata['asotherrole'])) {
             $role = core_text::strtolower(preg_replace('#[ ]+#', '-', trim($opts->metadata['rolename'])));
             $usertextcontents .= html_writer::span(
                 get_string(
@@ -2993,7 +2993,7 @@ EOD;
         }
 
         // MNet.
-        if ($opts->metadata['asmnetuser']) {
+        if (!empty($opts->metadata['asmnetuser'])) {
             $mnet = strtolower(preg_replace('#[ ]+#', '-', trim($opts->metadata['mnetidprovidername'])));
             $usertextcontents .= html_writer::span(
                 get_string(
@@ -3019,9 +3019,13 @@ EOD;
         $am->set_alignment(action_menu::TR, action_menu::BR);
         if ($withlinks) {
             foreach ($opts->navitems as $key => $value) {
+                $pix = null;
+                if (isset($value->pix)) {
+                    $pix = new pix_icon($value->pix, $value->title, null);
+                }
                 $al = new action_menu_link_secondary(
                     $value->url,
-                    new pix_icon($value->pix, $value->title, null),
+                    $pix,
                     $value->title,
                     array('class' => 'icon')
                 );

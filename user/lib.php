@@ -683,8 +683,9 @@ function user_get_user_navigation_info($user, $page) {
 
         // Build a list of items for a guest.
         $login = new stdClass();
-        $login->url = get_login_url();
+        $login->url = new moodle_url(get_login_url());
         $login->title = get_string('login');
+        // TODO MDL-47457: we should be setting a login icon here.
         $returnobject->navitems[] = $login;
 
     } else {
