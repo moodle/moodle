@@ -46,7 +46,7 @@ if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', cont
 }
 
 $PAGE->set_course($course);
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_url('/enrol/index.php', array('id'=>$course->id));
 
 // do not allow enrols when in login-as session
