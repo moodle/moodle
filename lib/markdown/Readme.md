@@ -1,7 +1,7 @@
 PHP Markdown
 ============
 
-PHP Markdown Lib 1.4.0 - 29 Nov 2013
+PHP Markdown Lib 1.4.1 - 4 May 2013
 
 by Michel Fortin  
 <http://michelf.ca/>
@@ -163,6 +163,29 @@ too.
 Version History
 ---------------
 
+PHP Markdown Lib 1.4.1 (4 May 2014)
+
+*	The HTML block parser will now treat `<figure>` as a block-level element
+	(as it should) and no longer wrap it in `<p>` or parse it's content with 
+	the as Markdown syntax (although with Extra you can use `markdown="1"`
+	if you wish to use the Markdown syntax inside it).
+
+*	The content of `<style>` elements will now be left alone, its content
+	won't be interpreted as Markdown.
+
+*	Corrected an bug where some inline links with spaces in them would not
+	work even when surounded with angle brackets:
+	
+		[link](<s p a c e s>)
+
+*	Fixed an issue where email addresses with quotes in them would not always
+	have the quotes escaped in the link attribute, causing broken links (and
+	invalid HTML).
+
+*	Fixed the case were a link definition following a footnote definition would
+	be swallowed by the footnote unless it was separated by a blank line.
+
+
 PHP Markdown Lib 1.4.0 (29 Nov 2013)
 
 *	Added support for the `tel:` URL scheme in automatic links.
@@ -233,7 +256,7 @@ Copyright and License
 ---------------------
 
 PHP Markdown Lib
-Copyright (c) 2004-2013 Michel Fortin  
+Copyright (c) 2004-2014 Michel Fortin
 <http://michelf.ca/>  
 All rights reserved.
 
