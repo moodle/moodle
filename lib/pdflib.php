@@ -22,12 +22,29 @@
  *
  * The default location for fonts that are included with TCPDF is
  * lib/tcpdf/fonts/. If PDF_CUSTOM_FONT_PATH exists, this directory
- * will be used instead of lib/tcpdf/fonts/. If there is only one font
- * present in PDF_CUSTOM_FONT_PATH, the font is used as the default
- * font.
+ * will be used instead of lib/tcpdf/fonts/, the default location is
+ * $CFG->dataroot.'/fonts/'.
  *
- * See lib/tcpdf/fonts/README for details on how to convert fonts for use
- * with TCPDF.
+ * You should always copy all fonts from lib/tcpdf/fonts/ to your
+ * PDF_CUSTOM_FONT_PATH and then add extra fonts. Alternatively
+ * you may download all TCPDF fonts from http://www.tcpdf.org/download.php
+ * and extract them to PDF_CUSTOM_FONT_PATH directory.
+ *
+ * You can specify your own default font family in config.php
+ * by defining PDF_DEFAULT_FONT constant there.
+ *
+ * If you want to add True Type fonts such as "Arial Unicode MS",
+ * you need to create a simple script and then execute it, it should add
+ * new file to your fonts directory:
+ * <code>
+ *   <?php
+ *   require('config.php');
+ *   require_once($CFG->libdir . '/pdflib.php');
+ *   TCPDF_FONTS::addTTFfont('/full_path_to/ARIALUNI.TTF', 'TrueTypeUnicode');
+ * </code>
+ * This script will convert the TTF file to format compatible with TCPDF.
+ *
+ * Please note you need to have appropriate license to use the font files on your server!
  *
  * Example usage:
  * <code>
@@ -46,25 +63,70 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** defines the site-specific location of fonts */
-define('PDF_CUSTOM_FONT_PATH', $CFG->dataroot.'/fonts/');
+if (!defined('PDF_CUSTOM_FONT_PATH')) {
+    /** Defines the site-specific location of fonts. */
+    define('PDF_CUSTOM_FONT_PATH', $CFG->dataroot.'/fonts/');
+}
 
-/** default font to be used if there are more of them available */
-define('PDF_DEFAULT_FONT', 'FreeSerif');
+if (!defined('PDF_DEFAULT_FONT')) {
+    /** Default font to be used. */
+    define('PDF_DEFAULT_FONT', 'FreeSerif');
+}
 
 /** tell tcpdf it is configured here instead of in its own config file */
 define('K_TCPDF_EXTERNAL_CONFIG', 1);
 
 // The configuration constants needed by tcpdf follow
 
+/**
+ * Init K_PATH_FONTS and PDF_FONT_NAME_MAIN constant.
+ *
+ * Unfortunately this hack is necessary because the constants need
+ * to be defined before inclusion of the tcpdf.php file.
+ */
+function tcpdf_init_k_font_path() {
+    global $CFG;
+
+    $defaultfonts = $CFG->dirroot.'/lib/tcpdf/fonts/';
+
+    if (!defined('K_PATH_FONTS')) {
+        if (is_dir(PDF_CUSTOM_FONT_PATH)) {
+            // NOTE:
+            //   There used to be an option to have just one file and having it set as default
+            //   but that does not make sense any more because add-ons using standard fonts
+            //   would fail very badly, also font families consist of multiple php files for
+            //   regular, bold, italic, etc.
+
+            // Check for some standard font files if present and if not do not use the custom path.
+            $somestandardfiles = array('courier',  'helvetica', 'times', 'symbol', 'zapfdingbats', 'freeserif', 'freesans');
+            $missing = false;
+            foreach ($somestandardfiles as $file) {
+                if (!file_exists(PDF_CUSTOM_FONT_PATH . $file . '.php')) {
+                    $missing = true;
+                    break;
+                }
+            }
+            if ($missing) {
+                define('K_PATH_FONTS', $defaultfonts);
+            } else {
+                define('K_PATH_FONTS', PDF_CUSTOM_FONT_PATH);
+            }
+        } else {
+            define('K_PATH_FONTS', $defaultfonts);
+        }
+    }
+
+    if (!defined('PDF_FONT_NAME_MAIN')) {
+        define('PDF_FONT_NAME_MAIN', strtolower(PDF_DEFAULT_FONT));
+    }
+}
+tcpdf_init_k_font_path();
+
 /** tcpdf installation path */
 define('K_PATH_MAIN', $CFG->dirroot.'/lib/tcpdf/');
 
 /** URL path to tcpdf installation folder */
 define('K_PATH_URL', $CFG->wwwroot . '/lib/tcpdf/');
-
-/** path for PDF fonts */
-define('K_PATH_FONTS', K_PATH_MAIN . 'fonts/');
 
 /** cache directory for temporary files (full path) */
 define('K_PATH_CACHE', $CFG->cachedir . '/tcpdf/');
@@ -106,20 +168,6 @@ class pdf extends TCPDF {
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
 
-        if (is_dir(PDF_CUSTOM_FONT_PATH)) {
-            $fontfiles = $this->_getfontfiles(PDF_CUSTOM_FONT_PATH);
-
-            if (count($fontfiles) == 1) {
-                $autofontname = substr($fontfiles[0], 0, -4);
-                $this->AddFont($autofontname, '', $autofontname.'.php');
-                $this->SetFont($autofontname);
-            } else if (count($fontfiles == 0)) {
-                $this->SetFont(PDF_DEFAULT_FONT);
-            }
-        } else {
-            $this->SetFont(PDF_DEFAULT_FONT);
-        }
-
         // theses replace the tcpdf's config/lang/ definitions
         $this->l['w_page']          = get_string('page');
         $this->l['a_meta_language'] = current_language();
@@ -145,36 +193,61 @@ class pdf extends TCPDF {
     }
 
     /**
-     * Return fonts path
-     * Overriding TCPDF::_getfontpath()
-     *
-     * @global object
+     * Is this font family one of core fonts?
+     * @param string $fontfamily
+     * @return bool
      */
-    protected function _getfontpath() {
-        global $CFG;
-
-        if (is_dir(PDF_CUSTOM_FONT_PATH)
-                    && count($this->_getfontfiles(PDF_CUSTOM_FONT_PATH)) > 0) {
-            $fontpath = PDF_CUSTOM_FONT_PATH;
-        } else {
-            $fontpath = K_PATH_FONTS;
-        }
-        return $fontpath;
+    public function is_core_font_family($fontfamily) {
+        return isset($this->CoreFonts[$fontfamily]);
     }
 
     /**
-     * Get the .php files for the fonts
+     * Returns list of font families and types of fonts.
+     *
+     * @return array multidimensional array with font families as keys and B, I, BI and N as values.
      */
-    protected function _getfontfiles($fontdir) {
-        $dirlist = get_directory_list($fontdir);
-        $fontfiles = array();
-
-        foreach ($dirlist as $file) {
-            if (substr($file, -4) == '.php') {
-                array_push($fontfiles, $file);
+    public function get_font_families() {
+        $families = array();
+        foreach ($this->fontlist as $font) {
+            if (strpos($font, 'uni2cid') === 0) {
+                // This is not an font file.
+                continue;
             }
+            if (strpos($font, 'cid0') === 0) {
+                // These do not seem to work with utf-8, better ignore them for now.
+                continue;
+            }
+            if (substr($font, -2) === 'bi') {
+                $family = substr($font, 0, -2);
+                if (in_array($family, $this->fontlist)) {
+                    $families[$family]['BI'] = 'BI';
+                    continue;
+                }
+            }
+            if (substr($font, -1) === 'i') {
+                $family = substr($font, 0, -1);
+                if (in_array($family, $this->fontlist)) {
+                    $families[$family]['I'] = 'I';
+                    continue;
+                }
+            }
+            if (substr($font, -1) === 'b') {
+                $family = substr($font, 0, -1);
+                if (in_array($family, $this->fontlist)) {
+                    $families[$family]['B'] = 'B';
+                    continue;
+                }
+            }
+            // This must be a Family or incomplete set of fonts present.
+            $families[$font]['R'] = 'R';
         }
-        return $fontfiles;
-    }
 
+        // Sort everything consistently.
+        ksort($families);
+        foreach ($families as $k => $v) {
+            krsort($families[$k]);
+        }
+
+        return $families;
+    }
 }
