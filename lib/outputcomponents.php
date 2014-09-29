@@ -2645,6 +2645,30 @@ class custom_menu_item implements renderable {
     }
 
     /**
+     * Removes a custom menu item that is a child or descendant to the current menu.
+     *
+     * Returns true if child was found and removed.
+     *
+     * @param custom_menu_item $menuitem
+     * @return bool
+     */
+    public function remove_child(custom_menu_item $menuitem) {
+        $removed = false;
+        if (($key = array_search($menuitem, $this->children)) !== false) {
+            unset($this->children[$key]);
+            $this->children = array_values($this->children);
+            $removed = true;
+        } else {
+            foreach ($this->children as $child) {
+                if ($removed = $child->remove_child($menuitem)) {
+                    break;
+                }
+            }
+        }
+        return $removed;
+    }
+
+    /**
      * Returns the text for this item
      * @return string
      */
@@ -2812,79 +2836,63 @@ class custom_menu extends custom_menu_item {
      * @return array
      */
     public static function convert_text_to_menu_nodes($text, $language = null) {
+        $root = new custom_menu();
+        $lastitem = $root;
+        $lastdepth = 0;
+        $hiddenitems = array();
         $lines = explode("\n", $text);
-        $children = array();
-        $lastchild = null;
-        $lastdepth = null;
-        $lastsort = 0;
-        foreach ($lines as $line) {
+        foreach ($lines as $linenumber => $line) {
             $line = trim($line);
-            $bits = explode('|', $line, 4);    // name|url|title|langs
-            if (!array_key_exists(0, $bits) or empty($bits[0])) {
-                // Every item must have a name to be valid
+            if (strlen($line) == 0) {
                 continue;
-            } else {
-                $bits[0] = ltrim($bits[0],'-');
             }
-            if (!array_key_exists(1, $bits) or empty($bits[1])) {
-                // Set the url to null
-                $bits[1] = null;
-            } else {
-                // Make sure the url is a moodle url
-                $bits[1] = new moodle_url(trim($bits[1]));
-            }
-            if (!array_key_exists(2, $bits) or empty($bits[2])) {
-                // Set the title to null seeing as there isn't one
-                $bits[2] = $bits[0];
-            }
-            if (!array_key_exists(3, $bits) or empty($bits[3])) {
-                // The item is valid for all languages
-                $itemlangs = null;
-            } else {
-                $itemlangs = array_map('trim', explode(',', $bits[3]));
-            }
-            if (!empty($language) and !empty($itemlangs)) {
-                // check that the item is intended for the current language
-                if (!in_array($language, $itemlangs)) {
-                    continue;
-                }
-            }
-            // Set an incremental sort order to keep it simple.
-            $lastsort++;
-            if (preg_match('/^(\-*)/', $line, $match) && $lastchild != null && $lastdepth !== null) {
-                $depth = strlen($match[1]);
-                if ($depth < $lastdepth) {
-                    $difference = $lastdepth - $depth;
-                    if ($lastdepth > 1 && $lastdepth != $difference) {
-                        $tempchild = $lastchild->get_parent();
-                        for ($i =0; $i < $difference; $i++) {
-                            $tempchild = $tempchild->get_parent();
-                        }
-                        $lastchild = $tempchild->add($bits[0], $bits[1], $bits[2], $lastsort);
-                    } else {
-                        $depth = 0;
-                        $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $lastsort);
-                        $children[] = $lastchild;
-                    }
-                } else if ($depth > $lastdepth) {
-                    $depth = $lastdepth + 1;
-                    $lastchild = $lastchild->add($bits[0], $bits[1], $bits[2], $lastsort);
-                } else {
-                    if ($depth == 0) {
-                        $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $lastsort);
-                        $children[] = $lastchild;
-                    } else {
-                        $lastchild = $lastchild->get_parent()->add($bits[0], $bits[1], $bits[2], $lastsort);
+            // Parse item settings.
+            $itemtext = null;
+            $itemurl = null;
+            $itemtitle = null;
+            $itemvisible = true;
+            $settings = explode('|', $line);
+            foreach ($settings as $i => $setting) {
+                $setting = trim($setting);
+                if (!empty($setting)) {
+                    switch ($i) {
+                        case 0:
+                            $itemtext = ltrim($setting, '-');
+                            $itemtitle = $itemtext;
+                            break;
+                        case 1:
+                            $itemurl = new moodle_url($setting);
+                            break;
+                        case 2:
+                            $itemtitle = $setting;
+                            break;
+                        case 3:
+                            if (!empty($language)) {
+                                $itemlanguages = array_map('trim', explode(',', $setting));
+                                $itemvisible &= in_array($language, $itemlanguages);
+                            }
+                            break;
                     }
                 }
-            } else {
-                $depth = 0;
-                $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $lastsort);
-                $children[] = $lastchild;
             }
-            $lastdepth = $depth;
+            // Get depth of new item.
+            preg_match('/^(\-*)/', $line, $match);
+            $itemdepth = strlen($match[1]) + 1;
+            // Find parent item for new item.
+            while (($lastdepth - $itemdepth) >= 0) {
+                $lastitem = $lastitem->get_parent();
+                $lastdepth--;
+            }
+            $lastitem = $lastitem->add($itemtext, $itemurl, $itemtitle, $linenumber + 1);
+            $lastdepth++;
+            if (!$itemvisible) {
+                $hiddenitems[] = $lastitem;
+            }
         }
-        return $children;
+        foreach ($hiddenitems as $item) {
+            $item->parent->remove_child($item);
+        }
+        return $root->get_children();
     }
 
     /**

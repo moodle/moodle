@@ -332,7 +332,9 @@ EOF;
 Start|http://school.info
 Info
 -English|http://school.info/en|Information in English|en
+--Nested under English
 -Deutsch|http://school.info/de|Informationen in deutscher Sprache|de,de_du,de_kids
+--Nested under Deutsch
 EOF;
 
         // The menu without multilang support.
@@ -383,7 +385,7 @@ EOF;
         $this->assertTrue($menu->has_children());
         $this->assertCount(2, $menu->get_children());
 
-        $children = $infomenu->get_children();
+        $children = $menu->get_children();
         $infomenu = array_pop( $children);
         $this->assertFalse($infomenu->has_children());
     }
