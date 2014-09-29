@@ -1,7 +1,7 @@
 <?php
 /*
-  V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
- 
+  V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+
   First cut at the Netezza Driver by Josh Eldridge joshuae74#hotmail.com
  Based on the previous postgres drivers.
  http://www.netezza.com/
@@ -20,7 +20,7 @@ if (!defined('ADODB_DIR')) die();
 include_once(ADODB_DIR.'/drivers/adodb-postgres64.inc.php');
 
 class ADODB_netezza extends ADODB_postgres64 {
-    var $databaseType = 'netezza';	
+    var $databaseType = 'netezza';
 	var $dataProvider = 'netezza';
 	var $hasInsertID = false;
 	var $_resultid = false;
@@ -34,11 +34,11 @@ class ADODB_netezza extends ADODB_postgres64 {
 	var $blobEncodeType = 'C';
 	var $metaColumnsSQL = "SELECT attname, atttype FROM _v_relation_column_def WHERE name = '%s' AND attnum > 0 ORDER BY attnum";
 	var $metaColumnsSQL1 = "SELECT attname, atttype FROM _v_relation_column_def WHERE name = '%s' AND attnum > 0 ORDER BY attnum";
-	// netezza doesn't have keys. it does have distributions, so maybe this is 
+	// netezza doesn't have keys. it does have distributions, so maybe this is
 	// something that can be pulled from the system tables
 	var $metaKeySQL = "";
 	var $hasAffectedRows = true;
-	var $hasLimit = true;	
+	var $hasLimit = true;
 	var $true = 't';		// string that represents TRUE for a database
 	var $false = 'f';		// string that represents FALSE for a database
 	var $fmtDate = "'Y-m-d'";	// used by DBDate() as the default date format used by the database
@@ -47,52 +47,52 @@ class ADODB_netezza extends ADODB_postgres64 {
 	var $autoRollback = true; // apparently pgsql does not autorollback properly before 4.3.4
 							// http://bugs.php.net/bug.php?id=25404
 
-							
-	function ADODB_netezza() 
+
+	function ADODB_netezza()
 	{
-	
+
 	}
-	
-	function MetaColumns($table,$upper=true) 
+
+	function MetaColumns($table,$upper=true)
 	{
-	
+
 	// Changed this function to support Netezza which has no concept of keys
 	// could posisbly work on other things from the system table later.
-	
+
 	global $ADODB_FETCH_MODE;
-	
+
 		$table = strtolower($table);
 
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
-		
+
 		$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table,$table));
 		if (isset($savem)) $this->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
-		
+
 		if ($rs === false) return false;
 
 		$retarr = array();
-		while (!$rs->EOF) { 	
+		while (!$rs->EOF) {
 			$fld = new ADOFieldObject();
 			$fld->name = $rs->fields[0];
-			
-			// since we're returning type and length as one string, 
+
+			// since we're returning type and length as one string,
 			// split them out here.
-			
+
 			if ($first = strstr($rs->fields[1], "(")) {
 			 $fld->max_length = trim($first, "()");
 			} else {
 			 $fld->max_length = -1;
 			}
-		
+
 			if ($first = strpos($rs->fields[1], "(")) {
 			 $fld->type = substr($rs->fields[1], 0, $first);
 			} else {
 			 $fld->type = $rs->fields[1];
 			}
-			
+
 			switch ($fld->type) {
 			 case "byteint":
 			 case "boolean":
@@ -116,20 +116,20 @@ class ADODB_netezza extends ADODB_postgres64 {
 			 $fld->max_length = 12;
 			 break;
 			}
-			
-			if ($ADODB_FETCH_MODE == ADODB_FETCH_NUM) $retarr[] = $fld;	
+
+			if ($ADODB_FETCH_MODE == ADODB_FETCH_NUM) $retarr[] = $fld;
 			else $retarr[($upper) ? strtoupper($fld->name) : $fld->name] = $fld;
-			
+
 			$rs->MoveNext();
 		}
 		$rs->Close();
-		return $retarr;	
-		
+		return $retarr;
+
 	}
 
-		
+
 }
-	
+
 /*--------------------------------------------------------------------------------------
 	 Class Name: Recordset
 --------------------------------------------------------------------------------------*/
@@ -138,10 +138,10 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 {
 	var $databaseType = "netezza";
 	var $canSeek = true;
-	
-	function ADORecordSet_netezza($queryID,$mode=false) 
+
+	function ADORecordSet_netezza($queryID,$mode=false)
 	{
-		if ($mode === false) { 
+		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
 			$mode = $ADODB_FETCH_MODE;
 		}
@@ -149,7 +149,7 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 		{
 		case ADODB_FETCH_NUM: $this->fetchMode = PGSQL_NUM; break;
 		case ADODB_FETCH_ASSOC:$this->fetchMode = PGSQL_ASSOC; break;
-		
+
 		case ADODB_FETCH_DEFAULT:
 		case ADODB_FETCH_BOTH:
 		default: $this->fetchMode = PGSQL_BOTH; break;
@@ -157,7 +157,7 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 		$this->adodbFetchMode = $mode;
 		$this->ADORecordSet($queryID);
 	}
-	
+
 	// _initrs modified to disable blob handling
 	function _initrs()
 	{
@@ -167,4 +167,3 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 	}
 
 }
-?>

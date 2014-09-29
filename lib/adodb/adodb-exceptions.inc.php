@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version V5.18 3 Sep 2012   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+ * @version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
  * Released under both BSD license and Lesser GPL library license.
  * Whenever there is any discrepancy between the two licenses,
  * the BSD license will take precedence.
@@ -14,7 +14,7 @@
  */
 
 
-if (!defined('ADODB_ERROR_HANDLER_TYPE')) define('ADODB_ERROR_HANDLER_TYPE',E_USER_ERROR); 
+if (!defined('ADODB_ERROR_HANDLER_TYPE')) define('ADODB_ERROR_HANDLER_TYPE',E_USER_ERROR);
 define('ADODB_ERROR_HANDLER','adodb_throw');
 
 class ADODB_Exception extends Exception {
@@ -24,7 +24,7 @@ var $sql = '';
 var $params = '';
 var $host = '';
 var $database = '';
-	
+
 	function __construct($dbms, $fn, $errno, $errmsg, $p1, $p2, $thisConnection)
 	{
 		switch($fn) {
@@ -33,7 +33,7 @@ var $database = '';
 			$this->params = $p2;
 			$s = "$dbms error: [$errno: $errmsg] in $fn(\"$p1\")\n";
 			break;
-	
+
 		case 'PCONNECT':
 		case 'CONNECT':
 			$user = $thisConnection->user;
@@ -43,7 +43,7 @@ var $database = '';
 			$s = "$dbms error: [$errno: $errmsg] in $fn($p1, $p2)\n";
 			break;
 		}
-	
+
 		$this->dbms = $dbms;
 		if ($thisConnection) {
 			$this->host = $thisConnection->host;
@@ -51,7 +51,7 @@ var $database = '';
 		}
 		$this->fn = $fn;
 		$this->msg = $errmsg;
-				
+
 		if (!is_numeric($errno)) $errno = -1;
 		parent::__construct($s,$errno);
 	}
@@ -71,12 +71,9 @@ var $database = '';
 function adodb_throw($dbms, $fn, $errno, $errmsg, $p1, $p2, $thisConnection)
 {
 global $ADODB_EXCEPTION;
-	
+
 	if (error_reporting() == 0) return; // obey @ protocol
 	if (is_string($ADODB_EXCEPTION)) $errfn = $ADODB_EXCEPTION;
 	else $errfn = 'ADODB_EXCEPTION';
 	throw new $errfn($dbms, $fn, $errno, $errmsg, $p1, $p2, $thisConnection);
 }
-
-
-?>
