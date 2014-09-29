@@ -65,8 +65,9 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
                 $checked = 'checked="checked"';
             }
             $value ="{$companyid}.{$roleid}.{$capability->capability}";
+            $caplink = '<a href="http://docs.iomad.org/wiki/capabilities/' . $capability->capability . '">' . get_capability_string($capability->capability) . '</a>';
             $row = array(
-                $capability->capability,
+                $caplink . '<br /><small>' . $capability->capability . '</small>',
                 '<input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' . get_string('allow'),
             );
             $table->data[] = $row;
