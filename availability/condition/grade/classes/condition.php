@@ -85,6 +85,28 @@ class condition extends \core_availability\condition {
         return $result;
     }
 
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param int $gradeitemid Grade item id
+     * @param number|null $min Min grade (or null if no min)
+     * @param number|null $max Max grade (or null if no max)
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($gradeitemid, $min = null, $max = null) {
+        $result = (object)array('type' => 'grade', 'id' => (int)$gradeitemid);
+        if (!is_null($min)) {
+            $result->min = $min;
+        }
+        if (!is_null($max)) {
+            $result->max = $max;
+        }
+        return $result;
+    }
+
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
         $course = $info->get_course();
         $score = $this->get_cached_grade_score($this->gradeitemid, $course->id, $grabthelot, $userid);

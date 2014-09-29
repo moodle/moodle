@@ -622,6 +622,15 @@ class tree extends tree_node {
     }
 
     /**
+     * Checks whether this tree is empty (contains no children).
+     *
+     * @return boolean True if empty
+     */
+    public function is_empty() {
+        return count($this->children) === 0;
+    }
+
+    /**
      * Recursively gets all children of a particular class (you can use a base
      * class to get all conditions, or a specific class).
      *
