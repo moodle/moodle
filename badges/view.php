@@ -71,7 +71,7 @@ if ($type == BADGE_TYPE_SITE) {
     $coursename = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
     $title = $coursename . ': ' . get_string('coursebadges', 'badges');
     $PAGE->set_context(context_course::instance($course->id));
-    $PAGE->set_pagelayout('course');
+    $PAGE->set_pagelayout('incourse');
     $PAGE->set_heading($title);
 }
 

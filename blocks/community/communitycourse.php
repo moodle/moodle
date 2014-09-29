@@ -41,7 +41,7 @@ $context = context_course::instance($courseid);
 $PAGE->set_course($parentcourse);
 $PAGE->set_url('/blocks/community/communitycourse.php');
 $PAGE->set_heading($SITE->fullname);
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('searchcourse', 'block_community'));
 $PAGE->navbar->add(get_string('searchcourse', 'block_community'));
 
