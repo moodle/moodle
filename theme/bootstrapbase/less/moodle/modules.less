@@ -340,3 +340,101 @@ div#dock {
         border-right: 0px none;
     }
 }
+
+// Usermenu
+.usermenu {
+    > .moodle-actionmenu > .menubar {
+        display: block;
+        margin: 2px 0px;
+        li {
+            display: block;
+        }
+    }
+    .toggle-display {
+        color: #777;
+        outline: none;
+    }
+    .userbutton {
+        .avatars{
+            display: inline-block;
+            height: 35px;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        .usertext {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1em;
+            .meta {
+                display: block;
+                font-size: 12px;
+                .value {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+    .moodle-actionmenu[data-enhanced].show .menu a {
+        white-space: nowrap;
+    }
+}
+.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            position: relative;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            margin-top: 11px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+        }
+        img {
+            width: inherit;
+            height: inherit;
+        }
+        display: inline-block;
+        overflow: hidden;
+    }
+}
+.jsenabled .usermenu .moodle-actionmenu[data-enhanced] .toggle-display.textmenu .caret {
+    margin-top: 0;
+    vertical-align: middle;
+}
+.dir-ltr {
+    .usermenu {
+        .userbutton {
+            margin-right: 4px;
+            .avatars{
+                margin-right: 6px;
+            }
+        }
+    }
+    &.userloggedinas .usermenu .userbutton .avatars {
+        .avatar {
+            &.current {
+                margin-right: -34px;
+            }
+        }
+    }
+}
+
+.dir-rtl {
+    .usermenu {
+        .userbutton {
+            margin-left: 4px;
+            .avatars{
+                margin-left: 6px;
+            }
+        }
+    }
+    &.userloggedinas .usermenu .userbutton .avatars {
+        .avatar {
+            &.current {
+                margin-left: -22px;
+            }
+        }
+    }
+}
