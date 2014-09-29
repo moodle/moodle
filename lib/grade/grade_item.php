@@ -949,7 +949,13 @@ class grade_item extends grade_object {
      * @return bool
      */
     public function is_overridable_item() {
-        return !$this->is_outcome_item() and ($this->is_external_item() or $this->is_calculated() or $this->is_course_item() or $this->is_category_item());
+        if ($this->is_course_item() or $this->is_category_item()) {
+            $overridable = (bool) get_config('moodle', 'grade_overridecat');
+        } else {
+            $overridable = false;
+        }
+
+        return !$this->is_outcome_item() and ($this->is_external_item() or $this->is_calculated() or $overridable);
     }
 
     /**

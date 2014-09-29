@@ -314,7 +314,7 @@ M.gradereport_grader.classes.ajax = function(report, cfg) {
     this.existingfields = [];
 
     if (!report.isediting) {
-        report.table.all('.cell.grade').on('makeditable|click', this.make_editable, this);
+        report.table.all('.clickable').on('click', this.make_editable, this);
     } else {
         for (var userid in report.users) {
             if (!this.existingfields[userid]) {
@@ -1043,7 +1043,7 @@ M.gradereport_grader.classes.textfield.prototype.revert = function() {
         }
     }
     this.keyevents = [];
-    this.node.on('makeditable|click', this.report.ajax.make_editable, this.report.ajax);
+    this.node.on('click', this.report.ajax.make_editable, this.report.ajax);
 };
 /**
  * Gets the grade for current cell

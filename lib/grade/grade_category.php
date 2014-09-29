@@ -569,6 +569,8 @@ class grade_category extends grade_object {
             return;
         }
 
+        $minvisible = (bool) get_config('moodle', 'grade_report_showmin');
+
         // normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggregation
         foreach ($grade_values as $itemid=>$v) {
@@ -581,6 +583,10 @@ class grade_category extends grade_object {
             } else if (in_array($itemid, $excluded)) {
                 unset($grade_values[$itemid]);
                 continue;
+            }
+            // If grademin is hidden, set it to 0.
+            if (!$minvisible and $items[$itemid]->gradetype != GRADE_TYPE_SCALE) {
+                $items[$itemid]->grademin = 0;
             }
             $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
         }
@@ -614,6 +620,10 @@ class grade_category extends grade_object {
         // do the maths
         $result = $this->aggregate_values_and_adjust_bounds($grade_values, $items);
         $agg_grade = $result['grade'];
+
+        if (!$minvisible and $this->grade_item->gradetype != GRADE_TYPE_SCALE) {
+            $this->grade_item->grademin = 0;
+        }
 
         // recalculate the grade back to requested range
         $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $result['grademin'], $result['grademax']);
