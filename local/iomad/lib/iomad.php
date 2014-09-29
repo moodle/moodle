@@ -937,6 +937,13 @@ class iomad {
             throw new required_capability_exception($context, $capability, 'nopermissions', 'local_iomad');
         }
     }
+    
+    /**
+     * Get IOMAD documentation link.
+     */
+    public static function documentation_link() {
+        return 'http://docs.iomad.org/wiki/';
+    }
 }
 
 
