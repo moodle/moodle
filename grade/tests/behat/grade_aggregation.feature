@@ -271,8 +271,9 @@ Feature: We can use calculated grade totals
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
     And I set the field "Grade report" to "User report"
+    And I set the field "Select all or one user" to "Student 1"
     And the following should exist in the "user-grade" table:
-      | Grade item | Calculated weight | Grade | Range |
+      | Grade item | Calculated weight | Grade | Range | Contribution to course total |
       | Test assignment five | 28.57 % | 10.00 (50.00 %) | 0–20 | 6.43 |
       | Test assignment six | 50.00 % | 5.00 (50.00 %) | 0–10 | 11.25 |
       | Test assignment seven | 21.43 % | - | 0–15 | 0.00 |
