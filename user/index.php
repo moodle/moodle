@@ -363,7 +363,12 @@ if ($mode === MODE_BRIEF && !isset($hiddenfields['country'])) {
 }
 if (!isset($hiddenfields['lastaccess'])) {
     $tablecolumns[] = 'lastaccess';
-    $tableheaders[] = get_string('lastaccess');
+    if ($course->id == SITEID) {
+        // Exception case for viewing participants on site home.
+        $tableheaders[] = get_string('lastsiteaccess');
+    } else {
+        $tableheaders[] = get_string('lastcourseaccess');
+    }
 }
 
 if ($bulkoperations && $mode === MODE_USERDETAILS) {
@@ -376,8 +381,8 @@ $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
 $table->define_baseurl($baseurl->out());
 
-if (!isset($hiddenfields['lastaccess'])) {
-    $table->sortable(true, 'lastaccess', SORT_DESC);
+if (!isset($hiddenfields['lastcourseaccess'])) {
+    $table->sortable(true, 'lastcourseaccess', SORT_DESC);
 } else {
     $table->sortable(true, 'firstname', SORT_ASC);
 }
