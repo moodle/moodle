@@ -83,8 +83,18 @@ class message_output_email extends message_output {
             }
         }
 
+        // Configure mail replies - this is used for incoming mail replies.
+        $replyto = '';
+        $replytoname = '';
+        if (isset($eventdata->replyto)) {
+            $replyto = $eventdata->replyto;
+            if (isset($eventdata->replytoname)) {
+                $replytoname = $eventdata->replytoname;
+            }
+        }
+
         $result = email_to_user($recipient, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage,
-                                $eventdata->fullmessagehtml, $attachment, $attachname);
+                                $eventdata->fullmessagehtml, $attachment, $attachname, true, $replyto, $replytoname);
 
         // Remove an attachment file if any.
         if (!empty($attachment) && file_exists($attachment)) {

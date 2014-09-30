@@ -481,6 +481,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                     events_update_definition($component);
                     \core\task\manager::reset_scheduled_tasks_for_component($component);
                     message_update_providers($component);
+                    \core\message\inbound\manager::update_handlers_for_component($component);
                     if ($type === 'message') {
                         message_update_processors($plug);
                     }
@@ -518,6 +519,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             if ($type === 'message') {
                 message_update_processors($plug);
             }
@@ -550,6 +552,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             if ($type === 'message') {
                 // Ugly hack!
                 message_update_processors($plug);
@@ -650,6 +653,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
                     events_update_definition($component);
                     \core\task\manager::reset_scheduled_tasks_for_component($component);
                     message_update_providers($component);
+                    \core\message\inbound\manager::update_handlers_for_component($component);
                     upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
@@ -683,6 +687,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, true, $verbose);
@@ -718,6 +723,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, false, $verbose);
@@ -837,6 +843,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                     events_update_definition($component);
                     \core\task\manager::reset_scheduled_tasks_for_component($component);
                     message_update_providers($component);
+                    \core\message\inbound\manager::update_handlers_for_component($component);
                     upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
@@ -876,6 +883,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, true, $verbose);
@@ -910,6 +918,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, false, $verbose);
@@ -1511,6 +1520,7 @@ function install_core($version, $verbose) {
         events_update_definition('moodle');
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
         message_update_providers('moodle');
+        \core\message\inbound\manager::update_handlers_for_component('moodle');
 
         // Write default settings unconditionally
         admin_apply_default_settings(NULL, true);
@@ -1574,6 +1584,7 @@ function upgrade_core($version, $verbose) {
         events_update_definition('moodle');
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
         message_update_providers('moodle');
+        \core\message\inbound\manager::update_handlers_for_component('moodle');
         // Update core definitions.
         cache_helper::update_definitions(true);
 
