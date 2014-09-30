@@ -172,7 +172,7 @@
     <location>typo3</location>
     <name>Typo3</name>
     <license>GPL</license>
-    <version>4.7.15</version>
+    <version>4.7.19</version>
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
