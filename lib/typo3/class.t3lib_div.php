@@ -5677,7 +5677,7 @@ final class t3lib_div {
 			// thrown early during bootstrap, if the autoloader is
 			// not instantiated yet. This can happen for example if
 			// ext_localconf triggers a deprecation.
-		require_once 'utility/class.t3lib_utility_debug.php';
+		require_once __DIR__.'/class.t3lib_utility_debug.php';
 
 		$trail = debug_backtrace();
 
