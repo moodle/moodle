@@ -8,7 +8,7 @@ Feature: View gradebook when scales are used
     Given I log in as "admin"
     And I set the following administration settings values:
       | grade_report_showranges    | 1 |
-      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Sum of grades |
+      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I navigate to "Scales" node in "Site administration > Grades"
     And I press "Add a new scale"
     And I set the following fields to these values:
@@ -66,14 +66,8 @@ Feature: View gradebook when scales are used
     And I turn editing mode on
 
   @javascript
-  Scenario: Test displaying scales in gradebook in aggregation method Sum of grades
-    When I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Sum of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Sum of grades"
-    And I press "Save changes"
-    And I turn editing mode off
+  Scenario: Test displaying scales in gradebook in aggregation method Natural
+    When I turn editing mode off
     Then the following should exist in the "user-grades" table:
       | -1-                | -4-      | -5-            | -6-          |
       | Student 1          | A        | 5.00           | 5.00         |
@@ -91,9 +85,9 @@ Feature: View gradebook when scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage |
       | Test assignment one | C     | F–A   | 50.00 %    |
-      | Category total      | 3.00  | 0–5   | 60.00 %    |
-      | Course total        | 3.00  | 0–5   | 60.00 %    |
-    And I set the field "jump" to "Simple view"
+      | Category totalNatural.      | 3.00  | 0–5   | 60.00 %    |
+      | Course totalNatural.        | 3.00  | 0–5   | 60.00 %    |
+    And I set the field "jump" to "Set up grades layout"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 5.00      |
@@ -106,8 +100,8 @@ Feature: View gradebook when scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage |
       | Test assignment one | B     | F–A   | 75.00 %    |
-      | Category total      | 4.00  | 0–5   | 80.00 %    |
-      | Course total        | 4.00  | 0–5   | 80.00 %    |
+      | Category totalNatural.      | 4.00  | 0–5   | 80.00 %    |
+      | Course totalNatural.        | 4.00  | 0–5   | 80.00 %    |
 
   @javascript
   Scenario Outline: Test displaying scales in gradebook in all other aggregation methods
@@ -139,9 +133,9 @@ Feature: View gradebook when scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade          | Range | Percentage    |
       | Test assignment one | C              | F–A   | 50.00 %       |
-      | Category total      | 3.00           | 1–5   | 50.00 %       |
-      | Course total        | <coursetotal3> | 0–100 | <courseperc3> |
-    And I set the field "jump" to "Simple view"
+      | Category total<aggregation>.      | 3.00           | 1–5   | 50.00 %       |
+      | Course total<aggregation>.        | <coursetotal3> | 0–100 | <courseperc3> |
+    And I set the field "jump" to "Set up grades layout"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |
@@ -154,8 +148,8 @@ Feature: View gradebook when scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade          | Range | Percentage    |
       | Test assignment one | B              | F–A   | 75.00 %       |
-      | Category total      | 4.00           | 1–5   | 75.00 %       |
-      | Course total        | <coursetotal2> | 0–100 | <courseperc2> |
+      | Category total<aggregation>.      | 4.00           | 1–5   | 75.00 %       |
+      | Course total<aggregation>.        | <coursetotal2> | 0–100 | <courseperc2> |
 
   Examples:
       | aggregation                         | coursetotal1 | coursetotal2 | coursetotal3 | coursetotal4 | coursetotal5 |overallavg | courseperc2 | courseperc3 |
