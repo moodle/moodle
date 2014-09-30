@@ -127,7 +127,8 @@ class subs extends \table_sql implements \renderable {
                 'action' => 'unsubscribe', 'courseid' => $this->courseid));
         $action = new \component_action('click', 'M.util.show_confirm_dialog', array('message' => get_string('subareyousure',
             'tool_monitor', $a)));
-        $icon = $OUTPUT->action_link($deleteurl, new \pix_icon('t/delete', ''), $action);
+        $icon = $OUTPUT->action_link($deleteurl,
+                new \pix_icon('t/delete', get_string('deletesubscription', 'tool_monitor')), $action);
         return $icon;
     }
 

@@ -163,16 +163,16 @@ class renderable extends \table_sql implements \renderable {
             $deleteurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php', array('ruleid' => $rule->id,
                     'action' => 'delete', 'courseid' => $rule->courseid));
 
-            $icon = $OUTPUT->render(new \pix_icon('t/edit', ''));
+            $icon = $OUTPUT->render(new \pix_icon('t/edit', get_string('editrule', 'tool_monitor')));
             $manage .= \html_writer::link($editurl, $icon, array('class' => 'action-icon'));
 
-            $icon = $OUTPUT->render(new \pix_icon('t/copy', ''));
+            $icon = $OUTPUT->render(new \pix_icon('t/copy', get_string('duplicaterule', 'tool_monitor')));
             $manage .= \html_writer::link($copyurl, $icon, array('class' => 'action-icon'));
 
             $a = $rule->get_name($this->context);
             $action = new \component_action('click', 'M.util.show_confirm_dialog', array('message' => get_string('ruleareyousure',
                     'tool_monitor', $a)));
-            $icon = $OUTPUT->action_link($deleteurl, new \pix_icon('t/delete', ''), $action);
+            $icon = $OUTPUT->action_link($deleteurl, new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')), $action);
             $manage .= $icon;
         } else {
             $manage = '-';
