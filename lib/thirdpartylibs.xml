@@ -259,4 +259,11 @@
     <version>1.0</version>
     <licenseversion>3.0+</licenseversion>
   </library>
+  <library>
+    <location>horde</location>
+    <name>Horde</name>
+    <license>LGPL/BSD</license>
+    <version>5.2.1</version>
+    <licenseversion>2.1</licenseversion>
+  </library>
 </libraries>
