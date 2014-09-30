@@ -34,84 +34,203 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I follow "Course 1"
     And I follow "Grades"
     And I set the field "Grade report" to "Set up grades layout"
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Natural"
+
+  @javascript
+  Scenario: Setting all weights in a category to exactly one hundred in total.
+
+    And the field "Weight of Test assignment five" matches value "44.444"
+    And the field "Weight of Test assignment six" matches value "22.222"
+    And the field "Weight of Test assignment seven" matches value "33.333"
+    When I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Override weight of Test assignment seven" to "1"
+    And I set the field "Weight of Test assignment five" to "30"
+    And I set the field "Weight of Test assignment six" to "50"
+    And I set the field "Weight of Test assignment seven" to "20"
     And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Natural"
+
+    Then I should not see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "30.0"
+    And the field "Weight of Test assignment six" matches value "50.0"
+    And the field "Weight of Test assignment seven" matches value "20.0"
+
+  @javascript
+  Scenario: Setting all weights in a category to less than one hundred is normalised.
+
+    When I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Override weight of Test assignment seven" to "1"
+    And I set the field "Weight of Test assignment five" to "1"
+    And I set the field "Weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment seven" to "2"
     And I press "Save changes"
 
-    @javascript
-    Scenario: Setting all weights in a category to less than one hundred is normalised.
+    Then I should see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "25.0"
+    And the field "Weight of Test assignment six" matches value "25.0"
+    And the field "Weight of Test assignment seven" matches value "50.0"
 
-      Given I set the field "Override weight of Test assignment five" to "1"
-      And I set the field "Override weight of Test assignment six" to "1"
-      And I set the field "Override weight of Test assignment seven" to "1"
-      And I set the field "Weight of Test assignment five" to "1"
-      And I set the field "Weight of Test assignment six" to "1"
-      And I set the field "Weight of Test assignment seven" to "2"
-      And I press "Save changes"
+  @javascript
+  Scenario: Set one of the grade item weights to a figure over one hundred.
 
-      Then the field "Weight of Test assignment five" matches value "25.0"
-      And the field "Weight of Test assignment six" matches value "25.0"
-      And the field "Weight of Test assignment seven" matches value "50.0"
+    When I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Weight of Test assignment five" to "120"
+    And I press "Save changes"
 
-    @javascript
-    Scenario: Set one of the grade item weights to a figure over one hundred.
+    Then I should see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "100.0"
+    And the field "Weight of Test assignment six" matches value "0.0"
+    And the field "Weight of Test assignment seven" matches value "0.0"
 
-      Given I set the field "Override weight of Test assignment five" to "1"
-      And I set the field "Weight of Test assignment five" to "120"
-      And I press "Save changes"
+  @javascript
+  Scenario: Setting several but not all grade item weights to over one hundred each.
 
-      Then the field "Weight of Test assignment five" matches value "68.355"
-      And the field "Weight of Test assignment six" matches value "12.658"
-      And the field "Weight of Test assignment seven" matches value "18.987"
+    When I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment five" to "150"
+    And I set the field "Weight of Test assignment six" to "150"
+    And I press "Save changes"
 
-    @javascript
-    Scenario: Grade items weights are noramlised when all grade item weights are overridden. Extra credit is set to zero.
+    Then I should see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "50.000"
+    And the field "Weight of Test assignment six" matches value "50.000"
+    And the field "Weight of Test assignment seven" matches value "0.0"
 
-      Given I follow "Edit  assign Test assignment seven"
-      And I set the field "Extra credit" to "1"
-      And I press "Save changes"
-      And I set the field "Override weight of Test assignment five" to "1"
-      And I set the field "Override weight of Test assignment six" to "1"
-      And I set the field "Weight of Test assignment five" to "60"
-      And I set the field "Weight of Test assignment six" to "50"
-      And I press "Save changes"
+  @javascript
+  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum exactly 100). Extra credit is set to zero.
 
-      Then the field "Weight of Test assignment five" matches value "54.545"
-      And the field "Weight of Test assignment six" matches value "45.455"
-      And the field "Weight of Test assignment seven" matches value "0.0"
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
+    And I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment five" to "60"
+    And I set the field "Weight of Test assignment six" to "40"
+    And I press "Save changes"
 
-    @javascript
-    Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then
-    the grade item is set to normal.
+    Then I should not see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "60.000"
+    And the field "Weight of Test assignment six" matches value "40.000"
+    And the field "Weight of Test assignment seven" matches value "0.0"
+    And I follow "Reset weights of Sub category 1"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
 
-      # And I follow "Reset weights of Sub category 1"
-      Given I follow "Edit  assign Test assignment seven"
-      And I set the field "Extra credit" to "1"
-      And I press "Save changes"
-      And I set the field "Override weight of Test assignment seven" to "1"
-      And I set the field "Weight of Test assignment seven" to "105"
-      And I press "Save changes"
-      And I follow "Edit  assign Test assignment seven"
-      And I set the field "Extra credit" to "0"
-      And I press "Save changes"
+  @javascript
+  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum over 100). Extra credit is set to zero.
 
-      Then the field "Weight of Test assignment five" matches value "32.52"
-      And the field "Weight of Test assignment six" matches value "16.26"
-      And the field "Weight of Test assignment seven" matches value "51.22"
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment five" to "60"
+    And I set the field "Weight of Test assignment six" to "50"
+    And I press "Save changes"
 
-    @javascript
-    Scenario: Two out of three grade items weights are overridden and one is not.
-    The overridden grade item weights total over one hundred.
+    Then I should see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "54.545"
+    And the field "Weight of Test assignment six" matches value "45.455"
+    And the field "Weight of Test assignment seven" matches value "0.0"
+    And I follow "Reset weights of Sub category 1"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
 
-      Given I set the field "Override weight of Test assignment six" to "1"
-      And I set the field "Override weight of Test assignment seven" to "1"
-      And I set the field "Weight of Test assignment six" to "55"
-      And I set the field "Weight of Test assignment seven" to "65"
-      And I press "Save changes"
+  @javascript
+  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum under 100). Extra credit is set to zero.
 
-      Then the field "Weight of Test assignment five" matches value "0.0"
-      And the field "Weight of Test assignment six" matches value "45.833"
-      And the field "Weight of Test assignment seven" matches value "54.167"
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment five" to "40"
+    And I set the field "Weight of Test assignment six" to "30"
+    And I press "Save changes"
+
+    Then I should see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "57.143"
+    And the field "Weight of Test assignment six" matches value "42.857"
+    And the field "Weight of Test assignment seven" matches value "0.0"
+    And I follow "Reset weights of Sub category 1"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
+
+  @javascript
+  Scenario: Grade items weights are normalised when not all grade item weights are overridden. Extra credit is set respectful to non-overridden items.
+
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Weight of Test assignment five" to "40"
+    And I press "Save changes"
+
+    Then I should not see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "40.00"
+    And the field "Weight of Test assignment six" matches value "60.000"
+    And the field "Weight of Test assignment seven" matches value "90.0"
+    And I follow "Reset weights of Sub category 1"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
+
+  @javascript
+  Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then
+  the grade item is set to normal.
+
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment seven" to "1"
+    And I set the field "Weight of Test assignment seven" to "105"
+    And I press "Save changes"
+    Then I should not see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "105.0"
+    And I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "0"
+    And I press "Save changes"
+    And I should see "Your weights have been adjusted to total 100."
+
+    And the field "Weight of Test assignment five" matches value "32.52"
+    And the field "Weight of Test assignment six" matches value "16.26"
+    And the field "Weight of Test assignment seven" matches value "51.22"
+
+  @javascript
+  Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then
+  the grade category is reset.
+
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment seven" to "1"
+    And I set the field "Weight of Test assignment seven" to "105"
+    And I press "Save changes"
+
+    And I follow "Reset weights of Sub category 1"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
+
+  @javascript
+  Scenario: Two out of three grade items weights are overridden and one is not.
+  The overridden grade item weights total over one hundred.
+
+    Given I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Override weight of Test assignment seven" to "1"
+    And I set the field "Weight of Test assignment six" to "55"
+    And I set the field "Weight of Test assignment seven" to "65"
+    And I press "Save changes"
+    And I should see "Your weights have been adjusted to total 100."
+
+    Then the field "Weight of Test assignment five" matches value "0.0"
+    And the field "Weight of Test assignment six" matches value "45.833"
+    And the field "Weight of Test assignment seven" matches value "54.167"
