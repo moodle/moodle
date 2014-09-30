@@ -804,8 +804,7 @@ class helper {
         }
 
         list($where, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $params['categoryid'] = $moveto->id;
-        $sql = "SELECT c.id, c.category FROM {course} c WHERE c.id {$where} AND c.category <> :categoryid";
+        $sql = "SELECT c.id, c.category FROM {course} c WHERE c.id {$where}";
         $courses = $DB->get_records_sql($sql, $params);
         $checks = array();
         foreach ($courseids as $id) {
