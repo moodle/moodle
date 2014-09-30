@@ -677,8 +677,13 @@ function user_get_user_navigation_info($user, $page) {
     $returnobject->metadata['userprofileurl'] = new moodle_url('/user/profile.php', array(
         'id' => $user->id
     ));
-    $returnobject->metadata['useravatar'] = $OUTPUT->user_picture ($user, array('link' => false));
-
+    $returnobject->metadata['useravatar'] = $OUTPUT->user_picture (
+        $user,
+        array(
+            'link' => false,
+            'visibletoscreenreaders' => false
+        )
+    );
     if (isguestuser()) {
 
         // Build a list of items for a guest.
@@ -747,7 +752,13 @@ function user_get_user_navigation_info($user, $page) {
             $returnobject->metadata['realuserprofileurl'] = new moodle_url('/user/profile.php', array(
                 'id' => $realuser->id
             ));
-            $returnobject->metadata['realuseravatar'] = $OUTPUT->user_picture ($realuser, array('link' => false));
+            $returnobject->metadata['realuseravatar'] = $OUTPUT->user_picture (
+                $realuser,
+                array(
+                    'link' => false,
+                    'visibletoscreenreaders' => false
+                )
+            );
 
             // Build a user-revert link.
             $userrevert = new stdClass();
