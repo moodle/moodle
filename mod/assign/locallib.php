@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Assignment submission statuses.
+define('ASSIGN_SUBMISSION_STATUS_NEW', 'new');
 define('ASSIGN_SUBMISSION_STATUS_REOPENED', 'reopened');
 define('ASSIGN_SUBMISSION_STATUS_DRAFT', 'draft');
 define('ASSIGN_SUBMISSION_STATUS_SUBMITTED', 'submitted');
@@ -1447,29 +1448,18 @@ class assign {
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
-        $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
-                                 FROM {assign_submission} mxs
-                                 WHERE mxs.assignment = :assignid2 GROUP BY mxs.userid';
-        $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt
-                            FROM {assign_grades} mxg
-                            WHERE mxg.assignment = :assignid3 GROUP BY mxg.userid';
-
         $params['assignid'] = $this->get_instance()->id;
-        $params['assignid2'] = $this->get_instance()->id;
-        $params['assignid3'] = $this->get_instance()->id;
         $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
         $sql = 'SELECT COUNT(s.userid)
                    FROM {assign_submission} s
-                   LEFT JOIN ( ' . $submissionmaxattempt . ' ) smx ON s.userid = smx.userid
-                   LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON s.userid = gmx.userid
                    LEFT JOIN {assign_grades} g ON
                         s.assignment = g.assignment AND
                         s.userid = g.userid AND
-                        g.attemptnumber = gmx.maxattempt
+                        g.attemptnumber = s.attemptnumber
                    JOIN(' . $esql . ') e ON e.id = s.userid
                    WHERE
-                        s.attemptnumber = smx.maxattempt AND
+                        s.latest = 1 AND
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL AND
                         s.status = :submitted AND
@@ -1563,31 +1553,21 @@ class assign {
         $params['submissionstatus'] = $status;
 
         if ($this->get_instance()->teamsubmission) {
-            $maxattemptsql = 'SELECT mxs.groupid, MAX(mxs.attemptnumber) AS maxattempt
-                              FROM {assign_submission} mxs
-                              WHERE mxs.assignment = :assignid2 GROUP BY mxs.groupid';
-
             $sql = 'SELECT COUNT(s.groupid)
                         FROM {assign_submission} s
-                        JOIN(' . $maxattemptsql . ') smx ON s.groupid = smx.groupid
                         WHERE
-                            s.attemptnumber = smx.maxattempt AND
+                            s.latest = 1 AND
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.userid = :groupuserid AND
                             s.status = :submissionstatus';
             $params['groupuserid'] = 0;
         } else {
-            $maxattemptsql = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
-                              FROM {assign_submission} mxs
-                              WHERE mxs.assignment = :assignid2 GROUP BY mxs.userid';
-
             $sql = 'SELECT COUNT(s.userid)
                         FROM {assign_submission} s
                         JOIN(' . $esql . ') e ON e.id = s.userid
-                        JOIN(' . $maxattemptsql . ') smx ON s.userid = smx.userid
                         WHERE
-                            s.attemptnumber = smx.maxattempt AND
+                            s.latest = 1 AND
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.status = :submissionstatus';
@@ -2041,6 +2021,7 @@ class assign {
      * @param int $groupid The id of the group for this user - may be 0 in which
      *                     case it is determined from the userid.
      * @param bool $create If set to true a new submission object will be created in the database
+     *                     with the status set to "new".
      * @param int $attemptnumber - -1 means the latest attempt
      * @return stdClass The submission
      */
@@ -2082,8 +2063,27 @@ class assign {
             } else {
                 $submission->attemptnumber = 0;
             }
-
-            $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+            // Work out if this is the latest submission.
+            $submission->latest = 0;
+            $params = array('assignment'=>$this->get_instance()->id, 'groupid'=>$groupid, 'userid'=>0);
+            if ($attemptnumber == -1) {
+                // This is a new submission so it must be the latest.
+                $submission->latest = 1;
+            } else {
+                // We need to work this out.
+                $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+                if ($result) {
+                    $latestsubmission = reset($result);
+                }
+                if (!$latestsubmission || ($attemptnumber == $latestsubmission->attemptnumber)) {
+                    $submission->latest = 1;
+                }
+            }
+            if ($submission->latest) {
+                // This is the case when we need to set latest to 0 for all the other attempts.
+                $DB->set_field('assign_submission', 'latest', 0, $params);
+            }
+            $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
             $sid = $DB->insert_record('assign_submission', $submission);
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
@@ -2652,7 +2652,7 @@ class assign {
      *
      * @param int $userid The id of the user whose submission we want or 0 in which case USER->id is used
      * @param bool $create optional - defaults to false. If set to true a new submission object
-     *                     will be created in the database.
+     *                     will be created in the database with the status set to "new".
      * @param int $attemptnumber - -1 means the latest attempt
      * @return stdClass The submission
      */
@@ -2684,11 +2684,32 @@ class assign {
             $submission->userid       = $userid;
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
-            $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+            $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
             if ($attemptnumber >= 0) {
                 $submission->attemptnumber = $attemptnumber;
             } else {
                 $submission->attemptnumber = 0;
+            }
+            // Work out if this is the latest submission.
+            $submission->latest = 0;
+            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
+            if ($attemptnumber == -1) {
+                // This is a new submission so it must be the latest.
+                $submission->latest = 1;
+            } else {
+                // We need to work this out.
+                $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+                $latestsubmission = null;
+                if ($result) {
+                    $latestsubmission = reset($result);
+                }
+                if (empty($latestsubmission) || ($attemptnumber > $latestsubmission->attemptnumber)) {
+                    $submission->latest = 1;
+                }
+            }
+            if ($submission->latest) {
+                // This is the case when we need to set latest to 0 for all the other attempts.
+                $DB->set_field('assign_submission', 'latest', 0, $params);
             }
             $sid = $DB->insert_record('assign_submission', $submission);
             return $DB->get_record('assign_submission', array('id' => $sid));
@@ -2772,9 +2793,9 @@ class assign {
         if ($attemptnumber < 0) {
             // Make sure this grade matches the latest submission attempt.
             if ($this->get_instance()->teamsubmission) {
-                $submission = $this->get_group_submission($userid, 0, false);
+                $submission = $this->get_group_submission($userid, 0, true);
             } else {
-                $submission = $this->get_user_submission($userid, false);
+                $submission = $this->get_user_submission($userid, true);
             }
             if ($submission) {
                 $attemptnumber = $submission->attemptnumber;
@@ -6905,18 +6926,9 @@ class assign {
             $where = ' WHERE u.id != :userid ';
         }
 
-        $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
-                                 FROM {assign_submission} mxs
-                                 WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid';
-        $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt
-                            FROM {assign_grades} mxg
-                            WHERE mxg.assignment = :assignid2 GROUP BY mxg.userid';
-
         // When the gradebook asks us for grades - only return the last attempt for each user.
         $params = array('assignid1'=>$assignmentid,
                         'assignid2'=>$assignmentid,
-                        'assignid3'=>$assignmentid,
-                        'assignid4'=>$assignmentid,
                         'userid'=>$userid);
         $graderesults = $DB->get_recordset_sql('SELECT
                                                     u.id as userid,
@@ -6925,14 +6937,12 @@ class assign {
                                                     g.timemodified as dategraded,
                                                     g.grader as usermodified
                                                 FROM {user} u
-                                                LEFT JOIN ( ' . $submissionmaxattempt . ' ) smx ON u.id = smx.userid
-                                                LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON u.id = gmx.userid
                                                 LEFT JOIN {assign_submission} s
-                                                    ON u.id = s.userid and s.assignment = :assignid3 AND
-                                                    s.attemptnumber = smx.maxattempt
+                                                    ON u.id = s.userid and s.assignment = :assignid1 AND
+                                                    s.latest = 1
                                                 JOIN {assign_grades} g
-                                                    ON u.id = g.userid and g.assignment = :assignid4 AND
-                                                    g.attemptnumber = gmx.maxattempt' .
+                                                    ON u.id = g.userid and g.assignment = :assignid2 AND
+                                                    g.attemptnumber = s.attemptnumber' .
                                                 $where, $params);
 
         foreach ($graderesults as $result) {

@@ -136,6 +136,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $data->groupid = 0;
         }
 
+        // We will correct this in set_latest_submission_field() once all submissions are restored.
+        $data->latest = 0;
+
         $newitemid = $DB->insert_record('assign_submission', $data);
 
         // Note - the old contextid is required in order to be able to restore files stored in
@@ -232,11 +235,92 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
     }
 
     /**
+     * For all submissions in this assignment, either set the
+     * submission->latest field to 1 for the latest attempts
+     * or create a new submission record for grades with no submission.
+     *
+     * @return void
+     */
+    protected function set_latest_submission_field() {
+        global $DB, $CFG;
+
+        // Required for constants.
+        require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+        $assignmentid = $this->get_new_parentid('assign');
+        // This code could be rewritten as a monster SQL - but the point of adding this "latest" field
+        // to the submissions table in the first place was to get away from those hard to maintain SQL queries.
+
+        // First user submissions.
+        $sql = 'SELECT DISTINCT userid FROM {assign_submission} WHERE assignment = ? AND groupid = ?';
+        $params = array($assignmentid, 0);
+        $users = $DB->get_records_sql($sql, $params);
+
+        foreach ($users as $userid => $unused) {
+            $params = array('assignment'=>$assignmentid, 'groupid'=>0, 'userid'=>$userid);
+
+            // Only return the row with the highest attemptnumber.
+            $submission = null;
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+            if ($submissions) {
+                $submission = reset($submissions);
+                $submission->latest = 1;
+                $DB->update_record('assign_submission', $submission);
+            }
+        }
+        // Then group submissions (if any).
+        $sql = 'SELECT DISTINCT groupid FROM {assign_submission} WHERE assignment = ? AND userid = ?';
+        $params = array($assignmentid, 0);
+        $groups = $DB->get_records_sql($sql, $params);
+
+        foreach ($groups as $groupid => $unused) {
+            $params = array('assignment'=>$assignmentid, 'userid'=>0, 'groupid'=>$groupid);
+
+            // Only return the row with the highest attemptnumber.
+            $submission = null;
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+            if ($submissions) {
+                $submission = reset($submissions);
+                $submission->latest = 1;
+                $DB->update_record('assign_submission', $submission);
+            }
+        }
+
+        // Now check for records with a grade, but no submission record.
+        // This happens when a teacher marks a student before they have submitted anything.
+        $records = $DB->get_recordset_sql('SELECT g.id, g.userid
+                                           FROM {assign_grades} g
+                                      LEFT JOIN {assign_submission} s
+                                             ON s.assignment = g.assignment
+                                            AND s.userid = g.userid
+                                          WHERE s.id IS NULL AND g.assignment = ?', array($assignmentid));
+
+        $submissions = array();
+        foreach ($records as $record) {
+            $submission = new stdClass();
+            $submission->assignment = $assignmentid;
+            $submission->userid = $record->userid;
+            $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+            $submission->groupid = 0;
+            $submission->latest = 1;
+            $submission->timecreated = time();
+            $submission->timemodified = time();
+            array_push($submissions, $submission);
+        }
+
+        $records->close();
+
+        $DB->insert_records('assign_submission', $submissions);
+    }
+
+    /**
      * Once the database tables have been fully restored, restore the files
      * @return void
      */
     protected function after_execute() {
         $this->add_related_files('mod_assign', 'intro', null);
         $this->add_related_files('mod_assign', 'introattachment', null);
+
+        $this->set_latest_submission_field();
     }
 }

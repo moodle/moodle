@@ -77,6 +77,18 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         // Create a student and give them 2 grades (for 2 attempts).
         $student = self::getDataGenerator()->create_user();
+
+        $submission = new stdClass();
+        $submission->assignment = $assign->id;
+        $submission->userid = $student->id;
+        $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+        $submission->latest = 0;
+        $submission->attemptnumber = 0;
+        $submission->groupid = 0;
+        $submission->timecreated = time();
+        $submission->timemodified = time();
+        $DB->insert_record('assign_submission', $submission);
+
         $grade = new stdClass();
         $grade->assignment = $assign->id;
         $grade->userid = $student->id;
@@ -86,6 +98,17 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $grade->grade = 50;
         $grade->attemptnumber = 0;
         $DB->insert_record('assign_grades', $grade);
+
+        $submission = new stdClass();
+        $submission->assignment = $assign->id;
+        $submission->userid = $student->id;
+        $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+        $submission->latest = 1;
+        $submission->attemptnumber = 1;
+        $submission->groupid = 0;
+        $submission->timecreated = time();
+        $submission->timemodified = time();
+        $DB->insert_record('assign_submission', $submission);
 
         $grade = new stdClass();
         $grade->assignment = $assign->id;
@@ -244,6 +267,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $submission->timemodified = $submission->timecreated;
         $submission->status = 'draft';
         $submission->attemptnumber = 0;
+        $submission->latest = 0;
         $sid = $DB->insert_record('assign_submission', $submission);
 
         // Second attempt.
@@ -254,6 +278,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $submission->timemodified = $submission->timecreated;
         $submission->status = 'submitted';
         $submission->attemptnumber = 1;
+        $submission->latest = 1;
         $sid = $DB->insert_record('assign_submission', $submission);
         $submission->id = $sid;
 

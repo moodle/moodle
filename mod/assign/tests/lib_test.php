@@ -169,13 +169,15 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_assign_user_complete() {
-        global $PAGE;
+        global $PAGE, $DB;
 
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance(array('submissiondrafts' => 1));
         $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
 
         $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $DB->update_record('assign_submission', $submission);
 
         $this->expectOutputRegex('/Draft/');
         assign_user_complete($this->course, $this->students[0], $assign->get_course_module(), $assign->get_instance());
