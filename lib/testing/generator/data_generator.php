@@ -34,7 +34,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testing_data_generator {
+    /** @var int The number of grade categories created */
     protected $gradecategorycounter = 0;
+    /** @var int The number of grade items created */
+    protected $gradeitemcounter = 0;
+    /** @var int The number of grade outcomes created */
+    protected $gradeoutcomecounter = 0;
     protected $usercounter = 0;
     protected $categorycount = 0;
     protected $cohortcount = 0;
@@ -914,7 +919,6 @@ EOD;
         global $CFG;
 
         $this->gradecategorycounter++;
-        $i = $this->gradecategorycounter;
 
         $record = (array)$record;
 
@@ -923,7 +927,7 @@ EOD;
         }
 
         if (!isset($record['fullname'])) {
-            $record['fullname'] = 'Grade category ' . $i;
+            $record['fullname'] = 'Grade category ' . $this->gradecategorycounter;
         }
 
         // For gradelib classes.
@@ -940,5 +944,69 @@ EOD;
 
         $gradecategory->update_from_db();
         return $gradecategory->get_record_data();
+    }
+
+    /**
+     * Create a grade_item.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the grade item record
+     */
+    public function create_grade_item($record = null) {
+        global $CFG;
+        require_once("$CFG->libdir/gradelib.php");
+
+        $this->gradeitemcounter++;
+
+        if (!isset($record['itemtype'])) {
+            $record['itemtype'] = 'manual';
+        }
+
+        if (!isset($record['itemname'])) {
+            $record['itemname'] = 'Grade item ' . $this->gradeitemcounter;
+        }
+
+        if (isset($record['outcomeid'])) {
+            $outcome = new grade_outcome(array('id' => $record['outcomeid']));
+            $record['scaleid'] = $outcome->scaleid;
+        }
+        if (isset($record['scaleid'])) {
+            $record['gradetype'] = GRADE_TYPE_SCALE;
+        } else if (!isset($record['gradetype'])) {
+            $record['gradetype'] = GRADE_TYPE_VALUE;
+        }
+
+        // Create new grade item in this course.
+        $gradeitem = new grade_item($record, false);
+        $gradeitem->insert();
+
+        $gradeitem->update_from_db();
+        return $gradeitem->get_record_data();
+    }
+
+    /**
+     * Create a grade_outcome.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the grade outcome record
+     */
+    public function create_grade_outcome($record = null) {
+        global $CFG;
+
+        $this->gradeoutcomecounter++;
+        $i = $this->gradeoutcomecounter;
+
+        if (!isset($record['fullname'])) {
+            $record['fullname'] = 'Grade outcome ' . $i;
+        }
+
+        // For gradelib classes.
+        require_once($CFG->libdir . '/gradelib.php');
+        // Create new grading outcome in this course.
+        $gradeoutcome = new grade_outcome($record, false);
+        $gradeoutcome->insert();
+
+        $gradeoutcome->update_from_db();
+        return $gradeoutcome->get_record_data();
     }
 }
