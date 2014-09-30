@@ -537,13 +537,19 @@ function xmldb_assign_upgrade($oldversion) {
                                 FROM {assign_submission}
                             GROUP BY assignment, groupid, userid';
 
-            $maxattemptidssql = 'SELECT souter.id
-                                   FROM {assign_submission} souter
-                                   JOIN (' . $maxattemptsql . ') sinner
-                                     ON souter.assignment = sinner.assignment
-                                    AND souter.userid = sinner.userid
-                                    AND souter.groupid = sinner.groupid
-                                    AND souter.attemptnumber = sinner.maxattempt';
+            // Note: souterouter looks redundant below, but it forces
+            // MySQL to use an in memory table to store the results of the
+            // inner query. Without this MySQL would complain that the UPDATE
+            // is operating on the same table as the FROM (which is true).
+            $maxattemptidssql = 'SELECT souterouter.id FROM (
+                                    SELECT souter.id
+                                       FROM {assign_submission} souter
+                                       JOIN (' . $maxattemptsql . ') sinner
+                                         ON souter.assignment = sinner.assignment
+                                        AND souter.userid = sinner.userid
+                                        AND souter.groupid = sinner.groupid
+                                        AND souter.attemptnumber = sinner.maxattempt
+                                ) souterouter';
             $select = 'id IN(' . $maxattemptidssql . ')';
             $DB->set_field_select('assign_submission', 'latest', 1, $select);
 
