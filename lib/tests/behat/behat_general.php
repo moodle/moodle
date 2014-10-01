@@ -1126,4 +1126,84 @@ class behat_general extends behat_base {
             }
         }
     }
+
+    /**
+     * Given the text of a link, download the linked file and return the contents.
+     *
+     * This is a helper method used by {@link following_should_download_bytes()}
+     * and {@link following_should_download_between_and_bytes()}
+     *
+     * @param string $link the text of the link.
+     * @return string the content of the downloaded file.
+     */
+    protected function download_file_from_link($link) {
+        // Find the link.
+        $linknode = $this->find_link($link);
+        $this->ensure_node_is_visible($linknode);
+
+        // Get the href and check it.
+        $url = $linknode->getAttribute('href');
+        if (!$url) {
+            throw new ExpectationException('Download link does not have href attribute',
+                    $this->getSession());
+        }
+        if (!preg_match('~^https?://~', $url)) {
+            throw new ExpectationException('Download link not an absolute URL: ' . $url,
+                    $this->getSession());
+        }
+
+        // Download the URL and check the size.
+        $session = $this->getSession()->getCookie('MoodleSession');
+        return download_file_content($url, array('Cookie' => 'MoodleSession=' . $session));
+    }
+
+    /**
+     * Downloads the file from a link on the page and checks the size.
+     *
+     * Only works if the link has an href attribute. Javascript downloads are
+     * not supported. Currently, the href must be an absolute URL.
+     *
+     * @Then /^following "(?P<link_string>[^"]*)" should download "(?P<expected_bytes>\d+)" bytes$/
+     * @throws ExpectationException
+     * @param string $link the text of the link.
+     * @param number $expectedsize the expected file size in bytes.
+     */
+    public function following_should_download_bytes($link, $expectedsize) {
+        $result = $this->download_file_from_link($link);
+        $actualsize = (int)strlen($result);
+        if ($actualsize !== (int)$expectedsize) {
+            throw new ExpectationException('Downloaded data was ' . $actualsize .
+                    ' bytes, expecting ' . $expectedsize, $this->getSession());
+        }
+    }
+
+    /**
+     * Downloads the file from a link on the page and checks the size is in a given range.
+     *
+     * Only works if the link has an href attribute. Javascript downloads are
+     * not supported. Currently, the href must be an absolute URL.
+     *
+     * The range includes the endpoints. That is, a 10 byte file in considered to
+     * be between "5" and "10" bytes, and between "10" and "20" bytes.
+     *
+     * @Then /^following "(?P<link_string>[^"]*)" should download between "(?P<min_bytes>\d+)" and "(?P<max_bytes>\d+)" bytes$/
+     * @throws ExpectationException
+     * @param string $link the text of the link.
+     * @param number $minexpectedsize the minimum expected file size in bytes.
+     * @param number $maxexpectedsize the maximum expected file size in bytes.
+     */
+    public function following_should_download_between_and_bytes($link, $minexpectedsize, $maxexpectedsize) {
+        // If the minimum is greater than the maximum then swap the values.
+        if ((int)$minexpectedsize > (int)$maxexpectedsize) {
+            list($minexpectedsize, $maxexpectedsize) = array($maxexpectedsize, $minexpectedsize);
+        }
+
+        $result = $this->download_file_from_link($link);
+        $actualsize = (int)strlen($result);
+        if ($actualsize < $minexpectedsize || $actualsize > $maxexpectedsize) {
+            throw new ExpectationException('Downloaded data was ' . $actualsize .
+                    ' bytes, expecting between ' . $minexpectedsize . ' and ' .
+                    $maxexpectedsize, $this->getSession());
+        }
+    }
 }
