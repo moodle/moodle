@@ -60,7 +60,7 @@ echo $OUTPUT->doctype() ?>
                 <?php echo $OUTPUT->custom_menu(); ?>
                 <ul class="nav pull-right">
                     <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
-                    <li class="navbar-text"><?php echo $OUTPUT->user_menu(); ?></li>
+                    <li class="navbar-text"><?php echo $OUTPUT->login_info() ?></li>
                 </ul>
             </div>
         </div>
@@ -75,7 +75,6 @@ echo $OUTPUT->doctype() ?>
             <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
         </div>
         <?php echo $OUTPUT->page_heading(); ?>
-        <?php echo $OUTPUT->user_menu(); ?>
         <div id="course-header">
             <?php echo $OUTPUT->course_header(); ?>
         </div>

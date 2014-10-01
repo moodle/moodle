@@ -94,10 +94,6 @@ class behat_auth extends behat_base {
         // If it is needed, it expands the navigation bar with the 'Log out' link.
         if ($clicknavbar = $this->get_expand_navbar_step()) {
             array_unshift($steps, $clicknavbar);
-        } else {
-            // Otherwise we need to expand the the user menu.
-            $xpath ="//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
-            array_unshift($steps, new When('I click on "'.$xpath.'" "xpath_element"'));
         }
 
         return $steps;
