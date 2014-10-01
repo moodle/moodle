@@ -28,3 +28,9 @@ Feature: Test importing questions from GIFT format.
     And I should see "What's between orange and green in the spectrum?"
     When I press "Continue"
     Then I should see "colours"
+
+    # Now export again.
+    And I navigate to "Export" node in "Course administration > Question bank"
+    And I set the field "id_format_gift" to "1"
+    And I press "Export questions to file"
+    And following "click here" should download "1624" bytes
