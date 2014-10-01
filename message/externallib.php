@@ -71,6 +71,7 @@ class core_message_external extends external_api {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/message/lib.php");
 
+
         //check if messaging is enabled
         if (!$CFG->messaging) {
             throw new moodle_exception('disabled', 'message');
@@ -573,7 +574,7 @@ class core_message_external extends external_api {
      * Get messages parameters description.
      *
      * @return external_function_parameters
-     * @since 2.7
+     * @since 2.8
      */
     public static function get_messages_parameters() {
         return new external_function_parameters(
@@ -597,15 +598,15 @@ class core_message_external extends external_api {
      * Get messages function implementation.
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
-     * @param  string   $type           type of message tu return, expected values: notifications, conversations and both
+     * @param  string   $type           type of message to return, expected values: notifications, conversations and both
      * @param  bool     $read           true for retreiving read messages, false for unread
      * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
      * @param  int      $limitfrom      limit from
      * @param  int      $limitnum       limit num
      * @return external_description
-     * @since  2.7
+     * @since  2.8
      */
-    public static function get_messages($useridto, $useridfrom = 0, $type = 'both' , $read = true,
+    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $DB, $USER;
         require_once($CFG->dirroot . "/message/lib.php");
@@ -677,48 +678,16 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        // Get messages.
-        $messagetable = $read ? '{message_read}' : '{message}';
-        $usersql = "";
-        $joinsql = "";
-        $params = array('deleted' => 0);
-
-        // Empty useridto means that we are going to retrieve messages send by the useridfrom to any user.
-        if (empty($useridto)) {
-            $userfields = get_all_user_name_fields(true, 'u', '', 'userto');
-            $joinsql = "JOIN {user} u ON u.id = mr.useridto";
-            $usersql = "mr.useridfrom = :useridfrom AND u.deleted = :deleted";
-            $params['useridfrom'] = $useridfrom;
-        } else {
-            $userfields = get_all_user_name_fields(true, 'u', '', 'userfrom');
-            // Left join because useridfrom may be -10 or -20 (no-reply and support users).
-            $joinsql = "LEFT JOIN {user} u ON u.id = mr.useridfrom";
-            $usersql = "mr.useridto = :useridto AND (u.deleted IS NULL OR u.deleted = :deleted)";
-            $params['useridto'] = $useridto;
-            if (!empty($useridfrom)) {
-                $usersql .= " AND mr.useridfrom = :useridfrom";
-                $params['useridfrom'] = $useridfrom;
-            }
-        }
-
-        // Now, if retrieve notifications, conversations or both.
-        $typesql = "";
+        // Which type of messages retrieve.
+        $notifications = -1;
         if ($type != 'both') {
-            $typesql = "AND mr.notification = :notification";
-            $params['notification'] = ($type == 'notifications') ? 1 : 0;
+            $notifications = ($type == 'notifications') ? 1 : 0;
         }
 
-        // Finally the sort direction.
         $orderdirection = $newestfirst ? 'DESC' : 'ASC';
+        $sort = "mr.timecreated $orderdirection";
 
-        $sql = "SELECT mr.*, $userfields
-                  FROM $messagetable mr
-                     $joinsql
-                 WHERE  $usersql
-                        $typesql
-                 ORDER BY mr.timecreated $orderdirection";
-
-        if ($messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
+        if ($messages = message_get_messages($useridto, $useridfrom, $notifications, $read, $sort, $limitfrom, $limitnum)) {
             $canviewfullname = has_capability('moodle/site:viewfullnames', $context);
 
             // In some cases, we don't need to get the to/from user objects from the sql query.
@@ -736,7 +705,6 @@ class core_message_external extends external_api {
                 // If the useridto field is empty, the useridfrom must be filled.
                 $userfromfullname = fullname($userfrom, $canviewfullname);
             }
-
             foreach ($messages as $mid => $message) {
 
                 // We need to get the user from the query.
@@ -763,12 +731,12 @@ class core_message_external extends external_api {
                     $message->usertofullname = $usertofullname;
                 }
 
+                // This field is only available in the message_read table.
                 if (!isset($message->timeread)) {
                     $message->timeread = 0;
                 }
 
                 $message->text = message_format_message_text($message);
-
                 $messages[$mid] = (array) $message;
             }
         }
@@ -785,7 +753,7 @@ class core_message_external extends external_api {
      * Get messages return description.
      *
      * @return external_single_structure
-     * @since 2.7
+     * @since 2.8
      */
     public static function get_messages_returns() {
         return new external_single_structure(
@@ -793,13 +761,13 @@ class core_message_external extends external_api {
                 'messages' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'mMssage id'),
+                            'id' => new external_value(PARAM_INT, 'Message id'),
                             'useridfrom' => new external_value(PARAM_INT, 'User from id'),
                             'useridto' => new external_value(PARAM_INT, 'User to id'),
                             'subject' => new external_value(PARAM_TEXT, 'The message subject'),
                             'text' => new external_value(PARAM_RAW, 'The message text formated'),
                             'fullmessage' => new external_value(PARAM_RAW, 'The message'),
-                            'fullmessageformat' => new external_value(PARAM_INT, 'The message message format'),
+                            'fullmessageformat' => new external_format_value('fullmessage'),
                             'fullmessagehtml' => new external_value(PARAM_RAW, 'The message in html'),
                             'smallmessage' => new external_value(PARAM_RAW, 'The shorten message'),
                             'notification' => new external_value(PARAM_INT, 'Is a notification?'),
