@@ -747,12 +747,14 @@ class grade_plugin_info {
  * @param string  $bodytags Additional attributes that will be added to the <body> tag
  * @param string  $buttons Additional buttons to display on the page
  * @param boolean $shownavigation should the gradebook navigation drop down (or tabs) be shown?
+ * @param string  $headerhelpidentifier The help string identifier if required.
+ * @param string  $headerhelpcomponent The component for the help string.
  *
  * @return string HTML code or nothing if $return == false
  */
 function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
-                               $buttons=false, $shownavigation=true) {
+                               $buttons=false, $shownavigation=true, $headerhelpidentifier = null, $headerhelpcomponent = null) {
     global $CFG, $OUTPUT, $PAGE;
 
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
@@ -781,6 +783,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     grade_extend_settings($plugin_info, $courseid);
 
     $returnval = $OUTPUT->header();
+
     if (!$return) {
         echo $returnval;
     }
@@ -795,10 +798,18 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
             $returnval .= print_grade_plugin_selector($plugin_info, $active_type, $active_plugin, $return);
         }
 
-        if ($return) {
-            $returnval .= $OUTPUT->heading($heading);
+        $output = '';
+        // Add a help dialogue box if provided.
+        if (isset($headerhelpidentifier)) {
+            $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
         } else {
-            echo $OUTPUT->heading($heading);
+            $output = $OUTPUT->heading($heading);
+        }
+
+        if ($return) {
+            $returnval .= $output;
+        } else {
+            echo $output;
         }
 
         if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
