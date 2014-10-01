@@ -8615,7 +8615,7 @@ function getremoteaddr($default='0.0.0.0') {
     if (!($variablestoskip & GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR)) {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $hdr = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $address = $hdr[0];
+            $address = cleanremoteaddr($hdr[0]);
             return $address ? $address : $default;
         }
     }
