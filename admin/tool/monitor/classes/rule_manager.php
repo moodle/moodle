@@ -142,7 +142,8 @@ class rule_manager {
     public static function get_rules_by_courseid($courseid, $limitfrom = 0, $limitto = 0) {
         global $DB;
         $select = "courseid = ? OR courseid = ?";
-        return $DB->get_records_select('tool_monitor_rules', $select, array(0, $courseid), null, '*', $limitfrom, $limitto);
+        return self::get_instances($DB->get_records_select('tool_monitor_rules', $select, array(0, $courseid), null, '*',
+                $limitfrom, $limitto));
     }
 
     /**
@@ -167,7 +168,7 @@ class rule_manager {
      */
     public static function get_rules_by_plugin($plugin) {
         global $DB;
-        return $DB->get_records('tool_monitor_rules', array('plugin' => $plugin));
+        return self::get_instances($DB->get_records('tool_monitor_rules', array('plugin' => $plugin)));
     }
 
     /**
@@ -179,6 +180,21 @@ class rule_manager {
      */
     public static function get_rules_by_event($eventname) {
         global $DB;
-        return $DB->get_records('tool_monitor_rules', array('eventname' => $eventname));
+        return self::get_instances($DB->get_records('tool_monitor_rules', array('eventname' => $eventname)));
+    }
+
+    /**
+     * Helper method to convert db records to instances.
+     *
+     * @param array $arr of rules.
+     *
+     * @return array of rules as instances.
+     */
+    protected static function get_instances($arr) {
+        $result = array();
+        foreach ($arr as $key => $sub) {
+            $result[$key] = new rule($sub);
+        }
+        return $result;
     }
 }

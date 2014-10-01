@@ -192,9 +192,7 @@ class renderable extends \table_sql implements \renderable {
         $this->pagesize($pagesize, $total);
         $rules = \tool_monitor\rule_manager::get_rules_by_courseid($this->courseid, $this->get_page_start(),
                 $this->get_page_size());
-        foreach ($rules as $rule) {
-            $this->rawdata[] = \tool_monitor\rule_manager::get_rule($rule);
-        }
+        $this->rawdata = $rules;
         // Set initial bars.
         if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);

@@ -144,9 +144,7 @@ class subs extends \table_sql implements \renderable {
         $this->pagesize($pagesize, $total);
         $subs = \tool_monitor\subscription_manager::get_user_subscriptions_for_course($this->courseid, $this->get_page_start(),
                 $this->get_page_size());
-        foreach ($subs as $subscription) {
-            $this->rawdata[] = \tool_monitor\subscription_manager::get_subscription($subscription->id);
-        }
+        $this->rawdata = $subs;
         // Set initial bars.
         if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);

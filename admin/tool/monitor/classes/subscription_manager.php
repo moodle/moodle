@@ -136,7 +136,8 @@ class subscription_manager {
         $sql = self::get_subscription_join_rule_sql();
         $sql .= "WHERE s.courseid = :courseid AND s.userid = :userid ORDER BY $order";
 
-        return $DB->get_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid), $limitfrom, $limitto);
+        return self::get_instances($DB->get_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid), $limitfrom,
+                $limitto));
     }
 
     /**
@@ -158,7 +159,6 @@ class subscription_manager {
         return $DB->count_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid));
     }
 
-
     /**
      * Return a list of subscriptions for a given event.
      *
@@ -177,7 +177,7 @@ class subscription_manager {
             $sql .= "WHERE r.eventname = :eventname AND (s.courseid = :courseid OR s.courseid = 0)";
             $params = array('eventname' => $event->eventname, 'courseid' => $event->courseid);
         }
-        return $DB->get_records_sql($sql, $params);
+        return self::get_instances($DB->get_records_sql($sql, $params));
     }
 
     /**
@@ -187,7 +187,7 @@ class subscription_manager {
      *
      * @return string the sql.
      */
-    public static function get_subscription_join_rule_sql($count = false) {
+    protected static function get_subscription_join_rule_sql($count = false) {
         if ($count) {
             $select = "SELECT COUNT(s.id) ";
         } else {
@@ -199,5 +199,20 @@ class subscription_manager {
                   JOIN {tool_monitor_subscriptions} s
                         ON r.id = s.ruleid ";
         return $sql;
+    }
+
+    /**
+     * Helper method to convert db records to instances.
+     *
+     * @param array $arr of subscriptions.
+     *
+     * @return array of subscriptions as instances.
+     */
+    protected static function get_instances($arr) {
+        $result = array();
+        foreach ($arr as $key => $sub) {
+            $result[$key] = new subscription($sub);
+        }
+        return $result;
     }
 }
