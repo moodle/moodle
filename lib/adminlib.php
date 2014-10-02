@@ -203,7 +203,7 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('task_scheduled', array('component' => $pluginname));
 
     // Delete Inbound Message datakeys.
-    $DB->delete_records_sql('messageinbound_datakeys',
+    $DB->delete_records_select('messageinbound_datakeys',
             'handler IN (SELECT id FROM {messageinbound_handlers} WHERE component = ?)', array($pluginname));
 
     // Delete Inbound Message handlers.
