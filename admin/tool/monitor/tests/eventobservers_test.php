@@ -364,4 +364,119 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
         $this->assertEquals($expectedmsg, $msg->fullmessage);
     }
 
+    /**
+     * Test observer for user delete event.
+     */
+    public function test_user_deleted() {
+        global $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        $rule = new stdClass();
+        $rule->userid = $user->id;
+        $rule->courseid = $course->id;
+        $rule->plugin = 'test';
+
+        $sub = new stdClass();
+        $sub->courseid = $course->id;
+        $sub->userid = $user->id;
+
+        // Add 10 rules for this course with subscriptions.
+        for ($i = 0; $i < 10; $i++) {
+            $createdrule = $monitorgenerator->create_rule($rule);
+            $sub->ruleid = $createdrule->id;
+            $monitorgenerator->create_subscription($sub);
+        }
+
+        // Add 10 random rules for random courses.
+        for ($i = 0; $i < 10; $i++) {
+            $rule->courseid = rand(10000000, 50000000);
+            $createdrule = $monitorgenerator->create_rule($rule);
+            $sub->courseid = $rule->courseid;
+            $sub->ruleid = $createdrule->id;
+            $monitorgenerator->create_subscription($sub);
+        }
+
+        // Verify data before user delete.
+        $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');
+        $this->assertCount(20, $totalrules);
+        $totalsubs = $DB->get_records('tool_monitor_subscriptions');
+        $this->assertCount(20, $totalsubs);
+
+        // Let us delete the user now.
+        delete_user($user);
+
+        // Verify data after course delete.
+        $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');
+        $this->assertCount(20, $totalrules);
+        $totalsubs = $DB->get_records('tool_monitor_subscriptions');
+        $this->assertCount(0, $totalsubs); // Make sure all subscriptions are deleted.
+    }
+
+    /**
+     * Test observer for course module delete event.
+     */
+    public function test_course_module_deleted() {
+        global $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        // Now let us create a rule specific to a module instance.
+        $cm = new stdClass();
+        $cm->course = $course->id;
+        $book = $this->getDataGenerator()->create_module('book', $cm);
+
+        $rule = new stdClass();
+        $rule->userid = $user->id;
+        $rule->courseid = $course->id;
+        $rule->plugin = 'test';
+
+        $sub = new stdClass();
+        $sub->courseid = $course->id;
+        $sub->userid = $user->id;
+        $sub->cmid = $book->cmid;
+
+        // Add 10 rules for this course with subscriptions for this module.
+        for ($i = 0; $i < 10; $i++) {
+            $createdrule = $monitorgenerator->create_rule($rule);
+            $sub->ruleid = $createdrule->id;
+            $monitorgenerator->create_subscription($sub);
+        }
+
+        // Add 10 random rules for random courses.
+        for ($i = 0; $i < 10; $i++) {
+            $rule->courseid = rand(10000000, 50000000);
+            $createdrule = $monitorgenerator->create_rule($rule);
+            $sub->courseid = $rule->courseid;
+            $sub->ruleid = $createdrule->id;
+            $sub->cmid = 0;
+            $monitorgenerator->create_subscription($sub);
+        }
+
+        // Verify data before module delete.
+        $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');
+        $this->assertCount(20, $totalrules);
+        $totalsubs = $DB->get_records('tool_monitor_subscriptions');
+        $this->assertCount(20, $totalsubs);
+
+        // Let us delete the user now.
+        course_delete_module($book->cmid);
+
+        // Verify data after course delete.
+        $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');
+        $this->assertCount(20, $totalrules);
+        $totalsubs = $DB->get_records('tool_monitor_subscriptions');
+        $this->assertCount(10, $totalsubs); // Make sure only relevant subscriptions are deleted.
+    }
+
 }
