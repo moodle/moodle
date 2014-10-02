@@ -2,6 +2,11 @@ This files describes API changes in the quiz code.
 
 === 2.8 ===
 
+* Classes that where defined in various lib files have been moved to the classes
+  folder to take advantage of auto-loading. This has involved renaming them.
+  see the list in mod/quiz/db/renamedclasses.php.
+
+
 * Major changes to the Edit quiz page.
 
   The goal of this work was to increase usability, and also clean up the page

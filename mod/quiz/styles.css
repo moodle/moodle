@@ -705,8 +705,9 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots .activityinstance span.instancename img {
     margin-right: .2em;
 }
+#page-mod-quiz-edit #categoryquestions .questionname,
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questionname {
-    font-weight: bold;
+  font-weight: bold;
     color: #555;
 }
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questiontext {
