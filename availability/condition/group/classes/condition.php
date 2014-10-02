@@ -176,6 +176,12 @@ class condition extends \core_availability\condition {
     public function filter_user_list(array $users, $not, \core_availability\info $info,
             \core_availability\capability_checker $checker) {
         global $CFG, $DB;
+
+        // If the array is empty already, just return it.
+        if (!$users) {
+            return $users;
+        }
+
         require_once($CFG->libdir . '/grouplib.php');
         $course = $info->get_course();
 
