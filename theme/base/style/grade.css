@@ -73,7 +73,6 @@
     text-align:center;
 }
 
-.path-grade-edit-tree table.generaltable td.selection,
-.path-grade-edit-tree table.generaltable th.selection {
+.path-grade-edit-tree table.setup-grades .column-select {
     text-align: center;
 }

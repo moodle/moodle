@@ -376,7 +376,8 @@ class grade_report_user extends grade_report {
         $data = array();
         $hidden = '';
         $excluded = '';
-        $class = '';
+        $itemlevel = ($type == 'categoryitem' || $type == 'category' || $type == 'courseitem') ? $depth : ($depth + 1);
+        $class = 'level' . $itemlevel . ' level' . ($itemlevel % 2 ? 'odd' : 'even');
         $classfeedback = '';
 
         // If this is a hidden grade category, hide it completely from the user
@@ -442,7 +443,7 @@ class grade_report_user extends grade_report {
                 **/
 
                 /// Other class information
-                $class = "$hidden $excluded";
+                $class .= $hidden . $excluded;
                 if ($this->switch) { // alter style based on whether aggregation is first or last
                    $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggt b2b" : " item b1b";
                 } else {
@@ -665,6 +666,9 @@ class grade_report_user extends grade_report {
         }
 
         /// Add this row to the overall system
+        foreach ($data as $key => $celldata) {
+            $data[$key]['class'] .= ' column-' . $key;
+        }
         $this->tabledata[] = $data;
 
         /// Recursively iterate through all child elements
@@ -768,10 +772,10 @@ class grade_report_user extends grade_report {
                    class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
-                    <th id='".$this->tablecolumns[0]."' class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
+                    <th id='".$this->tablecolumns[0]."' class=\"header column-{$this->tablecolumns[0]}\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
 
         for ($i = 1; $i < count($this->tableheaders); $i++) {
-            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header\">".$this->tableheaders[$i]."</th>\n";
+            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header column-{$this->tablecolumns[$i]}\">".$this->tableheaders[$i]."</th>\n";
         }
 
         $html .= "
