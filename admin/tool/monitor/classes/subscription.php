@@ -124,7 +124,6 @@ class subscription {
      * Get properly formatted name of the rule associated.
      *
      * @param \context $context context where this name would be displayed.
-     *
      * @return string Formatted name of the rule.
      */
     public function get_name(\context $context) {
@@ -135,7 +134,6 @@ class subscription {
      * Get properly formatted description of the rule associated.
      *
      * @param \context $context context where this description would be displayed.
-     *
      * @return string Formatted description of the rule.
      */
     public function get_description(\context $context) {
@@ -162,21 +160,16 @@ class subscription {
      * Get properly formatted name of the course associated.
      *
      * @param \context $context context where this name would be displayed.
-     *
      * @return string Formatted name of the rule.
      */
     public function get_course_name(\context $context) {
-        global $SITE;
         $courseid = $this->courseid;
         if (empty($courseid)) {
-            $coursename = format_string($SITE->fullname, true, array('context' => $context));
+            return get_string('site');
         } else {
-            $course = get_course($this->courseid);
-            $link = new \moodle_url('/course/view.php', array('id' => $course->id));
-            $coursename = format_string($course->fullname, true, array('context' => $context));
-            $coursename = \html_writer::link($link, $coursename);
+            $course = get_course($courseid);
+            return format_string($course->fullname, true, array('context' => $context));
         }
-        return $coursename;
     }
 
     /**

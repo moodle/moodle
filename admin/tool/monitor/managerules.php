@@ -47,16 +47,11 @@ if (empty($courseid)) {
 require_capability('tool/monitor:managerules', $context);
 
 // Set up the page.
-$a = new stdClass();
-$a->coursename = $coursename;
-$a->reportname = get_string('pluginname', 'tool_monitor');
-$title = get_string('title', 'tool_monitor', $a);
 $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
-
 $PAGE->set_url($manageurl);
 $PAGE->set_pagelayout('report');
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_title($coursename);
+$PAGE->set_heading($coursename);
 
 // Site level report.
 if (empty($courseid)) {
@@ -105,6 +100,8 @@ if (!empty($action) && $ruleid) {
 } else {
     echo $OUTPUT->header();
 }
+
+echo $OUTPUT->heading(get_string('managerules', 'tool_monitor'));
 
 // Render the rule list.
 $renderable = new \tool_monitor\output\managerules\renderable('toolmonitorrules', $manageurl, $courseid);

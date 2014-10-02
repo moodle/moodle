@@ -44,17 +44,12 @@ if (empty($courseid)) {
 require_capability('tool/monitor:managerules', $context);
 
 // Set up the page.
-$a = new stdClass();
-$a->coursename = $coursename;
-$a->reportname = get_string('pluginname', 'tool_monitor');
-$title = get_string('title', 'tool_monitor', $a);
 $url = new moodle_url("/admin/tool/monitor/edit.php", array('courseid' => $courseid, 'ruleid' => $ruleid));
 $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
-
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_title($coursename);
+$PAGE->set_heading($coursename);
 
 // Get data ready for mform.
 $eventlist = tool_monitor\eventlist::get_all_eventlist(true);
@@ -85,6 +80,11 @@ if (!empty($ruleid)) {
 $mform = new tool_monitor\rule_form(null, array('eventlist' => $eventlist, 'pluginlist' => $pluginlist, 'rule' => $rule,
         'courseid' => $courseid));
 
+if ($mform->is_cancelled()) {
+    redirect(new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $courseid)));
+    exit();
+}
+
 if ($mformdata = $mform->get_data()) {
     $rule = \tool_monitor\rule_manager::clean_ruledata_form($mformdata);
 
@@ -95,10 +95,14 @@ if ($mformdata = $mform->get_data()) {
     }
 
     redirect($manageurl);
-} else {
-    echo $OUTPUT->header();
-    $mform->set_data($rule);
-    $mform->display();
-    echo $OUTPUT->footer();
 }
 
+echo $OUTPUT->header();
+if (!empty($ruleid)) {
+    echo $OUTPUT->heading(get_string('editrule', 'tool_monitor'));
+} else {
+    echo $OUTPUT->heading(get_string('addrule', 'tool_monitor'));
+}
+$mform->set_data($rule);
+$mform->display();
+echo $OUTPUT->footer();

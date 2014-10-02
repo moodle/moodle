@@ -26,19 +26,17 @@
 
 $string['addrule'] = 'Add a new rule';
 $string['allevents'] = 'All events';
-$string['allmodules'] = 'All modules';
+$string['allmodules'] = 'All instances';
+$string['area'] = 'Area';
+$string['areatomonitor'] = 'Area to monitor';
 $string['core'] = 'Core';
-$string['context'] = 'Context';
-$string['customisefilters'] = 'Select the frequency of the events';
-$string['customisemessage'] = 'Customise the notification message';
 $string['currentsubscriptions'] = 'Your current subscriptions';
-$string['description_help'] = "Description is displayed to users when they want to subscribe to this rule. This helps them understand what the rule is about.";
-$string['defaultmessagetpl'] = 'Rule "{rulename}" has happened. You can find further details at {link}';
+$string['defaultmessagetemplate'] = 'The rule "{rulename}" you have subscribed to has occurred - please find further details at {link}';
 $string['deleterule'] = 'Delete rule';
 $string['deletesubscription'] = 'Delete subscription';
-$string['description'] = 'Description:';
 $string['duplicaterule'] = 'Duplicate rule';
 $string['editrule'] = 'Edit rule';
+$string['event'] = 'Event';
 $string['eventnotfound'] = 'Event not found';
 $string['eventrulecreated'] = 'Rule created';
 $string['eventruledeleted'] = 'Rule deleted';
@@ -47,31 +45,32 @@ $string['eventsubcreated'] = 'Subscription created';
 $string['eventsubcriteriamet'] = 'Subscription criteria met';
 $string['eventsubdeleted'] = 'Subscription deleted';
 $string['errorincorrectevent'] = 'Please select an event related to the selected plugin';
-$string['freqdesc'] = '{$a->freq} times in {$a->mins} minutes';
-$string['frequency'] = 'Frequency';
+$string['freqdesc'] = '{$a->freq} time(s) in {$a->mins} minute(s)';
+$string['frequency'] = 'Notification threshold';
+$string['frequency_help'] = 'The number of events within a specified time period required for a notification message to be sent.';
+$string['inminutes'] = 'in minutes';
 $string['invalidmodule'] = 'Invalid module';
-$string['norules'] = 'There are no rules you can subscribe to.';
-$string['manageruleslink'] = 'You can manage rules from {$a} page.';
+$string['manageruleslink'] = 'You can manage rules from the {$a} page.';
 $string['managesubscriptionslink'] = 'You can subscribe to rules from the {$a} page.';
-$string['moduleinstance'] = 'Module instance';
 $string['manage'] = 'Manage';
 $string['managesubscriptions'] = 'Event monitoring';
 $string['managerules'] = 'Event monitoring rules';
-$string['messageheader'] = 'Customise your notification message';
 $string['messageprovider:notification'] = 'Notifications of rule subscriptions';
-$string['messagetemplate'] = 'Message template';
-$string['messagetemplate_help'] = 'This is the content of the message that will be sent to users, when the given conditions of the rule are met. You are allowed to use following templates in this.
-<br /> {link} - Link to the location where the event happened.
-<br /> {modulelink} - Link to the module where the event has happened.
-<br /> {rulename} - Name of this rule.
-<br /> {description} - Rule description.
-<br /> {eventname} - Name of the event associated with the rule.';
-$string['minutes'] = 'in minutes:';
-$string['name'] = 'Name of the rule: ';
-$string['name_help'] = "Choose a name for the rule.";
-$string['nopermission'] = "No permission";
+$string['nopermission'] = 'No permission';
+$string['messagetemplate'] = 'Notification message';
+$string['messagetemplate_help'] = 'A notification message is sent to subscribers once the notification threshold has been reached. It can include any or all of the following placeholders:
+<br /><br />
+* Link to the location of the event {link}<br />
+* Link to the area monitored {modulelink}<br />
+* Rule name {rulename}<br />
+* Description {description}<br />
+* Event {eventname}';
+$string['monitor:managerules'] = 'Manage event monitor rules';
+$string['monitor:subscribe'] = 'Subscribe to event monitor rules';
+$string['norules'] = 'There are no event monitoring rules.';
 $string['pluginname'] = 'Event monitor';
 $string['processevents'] = 'Process events';
+$string['rulename'] = 'Rule name';
 $string['ruleareyousure'] = 'Are you sure you want to delete rule "{$a}"?';
 $string['rulecopysuccess'] = 'Rule successfully duplicated';
 $string['ruledeletesuccess'] = 'Rule successfully deleted';
@@ -81,23 +80,12 @@ $string['rulenopermissions'] = 'You do not have permissions to "{$a} a rule"';
 $string['rulescansubscribe'] = 'Rules you can subscribe to';
 $string['selectacourse'] = 'Select a course';
 $string['selectcourse'] = 'Visit this report at course level to get a list of possible modules';
-$string['selectevent'] = 'Select an event:';
-$string['selectevent_help'] = "Select an event to monitor. Please note that some events are only triggered for the entire site (e.g. 'course created') and will never trigger when subscribed to from within a course.";
-$string['selectfrequency'] = 'Frequency of events:';
-$string['selectfrequency_help'] = "Frequency defines the denisty of the event occurrence. Select criterias to define how frequently the event should happen to trigger the notification.";
-$string['selectminutes'] = 'in minutes:';
-$string['selectplugin'] = 'Select the plugin type:';
-$string['selectplugin_help'] = "Select a plugin that you are interested in monitoring. The event list below would be updated to display events from the selected plugin.";
 $string['subareyousure'] = 'Are you sure you want to delete this subscription for the rule "{$a}"?';
 $string['subcreatesuccess'] = "Subscription successfully created";
 $string['subdeletesuccess'] = "Subscription successfully removed";
 $string['subhelp'] = 'Subscription details';
 $string['subhelp_help'] = 'This subscription listens for when the event \'{$a->eventname}\' has been triggered in \'{$a->moduleinstance}\' {$a->frequency} time(s) in {$a->minutes} minute(s).';
 $string['subscribeto'] = 'Subscribe to rule "{$a}"';
-$string['system'] = "System";
 $string['taskcleanevents'] = 'Removes any unnecessary event monitor events';
-$string['title'] = '{$a->coursename} : {$a->reportname}';
-$string['monitor:managerules'] = 'Manage event monitor rules';
-$string['monitor:subscribe'] = 'Subscribe to event monitor rules';
 $string['unsubscribe'] = 'Unsubscribe';
 
