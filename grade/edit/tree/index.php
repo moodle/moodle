@@ -170,6 +170,8 @@ switch ($action) {
 //Ideally we could do the updates through $grade_edit_tree to avoid recreating it
 $recreatetree = false;
 
+$normalisationmessage = null;
+
 if ($data = data_submitted() and confirm_sesskey()) {
     // Perform bulk actions first
     if (!empty($data->bulkmove)) {
@@ -225,6 +227,21 @@ if ($data = data_submitted() and confirm_sesskey()) {
     }
 
     grade_regrade_final_grades($courseid);
+    // Check to see if any weights were automatically adjusted.
+    // Run through the data to obtain all of the weight categories.
+    foreach ($data as $key => $notused) {
+        // We only want the weight entries.
+        if (preg_match('/^(weight)_([0-9]+)$/', $key, $matches)) {
+            // Fetch the weight for the grade item.
+            $gradeitemweight = grade_item::fetch(array('id' => $matches[2], 'courseid' => $courseid))->aggregationcoef2;
+            // Compare what was entered from the form with what was actually entered into the database.
+            if ($data->$matches[0] != ($gradeitemweight * 100)) {
+                // Send a notification that the weights were automatically adjusted.
+                $normalisationmessage = get_string('weightsadjusted', 'grades');
+                break;
+            }
+        }
+    }
 }
 
 print_grade_page_head($courseid, 'settings', 'setup', get_string('setupgradeslayout', 'grades'));
@@ -239,6 +256,10 @@ echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 //did we update something in the db and thus invalidate $grade_edit_tree?
 if ($recreatetree) {
     $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
+}
+// Check to see if we have a normalisation message to send.
+if (!empty($normalisationmessage)) {
+    echo $OUTPUT->notification($normalisationmessage, 'notifymessage');
 }
 
 echo html_writer::table($grade_edit_tree->table);

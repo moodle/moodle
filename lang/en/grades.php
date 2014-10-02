@@ -727,6 +727,7 @@ $string['weightofa'] = 'Weight of {$a}';
 $string['weightorextracredit'] = 'Weight or extra credit';
 $string['weight'] = 'Weight';
 $string['weights'] = 'Weights';
+$string['weightsadjusted'] = 'Your weights have been adjusted to total 100.';
 $string['weightsedit'] = 'Edit weights and extra credits';
 $string['weightuc'] = 'Calculated weight';
 $string['writinggradebookinfo'] = 'Writing gradebook settings';
