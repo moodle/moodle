@@ -2871,5 +2871,22 @@ abstract class grade_helper {
 
         return $fields;
     }
+
+    /**
+     * This helper method gets a snapshot of all the weights for a course.
+     * It is used as a quick method to see if any wieghts have been automatically adjusted.
+     * @param int $courseid
+     * @return array of itemid -> aggregationcoef2
+     */
+    public static function fetch_all_natural_weights_for_course($courseid) {
+        global $DB;
+        $result = array();
+
+        $records = $DB->get_records('grade_items', array('courseid'=>$courseid), 'id', 'id, aggregationcoef2');
+        foreach ($records as $record) {
+            $result[$record->id] = $record->aggregationcoef2;
+        }
+        return $result;
+    }
 }
 

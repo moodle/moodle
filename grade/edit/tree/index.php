@@ -68,7 +68,17 @@ if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
 }
 
 //first make sure we have proper final grades - we need it for locking changes
+$normalisationmessage = null;
+
+$originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
+
 grade_regrade_final_grades($courseid);
+
+$alteredweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
+
+if (array_diff($originalweights, $alteredweights)) {
+    $normalisationmessage = get_string('weightsadjusted', 'grades');
+}
 
 // get the grading tree object
 // note: total must be first for moving to work correctly, if you want it last moving code must be rewritten!
@@ -170,8 +180,6 @@ switch ($action) {
 //Ideally we could do the updates through $grade_edit_tree to avoid recreating it
 $recreatetree = false;
 
-$normalisationmessage = null;
-
 if ($data = data_submitted() and confirm_sesskey()) {
     // Perform bulk actions first
     if (!empty($data->bulkmove)) {
@@ -226,21 +234,13 @@ if ($data = data_submitted() and confirm_sesskey()) {
         }
     }
 
+    $originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
+
     grade_regrade_final_grades($courseid);
-    // Check to see if any weights were automatically adjusted.
-    // Run through the data to obtain all of the weight categories.
-    foreach ($data as $key => $notused) {
-        // We only want the weight entries.
-        if (preg_match('/^(weight)_([0-9]+)$/', $key, $matches)) {
-            // Fetch the weight for the grade item.
-            $gradeitemweight = grade_item::fetch(array('id' => $matches[2], 'courseid' => $courseid))->aggregationcoef2;
-            // Compare what was entered from the form with what was actually entered into the database.
-            if ($data->$matches[0] != ($gradeitemweight * 100)) {
-                // Send a notification that the weights were automatically adjusted.
-                $normalisationmessage = get_string('weightsadjusted', 'grades');
-                break;
-            }
-        }
+
+    $alteredweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
+    if (array_diff($originalweights, $alteredweights)) {
+        $normalisationmessage = get_string('weightsadjusted', 'grades');
     }
 }
 

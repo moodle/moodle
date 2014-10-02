@@ -1317,8 +1317,7 @@ class grade_category extends grade_object {
             }
             // If all items besides the extra credit grade item are overridden then set extra credit to zero.
             if (!$automaticgradeitemspresent && $gradeitemdetail['extracredit'] >= 1 && !$gradeitemdetail['weightoverride']) {
-                    $setotherweightstozero = true;
-                }
+                $setotherweightstozero = true;
             }
         }
 
