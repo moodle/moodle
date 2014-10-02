@@ -209,6 +209,11 @@ class condition extends \core_availability\condition {
             \core_availability\capability_checker $checker) {
         global $CFG, $DB;
 
+        // If the array is empty already, just return it.
+        if (!$users) {
+            return $users;
+        }
+
         // List users for this course who match the condition.
         $groupingusers = $DB->get_records_sql("
                 SELECT DISTINCT gm.userid

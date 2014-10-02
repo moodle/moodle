@@ -416,6 +416,11 @@ class condition extends \core_availability\condition {
             \core_availability\capability_checker $checker) {
         global $CFG, $DB;
 
+        // If the array is empty already, just return it.
+        if (!$users) {
+            return $users;
+        }
+
         // Get all users from the list who match the condition.
         list ($sql, $params) = $DB->get_in_or_equal(array_keys($users));
 
