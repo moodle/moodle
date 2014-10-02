@@ -956,7 +956,7 @@ $services = array(
             'core_grades_get_grades',
             'core_grades_update_grades',
             'mod_forum_get_forums_by_courses',
-            'mod_forum_get_forum_discussions',
+            'mod_forum_get_forum_discussions_paginated',
             'mod_forum_get_forum_discussion_posts',
             'core_files_get_files'),
         'enabled' => 0,
