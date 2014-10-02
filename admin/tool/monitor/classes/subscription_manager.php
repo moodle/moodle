@@ -85,6 +85,30 @@ class subscription_manager {
     }
 
     /**
+     * Delete all subscriptions for a user.
+     *
+     * @param int $userid user id.
+     *
+     * @return mixed
+     */
+    public static function delete_user_subscriptions($userid) {
+        global $DB;
+        return $DB->delete_records('tool_monitor_subscriptions', array('userid' => $userid));
+    }
+
+    /**
+     * Delete all subscriptions for a course module.
+     *
+     * @param int $cmid cm id.
+     *
+     * @return mixed
+     */
+    public static function delete_cm_subscriptions($cmid) {
+        global $DB;
+        return $DB->delete_records('tool_monitor_subscriptions', array('cmid' => $cmid));
+    }
+
+    /**
      * Delete all subscribers for a given rule.
      *
      * @param int $ruleid rule id.

@@ -187,4 +187,24 @@ class eventobservers {
         $this->count = 0;
         return $events;
     }
+
+    /**
+     * Observer that monitors user deleted event and delete user subscriptions.
+     *
+     * @param \core\event\user_deleted $event the event object.
+     */
+    public static function user_deleted(\core\event\user_deleted $event) {
+        $userid = $event->objectid;
+        subscription_manager::delete_user_subscriptions($userid);
+    }
+
+    /**
+     * Observer that monitors course module deleted event and delete user subscriptions.
+     *
+     * @param \core\event\course_module_deleted $event the event object.
+     */
+    public static function course_module_deleted(\core\event\course_module_deleted $event) {
+        $cmid = $event->contextinstanceid;
+        subscription_manager::delete_cm_subscriptions($cmid);
+    }
 }
