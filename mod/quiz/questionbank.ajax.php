@@ -25,9 +25,9 @@
 
 define('AJAX_SCRIPT', true);
 
-
-require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/quiz/editlib.php');
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
