@@ -323,15 +323,15 @@ if ($mform->is_cancelled()) {
         redirect($nexturl);
     }
 
-} else {
-    $streditingquestion = $qtypeobj->get_heading();
-    $PAGE->set_title($streditingquestion);
-    $PAGE->set_heading($COURSE->fullname);
-    $PAGE->navbar->add($streditingquestion);
-
-    // Display a heading, question editing form and possibly some extra content needed for
-    // for this question type.
-    echo $OUTPUT->header();
-    $qtypeobj->display_question_editing_page($mform, $question, $wizardnow);
-    echo $OUTPUT->footer();
 }
+
+$streditingquestion = $qtypeobj->get_heading();
+$PAGE->set_title($streditingquestion);
+$PAGE->set_heading($COURSE->fullname);
+$PAGE->navbar->add($streditingquestion);
+
+// Display a heading, question editing form and possibly some extra content needed for
+// for this question type.
+echo $OUTPUT->header();
+$qtypeobj->display_question_editing_page($mform, $question, $wizardnow);
+echo $OUTPUT->footer();
