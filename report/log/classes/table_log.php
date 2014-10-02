@@ -381,7 +381,7 @@ class report_log_table_log extends table_sql {
                 && !empty($this->filterparams->userid) && !empty($this->filterparams->modid);
 
         $groupid = 0;
-        if (!empty($this->filterparams->courseid)) {
+        if (!empty($this->filterparams->courseid) && $this->filterparams->courseid != SITEID) {
             if (!empty($this->filterparams->groupid)) {
                 $groupid = $this->filterparams->groupid;
             }
