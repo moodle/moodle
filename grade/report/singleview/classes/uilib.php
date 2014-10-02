@@ -51,12 +51,13 @@ class singleview_factory_class_wrap {
 }
 
 abstract class singleview_ui_element {
-    var $name;
-    var $value;
+    public $name;
+    public $value;
 
-    public function __construct($name, $value) {
+    public function __construct($name, $value, $label) {
         $this->name = $name;
         $this->value = $value;
+        $this->label = $label;
     }
 
     public function is_checkbox() {
@@ -92,10 +93,10 @@ class singleview_text_attribute extends singleview_ui_element {
     private $isdisabled;
     private $tabindex;
 
-    public function __construct($name, $value, $isdisabled = false, $tabindex = null) {
+    public function __construct($name, $value, $label, $isdisabled = false, $tabindex = null) {
         $this->isdisabled = $isdisabled;
         $this->tabindex = $tabindex;
-        parent::__construct($name, $value);
+        parent::__construct($name, $value, $label);
     }
 
     public function is_textbox() {
@@ -106,7 +107,8 @@ class singleview_text_attribute extends singleview_ui_element {
         $attributes = array(
             'type' => 'text',
             'name' => $this->name,
-            'value' => $this->value
+            'value' => $this->value,
+            'id' => $this->name
         );
 
         if (!empty($this->tabindex)) {
@@ -122,7 +124,17 @@ class singleview_text_attribute extends singleview_ui_element {
             'value' => $this->value
         );
 
+        $label = '';
+        if (preg_match("/^feedback/", $this->name)) {
+            $labeltitle = get_string('feedbackfor', 'gradereport_singleview', $this->label);
+            $label = html_writer::tag('label', $labeltitle,  array('for' => $this->name, 'class' => 'accesshide'));
+        } else if (preg_match("/^finalgrade/", $this->name)) {
+            $labeltitle = get_string('gradefor', 'gradereport_singleview', $this->label);
+            $label = html_writer::tag('label', $labeltitle,  array('for' => $this->name, 'class' => 'accesshide'));
+        }
+
         return (
+            $label .
             html_writer::empty_tag('input', $attributes) .
             html_writer::empty_tag('input', $hidden)
         );
@@ -133,11 +145,11 @@ class singleview_checkbox_attribute extends singleview_ui_element {
     private $ischecked;
     private $tabindex;
 
-    public function __construct($name, $ischecked = false, $tabindex = null, $locked=0) {
+    public function __construct($name, $label, $ischecked = false, $tabindex = null, $locked=0) {
         $this->ischecked = $ischecked;
         $this->tabindex = $tabindex;
         $this->locked = $locked;
-        parent::__construct($name, 1);
+        parent::__construct($name, 1, $label);
     }
 
     public function is_checkbox() {
@@ -149,7 +161,8 @@ class singleview_checkbox_attribute extends singleview_ui_element {
         $attributes = array(
             'type' => 'checkbox',
             'name' => $this->name,
-            'value' => 1
+            'value' => 1,
+            'id' => $this->name
         );
 
         // UCSB fixed user should not be able to override locked grade.
@@ -177,8 +190,14 @@ class singleview_checkbox_attribute extends singleview_ui_element {
             $hidden['value'] = 1;
         }
 
+        $type = "override";
+        if (preg_match("/^exclude/", $this->name)) {
+            $type = "exclude";
+        }
+
         return (
             html_writer::empty_tag('input', $alt) .
+            html_writer::tag('label', get_string($type . 'for', 'gradereport_singleview', $this->label), array('for' => $this->name, 'class' => 'accesshide')) .
             html_writer::empty_tag('input', $attributes) .
             html_writer::empty_tag('input', $hidden)
         );
@@ -190,12 +209,12 @@ class singleview_dropdown_attribute extends singleview_ui_element {
     private $options;
     private $isdisabled;
 
-    public function __construct($name, $options, $selected = '', $isdisabled = false, $tabindex = null) {
+    public function __construct($name, $options, $label, $selected = '', $isdisabled = false, $tabindex = null) {
         $this->selected = $selected;
         $this->options = $options;
         $this->tabindex = $tabindex;
         $this->isdisabled = $isdisabled;
-        parent::__construct($name, $selected);
+        parent::__construct($name, $selected, $label);
     }
 
     public function is_dropdown() {
@@ -228,6 +247,7 @@ class singleview_dropdown_attribute extends singleview_ui_element {
 
 abstract class singleview_grade_attribute_format extends singleview_attribute_format implements unique_name, tabbable {
     public $name;
+    public $label;
 
     public function __construct() {
         $args = func_get_args();
@@ -308,9 +328,9 @@ class singleview_bulk_insert_ui extends singleview_ui_element {
         $select = html_writer::select(
             $insertoptions, $this->selectname, 'blanks', false
         );
-
+ 
         $label = html_writer::tag('label', $s('for'));
-        $text = new singleview_text_attribute($this->insertname, "0");
+        $text = new singleview_text_attribute($this->insertname, "0", 'bulk');
         return implode(' ', array($apply, $text->html(), $label, $select));
     }
 
@@ -332,6 +352,7 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
     public $name = 'finalgrade';
 
     public function get_value() {
+        $this->label = $this->grade->grade_item->itemname;
         // Manual item raw grade support.
         $val = $this->grade->grade_item->is_manual_item() && (!is_null($this->grade->rawgrade)) ?
             $this->grade->rawgrade : $this->grade->finalgrade;
@@ -341,6 +362,13 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
         } else {
             return $val ? format_float($val, $this->grade->grade_item->get_decimals()) : '';
         }
+    }
+
+    public function get_label() {
+        if (!isset($this->grade->label)) {
+            $this->grade->label = '';
+        }
+        return $this->grade->label;
     }
 
     public function is_disabled() {
@@ -378,6 +406,7 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
                 $this->get_name(),
                 $options,
                 $this->get_value(),
+                $this->get_label(),
                 $this->is_disabled(),
                 $this->get_tabindex()
             );
@@ -385,6 +414,7 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
             return new singleview_text_attribute(
                 $this->get_name(),
                 $this->get_value(),
+                $this->get_label(),
                 $this->is_disabled(),
                 $this->get_tabindex()
             );
@@ -428,7 +458,6 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
                 $gradestr->username = $user->firstname . ' ' . $user->lastname;
             }
             $gradestr->itemname = $this->grade->grade_item->get_name();
-
             $errorstr = get_string($errorstr, 'grades', $gradestr);
         }
 
@@ -443,6 +472,13 @@ class singleview_feedback_ui extends singleview_grade_attribute_format implement
 
     public function get_value() {
         return $this->grade->feedback ? $this->grade->feedback : '';
+    }
+
+    public function get_label() {
+        if (!isset($this->grade->label)) {
+            $this->grade->label = '';
+        }
+        return $this->grade->label;
     }
 
     public function is_disabled() {
@@ -470,6 +506,7 @@ class singleview_feedback_ui extends singleview_grade_attribute_format implement
         return new singleview_text_attribute(
             $this->get_name(),
             $this->get_value(),
+            $this->get_label(),
             $this->is_disabled(),
             $this->get_tabindex()
         );
@@ -510,12 +547,20 @@ class singleview_override_ui extends singleview_grade_attribute_format implement
         return ($lockedgrade || $lockedgradeitem);
     }
 
+    public function get_label() {
+        if (!isset($this->grade->label)) {
+            $this->grade->label = '';
+        }
+        return $this->grade->label;
+    }
+
     function determine_format() {
         if (!$this->grade->grade_item->is_overridable_item()) {
             return new singleview_empty_element();
         }
         return new singleview_checkbox_attribute(
             $this->get_name(),
+            $this->get_label(),
             $this->ischecked(),
             null,
             $this->is_disabled()
@@ -545,8 +590,16 @@ class singleview_exclude_ui extends singleview_grade_attribute_format implements
     function determine_format() {
         return new singleview_checkbox_attribute(
             $this->get_name(),
+            $this->get_label(),
             $this->ischecked()
         );
+    }
+
+    public function get_label() {
+        if (!isset($this->grade->label)) {
+            $this->grade->label = '';
+        }
+        return $this->grade->label;
     }
 
     function set($value) {

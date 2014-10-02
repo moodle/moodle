@@ -345,7 +345,6 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
         foreach ($this->definition() as $i => $field) {
             // Table tab index.
             $tab = ($i * $this->total) + $this->index;
-
             $html = $this->factory()->create($field)->format($grade, $tab);
             
             if ($field == 'finalgrade' and !empty($this->structure)) {
@@ -354,7 +353,7 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
 
             $line[] = $html;
         }
-
+ 
         return $line;
     }
 
@@ -401,7 +400,7 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
         $save = html_writer::empty_tag('input', array(
             'type' => 'submit',
             'value' => get_string('update'),
-            'tabindex' => $this->get_tabindex()
+            'tabindex' => $this->get_tabindex(),
         ));
 
         return array($save);

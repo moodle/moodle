@@ -171,6 +171,7 @@ class singleview_grade extends singleview_tablelike
         $item->imagealt = $fullname;
         $url = new moodle_url("/user/view.php", array('id' => $item->id, 'course' => $this->courseid));
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $fullname);
+        $grade->label = $fullname;
 
         $line = array(
             $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', $iconstring)),
@@ -178,6 +179,7 @@ class singleview_grade extends singleview_tablelike
             html_writer::link($url, $fullname),
             $this->item_range()
         );
+ 
         return $this->format_definition($line, $grade);
     }
 

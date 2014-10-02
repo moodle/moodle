@@ -110,6 +110,7 @@ class singleview_user extends singleview_tablelike implements selectable_items {
 
         $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $item->cmid));
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
+        $grade->label = $item->get_name();
 
         $line = array(
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', $iconstring)),
