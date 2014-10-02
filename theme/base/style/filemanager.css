@@ -82,7 +82,7 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .fp-toolbar img {vertical-align:-15%;margin:7px;}
 .file-picker .fp-toolbar .fp-tb-search {height:30px;}
 .file-picker .fp-toolbar .fp-tb-search .fp-def-search {border:0;background:transparent;margin:0;padding:0;}
-.fp-toolbar .fp-tb-search input {background:#fff url('[[pix:a/search]]') no-repeat 7px 7px;padding:2px 6px 1px 27px;width:200px;height:27px;border: 1px solid #bbb;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
+.fp-toolbar .fp-tb-search input {background:#fff url('[[pix:moodle|a/search]]') no-repeat 7px 7px;padding:2px 6px 1px 27px;width:200px;height:27px;border: 1px solid #bbb;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
 .dir-rtl .fp-toolbar img {vertical-align:-35%;}
 .dir-rtl .file-picker .fp-viewbar, .dir-rtl .fp-navbar .filemanager-toolbar .fp-viewbar {float:left;}
 .file-picker .fp-viewbar, .fp-navbar .filemanager-toolbar .fp-viewbar {float:right;margin:4px; background:white;border:1px solid #CCCCCC;border-radius:4px;border-bottom:1px solid #B3B3B3;height:30px;}
@@ -307,7 +307,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .fp-iconview .fp-file.fp-isreference .fp-reficons2 {background:url('[[pix:theme|fp/alias]]') no-repeat;background-position:bottom left;}
 
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {display:none;}
-.filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail {background:url([[pix:s/dead]]) no-repeat;background-position:center center;}
+.filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail {background:url([[pix:moodle|s/dead]]) no-repeat;background-position:center center;}
 
 /*
  * Table view (File Manager only)

@@ -115,9 +115,9 @@ class core_csslib_testcase extends advanced_testcase {
         $cssout = '.test{background-color:#123456;background-repeat:repeat-x;background-position:100% 0%;}';
         $this->assertSame($cssout, $optimiser->process($cssin));
 
-        $cssin = '.tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
+        $cssin = '.tree_item.branch {background-image: url([[pix:moodle|t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
                   .tree_item.branch.navigation_node {background-image:none;padding-left:0;}';
-        $cssout = '.tree_item.branch{background-image:url([[pix:t/expanded]]);background-position:0 10%;background-repeat:no-repeat;} .tree_item.branch.navigation_node{background-image:none;padding-left:0;}';
+        $cssout = '.tree_item.branch{background-image:url([[pix:moodle|t/expanded]]);background-position:0 10%;background-repeat:no-repeat;} .tree_item.branch.navigation_node{background-image:none;padding-left:0;}';
         $this->assertSame($cssout, $optimiser->process($cssin));
 
         $cssin = '#nextLink{background:url(data:image/gif;base64,AAAA);}';

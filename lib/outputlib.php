@@ -1304,8 +1304,16 @@ class theme_config {
                     continue;
                 }
                 $replaced[$match[0]] = true;
-                $imagename = $match[2];
-                $component = rtrim($match[1], '|');
+                if ( !empty( $match[1] ) ) {
+                    $imagename = $match[2];
+                    $component = rtrim($match[1], '|');
+                } else {
+                    if ( !empty( $match[2] ) ) {
+                        $tmp_array = explode( '|' , $match[2]);
+                        $component = $tmp_array[0];
+                        $imagename = $tmp_array[1];
+                    }
+                }
                 $imageurl = $this->pix_url($imagename, $component)->out(false);
                  // we do not need full url because the image.php is always in the same dir
                 $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
