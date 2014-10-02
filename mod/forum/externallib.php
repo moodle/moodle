@@ -155,6 +155,8 @@ class mod_forum_external extends external_api {
      *
      * @return external_external_function_parameters
      * @since Moodle 2.5
+     * @deprecated Moodle 2.8 MDL-46458 - Please do not call this function any more.
+     * @see get_forum_discussions_paginated
      */
     public static function get_forum_discussions_parameters() {
         return new external_function_parameters (
@@ -177,6 +179,8 @@ class mod_forum_external extends external_api {
      *
      * @return array the forum discussion details
      * @since Moodle 2.5
+     * @deprecated Moodle 2.8 MDL-46458 - Please do not call this function any more.
+     * @see get_forum_discussions_paginated
      */
     public static function get_forum_discussions($forumids, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $DB, $USER;
@@ -319,6 +323,8 @@ class mod_forum_external extends external_api {
      *
      * @return external_single_structure
      * @since Moodle 2.5
+     * @deprecated Moodle 2.8 MDL-46458 - Please do not call this function any more.
+     * @see get_forum_discussions_paginated
      */
      public static function get_forum_discussions_returns() {
         return new external_multiple_structure(
