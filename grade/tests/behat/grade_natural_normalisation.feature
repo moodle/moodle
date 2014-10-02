@@ -1,4 +1,4 @@
-@core @core_grades @adrian
+@core @core_grades
 Feature: We can use natural aggregation and weights will be normalised to a total of one hundred
   In order to override weights
   As a teacher
@@ -111,7 +111,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Weight of Test assignment six" to "40"
     And I press "Save changes"
 
-    Then I should not see "Your weights have been adjusted to total 100."
+    Then I should see "Your weights have been adjusted to total 100."
     And the field "Weight of Test assignment five" matches value "60.000"
     And the field "Weight of Test assignment six" matches value "40.000"
     And the field "Weight of Test assignment seven" matches value "0.0"
@@ -141,26 +141,26 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
 
-  # @javascript
-  # Scenario: Grade items weights are normalised when all grade item weights are overridden (sum under 100). Extra credit is set to zero.
+  @javascript
+  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum under 100). Extra credit is set to zero.
 
-  #   When I follow "Edit  assign Test assignment seven"
-  #   And I set the field "Extra credit" to "1"
-  #   And I press "Save changes"
-  #   And I set the field "Override weight of Test assignment five" to "1"
-  #   And I set the field "Override weight of Test assignment six" to "1"
-  #   And I set the field "Weight of Test assignment five" to "40"
-  #   And I set the field "Weight of Test assignment six" to "30"
-  #   And I press "Save changes"
+    When I follow "Edit  assign Test assignment seven"
+    And I set the field "Extra credit" to "1"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment five" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment five" to "40"
+    And I set the field "Weight of Test assignment six" to "30"
+    And I press "Save changes"
 
-  #   Then I should see "Your weights have been adjusted to total 100."
-  #   And the field "Weight of Test assignment five" matches value "57.143"
-  #   And the field "Weight of Test assignment six" matches value "42.857"
-  #   And the field "Weight of Test assignment seven" matches value "0.0"
-  #   And I follow "Reset weights of Sub category 1"
-  #   And the field "Weight of Test assignment five" matches value "66.667"
-  #   And the field "Weight of Test assignment six" matches value "33.333"
-  #   And the field "Weight of Test assignment seven" matches value "50.0"
+    Then I should see "Your weights have been adjusted to total 100."
+    And the field "Weight of Test assignment five" matches value "57.143"
+    And the field "Weight of Test assignment six" matches value "42.857"
+    And the field "Weight of Test assignment seven" matches value "0.0"
+    And I follow "Reset weights of Sub category 1"
+    And the field "Weight of Test assignment five" matches value "66.667"
+    And the field "Weight of Test assignment six" matches value "33.333"
+    And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
   Scenario: Grade items weights are normalised when not all grade item weights are overridden. Extra credit is set respectful to non-overridden items.
@@ -172,7 +172,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Weight of Test assignment five" to "40"
     And I press "Save changes"
 
-    Then I should not see "Your weights have been adjusted to total 100."
+    Then I should see "Your weights have been adjusted to total 100."
     And the field "Weight of Test assignment five" matches value "40.00"
     And the field "Weight of Test assignment six" matches value "60.000"
     And the field "Weight of Test assignment seven" matches value "90.0"
@@ -200,9 +200,9 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I press "Save changes"
     And I should see "Your weights have been adjusted to total 100."
 
-    And the field "Weight of Test assignment five" matches value "32.52"
-    And the field "Weight of Test assignment six" matches value "16.26"
-    And the field "Weight of Test assignment seven" matches value "51.22"
+    And the field "Weight of Test assignment five" matches value "0.0"
+    And the field "Weight of Test assignment six" matches value "0.0"
+    And the field "Weight of Test assignment seven" matches value "100.0"
 
   @javascript
   Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then

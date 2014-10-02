@@ -1241,6 +1241,7 @@ class grade_category extends grade_object {
 
         // Calculate the sum of the grademax's of all the items within this category.
         $totalnonoverriddengrademax = 0;
+        $totalgrademax = 0;
 
         // Out of 1, how much weight has been manually overriden by a user?
         $totaloverriddenweight  = 0;
@@ -1264,35 +1265,26 @@ class grade_category extends grade_object {
 
             // Record the ID and the weight for this grade item.
             $overridearray[$gradeitem->id] = array();
-            $overridearray[$gradeitem->id]['extracredit'] = $gradeitem->aggregationcoef;
+            $overridearray[$gradeitem->id]['extracredit'] = intval($gradeitem->aggregationcoef);
             $overridearray[$gradeitem->id]['weight'] = $gradeitem->aggregationcoef2;
-            $overridearray[$gradeitem->id]['weightoverride'] = $gradeitem->weightoverride;
+            $overridearray[$gradeitem->id]['weightoverride'] = intval($gradeitem->weightoverride);
             // If this item has had its weight overridden then set the flag to true, but
             // only if all previous items were also overridden. Note that extra credit items
             // are counted as overridden grade items.
             if (!$gradeitem->weightoverride && $gradeitem->aggregationcoef == 0) {
                 $automaticgradeitemspresent = true;
             }
-            // echo ($gradeitem->weightoverride) ? 'override' : '';
-            // echo '<br />';
-            // echo ($gradeitem->aggregationcoef >= 1) ? 'extra credit' : '';
-            // echo '<br />';
-
-            // If the individual weight is higher than 1 then we automatically need to normalise.
-            if ($gradeitem->aggregationcoef2 > 1 && $gradeitem->aggregationcoef > 0) {
-                $requiresnormalising = true;
-            }
 
             if ($gradeitem->aggregationcoef > 0) {
                 // An extra credit grade item doesn't contribute to $totaloverriddengrademax.
                 continue;
-            } else if ($gradeitem->weightoverride && $gradeitem->aggregationcoef2 <= 0) {
+            } else if ($gradeitem->weightoverride > 0 && $gradeitem->aggregationcoef2 <= 0) {
                 // An overriden item that defines a weight of 0 does not contribute to $totaloverriddengrademax.
                 continue;
             }
 
-            $totalnonoverriddengrademax += $gradeitem->grademax;
-            if ($gradeitem->weightoverride) {
+            $totalgrademax += $gradeitem->grademax;
+            if ($gradeitem->weightoverride > 0) {
                 $totaloverriddenweight += $gradeitem->aggregationcoef2;
                 $totaloverriddengrademax += $gradeitem->grademax;
             }
@@ -1308,28 +1300,22 @@ class grade_category extends grade_object {
         // Total up all of the weights.
         foreach ($overridearray as $gradeitemdetail) {
             // If the grade item has extra credit, then don't add it to the normalisetotal.
-            if ($gradeitemdetail['extracredit'] < 1) {
+            if (!$gradeitemdetail['extracredit']) {
                 $normalisetotal += $gradeitemdetail['weight'];
             }
-            if ($gradeitemdetail['weightoverride'] && $gradeitemdetail['extracredit'] == 0) {
+            if ($gradeitemdetail['weightoverride'] && !$gradeitemdetail['extracredit']) {
                 // Add overriden weights up to see if they are greater than 1.
                 $overriddentotal += $gradeitemdetail['weight'];
             }
-            // If all items besides the extra credit grade item are overridden then set extra credit to zero.
-            if (!$automaticgradeitemspresent && $gradeitemdetail['extracredit'] >= 1 && !$gradeitemdetail['weightoverride']) {
-                $setotherweightstozero = true;
-            }
         }
-
         if ($overriddentotal > 1) {
             // Make sure that this catergory of weights gets normalised.
             $requiresnormalising = true;
             // The normalised weights are only the overridden weights, so we just use the total of those.
             $normalisetotal = $overriddentotal;
-            $setotherweightstozero = true;
         }
 
-        $totalnonoverriddengrademax -= $totaloverriddengrademax;
+        $totalnonoverriddengrademax = $totalgrademax - $totaloverriddengrademax;
 
         reset($children);
         foreach ($children as $sortorder => $child) {
@@ -1339,25 +1325,6 @@ class grade_category extends grade_object {
                 $gradeitem = $child['object'];
             } else if ($child['type'] == 'category') {
                 $gradeitem = $child['object']->load_grade_item();
-            }
-
-            // echo 'normalised total: ' .  $normalisetotal . '<br />';
-            // echo 'We have automatic grade items present: ' .  $automaticgradeitemspresent . '<br />';
-            // echo 'requires normalising: ' .  $requiresnormalising . '<br />';
-
-            // If all items are overridden and the total is not one or we know that the values require normalising then proceed.
-            if ((!$automaticgradeitemspresent && $normalisetotal != 1) || $requiresnormalising) {
-                // Set weights that are not overridden to zero.
-                if ($setotherweightstozero && !$overridearray[$gradeitem->id]['weightoverride']) {
-                    $gradeitem->aggregationcoef2 = 0;
-                } else {
-                    // Just divide the overriden weight for this item against the total weight override of all items in this category.
-                    $gradeitem->aggregationcoef2 = $overridearray[$gradeitem->id]['weight'] / $normalisetotal;
-                }
-                // Update the grade item to reflect these changes.
-                $gradeitem->update();
-                // Don't bother with the next step, move onto the next grade item.
-                continue;
             }
 
             if (!$gradeitem->weightoverride) {
@@ -1371,6 +1338,16 @@ class grade_category extends grade_object {
                     $gradeitem->aggregationcoef2 = ($gradeitem->grademax/$totalnonoverriddengrademax) *
                             (1 - $totaloverriddenweight);
                 }
+                $gradeitem->update();
+            } else if ((!$automaticgradeitemspresent && $normalisetotal != 1) || ($requiresnormalising)) {
+                // Just divide the overriden weight for this item against the total weight override of all
+                // items in this category.
+                if ($normalisetotal == 0) {
+                    $gradeitem->aggregationcoef2 = 0;
+                } else {
+                    $gradeitem->aggregationcoef2 = $overridearray[$gradeitem->id]['weight'] / $normalisetotal;
+                }
+                // Update the grade item to reflect these changes.
                 $gradeitem->update();
             }
         }
