@@ -538,10 +538,12 @@ class condition extends \core_availability\condition {
                 break;
             case self::OP_IS_EMPTY:
                 // Mimic PHP empty() behaviour for strings, '0' or ''.
-                $sql = '(' . $field . " IN ('0', '') OR $field2 IS NULL)";
+                $emptystring = self::unique_sql_parameter($params, '');
+                $sql = '(' . $field . " IN ('0', $emptystring) OR $field2 IS NULL)";
                 break;
             case self::OP_IS_NOT_EMPTY:
-                $sql = '(' . $field . " NOT IN ('0', '') AND $field2 IS NOT NULL)";
+                $emptystring = self::unique_sql_parameter($params, '');
+                $sql = '(' . $field . " NOT IN ('0', $emptystring) AND $field2 IS NOT NULL)";
                 break;
         }
         return array($sql, $params);
