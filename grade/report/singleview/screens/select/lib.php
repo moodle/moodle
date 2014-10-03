@@ -23,10 +23,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class singleview_select extends singleview_screen {
+class gradereport_singleview_select extends gradereport_singleview_screen {
     public function init($selfitemisempty = false) {
         global $DB;
 
+        $this->items = get_role_users(
+            '', $this->context, false, '',
+            'u.lastname, u.firstname', null, $this->groupid,
+            $this->perpage * $this->page, $this->perpage
+        );
         $this->item = $DB->get_record('course', array('id' => $this->courseid));
     }
 
@@ -35,14 +40,14 @@ class singleview_select extends singleview_screen {
 
         $html = '';
 
-        $types = grade_report_singleview::valid_screens();
+        $types = gradereport_singleview::valid_screens();
 
         foreach ($types as $type) {
-            $class = grade_report_singleview::classname($type);
+            $class = gradereport_singleview::classname($type);
 
             $screen = new $class($this->courseid, null, $this->groupid);
 
-            if (!$screen instanceof selectable_items) {
+            if (!$screen instanceof gradereport_selectable_items) {
                 continue;
             }
 
@@ -65,7 +70,7 @@ class singleview_select extends singleview_screen {
         }
 
         if (empty($html)) {
-            $OUTPUT->notification(get_string('no_screens', 'gradereport_singleview'));
+            $OUTPUT->notification(get_string('noscreens', 'gradereport_singleview'));
         }
 
         return $html;

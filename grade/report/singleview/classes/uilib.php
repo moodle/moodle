@@ -23,21 +23,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-abstract class singleview_ui_factory {
+abstract class gradereport_singleview_ui_factory {
     public abstract function create($type);
 
     protected function wrap($class) {
-        return new singleview_factory_class_wrap($class);
+        return new gradereport_singleview_factory_class_wrap($class);
     }
 }
 
-class singleview_grade_ui_factory extends singleview_ui_factory {
+class gradereport_singleview_grade_ui_factory extends gradereport_singleview_ui_factory {
     public function create($type) {
-        return $this->wrap("singleview_{$type}_ui");
+        return $this->wrap("gradereport_singleview_{$type}_ui");
     }
 }
 
-class singleview_factory_class_wrap {
+class gradereport_singleview_factory_class_wrap {
     public function __construct($class) {
         $this->class = $class;
     }
@@ -50,9 +50,10 @@ class singleview_factory_class_wrap {
     }
 }
 
-abstract class singleview_ui_element {
+abstract class gradereport_singleview_ui_element {
     public $name;
     public $value;
+    public $label;
 
     public function __construct($name, $value, $label) {
         $this->name = $name;
@@ -75,7 +76,7 @@ abstract class singleview_ui_element {
     abstract public function html();
 }
 
-class singleview_empty_element extends singleview_ui_element {
+class gradereport_singleview_empty_element extends gradereport_singleview_ui_element {
     public function __construct($msg = null) {
         if (is_null($msg)) {
             $this->text = get_string('notavailable', 'gradereport_singleview');
@@ -89,7 +90,7 @@ class singleview_empty_element extends singleview_ui_element {
     }
 }
 
-class singleview_text_attribute extends singleview_ui_element {
+class gradereport_singleview_text_attribute extends gradereport_singleview_ui_element {
     private $isdisabled;
     private $tabindex;
 
@@ -141,7 +142,7 @@ class singleview_text_attribute extends singleview_ui_element {
     }
 }
 
-class singleview_checkbox_attribute extends singleview_ui_element {
+class gradereport_singleview_checkbox_attribute extends gradereport_singleview_ui_element {
     private $ischecked;
     private $tabindex;
 
@@ -204,7 +205,7 @@ class singleview_checkbox_attribute extends singleview_ui_element {
     }
 }
 
-class singleview_dropdown_attribute extends singleview_ui_element {
+class gradereport_singleview_dropdown_attribute extends gradereport_singleview_ui_element {
     private $selected;
     private $options;
     private $isdisabled;
@@ -245,7 +246,7 @@ class singleview_dropdown_attribute extends singleview_ui_element {
     }
 }
 
-abstract class singleview_grade_attribute_format extends singleview_attribute_format implements unique_name, tabbable {
+abstract class gradereport_singleview_grade_attribute_format extends gradereport_singleview_attribute_format implements unique_name, tabbable {
     public $name;
     public $label;
 
@@ -286,14 +287,14 @@ interface be_disabled {
 }
 
 interface be_checked {
-    public function ischecked();
+    public function is_checked();
 }
 
 interface tabbable {
     public function get_tabindex();
 }
 
-class singleview_bulk_insert_ui extends singleview_ui_element {
+class gradereport_singleview_bulk_insert_ui extends gradereport_singleview_ui_element {
     public function __construct($item) {
         $this->name = 'bulk_' . $item->id;
         $this->applyname = $this->name_for('apply');
@@ -314,23 +315,21 @@ class singleview_bulk_insert_ui extends singleview_ui_element {
     }
 
     public function html() {
-        $s = function($key) {
-            return get_string($key, 'gradereport_singleview');
-        };
+        $insertgrade = get_string('bulkinsertgrade', 'gradereport_singleview');
+        $insertappliesto = get_string('bulkappliesto', 'gradereport_singleview');
 
-        $apply = html_writer::checkbox($this->applyname, 1, false, ' ' . $s('bulk'));
-
+        $apply = html_writer::checkbox($this->applyname, 1, false, $insertgrade);
         $insertoptions = array(
-            'all' => $s('all_grades'),
-            'blanks' => $s('blanks')
+            'all' => get_string('all_grades', 'gradereport_singleview'),
+            'blanks' => get_string('blanks', 'gradereport_singleview')
         );
 
         $select = html_writer::select(
             $insertoptions, $this->selectname, 'blanks', false
         );
  
-        $label = html_writer::tag('label', $s('for'));
-        $text = new singleview_text_attribute($this->insertname, "0", 'bulk');
+        $label = html_writer::tag('label', $insertappliesto);
+        $text = new gradereport_singleview_text_attribute($this->insertname, "0", 'bulk');
         return implode(' ', array($apply, $text->html(), $label, $select));
     }
 
@@ -339,7 +338,7 @@ class singleview_bulk_insert_ui extends singleview_ui_element {
     }
 }
 
-abstract class singleview_attribute_format {
+abstract class gradereport_singleview_attribute_format {
     abstract public function determine_format();
 
     public function __toString() {
@@ -347,7 +346,7 @@ abstract class singleview_attribute_format {
     }
 }
 
-class singleview_finalgrade_ui extends singleview_grade_attribute_format implements unique_value, be_disabled {
+class gradereport_singleview_finalgrade_ui extends gradereport_singleview_grade_attribute_format implements unique_value, be_disabled {
 
     public $name = 'finalgrade';
 
@@ -402,7 +401,7 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
                 $options[$i + 1] = $name;
             }
 
-            return new singleview_dropdown_attribute(
+            return new gradereport_singleview_dropdown_attribute(
                 $this->get_name(),
                 $options,
                 $this->get_value(),
@@ -411,7 +410,7 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
                 $this->get_tabindex()
             );
         } else {
-            return new singleview_text_attribute(
+            return new gradereport_singleview_text_attribute(
                 $this->get_name(),
                 $this->get_value(),
                 $this->get_label(),
@@ -466,7 +465,7 @@ class singleview_finalgrade_ui extends singleview_grade_attribute_format impleme
     }
 }
 
-class singleview_feedback_ui extends singleview_grade_attribute_format implements unique_value, be_disabled {
+class gradereport_singleview_feedback_ui extends gradereport_singleview_grade_attribute_format implements unique_value, be_disabled {
 
     public $name = 'feedback';
 
@@ -503,7 +502,7 @@ class singleview_feedback_ui extends singleview_grade_attribute_format implement
     }
 
     public function determine_format() {
-        return new singleview_text_attribute(
+        return new gradereport_singleview_text_attribute(
             $this->get_name(),
             $this->get_value(),
             $this->get_label(),
@@ -529,19 +528,19 @@ class singleview_feedback_ui extends singleview_grade_attribute_format implement
     }
 }
 
-class singleview_override_ui extends singleview_grade_attribute_format implements be_checked, be_disabled {
+class gradereport_singleview_override_ui extends gradereport_singleview_grade_attribute_format implements be_checked, be_disabled {
     public $name = 'override';
 
-    public function ischecked() {
+    public function is_checked() {
         return $this->grade->is_overridden();
     }
 
     public function is_disabled() {
         $lockedgrade = $lockedgradeitem = 0;
-        if ( ! empty($this->grade->locked) ) {
+        if (!empty($this->grade->locked)) {
             $lockedgrade = 1;
         }
-        if ( ! empty($this->grade->grade_item->locked) ) {
+        if (!empty($this->grade->grade_item->locked)) {
             $lockedgradeitem = 1;
         }
         return ($lockedgrade || $lockedgradeitem);
@@ -556,12 +555,12 @@ class singleview_override_ui extends singleview_grade_attribute_format implement
 
     function determine_format() {
         if (!$this->grade->grade_item->is_overridable_item()) {
-            return new singleview_empty_element();
+            return new gradereport_singleview_empty_element();
         }
-        return new singleview_checkbox_attribute(
+        return new gradereport_singleview_checkbox_attribute(
             $this->get_name(),
             $this->get_label(),
-            $this->ischecked(),
+            $this->is_checked(),
             null,
             $this->is_disabled()
         );
@@ -580,18 +579,18 @@ class singleview_override_ui extends singleview_grade_attribute_format implement
     }
 }
 
-class singleview_exclude_ui extends singleview_grade_attribute_format implements be_checked {
+class gradereport_singleview_exclude_ui extends gradereport_singleview_grade_attribute_format implements be_checked {
     var $name = 'exclude';
 
-    function ischecked() {
+    function is_checked() {
         return $this->grade->is_excluded();
     }
 
     function determine_format() {
-        return new singleview_checkbox_attribute(
+        return new gradereport_singleview_checkbox_attribute(
             $this->get_name(),
             $this->get_label(),
-            $this->ischecked()
+            $this->is_checked()
         );
     }
 
@@ -633,7 +632,7 @@ class singleview_exclude_ui extends singleview_grade_attribute_format implements
     }
 }
 
-class singleview_range_ui extends singleview_attribute_format {
+class gradereport_singleview_range_ui extends gradereport_singleview_attribute_format {
     function __construct($item) {
         $this->item = $item;
     }
@@ -644,6 +643,6 @@ class singleview_range_ui extends singleview_attribute_format {
         $min = format_float($this->item->grademin, $decimals);
         $max = format_float($this->item->grademax, $decimals);
 
-        return new singleview_empty_element("$min - $max");
+        return new gradereport_singleview_empty_element("$min - $max");
     }
 }

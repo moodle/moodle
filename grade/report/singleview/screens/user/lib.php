@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class singleview_user extends singleview_tablelike implements selectable_items {
+class gradereport_singleview_user extends gradereport_singleview_tablelike implements gradereport_selectable_items {
 
     private $categories = array();
 
@@ -64,7 +64,7 @@ class singleview_user extends singleview_tablelike implements selectable_items {
             }
         }
 
-        $this->items = array_filter($seq->items, grade_report_singleview::filters());
+        $this->items = array_filter($seq->items, gradereport_singleview::filters());
 
         unset($seq);
 
@@ -105,10 +105,15 @@ class singleview_user extends singleview_tablelike implements selectable_items {
             $lockeditemgrade = 1;
         }
         // Check both grade and grade item.
-        if ( $lockeditem || $lockeditemgrade )
+        if ($lockeditem || $lockeditemgrade) {
              $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked');
+        }
 
-        $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $item->cmid));
+        $realuserid = '';
+        if (isset($item->cmid)) {
+            $realuserid = $item->cmid;
+        }
+        $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $realuserid));
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
         $grade->label = $item->get_name();
 
@@ -152,10 +157,6 @@ class singleview_user extends singleview_tablelike implements selectable_items {
     }
 
     public function heading() {
-        if (!empty($this->item->alternatename)) {
-            return $this->item->alternatename . ' (' . $this->item->firstname . ') ' . $this->item->lastname;
-        } else {
-            return fullname($this->item);
-        }
+        return fullname($this->item);
     }
 }

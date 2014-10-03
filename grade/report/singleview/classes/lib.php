@@ -25,7 +25,7 @@
 
 require_once $CFG->dirroot . '/grade/report/singleview/classes/uilib.php';
 
-interface selectable_items {
+interface gradereport_selectable_items {
     public function description();
 
     public function options();
@@ -33,11 +33,11 @@ interface selectable_items {
     public function item_type();
 }
 
-interface item_filtering {
+interface gradereport_item_filtering {
     public static function filter($item);
 }
 
-abstract class singleview_screen {
+abstract class gradereport_singleview_screen {
     var $courseid;
 
     var $itemid;
@@ -61,7 +61,10 @@ abstract class singleview_screen {
         $this->course = $DB->get_record('course', array('id' => $courseid));
 
         $this->page = optional_param('page', 0, PARAM_INT);
-        $this->perpage = optional_param('perpage', 300, PARAM_INT);
+        $this->perpage = optional_param('perpage', 100, PARAM_INT);
+        if ($this->perpage > 100) {
+            $this->perpage = 100;
+        }
 
         $this->init(empty($itemid));
     }
@@ -136,7 +139,7 @@ abstract class singleview_screen {
     public abstract function html();
 
     public function supports_paging() {
-        return false;
+        return true;
     }
 
     public function pager() {
@@ -147,7 +150,6 @@ abstract class singleview_screen {
         global $OUTPUT;
 
         list($___, $item) = explode('singleview_', get_class($this));
-
         return $OUTPUT->paging_bar(
             count($this->items), $this->page, $this->perpage,
             new moodle_url('/grade/report/singleview/index.php', array(
@@ -174,7 +176,7 @@ abstract class singleview_screen {
 
     public function factory() {
         if (empty($this->__factory)) {
-            $this->__factory = new singleview_grade_ui_factory();
+            $this->__factory = new gradereport_singleview_grade_ui_factory();
         }
 
         return $this->__factory;
@@ -250,8 +252,8 @@ abstract class singleview_screen {
     }
 }
 
-abstract class singleview_tablelike extends singleview_screen implements tabbable {
-    var $items;
+abstract class gradereport_singleview_tablelike extends gradereport_singleview_screen implements tabbable {
+    public $items;
 
     protected $headers = array();
 
@@ -284,13 +286,11 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
     // Special injection for bulk operations.
     public function process($data) {
         $bulk = $this->factory()->create('bulk_insert')->format($this->item);
-
         // Bulk insert messages the data to be passed in
         // ie: for all grades of empty grades apply the specified value.
         if ($bulk->is_applied($data)) {
             $filter = $bulk->get_type($data);
             $insert_value = $bulk->get_insert_value($data);
-
             // Appropriately massage data that may not exist.
             if ($this->supports_paging()) {
                 // TODO: this only works with the grade screen...
@@ -301,7 +301,7 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
 
                 $null = $grade_item->gradetype == GRADE_TYPE_SCALE ? -1 : '';
 
-                foreach ($this->all_items as $itemid => $item) {
+                foreach ($this->items as $itemid => $item) {
                     $field = "finalgrade_{$grade_item->id}_{$itemid}";
                     if (isset($data->$field)) {
                         continue;
@@ -346,14 +346,13 @@ abstract class singleview_tablelike extends singleview_screen implements tabbabl
             // Table tab index.
             $tab = ($i * $this->total) + $this->index;
             $html = $this->factory()->create($field)->format($grade, $tab);
-            
+
             if ($field == 'finalgrade' and !empty($this->structure)) {
                 $html .= $this->structure->get_grade_analysis_icon($grade);
             }
 
             $line[] = $html;
         }
- 
         return $line;
     }
 

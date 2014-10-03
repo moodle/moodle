@@ -23,12 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class singleview_grade extends singleview_tablelike
-    implements selectable_items, item_filtering {
+class gradereport_singleview_grade extends gradereport_singleview_tablelike
+    implements gradereport_selectable_items, gradereport_item_filtering {
+
+    private $totalitemcount = 0;
 
     private $requiresextra = false;
 
-    private $requirespaging = false;
+    private $requirespaging = true;
 
     public $structure;
 
@@ -84,26 +86,15 @@ class singleview_grade extends singleview_tablelike
         $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
         $this->items = get_role_users(
-         $roleids, $this->context, false, '',
-         'u.lastname, u.firstname', null, $this->groupid,
-         $this->perpage * $this->page, $this->perpage
-         );
+            $roleids, $this->context, false, '',
+            'u.lastname, u.firstname', null, $this->groupid,
+            $this->perpage * $this->page, $this->perpage
+        );
+
+        $this->totalitemcount = count_role_users($roleids, $this->context);
 
         if ($selfitemisempty) {
             return;
-        }
-
-        // Only page when necessary.
-        if (count($this->items) > $this->perpage) {
-            $this->requirespaging = true;
-
-            $this->all_items = $this->items;
-
-            $this->items = get_role_users(
-                $roleids, $this->context, false, '',
-                'u.lastname, u.firstname', null, $this->groupid,
-                $this->perpage * $this->page, $this->perpage
-            );
         }
 
         global $DB;
@@ -115,12 +106,12 @@ class singleview_grade extends singleview_tablelike
 
         $this->item = grade_item::fetch($params);
 
-        $filterfun = grade_report_singleview::filters();
+        $filterfun = gradereport_singleview::filters();
 
         $allowed = $filterfun($this->item);
 
         if (empty($allowed)) {
-            print_error('not_allowed', 'gradereport_singleview');
+            print_error('notallowed', 'gradereport_singleview');
         }
 
         $this->requiresextra = !$this->item->is_manual_item();
@@ -132,16 +123,16 @@ class singleview_grade extends singleview_tablelike
     }
 
     public function original_headers() {
-        $headers = array(
+        return array(
             '', // For filter icon.
             '', // For user picture.
             get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
-            get_string('feedback', 'grades')
+            get_string('feedback', 'grades'),
+            $this->make_toggle_links('override'),
+            $this->make_toggle_links('exclude')
         );
-
-        return $this->additional_headers($headers);
     }
 
     public function format_line($item) {
@@ -179,18 +170,8 @@ class singleview_grade extends singleview_tablelike
             html_writer::link($url, $fullname),
             $this->item_range()
         );
- 
+
         return $this->format_definition($line, $grade);
-    }
-
-    public function additional_headers($headers) {
-        if ($this->requiresextra) {
-            $headers[] = $this->make_toggle_links('override');
-        }
-
-        $headers[] = $this->make_toggle_links('exclude');
-
-        return $headers;
     }
 
     public function item_range() {
@@ -209,7 +190,7 @@ class singleview_grade extends singleview_tablelike
         global $OUTPUT;
 
         return $OUTPUT->paging_bar(
-            count($this->all_items), $this->page, $this->perpage,
+            $this->totalitemcount, $this->page, $this->perpage,
             new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,

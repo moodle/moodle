@@ -16,10 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays the Single view 
+ * Displays the Single view
  *
  * @package   gradereport_singleview
- * @copyright 2014 Moodle 
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,7 +46,7 @@ if (!$course = $DB->get_record('course', $courseparams)) {
     print_error('nocourseid');
 }
 
-if (!in_array($itemtype, grade_report_singleview::valid_screens())) {
+if (!in_array($itemtype, gradereport_singleview::valid_screens())) {
     print_error('notvalid', 'gradereport_singleview', '', $itemtype);
 }
 
@@ -74,7 +74,7 @@ $USER->grade_last_report[$course->id] = 'singleview';
 
 grade_regrade_final_grades($courseid);
 
-$report = new grade_report_singleview(
+$report = new gradereport_singleview(
     $courseid, $gpr, $context,
     $itemtype, $itemid, $groupid
 );
@@ -111,12 +111,12 @@ if ($data = data_submitted()) {
 
 $graderrightnav = $graderleftnav = null;
 if ($report->screen instanceof selectable_items
-        && class_exists($report::classname($report->screen->item_type()))) {
+        && class_exists(gradereport_singleview::classname($report->screen->item_type()))) {
 
     $optionkeys = array_keys($report->screen->options());
     $optionitemid = array_shift($optionkeys);
 
-    $relreport = new grade_report_singleview(
+    $relreport = new gradereport_singleview(
                 $courseid, $gpr, $context,
                 $report->screen->item_type(), $optionitemid, $groupid
     );

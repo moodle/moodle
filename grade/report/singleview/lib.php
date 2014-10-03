@@ -19,14 +19,14 @@
  * Base lib class for singleview functionality.
  *
  * @package   gradereport_singleview
- * @copyright 2014 Moodle 
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->dirroot . '/grade/report/singleview/classes/lib.php');
 
-class grade_report_singleview extends grade_report {
+class gradereport_singleview extends grade_report {
 
     public static function valid_screens() {
         $screendir = dirname(__FILE__) . '/screens';
@@ -54,11 +54,11 @@ class grade_report_singleview extends grade_report {
 
         require_once $screendir . '/lib.php';
 
-        return 'singleview_' . $screen;
+        return 'gradereport_singleview_' . $screen;
     }
 
     public static function filters() {
-        $classnames = array('grade_report_singleview', 'classname');
+        $classnames = array('gradereport_singleview', 'classname');
         $classes = array_map($classnames, self::valid_screens());
 
         $screens = array_filter($classes, function($screen) {
@@ -115,10 +115,10 @@ class grade_report_singleview extends grade_report {
     }
 }
 
-function grade_report_singleview_profilereport($course, $user) {
+function gradereport_singleview_profilereport($course, $user) {
     global $CFG, $OUTPUT;
 
-    if (!function_exists('grade_report_user_profilereport')) {
+    if (!function_exists('gradereport_user_profilereport')) {
         require_once $CFG->dirroot . '/grade/report/user/lib.php';
     }
 
@@ -131,7 +131,7 @@ function grade_report_singleview_profilereport($course, $user) {
     );
 
     if (!$can_use) {
-        grade_report_user_profilereport($course, $user);
+        gradereport_user_profilereport($course, $user);
     } else {
         $gpr = new grade_plugin_return(array(
             'type' => 'report',
@@ -140,7 +140,7 @@ function grade_report_singleview_profilereport($course, $user) {
             'userid' => $user->id
         ));
 
-        $report = new grade_report_singleview($course->id, $gpr, $context, 'user', $user->id);
+        $report = new gradereport_singleview($course->id, $gpr, $context, 'user', $user->id);
 
         echo $OUTPUT->heading($report->screen->heading());
         echo $report->output();

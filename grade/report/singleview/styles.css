@@ -26,7 +26,7 @@
    text-align: center;
 }
 
-input[name^="finalgrade"] {
+#page-grade-report-singleview-index input[name^="finalgrade"] {
     width: 50px;
 }
 
