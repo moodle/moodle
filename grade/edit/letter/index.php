@@ -76,6 +76,8 @@ $pagename  = get_string('letters', 'grades');
 $letters = grade_get_letters($context);
 $num = count($letters) + 3;
 
+$override = $DB->record_exists('grade_letters', array('contextid' => $context->id));
+
 //if were viewing the letters
 if (!$edit) {
 
@@ -92,6 +94,10 @@ if (!$edit) {
     }
 
     print_grade_page_head($COURSE->id, 'letter', 'view', get_string('gradeletters', 'grades'));
+
+    if (!empty($override)) {
+        echo $OUTPUT->notification(get_string('gradeletteroverridden', 'grades'), 'notifymessage');
+    }
 
     $stredit = get_string('editgradeletters', 'grades');
     $editlink = html_writer::nonempty_tag('div', html_writer::link($returnurl.$editparam, $stredit), array('class'=>'mdl-align'));
@@ -122,7 +128,7 @@ if (!$edit) {
         $data->$gradeboundaryname = $boundary;
         $i++;
     }
-    $data->override = $DB->record_exists('grade_letters', array('contextid' => $context->id));
+    $data->override = $override;
 
     $mform = new edit_letter_form($returnurl.$editparam, array('num'=>$num, 'admin'=>$admin));
     $mform->set_data($data);
