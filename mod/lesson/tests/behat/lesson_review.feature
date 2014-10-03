@@ -22,6 +22,7 @@ Feature: In a lesson activity, students can review the answers they gave to ques
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
+      | Description | Test lesson description |
       | Display ongoing score | Yes |
       | Slideshow | Yes |
       | Maximum number of answers | 10 |
