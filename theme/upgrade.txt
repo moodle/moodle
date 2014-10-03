@@ -11,7 +11,7 @@ information provided here is intended especially for theme designer.
 * On calendar view screen the course selector and new event button have been swapped, custom CSS for .path-calendar might be affected.
 * The functions search_listing() and search_pagination() in the core_course_management_renderer class take the searched string
   as an extra parameter - see MDL-46902.
-
+* Themes with non-fixed headers must have the .navbar class in their navbar in order for floating headers in the grader report to work - see MDL-46658. 
 
 === 2.7 ===
 

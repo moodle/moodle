@@ -485,6 +485,13 @@ FloatingHeaders.prototype = {
         if (header) {
             if (header.getComputedStyle('position') === 'fixed') {
                 this.pageHeaderHeight = header.get(OFFSETHEIGHT);
+            } else {
+                var navbar = Y.one('.navbar');
+
+                if (navbar) {
+                    // If the navbar exists and isn't fixed, we need to offset the page header to accommodate for it.
+                    this.pageHeaderHeight = navbar.get(OFFSETHEIGHT);
+                }
             }
         }
     },
