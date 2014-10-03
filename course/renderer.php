@@ -791,12 +791,7 @@ class core_course_renderer extends plugin_renderer_base {
         // has already been encoded for display (puke).
         $onclick = htmlspecialchars_decode($mod->onclick, ENT_QUOTES);
 
-        $groupinglabel = '';
-        if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($mod->course))) {
-            $groupings = groups_get_all_groupings($mod->course);
-            $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$mod->groupingid]->name).')',
-                    array('class' => 'groupinglabel '.$textclasses));
-        }
+        $groupinglabel = $mod->get_grouping_label($textclasses);
 
         // Display link itself.
         $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
@@ -853,8 +848,10 @@ class core_course_renderer extends plugin_renderer_base {
                         trim('contentafterlink ' . $textclasses)));
             }
         } else {
+            $groupinglabel = $mod->get_grouping_label($textclasses);
+
             // No link, so display only content.
-            $output = html_writer::tag('div', $accesstext . $content,
+            $output = html_writer::tag('div', $accesstext . $content . $groupinglabel,
                     array('class' => 'contentwithoutlink ' . $textclasses));
         }
         return $output;
