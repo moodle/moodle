@@ -1696,11 +1696,11 @@ class grade_report_grader extends grade_report {
     public static function do_process_action($target, $action, $courseid = null) {
         global $DB;
         // TODO: this code should be in some grade_tree static method
-        $targettype = substr($target, 0, 1);
-        $targetid = substr($target, 1);
+        $targettype = substr($target, 0, 2);
+        $targetid = substr($target, 2);
         // TODO: end
 
-        if ($targettype !== 'c') {
+        if ($targettype !== 'cg') {
             // The following code only works with categories.
             return true;
         }
