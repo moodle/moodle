@@ -3903,6 +3903,26 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2014092200.01);
     }
+    if ($oldversion < 2014100300.00) {
+        // Set flags so we can display a notice on all courses that might
+        // be affected by the uprade to natural aggregation.
+        if (!get_config('grades_sumofgrades_upgrade_flagged', 'core')) {
+            // 13 == SUM_OF_GRADES.
+            $sql = 'SELECT DISTINCT courseid
+                      FROM {grade_categories}
+                     WHERE aggregation = ?';
+            $courses = $DB->get_records_sql($sql, array(13));
+
+            foreach ($courses as $course) {
+                set_config('show_sumofgrades_upgrade_' . $course->courseid, 1);
+            }
+
+            set_config('grades_sumofgrades_upgrade_flagged', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100300.00);
+    }
 
     return true;
 }

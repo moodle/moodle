@@ -459,6 +459,48 @@ function grade_get_graded_users_select($report, $course, $userid, $groupid, $inc
 }
 
 /**
+ * Hide warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_natural_aggregation_upgrade_notice($courseid) {
+    set_config('show_sumofgrades_upgrade_' . $courseid, false);
+}
+
+/**
+ * Print warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ * @param context $context The course context.
+ * @param boolean $return return as string
+ *
+ * @return nothing or string if $return true
+ */
+function print_natural_aggregation_upgrade_notice($courseid, $context, $return=false) {
+    global $OUTPUT;
+    $html = '';
+    $show = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
+
+    if ($show) {
+        $message = get_string('sumofgradesupgradedgrades', 'grades');
+        $hidemessage = get_string('sumofgradesupgradedgradeshidemessage', 'grades');
+        $urlparams = array( 'id' => $courseid,
+                            'seensumofgradesupgradedgrades' => true,
+                            'sesskey' => sesskey());
+        $goawayurl = new moodle_url('/grade/report/grader/index.php', $urlparams);
+        $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $html .= $OUTPUT->notification($message, 'notifysuccess');
+        $html .= $goawaybutton;
+    }
+
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
+    }
+}
+
+/**
  * Print grading plugin selection popup form.
  *
  * @param array   $plugin_info An array of plugins containing information for the selector
