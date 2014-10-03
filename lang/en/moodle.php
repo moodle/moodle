@@ -1896,6 +1896,7 @@ $string['userdescription_help'] = 'This box enables you to enter some text about
 $string['userdetails'] = 'User details';
 $string['userfiles'] = 'User files';
 $string['userlist'] = 'User list';
+$string['usermenu'] = 'User menu';
 $string['username'] = 'Username';
 $string['usernameemail'] = 'Username / email';
 $string['usernameemailmatch'] = 'The username and email address do not relate to the same user';

@@ -2912,8 +2912,9 @@ EOD;
      * @param bool $withlinks true if a dropdown should be built.
      * @return string HTML fragment.
      */
-    public function user_menu($user = null, $withlinks = false) {
+    public function user_menu($user = null, $withlinks = null) {
         global $USER, $CFG;
+        require_once($CFG->dirroot . '/user/lib.php');
 
         if (is_null($user)) {
             $user = $USER;
@@ -2924,6 +2925,12 @@ EOD;
         // intended to be theme-specific. Please don't copy this snippet anywhere else.
         if (is_null($withlinks)) {
             $withlinks = empty($this->page->layout_options['nologinlinks']);
+        }
+
+        // Add a class for when $withlinks is false.
+        $usermenuclasses = 'usermenu';
+        if (!$withlinks) {
+            $usermenuclasses .= ' withoutlinks';
         }
 
         $returnstr = "";
@@ -2941,10 +2948,14 @@ EOD;
             if (!$loginpage) {
                 $returnstr .= " (<a href=\"$loginurl\">" . get_string('login') . '</a>)';
             }
-            return html_writer::tag(
-                'span',
-                $returnstr
+            return html_writer::div(
+                html_writer::span(
+                    $returnstr,
+                    'login'
+                ),
+                $usermenuclasses
             );
+
         }
 
         // If logged in as a guest user, show a string to that effect.
@@ -2953,14 +2964,17 @@ EOD;
             if (!$loginpage && $withlinks) {
                 $returnstr .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
             }
-            return html_writer::tag(
-                'span',
-                $returnstr
+
+            return html_writer::div(
+                html_writer::span(
+                    $returnstr,
+                    'login'
+                ),
+                $usermenuclasses
             );
         }
 
         // Get some navigation opts.
-        require_once($CFG->dirroot . '/user/lib.php');
         $opts = user_get_user_navigation_info($user, $this->page, $this->page->course);
 
         $avatarclasses = "avatars";
@@ -3015,15 +3029,10 @@ EOD;
         }
 
         $returnstr .= html_writer::span(
-            html_writer::span($avatarcontents, $avatarclasses) . html_writer::span($usertextcontents, 'usertext'),
+            html_writer::span($usertextcontents, 'usertext') .
+            html_writer::span($avatarcontents, $avatarclasses),
             'userbutton'
         );
-
-        // Add a class for when $withlinks is false.
-        $usermenuclasses = 'usermenu';
-        if (!$withlinks) {
-            $usermenuclasses .= ' withoutlinks';
-        }
 
         // Create a divider (well, a filler).
         $divider = new action_menu_filler();
@@ -3032,7 +3041,7 @@ EOD;
         $am = new action_menu();
         $am->initialise_js($this->page);
         $am->set_menu_trigger(html_writer::span(
-            "User menu",
+            get_string('usermenu', 'moodle'),
             "accesshide"
         ));
         $am->set_alignment(action_menu::TR, action_menu::BR);
@@ -3042,7 +3051,7 @@ EOD;
             foreach ($opts->navitems as $key => $value) {
                 $pix = null;
                 if (isset($value->pix)) {
-                    $pix = new pix_icon($value->pix, $value->title, null);
+                    $pix = new pix_icon($value->pix, $value->title, null, array('class' => 'iconsmall'));
                 }
                 $al = new action_menu_link_secondary(
                     $value->url,

@@ -343,12 +343,19 @@ div#dock {
 
 // Usermenu
 .usermenu {
+    font-size: 14px;
     &.withoutlinks {
         .withoutlinks {
             display: none;
         }
     }
-    font-size: 14px;
+    .login {
+        color: @navbarText;
+        line-height: 40px;
+        a {
+            color: @navbarLinkColor;
+        }
+    }
     > .moodle-actionmenu > .menubar {
         display: block;
         margin: -40px 0px 2px 0px;
@@ -363,13 +370,15 @@ div#dock {
         height: 40px;
     }
     .toggle-display {
-        color: #777;
+        color: @navbarLinkColor;
         outline: none;
     }
     .userbutton {
+        height: 40px;
+        line-height: 40px;
         .avatars{
             display: inline-block;
-            height: 37px;
+            height: 36px;
             vertical-align: middle;
             margin-right: 6px;
 
@@ -435,33 +444,57 @@ div#dock {
     }
 }
 .jsenabled .navbar-inverse {
-    .usermenu:hover {
-        .userinfo .usertext {
-            color: @navbarInverseLinkColorHover;
-            .meta {
-                color: @navbarInverseText;
-                .value {
+    .usermenu {
+        .login {
+            color: @navbarInverseText;
+            a {
+                color: @navbarInverseLinkColor;
+                &:hover {
                     color: @navbarInverseLinkColorHover;
                 }
             }
         }
-        .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
-            .caret {
-                border-top-color: @navbarInverseLinkColorHover;
+        .toggle-display {
+            color: @navbarInverseLinkColor;
+        }
+        .userinfo .usertext {
+            color: @navbarInverseLinkColor;
+            .meta {
+                color: @navbarInverseText;
+                .value {
+                    color: @navbarInverseLinkColor;
+                }
+            }
+        }
+        &:hover {
+            .userinfo .usertext {
+                color: @navbarInverseLinkColorHover;
+                .meta {
+                    color: @navbarInverseText;
+                    .value {
+                        color: @navbarInverseLinkColorHover;
+                    }
+                }
+            }
+            .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
+                .caret {
+                    border-top-color: @navbarInverseLinkColorHover;
+                }
             }
         }
     }
 }
 .dir-ltr {
     .usermenu {
+        float: right;
         .userinfo {
             padding-left: 20px;
         }
         .userbutton {
             margin-right: 4px;
-            padding-right: 16px;
+            padding-right: 8px;
             .avatars{
-                margin-right: 6px;
+                margin-left: 6px;
             }
         }
         > .moodle-actionmenu > .menubar li a {
@@ -479,11 +512,12 @@ div#dock {
 
 .dir-rtl {
     .usermenu {
+        float: left;
         .userbutton {
             margin-left: 4px;
-            padding-left: 16px;
+            padding-left: 8px;
             .avatars{
-                margin-left: 6px;
+                margin-right: 6px;
             }
         }
         > .moodle-actionmenu > .menubar li a {
