@@ -883,11 +883,19 @@ function setup_get_remote_url() {
         //IIS - needs a lot of tweaking to make it work
         $rurl['fullpath'] = $_SERVER['SCRIPT_NAME'];
 
-        // NOTE: ignore PATH_INFO because it is incorrectly encoded using 8bit filesystem legacy encoding in IIS
-        //       since 2.0 we rely on iis rewrite extenssion like Helicon ISAPI_rewrite
-        //       example rule: RewriteRule ^([^\?]+?\.php)(\/.+)$ $1\?file=$2 [QSA]
+        // NOTE: we should ignore PATH_INFO because it is incorrectly encoded using 8bit filesystem legacy encoding in IIS.
+        //       Since 2.0, we rely on IIS rewrite extensions like Helicon ISAPI_rewrite
+        //         example rule: RewriteRule ^([^\?]+?\.php)(\/.+)$ $1\?file=$2 [QSA]
+        //       OR
+        //       we rely on a proper IIS 6.0+ configuration: the 'FastCGIUtf8ServerVariables' registry key.
+        if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
+            // Check that PATH_INFO works == must not contain the script name.
+            if (strpos($_SERVER['PATH_INFO'], $_SERVER['SCRIPT_NAME']) === false) {
+                $rurl['fullpath'] .= clean_param(urldecode($_SERVER['PATH_INFO']), PARAM_PATH);
+            }
+        }
 
-        if ($_SERVER['QUERY_STRING'] != '') {
+        if (isset($_SERVER['QUERY_STRING']) and $_SERVER['QUERY_STRING'] !== '') {
             $rurl['fullpath'] .= '?'.$_SERVER['QUERY_STRING'];
         }
         $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility

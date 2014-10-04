@@ -1030,9 +1030,11 @@ function get_file_argument() {
 
     // Then try extract file from the slasharguments.
     if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
-        // NOTE: ISS tends to convert all file paths to single byte DOS encoding,
+        // NOTE: IIS tends to convert all file paths to single byte DOS encoding,
         //       we can not use other methods because they break unicode chars,
-        //       the only way is to use URL rewriting.
+        //       the only ways are to use URL rewriting
+        //       OR
+        //       to properly set the 'FastCGIUtf8ServerVariables' registry key.
         if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
             // Check that PATH_INFO works == must not contain the script name.
             if (strpos($_SERVER['PATH_INFO'], $SCRIPT) === false) {
