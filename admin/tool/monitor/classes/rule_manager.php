@@ -49,6 +49,26 @@ class rule_manager {
         $ruledata->timemodified = $now;
 
         $ruledata->id = $DB->insert_record('tool_monitor_rules', $ruledata);
+
+        // Trigger a rule created event.
+        if ($ruledata->id) {
+            if (!empty($ruledata->courseid)) {
+                $courseid = $ruledata->courseid;
+                $context = \context_course::instance($ruledata->courseid);
+            } else {
+                $courseid = 0;
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $ruledata->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\rule_created::create($params);
+            $event->trigger();
+        }
+
         return new rule($ruledata);
     }
 
