@@ -147,7 +147,34 @@ class rule_manager {
             throw new \coding_exception('Invalid rule ID.');
         }
         $ruledata->timemodified = time();
-        return $DB->update_record('tool_monitor_rules', $ruledata);
+
+        $success = $DB->update_record('tool_monitor_rules', $ruledata);
+
+        // If successful trigger a rule updated event.
+        if ($success) {
+            // If we do not have the course id we need to retrieve it.
+            if (!isset($ruledata->courseid)) {
+                $courseid = $DB->get_field('tool_monitor_rules', 'courseid', array('id' => $ruledata->id), MUST_EXIST);
+            } else {
+                $courseid = $ruledata->courseid;
+            }
+
+            if (!empty($courseid)) {
+                $context = \context_course::instance($courseid);
+            } else {
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $ruledata->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\rule_updated::create($params);
+            $event->trigger();
+        }
+
+        return $success;
     }
 
     /**

@@ -83,4 +83,50 @@ class tool_monitor_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_monitor\event\rule_created', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
     }
+
+    /**
+     * Test the rule updated event.
+     */
+    public function test_rule_updated() {
+        // Create the items we need.
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create the rule we are going to update.
+        $createrule = new stdClass();
+        $createrule->courseid = $course->id;
+        $rule = $monitorgenerator->create_rule($createrule);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $updaterule = new stdClass();
+        $updaterule->id = $rule->id;
+        \tool_monitor\rule_manager::update_rule($updaterule);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event contains the expected values.
+        $this->assertInstanceOf('\tool_monitor\event\rule_updated', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($rule->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+
+        // Now let's update a system rule (courseid = 0).
+        $createrule->courseid = 0;
+        $rule = $monitorgenerator->create_rule($createrule);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $updaterule = new stdClass();
+        $updaterule->id = $rule->id;
+        \tool_monitor\rule_manager::update_rule($updaterule);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event uses the system context.
+        $this->assertInstanceOf('\tool_monitor\event\rule_updated', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+    }
 }
