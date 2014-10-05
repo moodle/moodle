@@ -54,8 +54,12 @@ class eventobservers {
      */
     public static function course_deleted(\core\event\course_deleted $event) {
         $rules = rule_manager::get_rules_by_courseid($event->courseid);
+        $context = null;
+        if ($event->contextlevel == CONTEXT_COURSE) {
+            $context = $event->get_context();
+        }
         foreach ($rules as $rule) {
-            rule_manager::delete_rule($rule->id);
+            rule_manager::delete_rule($rule->id, $context);
         }
     }
 
