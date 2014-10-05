@@ -172,4 +172,41 @@ class tool_monitor_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_monitor\event\rule_deleted', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
     }
+
+    /**
+     * Test the subscription created event.
+     */
+    public function test_subscription_created() {
+        // Create the items we need to test this.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        // Create a rule to subscribe to.
+        $rule = $monitorgenerator->create_rule();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $subscriptionid = \tool_monitor\subscription_manager::create_subscription($rule->id, $course->id, 0, $user->id);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event contains the expected values.
+        $this->assertInstanceOf('\tool_monitor\event\subscription_created', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($subscriptionid, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+
+        // Create a system subscription - trigger and capture the event.
+        $sink = $this->redirectEvents();
+        \tool_monitor\subscription_manager::create_subscription($rule->id, 0, 0, $user->id);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event uses the system context.
+        $this->assertInstanceOf('\tool_monitor\event\subscription_created', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+    }
 }

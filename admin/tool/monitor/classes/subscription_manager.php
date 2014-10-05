@@ -59,7 +59,28 @@ class subscription_manager {
         }
 
         $subscription->timecreated = time();
-        return $DB->insert_record('tool_monitor_subscriptions', $subscription);
+        $subscription->id = $DB->insert_record('tool_monitor_subscriptions', $subscription);
+
+        // Trigger a subscription created event.
+        if ($subscription->id) {
+            if (!empty($subscription->courseid)) {
+                $courseid = $subscription->courseid;
+                $context = \context_course::instance($subscription->courseid);
+            } else {
+                $courseid = 0;
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $subscription->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\subscription_created::create($params);
+            $event->trigger();
+        }
+
+        return $subscription->id;
     }
 
     /**
