@@ -1459,7 +1459,8 @@ function forum_print_overview($courses,&$htmlarray) {
                 .'JOIN {forum_posts} p ON p.discussion = d.id '
                 ."WHERE ($coursessql) "
                 .'AND p.userid != ? '
-                .'GROUP BY d.id, d.forum, d.course, d.groupid';
+                .'GROUP BY d.id, d.forum, d.course, d.groupid '
+                .'ORDER BY d.course, d.forum';
 
     // Avoid warnings.
     if (!$discussions = $DB->get_records_sql($sql, $params)) {
