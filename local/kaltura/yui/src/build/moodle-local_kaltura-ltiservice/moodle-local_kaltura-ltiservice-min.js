@@ -1,0 +1,1 @@
+YUI.add("moodle-local_kaltura-ltiservice",function(e,t){var n=function(){n.superclass.constructor.apply(this,arguments)};e.extend(n,e.Base,{init:function(){alert("ltiservice")}},{NAME:"moodle-local_kaltura-ltiservice"}),M.local_kaltura=M.local_kaltura||{},M.local_kaltura.init=function(e){return new n(e)}},"@VERSION@",{requires:["base","node"]});

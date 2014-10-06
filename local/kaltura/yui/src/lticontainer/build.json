@@ -1,0 +1,10 @@
+{
+  "name": "moodle-local_kaltura-lticontainer",
+  "builds": {
+    "moodle-local_kaltura-lticontainer": {
+      "jsfiles": [
+        "lticontainer.js"
+      ]
+    }
+  }
+}

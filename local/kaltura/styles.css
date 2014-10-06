@@ -1,0 +1,10 @@
+iframe#contentframe {
+    border-style: none;
+}
+
+#panelcontentframecontainer {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+    width: 100%;
+}
