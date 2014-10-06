@@ -575,8 +575,8 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>$category1ctx->id, 'name'=>'aaagrrryyy', 'idnumber'=>'','description'=>''));
         $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid'=>$category1ctx->id, 'name'=>'bbb', 'idnumber'=>'', 'description'=>'yyybrrr', 'visible'=>0));
         $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>$category2ctx->id, 'name'=>'ccc', 'idnumber'=>'xxarrrghyyy', 'description'=>'po_us'));
-        $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>$systemctx->id));
-        $cohort5 = $this->getDataGenerator()->create_cohort(array('contextid'=>$systemctx->id, 'visible'=>0));
+        $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>$systemctx->id, 'name' => 'ddd'));
+        $cohort5 = $this->getDataGenerator()->create_cohort(array('contextid'=>$systemctx->id, 'visible'=>0, 'name' => 'eee'));
 
         /*
         Structure of generated course categories, courses and cohort:
