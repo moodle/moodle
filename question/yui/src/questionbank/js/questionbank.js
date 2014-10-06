@@ -48,8 +48,6 @@ question_bank = {
 
     }
 
-    
-    
     init_checkbox_column: function(Y, strselectall, strdeselectall, firstcbid) {
         question_bank.strselectall = strselectall;
         question_bank.strdeselectall = strdeselectall;
