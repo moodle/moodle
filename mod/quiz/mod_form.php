@@ -156,33 +156,15 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('shufflequestions', $quizconfig->shufflequestions_adv);
         $mform->setDefault('shufflequestions', $quizconfig->shufflequestions);
 
-        // Questions per page.
-        $pageoptions = array();
-        $pageoptions[0] = get_string('neverallononepage', 'quiz');
-        $pageoptions[1] = get_string('everyquestion', 'quiz');
-        for ($i = 2; $i <= QUIZ_MAX_QPP_OPTION; ++$i) {
-            $pageoptions[$i] = get_string('everynquestions', 'quiz', $i);
-        }
-
         $pagegroup = array();
         $pagegroup[] = $mform->createElement('select', 'questionsperpage',
-                get_string('newpage', 'quiz'), $pageoptions, array('id' => 'id_questionsperpage'));
+                get_string('newpage', 'quiz'), quiz_questions_per_page_options(), array('id' => 'id_questionsperpage'));
         $mform->setDefault('questionsperpage', $quizconfig->questionsperpage);
 
         if (!empty($this->_cm)) {
             $pagegroup[] = $mform->createElement('checkbox', 'repaginatenow', '',
                     get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
             $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
-
-            $PAGE->requires->js('/question/qengine.js');
-            $module = array(
-                'name'      => 'mod_quiz_edit',
-                'fullpath'  => '/mod/quiz/edit.js',
-                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-                'strings'   => array(),
-                'async'     => false,
-            );
-            $PAGE->requires->js_init_call('quiz_settings_init', null, false, $module);
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp',
@@ -408,6 +390,8 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // -------------------------------------------------------------------------------
         $this->add_action_buttons();
+
+        $PAGE->requires->yui_module('moodle-mod_quiz-modform', 'M.mod_quiz.modform.init');
     }
 
     protected function add_review_options_group($mform, $quizconfig, $whenname,

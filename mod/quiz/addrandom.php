@@ -73,7 +73,8 @@ $qcobject = new question_category_object(
     null,
     $contexts->having_cap('moodle/question:add'));
 
-$mform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'), $contexts);
+$mform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'),
+                array('contexts' => $contexts, 'cat' => $pagevars['cat']));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
@@ -96,7 +97,7 @@ if ($data = $mform->get_data()) {
                 'It seems a form was submitted without any button being pressed???');
     }
 
-    quiz_add_random_questions($quiz, $addonpage, $categoryid, 1, $includesubcategories);
+    quiz_add_random_questions($quiz, $addonpage, $categoryid, $data->numbertoadd, $includesubcategories);
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
     redirect($returnurl);

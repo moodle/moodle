@@ -17,10 +17,10 @@
 /**
  * Steps definitions related to mod_quiz.
  *
- * @package    mod_quiz
- * @category   test
- * @copyright  2014 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @category  test
+ * @copyright 2014 Marina Glancy
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
@@ -34,10 +34,8 @@ use Behat\Behat\Context\Step\Given as Given,
 /**
  * Steps definitions related to mod_quiz.
  *
- * @package    mod_quiz
- * @category   test
- * @copyright  2014 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2014 Marina Glancy
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_mod_quiz extends behat_question_base {
     /**
@@ -54,10 +52,162 @@ class behat_mod_quiz extends behat_question_base {
         $quizname = $this->escape($quizname);
         $editquiz = $this->escape(get_string('editquiz', 'quiz'));
         $addaquestion = $this->escape(get_string('addaquestion', 'quiz'));
+        $menuxpath = "//div[contains(@class, ' page-add-actions ')][last()]//a[contains(@class, ' textmenu')]";
+        $itemxpath = "//div[contains(@class, ' page-add-actions ')][last()]//a[contains(@class, ' addquestion ')]";
         return array_merge(array(
             new Given("I follow \"$quizname\""),
             new Given("I follow \"$editquiz\""),
-            new Given("I press \"$addaquestion\""),
+            new Given("I click on \"$menuxpath\" \"xpath_element\""),
+            new Given("I click on \"$itemxpath\" \"xpath_element\""),
                 ), $this->finish_adding_question($questiontype, $questiondata));
+    }
+
+    /**
+     * Set the max mark for a question on the Edit quiz page.
+     *
+     * @When /^I set the max mark for question "(?P<question_name_string>(?:[^"]|\\")*)" to "(?P<new_mark_string>(?:[^"]|\\")*)"$/
+     * @param string $questionname the name of the question to set the max mark for.
+     * @param string $newmark the mark to set
+     */
+    public function i_set_the_max_mark_for_quiz_question($questionname, $newmark) {
+        return array(
+            new Given('I follow "' . $this->escape(get_string('editmaxmark', 'quiz')) . '"'),
+            new Given('I wait until "li input[name=maxmark]" "css_element" exists'),
+            new Given('I should see "' . $this->escape(get_string('edittitleinstructions')) . '"'),
+            new Given('I set the field "maxmark" to "' . $this->escape($newmark) . chr(10) . '"'),
+        );
+    }
+
+    /**
+     * Open the add menu on a given page, or at the end of the Edit quiz page.
+     * @Given /^I open the "(?P<page_n_or_last_string>(?:[^"]|\\")*)" add to quiz menu$/
+     * @param string $pageorlast either "Page n" or "last".
+     */
+    public function i_open_the_add_to_quiz_menu_for($pageorlast) {
+
+        if (!$this->running_javascript()) {
+            throw new DriverException('Activities actions menu not available when Javascript is disabled');
+        }
+
+        if ($pageorlast == 'last') {
+            $xpath = "//div[@class = 'last-add-menu']//a[contains(@class, 'textmenu') and contains(., 'Add')]";
+        } else if (preg_match('~Page (\d+)~', $pageorlast, $matches)) {
+            $xpath = "//li[@id = 'page-{$matches[1]}']//a[contains(@class, 'textmenu') and contains(., 'Add')]";
+        } else {
+            throw new ExpectationException("The I open the add to quiz menu step must specify either 'Page N' or 'last'.");
+        }
+        $menu = $this->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * Click on a given link in the moodle-actionmenu that is currently open.
+     * @Given /^I follow "(?P<link_string>(?:[^"]|\\")*)" in the open menu$/
+     * @param string $linkstring the text (or id, etc.) of the link to click.
+     * @return array of steps.
+     */
+    public function i_follow_in_the_open_menu($linkstring) {
+        $openmenuxpath = "//div[contains(@class, 'moodle-actionmenu') and contains(@class, 'show')]";
+        return array(
+            new Given('I click on "' . $linkstring . '" "link" in the "' . $openmenuxpath . '" "xpath_element"'),
+        );
+    }
+
+    /**
+     * Check whether a particular question is on a particular page of the quiz on the Edit quiz page.
+     * @Given /^I should see "(?P<question_name>(?:[^"]|\\")*)" on quiz page "(?P<page_number>\d+)"$/
+     * @param string $questionname the name of the question we are looking for.
+     * @param number $pagenumber the page it should be found on.
+     * @return array of steps.
+     */
+    public function i_should_see_on_quiz_page($questionname, $pagenumber) {
+        $xpath = "//li[contains(., '" . $this->escape($questionname) .
+                "')][./preceding-sibling::li[contains(@class, 'pagenumber')][1][contains(., 'Page " .
+                $pagenumber . "')]]";
+        return array(
+            new Given('"' . $xpath . '" "xpath_element" should exist'),
+        );
+    }
+
+    /**
+     * Check whether one question comes before another on the Edit quiz page.
+     * The two questions must be on the same page.
+     * @Given /^I should see "(?P<first_q_name>(?:[^"]|\\")*)" before "(?P<second_q_name>(?:[^"]|\\")*)" on the edit quiz page$/
+     * @param string $firstquestionname the name of the question that should come first in order.
+     * @param string $secondquestionname the name of the question that should come immediately after it in order.
+     * @return array of steps.
+     */
+    public function i_should_see_before_on_the_edit_quiz_page($firstquestionname, $secondquestionname) {
+        $xpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($firstquestionname) .
+                "')]/following-sibling::li[contains(@class, ' slot ')][1]" .
+                "[contains(., '" . $this->escape($secondquestionname) . "')]";
+        return array(
+            new Given('"' . $xpath . '" "xpath_element" should exist'),
+        );
+    }
+
+    /**
+     * Check the number displayed alongside a question on the Edit quiz page.
+     * @Given /^"(?P<question_name>(?:[^"]|\\")*)" should have number "(?P<number>(?:[^"]|\\")*)" on the edit quiz page$/
+     * @param string $questionname the name of the question we are looking for.
+     * @param number $number the number (or 'i') that should be displayed beside that question.
+     * @return array of steps.
+     */
+    public function should_have_number_on_the_edit_quiz_page($questionname, $number) {
+        $xpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
+                "')]//span[@class = 'slotnumber' and normalize-space(text()) = '" . $this->escape($number) . "']";
+        return array(
+            new Given('"' . $xpath . '" "xpath_element" should exist'),
+        );
+    }
+
+    /**
+     * Click the add or remove page-break icon after a particular question.
+     * @When /^I click on the "(Add|Remove)" page break icon after question "(?P<question_name>(?:[^"]|\\")*)"$/
+     * @param string $addorremoves 'Add' or 'Remove'.
+     * @param string $questionname the name of the question before the icon to click.
+     * @return array of steps.
+     */
+    public function i_click_on_the_page_break_icon_after_question($addorremoves, $questionname) {
+        $xpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
+                "')]//a[@class = 'page_split_join' and @title = '" . $addorremoves . " page break']";
+        return array(
+            new Given('I click on "' . $xpath . '" "xpath_element"'),
+        );
+    }
+
+    /**
+     * Move a question on the Edit quiz page by first clicking on the Move icon,
+     * then clicking one of the "After ..." links.
+     * @When /^I move "(?P<question_name>(?:[^"]|\\")*)" to "(?P<target>(?:[^"]|\\")*)" in the quiz by clicking the move icon$/
+     * @param string $questionname the name of the question we are looking for.
+     * @param string $target the target place to move to. One of the links in the pop-up like
+     *      "After Page 1" or "After Question N".
+     * @return array of steps.
+     */
+    public function i_move_question_after_item_by_clicking_the_move_icon($questionname, $target) {
+        $iconxpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
+                "')]//span[contains(@class, 'editing_move')]";
+        return array(
+            new Given('I click on "' . $iconxpath . '" "xpath_element"'),
+            new Given('I click on "' . $this->escape($target) . '" "text"'),
+        );
+    }
+
+    /**
+     * Move a question on the Edit quiz page by dragging a given question on top of another item.
+     * @When /^I move "(?P<question_name>(?:[^"]|\\")*)" to "(?P<target>(?:[^"]|\\")*)" in the quiz by dragging$/
+     * @param string $questionname the name of the question we are looking for.
+     * @param string $target the target place to move to. Ether a question name, or "Page N"
+     * @return array of steps.
+     */
+    public function i_move_question_after_item_by_dragging($questionname, $target) {
+        $iconxpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
+                "')]//span[contains(@class, 'editing_move')]//img";
+        $destinationxpath = "//li[contains(@class, ' slot ') or contains(@class, 'pagenumber ')]" .
+                "[contains(., '" . $this->escape($target) . "')]";
+        return array(
+            new Given('I drag "' . $iconxpath . '" "xpath_element" ' .
+                'and I drop it in "' . $destinationxpath . '" "xpath_element"'),
+        );
     }
 }

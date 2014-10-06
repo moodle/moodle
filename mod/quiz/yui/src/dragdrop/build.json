@@ -1,0 +1,12 @@
+{
+    "name": "moodle-mod_quiz-dragdrop",
+    "builds": {
+        "moodle-mod_quiz-dragdrop": {
+            "jsfiles": [
+                "dragdrop.js",
+                "section.js",
+                "resource.js"
+            ]
+        }
+    }
+}

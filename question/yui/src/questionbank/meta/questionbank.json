@@ -1,0 +1,8 @@
+{
+  "moodle-question-questionbank": {
+    "requires": [
+        "",
+        ""
+    ]
+  }
+}
