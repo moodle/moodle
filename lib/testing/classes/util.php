@@ -458,7 +458,7 @@ abstract class testing_util {
         // To reduce the chance of the coding error, we start sequences at different values where possible.
         // In a attempt to avoid tables with existing id's we start at a high number.
         // Reset the value each time all database sequences are reset.
-        if (defined('PHPUNIT_SEQUENCE_START')) {
+        if (defined('PHPUNIT_SEQUENCE_START') and PHPUNIT_SEQUENCE_START) {
             self::$sequencenextstartingid = PHPUNIT_SEQUENCE_START;
         } else {
             self::$sequencenextstartingid = 100000;
