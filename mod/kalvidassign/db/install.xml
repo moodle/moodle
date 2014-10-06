@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/kalvidassign/db" VERSION="20111206" COMMENT="XMLDB file for Moodle mod/kalvidassign"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="kalvidassign" COMMENT="Kaltura video assignment module instances are stored here" NEXT="kalvidassign_submission">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course id" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="timeavailable"/>
+        <FIELD NAME="timeavailable" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment is available for student submission" PREVIOUS="introformat" NEXT="timedue"/>
+        <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the assignment submissions are due by" PREVIOUS="timeavailable" NEXT="preventlate"/>
+        <FIELD NAME="preventlate" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Prevent late submissions" PREVIOUS="timedue" NEXT="resubmit"/>
+        <FIELD NAME="resubmit" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow for resubmissions" PREVIOUS="preventlate" NEXT="emailteachers"/>
+        <FIELD NAME="emailteachers" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Email submissions to the teacher" PREVIOUS="resubmit" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Maximum grade the assignment is worth" PREVIOUS="emailteachers" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment was created" PREVIOUS="emailteachers" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the assignment settings were modified" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="kal_course_idx" UNIQUE="false" FIELDS="course" COMMENT="index on course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="kalvidassign_submission" COMMENT="Kaltura video assignment submissions" PREVIOUS="kalvidassign">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="vidassignid"/>
+        <FIELD NAME="vidassignid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key to the kalvidassign table" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Moodle user id" PREVIOUS="vidassignid" NEXT="entry_id"/>
+        <FIELD NAME="entry_id" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Kaltura entry id" PREVIOUS="userid" NEXT="source"/>
+        <FIELD NAME="source" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The source URL of the media entry." PREVIOUS="entry_id" NEXT="width"/>
+        <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Iframe width." PREVIOUS="source" NEXT="height"/>
+        <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Iframe height." PREVIOUS="width" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Grade score for the submission" PREVIOUS="height" NEXT="submissioncomment"/>
+        <FIELD NAME="submissioncomment" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Submission teacher comment" PREVIOUS="grade" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissioncomment" NEXT="teacher"/>
+        <FIELD NAME="teacher" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Moodle userId of the teacher who marked the submission" PREVIOUS="format" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the assignment submission notification has been emailed to the teacher." PREVIOUS="teacher" NEXT="timemarked"/>
+        <FIELD NAME="timemarked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment submission was marked" PREVIOUS="mailed" NEXT="metadata"/>
+        <FIELD NAME="metadata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Stores a base 64 encoded serialized metadata object." PREVIOUS="timemarked" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the submission record was created" PREVIOUS="metadata" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time the assignment submission was modified" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="kal_vid_assign_idx" UNIQUE="false" FIELDS="vidassignid" COMMENT="Index on the kaltura assignment id" NEXT="kal_userid_idx"/>
+        <INDEX NAME="kal_userid_idx" UNIQUE="false" FIELDS="userid" COMMENT="Index on the Moodle userid" PREVIOUS="kal_vid_assign_idx" NEXT="kal_marked_idx"/>
+        <INDEX NAME="kal_marked_idx" UNIQUE="false" FIELDS="timemarked" COMMENT="Index on the submission marked field" PREVIOUS="kal_userid_idx" NEXT="kal_mailed_idx"/>
+        <INDEX NAME="kal_mailed_idx" UNIQUE="false" FIELDS="mailed" COMMENT="Index on the mailed field" PREVIOUS="kal_marked_idx"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
