@@ -94,7 +94,7 @@ Y.extend(POPUP, Y.Base, {
     },
 
     load_content : function(queryString) {
-        Y.log('Starting load.');
+        Y.log('Starting load.', 'debug', 'moodle-mod_quiz-quizquestionbank');
         this.dialogue.bodyNode.append(this.loadingDiv);
 
         // If to support old IE.
@@ -111,7 +111,7 @@ Y.extend(POPUP, Y.Base, {
             context: this
         });
 
-        Y.log('Load started.');
+        Y.log('Load request sent.', 'debug', 'moodle-mod_quiz-quizquestionbank');
     },
 
     load_done: function(transactionid, response) {
@@ -123,7 +123,7 @@ Y.extend(POPUP, Y.Base, {
             return;
         }
 
-        Y.log('Load completed.');
+        Y.log('Load completed.', 'debug', 'moodle-mod_quiz-quizquestionbank');
 
         this.dialogue.bodyNode.setHTML(result.contents);
         Y.use('moodle-question-chooser', function() {M.question.init_chooser({});});
@@ -136,7 +136,7 @@ Y.extend(POPUP, Y.Base, {
     },
 
     load_failed: function() {
-        Y.log('Load failed.');
+        Y.log('Load failed.', 'debug', 'moodle-mod_quiz-quizquestionbank');
     },
 
     link_clicked: function(e) {
@@ -162,4 +162,15 @@ M.mod_quiz.quizquestionbank.init = function() {
 };
 
 
-}, '@VERSION@', {"requires": ["base", "event", "node", "io", "io-form", "yui-later", "moodle-question-qbankmanager"]});
+}, '@VERSION@', {
+    "requires": [
+        "base",
+        "event",
+        "node",
+        "io",
+        "io-form",
+        "yui-later",
+        "moodle-question-qbankmanager",
+        "moodle-core-notification-dialogue"
+    ]
+});

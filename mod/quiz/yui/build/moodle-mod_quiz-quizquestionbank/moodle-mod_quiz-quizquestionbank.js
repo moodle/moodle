@@ -158,4 +158,15 @@ M.mod_quiz.quizquestionbank.init = function() {
 };
 
 
-}, '@VERSION@', {"requires": ["base", "event", "node", "io", "io-form", "yui-later", "moodle-question-qbankmanager"]});
+}, '@VERSION@', {
+    "requires": [
+        "base",
+        "event",
+        "node",
+        "io",
+        "io-form",
+        "yui-later",
+        "moodle-question-qbankmanager",
+        "moodle-core-notification-dialogue"
+    ]
+});

@@ -123,7 +123,7 @@ Y.Moodle.mod_quiz.util.slot = {
     },
 
     /**
-     * Reset the order of the numbers given to each slot. 
+     * Reset the order of the numbers given to each slot.
      *
      * @method reorder_slots
      * @return void
