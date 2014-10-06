@@ -489,7 +489,7 @@ abstract class grade_report {
                 array_key_exists($course_item->id, $hiding_affected['alteredgrademin']) ||
                 array_key_exists($course_item->id, $hiding_affected['alteredgrademax']) ||
                 array_key_exists($course_item->id, $hiding_affected['alteredaggregationstatus']) ||
-                array_key_exists($course_item->id, $hiding_affected['alteredaggregationweight'])) { 
+                array_key_exists($course_item->id, $hiding_affected['alteredaggregationweight'])) {
             if (!$this->showtotalsifcontainhidden[$courseid]) {
                 //hide the grade
                 $finalgrade = null;
