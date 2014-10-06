@@ -816,7 +816,7 @@ class grade_report_grader extends grade_report {
 
                     $singleview = '';
                     if (has_capability('gradereport/singleview:view', $this->context) &&
-                        preg_match('/^item/', $type)) {
+                        !preg_match('/^category/', $type)) {
                         $url = new moodle_url('/grade/report/singleview/index.php', array(
                             'id' => $this->course->id,
                             'item' => 'grade',

@@ -75,7 +75,9 @@ class gradereport_singleview extends grade_report {
     }
 
     function process_data($data) {
-        return $this->screen->process($data);
+        if (has_capability('moodle/grade:manage', $this->context)) {
+            return $this->screen->process($data);
+        }
     }
 
     function process_action($target, $action) {

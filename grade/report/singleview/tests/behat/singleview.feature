@@ -64,7 +64,7 @@ Feature: We can use Single view
         | 12.05 |
         | Excluded |
 
-  Scenario: Single view quick links work on grade report.
+  Scenario: Single view links work on grade report.
     Given I follow "Single view for Test assignment one"
     Then I should see "Test assignment one"
     Then I follow "Grader report"

@@ -113,7 +113,7 @@ class gradereport_singleview_user extends gradereport_singleview_tablelike imple
         if (isset($item->cmid)) {
             $realuserid = $item->cmid;
         }
-        $url = new moodle_url("/mod/$item->itemmodule/view.php", array('id' => $realuserid));
+        $url = new moodle_url('/mod/' . $item->itemmodule . '/view.php', array('id' => $realuserid));
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
         $grade->label = $item->get_name();
 

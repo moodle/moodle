@@ -65,7 +65,6 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
             }
         }, $this->items);
 
-        $options['name']= 'foo';
         return $options;
     }
 
