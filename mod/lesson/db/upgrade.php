@@ -92,5 +92,12 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014091001, 'lesson');
     }
 
+    if ($oldversion < 2014100600) {
+        // Previously there was no module intro in lesson so don't require
+        // it to be filled in for upgraded sites.
+        set_config('requiremodintro', 0, 'lesson');
+        upgrade_mod_savepoint(true, 2014100600, 'lesson');
+    }
+
     return true;
 }
