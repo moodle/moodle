@@ -1313,9 +1313,9 @@ class '.$classname.' {
                         }
                     }
                 } else if ($keydesc->required == VALUE_OPTIONAL) {
-                    //it does make sens to declare a parameter VALUE_OPTIONAL
-                    //VALUE_OPTIONAL is used only for array/object key
-                    throw new moodle_exception('parametercannotbevalueoptional');
+                    // It does not make sense to declare a parameter VALUE_OPTIONAL.
+                    // VALUE_OPTIONAL is used only for array/object key.
+                    throw new moodle_exception('erroroptionalparamarray', 'webservice', '', $name);
                 }
             } else { //for the moment we do not support default for other structure types
                  if ($keydesc->required == VALUE_DEFAULT) {
