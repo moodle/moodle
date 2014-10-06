@@ -1,8 +1,0 @@
-{
-  "moodle-local_kaltura-lticontainer": {
-    "requires": [
-        "base",
-        "node"
-    ]
-  }
-}

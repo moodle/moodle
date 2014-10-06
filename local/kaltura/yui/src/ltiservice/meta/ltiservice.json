@@ -1,9 +1,0 @@
-{
-  "moodle-local_kaltura-ltiservice": {
-    "requires": [
-        "base",
-        "node",
-        "node-event-simulate"
-    ]
-  }
-}
