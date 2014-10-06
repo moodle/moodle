@@ -405,7 +405,7 @@ class core_grades_external extends external_api {
                             'str_feedback' => new external_value(
                                 PARAM_TEXT, 'A string representation of the feedback from the grader', VALUE_OPTIONAL),
                         )
-                ), 'Any student grades to alter', VALUE_OPTIONAL),
+                ), 'Any student grades to alter', VALUE_DEFAULT, array()),
                 'itemdetails' => new external_single_structure(
                     array(
                         'itemname' => new external_value(
@@ -428,7 +428,7 @@ class core_grades_external extends external_api {
                             PARAM_BOOL, 'True if the grade item should be deleted', VALUE_OPTIONAL),
                         'hidden' => new external_value(
                             PARAM_BOOL, 'True if the grade item is hidden', VALUE_OPTIONAL),
-                    ), 'Any grade item settings to alter', VALUE_OPTIONAL
+                    ), 'Any grade item settings to alter', VALUE_DEFAULT, array()
                 )
             )
         );
