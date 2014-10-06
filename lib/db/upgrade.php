@@ -3980,5 +3980,43 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014100800.00);
     }
 
+    if ($oldversion < 2014101001.00) {
+        // Some blocks added themselves to the my/ home page, but they did not declare the
+        // subpage of the default my home page. While the upgrade script has been fixed, this
+        // upgrade script will fix the data that was wrongly added.
+
+        // We only proceed if we can find the right entry from my_pages. Private => 1 refers to
+        // the constant value MY_PAGE_PRIVATE.
+        if ($systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => 1))) {
+
+            // Select the blocks there could have been automatically added. showinsubcontexts is hardcoded to 0
+            // because it is possible for administrators to have forced it on the my/ page by adding it to the
+            // system directly rather than updating the default my/ page.
+            $blocks = array('course_overview', 'private_files', 'online_users', 'badges', 'calendar_month', 'calendar_upcoming');
+            list($blocksql, $blockparams) = $DB->get_in_or_equal($blocks, SQL_PARAMS_NAMED);
+            $select = "parentcontextid = :contextid
+                    AND pagetypepattern = :page
+                    AND showinsubcontexts = 0
+                    AND subpagepattern IS NULL
+                    AND blockname $blocksql";
+            $params = array(
+                'contextid' => context_system::instance()->id,
+                'page' => 'my-index'
+            );
+            $params = array_merge($params, $blockparams);
+
+            $DB->set_field_select(
+                'block_instances',
+                'subpagepattern',
+                $systempage->id,
+                $select,
+                $params
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014101001.00);
+    }
+
     return true;
 }
