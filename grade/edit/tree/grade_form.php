@@ -85,11 +85,7 @@ class edit_grade_form extends moodleform {
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
         }
 
-        if ($grade_category and $grade_category->aggregation == GRADE_AGGREGATE_SUM) {
-            $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'), '<small>('.get_string('warningexcludedsum', 'grades').')</small>');
-        } else {
-            $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
-        }
+        $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
         $mform->addHelpButton('excluded', 'excluded', 'grades');
 
         /// hiding

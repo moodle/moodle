@@ -1049,6 +1049,12 @@ class grade_report_grader extends grade_report {
                     if ($item->needsupdate) {
                         $itemcell->text .= "<span class='gradingerror{$hidden}{$gradepass}'>" . $error . "</span>";
                     } else {
+                        // The max and min for an aggregation may be different to the grade_item.
+                        if (!is_null($gradeval)) {
+                            $item->grademax = $grade->rawgrademax;
+                            $item->grademin = $grade->rawgrademin;
+                        }
+
                         $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>" .
                                 grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null) . "</span>";
                         if ($showanalysisicon) {
@@ -1690,11 +1696,11 @@ class grade_report_grader extends grade_report {
     public static function do_process_action($target, $action, $courseid = null) {
         global $DB;
         // TODO: this code should be in some grade_tree static method
-        $targettype = substr($target, 0, 1);
-        $targetid = substr($target, 1);
+        $targettype = substr($target, 0, 2);
+        $targetid = substr($target, 2);
         // TODO: end
 
-        if ($targettype !== 'c') {
+        if ($targettype !== 'cg') {
             // The following code only works with categories.
             return true;
         }

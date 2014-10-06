@@ -18,8 +18,8 @@ Feature: We can use calculated grade totals
       | student1 | C1 | student |
     And the following "grade categories" exist:
       | fullname | course |
-      | Sub category 1 | C1|
-      | Sub category 2 | C1|
+      | Sub category 1 | C1 |
+      | Sub category 2 | C1 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | grade |
       | assign | C1 | a1 | Test assignment one | Submit something! | 300 |
@@ -28,14 +28,18 @@ Feature: We can use calculated grade totals
       | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | gradecategory | grade |
-      | assign | C1 | a5 | Test assignment five | Submit something! | Sub category 1 | 200
-      | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 100
-      | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 150
+      | assign | C1 | a5 | Test assignment five | Submit something! | Sub category 1 | 20 |
+      | assign | C1 | a6 | Test assignment six | Submit something! | Sub category 1 | 10 |
+      | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | gradecategory | grade |
-      | assign | C1 | a8 | Test assignment eight | Submit something! | Sub category 2 | 200
-      | assign | C1 | a9 | Test assignment nine | Submit something! | Sub category 2 | 100
-      | assign | C1 | 10 | Test assignment ten | Submit nothing! | Sub category 2 | 150
+      | assign | C1 | a8 | Test assignment eight | Submit something! | Sub category 2 | 20 |
+      | assign | C1 | a9 | Test assignment nine | Submit something! | Sub category 2 | 10 |
+      | assign | C1 | 10 | Test assignment ten | Submit nothing! | Sub category 2 | 15 |
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
+    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
@@ -48,35 +52,28 @@ Feature: We can use calculated grade totals
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment eight"
     And I give the grade "5.00" to the user "Student 1" for the grade item "Test assignment nine"
     And I press "Save changes"
-    And I click on "Edit  assign Test assignment two" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment five" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment eight" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I follow "Course grade settings"
+    And I set the following settings for grade item "Test assignment two":
+      | Hidden | 1 |
+    And I set the following settings for grade item "Test assignment five":
+      | Hidden | 1 |
+    And I set the following settings for grade item "Test assignment eight":
+      | Hidden | 1 |
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Grade display type" to "Real (percentage)"
     And I press "Save changes"
 
   @javascript
   Scenario: Mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Mean of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Mean of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mean of grades |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Mean of grades |
+      | Exclude empty grades | 0              |
     And I turn editing mode off
     Then I should see "30.00 (30.00 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -88,27 +85,20 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Weighted mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "1"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "1"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I expand all fieldsets
-    And I set the field "Item weight" to "3"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Weighted mean of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Weighted mean of grades |
+      | Item weight          | 1                       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Weighted mean of grades |
+      | Item weight          | 1                       |
+      | Exclude empty grades | 0                       |
+    And I set the following settings for grade item "Test assignment one":
+      | Item weight | 3 |
     And I turn editing mode off
     Then I should see "27.14 (27.14 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -120,24 +110,18 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Simple weighted mean of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Simple weighted mean of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I expand all fieldsets
-    And I click on "Extra credit" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Simple weighted mean of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Simple weighted mean of grades |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Simple weighted mean of grades |
+      | Exclude empty grades | 0                              |
+    And I set the following settings for grade item "Test assignment one":
+      | Extra credit | 1 |
     And I turn editing mode off
     Then I should see "45.19 (45.19 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -149,24 +133,18 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Mean of grades (with extra credits) aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Mean of grades (with extra credits)"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I expand all fieldsets
-    And I set the field "Extra credit weight" to "2"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Mean of grades (with extra credits) |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mean of grades (with extra credits) |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Mean of grades (with extra credits) |
+      | Exclude empty grades | 0                                   |
+    And I set the following settings for grade item "Test assignment one":
+      | Extra credit weight  | 2 |
     And I turn editing mode off
     Then I should see "42.50 (42.50 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -178,20 +156,16 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Median of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Median of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Median of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Median of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Median of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation | Median of grades |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Median of grades |
+      | Exclude empty grades | 0                |
     And I turn editing mode off
     Then I should see "26.67 (26.67 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -203,26 +177,20 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Lowest grade aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Lowest grade"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment five" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment four" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Lowest grade |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation | Lowest grade |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Lowest grade |
+      | Exclude empty grades | 0            |
+    And I set the following settings for grade item "Test assignment five":
+      | Hidden | 1 |
+    And I set the following settings for grade item "Test assignment four":
+      | Hidden | 1 |
     And I turn editing mode off
     Then I should see "0.00 (0.00 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -234,23 +202,18 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Highest grade aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Highest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Highest grade"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Highest grade"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Highest grade |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Highest grade |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Highest grade |
+      | Exclude empty grades | 0             |
+    And I set the following settings for grade item "Test assignment one":
+      | Hidden | 1 |
     And I turn editing mode off
     Then I should see "50.00 (50.00 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -262,23 +225,18 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Mode of grades aggregation
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Mode of grades"
-    And I click on "Show more..." "link"
-    And I click on "Exclude empty grades" "checkbox"
-    And I press "Save changes"
-    And I click on "Edit  assign Test assignment one" "link"
-    And I click on "Hidden" "checkbox"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Mode of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mode of grades |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Mode of grades |
+      | Exclude empty grades | 0              |
+    And I set the following settings for grade item "Test assignment one":
+      | Hidden | 1 |
     And I turn editing mode off
     Then I should see "50.00 (50.00 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -289,24 +247,249 @@ Feature: We can use calculated grade totals
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
   @javascript
-  Scenario: Sum of grades aggregation
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Sum of grades"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Sum of grades"
-    And I press "Save changes"
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Sum of grades"
-    And I press "Save changes"
+  Scenario: Natural aggregation
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 1       |
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Test assignment six":
+      | Weight adjusted  | 1   |
+      | aggregationcoef2 | 50  |
+    And I set the following settings for grade item "Test assignment three":
+      | Extra credit | 1 |
     And I turn editing mode off
-    Then I should see "150.00 (18.99 %)" in the ".course" "css_element"
-    And I follow "Course grade settings"
-    And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
+    Then I should see "152.68 (24.43 %)" in the ".course" "css_element"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "Show contribution to course total" to "Show"
+    And I set the field "Show weightings" to "Show"
     And I press "Save changes"
+    And I set the field "Grade report" to "User report"
+    And I set the field "Select all or one user" to "Student 1"
+    And the following should exist in the "user-grade" table:
+      | Grade item | Calculated weight | Grade | Range | Contribution to course total |
+      | Test assignment five | 28.57 % | 10.00 (50.00 %) | 0–20 | 6.43 |
+      | Test assignment six | 50.00 % | 5.00 (50.00 %) | 0–10 | 11.25 |
+      | Test assignment seven | 21.43 % | - | 0–15 | 0.00 |
+      | Test assignment eight | 66.67 % | 10.00 (50.00 %) | 0–20 | 10.00 |
+      | Test assignment nine | 33.33 % | 5.00 (50.00 %) | 0–10 | 5.00 |
+      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 |
+      | Test assignment one | 48.00 % | 60.00 (20.00 %) | 0–300 | 60.00 |
+      | Test assignment two | 16.00 % | 20.00 (20.00 %) | 0–100 | 20.00 |
+      | Test assignment three | 24.00 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 40.00 |
+      | Test assignment four | 24.00 % | - | 0–150 | 0.00 |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Grades"
     And I set the field "Grade report" to "Overview report"
-    And I should see "110.00 (16.92 %)" in the "overview-grade" "table"
+    And I should see "113.75 (23.45 %)" in the "overview-grade" "table"
+    And I set the field "Grade report" to "User report"
+    And the following should exist in the "user-grade" table:
+      | Grade item | Calculated weight | Grade | Range | Contribution to course total |
+      | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 | 8.75 |
+      | Test assignment seven | 30.00 % | - | 0–15 | 0.00 |
+      | Test assignment nine | 100.00 % | 5.00 (50.00 %) | 0–10 | 5.00 |
+      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 |
+      | Test assignment one | 61.86 % | 60.00 (20.00 %) | 0–300 | 60.0 |
+      | Test assignment three | 30.93 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 40.0 |
+      | Test assignment four | 30.93 % | - | 0–150 | 0.00 |
+
+  @javascript
+  Scenario: Natural aggregation with drop lowest
+    When I log out
+    And I log in as "admin"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I turn editing mode on
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
+    And I press "Add category"
+    And I click on "Show more" "link"
+    And I set the following fields to these values:
+      | Category name | Sub category 3 |
+      | Aggregation | Natural |
+      | Drop the lowest | 1 |
+    And I press "Save changes"
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | Manual item 1 |
+      | Grade category | Sub category 3 |
+    And I press "Save changes"
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | Manual item 2 |
+      | Grade category | Sub category 3 |
+    And I press "Save changes"
+    And I press "Add grade item"
+    And I set the following fields to these values:
+      | Item name | Manual item 3 |
+      | Grade category | Sub category 3 |
+    And I press "Save changes"
+    And I follow "Grader report"
+    And I give the grade "60.00" to the user "Student 1" for the grade item "Manual item 1"
+    And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I give the grade "40.00" to the user "Student 1" for the grade item "Manual item 3"
+    And I press "Save changes"
+    And I turn editing mode off
+    Then I should see "250.00 (25.25 %)" in the ".course" "css_element"
+    And I turn editing mode on
+    And I set the following settings for grade item "Manual item 2":
+      | Extra credit | 1 |
+    And I turn editing mode off
+    And I should see "270.00 (27.27 %)" in the ".course" "css_element"
+    And I turn editing mode on
+    And I set the following settings for grade item "Manual item 2":
+      | Extra credit  | 0   |
+      | Maximum grade | 200 |
+    And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I turn editing mode off
+    And I should see "270.00 (22.69 %)" in the ".course" "css_element"
+    And I turn editing mode on
+    And I set the following settings for grade item "Manual item 2":
+      | Extra credit  | 0   |
+      | Maximum grade | 100 |
+    And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
+    And I press "Save changes"
+    And I turn editing mode off
+    And I should see "250.00 (25.25 %)" in the ".course" "css_element"
+    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
+    And I press "Add category"
+    And I set the following fields to these values:
+      | Category name | Sub sub category 1 |
+      | Parent category | Sub category 3 |
+    And I press "Save changes"
+    And I follow "Grader report"
+    And I should see "270.00 (24.77 %)" in the ".course" "css_element"
+
+  @javascript
+  Scenario: Natural aggregation from the setup screen
+    And I set the field "Grade report" to "Set up grades layout"
+    And I follow "Edit   Course 1"
+    And I set the field "Aggregation" to "Natural"
+    And I press "Save changes"
+    And I follow "Edit   Sub category 1"
+    And I set the field "Aggregation" to "Natural"
+    And I press "Save changes"
+    And I follow "Edit   Sub category 2"
+    And I set the field "Aggregation" to "Natural"
+    And I press "Save changes"
+
+    And I set the field "Override weight of Test assignment one" to "1"
+    And the field "Weight of Test assignment one" matches value "37.975"
+    And I set the field "Weight of Test assignment one" to "10"
+
+    And I set the field "Override weight of Test assignment two" to "1"
+    And the field "Weight of Test assignment two" matches value "12.658"
+    And I set the field "Override weight of Test assignment two" to "0"
+
+    And I set the field "Override weight of Test assignment six" to "1"
+    And the field "Weight of Test assignment six" matches value "22.222"
+    And I set the field "Weight of Test assignment six" to "50"
+    And I set the field "Override weight of Test assignment six" to "0"
+
+    And I set the field "Override weight of Test assignment ten" to "1"
+    And the field "Weight of Test assignment ten" matches value "33.333"
+    And I set the field "Weight of Test assignment ten" to "50"
+
+    And I set the field "Override weight of Sub category 1" to "1"
+    And the field "Weight of Sub category 1" matches value "5.696"
+    And I set the field "Weight of Sub category 1" to "15"
+
+    When I press "Save changes"
+    And I set the field "Override weight of Test assignment two" to "1"
+    And I set the field "Override weight of Test assignment six" to "1"
+
+    Then the field "Weight of Test assignment one" matches value "10.0"
+    And the field "Weight of Test assignment two" matches value "16.854"
+    And the field "Weight of Test assignment six" matches value "22.222"
+    And the field "Weight of Test assignment ten" matches value "50.0"
+    And the field "Weight of Sub category 1" matches value "15.0"
+    And I set the field "Override weight of Test assignment one" to "0"
+    And I set the field "Override weight of Test assignment two" to "0"
+    And I set the field "Override weight of Test assignment six" to "0"
+    And I set the field "Override weight of Sub category 1" to "0"
+    And I press "Save changes"
+    And I set the field "Override weight of Test assignment one" to "1"
+    And I set the field "Override weight of Sub category 1" to "1"
+    And the field "Weight of Test assignment one" matches value "37.975"
+    And the field "Weight of Sub category 1" matches value "5.696"
+    And I click on "Reset weights of Sub category 2" "link"
+    And the field "Weight of Test assignment ten" matches value "33.333"
+
+  @javascript
+  Scenario: Natural aggregation with weights of zero
+    When I set the following settings for grade item "Course 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Natural |
+      | Exclude empty grades | 0       |
+    And I turn editing mode off
+    And I set the field "Grade report" to "Set up grades layout"
+    And I set the field "Override weight of Test assignment one" to "1"
+    And I set the field "Weight of Test assignment one" to "0"
+    And I set the field "Override weight of Test assignment six" to "1"
+    And I set the field "Weight of Test assignment six" to "0"
+    And I set the field "Override weight of Test assignment nine" to "1"
+    And I set the field "Weight of Test assignment nine" to "100"
+    And I press "Save changes"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "Show contribution to course total" to "Show"
+    And I set the field "Show weightings" to "Show"
+    And I press "Save changes"
+    Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
+    And I set the field "Grade report" to "User report"
+    And I set the field "Select all or one user" to "Student 1"
+    And the following should exist in the "user-grade" table:
+      | Grade item            | Calculated weight | Grade           | Contribution to course total |
+      | Test assignment five  | 57.14 %           | 10.00 (50.00 %) | 10.00                        |
+      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00                         |
+      | Test assignment seven | 42.86 %           | -               | 0.00                         |
+      | Test assignment eight | 0.00 %            | 10.00 (50.00 %) | 0.00                         |
+      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 5.00                         |
+      | Test assignment ten   | 0.00 %            | -               | 0.00                         |
+      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00                         |
+      | Test assignment two   | 22.47 %           | 20.00 (20.00 %) | 20.00                        |
+      | Test assignment three | 33.71 %           | 40.00 (26.67 %) | 40.00                        |
+      | Test assignment four  | 33.71 %           | -               | 0.00                         |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I set the field "Grade report" to "Overview report"
+    And I should see "45.00 (13.85 %)" in the "overview-grade" "table"
+    And I set the field "Grade report" to "User report"
+    And the following should exist in the "user-grade" table:
+      | Grade item            | Calculated weight | Grade           | Contribution to course total |
+      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00                         |
+      | Test assignment seven | 100.00 %          | -               | 0.00                         |
+      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 5.00                         |
+      | Test assignment ten   | 0.00              | -               | 0.00                         |
+      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00                         |
+      | Test assignment three | 46.15 %           | 40.00 (26.67 %) | 40.00                        |
+      | Test assignment four  | 46.15 %           | -               | 0.00                         |

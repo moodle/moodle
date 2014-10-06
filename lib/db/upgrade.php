@@ -3837,5 +3837,92 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014100100.00);
     }
 
+    if ($oldversion < 2014100600.01) {
+        // Define field aggregationstatus to be added to grade_grades.
+        $table = new xmldb_table('grade_grades');
+        $field = new xmldb_field('aggregationstatus', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'unknown', 'timemodified');
+
+        // Conditionally launch add field aggregationstatus.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('aggregationweight', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'aggregationstatus');
+
+        // Conditionally launch add field aggregationweight.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field aggregationcoef2 to be added to grade_items.
+        $table = new xmldb_table('grade_items');
+        $field = new xmldb_field('aggregationcoef2', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'aggregationcoef');
+
+        // Conditionally launch add field aggregationcoef2.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('weightoverride', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'needsupdate');
+
+        // Conditionally launch add field weightoverride.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100600.01);
+    }
+
+    if ($oldversion < 2014100600.02) {
+
+        // Define field aggregationcoef2 to be added to grade_items_history.
+        $table = new xmldb_table('grade_items_history');
+        $field = new xmldb_field('aggregationcoef2', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'aggregationcoef');
+
+        // Conditionally launch add field aggregationcoef2.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100600.02);
+    }
+
+    if ($oldversion < 2014100600.03) {
+
+        // Define field weightoverride to be added to grade_items_history.
+        $table = new xmldb_table('grade_items_history');
+        $field = new xmldb_field('weightoverride', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'decimals');
+
+        // Conditionally launch add field weightoverride.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100600.03);
+    }
+    if ($oldversion < 2014100600.04) {
+        // Set flags so we can display a notice on all courses that might
+        // be affected by the uprade to natural aggregation.
+        if (!get_config('grades_sumofgrades_upgrade_flagged', 'core')) {
+            // 13 == SUM_OF_GRADES.
+            $sql = 'SELECT DISTINCT courseid
+                      FROM {grade_categories}
+                     WHERE aggregation = ?';
+            $courses = $DB->get_records_sql($sql, array(13));
+
+            foreach ($courses as $course) {
+                set_config('show_sumofgrades_upgrade_' . $course->courseid, 1);
+            }
+
+            set_config('grades_sumofgrades_upgrade_flagged', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100600.04);
+    }
+
     return true;
 }

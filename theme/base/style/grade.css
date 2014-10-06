@@ -72,3 +72,7 @@
 #page-grade-edit-outcome-course .courseoutcomes td {
     text-align:center;
 }
+
+.path-grade-edit-tree table.setup-grades .column-select {
+    text-align: center;
+}

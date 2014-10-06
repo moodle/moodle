@@ -130,6 +130,12 @@ class grade_report_user extends grade_report {
     public $showlettergrade = false;
 
     /**
+     * Show the calculated contribution to the course total column.
+     * @var bool
+     */
+    public $showcontributiontocoursetotal = false;
+
+    /**
      * Show average grades in the report, default false.
      * @var false
      */
@@ -171,6 +177,15 @@ class grade_report_user extends grade_report {
     protected $viewasuser = false;
 
     /**
+     * An array that collects the aggregationhints for every
+     * grade_item. The hints contain grade, grademin, grademax
+     * status, weight and parent.
+     *
+     * @var array
+     */
+    protected $aggregationhints = array();
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -191,6 +206,7 @@ class grade_report_user extends grade_report {
         $this->showrange       = grade_get_setting($this->courseid, 'report_user_showrange',       !empty($CFG->grade_report_user_showrange));
         $this->showfeedback    = grade_get_setting($this->courseid, 'report_user_showfeedback',    !empty($CFG->grade_report_user_showfeedback));
         $this->showweight      = grade_get_setting($this->courseid, 'report_user_showweight',      !empty($CFG->grade_report_user_showweight));
+        $this->showcontributiontocoursetotal      = grade_get_setting($this->courseid, 'report_user_showcontributiontocoursetotal',      !empty($CFG->grade_report_user_showcontributiontocoursetotal));
         $this->showlettergrade = grade_get_setting($this->courseid, 'report_user_showlettergrade', !empty($CFG->grade_report_user_showlettergrade));
         $this->showaverage     = grade_get_setting($this->courseid, 'report_user_showaverage',     !empty($CFG->grade_report_user_showaverage));
 
@@ -327,6 +343,11 @@ class grade_report_user extends grade_report {
             $this->tablecolumns[] = 'feedback';
             $this->tableheaders[] = $this->get_lang_string('feedback', 'grades');
         }
+
+        if ($this->showcontributiontocoursetotal) {
+            $this->tablecolumns[] = 'contributiontocoursetotal';
+            $this->tableheaders[] = $this->get_lang_string('contributiontocoursetotal', 'grades');
+        }
     }
 
     function fill_table() {
@@ -338,6 +359,11 @@ class grade_report_user extends grade_report {
         return true;
     }
 
+    /**
+     * Fill the table with data.
+     *
+     * @param $element - An array containing the table data for the current row.
+     */
     private function fill_table_recursive(&$element) {
         global $DB, $CFG;
 
@@ -346,11 +372,12 @@ class grade_report_user extends grade_report {
         $grade_object = $element['object'];
         $eid = $grade_object->id;
         $element['userid'] = $this->user->id;
-        $fullname = $this->gtree->get_element_header($element, true, true, true);
+        $fullname = $this->gtree->get_element_header($element, true, true, true, true);
         $data = array();
         $hidden = '';
         $excluded = '';
-        $class = '';
+        $itemlevel = ($type == 'categoryitem' || $type == 'category' || $type == 'courseitem') ? $depth : ($depth + 1);
+        $class = 'level' . $itemlevel . ' level' . ($itemlevel % 2 ? 'odd' : 'even');
         $classfeedback = '';
 
         // If this is a hidden grade category, hide it completely from the user
@@ -408,13 +435,15 @@ class grade_report_user extends grade_report {
 
             if (!$hide) {
                 /// Excluded Item
+                /**
                 if ($grade_grade->is_excluded()) {
                     $fullname .= ' ['.get_string('excluded', 'grades').']';
                     $excluded = ' excluded';
                 }
+                **/
 
                 /// Other class information
-                $class = "$hidden $excluded";
+                $class .= $hidden . $excluded;
                 if ($this->switch) { // alter style based on whether aggregation is first or last
                    $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggt b2b" : " item b1b";
                 } else {
@@ -433,17 +462,27 @@ class grade_report_user extends grade_report {
 
                 /// Actual Grade
                 $gradeval = $grade_grade->finalgrade;
+                $hint = $grade_grade->get_aggregation_hint();
                 if (!$this->canviewhidden) {
                     /// Virtual Grade (may be calculated excluding hidden items etc).
                     $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
                                                                                  $grade_grade->grade_item,
                                                                                  $gradeval);
+
                     $gradeval = $adjustedgrade['grade'];
 
                     // We temporarily adjust the view of this grade item - because the min and
                     // max are affected by the hidden values in the aggregation.
                     $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
                     $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
+                    $hint['status'] = $adjustedgrade['aggregationstatus'];
+                    $hint['weight'] = $adjustedgrade['aggregationweight'];
+                } else {
+                    // The max and min for an aggregation may be different to the grade_item.
+                    if (!is_null($gradeval)) {
+                        $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
+                        $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
+                    }
                 }
 
                 if ($this->showfeedback) {
@@ -456,8 +495,13 @@ class grade_report_user extends grade_report {
                     $data['weight']['content'] = '-';
                     $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
-                    if ($grade_object->aggregationcoef > 0 && $type <> 'courseitem') {
-                        $data['weight']['content'] = number_format($grade_object->aggregationcoef,2);
+
+                    // This obliterates the weight because it provides a more informative description.
+                    if (is_numeric($hint['weight'])) {
+                        $data['weight']['content'] = format_float($hint['weight'] * 100.0, 2) . ' %';
+                    }
+                    if ($hint['status'] != 'used' && $hint['status'] != 'unknown') {
+                        $data['weight']['content'] .= '<br>' . get_string('aggregationhint' . $hint['status'], 'grades');
                     }
                 }
 
@@ -586,6 +630,22 @@ class grade_report_user extends grade_report {
                     }
                     $data['feedback']['headers'] = "$header_cat $header_row feedback";
                 }
+                // Contribution to the course total column.
+                if ($this->showcontributiontocoursetotal) {
+                    $data['contributiontocoursetotal']['class'] = $class;
+                    $data['contributiontocoursetotal']['content'] = '-';
+                    $data['contributiontocoursetotal']['headers'] = "$header_cat $header_row contributiontocoursetotal";
+
+                    $hint['grademax'] = $grade_grade->grade_item->grademax;
+                    $hint['grademin'] = $grade_grade->grade_item->grademin;
+                    $hint['grade'] = $gradeval;
+                    $parent = $grade_object->load_parent_category();
+                    if ($grade_object->is_category_item()) {
+                        $parent = $parent->load_parent_category();
+                    }
+                    $hint['parent'] = $parent->load_grade_item()->id;
+                    $this->aggregationhints[$grade_grade->itemid] = $hint;
+                }
             }
         }
 
@@ -606,12 +666,92 @@ class grade_report_user extends grade_report {
         }
 
         /// Add this row to the overall system
+        foreach ($data as $key => $celldata) {
+            $data[$key]['class'] .= ' column-' . $key;
+        }
         $this->tabledata[] = $data;
 
         /// Recursively iterate through all child elements
         if (isset($element['children'])) {
             foreach ($element['children'] as $key=>$child) {
                 $this->fill_table_recursive($element['children'][$key]);
+            }
+        }
+
+        // Check we are showing this column, and we are looking at the root of the table.
+        // This should be the very last thing this fill_table_recursive function does.
+        if ($this->showcontributiontocoursetotal && ($type == 'category' && $depth == 1)) {
+            // We should have collected all the hints by now - walk the tree again and build the contributions column.
+
+            $this->fill_contributions_column($element);
+        }
+    }
+
+    /**
+     * This function is called after the table has been built and the aggregationhints
+     * have been collected. We need this info to walk up the list of parents of each
+     * grade_item.
+     *
+     * @param $element - An array containing the table data for the current row.
+     */
+    public function fill_contributions_column($element) {
+
+        // Recursively iterate through all child elements.
+        if (isset($element['children'])) {
+            foreach ($element['children'] as $key=>$child) {
+                $this->fill_contributions_column($element['children'][$key]);
+            }
+        } else if ($element['type'] == 'item') {
+            // This is a grade item (We don't do this for categories or we would double count).
+            $grade_object = $element['object'];
+            $itemid = $grade_object->id;
+
+            // Ignore anything with no hint - e.g. a hidden row.
+            if (isset($this->aggregationhints[$itemid])) {
+
+                // Normalise the gradeval.
+                $gradecat = $grade_object->load_parent_category();
+                if ($gradecat->aggregation == GRADE_AGGREGATE_SUM) {
+                    // Natural aggregation/Sum of grades does not consider the mingrade.
+                    $graderange = $this->aggregationhints[$itemid]['grademax'];
+                    $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
+                } else {
+                    $graderange = $this->aggregationhints[$itemid]['grademax'] - $this->aggregationhints[$itemid]['grademin'];
+                    $gradeval = ($this->aggregationhints[$itemid]['grade'] - $this->aggregationhints[$itemid]['grademin']) / $graderange;
+                }
+
+                // Multiply the normalised value by the weight
+                // of all the categories higher in the tree.
+                do {
+                    if (!is_null($this->aggregationhints[$itemid]['weight'])) {
+                        $gradeval *= $this->aggregationhints[$itemid]['weight'];
+                    }
+
+                    // The second part of this if is to prevent infinite loops
+                    // in case of crazy data.
+                    if (isset($this->aggregationhints[$itemid]['parent']) &&
+                            $this->aggregationhints[$itemid]['parent'] != $itemid) {
+                        $parent = $this->aggregationhints[$itemid]['parent'];
+                        $itemid = $parent;
+                    } else {
+                        // We are at the top of the tree.
+                        $parent = false;
+                    }
+                } while ($parent);
+                // Finally multiply by the course grademax.
+                $gradeval *= $this->aggregationhints[$itemid]['grademax'];
+
+                // Now we need to loop through the "built" table data and update the
+                // contributions column for the current row.
+                $header_row = "row_{$grade_object->id}_{$this->user->id}";
+                foreach ($this->tabledata as $key => $row) {
+                    if (isset($row['itemname']) && ($row['itemname']['id'] == $header_row)) {
+                        // Found it - update the column.
+                        $decimals = $grade_object->get_decimals();
+                        $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -632,10 +772,10 @@ class grade_report_user extends grade_report {
                    class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
-                    <th id='".$this->tablecolumns[0]."' class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
+                    <th id='".$this->tablecolumns[0]."' class=\"header column-{$this->tablecolumns[0]}\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
 
         for ($i = 1; $i < count($this->tableheaders); $i++) {
-            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header\">".$this->tableheaders[$i]."</th>\n";
+            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header column-{$this->tablecolumns[$i]}\">".$this->tableheaders[$i]."</th>\n";
         }
 
         $html .= "
@@ -901,6 +1041,14 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showlettergrade', get_string('showlettergrade', 'grades'), $options);
+    if (empty($CFG->grade_report_user_showcontributiontocoursetotal)) {
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[$CFG->grade_report_user_showcontributiontocoursetotal]);
+    }
+
+    $mform->addElement('select', 'report_user_showcontributiontocoursetotal', get_string('showcontributiontocoursetotal', 'grades'), $options);
+    $mform->addHelpButton('report_user_showcontributiontocoursetotal', 'showcontributiontocoursetotal', 'grades');
 
     if (empty($CFG->grade_report_user_showrange)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
@@ -944,6 +1092,7 @@ function grade_report_user_settings_definition(&$mform) {
 
     $mform->addElement('select', 'report_user_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'), $options);
     $mform->addHelpButton('report_user_showtotalsifcontainhidden', 'hidetotalifhiddenitems', 'grades');
+
 }
 
 /**

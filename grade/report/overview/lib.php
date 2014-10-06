@@ -179,6 +179,13 @@ class grade_report_overview extends grade_report {
                         $course_item->grademax = $adjustedgrade['grademax'];
                         $course_item->grademin = $adjustedgrade['grademin'];
                     }
+                } else {
+                    // We must use the rawgrademin / rawgrademax because it can be different for
+                    // each grade_grade when items are excluded from sum of grades.
+                    if (!is_null($finalgrade)) {
+                        $course_item->grademin = $course_grade->rawgrademin;
+                        $course_item->grademax = $course_grade->rawgrademax;
+                    }
                 }
 
                 $data = array($courselink, grade_format_gradevalue($finalgrade, $course_item, true));

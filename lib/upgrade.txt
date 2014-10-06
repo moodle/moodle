@@ -16,6 +16,9 @@ information provided here is intended especially for developers.
 * Scheduled tasks have gained support for syntax to introduce variability when a
   task will run across installs. When a when hour or minute are defined as 'R'
   they will be installed with a random hour/minute value.
+* Several classes grade_edit_tree_column_xxx were removed since grades setup page
+  has been significantly changed. These classes should not be used outside of
+  gradebook or developers can copy them into their plugins from 2.7 branch.
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.

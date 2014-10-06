@@ -940,8 +940,8 @@ class backup_gradebook_structure_step extends backup_structure_step {
             'iteminstance', 'itemnumber', 'iteminfo', 'idnumber',
             'calculation', 'gradetype', 'grademax', 'grademin',
             'scaleid', 'outcomeid', 'gradepass', 'multfactor',
-            'plusfactor', 'aggregationcoef', 'sortorder', 'display',
-            'decimals', 'hidden', 'locked', 'locktime',
+            'plusfactor', 'aggregationcoef', 'aggregationcoef2', 'weightoverride',
+            'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
             'needsupdate', 'timecreated', 'timemodified'));
 
         $grade_grades = new backup_nested_element('grade_grades');
@@ -950,7 +950,8 @@ class backup_gradebook_structure_step extends backup_structure_step {
             'rawscaleid', 'usermodified', 'finalgrade', 'hidden',
             'locked', 'locktime', 'exported', 'overridden',
             'excluded', 'feedback', 'feedbackformat', 'information',
-            'informationformat', 'timecreated', 'timemodified'));
+            'informationformat', 'timecreated', 'timemodified',
+            'aggregationstatus', 'aggregationweight'));
 
         //grade_categories
         $grade_categories = new backup_nested_element('grade_categories');
@@ -2163,8 +2164,8 @@ class backup_activity_grades_structure_step extends backup_structure_step {
             'iteminstance', 'itemnumber', 'iteminfo', 'idnumber',
             'calculation', 'gradetype', 'grademax', 'grademin',
             'scaleid', 'outcomeid', 'gradepass', 'multfactor',
-            'plusfactor', 'aggregationcoef', 'sortorder', 'display',
-            'decimals', 'hidden', 'locked', 'locktime',
+            'plusfactor', 'aggregationcoef', 'aggregationcoef2', 'weightoverride',
+            'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
             'needsupdate', 'timecreated', 'timemodified'));
 
         $grades = new backup_nested_element('grade_grades');
@@ -2174,7 +2175,8 @@ class backup_activity_grades_structure_step extends backup_structure_step {
             'rawscaleid', 'usermodified', 'finalgrade', 'hidden',
             'locked', 'locktime', 'exported', 'overridden',
             'excluded', 'feedback', 'feedbackformat', 'information',
-            'informationformat', 'timecreated', 'timemodified'));
+            'informationformat', 'timecreated', 'timemodified',
+            'aggregationstatus', 'aggregationweight'));
 
         $letters = new backup_nested_element('grade_letters');
 

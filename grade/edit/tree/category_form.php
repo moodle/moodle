@@ -37,15 +37,7 @@ class edit_category_form extends moodleform {
 
         $category = $this->_customdata['current'];
 
-        $this->aggregation_options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', 'grades'),
-                                           GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
-                                           GRADE_AGGREGATE_WEIGHTED_MEAN2  =>get_string('aggregateweightedmean2', 'grades'),
-                                           GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'),
-                                           GRADE_AGGREGATE_MEDIAN          =>get_string('aggregatemedian', 'grades'),
-                                           GRADE_AGGREGATE_MIN             =>get_string('aggregatemin', 'grades'),
-                                           GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
-                                           GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
-                                           GRADE_AGGREGATE_SUM             =>get_string('aggregatesum', 'grades'));
+        $this->aggregation_options = grade_helper::get_aggregation_strings();
 
         // visible elements
         $mform->addElement('header', 'headercategory', get_string('gradecategory', 'grades'));
@@ -62,7 +54,6 @@ class edit_category_form extends moodleform {
 
         $mform->addElement('checkbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         $mform->addHelpButton('aggregateonlygraded', 'aggregateonlygraded', 'grades');
-        $mform->disabledIf('aggregateonlygraded', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
         if ((int)$CFG->grade_aggregateonlygraded_flag & 2) {
             $mform->setAdvanced('aggregateonlygraded');
@@ -169,6 +160,14 @@ class edit_category_form extends moodleform {
             $mform->disabledIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
             $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
         }
+
+        $mform->addElement('advcheckbox', 'grade_item_weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addHelpButton('grade_item_weightoverride', 'weightoverride', 'grades');
+
+        $mform->addElement('text', 'grade_item_aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('grade_item_aggregationcoef2', 'weight', 'grades');
+        $mform->setType('grade_item_aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('grade_item_aggregationcoef2', 'grade_item_weightoverride');
 
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->setType('grade_item_gradepass', PARAM_RAW);
@@ -332,6 +331,18 @@ class edit_category_form extends moodleform {
 
             }
 
+            // Prevent the user from using drop lowest/keep highest when the aggregation method cannot handle it.
+            if (!$grade_category->can_apply_limit_rules()) {
+                if ($mform->elementExists('keephigh')) {
+                    $mform->setConstant('keephigh', 0);
+                    $mform->hardFreeze('keephigh');
+                }
+                if ($mform->elementExists('droplow')) {
+                    $mform->setConstant('droplow', 0);
+                    $mform->hardFreeze('droplow');
+                }
+            }
+
             if ($grade_item->is_calculated()) {
                 // following elements are ignored when calculation formula used
                 if ($mform->elementExists('aggregation')) {
@@ -430,6 +441,12 @@ class edit_category_form extends moodleform {
                     $mform->removeElement('grade_item_aggregationcoef');
                 }
 
+                if ($mform->elementExists('grade_item_weightoverride')) {
+                    $mform->removeElement('grade_item_weightoverride');
+                }
+                if ($mform->elementExists('grade_item_aggregationcoef2')) {
+                    $mform->removeElement('grade_item_aggregationcoef2');
+                }
             } else {
                 if ($grade_item->is_category_item()) {
                     $category = $grade_item->get_item_category();
@@ -448,14 +465,25 @@ class edit_category_form extends moodleform {
 
                     $coefstring = $grade_item->get_coefstring();
 
-                    if ($coefstring == 'aggregationcoefextrasum') {
+                    if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
                         // advcheckbox is not compatible with disabledIf!
+                        $coefstring = 'aggregationcoefextrasum';
                         $element =& $mform->createElement('checkbox', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
                     } else {
                         $element =& $mform->createElement('text', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
                     }
                     $mform->insertElementBefore($element, 'parentcategory');
                     $mform->addHelpButton('grade_item_aggregationcoef', $coefstring, 'grades');
+                }
+
+                // Remove fields used by natural weighting if the parent category is not using natural weighting.
+                if ($parent_category->aggregation != GRADE_AGGREGATE_SUM) {
+                    if ($mform->elementExists('grade_item_weightoverride')) {
+                        $mform->removeElement('grade_item_weightoverride');
+                    }
+                    if ($mform->elementExists('grade_item_aggregationcoef2')) {
+                        $mform->removeElement('grade_item_aggregationcoef2');
+                    }
                 }
             }
         }

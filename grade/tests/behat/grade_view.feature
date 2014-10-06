@@ -17,6 +17,10 @@ Feature: We can enter in grades and view reports from the gradebook
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
+    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -68,23 +72,23 @@ Feature: We can enter in grades and view reports from the gradebook
       | Grade item | Grade | Range | Percentage |
       | Test assignment name 1 | 80.00 | 0–100 | 80.00 % |
       | Test assignment name 2 | 90.00 | 0–100 | 90.00 % |
-      | Course total | 85.00 | 0–100 | 85.00 % |
+      | Course totalNatural. | 170.00 | 0–200 | 85.00 % |
     And the following should not exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
-      | Course total | 90.00 | 0–110 | 90.00 % |
+      | Course totalNatural. | 90.00 | 0–100 | 90.00 % |
     And I set the field "Grade report" to "Overview report"
-    And "C1" row "Grade" column of "overview-grade" table should contain "85.00"
+    And "C1" row "Grade" column of "overview-grade" table should contain "170.00"
     And "C1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
   @javascript
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
-    When I set the field "Grade report" to "Full view"
-    And I set the field "Aggregation" to "Weighted mean of grades"
-    And I set the following fields to these values:
-      | Extra credit value for Test assignment name | 0.72 |
+    When I set the field "Grade report" to "Set up grades layout"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation | Weighted mean of grades |
+    And I set the field "Extra credit value for Test assignment name" to "0.72"
     And I press "Save changes"
     And I set the field "Grade report" to "User report"
-    And I follow "Course grade settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Settings"
     And I set the following fields to these values:
       | Show weightings | Show |
     And I press "Save changes"
@@ -93,12 +97,12 @@ Feature: We can enter in grades and view reports from the gradebook
     And I follow "Course 1"
     And I follow "Grades"
     Then the following should exist in the "user-grade" table:
-      | Grade item | Weight | Grade | Range | Percentage |
-      | Test assignment name 1 | 0.72 | 80.00 | 0–100 | 80.00 % |
-      | Test assignment name 2 | 1.00 | 90.00 | 0–100 | 90.00 % |
-      | Course total | - | 85.81 | 0–100 | 85.81 % |
+      | Grade item | Calculated weight | Grade | Range | Percentage |
+      | Test assignment name 1 | 41.86 % | 80.00 | 0–100 | 80.00 % |
+      | Test assignment name 2 | 58.14 % | 90.00 | 0–100 | 90.00 % |
+      | Course totalWeighted mean of grades. | - | 85.81 | 0–100 | 85.81 % |
     And the following should not exist in the "user-grade" table:
-      | Grade item | Weight | Percentage |
+      | Grade item | Calculated weight | Percentage |
       | Test assignment name 1 | 0.72% | 0.72% |
       | Test assignment name 2 | 1.00% | 1.00% |
       | Course total | 1.00% | 1.00% |

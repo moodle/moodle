@@ -128,6 +128,13 @@ $reportname = get_string('pluginname', 'gradereport_grader');
 // Print header
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 
+// Hide the following warning if the user told it to go away.
+if (optional_param('seensumofgradesupgradedgrades', false, PARAM_BOOL) && confirm_sesskey()) {
+    hide_natural_aggregation_upgrade_notice($courseid);
+}
+// This shows a notice about the upgrade to Natural aggregation.
+print_natural_aggregation_upgrade_notice($COURSE->id, $context);
+
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
