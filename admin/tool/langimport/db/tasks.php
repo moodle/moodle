@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Definition of langimport tasks
  *
- * @package    tool
- * @subpackage langimport
- * @copyright  2011 Petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_langimport
+ * @category  task
+ * @copyright 2014 Dan Poltawski <dan@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014092801; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800; // Requires this Moodle version
-$plugin->component = 'tool_langimport'; // Full name of the plugin (used for diagnostics)
+$tasks = array(
+    array(
+        'classname' => 'tool_langimport\task\update_langpacks_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '4',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
