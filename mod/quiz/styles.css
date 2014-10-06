@@ -541,10 +541,6 @@ table.quizreviewsummary td.cell {
     top: 0;
     right: 0;
 }
-#page-mod-quiz-edit .add-menu {
-    max-height: 20px;
-    width:10em;
-}
 #page-mod-quiz-edit .slotnumber {
     background-color: #D3D3D3;
     text-align: center;

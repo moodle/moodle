@@ -292,10 +292,6 @@ $PAGE->set_pagetype('mod-quiz-edit');
 
 $output = $PAGE->get_renderer('mod_quiz', 'edit');
 
-$PAGE->requires->skip_link_to('questionbank',
-        get_string('skipto', 'access', get_string('questionbank', 'question')));
-$PAGE->requires->skip_link_to('quizcontentsblock',
-        get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
 $PAGE->set_title(get_string('editingquizx', 'quiz', format_string($quiz->name)));
 $PAGE->set_heading($course->fullname);
 $node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING);

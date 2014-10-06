@@ -39,6 +39,7 @@ class quiz_add_random_form extends moodleform {
     protected function definition() {
         global $CFG, $DB;
         $mform =& $this->_form;
+        $mform->setDisableShortforms();
 
         $contexts = $this->_customdata['contexts'];
         $usablecontexts = $contexts->having_cap('moodle/question:useall');
