@@ -41,7 +41,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
     public function course_overview($courses, $overviews) {
         $html = '';
         $config = get_config('block_course_overview');
-        if ($config->showcategories !== BLOCKS_COURSE_OVERVIEW_SHOWCATEGORIES_NONE) {
+        if ($config->showcategories != BLOCKS_COURSE_OVERVIEW_SHOWCATEGORIES_NONE) {
             global $CFG;
             require_once($CFG->libdir.'/coursecatlib.php');
         }
@@ -132,12 +132,12 @@ class block_course_overview_renderer extends plugin_renderer_base {
                 $html .= $this->activity_display($course->id, $overviews[$course->id]);
             }
 
-            if ($config->showcategories !== BLOCKS_COURSE_OVERVIEW_SHOWCATEGORIES_NONE) {
+            if ($config->showcategories != BLOCKS_COURSE_OVERVIEW_SHOWCATEGORIES_NONE) {
                 // List category parent or categories path here.
                 $currentcategory = coursecat::get($course->category, IGNORE_MISSING);
                 if ($currentcategory !== null) {
                     $html .= html_writer::start_tag('div', array('class' => 'categorypath'));
-                    if ($config->showcategories === BLOCKS_COURSE_OVERVIEW_SHOWCATEGORIES_FULL_PATH) {
+                    if ($config->showcategories == BLOCKS_COURSE_OVERVIEW_SHOWCATEGORIES_FULL_PATH) {
                         foreach ($currentcategory->get_parents() as $categoryid) {
                             $category = coursecat::get($categoryid, IGNORE_MISSING);
                             if ($category !== null) {
