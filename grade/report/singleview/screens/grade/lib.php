@@ -57,13 +57,16 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
     }
 
     public function options() {
-        return array_map(function($user) {
+        $options = array_map(function($user) {
             if (!empty($user->alternatename)) {
                 return $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
             } else {
                 return fullname($user);
             }
         }, $this->items);
+
+        $options['name']= 'foo';
+        return $options;
     }
 
     public function item_type() {

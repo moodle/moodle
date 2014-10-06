@@ -110,7 +110,7 @@ if ($data = data_submitted()) {
 }
 
 $graderrightnav = $graderleftnav = null;
-if ($report->screen instanceof selectable_items
+if ($report->screen instanceof gradereport_selectable_items
         && class_exists(gradereport_singleview::classname($report->screen->item_type()))) {
 
     $optionkeys = array_keys($report->screen->options());

@@ -27,9 +27,11 @@ class gradereport_singleview_select extends gradereport_singleview_screen {
     public function init($selfitemisempty = false) {
         global $DB;
 
+        $roleids = explode(',', get_config('moodle', 'gradebookroles'));
+
         $this->items = get_role_users(
-            '', $this->context, false, '',
-            'u.lastname, u.firstname', null, $this->groupid,
+            $roleids, $this->context, false, '',
+            'u.id, u.lastname, u.firstname', null, $this->groupid,
             $this->perpage * $this->page, $this->perpage
         );
         $this->item = $DB->get_record('course', array('id' => $this->courseid));

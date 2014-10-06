@@ -215,9 +215,6 @@ abstract class gradereport_singleview_screen {
             $oldname = "old$name";
 
             $posted = $data->$name;
-            if (isset($data->$oldname)) {
-                $oldvalue = $data->$oldname;
-            }
 
             $format = $element->determine_format();
 
@@ -226,7 +223,7 @@ abstract class gradereport_singleview_screen {
             }
 
             // Same value; skip.
-            if ($oldvalue == $posted) {
+            if (isset($data->$oldname) && $data->$oldname == $posted) {
                 continue;
             }
 

@@ -32,16 +32,16 @@ Feature: We can use Single view
       | assign | C1 | a2 | Test assignment two | Submit something! | 100 |
       | assign | C1 | a3 | Test assignment three | Submit something! | 150 |
       | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
-    Then I log in as "teacher1"
+    And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
 
-  @javascript
+ @javascript
   Scenario: I can update grades, add feedback and exclude grades.
     Given I click on "Single view" "option"
-    Then I click on "studentawesemo (Student) 4" "option"
+    And I click on "studentawesemo (Student) 4" "option"
     And I click on "Override for Test assignment one" "checkbox"
-    And I set the following fields to these values:
+    When I set the following fields to these values:
         | Grade for Test assignment one | 10.00 |
         | Feedback for Test assignment one | test data |
     And I click on "Exclude for Test assignment four" "checkbox"
@@ -49,7 +49,7 @@ Feature: We can use Single view
     Then the following should exist in the "user-grades" table:
         | Test assignment four |
         | excluded |
-    Then the following should exist in the "user-grades" table:
+    And the following should exist in the "user-grades" table:
         | Test assignment one |
         | 10.00 |
     And I click on "Single view for Test assignment three" "link"
@@ -59,12 +59,11 @@ Feature: We can use Single view
         | Feedback for studentbro (Student) 1 | test data2 |
     And I click on "Exclude for studentjo (Student) 2" "checkbox"
     And I press "Update"
-    Then the following should exist in the "user-grades" table:
+    And the following should exist in the "user-grades" table:
         | Test assignment three |
         | 12.05 |
         | Excluded |
 
-  @javascript
   Scenario: Single view quick links work on grade report.
     Given I follow "Single view for Test assignment one"
     Then I should see "Test assignment one"

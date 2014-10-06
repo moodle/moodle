@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for Single view 
+ * Strings for Single view
  *
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)

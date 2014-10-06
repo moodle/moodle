@@ -327,7 +327,7 @@ class gradereport_singleview_bulk_insert_ui extends gradereport_singleview_ui_el
         $select = html_writer::select(
             $insertoptions, $this->selectname, 'blanks', false
         );
- 
+
         $label = html_writer::tag('label', $insertappliesto);
         $text = new gradereport_singleview_text_attribute($this->insertname, "0", 'bulk');
         return implode(' ', array($apply, $text->html(), $label, $select));
