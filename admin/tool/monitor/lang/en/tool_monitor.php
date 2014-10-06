@@ -84,7 +84,7 @@ $string['subdeletesuccess'] = "Subscription successfully removed";
 $string['subhelp'] = 'Subscription details';
 $string['subhelp_help'] = 'This subscription listens for when the event \'{$a->eventname}\' has been triggered in \'{$a->moduleinstance}\' {$a->frequency} time(s) in {$a->minutes} minute(s).';
 $string['title'] = '{$a->coursename} : {$a->reportname}';
-$string['tool/monitor:managerules'] = 'Manage event monitor rules';
-$string['tool/monitor:subscribe'] = 'Subscribe to event monitor rules';
+$string['monitor:managerules'] = 'Manage event monitor rules';
+$string['monitor:subscribe'] = 'Subscribe to event monitor rules';
 $string['unsubscribe'] = 'Unsubscribe';
 
