@@ -57,6 +57,7 @@ class block_iomad_company_admin_renderer extends plugin_renderer_base {
         $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
         $out = '<h3>' . get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->name) . '</h3>';
         $out .= '<p><b>' . get_string('rolename', 'block_iomad_company_admin', $role->name) . '</b></p>';
+        $out .= '<p>' . get_string('iomadcapabilities_boiler', 'block_iomad_company_admin') . '</p>';
 
         $table = new html_table();
         foreach ($capabilities as $capability) {

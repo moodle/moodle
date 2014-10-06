@@ -131,6 +131,7 @@ $string['enrolcourse'] = 'Self Enrolled Course';
 $string['enrolcourse_help'] = 'This defines how a user will gain access to the course.';
 $string['enrolcoursetype'] = 'How do users enrol on the course';
 $string['enrolled'] = 'Users are enrolled onto course by a manager';
+$string['iomadcapabilities_boiler'] = 'Please be aware that the capabilities for the Iomad system are fairly complex and disabling one of these may not completely take away the capability from the role you are editing.  You are advised to <b>test</b> any role changes you make to ensure that they work as you expect.';
 $string['iomad_company_admin:addinstance'] = 'Add a new Iomad company admin block';
 $string['iomad_company_admin:assign_company_manager'] = 'Assign a company manager';
 $string['iomad_company_admin:assign_department_manager'] = 'Assign a department manager';
