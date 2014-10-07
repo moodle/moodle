@@ -64,6 +64,12 @@ $options = array('subdirs' => 1, 'maxbytes' => $maxbytes, 'maxfiles' => -1, 'acc
         'areamaxbytes' => $maxareabytes);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
 
+// Attempt to generate an inbound message address to support e-mail to private files.
+$generator = new \core\message\inbound\address_manager();
+$generator->set_handler('\core\message\inbound\private_files_handler');
+$generator->set_data(-1);
+$data->emaillink = $generator->generate($USER->id);
+
 $mform = new user_files_form(null, array('data' => $data, 'options' => $options));
 
 if ($mform->is_cancelled()) {
@@ -75,6 +81,8 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
+
+
 $mform->display();
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

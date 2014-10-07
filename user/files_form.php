@@ -45,6 +45,11 @@ class user_files_form extends moodleform {
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
         $mform->addElement('hidden', 'returnurl', $data->returnurl);
+        if (isset($data->emaillink)) {
+            $emaillink = html_writer::link(new moodle_url('mailto:' . $data->emaillink), $data->emaillink);
+            $mform->addElement('static', 'emailaddress', '',
+                get_string('emailtoprivatefiles', 'moodle', $emaillink));
+        }
         $mform->setType('returnurl', PARAM_LOCALURL);
 
         $this->add_action_buttons(true, get_string('savechanges'));
