@@ -78,15 +78,20 @@ if ($scrollpos) {
 }
 $PAGE->set_url($url);
 
+if ($cmid) {
+    $questionbankurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
+} else {
+    $questionbankurl = new moodle_url('/question/edit.php', array('courseid' => $courseid));
+}
+navigation_node::override_active_url($questionbankurl);
+
 if ($originalreturnurl) {
     if (strpos($originalreturnurl, '/') !== 0) {
         throw new coding_exception("returnurl must be a local URL starting with '/'. $originalreturnurl was given.");
     }
     $returnurl = new moodle_url($originalreturnurl);
-} else if ($cmid) {
-    $returnurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
 } else {
-    $returnurl = new moodle_url('/question/edit.php', array('courseid' => $courseid));
+    $returnurl = $questionbankurl;
 }
 if ($scrollpos) {
     $returnurl->param('scrollpos', $scrollpos);
@@ -308,31 +313,15 @@ if ($mform->is_cancelled()) {
         redirect($nexturl);
     }
 
-} else {
-    $streditingquestion = $qtypeobj->get_heading();
-    $PAGE->set_title($streditingquestion);
-    $PAGE->set_heading($COURSE->fullname);
-    if ($cm !== null) {
-        $strmodule = get_string('modulename', $cm->modname);
-        $streditingmodule = get_string('editinga', 'moodle', $strmodule);
-        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url('/mod/'.$cm->modname.'/index.php', array('id'=>$cm->course)));
-        $PAGE->navbar->add(format_string($module->name), new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
-        if (stripos($returnurl, "{$CFG->wwwroot}/mod/{$cm->modname}/view.php")!== 0){
-            //don't need this link if returnurl returns to view.php
-            $PAGE->navbar->add($streditingmodule, $returnurl);
-        }
-        $PAGE->navbar->add($streditingquestion);
-        echo $OUTPUT->header();
-
-    } else {
-        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string('editquestions', 'question').'</a> -> '.$streditingquestion;
-        $PAGE->navbar->add(get_string('editquestions', 'question'), $returnurl);
-        $PAGE->navbar->add($streditingquestion);
-        echo $OUTPUT->header();
-    }
-
-    // Display a heading, question editing form and possibly some extra content needed for
-    // for this question type.
-    $qtypeobj->display_question_editing_page($mform, $question, $wizardnow);
-    echo $OUTPUT->footer();
 }
+
+$streditingquestion = $qtypeobj->get_heading();
+$PAGE->set_title($streditingquestion);
+$PAGE->set_heading($COURSE->fullname);
+$PAGE->navbar->add($streditingquestion);
+
+// Display a heading, question editing form and possibly some extra content needed for
+// for this question type.
+echo $OUTPUT->header();
+$qtypeobj->display_question_editing_page($mform, $question, $wizardnow);
+echo $OUTPUT->footer();
