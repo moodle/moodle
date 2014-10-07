@@ -358,16 +358,6 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2012042300.00) {
         // This change makes the course_section index unique.
 
-        // xmldb does not allow changing index uniqueness - instead we must drop
-        // index then add it again
-        $table = new xmldb_table('course_sections');
-        $index = new xmldb_index('course_section', XMLDB_INDEX_NOTUNIQUE, array('course', 'section'));
-
-        // Conditionally launch drop index course_section
-        if ($dbman->index_exists($table, $index)) {
-            $dbman->drop_index($table, $index);
-        }
-
         // Look for any duplicate course_sections entries. There should not be
         // any but on some busy systems we found a few, maybe due to previous
         // bugs.
@@ -388,6 +378,19 @@ function xmldb_main_upgrade($oldversion) {
         }
         $rs->close();
         $transaction->allow_commit();
+
+        // XMLDB does not allow changing index uniqueness - instead we must drop
+        // index then add it again.
+        // MDL-46182: The query to make the index unique uses the index,
+        // so the removal of the non-unique version needs to happen after any
+        // data changes have been made.
+        $table = new xmldb_table('course_sections');
+        $index = new xmldb_index('course_section', XMLDB_INDEX_NOTUNIQUE, array('course', 'section'));
+
+        // Conditionally launch drop index course_section.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
 
         // Define index course_section (unique) to be added to course_sections
         $index = new xmldb_index('course_section', XMLDB_INDEX_UNIQUE, array('course', 'section'));
