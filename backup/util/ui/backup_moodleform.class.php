@@ -55,11 +55,22 @@ abstract class backup_moodleform extends base_moodleform {
 }
 /**
  * Initial backup user interface stage moodleform.
- *
- * Nothing to override we only need it defined so that moodleform doesn't get confused
- * between stages.
  */
-class backup_initial_form extends backup_moodleform {}
+class backup_initial_form extends backup_moodleform {
+
+    /**
+     * We override the initial form to offer a one click backup option.
+     */
+    public function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'backupheading', get_string('backup'));
+        $mform->addElement('html', html_writer::tag('p', get_string('performoneclickbackup_desc', 'backup')));
+        $mform->addElement('submit', 'oneclickbackup', get_string('performoneclickbackup', 'backup'));
+
+        parent::definition();
+    }
+}
 /**
  * Schema backup user interface stage moodleform.
  *

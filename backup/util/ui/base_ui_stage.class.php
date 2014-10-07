@@ -84,7 +84,7 @@ abstract class base_ui_stage {
      * The next stage
      * @return int
      */
-    final public function get_next_stage() {
+    public function get_next_stage() {
         return floor($this->stage*2);
     }
     /**
