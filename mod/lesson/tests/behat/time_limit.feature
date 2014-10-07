@@ -22,6 +22,7 @@ Feature: A teacher can set a time limit for a lesson
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson |
+      | Description | Test lesson description |
       | timed | 1 |
       | maxtime | 1 |
     And I follow "Test lesson"
