@@ -309,6 +309,7 @@ $string['gradetype_help'] = 'There are 4 grade types:
 
 Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the activity settings page.';
 $string['gradeview'] = 'View grade';
+$string['gradewasmodifiedduringediting'] = 'The grade entered for {$a->itemname} for {$a->username} was ignored because it was more recently updated by someone else.';
 $string['gradeweighthelp'] = 'Grade weight help';
 $string['groupavg'] = 'Group average';
 $string['hidden'] = 'Hidden';
