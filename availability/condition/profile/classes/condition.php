@@ -502,9 +502,10 @@ class condition extends \core_availability\condition {
      *
      * @param string $field Field name
      * @param string $field2 Second copy of field name (default same).
+     * @param boolean $istext Any of the fields correspond to a TEXT column in database (true) or not (false).
      * @return array Array of SQL and parameters
      */
-    private function get_condition_sql($field, $field2 = null) {
+    private function get_condition_sql($field, $field2 = null, $istext = false) {
         global $DB;
         if (is_null($field2)) {
             $field2 = $field;
@@ -525,8 +526,13 @@ class condition extends \core_availability\condition {
                         $params, '%' . $this->value . '%'), true, true, true);
                 break;
             case self::OP_IS_EQUAL_TO:
-                $sql = $field . ' = ' . self::unique_sql_parameter(
-                        $params, $this->value);
+                if ($istext) {
+                    $sql = $DB->sql_compare_text($field) . ' = ' . $DB->sql_compare_text(
+                            self::unique_sql_parameter($params, $this->value));
+                } else {
+                    $sql = $field . ' = ' . self::unique_sql_parameter(
+                            $params, $this->value);
+                }
                 break;
             case self::OP_STARTS_WITH:
                 $sql = $DB->sql_like($field, self::unique_sql_parameter(
@@ -539,11 +545,19 @@ class condition extends \core_availability\condition {
             case self::OP_IS_EMPTY:
                 // Mimic PHP empty() behaviour for strings, '0' or ''.
                 $emptystring = self::unique_sql_parameter($params, '');
-                $sql = '(' . $field . " IN ('0', $emptystring) OR $field2 IS NULL)";
+                if ($istext) {
+                    $sql = '(' . $DB->sql_compare_text($field) . " IN ('0', $emptystring) OR $field2 IS NULL)";
+                } else {
+                    $sql = '(' . $field . " IN ('0', $emptystring) OR $field2 IS NULL)";
+                }
                 break;
             case self::OP_IS_NOT_EMPTY:
                 $emptystring = self::unique_sql_parameter($params, '');
-                $sql = '(' . $field . " NOT IN ('0', $emptystring) AND $field2 IS NOT NULL)";
+                if ($istext) {
+                    $sql = '(' . $DB->sql_compare_text($field) . " NOT IN ('0', $emptystring) AND $field2 IS NOT NULL)";
+                } else {
+                    $sql = '(' . $field . " NOT IN ('0', $emptystring) AND $field2 IS NOT NULL)";
+                }
                 break;
         }
         return array($sql, $params);
@@ -562,18 +576,18 @@ class condition extends \core_availability\condition {
             $customfield = $customfields[$this->customfield];
 
             $mainparams = array();
-            $tablesql = "LEFT JOIN {user_info_data} uid ON uid.fieldid = " .
+            $tablesql = "LEFT JOIN {user_info_data} ud ON ud.fieldid = " .
                     self::unique_sql_parameter($mainparams, $customfield->id) .
-                    " AND uid.userid = userids.id";
-            list ($condition, $conditionparams) = $this->get_condition_sql('uid.data');
+                    " AND ud.userid = userids.id";
+            list ($condition, $conditionparams) = $this->get_condition_sql('ud.data', null, true);
             $mainparams = array_merge($mainparams, $conditionparams);
 
             // If default is true, then allow that too.
             if ($this->is_field_condition_met(
                     $this->operator, $customfield->defaultdata, $this->value)) {
-                $where = "((uid.data IS NOT NULL AND $condition) OR (uid.data IS NULL))";
+                $where = "((ud.data IS NOT NULL AND $condition) OR (ud.data IS NULL))";
             } else {
-                $where = "(uid.data IS NOT NULL AND $condition)";
+                $where = "(ud.data IS NOT NULL AND $condition)";
             }
         } else {
             $tablesql = "JOIN {user} u ON u.id = userids.id";
