@@ -266,7 +266,8 @@ class behat_navigation extends behat_base {
 
         // Throw exception if no node found.
         if (!$node) {
-            throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' . $parentnodes . '"', $this->getSession());
+            throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' .
+                implode($parentnodes, ' > ') . '"', $this->getSession());
         }
 
         if ($this->running_javascript()) {
