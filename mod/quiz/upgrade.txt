@@ -2,6 +2,11 @@ This files describes API changes in the quiz code.
 
 === 2.8 ===
 
+* Classes that were defined in various lib files have been moved to the classes
+  folder to take advantage of auto-loading. This has involved renaming them.
+  see the list in mod/quiz/db/renamedclasses.php.
+
+
 * Major changes to the Edit quiz page.
 
   The goal of this work was to increase usability, and also clean up the page
@@ -18,8 +23,8 @@ This files describes API changes in the quiz code.
   two scripts get merged in future.) Also questionbank.ajax.php (which may, in
   future, be made more generic, and moved into the core question bank code.)
 
-  As a result of this, mod/quiz/editlib.php is now much shorter than it was.
-  (In future, expect the remaining code in here to move into mod/quiz/classes.)
+  As a result of this, mod/quiz/editlib.php has gone. (A few remaining functions
+  were moved to locallib.php.)
 
   Here is a list of all the old functions or classes that have changed.
   If you used any of these in custom code, you will need to update your code.

@@ -27,8 +27,7 @@ if (!defined('AJAX_SCRIPT')) {
 }
 
 require_once(__DIR__ . '/../../config.php');
-require_once($CFG->dirroot . '/course/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/editlib.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 // Initialise ALL the incoming parameters here, up front.
 $quizid     = required_param('quizid', PARAM_INT);

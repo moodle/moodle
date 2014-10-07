@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
-require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 
 /**
  * Unit tests for quiz events.

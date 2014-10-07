@@ -911,11 +911,11 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Return the contents of the question bank, to be displayed in the question-bank pop-up.
      *
-     * @param \quiz_question_bank_view $questionbank the question bank view object.
+     * @param \mod_quiz\question\bank\custom_view $questionbank the question bank view object.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @return string HTML to output / send back in response to an AJAX request.
      */
-    public function question_bank_contents(\quiz_question_bank_view $questionbank, array $pagevars) {
+    public function question_bank_contents(\mod_quiz\question\bank\custom_view $questionbank, array $pagevars) {
 
         $qbank = $questionbank->render('editq', $pagevars['qpage'], $pagevars['qperpage'],
                 $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['qbshowtext']);
