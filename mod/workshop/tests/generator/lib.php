@@ -97,4 +97,63 @@ class mod_workshop_generator extends testing_module_generator {
 
         return parent::create_instance($record, (array)$options);
     }
+
+    /**
+     * Generates a submission authored by the given user.
+     *
+     * @param int $workshopid Workshop instance id.
+     * @param int $authorid Author user id.
+     * @param stdClass|array $options Optional explicit properties.
+     * @return int The new submission id.
+     */
+    public function create_submission($workshopid, $authorid, $options = null) {
+        global $DB;
+
+        $timenow = time();
+        $options = (array)$options;
+
+        $record = $options + array(
+            'workshopid' => $workshopid,
+            'example' => 0,
+            'authorid' => $authorid,
+            'timecreated' => $timenow,
+            'timemodified' => $timenow,
+            'title' => 'Generated submission',
+            'content' => 'Generated content',
+            'contentformat' => FORMAT_MARKDOWN,
+            'contenttrust' => 0,
+        );
+
+        $id = $DB->insert_record('workshop_submissions', $record);
+
+        return $id;
+    }
+
+    /**
+     * Generates an allocation of the given submission for peer-assessment by the given user
+     *
+     * @param int $submissionid Submission id.
+     * @param int $reviewerid Reviewer's user id.
+     * @param stdClass|array $options Optional explicit properties.
+     * @return int The new assessment id.
+     */
+    public function create_assessment($submissionid, $reviewerid, $options = null) {
+        global $DB;
+
+        $timenow = time();
+        $options = (array)$options;
+
+        $record = $options + array(
+            'submissionid' => $submissionid,
+            'reviewerid' => $reviewerid,
+            'weight' => 1,
+            'timecreated' => $timenow,
+            'timemodified' => $timenow,
+            'grade' => null,
+        );
+
+        $id = $DB->insert_record('workshop_assessments', $record);
+
+        return $id;
+    }
 }
