@@ -2381,6 +2381,8 @@ class workshop {
     /**
      * Performs the reset of this workshop instance.
      *
+     * @since Moodle 2.6.6, 2.7.3
+     *
      * @param stdClass $data The actual course reset settings.
      * @return array List of results, each being array[(string)component, (string)item, (string)error]
      */
@@ -2705,6 +2707,8 @@ class workshop {
      * This includes assessments of example submissions as long as they are not
      * referential assessments.
      *
+     * @since Moodle 2.6.6, 2.7.3
+     *
      * @param stdClass $data The actual course reset settings.
      * @return bool|string True on success, error message otherwise.
      */
@@ -2728,6 +2732,8 @@ class workshop {
     /**
      * Removes all user data related to participants' submissions.
      *
+     * @since Moodle 2.6.6, 2.7.3
+     *
      * @param stdClass $data The actual course reset settings.
      * @return bool|string True on success, error message otherwise.
      */
@@ -2744,6 +2750,8 @@ class workshop {
 
     /**
      * Hard set the workshop phase to the setup one.
+     *
+     * @since Moodle 2.6.6, 2.7.3
      */
     protected function reset_phase() {
         global $DB;
