@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * @copyright  2014 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class reply_handler extends \core\message\inbound\handler {
 
     /**
@@ -61,12 +60,13 @@ class reply_handler extends \core\message\inbound\handler {
     /**
      * Process a message received and validated by the Inbound Message processor.
      *
-     * @param $messagedata The Inbound Message record
-     * @param $messagedata The message data packet
+     * @throws \core\message\inbound\processing_failed_exception
+     * @param \stdClass $messagedata The Inbound Message record
+     * @param \stdClass $messagedata The message data packet
      * @return bool Whether the message was successfully processed.
      */
     public function process_message(\stdClass $record, \stdClass $messagedata) {
-        global $DB, $CFG, $USER;
+        global $DB, $USER;
 
         // Load the post being replied to.
         $post = $DB->get_record('forum_posts', array('id' => $record->datavalue));
@@ -85,7 +85,6 @@ class reply_handler extends \core\message\inbound\handler {
         // Load the other required data.
         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
         $course = $DB->get_record('course', array('id' => $forum->course));
-        $coursecontext = \context_course::instance($course->id);
         $cm = get_fast_modinfo($course->id)->instances['forum'][$forum->id];
         $modcontext = \context_module::instance($cm->id);
         $usercontext = \context_user::instance($USER->id);
@@ -114,14 +113,14 @@ class reply_handler extends \core\message\inbound\handler {
         if (!$canpost) {
             $data = new \stdClass();
             $data->forum = $forum;
-            throw new \message\inbound\processing_failed_exception('messageinboundnopostforum', 'mod_forum', $data);
+            throw new \core\message\inbound\processing_failed_exception('messageinboundnopostforum', 'mod_forum', $data);
         }
 
         // And check the availability.
         if (!\core_availability\info_module::is_user_visible($cm, $USER, true)) {
             $data = new \stdClass();
             $data->forum = $forum;
-            throw new \message\inbound\processing_failed_exception('messageinboundforumhidden', 'mod_forum', $data);
+            throw new \core\message\inbound\processing_failed_exception('messageinboundforumhidden', 'mod_forum', $data);
         }
 
         // Before we add this we must check that the user will not exceed the blocking threshold.
@@ -131,7 +130,7 @@ class reply_handler extends \core\message\inbound\handler {
             $data = new \stdClass();
             $data->forum = $forum;
             $data->message = get_string($thresholdwarning->errorcode, $thresholdwarning->module, $thresholdwarning->additional);
-            throw new \message\inbound\processing_failed_exception('messageinboundthresholdhit', 'mod_forum', $data);
+            throw new \core\message\inbound\processing_failed_exception('messageinboundthresholdhit', 'mod_forum', $data);
         }
 
         $addpost = new \stdClass();
@@ -165,7 +164,7 @@ class reply_handler extends \core\message\inbound\handler {
                 $data = new \stdClass();
                 $data->forum = $forum;
                 $data->attachmentcount = $attachmentcount;
-                throw new \message\inbound\processing_failed_exception('messageinboundattachmentdisallowed', 'mod_forum', $data);
+                throw new \core\message\inbound\processing_failed_exception('messageinboundattachmentdisallowed', 'mod_forum', $data);
             }
 
             if ($forum->maxattachments < $attachmentcount) {
@@ -176,7 +175,7 @@ class reply_handler extends \core\message\inbound\handler {
                 $data = new \stdClass();
                 $data->forum = $forum;
                 $data->attachmentcount = $attachmentcount;
-                throw new \message\inbound\processing_failed_exception('messageinboundfilecountexceeded', 'mod_forum', $data);
+                throw new \core\message\inbound\processing_failed_exception('messageinboundfilecountexceeded', 'mod_forum', $data);
             }
 
             $filesize = 0;
@@ -195,7 +194,7 @@ class reply_handler extends \core\message\inbound\handler {
                 $data->forum = $forum;
                 $data->maxbytes = display_size($forum->maxbytes);
                 $data->filesize = display_size($filesize);
-                throw new \message\inbound\processing_failed_exception('messageinboundfilesizeexceeded', 'mod_forum', $data);
+                throw new \core\message\inbound\processing_failed_exception('messageinboundfilesizeexceeded', 'mod_forum', $data);
             }
         }
 
@@ -236,13 +235,14 @@ class reply_handler extends \core\message\inbound\handler {
     /**
      * Process attachments included in a message.
      *
-     * @param $acceptedtypes String The mimetypes of the acceptable attachment types.
-     * @param $context context_user The context of the user creating this attachment.
-     * @param $itemid int The itemid to store this attachment under.
-     * @param $attachment stdClass The Attachment data to store.
+     * @param string[] $acceptedtypes String The mimetypes of the acceptable attachment types.
+     * @param \context_user $context context_user The context of the user creating this attachment.
+     * @param int $itemid int The itemid to store this attachment under.
+     * @param \stdClass $attachment stdClass The Attachment data to store.
+     * @return \stored_file
      */
     protected function process_attachment($acceptedtypes, \context_user $context, $itemid, \stdClass $attachment) {
-        global $DB, $USER, $CFG;
+        global $USER, $CFG;
 
         // Create the file record.
         $record = new \stdClass();

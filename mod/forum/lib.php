@@ -1147,7 +1147,7 @@ function forum_cron() {
  * @param object $userfrom
  * @param object $userto
  * @param boolean $bare
- * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with.
+ * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with. [Since 2.8].
  * @return string The email body in plain text format.
  */
 function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $bare = false, $replyaddress = null) {
@@ -1237,7 +1237,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
  * @param object $post
  * @param object $userfrom
  * @param object $userto
- * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with.
+ * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with. [Since 2.8].
  * @return string The email text in HTML format
  */
 function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $replyaddress = null) {
@@ -4275,7 +4275,7 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, $unused=null) {
  * @global object
  * @param object $post
  * @param mixed $mform
- * @param string $message
+ * @param string $unused formerly $message, renamed in 2.8 as it was unused.
  * @return int
  */
 function forum_add_new_post($post, $mform, $unused = null) {
