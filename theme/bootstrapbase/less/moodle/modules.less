@@ -340,3 +340,195 @@ div#dock {
         border-right: 0px none;
     }
 }
+
+// Usermenu
+.usermenu {
+    font-size: 14px;
+    &.withoutlinks {
+        .withoutlinks {
+            display: none;
+        }
+    }
+    .login {
+        color: @navbarText;
+        line-height: 40px;
+        a {
+            color: @navbarLinkColor;
+        }
+    }
+    > .moodle-actionmenu > .menubar {
+        display: block;
+        margin: -40px 0px 2px 0px;
+        li {
+            display: block;
+            a {
+                line-height: 40px;
+            }
+        }
+    }
+    > div {
+        height: 40px;
+    }
+    .toggle-display {
+        color: @navbarLinkColor;
+        outline: none;
+    }
+    .userbutton {
+        height: 40px;
+        line-height: 40px;
+        .avatars{
+            display: inline-block;
+            height: 36px;
+            vertical-align: middle;
+            margin-right: 6px;
+
+            .avatar,
+            img {
+                display: block;
+            }
+        }
+        .usertext {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1em;
+            .meta,
+            .role {
+                display: block;
+                font-size: 12px;
+                .value {
+                    font-weight: bold;
+                }
+            }
+            .role {
+                font-weight: bold;
+            }
+        }
+    }
+    .moodle-actionmenu[data-enhanced].show .menu a {
+        white-space: nowrap;
+    }
+    .menu .filler {
+        width: auto;
+        height: 1px;
+        margin: 4px 0px;
+        display: block;
+        background: #e5e5e5;
+    }
+}
+.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            position: relative;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            margin-top: 11px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+        }
+        img {
+            width: inherit;
+            height: inherit;
+        }
+        display: inline-block;
+        overflow: hidden;
+    }
+}
+.jsenabled .usermenu .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
+    position: relative;
+    .caret {
+        margin-top: 0;
+        vertical-align: middle;
+    }
+}
+.jsenabled .navbar-inverse {
+    .usermenu {
+        .login {
+            color: @navbarInverseText;
+            a {
+                color: @navbarInverseLinkColor;
+                &:hover {
+                    color: @navbarInverseLinkColorHover;
+                }
+            }
+        }
+        .toggle-display {
+            color: @navbarInverseLinkColor;
+        }
+        .userinfo .usertext {
+            color: @navbarInverseLinkColor;
+            .meta {
+                color: @navbarInverseText;
+                .value {
+                    color: @navbarInverseLinkColor;
+                }
+            }
+        }
+        &:hover {
+            .userinfo .usertext {
+                color: @navbarInverseLinkColorHover;
+                .meta {
+                    color: @navbarInverseText;
+                    .value {
+                        color: @navbarInverseLinkColorHover;
+                    }
+                }
+            }
+            .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
+                .caret {
+                    border-top-color: @navbarInverseLinkColorHover;
+                }
+            }
+        }
+    }
+}
+.dir-ltr {
+    .usermenu {
+        float: right;
+        .userinfo {
+            padding-left: 20px;
+        }
+        .userbutton {
+            margin-right: 4px;
+            padding-right: 8px;
+            .avatars{
+                margin-left: 6px;
+            }
+        }
+        > .moodle-actionmenu > .menubar li a {
+            text-align: right;
+        }
+    }
+    &.userloggedinas .usermenu .userbutton .avatars {
+        .avatar {
+            &.current {
+                margin-right: -34px;
+            }
+        }
+    }
+}
+
+.dir-rtl {
+    .usermenu {
+        float: left;
+        .userbutton {
+            margin-left: 4px;
+            padding-left: 8px;
+            .avatars{
+                margin-right: 6px;
+            }
+        }
+        > .moodle-actionmenu > .menubar li a {
+            text-align: left;
+        }
+    }
+    &.userloggedinas .usermenu .userbutton .avatars {
+        .avatar {
+            &.current {
+                margin-left: -42px;
+            }
+        }
+    }
+}
