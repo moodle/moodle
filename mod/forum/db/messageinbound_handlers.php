@@ -15,15 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Message Inbound Handlers for mod_forum.
  *
- * @package   mod_forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_forum
+ * @copyright  2014 Andrew NIcols
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014082101;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800;       // Requires this Moodle version
-$plugin->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
+$handlers = array(
+    array(
+        'classname' => '\mod_forum\message\inbound\reply_handler',
+    ),
+);

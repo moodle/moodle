@@ -463,6 +463,7 @@ function forum_cron() {
     $courses            = array();
     $coursemodules      = array();
     $subscribedusers    = array();
+    $messageinboundhandlers = array();
 
     // Posts older than 2 days will not be mailed.  This is to avoid the problem where
     // cron has not been running for a long time, and then suddenly people are flooded
@@ -481,6 +482,10 @@ function forum_cron() {
         $digests[$thisrow->forum][$thisrow->userid] = $thisrow->maildigest;
     }
     $digestsset->close();
+
+    // Create the generic messageinboundgenerator.
+    $messageinboundgenerator = new \core\message\inbound\address_manager();
+    $messageinboundgenerator->set_handler('\mod_forum\message\inbound\reply_handler');
 
     if ($posts = forum_get_unmailed_posts($starttime, $endtime, $timenow)) {
         // Mark them all now as being mailed.  It's unlikely but possible there
@@ -543,6 +548,11 @@ function forum_cron() {
             if (!isset($subscribedusers[$forumid])) {
                 $modcontext = context_module::instance($coursemodules[$forumid]->id);
                 if ($subusers = \mod_forum\subscriptions::fetch_subscribed_users($forums[$forumid], 0, $modcontext, 'u.*', true)) {
+
+                    // Save the Inbound Message datakey here to reduce DB queries later.
+                    $messageinboundgenerator->set_data($pid);
+                    $messageinboundhandlers[$pid] = $messageinboundgenerator->fetch_data_key();
+
                     foreach ($subusers as $postuser) {
                         // this user is subscribed to this forum
                         $subscribedusers[$forumid][$postuser->id] = $postuser->id;
@@ -734,13 +744,22 @@ function forum_cron() {
 
                 $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
+                // Generate a reply-to address from using the Inbound Message handler.
+                $replyaddress = null;
+                if ($userto->canpost[$discussion->id] && array_key_exists($post->id, $messageinboundhandlers)) {
+                    $messageinboundgenerator->set_data($post->id, $messageinboundhandlers[$post->id]);
+                    $replyaddress = $messageinboundgenerator->generate($userto->id);
+                }
+
                 $a = new stdClass();
                 $a->courseshortname = $shortname;
                 $a->forumname = $cleanforumname;
                 $a->subject = format_string($post->subject, true);
                 $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a));
-                $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
-                $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
+                $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false,
+                        $replyaddress);
+                $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
+                        $replyaddress);
 
                 // Send the post now!
                 mtrace('Sending ', '');
@@ -755,6 +774,7 @@ function forum_cron() {
                 $eventdata->fullmessageformat   = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml     = $posthtml;
                 $eventdata->notification        = 1;
+                $eventdata->replyto             = $replyaddress;
 
                 // If forum_replytouser is not set then send mail using the noreplyaddress.
                 if (empty($CFG->forum_replytouser)) {
@@ -1127,9 +1147,10 @@ function forum_cron() {
  * @param object $userfrom
  * @param object $userto
  * @param boolean $bare
+ * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with.
  * @return string The email body in plain text format.
  */
-function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
+function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $bare = false, $replyaddress = null) {
     global $CFG, $USER;
 
     $modcontext = context_module::instance($cm->id);
@@ -1198,6 +1219,10 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     $posttext .= get_string("digestmailpost", "forum");
     $posttext .= ": {$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}\n";
 
+    if ($replyaddress) {
+        $posttext .= "\n\n" . get_string('replytoforumpost', 'mod_forum', $replyaddress);
+    }
+
     return $posttext;
 }
 
@@ -1212,9 +1237,10 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
  * @param object $post
  * @param object $userfrom
  * @param object $userto
+ * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with.
  * @return string The email text in HTML format
  */
-function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto) {
+function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $replyaddress = null) {
     global $CFG;
 
     if ($userto->mailformat != 1) {  // Needs to be HTML
@@ -1250,6 +1276,10 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
                      format_string($discussion->name,true).'</a></div>';
     }
     $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
+
+    if ($replyaddress) {
+        $posthtml .= "<p>" . get_string('replytoforumpost_html', 'mod_forum', $replyaddress) . "</p>";
+    }
 
     $footerlinks = array();
     if ($canunsubscribe) {
@@ -4248,7 +4278,7 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, $unused=null) {
  * @param string $message
  * @return int
  */
-function forum_add_new_post($post, $mform, &$message) {
+function forum_add_new_post($post, $mform, $unused = null) {
     global $USER, $CFG, $DB;
 
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
@@ -4271,7 +4301,7 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
             mod_forum_post_form::editor_options($context, null), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
-    forum_add_attachment($post, $forum, $cm, $mform, $message);
+    forum_add_attachment($post, $forum, $cm, $mform);
 
     // Update discussion modified date
     $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
