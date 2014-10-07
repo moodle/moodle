@@ -1710,3 +1710,80 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
         $oldevent->delete();
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Course reset API                                                           //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Extends the course reset form with workshop specific settings.
+ *
+ * @param MoodleQuickForm $mform
+ */
+function workshop_reset_course_form_definition($mform) {
+
+    $mform->addElement('header', 'workshopheader', get_string('modulenameplural', 'mod_workshop'));
+
+    $mform->addElement('advcheckbox', 'reset_workshop_submissions', get_string('resetsubmissions', 'mod_workshop'));
+    $mform->addHelpButton('reset_workshop_submissions', 'resetsubmissions', 'mod_workshop');
+
+    $mform->addElement('advcheckbox', 'reset_workshop_assessments', get_string('resetassessments', 'mod_workshop'));
+    $mform->addHelpButton('reset_workshop_assessments', 'resetassessments', 'mod_workshop');
+    $mform->disabledIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
+
+    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
+    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+}
+
+/**
+ * Provides default values for the workshop settings in the course reset form.
+ *
+ * @param stdClass $course The course to be reset.
+ */
+function workshop_reset_course_form_defaults(stdClass $course) {
+
+    $defaults = array(
+        'reset_workshop_submissions'    => 1,
+        'reset_workshop_assessments'    => 1,
+        'reset_workshop_phase'          => 1,
+    );
+
+    return $defaults;
+}
+
+/**
+ * Performs the reset of all workshop instances in the course.
+ *
+ * @param stdClass $data The actual course reset settings.
+ * @return array List of results, each being array[(string)component, (string)item, (string)error]
+ */
+function workshop_reset_userdata(stdClass $data) {
+    global $CFG, $DB;
+
+    if (empty($data->reset_workshop_submissions)
+            and empty($data->reset_workshop_assessments)
+            and empty($data->reset_workshop_phase) ) {
+        // Nothing to do here.
+        return array();
+    }
+
+    $workshoprecords = $DB->get_records('workshop', array('course' => $data->courseid));
+
+    if (empty($workshoprecords)) {
+        // What a boring course - no workshops here!
+        return array();
+    }
+
+    require_once($CFG->dirroot . '/mod/workshop/locallib.php');
+
+    $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
+    $status = array();
+
+    foreach ($workshoprecords as $workshoprecord) {
+        $cm = get_coursemodule_from_instance('workshop', $workshoprecord->id, $course->id, false, MUST_EXIST);
+        $workshop = new workshop($workshoprecord, $cm, $course);
+        $status = array_merge($status, $workshop->reset_userdata($data));
+    }
+
+    return $status;
+}

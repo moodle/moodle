@@ -1046,8 +1046,14 @@ class workshop {
      */
     public function delete_submission(stdclass $submission) {
         global $DB;
+
         $assessments = $DB->get_records('workshop_assessments', array('submissionid' => $submission->id), '', 'id');
         $this->delete_assessment(array_keys($assessments));
+
+        $fs = get_file_storage();
+        $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_content', $submission->id);
+        $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
+
         $DB->delete_records('workshop_submissions', array('id' => $submission->id));
     }
 
@@ -1251,21 +1257,39 @@ class workshop {
     }
 
     /**
-     * Delete assessment record or records
+     * Delete assessment record or records.
      *
-     * @param mixed $id int|array assessment id or array of assessments ids
-     * @return bool false if $id not a valid parameter, true otherwise
+     * Removes associated records from the workshop_grades table, too.
+     *
+     * @param int|array $id assessment id or array of assessments ids
+     * @todo Give grading strategy plugins a chance to clean up their data, too.
+     * @return bool true
      */
     public function delete_assessment($id) {
         global $DB;
 
-        // todo remove all given grades from workshop_grades;
+        if (empty($id)) {
+            return true;
+        }
+
+        $fs = get_file_storage();
 
         if (is_array($id)) {
-            return $DB->delete_records_list('workshop_assessments', 'id', $id);
+            $DB->delete_records_list('workshop_grades', 'assessmentid', $id);
+            foreach ($id as $itemid) {
+                $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_content', $itemid);
+                $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment', $itemid);
+            }
+            $DB->delete_records_list('workshop_assessments', 'id', $id);
+
         } else {
-            return $DB->delete_records('workshop_assessments', array('id' => $id));
+            $DB->delete_records('workshop_grades', array('assessmentid' => $id));
+            $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_content', $id);
+            $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment', $id);
+            $DB->delete_records('workshop_assessments', array('id' => $id));
         }
+
+        return true;
     }
 
     /**
@@ -2354,6 +2378,69 @@ class workshop {
         );
     }
 
+    /**
+     * Performs the reset of this workshop instance.
+     *
+     * @param stdClass $data The actual course reset settings.
+     * @return array List of results, each being array[(string)component, (string)item, (string)error]
+     */
+    public function reset_userdata(stdClass $data) {
+
+        $componentstr = get_string('pluginname', 'workshop').': '.format_string($this->name);
+        $status = array();
+
+        if (!empty($data->reset_workshop_assessments) or !empty($data->reset_workshop_submissions)) {
+            // Reset all data related to assessments, including assessments of
+            // example submissions.
+            $result = $this->reset_userdata_assessments($data);
+            if ($result === true) {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetassessments', 'mod_workshop'),
+                    'error' => false,
+                );
+            } else {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetassessments', 'mod_workshop'),
+                    'error' => $result,
+                );
+            }
+        }
+
+        if (!empty($data->reset_workshop_submissions)) {
+            // Reset all remaining data related to submissions.
+            $result = $this->reset_userdata_submissions($data);
+            if ($result === true) {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetsubmissions', 'mod_workshop'),
+                    'error' => false,
+                );
+            } else {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetsubmissions', 'mod_workshop'),
+                    'error' => $result,
+                );
+            }
+        }
+
+        if (!empty($data->reset_workshop_phase)) {
+            // Do not use the {@link workshop::switch_phase()} here, we do not
+            // want to trigger events.
+            $this->reset_phase();
+            $status[] = array(
+                'component' => $componentstr,
+                'item' => get_string('resetsubmissions', 'mod_workshop'),
+                'error' => false,
+            );
+        }
+
+        return $status;
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
@@ -2610,6 +2697,59 @@ class workshop {
         }
 
         return substr($fullurl->out(), strlen($baseurl));
+    }
+
+    /**
+     * Removes all user data related to assessments (including allocations).
+     *
+     * This includes assessments of example submissions as long as they are not
+     * referential assessments.
+     *
+     * @param stdClass $data The actual course reset settings.
+     * @return bool|string True on success, error message otherwise.
+     */
+    protected function reset_userdata_assessments(stdClass $data) {
+        global $DB;
+
+        $sql = "SELECT a.id
+                  FROM {workshop_assessments} a
+                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                 WHERE s.workshopid = :workshopid
+                       AND (s.example = 0 OR (s.example = 1 AND a.weight = 0))";
+
+        $assessments = $DB->get_records_sql($sql, array('workshopid' => $this->id));
+        $this->delete_assessment(array_keys($assessments));
+
+        $DB->delete_records('workshop_aggregations', array('workshopid' => $this->id));
+
+        return true;
+    }
+
+    /**
+     * Removes all user data related to participants' submissions.
+     *
+     * @param stdClass $data The actual course reset settings.
+     * @return bool|string True on success, error message otherwise.
+     */
+    protected function reset_userdata_submissions(stdClass $data) {
+        global $DB;
+
+        $submissions = $this->get_submissions();
+        foreach ($submissions as $submission) {
+            $this->delete_submission($submission);
+        }
+
+        return true;
+    }
+
+    /**
+     * Hard set the workshop phase to the setup one.
+     */
+    protected function reset_phase() {
+        global $DB;
+
+        $DB->set_field('workshop', 'phase', self::PHASE_SETUP, array('id' => $this->id));
+        $this->phase = self::PHASE_SETUP;
     }
 }
 
@@ -3428,10 +3568,10 @@ class workshop_assessment extends workshop_assessment_base implements renderable
             return null;
         }
 
-        $content = format_text($this->feedbackauthor, $this->feedbackauthorformat,
-            array('overflowdiv' => true, 'context' => $this->workshop->context));
-        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->workshop->context->id,
+        $content = file_rewrite_pluginfile_urls($this->feedbackauthor, 'pluginfile.php', $this->workshop->context->id,
             'mod_workshop', 'overallfeedback_content', $this->id);
+        $content = format_text($content, $this->feedbackauthorformat,
+            array('overflowdiv' => true, 'context' => $this->workshop->context));
 
         return $content;
     }

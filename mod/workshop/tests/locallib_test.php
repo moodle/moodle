@@ -416,4 +416,97 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         // excersise SUT
         $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
     }
+
+    /**
+     * Test the workshop reset feature.
+     */
+    public function test_reset_phase() {
+        $this->resetAfterTest(true);
+
+        $this->workshop->switch_phase(workshop::PHASE_CLOSED);
+        $this->assertEquals(workshop::PHASE_CLOSED, $this->workshop->phase);
+
+        $settings = (object)array(
+            'reset_workshop_phase' => 0,
+        );
+        $status = $this->workshop->reset_userdata($settings);
+        $this->assertEquals(workshop::PHASE_CLOSED, $this->workshop->phase);
+
+        $settings = (object)array(
+            'reset_workshop_phase' => 1,
+        );
+        $status = $this->workshop->reset_userdata($settings);
+        $this->assertEquals(workshop::PHASE_SETUP, $this->workshop->phase);
+        foreach ($status as $result) {
+            $this->assertFalse($result['error']);
+        }
+    }
+
+    /**
+     * Test deleting assessments related data on workshop reset.
+     */
+    public function test_reset_userdata_assessments() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($student1->id, $this->workshop->course->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $this->workshop->course->id);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+
+        $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
+        $subid2 = $workshopgenerator->create_submission($this->workshop->id, $student2->id);
+
+        $asid1 = $workshopgenerator->create_assessment($subid1, $student2->id);
+        $asid2 = $workshopgenerator->create_assessment($subid2, $student1->id);
+
+        $settings = (object)array(
+            'reset_workshop_assessments' => 1,
+        );
+        $status = $this->workshop->reset_userdata($settings);
+
+        foreach ($status as $result) {
+            $this->assertFalse($result['error']);
+        }
+
+        $this->assertEquals(2, $DB->count_records('workshop_submissions', array('workshopid' => $this->workshop->id)));
+        $this->assertEquals(0, $DB->count_records('workshop_assessments'));
+    }
+
+    /**
+     * Test deleting submissions related data on workshop reset.
+     */
+    public function test_reset_userdata_submissions() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($student1->id, $this->workshop->course->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $this->workshop->course->id);
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+
+        $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
+        $subid2 = $workshopgenerator->create_submission($this->workshop->id, $student2->id);
+
+        $asid1 = $workshopgenerator->create_assessment($subid1, $student2->id);
+        $asid2 = $workshopgenerator->create_assessment($subid2, $student1->id);
+
+        $settings = (object)array(
+            'reset_workshop_submissions' => 1,
+        );
+        $status = $this->workshop->reset_userdata($settings);
+
+        foreach ($status as $result) {
+            $this->assertFalse($result['error']);
+        }
+
+        $this->assertEquals(0, $DB->count_records('workshop_submissions', array('workshopid' => $this->workshop->id)));
+        $this->assertEquals(0, $DB->count_records('workshop_assessments'));
+    }
 }
