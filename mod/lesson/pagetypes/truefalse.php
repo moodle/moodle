@@ -50,6 +50,9 @@ class lesson_page_type_truefalse extends lesson_page {
     public function display($renderer, $attempt) {
         global $USER, $CFG, $PAGE;
         $answers = $this->get_answers();
+        foreach ($answers as $key => $answer) {
+            $answers[$key] = parent::rewrite_answers_urls($answer);
+        }
         shuffle($answers);
 
         $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents(), 'attempt'=>$attempt);
@@ -81,6 +84,7 @@ class lesson_page_type_truefalse extends lesson_page {
         }
         $result->answerid = $data->answerid;
         $answer = $DB->get_record("lesson_answers", array("id" => $result->answerid), '*', MUST_EXIST);
+        $answer = parent::rewrite_answers_urls($answer);
         if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
             $result->correctanswer = true;
         }
@@ -104,6 +108,7 @@ class lesson_page_type_truefalse extends lesson_page {
         $options->para = false;
         $i = 1;
         foreach ($answers as $answer) {
+            $answer = parent::rewrite_answers_urls($answer);
             $cells = array();
             if ($this->lesson->custom && $answer->score > 0) {
                 // if the score is > 0, then it is correct
@@ -193,6 +198,9 @@ class lesson_page_type_truefalse extends lesson_page {
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
+                // Save files in answers and responses.
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i],
+                        $properties->answer_editor[$i], $properties->response_editor[$i]);
             } else if (isset($this->answers[$i]->id)) {
                 $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
                 unset($this->answers[$i]);
@@ -238,6 +246,7 @@ class lesson_page_type_truefalse extends lesson_page {
         $formattextdefoptions->para = false;
         $formattextdefoptions->noclean = true;
         foreach ($answers as $answer) {
+            $answer = parent::rewrite_answers_urls($answer);
             if ($this->properties->qoption) {
                 if ($useranswer == null) {
                     $userresponse = array();
