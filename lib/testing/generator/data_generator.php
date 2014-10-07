@@ -335,6 +335,10 @@ EOD;
             $record['descriptionformat'] = FORMAT_MOODLE;
         }
 
+        if (!isset($record['visible'])) {
+            $record['visible'] = 1;
+        }
+
         if (!isset($record['component'])) {
             $record['component'] = '';
         }
