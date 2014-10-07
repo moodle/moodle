@@ -3964,5 +3964,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014100700.01);
     }
 
+    if ($oldversion < 2014100800.00) {
+        // Remove qformat_learnwise (unless it has manually been added back).
+        if (!file_exists($CFG->dirroot . '/question/format/learnwise/format.php')) {
+            unset_all_config_for_plugin('qformat_learnwise');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014100800.00);
+    }
+
     return true;
 }
