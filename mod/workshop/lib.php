@@ -1708,6 +1708,8 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
 /**
  * Extends the course reset form with workshop specific settings.
  *
+ * @since Moodle 2.6.6, 2.7.3
+ *
  * @param MoodleQuickForm $mform
  */
 function workshop_reset_course_form_definition($mform) {
@@ -1728,6 +1730,8 @@ function workshop_reset_course_form_definition($mform) {
 /**
  * Provides default values for the workshop settings in the course reset form.
  *
+ * @since Moodle 2.6.6, 2.7.3
+ *
  * @param stdClass $course The course to be reset.
  */
 function workshop_reset_course_form_defaults(stdClass $course) {
@@ -1743,6 +1747,8 @@ function workshop_reset_course_form_defaults(stdClass $course) {
 
 /**
  * Performs the reset of all workshop instances in the course.
+ *
+ * @since Moodle 2.6.6, 2.7.3
  *
  * @param stdClass $data The actual course reset settings.
  * @return array List of results, each being array[(string)component, (string)item, (string)error]
