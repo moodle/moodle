@@ -202,6 +202,7 @@ class enrol_manual_plugin extends enrol_plugin {
      */
     public function get_manual_enrol_button(course_enrolment_manager $manager) {
         global $CFG;
+        require_once($CFG->dirroot.'/cohort/lib.php');
 
         $instance = null;
         $instances = array();
@@ -245,7 +246,8 @@ class enrol_manual_plugin extends enrol_plugin {
             'defaultRole'         => $instance->roleid,
             'defaultDuration'     => $defaultduration,
             'disableGradeHistory' => $CFG->disablegradehistory,
-            'recoverGradesDefault'=> ''
+            'recoverGradesDefault'=> '',
+            'cohortsAvailable'    => cohort_get_available_cohorts($manager->get_context(), COHORT_COUNT_MEMBERS, 0, 1) ? true : false
         );
 
         if ($CFG->recovergradesdefault) {
@@ -271,6 +273,7 @@ class enrol_manual_plugin extends enrol_plugin {
             'enrolperiod',
             'finishenrollingusers',
             'recovergrades'), 'enrol');
+        $button->strings_for_js(array('browseusers', 'browsecohorts'), 'enrol_manual');
         $button->strings_for_js('assignroles', 'role');
         $button->strings_for_js('startingfrom', 'moodle');
 
@@ -574,5 +577,29 @@ class enrol_manual_plugin extends enrol_plugin {
     public function can_hide_show_instance($instance) {
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/manual:config', $context);
+    }
+
+    /**
+     * Enrol all not enrolled cohort members into course via enrol instance.
+     *
+     * @param stdClass $instance
+     * @param int $cohortid
+     * @param int $roleid optional role id
+     * @param int $timestart 0 means unknown
+     * @param int $timeend 0 means forever
+     * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
+     * @param bool $recovergrades restore grade history
+     */
+    public function enrol_cohort(stdClass $instance, $cohortid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null) {
+        global $DB;
+        $context = context_course::instance($instance->courseid);
+        list($esql, $params) = get_enrolled_sql($context);
+        $sql = "SELECT cm.userid FROM {cohort_members} cm LEFT JOIN ($esql) u ON u.id = cm.userid ".
+            "WHERE cm.cohortid = :cohortid AND u.id IS NULL";
+        $params['cohortid'] = $cohortid;
+        $members = $DB->get_fieldset_sql($sql, $params);
+        foreach ($members as $userid) {
+            $this->enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
+        }
     }
 }

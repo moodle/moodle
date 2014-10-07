@@ -4452,14 +4452,13 @@ function coursemodule_visible_for_user($cm, $userid=0) {
 /**
  * Gets all the cohorts the user is able to view.
  *
- * @deprecated since Moodle 2.8 MDL-36014 please use enrol_cohort_search_cohorts()
+ * @deprecated since Moodle 2.8 MDL-36014, MDL-35618 this functionality is removed
  *
  * @param course_enrolment_manager $manager
  * @return array
  */
 function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
     global $CFG;
-    require_once($CFG->dirroot . '/enrol/cohort/locallib.php');
     debugging('Function enrol_cohort_get_cohorts() is deprecated, use enrol_cohort_search_cohorts() or '.
         'cohort_get_available_cohorts() instead', DEBUG_DEVELOPER);
     return enrol_cohort_search_cohorts($manager, 0, 0, '');
@@ -4537,4 +4536,97 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
     }
 
     return $cohorts;
+}
+
+/**
+ * Enrols all of the users in a cohort through a manual plugin instance.
+ *
+ * In order for this to succeed the course must contain a valid manual
+ * enrolment plugin instance that the user has permission to enrol users through.
+ *
+ * @deprecated since Moodle 2.8 MDL-35618 this functionality is removed
+ *
+ * @global moodle_database $DB
+ * @param course_enrolment_manager $manager
+ * @param int $cohortid
+ * @param int $roleid
+ * @return int
+ */
+function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohortid, $roleid) {
+    global $DB;
+    debugging('enrol_cohort_enrol_all_users() is deprecated. This functionality is moved to enrol_manual.', DEBUG_DEVELOPER);
+
+    $context = $manager->get_context();
+    require_capability('moodle/course:enrolconfig', $context);
+
+    $instance = false;
+    $instances = $manager->get_enrolment_instances();
+    foreach ($instances as $i) {
+        if ($i->enrol == 'manual') {
+            $instance = $i;
+            break;
+        }
+    }
+    $plugin = enrol_get_plugin('manual');
+    if (!$instance || !$plugin || !$plugin->allow_enrol($instance) || !has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
+        return false;
+    }
+    $sql = "SELECT com.userid
+              FROM {cohort_members} com
+         LEFT JOIN (
+                SELECT *
+                  FROM {user_enrolments} ue
+                 WHERE ue.enrolid = :enrolid
+                 ) ue ON ue.userid=com.userid
+             WHERE com.cohortid = :cohortid AND ue.id IS NULL";
+    $params = array('cohortid' => $cohortid, 'enrolid' => $instance->id);
+    $rs = $DB->get_recordset_sql($sql, $params);
+    $count = 0;
+    foreach ($rs as $user) {
+        $count++;
+        $plugin->enrol_user($instance, $user->userid, $roleid);
+    }
+    $rs->close();
+    return $count;
+}
+
+/**
+ * Gets cohorts the user is able to view.
+ *
+ * @deprecated since Moodle 2.8 MDL-35618 this functionality is removed
+ *
+ * @global moodle_database $DB
+ * @param course_enrolment_manager $manager
+ * @param int $offset limit output from
+ * @param int $limit items to output per load
+ * @param string $search search string
+ * @return array    Array(more => bool, offset => int, cohorts => array)
+ */
+function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset = 0, $limit = 25, $search = '') {
+    global $CFG;
+    debugging('enrol_cohort_search_cohorts() is deprecated. This functionality is moved to enrol_manual.', DEBUG_DEVELOPER);
+    require_once($CFG->dirroot . '/cohort/lib.php');
+
+    $context = $manager->get_context();
+    $cohorts = array();
+    $instances = $manager->get_enrolment_instances();
+    $enrolled = array();
+    foreach ($instances as $instance) {
+        if ($instance->enrol === 'cohort') {
+            $enrolled[] = $instance->customint1;
+        }
+    }
+
+    $rawcohorts = cohort_get_available_cohorts($context, COHORT_COUNT_MEMBERS, $offset, $limit, $search);
+
+    // Produce the output respecting parameters.
+    foreach ($rawcohorts as $c) {
+        $cohorts[$c->id] = array(
+            'cohortid' => $c->id,
+            'name'     => shorten_text(format_string($c->name, true, array('context'=>context::instance_by_id($c->contextid))), 35),
+            'users'    => $c->memberscnt,
+            'enrolled' => in_array($c->id, $enrolled)
+        );
+    }
+    return array('more' => !(bool)$limit, 'offset' => $offset, 'cohorts' => $cohorts);
 }

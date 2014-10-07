@@ -209,54 +209,6 @@ class enrol_cohort_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns a button to enrol a cohort or its users through the manual enrolment plugin.
-     *
-     * This function also adds a quickenrolment JS ui to the page so that users can be enrolled
-     * via AJAX.
-     *
-     * @param course_enrolment_manager $manager
-     * @return enrol_user_button
-     */
-    public function get_manual_enrol_button(course_enrolment_manager $manager) {
-        $course = $manager->get_course();
-        if (!$this->can_add_new_instances($course->id)) {
-            return false;
-        }
-
-        $cohorturl = new moodle_url('/enrol/cohort/edit.php', array('courseid' => $course->id));
-        $button = new enrol_user_button($cohorturl, get_string('enrolcohort', 'enrol'), 'get');
-        $button->class .= ' enrol_cohort_plugin';
-
-        $button->strings_for_js(array(
-            'enrol',
-            'synced',
-            'enrolcohort',
-            'enrolcohortusers',
-            ), 'enrol');
-        $button->strings_for_js(array(
-            'ajaxmore',
-            'cohortsearch',
-            ), 'enrol_cohort');
-        $button->strings_for_js('assignroles', 'role');
-        $button->strings_for_js('cohort', 'cohort');
-        $button->strings_for_js('users', 'moodle');
-
-        // No point showing this at all if the user cant manually enrol users.
-        $hasmanualinstance = has_capability('enrol/manual:enrol', $manager->get_context()) && $manager->has_instance('manual');
-
-        $modules = array('moodle-enrol_cohort-quickenrolment', 'moodle-enrol_cohort-quickenrolment-skin');
-        $function = 'M.enrol_cohort.quickenrolment.init';
-        $arguments = array(
-            'courseid'        => $course->id,
-            'ajaxurl'         => '/enrol/cohort/ajax.php',
-            'url'             => $manager->get_moodlepage()->url->out(false),
-            'manualEnrolment' => $hasmanualinstance);
-        $button->require_yui_module($modules, $function, array($arguments));
-
-        return $button;
-    }
-
-    /**
      * Restore instance and map settings.
      *
      * @param restore_enrolments_structure_step $step
