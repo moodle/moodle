@@ -39,11 +39,11 @@ Feature: We can understand the gradebook user report
     And I give the grade "70.00" to the user "Student 1" for the grade item "Test assignment five"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment six"
     And I press "Save changes"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
-    And I set the field "Grade report" to "Set up grades layout"
+    And I set the field "Grade report" to "Categories and items"
     And I press "Add category"
     And I set the field "Category name" to "Sub category"
     And I press "Save changes"
@@ -226,7 +226,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five | 33.33 % | 70.00 | 23.33 |
       | Test assignment six | 33.33 % | 30.00 | 10.00 |
       | Category totalWeighted mean of grades. | 33.33 % | 36.67 | - |
-      | Course totalNatural. | - | 156.67 | - |
+      | Course total | - | 156.67 | - |
 
   @javascript
   Scenario: View user report with natural aggregation
@@ -244,5 +244,5 @@ Feature: We can understand the gradebook user report
       | Test assignment four | 33.33 % | 10.00 | 10.00 |
       | Test assignment five | 33.33 % | 70.00 | 70.00 |
       | Test assignment six | 33.33 % | 30.00 | 30.00 |
-      | Category totalNatural. | 60.00 % | 110.00 | - |
-      | Course totalNatural. | - | 230.00 | - |
+      | Category total | 60.00 % | 110.00 | - |
+      | Course total | - | 230.00 | - |

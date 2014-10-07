@@ -58,7 +58,7 @@ Feature: We can use calculated grade totals
       | Hidden | 1 |
     And I set the following settings for grade item "Test assignment eight":
       | Hidden | 1 |
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Grade display type" to "Real (percentage)"
     And I press "Save changes"
 
@@ -73,7 +73,7 @@ Feature: We can use calculated grade totals
       | Exclude empty grades | 0              |
     And I turn editing mode off
     Then I should see "30.00 (30.00 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -98,7 +98,7 @@ Feature: We can use calculated grade totals
       | Item weight | 3 |
     And I turn editing mode off
     Then I should see "27.14 (27.14 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -121,7 +121,7 @@ Feature: We can use calculated grade totals
       | Extra credit | 1 |
     And I turn editing mode off
     Then I should see "45.19 (45.19 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -144,7 +144,7 @@ Feature: We can use calculated grade totals
       | Extra credit weight  | 2 |
     And I turn editing mode off
     Then I should see "42.50 (42.50 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -165,7 +165,7 @@ Feature: We can use calculated grade totals
       | Exclude empty grades | 0                |
     And I turn editing mode off
     Then I should see "26.67 (26.67 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -190,7 +190,7 @@ Feature: We can use calculated grade totals
       | Hidden | 1 |
     And I turn editing mode off
     Then I should see "0.00 (0.00 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -213,7 +213,7 @@ Feature: We can use calculated grade totals
       | Hidden | 1 |
     And I turn editing mode off
     Then I should see "50.00 (50.00 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -236,7 +236,7 @@ Feature: We can use calculated grade totals
       | Hidden | 1 |
     And I turn editing mode off
     Then I should see "50.00 (50.00 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Hide totals if they contain hidden items" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I log out
@@ -264,7 +264,7 @@ Feature: We can use calculated grade totals
       | Extra credit | 1 |
     And I turn editing mode off
     Then I should see "152.68 (24.43 %)" in the ".course" "css_element"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I set the field "Show contribution to course total" to "Show"
@@ -317,7 +317,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
+    And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I press "Add category"
     And I click on "Show more" "link"
     And I set the following fields to these values:
@@ -372,7 +372,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I turn editing mode off
     And I should see "250.00 (25.25 %)" in the ".course" "css_element"
-    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
+    And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Sub sub category 1 |
@@ -383,7 +383,7 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation from the setup screen
-    And I set the field "Grade report" to "Set up grades layout"
+    And I set the field "Grade report" to "Categories and items"
     And I follow "Edit   Course 1"
     And I set the field "Aggregation" to "Natural"
     And I press "Save changes"
@@ -448,7 +448,7 @@ Feature: We can use calculated grade totals
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I turn editing mode off
-    And I set the field "Grade report" to "Set up grades layout"
+    And I set the field "Grade report" to "Categories and items"
     And I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "0"
     And I set the field "Override weight of Test assignment six" to "1"
@@ -456,7 +456,7 @@ Feature: We can use calculated grade totals
     And I set the field "Override weight of Test assignment nine" to "1"
     And I set the field "Weight of Test assignment nine" to "100"
     And I press "Save changes"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I set the field "Show contribution to course total" to "Show"

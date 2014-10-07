@@ -85,9 +85,9 @@ Feature: View gradebook when scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage |
       | Test assignment one | C     | F–A   | 50.00 %    |
-      | Category totalNatural.      | 3.00  | 0–5   | 60.00 %    |
-      | Course totalNatural.        | 3.00  | 0–5   | 60.00 %    |
-    And I set the field "jump" to "Set up grades layout"
+      | Category total      | 3.00  | 0–5   | 60.00 %    |
+      | Course total        | 3.00  | 0–5   | 60.00 %    |
+    And I set the field "jump" to "Categories and items"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 5.00      |
@@ -100,8 +100,8 @@ Feature: View gradebook when scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage |
       | Test assignment one | B     | F–A   | 75.00 %    |
-      | Category totalNatural.      | 4.00  | 0–5   | 80.00 %    |
-      | Course totalNatural.        | 4.00  | 0–5   | 80.00 %    |
+      | Category total      | 4.00  | 0–5   | 80.00 %    |
+      | Course total        | 4.00  | 0–5   | 80.00 %    |
 
   @javascript
   Scenario Outline: Test displaying scales in gradebook in all other aggregation methods
@@ -135,12 +135,12 @@ Feature: View gradebook when scales are used
       | Test assignment one | C              | F–A   | 50.00 %       |
       | Category total<aggregation>.      | 3.00           | 1–5   | 50.00 %       |
       | Course total<aggregation>.        | <coursetotal3> | 0–100 | <courseperc3> |
-    And I set the field "jump" to "Set up grades layout"
+    And I set the field "jump" to "Categories and items"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |
-      | Category total      |           |
-      | Course total        |           |
+      | Category total<aggregation>. |           |
+      | Course total<aggregation>.   |           |
     And I log out
     And I log in as "student2"
     And I follow "Course 1"

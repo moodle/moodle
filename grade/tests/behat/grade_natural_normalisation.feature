@@ -33,7 +33,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
-    And I set the field "Grade report" to "Set up grades layout"
+    And I set the field "Grade report" to "Categories and items"
 
   @javascript
   Scenario: Setting all weights in a category to exactly one hundred in total.
