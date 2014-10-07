@@ -45,6 +45,8 @@ require_sesskey();
 
 $action = required_param('action', PARAM_ALPHA);
 
+$response = array();
+
 if ($action === 'save') {
     $drafttext = required_param('drafttext', PARAM_RAW);
     $params = array('elementid' => $elementid,
@@ -138,7 +140,8 @@ if ($action === 'save') {
 
         // A response means the draft has been restored and here is the auto-saved text.
         if (!$stale) {
-            echo $record->drafttext;
+            $response['result'] = $record->drafttext;
+            echo json_encode($response);
         }
         die();
     }

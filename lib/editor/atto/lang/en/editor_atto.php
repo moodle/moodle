@@ -23,7 +23,7 @@
  */
 
 $string['autosavefailed'] = 'Could not connect to the server. If you submit this page now, your changes may be lost.';
-$string['autosavefrequency'] = 'Autosave frequency (seconds).';
+$string['autosavefrequency'] = 'Autosave frequency';
 $string['autosavefrequency_desc'] = 'This is the number of seconds between auto save attempts. Atto will automatically save the text in the editor according to this setting, so that text can be automatically restored when the same user returns to the same form.';
 $string['autosavesucceeded'] = 'Draft saved.';
 $string['errorcannotparseline'] = 'The line \'{$a}\' is not in the correct format.';
@@ -31,6 +31,7 @@ $string['errorgroupisusedtwice'] = 'The group \'{$a}\' is defined twice; group n
 $string['errornopluginsorgroupsfound'] = 'No plugins or groups found; please add some groups and plugins.';
 $string['errorpluginnotfound'] = 'The plugin \'{$a}\' cannot be used; it does not appear to be installed.';
 $string['errorpluginisusedtwice'] = 'The plugin \'{$a}\' is used twice; plugins can only be defined once.';
+$string['errortextrecovery'] = 'The draft version of this text was unable to be restored.';
 $string['pluginname'] = 'Atto HTML editor';
 $string['subplugintype_atto'] = 'Atto plugin';
 $string['subplugintype_atto_plural'] = 'Atto plugins';
