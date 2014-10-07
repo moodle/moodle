@@ -193,7 +193,7 @@ abstract class grade_object {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                 continue;
             }
-            if (!array_key_exists($var, $columns)) { // TODO: Should this throw a coding exception?
+            if (!array_key_exists($var, $columns)) {
                 continue;
             }
             if (is_null($value)) {
