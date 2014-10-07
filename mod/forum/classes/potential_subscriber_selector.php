@@ -108,7 +108,6 @@ class mod_forum_potential_subscriber_selector extends mod_forum_subscriber_selec
         $params = array_merge($params, $eparams);
 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
-        $countfields = 'SELECT COUNT(u.id)';
 
         $sql = " FROM {user} u
                  JOIN ($esql) je ON je.id = u.id
@@ -117,19 +116,23 @@ class mod_forum_potential_subscriber_selector extends mod_forum_subscriber_selec
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
         $order = ' ORDER BY ' . $sort;
 
-        // Check to see if there are too many to show sensibly.
-        if (!$this->is_validating()) {
-            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > $this->maxusersperpage) {
-                return $this->too_many_results($search, $potentialmemberscount);
-            }
-        }
-
-        // If not, show them.
         $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
+
+        $cm = get_coursemodule_from_instance('forum', $this->forumid);
+        $modinfo = get_fast_modinfo($cm->course);
+        $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
+        $availableusers = $info->filter_user_list($availableusers);
 
         if (empty($availableusers)) {
             return array();
+        }
+
+        // Check to see if there are too many to show sensibly.
+        if (!$this->is_validating()) {
+            $potentialmemberscount = count($availableusers);
+            if ($potentialmemberscount > $this->maxusersperpage) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
         }
 
         if ($this->forcesubscribed) {

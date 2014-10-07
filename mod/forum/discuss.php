@@ -100,9 +100,10 @@
         }
         // For each subscribed user in this forum and discussion, copy over per-discussion subscriptions if required.
         $discussiongroup = $discussion->groupid == -1 ? 0 : $discussion->groupid;
-        $potentialsubscribers = \mod_forum\subscriptions::get_potential_subscribers(
-            $modcontext,
+        $potentialsubscribers = \mod_forum\subscriptions::fetch_subscribed_users(
+            $forum,
             $discussiongroup,
+            $modcontext,
             'u.id'
         );
 

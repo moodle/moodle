@@ -464,6 +464,12 @@ class subscriptions {
         // Guest user should never be subscribed to a forum.
         unset($results[$CFG->siteguest]);
 
+        // Apply the activity module availability resetrictions.
+        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
+        $modinfo = get_fast_modinfo($forum->course);
+        $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
+        $results = $info->filter_user_list($results);
+
         return $results;
     }
 
