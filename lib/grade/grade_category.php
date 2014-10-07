@@ -2249,11 +2249,14 @@ class grade_category extends grade_object {
         }
 
         //if marking category visible make sure parent category is visible MDL-21367
-        if ($this->is_hidden() != $hidden) {
+        if( !$hidden ) {
             $category_array = grade_category::fetch_all(array('id'=>$this->parent));
             if ($category_array && array_key_exists($this->parent, $category_array)) {
                 $category = $category_array[$this->parent];
-                $category->set_hidden($hidden, false);
+                //call set_hidden on the category regardless of whether it is hidden as its parent might be hidden
+                //if($category->is_hidden()) {
+                    $category->set_hidden($hidden, false);
+                //}
             }
         }
     }
