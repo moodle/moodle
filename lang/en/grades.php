@@ -116,6 +116,7 @@ $string['calculationsaved'] = 'Calculation saved';
 $string['calculationview'] = 'View calculation';
 $string['cannotaccessgroup'] = 'Can not access grades of selected group, sorry.';
 $string['categories'] = 'Categories';
+$string['categoriesanditems'] = 'Categories and items';
 $string['category'] = 'Category';
 $string['categoryedit'] = 'Edit category';
 $string['categoryname'] = 'Category name';
@@ -173,6 +174,7 @@ $string['editgradeletters'] = 'Edit grade letters';
 $string['editoutcome'] = 'Edit outcome';
 $string['editoutcomes'] = 'Edit outcomes';
 $string['editscale'] = 'Edit scale';
+$string['edittree'] = 'Setup';
 $string['editverbose'] = 'Edit {$a->category} {$a->itemmodule} {$a->itemname}';
 $string['enableajax'] = 'Enable AJAX';
 $string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader report, simplifying and speeding up common operations. Depends on Javascript being switched on at the user\'s browser level.';
@@ -593,7 +595,6 @@ $string['setgradeletters'] = 'Set grade letters';
 $string['setpreferences'] = 'Set preferences';
 $string['setting'] = 'Setting';
 $string['settings'] = 'Settings';
-$string['setupgradeslayout'] = 'Set up grades layout';
 $string['setweights'] = 'Set weights';
 $string['showanalysisicon'] = 'Show grade analysis icon';
 $string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
@@ -739,8 +740,6 @@ $string['yourgrade'] = 'Your grade';
 
 // Deprecated since Moodle 2.8
 
-$string['categoriesanditems'] = 'Setup';
 $string['categoriesedit'] = 'Edit setup';
-$string['edittree'] = 'Setup';
 $string['fullview'] = 'Full view';
 $string['simpleview'] = 'Simple view';
