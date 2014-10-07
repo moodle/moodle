@@ -334,8 +334,13 @@ function local_kaltura_strip_querystring($endpoint, $params) {
  * @param array $withblocks True if Moodle blocks are to be included on the page else false.
  * @return string Returns HTML required to initiate an LTI launch.
  */
-function local_kaltura_request_lti_launch($ltirequest, $withblocks = true) {
+function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = null) {
     global $CFG, $USER;
+    
+    if(is_null($editor))
+    {
+        $editor = 'tinymce';
+    }
 
     $requestparams = array();
 
@@ -365,6 +370,7 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true) {
     $requestparams['tool_consumer_instance_guid'] = $urlparts['host'];
 
     $returnurlparams['unsigned'] = '0';
+    $returnurlparams['editor'] = $editor;
 
     // Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
     $url = new moodle_url('/local/kaltura/service.php', $returnurlparams);

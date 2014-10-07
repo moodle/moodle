@@ -48,6 +48,8 @@ $showdescription = optional_param('showDuration', '', PARAM_TEXT);
 $showowner = optional_param('showOwner', '', PARAM_TEXT);
 $player = optional_param('player', '', PARAM_TEXT);
 $size = optional_param('size', '', PARAM_TEXT);
+$editor = optional_param('editor', 'tinymce', PARAM_TEXT);
+
 
 $serviceurl = new moodle_url('/local/kaltura/service.php');
 
@@ -94,8 +96,16 @@ $params = array(
     'entryid' => $entryid,
     'title' => $title,
     'metadata' => $metadata,
+    'editor' => $editor,
 );
-$PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', array($params));
+if($editor == 'atto')
+{
+    require_once('attobsepreview.php');
+}
+else
+{
+    $PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', array($params));
 
-echo $OUTPUT->header();
-echo $OUTPUT->footer();
+    echo $OUTPUT->header();
+    echo $OUTPUT->footer();
+}
