@@ -46,8 +46,6 @@ class rule_form extends \moodleform {
         $pluginlist = $this->_customdata['pluginlist'];
         $rule = $this->_customdata['rule'];
         $courseid = $this->_customdata['courseid'];
-        $eventlist = array_merge(array('' => get_string('choosedots')), $eventlist);
-        $pluginlist = array_merge(array('' => get_string('choosedots')), $pluginlist);
 
         // General section header.
         $mform->addElement('header', 'general', get_string('general'));

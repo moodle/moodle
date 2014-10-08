@@ -66,22 +66,38 @@ Y.extend(DropDown, Y.Base, {
      * @method updateEventsList
      */
     updateEventsList: function() {
+        var node, options, choosenode;
         var plugin = this.plugin.get('value'); // Get component name.
         var namespace = '\\' + plugin + '\\';
-        this.eventname.all(SELECTORS.OPTION).hide(); // Hide all options.
-        this.eventname.all(SELECTORS.OPTION).each(function(node) {
-            // Make sure we highlight only nodes with correct namespace.
-            if (node.get('value').substring(0, namespace.length) === namespace) {
-                node.show();
-            }
-        });
+        this.eventname.all(SELECTORS.OPTION).remove(true); // Delete all nodes.
+        options = this.get('eventlist');
+
         // Mark the default choose node as visible and selected.
-        var choosenode = this.eventname.one(SELECTORS.CHOOSE);
-        choosenode.show().set('selected', 'selected');
+        choosenode = Y.Node.create('<option value="">' + options[''] + '</option>');
+        choosenode.set('selected', 'selected');
+        this.eventname.appendChild(choosenode);
+
+        Y.Object.each(options, function(value, key) {
+            // Make sure we highlight only nodes with correct namespace.
+            if (key.substring(0, namespace.length) === namespace) {
+                node = Y.Node.create('<option value="' + key + '">' + value + '</option>');
+                this.eventname.appendChild(node);
+            }
+        }, this);
+
     }
 }, {
     NAME: 'dropDown',
-    ATTRS: {}
+    ATTRS: {
+        /**
+         * A list of events with components.
+         *
+         * @attribute eventlist
+         * @default null
+         * @type Object
+         */
+        eventlist: null
+    }
 });
 
 Y.namespace('M.tool_monitor.DropDown').init = function(config) {

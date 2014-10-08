@@ -55,7 +55,16 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->requires->yui_module('moodle-tool_monitor-dropdown', 'Y.M.tool_monitor.DropDown.init');
+
+// Get data ready for mform.
+$eventlist = tool_monitor\eventlist::get_all_eventlist(true);
+$pluginlist = tool_monitor\eventlist::get_plugin_list();
+$eventlist = array_merge(array('' => get_string('choosedots')), $eventlist);
+$pluginlist = array_merge(array('' => get_string('choosedots')), $pluginlist);
+
+// Set up the yui module.
+$PAGE->requires->yui_module('moodle-tool_monitor-dropdown', 'Y.M.tool_monitor.DropDown.init',
+        array(array('eventlist' => $eventlist)));
 
 // Site level report.
 if (empty($courseid)) {
@@ -65,9 +74,7 @@ if (empty($courseid)) {
     $PAGE->navigation->override_active_url($manageurl);
 }
 
-// Get data ready for mform.
-$eventlist = tool_monitor\eventlist::get_all_eventlist(true);
-$pluginlist = tool_monitor\eventlist::get_plugin_list();
+// Mform setup.
 if (!empty($ruleid)) {
     $rule = \tool_monitor\rule_manager::get_rule($ruleid)->get_mform_set_data();
     $rule->minutes = $rule->timewindow / MINSECS;
