@@ -68,6 +68,7 @@ echo $OUTPUT->header();
 
 // Create/delete subscription if needed.
 if (!empty($action)) {
+    require_sesskey();
     switch ($action) {
         case 'subscribe' :
             $rule = \tool_monitor\rule_manager::get_rule($ruleid);
@@ -104,7 +105,9 @@ if (!empty($totalrules)) {
     if (has_capability('tool/monitor:managerules', $context)) {
         $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
         $a = html_writer::link($manageurl, get_string('managerules', 'tool_monitor'));
-        echo html_writer::tag('span', get_string('manageruleslink', 'tool_monitor', $a));
+        $link = "&nbsp;";
+        $link .= html_writer::tag('span', get_string('manageruleslink', 'tool_monitor', $a));
+        echo $link;
     }
 }
 echo $OUTPUT->footer();

@@ -35,7 +35,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule {
-    use helper_trait;
 
     /**
      * @var \stdClass The rule object form database.
@@ -118,7 +117,7 @@ class rule {
             }
         }
         $url = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/index.php', array('courseid' => $courseid, 'ruleid' => $this->id,
-                'action' => 'subscribe'));
+                'action' => 'subscribe', 'sesskey' => sesskey()));
         return new \single_select($url, 'cmid', $options, '', $nothing = array('' => 'choosedots'));
     }
 
@@ -179,5 +178,70 @@ class rule {
             return $rule;
         }
         throw new \coding_exception('Invalid call to get_mform_set_data.');
+    }
+
+    /**
+     * Method to get event name.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public function get_event_name() {
+        $eventclass = $this->eventname;
+        if (class_exists($eventclass)) {
+            return $eventclass::get_name();
+        }
+        return get_string('eventnotfound', 'tool_monitor');
+    }
+
+    /**
+     * Get filter description.
+     *
+     * @return string
+     */
+    public function get_filters_description() {
+        $a = new \stdClass();
+        $a->freq = $this->frequency;
+        $mins = $this->timewindow / MINSECS; // Convert seconds to minutes.
+        $a->mins = $mins;
+        return get_string('freqdesc', 'tool_monitor', $a);
+    }
+
+    /**
+     * Get properly formatted name of the rule associated.
+     *
+     * @param \context $context context where this name would be displayed.
+     *
+     * @return string Formatted name of the rule.
+     */
+    public function get_name(\context $context) {
+        return format_text($this->name, FORMAT_HTML, array('context' => $context));
+    }
+
+    /**
+     * Get properly formatted description of the rule associated.
+     *
+     * @param \context $context context where this description would be displayed.
+     *
+     * @return string Formatted description of the rule.
+     */
+    public function get_description(\context $context) {
+        return format_text($this->description, $this->descriptionformat, array('context' => $context));
+    }
+
+    /**
+     * Get name of the plugin associated with this rule
+     *
+     * @return string Plugin name.
+     */
+    public function get_plugin_name() {
+        if ($this->plugin === 'core') {
+            $string = get_string('core', 'tool_monitor');
+        } else if (get_string_manager()->string_exists('pluginname', $this->plugin)) {
+            $string = get_string('pluginname', $this->plugin);
+        } else {
+            $string = $this->plugin;
+        }
+        return $string;
     }
 }

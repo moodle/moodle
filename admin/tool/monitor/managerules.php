@@ -66,6 +66,7 @@ echo $OUTPUT->header();
 
 // Copy/delete rule if needed.
 if (!empty($action) && $ruleid) {
+    require_sesskey();
     $rule = \tool_monitor\rule_manager::get_rule($ruleid);
     if ($rule->can_manage_rule()) {
         switch ($action) {

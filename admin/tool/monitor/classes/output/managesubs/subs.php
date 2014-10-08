@@ -124,7 +124,7 @@ class subs extends \table_sql implements \renderable {
 
         $a = $sub->get_name($this->context);
         $deleteurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/index.php', array('subscriptionid' => $sub->id,
-                'action' => 'unsubscribe', 'courseid' => $this->courseid));
+                'action' => 'unsubscribe', 'courseid' => $this->courseid, 'sesskey' => sesskey()));
         $action = new \component_action('click', 'M.util.show_confirm_dialog', array('message' => get_string('subareyousure',
             'tool_monitor', $a)));
         $icon = $OUTPUT->action_link($deleteurl,

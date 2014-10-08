@@ -157,11 +157,11 @@ class renderable extends \table_sql implements \renderable {
         if ($this->hassystemcap || ($rule->courseid !== 0)) {
             // There might be site rules which the user can not manage.
             $editurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/edit.php', array('ruleid' => $rule->id,
-                    'courseid' => $rule->courseid));
+                    'courseid' => $rule->courseid, 'sesskey' => sesskey()));
             $copyurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php',
-                    array('ruleid' => $rule->id, 'action' => 'copy', 'courseid' => $this->courseid));
+                    array('ruleid' => $rule->id, 'action' => 'copy', 'courseid' => $this->courseid, 'sesskey' => sesskey()));
             $deleteurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php', array('ruleid' => $rule->id,
-                    'action' => 'delete', 'courseid' => $rule->courseid));
+                    'action' => 'delete', 'courseid' => $rule->courseid, 'sesskey' => sesskey()));
 
             $icon = $OUTPUT->render(new \pix_icon('t/edit', get_string('editrule', 'tool_monitor')));
             $manage .= \html_writer::link($editurl, $icon, array('class' => 'action-icon'));

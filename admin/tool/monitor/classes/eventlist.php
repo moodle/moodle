@@ -165,6 +165,7 @@ class eventlist {
     public static function get_all_eventlist($withoutcomponent = false) {
         if ($withoutcomponent) {
             $return = array_merge(self::get_core_eventlist(), self::get_non_core_eventlist($withoutcomponent));
+            array_multisort($return, SORT_NATURAL);
         } else {
             $return = array_merge(array('core' => self::get_core_eventlist()),
                     self::get_non_core_eventlist($withoutcomponent = false));

@@ -3773,12 +3773,6 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Let admin tools hook into course navigation.
-        $tools = get_plugin_list_with_function('tool', 'extend_navigation_course', 'lib.php');
-        foreach ($tools as $toolfunction) {
-            $toolfunction($coursenode, $course, $coursecontext);
-        }
-
         // Add view grade report is permitted
         $reportavailable = false;
         if (has_capability('moodle/grade:viewall', $coursecontext)) {
@@ -3897,6 +3891,13 @@ class settings_navigation extends navigation_node {
                 $switchroles->add($name, $url, self::TYPE_SETTING, null, $key, new pix_icon('i/switchrole', ''));
             }
         }
+
+        // Let admin tools hook into course navigation.
+        $tools = get_plugin_list_with_function('tool', 'extend_navigation_course', 'lib.php');
+        foreach ($tools as $toolfunction) {
+            $toolfunction($coursenode, $course, $coursecontext);
+        }
+
         // Return we are done
         return $coursenode;
     }
