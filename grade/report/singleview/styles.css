@@ -43,10 +43,10 @@
    float:left;
 }
 .path-grade-report-singleview .generaltable {
-  width: 100%;
+    width: 100%;
 }
 .path-grade-report-singleview .generaltable th {
-  text-align: left;
+    text-align: left;
 }
 
 .dir-rtl.path-grade-report-singleview .generaltable th {

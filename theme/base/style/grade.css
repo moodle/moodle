@@ -6,10 +6,10 @@
 .path-grade-edit-tree .movetarget {position: relative;width: 80px;height: 16px;}
 
 .path-grade-edit-tree .setup-grades {
-	width: 100%;
+    width: 100%;
 }
 .path-grade-edit-tree .setup-grades thead th {
-	text-align: left;
+    text-align: left;
 }
 .path-grade-edit-tree .setup-grades .column-rowspan {
     padding: 0;
@@ -27,7 +27,7 @@
     padding-left: 0;
 }
 .path-grade-edit-tree .setup-grades .column-name img.smallicon {
-	margin: 0 .3em;
+    margin: 0 .3em;
 }
 .path-grade-edit-tree .setup-grades .category input[type="text"],
 .path-grade-edit-tree .setup-grades .category .column-range,
@@ -100,7 +100,7 @@
 }
 
 .dir-rtl.path-grade-edit-tree .setup-grades thead th {
-	text-align: right;
+    text-align: right;
 }
 .dir-rtl.path-grade-edit-tree .setup-grades .category td.column-name {
     padding-right: 0;
@@ -119,7 +119,7 @@
     margin-right: 0;
 }
 .dir-rtl.path-grade-edit-tree .setup-grades .column-weight.level3 {
-	padding-left: 0;
+    padding-left: 0;
     padding-right: 37px;
 }
 .dir-rtl.path-grade-edit-tree .setup-grades .column-weight.level4 {
@@ -250,13 +250,13 @@
 
 /** User report **/
 .path-grade-report-user .user-grade {
-	border-color: black;
+    border-color: black;
 }
 .path-grade-report-user .user-grade.generaltable .levelodd {
-	background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
 .path-grade-report-user .user-grade.generaltable .leveleven {
-	background-color: #fafafa;
+    background-color: #fafafa;
 }
 .path-grade-report-user .user-grade.generaltable tbody tr:hover > td,
 .path-grade-report-user .user-grade.generaltable tbody tr:hover > th {
