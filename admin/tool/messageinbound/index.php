@@ -62,11 +62,11 @@ if (empty($classname)) {
         $record->defaultexpiration = (int) $data->defaultexpiration;
 
         if ($handler->can_change_validateaddress()) {
-            $record->validateaddress = (int) $data->validateaddress;
+            $record->validateaddress = !empty($data->validateaddress);
         }
 
         if ($handler->can_change_enabled()) {
-            $record->enabled = (int) $data->enabled;
+            $record->enabled = !empty($data->enabled);
         }
         $DB->update_record('messageinbound_handlers', $record);
         redirect($PAGE->url);
