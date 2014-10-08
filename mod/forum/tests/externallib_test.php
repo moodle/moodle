@@ -482,18 +482,22 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'posts' => array(),
             'warnings' => array(),
         );
+
+        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
+            context_user::instance($discussion1reply2->userid)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply2->id,
             'discussion' => $discussion1reply2->discussion,
             'parent' => $discussion1reply2->parent,
-            'userid' => $discussion1reply2->userid,
+            'userid' => (int) $discussion1reply2->userid,
             'created' => $discussion1reply2->created,
             'modified' => $discussion1reply2->modified,
             'mailed' => $discussion1reply2->mailed,
             'subject' => $discussion1reply2->subject,
             'message' => file_rewrite_pluginfile_urls($discussion1reply2->message, 'pluginfile.php',
                     $forum1context->id, 'mod_forum', 'post', $discussion1reply2->id),
-            'messageformat' => $discussion1reply2->messageformat,
+            'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'messagetrust' => $discussion1reply2->messagetrust,
             'attachment' => $discussion1reply2->attachment,
             'totalscore' => $discussion1reply2->totalscore,
@@ -501,20 +505,25 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'children' => array(),
             'canreply' => true,
             'postread' => false,
-            'userfullname' => fullname($user3)
+            'userfullname' => fullname($user3),
+            'userpictureurl' => $userpictureurl
         );
+
+        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
+            context_user::instance($discussion1reply1->userid)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply1->id,
             'discussion' => $discussion1reply1->discussion,
             'parent' => $discussion1reply1->parent,
-            'userid' => $discussion1reply1->userid,
+            'userid' => (int) $discussion1reply1->userid,
             'created' => $discussion1reply1->created,
             'modified' => $discussion1reply1->modified,
             'mailed' => $discussion1reply1->mailed,
             'subject' => $discussion1reply1->subject,
             'message' => file_rewrite_pluginfile_urls($discussion1reply1->message, 'pluginfile.php',
                     $forum1context->id, 'mod_forum', 'post', $discussion1reply1->id),
-            'messageformat' => $discussion1reply1->messageformat,
+            'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'messagetrust' => $discussion1reply1->messagetrust,
             'attachment' => $discussion1reply1->attachment,
             'totalscore' => $discussion1reply1->totalscore,
@@ -522,7 +531,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'children' => array($discussion1reply2->id),
             'canreply' => true,
             'postread' => false,
-            'userfullname' => fullname($user2)
+            'userfullname' => fullname($user2),
+            'userpictureurl' => $userpictureurl
         );
 
         // Test a discussion with two additional posts (total 3 posts).

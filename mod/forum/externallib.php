@@ -483,8 +483,35 @@ class mod_forum_external extends external_api {
             }
 
             $user = new stdclass();
+            $user->id = $post->userid;
             $user = username_load_fields_from_object($user, $post);
-            $posts[$pid]->userfullname = fullname($user, $canviewfullname);
+            $post->userfullname = fullname($user, $canviewfullname);
+            $post->userpictureurl = moodle_url::make_webservice_pluginfile_url(
+                    context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+
+            // Rewrite embedded images URLs.
+            list($post->message, $post->messageformat) =
+                external_format_text($post->message, $post->messageformat, $modcontext->id, 'mod_forum', 'post', $post->id);
+
+            // List attachments.
+            if (!empty($post->attachment)) {
+                $post->attachments = array();
+
+                $fs = get_file_storage();
+                if ($files = $fs->get_area_files($modcontext->id, 'mod_forum', 'attachment', $post->id, "filename", false)) {
+                    foreach ($files as $file) {
+                        $filename = $file->get_filename();
+                        $fileurl = moodle_url::make_webservice_pluginfile_url(
+                                        $modcontext->id, 'mod_forum', 'attachment', $post->id, '/', $filename);
+
+                        $post->attachments[] = array(
+                            'filename' => $filename,
+                            'mimetype' => $file->get_mimetype(),
+                            'fileurl'  => $fileurl->out(false)
+                        );
+                    }
+                }
+            }
 
             $posts[$pid] = (array) $post;
         }
@@ -516,15 +543,25 @@ class mod_forum_external extends external_api {
                                 'mailed' => new external_value(PARAM_INT, 'Mailed?'),
                                 'subject' => new external_value(PARAM_TEXT, 'The post subject'),
                                 'message' => new external_value(PARAM_RAW, 'The post message'),
-                                'messageformat' => new external_value(PARAM_INT, 'The post message format'),
+                                'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
-                                'attachment' => new external_value(PARAM_RAW, 'Attachments'),
+                                'attachment' => new external_value(PARAM_RAW, 'Has attachments?'),
+                                'attachments' => new external_multiple_structure(
+                                    new external_single_structure(
+                                        array (
+                                            'filename' => new external_value(PARAM_FILE, 'file name'),
+                                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
+                                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
+                                        )
+                                    ), 'attachments', VALUE_OPTIONAL
+                                ),
                                 'totalscore' => new external_value(PARAM_INT, 'The post message total score'),
                                 'mailnow' => new external_value(PARAM_INT, 'Mail now?'),
                                 'children' => new external_multiple_structure(new external_value(PARAM_INT, 'children post id')),
                                 'canreply' => new external_value(PARAM_BOOL, 'The user can reply to posts?'),
                                 'postread' => new external_value(PARAM_BOOL, 'The post was read'),
-                                'userfullname' => new external_value(PARAM_TEXT, 'Post author full name')
+                                'userfullname' => new external_value(PARAM_TEXT, 'Post author full name'),
+                                'userpictureurl' => new external_value(PARAM_URL, 'Post author picture.', VALUE_OPTIONAL)
                             ), 'post'
                         )
                     ),
