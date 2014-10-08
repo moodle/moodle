@@ -88,8 +88,8 @@ if (!empty($add)) {
     if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)
             and has_capability('moodle/grade:managegradingforms', $context)) {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
-
-        $data->_advancedgradingdata['methods'] = grading_manager::available_methods();
+        $gradingman = get_grading_manager($context, 'mod_'.$data->modulename);
+        $data->_advancedgradingdata['methods'] = $gradingman->available_methods();
         $areas = grading_manager::available_areas('mod_'.$module->name);
 
         foreach ($areas as $areaname => $areatitle) {

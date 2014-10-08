@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="mod/forum/db" VERSION="20141028" COMMENT="XMLDB file for Moodle mod/forum"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
