@@ -992,7 +992,7 @@ class behat_general extends behat_base {
      * @Then /^"(?P<row_string>[^"]*)" row "(?P<column_string>[^"]*)" column of "(?P<table_string>[^"]*)" table should contain "(?P<value_string>[^"]*)"$/
      * @throws ElementNotFoundException
      * @param string $row row text which will be looked in.
-     * @param string $column column text to search
+     * @param string $column column text to search (or numeric value for the column position)
      * @param string $table table id/class/caption
      * @param string $value text to check.
      */
@@ -1004,42 +1004,41 @@ class behat_general extends behat_base {
         $valueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($value);
         $columnliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($column);
 
-        // Header can be in thead or tbody (first row), following xpath should work.
-        $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
-            $columnliteral . "])]";
-        $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
-            $columnliteral . "])]";
+        if (preg_match('/^-?(\d+)-?$/', $column, $columnasnumber)) {
+            // Column indicated as a number, just use it as position of the column.
+            $columnpositionxpath = "/child::*[position() = {$columnasnumber[1]}]";
+        } else {
+            // Header can be in thead or tbody (first row), following xpath should work.
+            $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
+                $columnliteral . "])]";
+            $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
+                $columnliteral . "])]";
 
-        // Check if column exists.
-        $columnheaderxpath = $tablexpath . "[" . $theadheaderxpath . " | " . $tbodyheaderxpath . "]";
-        $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
-        if (empty($columnheader)) {
-            $columnexceptionmsg = $column . '" in table "' . $table . '"';
-            throw new ElementNotFoundException($this->getSession(), 'Column', null, $columnexceptionmsg);
+            // Check if column exists.
+            $columnheaderxpath = $tablexpath . "[" . $theadheaderxpath . " | " . $tbodyheaderxpath . "]";
+            $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
+            if (empty($columnheader)) {
+                $columnexceptionmsg = $column . '" in table "' . $table . '"';
+                throw new ElementNotFoundException($this->getSession(), "\n$columnheaderxpath\n\n".'Column', null, $columnexceptionmsg);
+            }
+            // Following conditions were considered before finding column count.
+            // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
+            // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
+            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $theadheaderxpath .
+                "/preceding-sibling::*) + 1]";
         }
 
         // Check if value exists in specific row/column.
         // Get row xpath.
         $rowxpath = $tablexpath."/tbody/tr[th[normalize-space(.)=" . $rowliteral . "] | td[normalize-space(.)=" . $rowliteral . "]]";
 
-        // Following conditions were considered before finding column count.
-        // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
-        // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
-        $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $theadheaderxpath .
-            "/preceding-sibling::*) + 1]";
         $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
+
         // Looks for the requested node inside the container node.
         $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
         if (empty($coumnnode)) {
-            // Check if tbody/tr[1] contains header selector.
-            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $tbodyheaderxpath .
-                "/preceding-sibling::*) + 1]";
-            $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
-            $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
-            if (empty($coumnnode)) {
-                $locatorexceptionmsg = $value . '" in "' . $row . '" row with column "' . $column;
-                throw new ElementNotFoundException($this->getSession(), 'Column value', null, $locatorexceptionmsg);
-            }
+            $locatorexceptionmsg = $value . '" in "' . $row . '" row with column "' . $column;
+            throw new ElementNotFoundException($this->getSession(), "\n$columnvaluexpath\n\n".'Column value', null, $locatorexceptionmsg);
         }
     }
 
@@ -1071,6 +1070,10 @@ class behat_general extends behat_base {
      * Checks that the provided value exist in table.
      * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
+     * First row may contain column headers or numeric indexes of the columns
+     * (syntax -1- is also considered to be column index). Column indexes are
+     * useful in case of multirow headers and/or presence of cells with colspan.
+     *
      * @Then /^the following should exist in the "(?P<table_string>[^"]*)" table:$/
      * @throws ExpectationException
      * @param string $table name of table
@@ -1081,10 +1084,14 @@ class behat_general extends behat_base {
     public function following_should_exist_in_the_table($table, TableNode $data) {
         $datahash = $data->getHash();
 
-        foreach ($datahash as $value) {
-            $row = array_shift($value);
-            foreach ($value as $column => $value) {
-                $this->row_column_of_table_should_contain($row, $column, $table, $value);
+        foreach ($datahash as $row) {
+            $firstcell = null;
+            foreach ($row as $column => $value) {
+                if ($firstcell === null) {
+                    $firstcell = $value;
+                } else {
+                    $this->row_column_of_table_should_contain($firstcell, $column, $table, $value);
+                }
             }
         }
     }
