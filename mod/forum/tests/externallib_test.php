@@ -81,6 +81,24 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->course = $course2->id;
         $forum2 = self::getDataGenerator()->create_module('forum', $record);
 
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        // Expect one discussion.
+        $forum1->numdiscussions = 1;
+
+        $record = new stdClass();
+        $record->course = $course2->id;
+        $record->userid = $user->id;
+        $record->forum = $forum2->id;
+        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        // Expect two discussions.
+        $forum2->numdiscussions = 2;
+
         // Check the forum was correctly created.
         $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',
                 array('forum1' => $forum1->id, 'forum2' => $forum2->id)));

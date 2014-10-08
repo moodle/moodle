@@ -82,6 +82,8 @@ class mod_forum_external extends external_api {
                 if ($forums = $DB->get_records('forum', array('course' => $cid))) {
                     // Get the modinfo for the course.
                     $modinfo = get_fast_modinfo($cid);
+                    // Get the course object.
+                    $course = $modinfo->get_course();
                     // Get the forum instances.
                     $foruminstances = $modinfo->get_instances_of('forum');
                     // Loop through the forums returned by modinfo.
@@ -101,6 +103,10 @@ class mod_forum_external extends external_api {
                             $context->id, 'mod_forum', 'intro', 0);
                         // Add the course module id to the object, this information is useful.
                         $forum->cmid = $cm->id;
+
+                        // Discussions count. This function does static request cache.
+                        $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
+
                         // Add the forum to the array to return.
                         $arrforums[$forum->id] = (array) $forum;
                     }
@@ -144,7 +150,8 @@ class mod_forum_external extends external_api {
                     'completiondiscussions' => new external_value(PARAM_INT, 'Student must create discussions'),
                     'completionreplies' => new external_value(PARAM_INT, 'Student must post replies'),
                     'completionposts' => new external_value(PARAM_INT, 'Student must post discussions or replies'),
-                    'cmid' => new external_value(PARAM_INT, 'Course module id')
+                    'cmid' => new external_value(PARAM_INT, 'Course module id'),
+                    'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL)
                 ), 'forum'
             )
         );
