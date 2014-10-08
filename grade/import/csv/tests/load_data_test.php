@@ -41,9 +41,9 @@ require_once($CFG->libdir . '/grade/tests/fixtures/lib.php');
 class gradeimport_csv_load_data_testcase extends grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
-    protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Course total"
-Anne,Able,,"Moodle HQ","Rock on!",student7@mail.com,56.00,"We welcome feedback",56.00
-Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,75.00';
+    protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Course total","Last downloaded from this course"
+Anne,Able,1,"Moodle HQ","Rock on!",student7@mail.com,56.00,"We welcome feedback",56.00,1412327067
+Bobby,Bunce,2,"Moodle HQ","Rock on!",student5@mail.com,75.00,,75.00,1412327067';
 
     /** @var string $badtext Text to be imported. This data has an extra column and should not succeed in being imported. */
     protected $badtext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group","Course total"
@@ -94,24 +94,26 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,75.00';
         $expecteddata = array(array(
                 'Anne',
                 'Able',
-                '',
+                '1',
                 'Moodle HQ',
                 'Rock on!',
                 'student7@mail.com',
                 56.00,
                 'We welcome feedback',
-                56.00
+                56.00,
+                1412327067
             ),
             array(
                 'Bobby',
                 'Bunce',
-                '',
+                '2',
                 'Moodle HQ',
                 'Rock on!',
                 'student5@mail.com',
                 75.00,
                 '',
-                75.00
+                75.00,
+                1412327067
             )
         );
 
@@ -124,8 +126,10 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,75.00';
             'Email address',
             'Assignment: Assignment for grape group',
             'Feedback: Assignment for grape group',
-            'Course total'
+            'Course total',
+            'Last downloaded from this course'
         );
+
         // Check that general data is returned as expected.
         $this->assertEquals($csvpreview->get_previewdata(), $expecteddata);
         // Check that headers are returned as expected.
@@ -382,22 +386,29 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,75.00';
      */
     public function test_prepare_import_grade_data() {
         global $DB;
-
+        $course1 = $this->getDataGenerator()->create_course();
         // Need to add one of the users into the system.
         $user = new stdClass();
         $user->firstname = 'Anne';
         $user->lastname = 'Able';
         $user->email = 'student7@mail.com';
+        $user->id_number = 1;
         // Insert user 1.
-        $this->getDataGenerator()->create_user($user);
+        $user1 = $this->getDataGenerator()->create_user($user);
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+
         $user = new stdClass();
         $user->firstname = 'Bobby';
         $user->lastname = 'Bunce';
         $user->email = 'student5@mail.com';
+        $user->id_number = 2;
         // Insert user 2.
-        $this->getDataGenerator()->create_user($user);
+        $user2 = $this->getDataGenerator()->create_user($user);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
 
-        $this->csv_load($this->oktext);
+       $assign1 = $this->getDataGenerator()->create_module('assign', array('course' => $course1->id, 'itemid' => 1));
+
+        $csvdata =$this->csv_load($this->oktext);
 
         $importcode = 007;
         $verbosescales = 0;
@@ -415,10 +426,12 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,75.00';
         $formdata->mapping_6 = 'new';
         $formdata->mapping_7 = 'feedback_2';
         $formdata->mapping_8 = 0;
+        $formdata->mapping_9 = 0;
         $formdata->map = 1;
         $formdata->id = 2;
         $formdata->iid = $this->iid;
         $formdata->importcode = $importcode;
+        $formdata->forceimport = 1;
 
         // Blam go time.
         $testobject = new phpunit_gradeimport_csv_load_data();
@@ -426,5 +439,30 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,75.00';
                 $verbosescales);
         // If everything inserted properly then this should be true.
         $this->assertTrue($dataloaded);
+        grade_import_commit($this->courseid, $importcode, false, false);
+
+        // Test using force import disabled.
+        $formdata->mapping_6 = $assign1->id;
+        $formdata->forceimport = 0;
+        $csvdata[0][6] = '76.00';
+        $testobject = new phpunit_gradeimport_csv_load_data();
+        $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport, $this->courseid, '', '',
+            $verbosescales);
+        $this->assertTrue($dataloaded);
+        grade_import_commit($this->courseid, $importcode, false, false);
+
+        // Test last exported date.
+        $formdata->mapping_6 = $assign1->id;
+        $formdata->forceimport = 0;
+        $csvdata[0][6] = '77.00';
+        $testobject = new phpunit_gradeimport_csv_load_data();
+        $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport, $this->courseid, '', '',
+            $verbosescales);
+        // Should return false now, since the grade were updated since last export.
+        $this->assertFalse($dataloaded);
+
+        // Make sure we get a error message.
+        $errors = $testobject->get_gradebookerrors();
+        $this->assertEquals($errors[0], get_string('gradealreadyupdated', 'grades', fullname($user1)));
     }
 }
