@@ -102,7 +102,33 @@ class subscription_manager {
         if ($checkuser && $subscription->userid != $USER->id) {
             throw new \coding_exception('Invalid subscription supplied');
         }
-        return $DB->delete_records('tool_monitor_subscriptions', array('id' => $subscription->id));
+
+        // Store the subscription before we delete it.
+        $subscription = $DB->get_record('tool_monitor_subscriptions', array('id' => $subscription->id));
+
+        $success = $DB->delete_records('tool_monitor_subscriptions', array('id' => $subscription->id));
+
+        // If successful trigger a subscription_deleted event.
+        if ($success) {
+            if (!empty($subscription->courseid)) {
+                $courseid = $subscription->courseid;
+                $context = \context_course::instance($subscription->courseid);
+            } else {
+                $courseid = 0;
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $subscription->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\subscription_deleted::create($params);
+            $event->add_record_snapshot('tool_monitor_subscriptions', $subscription);
+            $event->trigger();
+        }
+
+        return $success;
     }
 
     /**
@@ -133,12 +159,49 @@ class subscription_manager {
      * Delete all subscribers for a given rule.
      *
      * @param int $ruleid rule id.
+     * @param \context|null $coursecontext the context of the course - this is passed when we
+     *      can not get the context via \context_course as the course has been deleted.
      *
      * @return bool
      */
-    public static function remove_all_subscriptions_for_rule($ruleid) {
+    public static function remove_all_subscriptions_for_rule($ruleid, $coursecontext = null) {
         global $DB;
-        return $DB->delete_records('tool_monitor_subscriptions', array('ruleid' => $ruleid));
+
+        // Store all the subscriptions we have to delete.
+        $subscriptions = $DB->get_recordset('tool_monitor_subscriptions', array('ruleid' => $ruleid));
+
+        // Now delete them.
+        $success = $DB->delete_records('tool_monitor_subscriptions', array('ruleid' => $ruleid));
+
+        // If successful and there were subscriptions that were deleted trigger a subscription deleted event.
+        if ($success && $subscriptions) {
+            foreach ($subscriptions as $subscription) {
+                // It is possible that we are deleting rules associated with a deleted course, so we should be
+                // passing the context as the second parameter.
+                if (!is_null($coursecontext)) {
+                    $context = $coursecontext;
+                    $courseid = $subscription->courseid;
+                } else if (!empty($subscription->courseid) && ($coursecontext =
+                        \context_course::instance($subscription->courseid, IGNORE_MISSING))) {
+                    $courseid = $subscription->courseid;
+                    $context = $coursecontext;
+                } else {
+                    $courseid = 0;
+                    $context = \context_system::instance();
+                }
+
+                $params = array(
+                    'objectid' => $subscription->id,
+                    'courseid' => $courseid,
+                    'context' => $context
+                );
+                $event = \tool_monitor\event\subscription_deleted::create($params);
+                $event->add_record_snapshot('tool_monitor_subscriptions', $subscription);
+                $event->trigger();
+            }
+        }
+
+        return $success;
     }
 
     /**

@@ -113,7 +113,7 @@ class rule_manager {
     public static function delete_rule($ruleid, $coursecontext = null) {
         global $DB;
 
-        subscription_manager::remove_all_subscriptions_for_rule($ruleid);
+        subscription_manager::remove_all_subscriptions_for_rule($ruleid, $coursecontext);
 
         // Retrieve the rule from the DB before we delete it, so we have a record when we trigger a rule deleted event.
         $rule = $DB->get_record('tool_monitor_rules', array('id' => $ruleid));

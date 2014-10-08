@@ -43,6 +43,7 @@ $string['eventrulecreated'] = 'Rule created';
 $string['eventruledeleted'] = 'Rule deleted';
 $string['eventruleupdated'] = 'Rule updated';
 $string['eventsubcreated'] = 'Subscription created';
+$string['eventsubdeleted'] = 'Subscription deleted';
 $string['errorincorrectevent'] = 'Please select an event related to the selected plugin';
 $string['freqdesc'] = '{$a->freq} times in {$a->mins} minutes';
 $string['frequency'] = 'Frequency';

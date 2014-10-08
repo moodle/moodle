@@ -209,4 +209,83 @@ class tool_monitor_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_monitor\event\subscription_created', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
     }
+
+    /**
+     * Test the subscription deleted event.
+     */
+    public function test_subscription_deleted() {
+        // Create the items we need to test this.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        // Create a rule to subscribe to.
+        $rule = $monitorgenerator->create_rule();
+
+        $sub = new stdClass();
+        $sub->courseid = $course->id;
+        $sub->userid = $user->id;
+        $sub->ruleid = $rule->id;
+
+        // Create the subscription we are going to delete.
+        $subscription = $monitorgenerator->create_subscription($sub);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        \tool_monitor\subscription_manager::delete_subscription($subscription->id, false);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event contains the expected values.
+        $this->assertInstanceOf('\tool_monitor\event\subscription_deleted', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($subscription->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+
+        // Now let's delete a system subscription.
+        $sub = new stdClass();
+        $sub->courseid = 0;
+        $sub->userid = $user->id;
+        $sub->ruleid = $rule->id;
+
+        // Create the subscription we are going to delete.
+        $subscription = $monitorgenerator->create_subscription($sub);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        \tool_monitor\subscription_manager::delete_subscription($subscription->id, false);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event uses the system context.
+        $this->assertInstanceOf('\tool_monitor\event\subscription_deleted', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+
+        // Now, create a bunch of subscriptions for the rule we created.
+        $sub->courseid = $course->id;
+        for ($i = 1; $i <= 10; $i++) {
+            $sub->userid = $i;
+            $subscription = $monitorgenerator->create_subscription($sub);
+            if ($i == 1) {
+                $subscription1 = $subscription;
+            }
+        }
+
+        // Trigger and capture the events.
+        $sink = $this->redirectEvents();
+        \tool_monitor\subscription_manager::remove_all_subscriptions_for_rule($rule->id);
+        $events = $sink->get_events();
+
+        // Check that there were 10 events in total.
+        $this->assertCount(10, $events);
+
+        // Get the first event and ensure it is valid (we can assume the rest are the same).
+        $event = reset($events);
+        $this->assertInstanceOf('\tool_monitor\event\subscription_deleted', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($subscription1->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+    }
 }
