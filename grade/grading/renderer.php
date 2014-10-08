@@ -45,6 +45,8 @@ class core_grading_renderer extends plugin_renderer_base {
 
         $method = $manager->get_active_method();
         $methods = $manager->get_available_methods();
+        $methods['none'] = $methods[''];
+        unset($methods['']);
         $selector = new single_select(new moodle_url($targeturl, array('sesskey' => sesskey())),
             'setmethod', $methods, empty($method) ? 'none' : $method, null, 'activemethodselector');
         $selector->set_label(get_string('changeactivemethod', 'core_grading'));
