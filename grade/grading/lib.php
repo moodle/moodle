@@ -44,7 +44,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 function get_grading_manager($context_or_areaid = null, $component = null, $area = null) {
     global $DB;
-    $gradingarea = null;
+
+    $manager = new grading_manager();
 
     if (is_object($context_or_areaid)) {
         $context = $context_or_areaid;
@@ -52,16 +53,10 @@ function get_grading_manager($context_or_areaid = null, $component = null, $area
         $context = null;
 
         if (is_numeric($context_or_areaid)) {
-            $gradingarea = $DB->get_record('grading_areas', array('id' => $context_or_areaid), '*', MUST_EXIST);
-
-            $context = context::instance_by_id($gradingarea->contextid, MUST_EXIST);
-            $component = $gradingarea->component;
-            $area = $gradingarea->areaname;
+            $manager->load($context_or_areaid);
+            return $manager;
         }
     }
-
-    $gradingmanagerclass = get_grading_manager_class($component);
-    $manager = new $gradingmanagerclass();
 
     if (!is_null($context)) {
         $manager->set_context($context);
@@ -71,27 +66,11 @@ function get_grading_manager($context_or_areaid = null, $component = null, $area
         $manager->set_component($component);
     }
 
-    if (!is_null($gradingarea)) {
-        $manager->set_areacache($gradingarea);
-    } else if (!is_null($area)) {
+    if (!is_null($area)) {
         $manager->set_area($area);
     }
 
     return $manager;
-}
-
-/*
- * Helper function to get grading class name, allows an activity to override the grading class.
- *
- * @param string|null $component the frankenstyle name of the component
- * @return string
- */
-function get_grading_manager_class($component) {
-    $gradingclass = $component.'_grading_manager';
-    if (class_exists($gradingclass)) {
-        return $customgradingmanager = $gradingclass;
-    }
-    return 'grading_manager';
 }
 
 /**
@@ -184,16 +163,6 @@ class grading_manager {
     }
 
     /**
-     * Sets the area the manager operates on
-     *
-     * @param string $area the name of the gradable area
-     */
-    public function set_areacache($areacache) {
-        $this->areacache = $areacache;
-        $this->area = $areacache->areaname;
-    }
-
-    /**
      * Returns a text describing the context and the component
      *
      * At the moment this works for gradable areas in course modules. In the future, this
@@ -279,7 +248,7 @@ class grading_manager {
     public static function available_methods($includenone = true) {
 
         if ($includenone) {
-            $list = array('none' => get_string('gradingmethodnone', 'core_grading'));
+            $list = array('' => get_string('gradingmethodnone', 'core_grading'));
         } else {
             $list = array();
         }
@@ -304,7 +273,7 @@ class grading_manager {
      */
     public function get_available_methods($includenone = true) {
         $this->ensure_isset(array('context'));
-        return $this->available_methods($includenone);
+        return self::available_methods($includenone);
     }
 
     /**
@@ -400,7 +369,7 @@ class grading_manager {
         $this->ensure_isset(array('context', 'component', 'area'));
 
         // make sure the passed method is empty or a valid plugin name
-        if (empty($method) || $method === 'none') {
+        if (empty($method)) {
             $method = null;
         } else {
             if ('gradingform_'.$method !== clean_param('gradingform_'.$method, PARAM_COMPONENT)) {

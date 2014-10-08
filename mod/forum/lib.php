@@ -238,6 +238,7 @@ function forum_update_instance($forum, $mform) {
             \mod_forum\subscriptions::subscribe_user($user->id, $forum, $modcontext);
         }
     }
+
     forum_grade_item_update($forum);
 
     return true;
