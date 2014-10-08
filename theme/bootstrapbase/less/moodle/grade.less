@@ -234,3 +234,23 @@
 .path-grade-edit-tree table.setup-grades .column-select {
     text-align: center;
 }
+
+/**
+ * Grader report.
+ */
+.path-grade-report {
+    .gradeparent {
+        table {
+            .border-radius(@baseBorderRadius);
+        }
+        table,
+        .cell {
+            border-color: @tableBorder;
+        }
+        tr:nth-of-type(even) .cell,
+        .floater .cell,
+        .avg {
+            background-color: @tableBackgroundAccent;
+        }
+    }
+}

@@ -3,99 +3,24 @@
  */
 M.gradereport_grader = {
     /**
-     * @param {Array} reports An array of instantiated report objects
-     */
-    reports : [],
-    /**
      * @namespace M.gradereport_grader
      * @param {Object} reports A collection of classes used by the grader report module
      */
     classes : {},
     /**
-     * @param {Object} tooltip Null or a tooltip object
-     */
-    tooltip : null,
-    /**
      * Instantiates a new grader report
      *
      * @function
      * @param {YUI} Y
-     * @param {String} id The id attribute of the reports table
      * @param {Object} cfg A configuration object
      * @param {Array} An array of items in the report
      * @param {Array} An array of users on the report
      * @param {Array} An array of feedback objects
      * @param {Array} An array of student grades
      */
-    init_report : function(Y, id, cfg, items, users, feedback, grades) {
-        this.tooltip = this.tooltip || {
-            overlay : null, // Y.Overlay instance
-            /**
-             * Attaches the tooltip event to the provided cell
-             *
-             * @function M.gradereport_grader.tooltip.attach
-             * @this M.gradereport_grader
-             * @param {Y.Node} td The cell to attach the tooltip event to
-             */
-            attach : function(td, report) {
-                td.on('mouseenter', this.show, this, report);
-            },
-            /**
-             * Shows the tooltip: Callback from @see M.gradereport_grader.tooltip#attach
-             *
-             * @function M.gradereport_grader.tooltip.show
-             * @this {M.gradereport_grader.tooltip}
-             * @param {Event} e
-             * @param {M.gradereport_grader.classes.report} report
-             */
-            show : function(e, report) {
-                e.halt();
-
-                var properties = report.get_cell_info(e.target);
-                if (!properties) {
-                    return;
-                }
-
-                var content = '<div class="graderreportoverlay" role="tooltip" aria-describedby="' + properties.id + '">';
-                content += '<div class="fullname">'+properties.username+'</div><div class="itemname">'+properties.itemname+'</div>';
-                if (properties.feedback) {
-                    content += '<div class="feedback">'+properties.feedback+'</div>';
-                }
-                content += '</div>';
-
-                properties.cell.on('mouseleave', this.hide, this, properties.cell);
-                properties.cell.addClass('tooltipactive');
-
-                this.overlay = this.overlay || (function(){
-                    var overlay = new Y.Overlay({
-                        bodyContent : 'Loading',
-                        visible : false,
-                        zIndex : 2
-                    });
-                    overlay.render(report.table.ancestor('div'));
-                    return overlay;
-                })();
-                this.overlay.set('xy', [e.target.getX()+(e.target.get('offsetWidth')/2),e.target.getY()+e.target.get('offsetHeight')-5]);
-                this.overlay.set("bodyContent", content);
-                this.overlay.show();
-                this.overlay.get('boundingBox').setStyle('visibility', 'visible');
-            },
-            /**
-             * Hides the tooltip
-             *
-             * @function M.gradereport_grader.tooltip.hide
-             * @this {M.gradereport_grader.tooltip}
-             * @param {Event} e
-             * @param {Y.Node} cell
-             */
-            hide : function(e, cell) {
-                cell.removeClass('tooltipactive');
-                this.overlay.hide();
-                this.overlay.get('boundingBox').setStyle('visibility', 'hidden');
-            }
-        };
+    init_report : function(Y, cfg, items, users, feedback, grades) {
         // Create the actual report
-        this.reports[id] = new this.classes.report(Y, id, cfg, items, users, feedback, grades);
+        new this.classes.report(Y, cfg, items, users, feedback, grades);
     }
 };
 
@@ -111,13 +36,12 @@ M.gradereport_grader = {
  * @constructor
  * @this {M.gradereport_grader}
  * @param {YUI} Y
- * @param {int} id The id of the table to attach the report to
  * @param {Object} cfg Configuration variables
  * @param {Array} items An array containing grade items
  * @param {Array} users An array containing user information
  * @param {Array} feedback An array containing feedback information
  */
-M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedback, grades) {
+M.gradereport_grader.classes.report = function(Y, cfg, items, users, feedback, grades) {
     this.Y = Y;
     this.isediting = (cfg.isediting);
     this.ajaxenabled = (cfg.ajaxenabled);
@@ -126,37 +50,6 @@ M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedbac
     this.feedback = feedback;
     this.table = Y.one('#user-grades');
     this.grades = grades;
-
-    // Alias this so that we can use the correct scope in the coming
-    // node iteration
-    this.table.all('tr').each(function(tr){
-        // Check it is a user row
-        if (tr.getAttribute('id').match(/^(fixed_)?user_(\d+)$/)) {
-            // Highlight rows
-            tr.all('th.cell').on('click', this.table_highlight_row, this, tr);
-            // Display tooltips
-            tr.all('td.cell').each(function(cell){
-                M.gradereport_grader.tooltip.attach(cell, this);
-            }, this);
-        }
-    }, this);
-
-    // If the fixed table exists then map those rows to highlight the
-    // grades table rows
-    var fixed = this.Y.one(id);
-    if (fixed) {
-        fixed.all('tr').each(function(tr) {
-            if (tr.getAttribute('id').match(/^fixed_user_(\d+)$/)) {
-                tr.all('th.cell').on('click', this.table_highlight_row, this, this.Y.one(tr.getAttribute('id').replace(/^fixed_/, '#')));
-            }
-        }, this);
-    }
-
-    // Highlight columns
-    this.table.all('.highlightable').each(function(cell){
-        cell.on('click', this.table_highlight_column, this, cell);
-        cell.removeClass('highlightable');
-    }, this);
 
     // If ajax is enabled then initialise the ajax component
     if (this.ajaxenabled) {
@@ -172,31 +65,6 @@ M.gradereport_grader.classes.report.prototype.users = [];             // Array c
 M.gradereport_grader.classes.report.prototype.feedback = [];          // Array containing feedback items
 M.gradereport_grader.classes.report.prototype.ajaxenabled = false;    // True is AJAX is enabled for the report
 M.gradereport_grader.classes.report.prototype.ajax = null;            // An instance of the ajax class or null
-/**
- * Highlights a row in the report
- *
- * @function
- * @param {Event} e
- * @param {Y.Node} tr The table row to highlight
- */
-M.gradereport_grader.classes.report.prototype.table_highlight_row = function (e, tr) {
-    tr.all('.cell').toggleClass('hmarked');
-};
-/**
- * Highlights a column in the table
- *
- * @function
- * @param {Event} e
- * @param {Y.Node} cell
- */
-M.gradereport_grader.classes.report.prototype.table_highlight_column = function(e, cell) {
-    // Among cell classes find the one that matches pattern / i[\d]+ /
-    var itemclass = (' '+cell.getAttribute('class')+' ').match(/ (i[\d]+) /);
-    if (itemclass) {
-        // Toggle class .vmarked for all cells in the table with the same class
-        this.table.all('.cell.'+itemclass[1]).toggleClass('vmarked');
-    }
-};
 /**
  * Builds an object containing information at the relevant cell given either
  * the cell to get information for or an array containing userid and itemid
@@ -234,13 +102,6 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
         return null;
     }
 
-    for (i in this.feedback) {
-        if (this.feedback[i] && this.feedback[i].user == userid && this.feedback[i].item == itemid) {
-            feedback = this.feedback[i].content;
-            break;
-        }
-    }
-
     return {
         id : cell.getAttribute('id'),
         userid : userid,
@@ -250,7 +111,6 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
         itemtype : this.items[itemid].type,
         itemscale : this.items[itemid].scale,
         itemdp : this.items[itemid].decimals,
-        feedback : feedback,
         cell : cell
     };
 };
@@ -274,28 +134,6 @@ M.gradereport_grader.classes.report.prototype.update_feedback = function(userid,
     this.feedback.push({user:userid,item:itemid,content:newfeedback});
     return true;
 };
-
-/**
- * Updates or creates the grade JS structure for the given user/item
- *
- * @function
- * @this {M.gradereport_grader}
- * @param {Int} userid
- * @param {Int} itemid
- * @param {String} newgrade
- * @return {Bool}
- */
-/*M.gradereport_grader.classes.report.prototype.update_grade = function(userid, itemid, newgrade) {
-    for (var i in this.grades) {
-        if (this.grades[i].user == userid && this.grades[i].item == itemid) {
-            this.grades[i].content = newgrade;
-            return true;
-        }
-    }
-    this.grades.push({user:userid,item:itemid,content:newgrade});
-    return true;
-};*/
-
 /**
  * Initialises the AJAX component of this report
  * @class ajax
@@ -379,11 +217,8 @@ M.gradereport_grader.classes.ajax.prototype.make_editable = function(e) {
     }
     this.current.replace().attach_key_events();
 
-    // Making a field editable changes the grade table width.
-    // Update the top scroll bar to reflect the new table width.
-    Y.use('moodle-gradereport_grader-scrollview', function() {
-        M.gradereport_grader.scrollview.resize();
-    });
+    // Fire the global resized event for the gradereport_grader to update the table row/column sizes.
+    Y.Global.fire('moodle-gradereport_grader:resized');
 };
 /**
  * Callback function for the user pressing the enter key on an editable field
@@ -460,6 +295,9 @@ M.gradereport_grader.classes.ajax.prototype.process_editable_field = function(ne
     if (next) {
         this.make_editable(next, null);
     }
+
+    // Fire the global resized event for the gradereport_grader to update the table row/column sizes.
+    Y.Global.fire('moodle-gradereport_grader:resized');
 };
 /**
  * Gets the next cell that is editable (right)

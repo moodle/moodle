@@ -1,645 +1,219 @@
-.path-grade-report-grader .flexible th {
-    white-space: normal;
+/**
+ * Container.
+ */
+.path-grade-report-grader .gradeparent {
+    position: relative;
 }
-.gradestable {
-    margin-bottom: 0;
+
+/**
+ * Tooltip and overlay.
+ */
+.path-grade-report-grader .gradeparent .grader-information-tooltip {
+    min-width: 200px;
 }
-.gradestable th.user img {
-    width: 20px;
-    height: 20px;
+.path-grade-report-grader .gradeparent .graderreportoverlay {
+    background-color: white;
+    width: auto;
+    padding: 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
-.gradestable th img {
-    vertical-align: text-bottom;
-    padding-bottom: 0;
+
+/**
+ * The table.
+ */
+.path-grade-report-grader .gradeparent table {
+    border: 1px solid #ccc;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-bottom-width: 0;
+    border-right-width: 0;
+    margin-bottom: 2em;
 }
-.gradestable th .grade_icons {
-    margin-top: .3em;
+.dir-rtl .path-grade-report-grader .gradeparent table {
+    border-left-width: 0;
+    border-right-width: 1px;
 }
-.gradestable th img.sorticon {
-    margin-left: .3em;
-}
-.dir-rtl .gradestable th img.sorticon {
-    margin-left: 0;
-    margin-right: .3em;
-}
-table#user-grades .catlevel2 {
-    background-color: #f9f9f9;
-}
-table#user-grades tr.range td.cell {
-    font-weight: 700;
-}
-table#user-grades tr.avg td.cell {
-    background-color: #efefff;
-    font-weight: 700;
-    color: #00008B;
-}
-table#user-grades tr.odd td.cell {
-    background-color: #efefef;
+
+/**
+ * All the cells.
+ */
+.path-grade-report-grader .gradeparent .cell {
+    border: 1px solid #ccc;
+    border-top-width: 0;
+    border-left-width: 0;
+    padding: 4px 5px;
+    vertical-align: middle;
+    text-align: right;
     white-space: nowrap;
 }
-table#user-grades tr td.overridden {
-    background-color: #F3E4C0;
+.dir-rtl .path-grade-report-grader .gradeparent .cell {
+    border-left-width: 1px;
+    border-right-width: 0;
+    text-align: left;
 }
-table#user-grades tr.odd td.overridden {
-    background-color: #EFD9A4;
+
+/**
+ * Stripped table.
+ */
+.path-grade-report-grader .gradeparent tr:nth-of-type(even) .cell {
+    background-color: #f9f9f9;
 }
-table#user-grades tr td.ajaxoverridden {
-    background-color: #FFE3A0;
+
+/**
+ * All the floating divs.
+ */
+.path-grade-report-grader .gradeparent .floater {
+    display: none;
 }
-table#user-grades tr.odd td.ajaxoverridden {
-    background-color: #FFDA83;
+.path-grade-report-grader .gradeparent .floating {
+    display: block;
 }
-table#user-grades tr.even td.excluded {
-    background-color: #EABFFF;
+
+/**
+ * All the headers + floating cells.
+ */
+.path-grade-report-grader .gradeparent .heading .cell,
+.path-grade-report-grader .gradeparent .avg .cell,
+.path-grade-report-grader .gradeparent .user.cell {
+    font-size: 14px;
+    font-weight: normal;
+    text-align: left;
 }
-table#user-grades tr.odd td.excluded {
-    background-color: #E5AFFF;
+.dir-rtl .path-grade-report-grader .gradeparent .heading .cell,
+.dir-rtl .path-grade-report-grader .gradeparent .avg .cell,
+.dir-rtl .path-grade-report-grader .gradeparent .user.cell {
+    text-align: right;
 }
-table#user-grades tr.odd th.header {
-    background-color: #efefef;
-    background-image: none;
+
+/**
+ * All the floating cells.
+ */
+.path-grade-report-grader .gradeparent .floater .cell {
+    background-color: #f9f9f9;
 }
-table#user-grades tr.even th.header {
-    background-image: none;
+
+/**
+ * The user cells.
+ */
+.path-grade-report-grader .gradeparent .user.cell {
+    min-width: 200px;
+    width: 200px;
+    white-space: normal;
+    vertical-align: top;
 }
-table#user-grades tr.groupavg td.cell {
-    background-color: #efffef;
-    font-weight: 700;
-    color: #006400;
+.path-grade-report-grader .gradeparent .user.cell .userpicture {
+    margin: 0 4px;
+    border: none;
+    vertical-align: middle;
 }
-table#user-grades td.cat,
-table#user-grades td.course {
-    font-weight: 700;
+
+/**
+ * The additional user fields.
+ */
+.path-grade-report-grader .gradeparent .userfield {
+    font-weight: normal;
+    text-align: left;
 }
-table#user-grades {
-    font-size: 10px;
+.dir-rtl .path-grade-report-grader .gradeparent .userfield {
+    text-align: right;
+}
+
+/**
+ * The footer's header.
+ */
+.path-grade-report-grader .gradeparent .range .header,
+.path-grade-report-grader .gradeparent .avg .header {
+    font-weight: bold;
+}
+
+/**
+ * The footer's floating cells.
+ */
+.path-grade-report-grader .gradeparent .avg.floating .cell {
+    border-top-width: 1px;
+}
+
+/**
+ * The footer's cells.
+ */
+.path-grade-report-grader .gradeparent .avg .cell {
+    text-align: right;
+}
+.dir-rtl .path-grade-report-grader .gradeparent .avg .cell {
+    text-align: left;
+}
+
+/**
+ * Content styling.
+ */
+.path-grade-report-grader .gradeparent .heading .cell .iconsmall {
+    /* Fixes inconsistencies in cell height on IE. */
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.path-grade-report-grader .gradeparent .sorticon {
+    margin-left: 3px;
+}
+.dir-rtl .path-grade-report-grader .gradeparent .sorticon {
+    margin-left: 0;
+    margin-right: 3px;
+}
+.path-grade-report-grader .gradeparent .gradevalue {
+    display: inline-block;
+}
+.path-grade-report-grader .gradeparent tr:nth-child(n) td.overridden:nth-child(n) {
+    /* Made very specific to override the default stripped style of the table. */
+    background-color: #efd9a4;
+}
+.path-grade-report-grader .gradeparent tr:nth-child(n) td.ajaxoverridden:nth-child(n) {
+    /* Made very specific to override the default stripped style of the table. */
+    background-color: #ffe3a0;
+}
+.path-grade-report-grader .gradeparent .excludedfloater {
+    font-weight: bold;
+    color: red;
+    font-size: 9px;
+    float: left;
+}
+.dir-rtl .path-grade-report-grader .gradeparent .excludedfloater {
+    float: right;
+}
+
+.path-grade-report .gradeparent .floater .controls.cell,
+.path-grade-report-grader .gradeparent .controls {
+    background-color: #f3ead8;
+}
+.path-grade-report-grader .gradeparent .category {
+    text-align: left;
+}
+.dir-rtl .path-grade-report-grader .gradeparent .category {
+    text-align: right;
+}
+
+/**
+ * Editing fields.
+ */
+.path-grade-report-grader .gradeparent select {
+    margin: 0;
+    padding: 0;
+}
+.path-grade-report-grader .gradeparent .text {
+    border: 1px solid #666;
     width: auto;
-    background-color: transparent;
-    border-style: solid;
-    border-width: 1px;
     margin: 0;
-}
-.path-grade-report-grader #overDiv table {
-    margin: 0;
-}
-.path-grade-report-grader #overDiv table td.feedback {
-    border: 0;
-}
-.path-grade-report-grader #overDiv .feedback {
-    font-size: 70%;
-    background-color: #ABF;
-    color: #000;
-    font-family: Verdana;
-    font-weight: 400;
-}
-.path-grade-report-grader #overDiv .caption {
-    font-size: 70%;
-    background-color: #56C;
-    color: #CCF;
-    font-family: Arial;
-    font-weight: 700;
-}
-.path-grade-report-grader #overDiv .intersection {
-    font-size: 70%;
-    background-color: #ABF;
-    color: #000;
-    font-family: Verdana;
-    font-weight: 400;
-}
-.path-grade-report-grader #overDiv .intersectioncaption {
-    background-color: #56C;
-    color: #CCF;
-    font-family: Arial;
-    font-weight: 700;
-}
-.path-grade-report-grader div.submit {
-    margin-top: 20px;
+    padding: 0;
     text-align: center;
 }
-table#user-grades td {
-    text-align: right;
-    border-style: solid;
-    border-width: 0 1px 1px 0;
-}
-table#user-grades th.category {
-    vertical-align: top;
-    border-style: solid;
-    border-width: 1px 1px 0;
-}
-table#user-grades th.user {
-    text-align: left;
-    border-style: solid;
-    border-width: 1px 0;
-}
-table#user-grades th.userfield {
-    border-style: solid;
-    border-width: 1px;
-}
-table#user-grades th.categoryitem,
-table#user-grades td.topleft {
-    vertical-align: bottom;
-    border-style: solid;
-    border-width: 0 1px;
-}
-.path-grade-report-grader td,.path-grade-report-grader th {
-    border-color: #CECECE;
-}
-.path-grade-report-grader table#participants th {
-    vertical-align: top;
-    width: auto;
-}
-table#user-grades td.fillerfirst {
-    border-style: solid;
-    border-width: 0 0 0 1px;
-}
-table#user-grades td.fillerlast {
-    border-style: solid;
-    border-width: 0 1px 0 0;
-}
-table#user-grades th.item,
-table#user-grades th.categoryitem,
-table#user-grades th.courseitem {
-    border-bottom-color: #000;
-    vertical-align: bottom;
-    border-style: solid;
-    border-width: 1px;
-}
-div.gradertoggle {
-    display: inline;
-    margin-left: 20px;
-}
-table#user-grades th.range {
-    text-align: right;
-    border-style: solid;
-    border-width: 1px;
-}
-table#user-grades .userpic {
-    display: inline;
-    margin-right: 10px;
-}
-table#user-grades .quickfeedback {
+.path-grade-report-grader .gradeparent .quickfeedback {
     border: 1px dashed #000;
     width: auto;
     margin: 0;
     padding: 0;
     margin-left: 10px;
 }
-.dir-rtl table#user-grades .quickfeedback {
+.dir-rtl .path-grade-report-grader .gradeparent .quickfeedback {
     margin-left: 0;
     margin-right: 10px;
-}
-.path-grade-report-grader #siteconfiglink {
-    text-align: right;
-}
-table#user-grades .datesubmitted {
-    font-size: .7em;
-}
-table#user-grades td.cell {
-    padding-left: 5px;
-    padding-right: 5px;
-    vertical-align: middle;
-}
-.path-grade-report-grader table {
-    border-collapse: collapse;
-    background-color: #fff;
-    border-color: #cecece;
-}
-.path-grade-report-grader th {
-    padding: 1px 10px;
-}
-.path-grade-report-grader span.inclusion-links {
-    margin: 0 5px 0 10px;
-}
-table#user-grades .item {
-    background-color: #e9e9e9;
-}
-.path-grade-report-grader table tr.odd th.header {
-    background-color: #efefef;
-    background-image: none;
-    border-width: 0 0 1px;
-}
-.path-grade-report-grader table tr.heading th.header {
-    border-top: 1px solid #cecece;
-}
-table#user-grades tr.heading th.categoryitem,
-table#user-grades tr.heading th.courseitem {
-    border-width: 0 0 0 1px;
-}
-table#user-grades th.category.header.catlevel1 {
-    vertical-align: top;
-    border-style: solid;
-    border-width: 1px 1px 0 0;
-}
-.path-grade-report-grader div.left_scroller th.user a {
-    vertical-align: middle;
-    margin: 0;
-    padding: 0;
-}
-table#user-grades th.categoryitem,
-table#user-grades th.courseitem,
-.path-grade-report-grader table td.topleft {
-    vertical-align: bottom;
-    border-color: #cecece #cecece #000;
-    border-style: solid;
-    border-width: 0 1px 1px;
-}
-.path-grade-report-grader .left_scroller table td.topleft {
-    background-color: #fff;
-    border-bottom-color: #cecece;
-}
-table#user-grades td.topleft {
-    background-color: #fff;
-}
-.path-grade-report-grader th.user img.userpicture {
-    border: 3px double #cecece;
-    vertical-align: top;
-    width: 2.7em;
-    height: 2.7em;
-    margin-right: 10px;
-}
-.path-grade-report-grader a.quickedit {
-    line-height: 1em;
-    display: block;
-    float: right;
-    clear: none;
-    font-size: 9px;
-    background-color: transparent;
-    margin: .1em 0 0;
-}
-.path-grade-report-grader a.quickedit2 {
-    display: block;
-    float: right;
-    clear: none;
-    background-color: transparent;
-    margin: 1.3em 0 0;
-}
-.path-grade-report-grader table#quick_edit {
-    border: 1px solid #cecece;
-    margin: 0 auto;
-}
-.path-grade-report-grader table#quick_edit td {
-    vertical-align: middle;
-    border: 1px solid #cecece;
-    text-align: left;
-    margin: 0;
-    padding: 5px;
-}
-.path-grade-report-grader table#quick_edit td img {
-    border: 3px double #cecece;
-    vertical-align: middle;
-    padding: 0;
-}
-.path-grade-report-grader td input.text {
-    border: 1px solid #666;
-    width: auto;
-    margin: 0;
-    padding: 0;
-    font-size: 12px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-}
-.path-grade-report-grader td input.submit {
-    margin: 10px 10px 0px 10px;
-}
-.path-grade-report-grader table#quick_edit td.fullname {
-    border-left: 0;
-    padding-left: 5px;
-}
-.path-grade-report-grader table#quick_edit td.picture {
-    border-right: 0;
-}
-.path-grade-report-grader table#quick_edit td.finalgrade input {
-    width: 5em;
-}
-.path-grade-report-grader h1 {
-    text-align: center;
-    clear: both;
-}
-.path-grade-report-grader input.center {
-    margin: 10px auto 0;
-}
-.path-grade-report-grader .lefttbody {
-    width: auto;
-    vertical-align: middle;
-}
-table#user-grades th.fixedcolumn {
-    border: 1px solid #cecece;
-    vertical-align: middle;
-}
-.path-grade-report-grader table#fixed_column th {
-    border: 1px solid #cecece;
-    vertical-align: middle;
-    border-right-color: #000;
-}
-.path-grade-report-grader table#fixed_column th.user{
-    border-right-color: #cecece;
-}
-.path-grade-report-grader table#fixed_column {
-    padding-top: 20px;
-    border-top: 1px solid #cecece;
-    background-color: #fff;
-}
-.path-grade-report-grader .left_scroller {
-    float: left;
-    clear: none;
-}
-.path-grade-report-grader.dir-rtl .left_scroller {
-    float: right;
-}
-.path-grade-report-grader .right_scroller {
-    width: auto;
-    clear: none;
-    overflow-x: scroll;
-    overflow-y: hidden;
-}
-.path-grade-report-grader table tr.avg,
-.path-grade-report-grader table tr.groupavg td,
-.path-grade-report-grader table tr.avg td,
-.path-grade-report-grader table tr.groupavg th,
-.path-grade-report-grader table tr.avg th,
-.path-grade-report-grader table tr.controls_row,
-.path-grade-report-grader table tr.controls_row th,
-.path-grade-report-grader table tr.range_row,
-.path-grade-report-grader table tr.range_row th,
-div.right_scroller tr {
-    height: 2em;
-}
-table#user-grades tr.groupavg td.cell,
-tr.groupavg th.header {
-    background-color: #efffef;
-}
-.path-grade-report-grader form td.excluded {
-    color: red;
-}
-.path-grade-report-grader .excludedfloater {
-    font-weight: 700;
-    color: red;
-    font-size: 9px;
-    float: left;
-}
-.path-grade-report-grader span.gradepass {
-    color: #298721;
-}
-.path-grade-report-grader span.gradefail {
-    color: #890d0d;
-}
-.path-grade-report-grader .gradeweight {
-    color: #461d7c;
-    font-weight: 700;
-}
-.path-grade-report-grader td select {
-    font-size: 100%;
-    padding: 0;
-}
-.path-grade-report-grader .right_scroller td select {
-    font-size: 86%;
-    padding: 0;
-}
-.path-grade-report-grader tr.avg,
-.path-grade-report-grader tr.controls,
-.path-grade-report-grader td.controls,
-.path-grade-report-grader th.controls,
-.path-grade-report-grader tr.groupavg,
-.path-grade-report-grader tr.range,
-.path-grade-report-grader th.range,
-.path-grade-report-grader td.range,
-.path-grade-report-grader tr.heading th.range {
-    height: 2em!important;
-    white-space: nowrap;
-}
-.path-grade-report-grader .heading_name_row th {
-    white-space: nowrap;
-    width: 2000px;
-}
-
-/*MDL-21088 - IE 7 ignores nowraps on tds or ths so we put a span within it with a nowrap on it*/
-.path-grade-report-grader heading_name_row th span {
-    white-space: nowrap;
-}
-.path-grade-report-grader .grade_icons img.ajax {
-    float: right;
-}
-.path-grade-report-grader .gradestable th.user,
-.path-grade-report-grader .gradestable th.range,
-.path-grade-report-grader .flexible th,
-.path-grade-report-grader .flexible td,
-.path-grade-report-grader .flexible th a,
-.path-grade-report-grader .flexible td a,
-.path-grade-report-grader .gradestable th.range,
-.path-grade-report-grader td {
-    white-space: nowrap;
-}
-table#user-grades .catlevel1,
-table#user-grades .r1,
-.path-grade-report-grader table tr.even td.cell,
-.path-grade-report-grader table tr.even th {
-    background-color: #fff;
-}
-table#user-grades .catlevel3,
-.path-grade-report-grader table tr.odd td.cell {
-    background-color: #efefef;
-}
-table#fixed_column tr.odd th ,
-table#user-grades tr.odd th {
-    background-color: #efefef;
-}
-table#user-grades td.vmarked,
-table#user-grades tr.odd td.vmarked,
-table#user-grades tr.avg td.vmarked,
-table#user-grades tr.controls td.vmarked,
-table#user-grades .catlevel1.vmarked,
-table#user-grades .catlevel2.vmarked,
-table#user-grades .catlevel3.vmarked,
-table#user-grades tr.range td.vmarked,
-table#user-grades tr.groupavg td.vmarked {
-    background-color: #fc3;
-}
-table#user-grades td.hmarked,
-table#user-grades tr.odd td.hmarked,
-table#user-grades tr.even td.hmarked,
-table#user-grades tr.odd th.hmarked,
-table#user-grades tr.even th.hmarked {
-    background-color: #ff9;
-}
-table#user-grades td.hmarked.vmarked,
-table#user-grades tr.odd td.hmarked.vmarked,
-table#user-grades tr.even td.hmarked.vmarked {
-    background-color: #fc9;
-}
-table#user-grades tr.heading,
-table#user-grades .heading td {
-    border-style: solid;
-    border-width: 0;
-}
-table#user-grades td.userfield,
-table#user-grades th,
-.path-grade-report-grader div.gradeparent,
-.path-grade-report-grader .ie6 form,
-table#user-grades td.ajax {
-    text-align: left;
-}
-.dir-rtl table#user-grades td.userfield,
-.dir-rtl table#user-grades th,
-.path-grade-report-grader.dir-rtl  div.gradeparent,
-.path-grade-report-grader.dir-rtl  .ie6 form,
-.dir-rtl table#user-grades td.ajax {
-    text-align: right;
-}
-.path-grade-report-grader .gradeparent {
-    overflow: auto;
-}
-table#user-grades td.controls,
-.path-grade-report-grader table tr.avg .cell,
-.path-grade-report-grader table tr.range .cell {
-    background-color: #f3ead8;
-}
-.path-grade-report-grader div.left_scroller tr,
-.path-grade-report-grader div.right_scroller tr,
-.path-grade-report-grader div.left_scroller td,
-.path-grade-report-grader div.right_scroller td,
-.path-grade-report-grader div.left_scroller th,
-.path-grade-report-grader div.right_scroller th {
-    height: 4.5em;
-    font-size: 10px;
-}
-.path-grade-report-grader table th.user,
-.path-grade-report-grader table td.userfield {
-    text-align: left;
-    vertical-align: middle;
-}
-.path-grade-report-grader .usersuspended a:link,
-.path-grade-report-grader .usersuspended a:visited {
-    color: #666;
-}
-.path-grade-report-grader table th.usersuspended img.usersuspendedicon {
-    vertical-align: text-bottom;
-    margin-left: .45em;
-}
-.path-grade-report-grader .yui3-overlay {
-    background-color: #FFEE69;
-    border-color: #D4C237 #A6982B #A6982B;
-    border-style: solid;
-    border-width: 1px;
-    left: 0;
-    padding: 2px 5px;
-    font-size: 0.7em;
-}
-.path-grade-report-grader .yui3-overlay .fullname {
-    color: #5F3E00;
-    font-weight: bold;
-}
-.path-grade-report-grader .yui3-overlay .itemname {
-    color: #194F3E;
-    font-weight: bold;
-}
-.path-grade-report-grader .yui3-overlay .feedback {
-    color: #5F595E;
-}
-/* table#user-grades td */
-/* .grader-report-grader table#user-grades td .yui-panel div.hd { */
-.path-grade-report-grader #tooltipPanel {
-    text-align: left;
-}
-.path-grade-report-grader .yui3-overlay a.container-close {
-    margin-top: -3px;
-}
-.path-grade-report-grader #hiddentooltiproot,
-.tooltipDiv {
-    display: none;
-}
-.path-grade-report-grader.ie .right_scroller {
-    overflow-y: hidden;
-}
-.path-grade-report-grader.ie table#fixed_column th {
-    height: 4.5em;
-}
-.path-grade-report-grader.ie table#fixed_column tr.avg th {
-    height: 2.1em;
-}
-.path-grade-report-grader.ie div.left_scroller td {
-    height: 4.5em;
-}
-.path-grade-report-grader.ie6 div.right_scroller {
-    margin-top: 4em;
-    width: auto;
-    position: absolute;
-}
-.path-grade-report-grader.ie6 .excludedfloater {
-    font-size: 7px;
-}
-
-/** MDL-40071 **/
-.path-grade-report-grader.dir-rtl table th.user,
-.path-grade-report-grader.dir-rtl table td.userfield {
-    text-align: right;
-}
-
-/** MDL-40180 **/
-.dir-rtl table#user-grades th.category,
-.dir-rtl table#user-grades th#studentheader,
-.dir-rtl table#user-grades th.user {
-    text-align: right;
-}
-.path-grade-report-grader.dir-rtl th.user img.userpicture {
-    margin-left: 0.5em;
-}
-
-.path-grade-report-grader .yui3-scrollview-scrollbar {
-    opacity: 1 !important;
-}
-
-.path-grade-report-grader .yui3-scrollview-scrollbar-horiz {
-    bottom: 0;
-}
-
-/** MDL-43824 **/
-#page-grade-report-grader-index table#fixed_column td.topleft.cell,
-#page-grade-report-grader-index.jsenabled table#fixed_column td.topleft.cell {
-    padding: 8px 5px;
-}
-#page-grade-report-grader-index table#fixed_column td.header.controls {
-    border-left: 1px solid #cecece;
-}
-.path-grade-report-grader .right_scroller td select {
-    line-height: 2;
-    margin: 0;
-    padding: 0;
-    height: 22px;
-}
-table#user-grades {
-    margin-bottom: 0;
-}
-table#user-grades td,
-table#user-grades th.category {
-    padding: 8px 5px;
-}
-.path-grade-report-grader .gradeparent {
-    border-top: 1px solid #cecece;
-}
-.path-grade-report-grader div.left_scroller tr,
-.path-grade-report-grader div.right_scroller tr,
-.path-grade-report-grader div.left_scroller td,
-.path-grade-report-grader div.right_scroller td,
-.path-grade-report-grader div.left_scroller th,
-.path-grade-report-grader div.right_scroller th {
-     padding: 8px 5px;
-}
-.path-grade-report-grader td.grade.overridden {
-    line-height: 20px;
-}
-
-/** MDL-46812 **/
-#page-grade-report-grader-index.jsenabled .right_scroller.topscroll {
-    background-color: #ececec;
-    height: 20px;
-    margin: 0;
-    padding: 0;
-}
-#page-grade-report-grader-index.jsenabled .topscrollcontent {
-    background-color: #ececec;
-    height: 20px;
-}
-.jsenabled.path-grade-report-grader .left_scroller {
-    border-top: 20px solid #ececec;
 }

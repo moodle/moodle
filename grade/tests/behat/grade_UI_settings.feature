@@ -48,7 +48,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
 
   @javascript
   Scenario: Disable category overriding
-    And ".r0 .course input[type='text']" "css_element" should exist
+    And ".r1 .course input[type='text']" "css_element" should exist
     Then I navigate to "Grade category settings" node in "Site administration > Grades"
     And I click on "Allow category grades to be manually overridden" "checkbox"
     And I press "Save changes"
