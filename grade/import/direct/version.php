@@ -17,14 +17,14 @@
 /**
  * Version details
  *
- * @package    gradeimport
- * @subpackage csv
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    gradeimport_direct
+ * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014093000;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2014080400;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2014050800;        // Requires this Moodle version
-$plugin->component = 'gradeimport_csv'; // Full name of the plugin (used for diagnostics)
+$plugin->component = 'gradeimport_direct'; // Full name of the plugin (used for diagnostics).
+$plugin->dependencies = array('gradeimport_csv' => 2014093000); // Grade import csv is required for this plugin.

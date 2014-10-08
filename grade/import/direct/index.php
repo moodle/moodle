@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,42 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once("../../../config.php");
+require_once(__DIR__ . "../../../../config.php");
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
-require_once($CFG->dirroot. '/grade/import/grade_import_form.php');
 require_once($CFG->dirroot.'/grade/import/lib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 $id            = required_param('id', PARAM_INT); // Course id.
-$separator     = optional_param('separator', '', PARAM_ALPHA);
 $verbosescales = optional_param('verbosescales', 1, PARAM_BOOL);
 $iid           = optional_param('iid', null, PARAM_INT);
 $importcode    = optional_param('importcode', '', PARAM_FILE);
 
-$url = new moodle_url('/grade/import/csv/index.php', array('id'=>$id));
-if ($separator !== '') {
-    $url->param('separator', $separator);
-}
+$url = new moodle_url('/grade/import/direct/index.php', array('id' => $id));
+
 if ($verbosescales !== 1) {
     $url->param('verbosescales', $verbosescales);
 }
+
 $PAGE->set_url($url);
 
-if (!$course = $DB->get_record('course', array('id'=>$id))) {
+if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('nocourseid');
 }
 
 require_login($course);
 $context = context_course::instance($id);
 require_capability('moodle/grade:import', $context);
-require_capability('gradeimport/csv:view', $context);
+require_capability('gradeimport/direct:view', $context);
 
 $separatemode = (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and
         !has_capability('moodle/site:accessallgroups', $context));
 $currentgroup = groups_get_course_group($course);
 
-print_grade_page_head($course->id, 'import', 'csv', get_string('importcsv', 'grades'));
+print_grade_page_head($course->id, 'import', 'direct', get_string('pluginname', 'gradeimport_direct'), false, false, true,
+        'userdata', 'gradeimport_direct');
 
 $renderer = $PAGE->get_renderer('gradeimport_csv');
 
@@ -62,17 +59,17 @@ $gradeitems = gradeimport_csv_load_data::fetch_grade_items($course->id);
 if (!$iid) {
 
     // Set up the import form.
-    $mform = new grade_import_form(null, array('includeseparator' => true, 'verbosescales' => $verbosescales, 'acceptedtypes' =>
-            array('.csv', '.txt')));
+    $mform = new gradeimport_direct_import_form(null, array('includeseparator' => true, 'verbosescales' => true, 'acceptedtypes' =>
+        array('.csv', '.txt')));
 
     // If the import form has been submitted.
     if ($formdata = $mform->get_data()) {
-        $text = $mform->get_file_content('userfile');
+        $text = $formdata->userdata;
         $csvimport = new gradeimport_csv_load_data();
-        $csvimport->load_csv_content($text, $formdata->encoding, $separator, $formdata->previewrows);
+        $csvimport->load_csv_content($text, $formdata->encoding, 'tab', $formdata->previewrows);
         $csvimporterror = $csvimport->get_error();
         if (!empty($csvimporterror)) {
-            echo $renderer->errors(array($csvimport->get_error()));
+            echo $renderer->errors($csvimport->get_error());
             echo $OUTPUT->footer();
             die();
         }
@@ -102,14 +99,14 @@ $mappingformdata = array(
     'importcode' => $importcode,
     'verbosescales' => $verbosescales
 );
-// we create a form to handle mapping data from the file to the database.
-$mform2 = new grade_import_mapping_form(null, $mappingformdata);
+// We create a form to handle mapping data from the file to the database.
+$mform2 = new gradeimport_direct_mapping_form(null, $mappingformdata);
 
 // Here, if we have data, we process the fields and enter the information into the database.
 if ($formdata = $mform2->get_data()) {
     $gradeimport = new gradeimport_csv_load_data();
-    $status = $gradeimport->prepare_import_grade_data($header, $formdata, $csvimport, $course->id, $separatemode,
-            $currentgroup, $verbosescales);
+    $status = $gradeimport->prepare_import_grade_data($header, $formdata, $csvimport, $course->id, $separatemode, $currentgroup,
+            $verbosescales);
 
     // At this stage if things are all ok, we commit the changes from temp table.
     if ($status) {
