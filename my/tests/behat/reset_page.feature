@@ -17,7 +17,7 @@ Feature: Reset my home page to default
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "student1"
-    And I follow "My home"
+    And I click on "My home" "link" in the "Navigation" "block"
 
   Scenario: Add blocks to page and reset
     When I press "Customise this page"
