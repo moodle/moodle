@@ -1067,7 +1067,10 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 .backup-restore .detail-pair-value {display:inline-block;width:65%;padding:8px;margin:0;}
 .backup-restore .detail-pair-value > .sub-detail {display:block;color:#1580B6;margin-left:2em;font-size:90%;font-style: italic;}
 .backup-restore > .singlebutton {text-align:right;}
-.path-backup .mform .fgroup .proceedbutton {float:right;margin-right:1%;}
+.path-backup .mform .fgroup .proceedbutton,
+.path-backup .mform .fgroup .oneclickbackup {float:right;margin-right:1%;}
+.dir-rtl.path-backup .mform .fgroup .proceedbutton,
+.dir-rtl.path-backup .mform .fgroup .oneclickbackup {float:left;margin-left:1%;margin-right: 0;}
 
 .restore-course-search .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
 .restore-course-search .rcs-results table {width:100%;margin:0;border-width:0;}
