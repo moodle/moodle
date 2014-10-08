@@ -19,6 +19,9 @@ information provided here is intended especially for developers.
 * Several classes grade_edit_tree_column_xxx were removed since grades setup page
   has been significantly changed. These classes should not be used outside of
   gradebook or developers can copy them into their plugins from 2.7 branch.
+* Google APIs Client Library (lib/google/) has been upgraded to 1.0.5-beta and
+  API has changed dramatically without backward compatibility. Any code accessing
+  it must be amended. It does not apply to lib/googleapi.php. See MDL-47297
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
