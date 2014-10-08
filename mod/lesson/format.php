@@ -29,6 +29,27 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Import files embedded into answer or response
+ *
+ * @param string $field nfield name (answer or response)
+ * @param array $data imported data
+ * @param object $answer answer object
+ * @param int $contextid
+ **/
+function lesson_import_question_files($field, $data, $answer, $contextid) {
+    global $DB;
+    if (!isset($data['itemid'])) {
+        return;
+    }
+    $text = file_save_draft_area_files($data['itemid'],
+            $contextid, 'mod_lesson', 'page_' . $field . 's', $answer->id,
+            array('subdirs' => false, 'maxfiles' => -1, 'maxbytes' => 0),
+            $answer->$field);
+
+    $DB->set_field("lesson_answers", $field, $text, array("id" => $answer->id));
+}
+
+/**
  * Given some question info and some data about the the answers
  * this function parses, organises and saves the question
  *
@@ -42,10 +63,12 @@ defined('MOODLE_INTERNAL') || die();
  *    5. truefalse options are ignored
  *    6. For multichoice questions with more than one answer the qoption field is true
  *
- * @param opject $question Contains question data like question, type and answers.
+ * @param object $question Contains question data like question, type and answers.
+ * @param object $lesson
+ * @param int $contextid
  * @return object Returns $result->error or $result->notice.
  **/
-function lesson_save_question_options($question, $lesson) {
+function lesson_save_question_options($question, $lesson, $contextid) {
     global $DB;
 
     // These lines are required to ensure that all page types have
@@ -78,6 +101,7 @@ function lesson_save_question_options($question, $lesson) {
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedback[$key], $answer, $contextid);
                     $answers[] = $answer->id;
                     if ($question->fraction[$key] > $maxfraction) {
                         $maxfraction = $question->fraction[$key];
@@ -116,6 +140,7 @@ function lesson_save_question_options($question, $lesson) {
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('response', $question->feedback[$key], $answer, $contextid);
 
                     $answers[] = $answer->id;
                     if ($question->fraction[$key] > $maxfraction) {
@@ -149,7 +174,8 @@ function lesson_save_question_options($question, $lesson) {
                 $answer->response = $question->feedbacktrue['text'];
                 $answer->responseformat = $question->feedbacktrue['format'];
             }
-            $DB->insert_record("lesson_answers", $answer);
+            $answer->id = $DB->insert_record("lesson_answers", $answer);
+            lesson_import_question_files('response', $question->feedbacktrue, $answer, $contextid);
 
             // the lie
             $answer = new stdClass;
@@ -165,7 +191,8 @@ function lesson_save_question_options($question, $lesson) {
                 $answer->response = $question->feedbackfalse['text'];
                 $answer->responseformat = $question->feedbackfalse['format'];
             }
-            $DB->insert_record("lesson_answers", $answer);
+            $answer->id = $DB->insert_record("lesson_answers", $answer);
+            lesson_import_question_files('response', $question->feedbackfalse, $answer, $contextid);
 
           break;
 
@@ -200,6 +227,9 @@ function lesson_save_question_options($question, $lesson) {
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('answer', $dataanswer, $answer, $contextid);
+                    lesson_import_question_files('response', $question->feedback[$key], $answer, $contextid);
+
                     // for Sanity checks
                     if ($question->fraction[$key] > 0) {
                         $totalfraction += $question->fraction[$key];
@@ -261,7 +291,9 @@ function lesson_save_question_options($question, $lesson) {
                         // first answer contains the correct answer jump
                         $answer->jumpto = LESSON_NEXTPAGE;
                     }
-                    $subquestions[] = $DB->insert_record("lesson_answers", $answer);
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
+                    lesson_import_question_files('answer', $questiontext, $answer, $contextid);
+                    $subquestions[] = $answer->id;
                     $i++;
                 }
             }
@@ -447,7 +479,7 @@ class qformat_default {
 
                     $question->lessonid = $lesson->id; // needed for foreign key
                     $question->qtype = $this->qtypeconvert[$question->qtype];
-                    $result = lesson_save_question_options($question, $lesson);
+                    $result = lesson_save_question_options($question, $lesson, $this->importcontext->id);
 
                     if (!empty($result->error)) {
                         echo $OUTPUT->notification($result->error);
