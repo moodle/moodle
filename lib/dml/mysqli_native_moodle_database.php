@@ -441,13 +441,10 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($dbhost and !empty($this->dboptions['dbpersist'])) {
             $dbhost = "p:$dbhost";
         }
-        ob_start();
-        $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
-        $dberr = ob_get_contents();
-        ob_end_clean();
-        $errorno = @$this->mysqli->connect_errno;
+        $this->mysqli = @new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
 
-        if ($errorno !== 0) {
+        if ($this->mysqli->connect_errno !== 0) {
+            $dberr = $this->mysqli->connect_error;
             $this->mysqli = null;
             throw new dml_connection_exception($dberr);
         }
