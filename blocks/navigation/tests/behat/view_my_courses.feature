@@ -37,7 +37,7 @@ Feature: View my courses in navigation block
       | Show my course categories | 0 |
     And I log out
     And I log in as "student1"
-    When I follow "My home"
+    When I click on "My home" "link" in the "Navigation" "block"
     Then I should not see "cat1" in the "Navigation" "block"
     And I should not see "cat2" in the "Navigation" "block"
     And I should see "c1" in the "Navigation" "block"
@@ -53,7 +53,7 @@ Feature: View my courses in navigation block
       | Show my course categories | 1 |
     And I log out
     And I log in as "student1"
-    When I follow "My home"
+    When I click on "My home" "link" in the "Navigation" "block"
     Then I should see "cat1" in the "Navigation" "block"
     And I should see "cat3" in the "Navigation" "block"
     And I should not see "cat2" in the "Navigation" "block"
