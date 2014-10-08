@@ -556,6 +556,9 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         }
 
         $store = new cachestore_mongodb('Test mongodb', $configuration);
+        if (!$store->is_ready()) {
+            return false;
+        }
         $store->initialise($definition);
 
         return $store;
