@@ -106,7 +106,7 @@ class MoodleExcelWorkbook {
         $mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         $filename = $filename.'.xlsx';
 
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: max-age=10');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');

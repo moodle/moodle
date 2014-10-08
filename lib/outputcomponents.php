@@ -404,7 +404,7 @@ class user_picture implements renderable {
 
             // If the currently requested page is https then we'll return an
             // https gravatar page.
-            if (strpos($CFG->httpswwwroot, 'https:') === 0) {
+            if (is_https()) {
                 $gravatardefault = str_replace($CFG->wwwroot, $CFG->httpswwwroot, $gravatardefault); // Replace by secure url.
                 return new moodle_url("https://secure.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $gravatardefault));
             } else {

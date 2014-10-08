@@ -180,7 +180,7 @@ class manager {
     protected static function prepare_cookies() {
         global $CFG;
 
-        if (!isset($CFG->cookiesecure) or (strpos($CFG->wwwroot, 'https://') !== 0 and empty($CFG->sslproxy))) {
+        if (!isset($CFG->cookiesecure) or (!is_https() and empty($CFG->sslproxy))) {
             $CFG->cookiesecure = 0;
         }
 

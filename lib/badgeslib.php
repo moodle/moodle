@@ -1258,7 +1258,7 @@ function badges_setup_backpack_js() {
     global $CFG, $PAGE;
     if (!empty($CFG->badges_allowexternalbackpack)) {
         $PAGE->requires->string_for_js('error:backpackproblem', 'badges');
-        $protocol = (strpos($CFG->wwwroot, 'https://') === 0) ? 'https://' : 'http://';
+        $protocol = (is_https()) ? 'https://' : 'http://';
         $PAGE->requires->js(new moodle_url($protocol . BADGE_BACKPACKURL . '/issuer.js'), true);
         $PAGE->requires->js('/badges/backpack.js', true);
     }
