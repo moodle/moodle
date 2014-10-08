@@ -28,6 +28,9 @@ $string['disclaimer'] = 'I understand the risks of this operation';
 $string['doit'] = 'Yes, do it!';
 $string['excludedtables'] = 'Several tables are not updated as part of the text replacement. This include configuration, log, events, and session tables.';
 $string['pageheader'] = 'Search and replace text throughout the whole database';
+$string['clibadparametertext'] = 'Invalid characters were found in the search or replacement text. Aborting.';
+$string['cliconfirmation'] = 'This script is not supported and the operation cannot be reverted, so always make a complete backup before proceeding.
+Are you sure you want to begin?';
 $string['notifyfinished'] = '...finished';
 $string['notifyrebuilding'] = 'Rebuilding course cache...';
 $string['notimplemented'] = 'Sorry, this feature is not implemented in your database driver.';
