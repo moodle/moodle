@@ -947,6 +947,24 @@ class grade_grade extends grade_object {
     }
 
     /**
+     * Deletes the grade_grade instance from the database.
+     *
+     * @param string $source The location the deletion occurred (mod/forum, manual, etc.).
+     * @return bool Returns true if the deletion was successful, false otherwise.
+     */
+    public function delete($source = null) {
+        $success = parent::delete($source);
+
+        // If the grade was deleted successfully trigger a grade_deleted event.
+        if ($success) {
+            $this->load_grade_item();
+            \core\event\grade_deleted::create_from_grade($this)->trigger();
+        }
+
+        return $success;
+    }
+
+    /**
      * Used to notify the completion system (if necessary) that a user's grade
      * has changed, and clear up a possible score cache.
      *
