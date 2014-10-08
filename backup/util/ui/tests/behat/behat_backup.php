@@ -122,7 +122,7 @@ class behat_backup extends behat_base {
         $this->wait();
 
         // Initial settings.
-        $this->find_button(get_string('performoneclickbackup', 'backup'))->press();
+        $this->find_button(get_string('jumptofinalstep', 'backup'))->press();
         $this->wait();
 
         // Waiting for it to finish.

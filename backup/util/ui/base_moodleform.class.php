@@ -123,6 +123,9 @@ abstract class base_moodleform extends moodleform {
         $buttonarray[] = $this->_form->createElement('submit', 'submitbutton', get_string($this->uistage->get_ui()->get_name().'stage'.$this->uistage->get_stage().'action', 'backup'), array('class'=>'proceedbutton'));
         if (!$this->uistage->is_first_stage()) {
             $buttonarray[] = $this->_form->createElement('submit', 'previous', get_string('previousstage','backup'));
+        } else {
+            $buttonarray[] = $this->_form->createElement('submit', 'oneclickbackup', get_string('jumptofinalstep', 'backup'),
+                array('class' => 'oneclickbackup'));
         }
         $buttonarray[] = $this->_form->createElement('cancel', 'cancel', get_string('cancel'), array('class'=>'confirmcancel'));
         $this->_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);

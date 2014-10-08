@@ -120,9 +120,15 @@
 .backup-restore > .singlebutton {
     text-align: right;
 }
-.path-backup .mform .fgroup .proceedbutton {
-    float: right;
-    margin-right: 5%;
+.path-backup .mform .fgroup {
+    .proceedbutton {
+        float: right;
+        margin-right: 5%;
+
+    }
+    .oneclickbackup {
+        float: right;
+    }
 }
 .restore-course-search .rcs-results {
     width: 70%;
@@ -228,4 +234,17 @@
     padding: 10px;
     height: 300px;
     overflow-y: scroll;
+}
+
+.dir-rtl {
+    &.path-backup .mform .fgroup {
+        .proceedbutton {
+            float: left;
+            margin-left: 5%;
+            margin-right: 0;
+        }
+        .oneclickbackup {
+            float: left;
+        }
+    }
 }
