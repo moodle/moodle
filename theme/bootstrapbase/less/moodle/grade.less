@@ -264,3 +264,22 @@
         }
     }
  }
+
+/**
+ * User report
+ */
+.path-grade-report-user .user-grade {
+    border: none;
+    &.generaltable {
+        .levelodd {
+            background-color: @tableBackgroundAccent;
+        }
+        .leveleven {
+            background-color: @tableBackground;
+        }
+        tbody tr:hover > td,
+        tbody tr:hover > th {
+            background-color: @tableBackgroundHover;
+        }
+    }
+}

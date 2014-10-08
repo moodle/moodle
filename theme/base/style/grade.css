@@ -85,3 +85,18 @@
     font-weight: normal;
     font-style: italic;
 }
+
+/** User report **/
+.path-grade-report-user .user-grade {
+	border-color: black;
+}
+.path-grade-report-user .user-grade.generaltable .levelodd {
+	background-color: #f0f0f0;
+}
+.path-grade-report-user .user-grade.generaltable .leveleven {
+	background-color: #fafafa;
+}
+.path-grade-report-user .user-grade.generaltable tbody tr:hover > td,
+.path-grade-report-user .user-grade.generaltable tbody tr:hover > th {
+    background-color: #f5f5f5;
+}
