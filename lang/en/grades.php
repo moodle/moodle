@@ -394,6 +394,7 @@ $string['incorrectcustomscale'] = '(Incorrect custom scale, please change.)';
 $string['incorrectminmax'] = 'The minimum must be lower than the maximum';
 $string['inherit'] = 'Inherit';
 $string['intersectioninfo'] = 'Student/Grade info';
+$string['invalidgradeexporteddate'] = 'The export date is invalid because it is more than a year ago, or in the future, or because the format is invalid.';
 $string['item'] = 'Item';
 $string['iteminfo'] = 'Item info';
 $string['iteminfo_help'] = 'This setting provides space for entering information about the item. The information is not displayed anywhere else.';

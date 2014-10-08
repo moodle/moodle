@@ -107,7 +107,7 @@ class gradeimport_direct_mapping_form extends moodleform {
         $mform->setType('groupid', PARAM_INT);
         $mform->setConstant('groupid', groups_get_course_group($COURSE));
         $mform->addElement('hidden', 'forceimport', $this->_customdata['forceimport']);
-        $mform->setType('forceimport', PARAM_INT);
+        $mform->setType('forceimport', PARAM_BOOL);
         $mform->setConstant('forceimport', $this->_customdata['forceimport']);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
     }

@@ -531,15 +531,25 @@ class gradeimport_csv_load_data {
                             $this->cleanup_import(get_string('gradelocked', 'grades'));
                             return $this->status;
                         }
-                    }
+                        // Check if the force import option is disabled and the last exported date column is present.
+                        if (!$forceimport && !empty($timeexportkey)) {
+                            $exportedtime = $line[$timeexportkey];
+                            if (clean_param($exportedtime, PARAM_INT) != $exportedtime || $exportedtime > time() ||
+                                    $exportedtime < strtotime("-1 year", time())) {
+                                // The date is invalid, or in the future, or more than a year old.
+                                $this->cleanup_import(get_string('invalidgradeexporteddate', 'grades'));
+                                return $this->status;
 
-                    // The grade was modified since the export.
-                    if ($forceimport === 0 && !empty($timeexportkey) && ($line[$timeexportkey] < $gradegrade->get_dategraded())) {
-                        $user = core_user::get_user($this->studentid);
-                        $this->cleanup_import(get_string('gradealreadyupdated', 'grades', fullname($user)));
-                        break;
+                            }
+                            $timemodified = $gradegrade->get_dategraded();
+                            if (!empty($timemodified) && ($exportedtime < $timemodified)) {
+                                // The item was graded after we exported it, we return here not to override it.
+                                $user = core_user::get_user($this->studentid);
+                                $this->cleanup_import(get_string('gradealreadyupdated', 'grades', fullname($user)));
+                                return $this->status;
+                            }
+                        }
                     }
-
                     $insertid = self::insert_grade_record($newgrade, $this->studentid);
                     // Check to see if the insert was successful.
                     if (empty($insertid)) {
