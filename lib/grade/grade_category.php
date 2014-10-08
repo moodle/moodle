@@ -90,7 +90,7 @@ class grade_category extends grade_object {
      * A constant pointing to one of the predefined aggregation strategies (none, mean, median, sum etc) .
      * @var int $aggregation
      */
-    public $aggregation = GRADE_AGGREGATE_MEAN;
+    public $aggregation = GRADE_AGGREGATE_SUM;
 
     /**
      * Keep only the X highest items.
@@ -1980,8 +1980,10 @@ class grade_category extends grade_object {
      */
     public function get_description() {
         $allhelp = array();
-        $aggrstrings = grade_helper::get_aggregation_strings();
-        $allhelp[] = $aggrstrings[$this->aggregation];
+        if ($this->aggregation != GRADE_AGGREGATE_SUM) {
+            $aggrstrings = grade_helper::get_aggregation_strings();
+            $allhelp[] = $aggrstrings[$this->aggregation];
+        }
 
         if ($this->droplow && $this->can_apply_limit_rules()) {
             $allhelp[] = get_string('droplowestvalues', 'grades', $this->droplow);
@@ -1995,7 +1997,10 @@ class grade_category extends grade_object {
         if ($this->aggregatesubcats) {
             $allhelp[] = get_string('aggregatesubcatsshort', 'grades');
         }
-        return implode('. ', $allhelp) . '.';
+        if ($allhelp) {
+            return implode('. ', $allhelp) . '.';
+        }
+        return '';
     }
 
     /**

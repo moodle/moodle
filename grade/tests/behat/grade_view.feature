@@ -72,23 +72,23 @@ Feature: We can enter in grades and view reports from the gradebook
       | Grade item | Grade | Range | Percentage |
       | Test assignment name 1 | 80.00 | 0–100 | 80.00 % |
       | Test assignment name 2 | 90.00 | 0–100 | 90.00 % |
-      | Course totalNatural. | 170.00 | 0–200 | 85.00 % |
+      | Course total | 170.00 | 0–200 | 85.00 % |
     And the following should not exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
-      | Course totalNatural. | 90.00 | 0–100 | 90.00 % |
+      | Course total | 90.00 | 0–100 | 90.00 % |
     And I set the field "Grade report" to "Overview report"
     And "C1" row "Grade" column of "overview-grade" table should contain "170.00"
     And "C1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
   @javascript
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
-    When I set the field "Grade report" to "Set up grades layout"
+    When I set the field "Grade report" to "Categories and items"
     And I set the following settings for grade item "Course 1":
       | Aggregation | Weighted mean of grades |
     And I set the field "Extra credit value for Test assignment name" to "0.72"
     And I press "Save changes"
     And I set the field "Grade report" to "User report"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the following fields to these values:
       | Show weightings | Show |
     And I press "Save changes"

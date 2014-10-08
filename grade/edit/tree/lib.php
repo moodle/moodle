@@ -44,9 +44,6 @@ class grade_edit_tree {
 
     public $uses_weight = false;
 
-    /** @var bool indicates if tree has categories with aggregation method other than Natural. */
-    protected $uses_non_natural = false;
-
     public $table;
 
     public $categories = array();
@@ -72,10 +69,6 @@ class grade_edit_tree {
         $this->deepest_level = $this->get_deepest_level($this->gtree->top_element);
 
         $this->columns = array(grade_edit_tree_column::factory('name', array('deepest_level' => $this->deepest_level)));
-
-        if ($this->uses_non_natural) {
-            $this->columns[] = grade_edit_tree_column::factory('aggregation', array('flag' => true));
-        }
 
         if ($this->uses_weight) {
             $this->columns[] = grade_edit_tree_column::factory('weight', array('adv' => 'weight'));
@@ -120,7 +113,7 @@ class grade_edit_tree {
 
         $object = $element['object'];
         $eid    = $element['eid'];
-        $object->name = $this->gtree->get_element_header($element, true, true, false);
+        $object->name = $this->gtree->get_element_header($element, true, true, true, true);
         $object->stripped_name = $this->gtree->get_element_header($element, false, false, false);
 
         $is_category_item = false;
@@ -523,10 +516,6 @@ class grade_edit_tree {
         $level++;
         $coefstring = $element['object']->get_coefstring();
         if ($element['type'] == 'category') {
-            if ($element['object']->aggregation != GRADE_AGGREGATE_SUM) {
-                $this->uses_non_natural = true;
-            }
-
             if ($coefstring == 'aggregationcoefweight' || $coefstring == 'aggregationcoefextraweightsum' ||
                     $coefstring == 'aggregationcoefextraweight') {
                 $this->uses_weight = true;
@@ -676,47 +665,6 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
         $itemcell = parent::get_item_cell($item, $params);
         $itemcell->colspan = ($this->deepest_level + 1) - $params['level'];
         $itemcell->text = $moveaction . $name;
-        return $itemcell;
-    }
-}
-
-/**
- * Class grade_edit_tree_column_aggregation
- *
- * @package   core_grades
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class grade_edit_tree_column_aggregation extends grade_edit_tree_column {
-
-    public function __construct($params) {
-        parent::__construct('aggregation');
-    }
-
-    public function get_header_cell() {
-        global $OUTPUT;
-        $headercell = clone($this->headercell);
-        $headercell->text = get_string('aggregation', 'grades').$OUTPUT->help_icon('aggregation', 'grades');
-        return $headercell;
-    }
-
-    public function get_category_cell($category, $levelclass, $params) {
-        global $CFG, $OUTPUT;
-        if (empty($params['id'])) {
-            throw new Exception('Array key (id) missing from 3rd param of grade_edit_tree_column_aggregation::get_category_cell($category, $levelclass, $params)');
-        }
-
-        $options = grade_helper::get_aggregation_strings();
-        $aggregation = $options[$category->aggregation];
-
-        $categorycell = parent::get_category_cell($category, $levelclass, $params);
-        $categorycell->text = $aggregation;
-        return $categorycell;
-
-    }
-
-    public function get_item_cell($item, $params) {
-        $itemcell = parent::get_item_cell($item, $params);
-        $itemcell->text = ' - ';
         return $itemcell;
     }
 }

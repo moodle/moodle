@@ -28,7 +28,7 @@ Feature: We can use a minimum grade different than zero
     And I am on homepage
     And I follow "Course 1"
     And I follow "Grades"
-    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
+    And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -66,14 +66,14 @@ Feature: We can use a minimum grade different than zero
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
     And I press "Save changes"
-    And I navigate to "Course grade settings" node in "Grade administration > Settings"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
 
   @javascript
   Scenario: Natural aggregation with negative and positive grade
-    And I navigate to "Set up grades layout" node in "Grade administration > Settings"
+    And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |

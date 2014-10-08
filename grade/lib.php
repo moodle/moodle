@@ -651,6 +651,10 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         $plugin_info['report'] = $reports;
     }
 
+    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
+        $plugin_info['settings'] = $settings;
+    }
+
     if ($scale = grade_helper::get_info_scales($courseid)) {
         $plugin_info['scale'] = array('view'=>$scale);
     }
@@ -683,16 +687,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
                 }
             }
         }
-    }
-
-    // Hide course settings if we're not in a course
-    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
-        $plugin_info['settings'] = $settings;
-    }
-
-    // Put preferences last
-    if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
-        $plugin_info['preferences'] = $preferences;
     }
 
     foreach ($plugin_info as $plugin_type => $plugins) {
@@ -789,6 +783,11 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
                                $buttons=false, $shownavigation=true, $headerhelpidentifier = null, $headerhelpcomponent = null) {
     global $CFG, $OUTPUT, $PAGE;
+
+    if ($active_type === 'preferences') {
+        // In Moodle 2.8 report preferences were moved under 'settings'. Allow backward compatibility for 3rd party grade reports.
+        $active_type = 'settings';
+    }
 
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
 
@@ -2416,6 +2415,13 @@ function grade_extend_settings($plugininfo, $courseid) {
         }
     }
 
+    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
+        $settingsnode = $gradenode->add($strings['settings'], null, navigation_node::TYPE_CONTAINER);
+        foreach ($settings as $setting) {
+            $settingsnode->add($setting->string, $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
+        }
+    }
+
     if ($imports = grade_helper::get_plugins_import($courseid)) {
         $importnode = $gradenode->add($strings['import'], null, navigation_node::TYPE_CONTAINER);
         foreach ($imports as $import) {
@@ -2427,20 +2433,6 @@ function grade_extend_settings($plugininfo, $courseid) {
         $exportnode = $gradenode->add($strings['export'], null, navigation_node::TYPE_CONTAINER);
         foreach ($exports as $export) {
             $exportnode->add($export->string, $export->link, navigation_node::TYPE_SETTING, null, $export->id, new pix_icon('i/export', ''));
-        }
-    }
-
-    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
-        $settingsnode = $gradenode->add($strings['settings'], null, navigation_node::TYPE_CONTAINER);
-        foreach ($settings as $setting) {
-            $settingsnode->add($setting->string, $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
-        }
-    }
-
-    if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
-        $preferencesnode = $gradenode->add(get_string('myreportpreferences', 'grades'), null, navigation_node::TYPE_CONTAINER);
-        foreach ($preferences as $preference) {
-            $preferencesnode->add($preference->string, $preference->link, navigation_node::TYPE_SETTING, null, $preference->id, new pix_icon('i/settings', ''));
         }
     }
 
@@ -2556,8 +2548,7 @@ abstract class grade_helper {
                 'letter' => get_string('letters', 'grades'),
                 'export' => get_string('export', 'grades'),
                 'import' => get_string('import'),
-                'preferences' => get_string('mypreferences', 'grades'),
-                'settings' => get_string('settings')
+                'settings' => get_string('edittree', 'grades')
             );
         }
         return self::$pluginstrings;
@@ -2598,12 +2589,18 @@ abstract class grade_helper {
         $context = context_course::instance($courseid);
         self::$managesetting = array();
         if ($courseid != SITEID && has_capability('moodle/grade:manage', $context)) {
+            self::$managesetting['categoriesanditems'] = new grade_plugin_info('setup',
+                new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)),
+                get_string('categoriesanditems', 'grades'));
             self::$managesetting['coursesettings'] = new grade_plugin_info('coursesettings',
                 new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)),
                 get_string('coursegradesettings', 'grades'));
-            self::$managesetting['setup'] = new grade_plugin_info('setup',
-                new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)),
-                get_string('setupgradeslayout', 'grades'));
+        }
+        if (self::$gradereportpreferences === null) {
+            self::get_plugins_reports($courseid);
+        }
+        if (self::$gradereportpreferences) {
+            self::$managesetting = array_merge(self::$managesetting, self::$gradereportpreferences);
         }
         return self::$managesetting;
     }
@@ -2640,7 +2637,8 @@ abstract class grade_helper {
             // Add link to preferences tab if such a page exists
             if (file_exists($plugindir.'/preferences.php')) {
                 $url = new moodle_url('/grade/report/'.$plugin.'/preferences.php', array('id'=>$courseid));
-                $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
+                $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url,
+                    get_string('mypreferences', 'grades') . ': ' . $pluginstr);
             }
         }
         if (count($gradereports) == 0) {
@@ -2657,19 +2655,7 @@ abstract class grade_helper {
         self::$gradereportpreferences = $gradepreferences;
         return self::$gradereports;
     }
-    /**
-     * Returns an array of grade plugin report preferences for plugin reports that
-     * support preferences
-     * @param int $courseid
-     * @return array
-     */
-    public static function get_plugins_report_preferences($courseid) {
-        if (self::$gradereportpreferences !== null) {
-            return self::$gradereportpreferences;
-        }
-        self::get_plugins_reports($courseid);
-        return self::$gradereportpreferences;
-    }
+
     /**
      * Get information on scales
      * @param int $courseid

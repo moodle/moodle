@@ -244,7 +244,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
     }
 }
 
-print_grade_page_head($courseid, 'settings', 'setup', get_string('setupgradeslayout', 'grades'));
+print_grade_page_head($courseid, 'settings', 'setup', get_string('categoriesanditems', 'grades'));
 
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
