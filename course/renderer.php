@@ -851,8 +851,15 @@ class core_course_renderer extends plugin_renderer_base {
                         trim('contentafterlink ' . $textclasses)));
             }
         } else {
+            $groupinglabel = '';
+            if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($mod->course))) {
+                $groupings = groups_get_all_groupings($mod->course);
+                $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$mod->groupingid]->name).')',
+                        array('class' => 'groupinglabel '.$textclasses));
+            }
+
             // No link, so display only content.
-            $output = html_writer::tag('div', $accesstext . $content,
+            $output = html_writer::tag('div', $accesstext . $content . $groupinglabel,
                     array('class' => 'contentwithoutlink ' . $textclasses));
         }
         return $output;
