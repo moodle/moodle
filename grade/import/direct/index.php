@@ -24,6 +24,7 @@ $id            = required_param('id', PARAM_INT); // Course id.
 $verbosescales = optional_param('verbosescales', 1, PARAM_BOOL);
 $iid           = optional_param('iid', null, PARAM_INT);
 $importcode    = optional_param('importcode', '', PARAM_FILE);
+$forceimport   = optional_param('forceimport', null, PARAM_INT);
 
 $url = new moodle_url('/grade/import/direct/index.php', array('id' => $id));
 
@@ -96,6 +97,7 @@ $mappingformdata = array(
     'header' => $header,
     'iid' => $iid,
     'id' => $id,
+    'forceimport' => $forceimport,
     'importcode' => $importcode,
     'verbosescales' => $verbosescales
 );

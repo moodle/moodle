@@ -267,7 +267,7 @@ class gradeimport_csv_load_data {
      * @param array $map Mapping information provided by the user.
      * @param int $key The line that we are currently working on.
      * @param bool $verbosescales Form setting for grading with scales.
-     * @param string $value The grade value .
+     * @param string $value The grade value.
      * @return array grades to be updated.
      */
     protected function update_grade_item($courseid, $map, $key, $verbosescales, $value) {
@@ -425,15 +425,19 @@ class gradeimport_csv_load_data {
         $this->headers = $header;
         $this->studentid = null;
         $this->gradebookerrors = null;
+        $forceimport = $formdata->forceimport;
         // Temporary array to keep track of what new headers are processed.
         $this->newgradeitems = array();
         $this->trim_headers();
-
+        $timeexportkey = null;
         $map = array();
         // Loops mapping_0, mapping_1 .. mapping_n and construct $map array.
         foreach ($header as $i => $head) {
             if (isset($formdata->{'mapping_'.$i})) {
                 $map[$i] = $formdata->{'mapping_'.$i};
+            }
+            if ($head == get_string('timeexported', 'gradeexport_txt')) {
+                $timeexportkey = $i;
             }
         }
 
@@ -528,6 +532,14 @@ class gradeimport_csv_load_data {
                             return $this->status;
                         }
                     }
+
+                    // The grade was modified since the export.
+                    if ($forceimport === 0 && !empty($timeexportkey) && ($line[$timeexportkey] < $gradegrade->get_dategraded())) {
+                        $user = core_user::get_user($this->studentid);
+                        $this->cleanup_import(get_string('gradealreadyupdated', 'grades', fullname($user)));
+                        break;
+                    }
+
                     $insertid = self::insert_grade_record($newgrade, $this->studentid);
                     // Check to see if the insert was successful.
                     if (empty($insertid)) {

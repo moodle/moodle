@@ -66,6 +66,9 @@ class gradeimport_direct_import_form extends moodleform {
         $mform->setType('previewrows', PARAM_INT);
         $mform->addElement('hidden', 'groupid', groups_get_course_group($COURSE));
         $mform->setType('groupid', PARAM_INT);
+        $mform->addElement('advcheckbox', 'forceimport', get_string('forceimport', 'grades'));
+        $mform->addHelpButton('forceimport', 'forceimport', 'grades');
+        $mform->setDefault('forceimport', 0);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 }
