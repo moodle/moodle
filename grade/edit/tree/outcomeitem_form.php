@@ -202,7 +202,7 @@ class edit_outcomeitem_form extends moodleform {
 
                 $parent_category->apply_forced_settings();
 
-                if (!$parent_category->is_aggregationcoef_used() or $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+                if (!$parent_category->is_aggregationcoef_used()) {
                     if ($mform->elementExists('aggregationcoef')) {
                         $mform->removeElement('aggregationcoef');
                     }
