@@ -359,7 +359,7 @@ class structure {
 
         $slots = $DB->get_records_sql("
                 SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
-                       q.*, qc.contextid
+                        slot.requireprevious, q.*, qc.contextid
                   FROM {quiz_slots} slot
                   LEFT JOIN {question} q ON q.id = slot.questionid
                   LEFT JOIN {question_categories} qc ON qc.id = q.category
@@ -381,6 +381,7 @@ class structure {
             $slot->page = $slotdata->page;
             $slot->questionid = $slotdata->questionid;
             $slot->maxmark = $slotdata->maxmark;
+            $slot->requireprevious = $slotdata->requireprevious;
 
             $this->slots[$slot->id] = $slot;
             $this->slotsinorder[$slot->slot] = $slot;
@@ -414,6 +415,7 @@ class structure {
                 $slot->name = get_string('missingquestion', 'quiz');
                 $slot->slot = $slot->slot;
                 $slot->maxmark = 0;
+                $slot->requireprevious = 0;
                 $slot->questiontext = ' ';
                 $slot->questiontextformat = FORMAT_HTML;
                 $slot->length = 1;
@@ -656,6 +658,24 @@ class structure {
         $trans->allow_commit();
 
         return true;
+    }
+
+    /**
+     * Change require previous for a slot..
+     * @param \stdClass $slot row from the quiz_slots table.
+     */
+    public function update_question_dependency($slot) {
+        global $DB;
+        $trans = $DB->start_delegated_transaction();
+
+        // Swap dependency setting.
+        if ($slot->requireprevious == 1) {
+            $slot->requireprevious = 0;
+        } else {
+            $slot->requireprevious = 1;
+        }
+        $DB->update_record('quiz_slots', $slot);
+        $trans->allow_commit();
     }
 
     /**

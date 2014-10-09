@@ -342,10 +342,11 @@ class edit_renderer extends \plugin_renderer_base {
             $contexts, $pagevars, $pageurl) {
 
         $output = '';
+        $previousquestion = null;
         foreach ($structure->get_questions_in_section($section->id) as $question) {
-            $output .= $this->question_row($structure, $question, $contexts, $pagevars, $pageurl);
+            $output .= $this->question_row($structure, $question, $previousquestion, $contexts, $pagevars, $pageurl);
+            $previousquestion = $question;
         }
-
         return html_writer::tag('ul', $output, array('class' => 'section img-text'));
     }
 
@@ -354,12 +355,13 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure object containing the structure of the quiz.
      * @param \stdClass $question data from the question and quiz_slots tables.
+     * @param \stdClass $previousquestion data from the question and quiz_slots tables.
      * @param \question_edit_contexts $contexts the relevant question bank contexts.
      * @param array $pagevars the variables from {@link \question_edit_setup()}.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function question_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
+    public function question_row(structure $structure, $question, $previousquestion, $contexts, $pagevars, $pageurl) {
         $output = '';
 
         $output .= $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
@@ -372,7 +374,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         // Question HTML.
-        $questionhtml = $this->question($structure, $question, $pageurl);
+        $questionhtml = $this->question($structure, $question, $previousquestion, $pageurl);
         $questionclasses = 'activity ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
 
         $output .= html_writer::tag('li', $questionhtml . $joinhtml,
@@ -543,12 +545,12 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param structure $structure object containing the structure of the quiz.
      * @param \stdClass $question data from the question and quiz_slots tables.
+     * @param \stdClass $previousquestion data from the question and quiz_slots tables.
      * @param \moodle_url $pageurl the canonical URL of this page.
      * @return string HTML to output.
      */
-    public function question(structure $structure, $question, \moodle_url $pageurl) {
+    public function question(structure $structure, $question, $previousquestion, \moodle_url $pageurl) {
         $output = '';
-
         $output .= html_writer::start_tag('div');
 
         if ($structure->can_be_edited()) {
@@ -580,6 +582,7 @@ class edit_renderer extends \plugin_renderer_base {
         $questionicons .= $this->question_preview_icon($structure->get_quiz(), $question);
         if ($structure->can_be_edited()) {
             $questionicons .= $this->question_remove_icon($question, $pageurl);
+            $questionicons .= $this->question_dependency_icon($structure->get_quiz(), $question, $previousquestion);
         }
         $questionicons .= $this->marked_out_of_field($structure->get_quiz(), $question);
         $output .= html_writer::span($questionicons, 'actions'); // Required to add js spinner icon.
@@ -611,8 +614,7 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function question_number($number) {
         if (is_numeric($number)) {
-            $number = html_writer::span(get_string('question'), 'accesshide') .
-                    ' ' . $number;
+            $number = html_writer::span(get_string('question'), 'accesshide') . ' ' . $number;
         }
         return html_writer::tag('span', $number, array('class' => 'slotnumber'));
     }
@@ -692,6 +694,58 @@ class edit_renderer extends \plugin_renderer_base {
         }
         return html_writer::span($this->action_link($url, $image, null, array('title' => $title,
                     'class' => 'page_split_join cm-edit-action', 'disabled' => $disabled, 'data-action' => $action)),
+                'page_split_join_wrapper');
+    }
+
+    /**
+     * Display an icon Add/Remove dependency
+     *
+     * @param object $quiz
+     * @param object $question
+     * @param object $previousquestion
+     * @param bool $dependencysetting
+     */
+    public function question_dependency_icon($quiz, $question, $previousquestion, $dependencysetting = true) {
+        if (!$dependencysetting) {
+            return null;
+        }
+        // Check whether the current question qualifies for dependency.
+        // What about random questions?
+        $unqualifiedqtypes = array('description', 'essay');
+
+        // Current question is not the first question in the quiz.
+        if ($question->slot == 1) {
+            return ' ';
+        }
+        // Current question is not a description or an essay question type.
+        if (in_array($question->qtype, $unqualifiedqtypes)) {
+            return ' ';
+        }
+        // Previous question is not a description or an essay question type.
+        if (in_array($previousquestion->qtype, $unqualifiedqtypes)) {
+            return ' ';
+        }
+        // Process qualified questions.
+        $url = new \moodle_url('questiondependency.php', array('cmid' => $quiz->cmid, 'quizid' => $quiz->id,
+                'slotid' => $question->slotid, 'sesskey' => sesskey()));
+
+        if ($question->requireprevious) {
+            $title = get_string('removequestiondependency', 'quiz');
+            $image = $this->pix_icon('e/remove_page_break', $title);
+            $action = 'linkpage';
+        } else {
+            $title = get_string('addquestiondependency', 'quiz');
+            $image = $this->pix_icon('e/insert_page_break', $title);
+            $action = 'unlinkpage';
+        }
+
+        // Disable the link if quiz has attempts.
+        $disabled = null;
+        if (quiz_has_attempts($quiz->id)) {
+            $disabled = "disabled";
+        }
+        return html_writer::span($this->action_link($url, $image, null, array('title' => $title,
+                'class' => 'question_dependency_icon', 'disabled' => $disabled, 'data-action' => $action)),
                 'page_split_join_wrapper');
     }
 

@@ -822,6 +822,35 @@ class question_usage_by_activity {
     }
 
     /**
+     * Replace a question with a dummy description question in this usage.
+     *
+     * @param object $slot
+     */
+    public function replace_question_with_a_description_qtye($slot) {
+        global $OUTPUT;
+        // Create a description qtye for the message.
+        question_bank::load_question_definition_classes('description');
+        $q = new qtype_description_question();
+        $q->id = $slot->questionid;
+        $q->name = 'Description';
+        $q->questiontext = get_string('questiondependsonprevious', 'quiz');
+        $q->generalfeedback = '';
+        $q->qtype = question_bank::get_qtype('description');
+        $q->options = new question_display_options();
+        $q->options->flags = 0;
+
+        $oldqa = $this->get_question_attempt($slot->slot);
+        $newqa = new question_attempt($q, $oldqa->get_usage_id(), $this->observer, $slot->maxmark);
+        $newqa->get_question()->options->flags = 1;
+
+        $newqa->set_database_id($oldqa->get_database_id());
+        $newqa->set_slot($slot->slot);
+        $this->questionattempts[$slot->slot] = $newqa;
+        $this->start_question($slot->slot);
+        $this->render_question($slot->slot, $q->options);
+    }
+
+    /**
      * Regrade all the questions in this usage (without changing their max mark).
      * @param bool $finished whether each question should be forced to be finished
      *      after the regrade, or whether it may still be in progress (default false).

@@ -1169,6 +1169,36 @@ class quiz_attempt {
     }
 
     /**
+     * Return slot object for the given slotnumber in a given quizid
+     *
+     * @param int $quizid
+     * @param int $slotnumber
+     */
+    public function get_slot_object($quizid, $slotnumber) {
+        global $DB;
+        return $DB->get_record('quiz_slots', array('slot' => $slotnumber, 'quizid' => $quizid));
+    }
+
+    /**
+     * Checks whether it requires previous question. If the previous question is not completed
+     * return a message in descripyiom question type format, otherwise returns null
+     *
+     * @param int $slot
+     */
+    public function require_previous_question($slot) {
+        $quiz = $this->get_quiz();
+        $currentslot = $this->get_slot_object($quiz->id, $slot);
+        $previousslot = $this->get_slot_object($quiz->id, $currentslot->slot - 1);
+
+        if ($currentslot->requireprevious && $previousslot) {
+            if ($this->get_question_status($previousslot->slot, false) == 'Not yet answered') {
+                return $this->quba->replace_question_with_a_description_qtye($currentslot);
+            }
+        }
+        return null;
+    }
+
+    /**
      * @param int $slot indicates which question to link to.
      * @param int $page if specified, the URL of this particular page of the attempt, otherwise
      * the URL will go to the first page.  If -1, deduce $page from $slot.

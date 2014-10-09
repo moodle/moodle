@@ -690,6 +690,13 @@ table.quizreviewsummary td.cell {
     margin: 0 2px;
 }
 
+#page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_icon {
+    -position: relative;
+    vertical-align: top;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
     display: block;
     min-height: 1.7em;
