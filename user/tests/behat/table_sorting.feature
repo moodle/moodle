@@ -1,4 +1,4 @@
-@core
+@core @core_user
 Feature: Tables can be sorted by additional names
   In order to sort fields by additional names
   As a user
