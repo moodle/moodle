@@ -46,6 +46,8 @@
 
     $returnurl = new moodle_url('/admin/user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'page'=>$page));
 
+    // The $user variable is also used outside of these if statements.
+    $user = null;
     if ($confirmuser and confirm_sesskey()) {
         require_capability('moodle/user:update', $sitecontext);
         if (!$user = $DB->get_record('user', array('id'=>$confirmuser, 'mnethostid'=>$CFG->mnet_localhost_id))) {
@@ -158,8 +160,9 @@
     // Carry on with the user listing
     $context = context_system::instance();
     $extracolumns = get_extra_user_fields($context);
-    $columns = array_merge(array('firstname', 'lastname'), $extracolumns,
-            array('city', 'country', 'lastaccess'));
+    // Get all user name fields as an array.
+    $allusernamefields = get_all_user_name_fields(false, null, null, null, true);
+    $columns = array_merge($allusernamefields, $extracolumns, array('city', 'country', 'lastaccess'));
 
     foreach ($columns as $column) {
         $string[$column] = get_user_field_name($column);
@@ -183,22 +186,28 @@
         $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
     }
 
-    $override = new stdClass();
-    $override->firstname = 'firstname';
-    $override->lastname = 'lastname';
-    $fullnamelanguage = get_string('fullnamedisplay', '', $override);
-    if (($CFG->fullnamedisplay == 'firstname lastname') or
-        ($CFG->fullnamedisplay == 'firstname') or
-        ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
-        $fullnamedisplay = "$firstname / $lastname";
-        if ($sort == "name") { // If sort has already been set to something else then ignore.
-            $sort = "firstname";
-        }
-    } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname').
-        $fullnamedisplay = "$lastname / $firstname";
-        if ($sort == "name") { // This should give the desired sorting based on fullnamedisplay.
-            $sort = "lastname";
-        }
+    // We need to check that alternativefullnameformat is not set to '' or language.
+    // We don't need to check the fullnamedisplay setting here as the fullname function call further down has
+    // the override parameter set to true.
+    $fullnamesetting = $CFG->alternativefullnameformat;
+    // If we are using language or it is empty, then retrieve all of the user's names.
+    if ($fullnamesetting == 'language' || empty($fullnamesetting)) {
+        $fullnamesetting = implode(' ', $allusernamefields);
+    }
+
+    // Order in string will ensure that the name columns are in the correct order.
+    $usernames = order_in_string($allusernamefields, $fullnamesetting);
+    $fullnamedisplay = array();
+    foreach ($usernames as $name) {
+        // Use the link from $$column for sorting on the user's name.
+        $fullnamedisplay[] = ${$name};
+    }
+    // All of the names are in one column. Put them into a string and separate them with a /.
+    $fullnamedisplay = implode(' / ', $fullnamedisplay);
+    // If $sort = name then it is the default for the setting and we should use the first name to sort by.
+    if ($sort == "name") {
+        // Use the first item in the array.
+        $sort = reset($usernames);
     }
 
     list($extrasql, $params) = $ufiltering->get_sql_filter();
