@@ -96,6 +96,12 @@ class grade_report_grader extends grade_report {
     protected $feedback_trunc_length = 50;
 
     /**
+     * Allow category grade overriding
+     * @var bool $overridecat
+     */
+    protected $overridecat;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -143,6 +149,8 @@ class grade_report_grader extends grade_report {
         $this->setup_groups();
         $this->setup_users();
         $this->setup_sortitemid();
+
+        $this->overridecat = (bool)get_config('moodle', 'grade_overridecat');
     }
 
     /**
@@ -1029,7 +1037,13 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($enableajax) {
-                        $itemcell->attributes['class'] .= ' clickable';
+                        $canoverride = true;
+                        if ($item->is_category_item() || $item->is_course_item()) {
+                            $canoverride = (bool) get_config('moodle', 'grade_overridecat');
+                        }
+                        if ($canoverride) {
+                            $itemcell->attributes['class'] .= ' clickable';
+                        }
                     }
 
                     if ($item->needsupdate) {
@@ -1485,7 +1499,16 @@ class grade_report_grader extends grade_report {
         // Init all icons
         $editicon = '';
 
-        if ($element['type'] != 'categoryitem' && $element['type'] != 'courseitem') {
+        $editable = true;
+
+        if ($element['type'] == 'grade') {
+            $item = $element['object']->grade_item;
+            if ($item->is_course_item() or $item->is_category_item()) {
+                $editable = $this->overridecat;
+            }
+        }
+
+        if ($element['type'] != 'categoryitem' && $element['type'] != 'courseitem' && $editable) {
             $editicon = $this->gtree->get_edit_icon($element, $this->gpr);
         }
 

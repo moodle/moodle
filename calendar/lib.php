@@ -795,7 +795,7 @@ function calendar_get_events_by_id($eventids) {
  * @return string $content return available control for the calender in html
  */
 function calendar_top_controls($type, $data) {
-    global $PAGE;
+    global $PAGE, $OUTPUT;
 
     // Get the calendar type we are using.
     $calendartype = \core_calendar\type_factory::get_calendar_instance();
@@ -923,7 +923,8 @@ function calendar_top_controls($type, $data) {
             }
 
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left . '<span class="hide"> | </span><h1 class="current">'.userdate($time, get_string('strftimemonthyear'))."</h1>";
+            $content .= $left . '<span class="hide"> | </span>';
+            $content .= $OUTPUT->heading(userdate($time, get_string('strftimemonthyear')), 2, 'current');
             $content .= '<span class="hide"> | </span>' . $right;
             $content .= '<span class="clearer"><!-- --></span>';
             $content .= html_writer::end_tag('div')."\n";
@@ -2887,10 +2888,11 @@ function calendar_add_subscription($sub) {
  * @param stdClass $event The RFC-2445 iCalendar event
  * @param int $courseid The course ID
  * @param int $subscriptionid The iCalendar subscription ID
+ * @param string $timezone The X-WR-TIMEZONE iCalendar property if provided
  * @throws dml_exception A DML specific exception is thrown for invalid subscriptionids.
  * @return int Code: CALENDAR_IMPORT_EVENT_UPDATED = updated,  CALENDAR_IMPORT_EVENT_INSERTED = inserted, 0 = error
  */
-function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
+function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timezone='UTC') {
     global $DB;
 
     // Probably an unsupported X-MICROSOFT-CDO-BUSYSTATUS event.
@@ -2923,15 +2925,27 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
 
     $defaulttz = date_default_timezone_get();
     $tz = isset($event->properties['DTSTART'][0]->parameters['TZID']) ? $event->properties['DTSTART'][0]->parameters['TZID'] :
-            'UTC';
+            $timezone;
     $eventrecord->timestart = strtotime($event->properties['DTSTART'][0]->value . ' ' . $tz);
     if (empty($event->properties['DTEND'])) {
         $eventrecord->timeduration = 3600; // one hour if no end time specified
     } else {
         $endtz = isset($event->properties['DTEND'][0]->parameters['TZID']) ? $event->properties['DTEND'][0]->parameters['TZID'] :
-                'UTC';
+                $timezone;
         $eventrecord->timeduration = strtotime($event->properties['DTEND'][0]->value . ' ' . $endtz) - $eventrecord->timestart;
     }
+
+    // Check to see if it should be treated as an all day event.
+    if ($eventrecord->timeduration == DAYSECS) {
+        // Check to see if the event started at Midnight on the imported calendar.
+        date_default_timezone_set($timezone);
+        if (date('H:i:s', $eventrecord->timestart) === "00:00:00") {
+            // This event should be an all day event.
+            $eventrecord->timeduration = 0;
+        }
+        date_default_timezone_set($defaulttz);
+    }
+
     $eventrecord->uuid = $event->properties['UID'][0]->value;
     $eventrecord->timemodified = time();
 
@@ -3065,8 +3079,14 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid = nu
         $sql = "UPDATE {event} SET timemodified = :time WHERE subscriptionid = :id";
         $DB->execute($sql, array('time' => 0, 'id' => $subscriptionid));
     }
+    // Grab the timezone from the iCalendar file to be used later.
+    if (isset($ical->properties['X-WR-TIMEZONE'][0]->value)) {
+        $timezone = $ical->properties['X-WR-TIMEZONE'][0]->value;
+    } else {
+        $timezone = 'UTC';
+    }
     foreach ($ical->components['VEVENT'] as $event) {
-        $res = calendar_add_icalendar_event($event, $courseid, $subscriptionid);
+        $res = calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timezone);
         switch ($res) {
           case CALENDAR_IMPORT_EVENT_UPDATED:
             $updatecount++;

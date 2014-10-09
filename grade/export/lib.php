@@ -36,7 +36,17 @@ abstract class grade_export {
     public $userkey;         // export using private user key
 
     public $updatedgradesonly; // only export updated grades
-    public $displaytype; // display type (e.g. real, percentages, letter) for exports
+
+    /**
+     *  Grade display type (real, percentages or letter).
+     *
+     *  This attribute is an integer for XML file export. Otherwise is an array for all other formats (ODS, XLS and TXT).
+     *
+     *  @var $displaytype Grade display type constant (1, 2 or 3) or an array of display types where the key is the name
+     *                    and the value is the grade display type constant or 0 for unchecked display types.
+     * @access public.
+     */
+    public $displaytype;
     public $decimalpoints; // number of decimal points for exports
     public $onlyactive; // only include users with an active enrolment
     public $usercustomfields; // include users custom fields
@@ -184,6 +194,12 @@ abstract class grade_export {
 
         if (isset($formdata->display)) {
             $this->displaytype = $formdata->display;
+
+            // Used by grade exports which accept multiple display types.
+            // If the checkbox value is 0 (unchecked) then remove it.
+            if (is_array($formdata->display)) {
+                $this->displaytype = array_filter($formdata->display);
+            }
         }
 
         if (isset($formdata->updatedgradesonly)) {
@@ -212,31 +228,38 @@ abstract class grade_export {
 
     /**
      * Returns string representation of final grade
-     * @param $object $grade instance of grade_grade class
+     * @param object $grade instance of grade_grade class
+     * @param integer $gradedisplayconst grade display type constant.
      * @return string
      */
-    public function format_grade($grade) {
-        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $this->displaytype, $this->decimalpoints);
+    public function format_grade($grade, $gradedisplayconst = null) {
+        $displaytype = $this->displaytype;
+        if (is_array($this->displaytype) && !is_null($gradedisplayconst)) {
+            $displaytype = $gradedisplayconst;
+        }
+        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, $this->decimalpoints);
     }
 
     /**
      * Returns the name of column in export
      * @param object $grade_item
-     * @param boolena $feedback feedback colum
-     * &return string
+     * @param boolean $feedback feedback colum
+     * @param string $gradedisplayname grade display name.
+     * @return string
      */
-    public function format_column_name($grade_item, $feedback=false) {
+    public function format_column_name($grade_item, $feedback=false, $gradedisplayname = null) {
+        $column = new stdClass();
+
         if ($grade_item->itemtype == 'mod') {
-            $name = get_string('modulename', $grade_item->itemmodule).get_string('labelsep', 'langconfig').$grade_item->get_name();
+            $column->name = get_string('modulename', $grade_item->itemmodule).get_string('labelsep', 'langconfig').$grade_item->get_name();
         } else {
-            $name = $grade_item->get_name();
+            $column->name = $grade_item->get_name();
         }
 
-        if ($feedback) {
-            $name .= ' ('.get_string('feedback').')';
-        }
+        // We can't have feedback and display type at the same time.
+        $column->extra = ($feedback) ? get_string('feedback') : get_string($gradedisplayname, 'grades');
 
-        return html_to_text($name, 0, false);
+        return html_to_text(get_string('gradeexportcolumntype', 'grades', $column), 0, false);
     }
 
     /**

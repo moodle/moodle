@@ -3717,7 +3717,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
-    if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
+    if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
             echo '<td class="discussionsubscription">';
@@ -5820,7 +5820,13 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo $OUTPUT->user_picture($activity->user, array('courseid'=>$courseid));
     echo "</td><td class=\"$class\">";
 
-    echo '<div class="title">';
+    if ($activity->content->parent) {
+        $class = 'title';
+    } else {
+        // Bold the title of new discussions so they stand out.
+        $class = 'title bold';
+    }
+    echo "<div class=\"{$class}\">";
     if ($detail) {
         $aname = s($activity->name);
         echo "<img src=\"" . $OUTPUT->pix_url('icon', $activity->type) . "\" ".

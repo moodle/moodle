@@ -1791,8 +1791,12 @@ class cm_info implements IteratorAggregate {
             // but we know that this function does not need anything more than basic data.
             $this->available = $ci->is_available($this->availableinfo, true,
                     $userid, $this->modinfo);
+        } else {
+            $this->available = true;
+        }
 
-            // Check parent section
+        // Check parent section.
+        if ($this->available) {
             $parentsection = $this->modinfo->get_section_info($this->sectionnum);
             if (!$parentsection->available) {
                 // Do not store info from section here, as that is already
@@ -1800,11 +1804,9 @@ class cm_info implements IteratorAggregate {
                 // the flag
                 $this->available = false;
             }
-        } else {
-            $this->available = true;
         }
 
-        // Update visible state for current user
+        // Update visible state for current user.
         $this->update_user_visible();
 
         // Let module make dynamic changes at this point
@@ -2678,15 +2680,22 @@ class section_info implements IteratorAggregate {
             // Has already been calculated or does not need calculation.
             return $this->_available;
         }
+        $this->_available = true;
+        $this->_availableinfo = '';
         if (!empty($CFG->enableavailability)) {
             require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
                     $userid, $this->modinfo);
-        } else {
-            $this->_available = true;
-            $this->_availableinfo = '';
+        }
+        // Execute the hook from the course format that may override the available/availableinfo properties.
+        $currentavailable = $this->_available;
+        course_get_format($this->modinfo->get_course())->
+            section_get_available_hook($this, $this->_available, $this->_availableinfo);
+        if (!$currentavailable && $this->_available) {
+            debugging('section_get_available_hook() can not make unavailable section available', DEBUG_DEVELOPER);
+            $this->_available = $currentavailable;
         }
         return $this->_available;
     }
@@ -2697,25 +2706,9 @@ class section_info implements IteratorAggregate {
      * @return string
      */
     private function get_availableinfo() {
-        // Make sure $this->_available has been calculated, it may also fill the _availableinfo property.
+        // Calling get_available() will also fill the availableinfo property
+        // (or leave it null if there is no userid).
         $this->get_available();
-        $userid = $this->modinfo->get_user_id();
-        if ($this->_availableinfo !== null || $userid == -1) {
-            // It has been already calculated or does not need calculation.
-            return $this->_availableinfo;
-        }
-        $this->_availableinfo = '';
-        // Display grouping info if available & not already displaying
-        // (it would already display if current user doesn't have access)
-        // for people with managegroups - same logic/class as grouping label
-        // on individual activities.
-        $context = context_course::instance($this->get_course());
-        if ($this->_groupingid && has_capability('moodle/course:managegroups', $context, $userid)) {
-            $groupings = groups_get_all_groupings($this->get_course());
-            $this->_availableinfo = html_writer::tag('span', '(' . format_string(
-                    $groupings[$this->_groupingid]->name, true, array('context' => $context)) .
-                    ')', array('class' => 'groupinglabel'));
-        }
         return $this->_availableinfo;
     }
 

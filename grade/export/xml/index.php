@@ -46,7 +46,8 @@ $formoptions = array(
     'idnumberrequired' => true,
     'updategradesonly' => true,
     'publishing' => true,
-    'simpleui' => true
+    'simpleui' => true,
+    'multipledisplaytypes' => false
 );
 
 $mform = new grade_export_form($actionurl, $formoptions);

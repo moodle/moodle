@@ -1,6 +1,6 @@
 <?php
 /**
-* @version V5.18 3 Sep 2012 (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+* @version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
 * Released under both BSD license and Lesser GPL library license.
 * Whenever there is any discrepancy between the two licenses,
 * the BSD license will take precedence.
@@ -21,13 +21,13 @@ if (!defined('ADODB_DIR')) die();
 	The big difference between mssqlpo and it's parent mssql is that mssqlpo supports
 	the more standard || string concatenation operator.
 */
-	
+
 include_once(ADODB_DIR.'/drivers/adodb-mssql.inc.php');
 
 class ADODB_mssqlpo extends ADODB_mssql {
 	var $databaseType = "mssqlpo";
-	var $concat_operator = '||'; 
-	
+	var $concat_operator = '||';
+
 	function ADODB_mssqlpo()
 	{
 		ADODB_mssql::ADODB_mssql();
@@ -44,7 +44,7 @@ class ADODB_mssqlpo extends ADODB_mssql {
 		if (!$stmt)  return $sql;
 		return array($sql,$stmt);
 	}
-	
+
 	function _query($sql,$inputarr=false)
 	{
 		if (is_string($sql)) $sql = str_replace('||','+',$sql);
@@ -59,4 +59,3 @@ class ADORecordset_mssqlpo extends ADORecordset_mssql {
 		$this->ADORecordset_mssql($id,$mode);
 	}
 }
-?>

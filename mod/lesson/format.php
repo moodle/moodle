@@ -89,7 +89,7 @@ function lesson_save_question_options($question, $lesson) {
             /// Perform sanity checks on fractional grades
             if ($maxfraction != 1) {
                 $maxfraction = $maxfraction * 100;
-                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                $result->notice = get_string("fractionsnomax", "lesson", $maxfraction);
                 return $result;
             }
             break;
@@ -127,7 +127,7 @@ function lesson_save_question_options($question, $lesson) {
             /// Perform sanity checks on fractional grades
             if ($maxfraction != 1) {
                 $maxfraction = $maxfraction * 100;
-                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                $result->notice = get_string("fractionsnomax", "lesson", $maxfraction);
                 return $result;
             }
         break;
@@ -140,7 +140,7 @@ function lesson_save_question_options($question, $lesson) {
             $answer->lessonid   = $question->lessonid;
             $answer->pageid = $question->id;
             $answer->timecreated   = $timenow;
-            $answer->answer = get_string("true", "quiz");
+            $answer->answer = get_string("true", "lesson");
             $answer->grade = $question->correctanswer * 100;
             if ($answer->grade > 50 ) {
                 $answer->jumpto = LESSON_NEXTPAGE;
@@ -156,7 +156,7 @@ function lesson_save_question_options($question, $lesson) {
             $answer->lessonid   = $question->lessonid;
             $answer->pageid = $question->id;
             $answer->timecreated   = $timenow;
-            $answer->answer = get_string("false", "quiz");
+            $answer->answer = get_string("false", "lesson");
             $answer->grade = (1 - (int)$question->correctanswer) * 100;
             if ($answer->grade > 50 ) {
                 $answer->jumpto = LESSON_NEXTPAGE;
@@ -214,14 +214,14 @@ function lesson_save_question_options($question, $lesson) {
             if ($question->single) {
                 if ($maxfraction != 1) {
                     $maxfraction = $maxfraction * 100;
-                    $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                    $result->notice = get_string("fractionsnomax", "lesson", $maxfraction);
                     return $result;
                 }
             } else {
                 $totalfraction = round($totalfraction,2);
                 if ($totalfraction != 1) {
                     $totalfraction = $totalfraction * 100;
-                    $result->notice = get_string("fractionsaddwrong", "quiz", $totalfraction);
+                    $result->notice = get_string("fractionsaddwrong", "lesson", $totalfraction);
                     return $result;
                 }
             }
@@ -267,7 +267,7 @@ function lesson_save_question_options($question, $lesson) {
             }
 
             if (count($subquestions) < 3) {
-                $result->notice = get_string("notenoughsubquestions", "quiz");
+                $result->notice = get_string("notenoughsubquestions", "lesson");
                 return $result;
             }
             break;

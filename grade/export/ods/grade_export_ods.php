@@ -67,7 +67,9 @@ class grade_export_ods extends grade_export {
             $myxls->write_string(0, $pos++, get_string("suspended"));
         }
         foreach ($this->columns as $grade_item) {
-            $myxls->write_string(0, $pos++, $this->format_column_name($grade_item));
+            foreach ($this->displaytype as $gradedisplayname => $gradedisplayconst) {
+                $myxls->write_string(0, $pos++, $this->format_column_name($grade_item, false, $gradedisplayname));
+            }
 
             // Add a column_feedback column.
             if ($this->export_feedback) {
@@ -101,12 +103,13 @@ class grade_export_ods extends grade_export {
                     $status = $geub->track($grade);
                 }
 
-                $gradestr = $this->format_grade($grade);
-                if (is_numeric($gradestr)) {
-                    $myxls->write_number($i,$j++,$gradestr);
-                }
-                else {
-                    $myxls->write_string($i,$j++,$gradestr);
+                foreach ($this->displaytype as $gradedisplayconst) {
+                    $gradestr = $this->format_grade($grade, $gradedisplayconst);
+                    if (is_numeric($gradestr)) {
+                        $myxls->write_number($i, $j++, $gradestr);
+                    } else {
+                        $myxls->write_string($i, $j++, $gradestr);
+                    }
                 }
 
                 // writing feedback if requested

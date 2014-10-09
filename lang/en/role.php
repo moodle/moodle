@@ -218,7 +218,6 @@ $string['grade:unlock'] = 'Unlock grades or items';
 $string['grade:view'] = 'View own grades';
 $string['grade:viewall'] = 'View grades of other users';
 $string['grade:viewhidden'] = 'View hidden grades for owner';
-$string['hidden'] = 'Hidden';
 $string['highlightedcellsshowdefault'] = 'The permissions highlighted in the table below are the defaults for the role archetype currently selected above.';
 $string['highlightedcellsshowinherit'] = 'The highlighted cells in the table below show the permission (if any) that will be inherited. Apart from the capabilities whose permission you actually want to alter, you should leave everything set to Inherit.';
 $string['checkglobalpermissions'] = 'Check system permissions';
@@ -423,3 +422,7 @@ $string['whydoesuserhavecap'] = 'Why does {$a->fullname} have capability {$a->ca
 $string['whydoesusernothavecap'] = 'Why does {$a->fullname} not have capability {$a->capability} in context {$a->context}?';
 $string['xroleassignments'] = '{$a}\'s role assignments';
 $string['xuserswiththerole'] = 'Users with the role "{$a->role}"';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'Hidden';

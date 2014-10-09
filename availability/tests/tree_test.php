@@ -490,6 +490,21 @@ class tree_testcase extends \advanced_testcase {
     }
 
     /**
+     * Tests the is_empty() function.
+     */
+    public function test_is_empty() {
+        // Tree with nothing in should be empty.
+        $structure = tree::get_root_json(array(), tree::OP_OR);
+        $tree = new tree($structure);
+        $this->assertTrue($tree->is_empty());
+
+        // Tree with something in is not empty.
+        $structure = tree::get_root_json(array(self::mock(array('m' => '1'))), tree::OP_OR);
+        $tree = new tree($structure);
+        $this->assertFalse($tree->is_empty());
+    }
+
+    /**
      * Tests the get_all_children() function.
      */
     public function test_get_all_children() {

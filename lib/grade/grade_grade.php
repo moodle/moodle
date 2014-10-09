@@ -243,6 +243,10 @@ class grade_grade extends grade_object {
             return false;
         }
 
+        if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
+            return (bool)get_config('moodle', 'grade_overridecat');
+        }
+
         return true;
     }
 

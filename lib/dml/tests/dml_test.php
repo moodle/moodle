@@ -4201,6 +4201,35 @@ class core_dml_testcase extends database_driver_testcase {
     }
 
     /**
+     * Test some complicated variations of set_field_select.
+     */
+    public function test_set_field_select_complicated() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 3, 'content' => 'hello', 'name'=>'xyz'));
+        $DB->insert_record($tablename, array('course' => 3, 'content' => 'world', 'name'=>'abc'));
+        $DB->insert_record($tablename, array('course' => 5, 'content' => 'hello', 'name'=>'def'));
+        $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe', 'name'=>'abc'));
+        // This SQL is a tricky case because we are selecting from the same table we are updating.
+        $sql = 'id IN (SELECT outerq.id from (SELECT innerq.id from {' . $tablename . '} innerq WHERE course = 3) outerq)';
+        $DB->set_field_select($tablename, 'name', 'ghi', $sql);
+
+        $this->assertSame(2, $DB->count_records_select($tablename, 'name = ?', array('ghi')));
+
+    }
+
+    /**
      * Test some more complex SQL syntax which moodle uses and depends on to work
      * useful to determine if new database libraries can be supported.
      */

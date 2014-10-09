@@ -143,11 +143,12 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertContains(get_string('overdue', 'assign', format_time(4*24*60*60)), $output);
 
         // Grant an extension.
-        $assign->testable_save_user_extension($this->students[0]->id, time() + 2 * 24 * 60 * 60);
+        $extendedtime = time() + 2 * 24 * 60 * 60;
+        $assign->testable_save_user_extension($this->students[0]->id, $extendedtime);
         $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
         $output = $assign->get_renderer()->render($gradingtable);
         $this->assertContains(get_string('submissionstatus_', 'assign'), $output);
-        $this->assertContains(get_string('userextensiondate', 'assign', userdate(time() + 2*24*60*60)), $output);
+        $this->assertContains(get_string('userextensiondate', 'assign', userdate($extendedtime)), $output);
 
         // Simulate a submission.
         $this->setUser($this->students[0]);
@@ -166,7 +167,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $gradingtable = new assign_grading_table($assign, 1, '', 0, true);
         $output = $assign->get_renderer()->render($gradingtable);
         $this->assertContains(get_string('submissionstatus_submitted', 'assign'), $output);
-        $this->assertContains(get_string('userextensiondate', 'assign', userdate(time() + 2*24*60*60)), $output);
+        $this->assertContains(get_string('userextensiondate', 'assign', userdate($extendedtime)), $output);
     }
 
     /**
@@ -660,6 +661,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Simulate a submission.
         $this->setUser($this->extrastudents[0]);
         $submission = $assign->get_user_submission($this->extrastudents[0]->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, false);
         // Leave this one as DRAFT.
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
@@ -1372,12 +1375,22 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $formdata->instance = $formdata->id;
         $assign->update_instance($formdata);
 
-        // Check we can repopen still.
+        // Mark the submission again.
+        $data = new stdClass();
+        $data->grade = '60.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 1);
+
+        // Check the grade exists.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEquals(60, (int)$grades[$this->students[0]->id]->rawgrade);
+
+        // Check we can reopen still.
         $result = $assign->testable_process_add_attempt($this->students[0]->id);
         $this->assertEquals(true, $result);
 
+        // Should no longer have a grade because there is no grade for the latest attempt.
         $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
-        $this->assertEquals(50, (int)$grades[$this->students[0]->id]->rawgrade);
+        $this->assertEmpty($grades);
 
     }
 

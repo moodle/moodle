@@ -1,3 +1,121 @@
+6.0.093 (2014-09-02)
+	- Security fix: some serialize/unserialize methods were replaced with json_encode/json_decode to avoid a potential object injection with user supplied content. Thanks to ownCloud Inc. for reporting this issue.
+	- K_TIMEZONE constant was added to the default configuration to supress date-time warnings.
+
+6.0.092 (2014-09-01)
+	- Bug item #956 "Monospaced fonts are not alignd at the baseline" was fixed.
+	- Bug item #964 "Problem when changing font size" was fixed.
+	- Bug item #969 "ImageSVG with radialGradient problem" was fixed.
+	- sRGB.icc file was replaced with the one from the Debian package icc-profiles-free (2.0.1+dfsg-1) 
+
+6.0.091 (2014-08-13)
+	- Issue #325"Division by zero when css fontsize equals 0" was fixed.
+
+6.0.090 (2014-08-08)
+	- Starting from this version TCPDF is also available in GitHub at https://github.com/tecnickcom/TCPDF
+	- Function getmypid() was removed for better compatibility with shared hosting environments.
+	- Support for pulling SVG stroke opacity value from RGBa color was mergeg [adf006].
+	- Bug item #951 "HTML Table within TCPDF columns doesnt flow correctly on page break ..." was fixed. 
+
+6.0.089 (2014-07-16)
+	- Bug item #948 "bottom line of rowspan cell not work correctly" was fixed.
+
+6.0.088 (2014-07-09)
+	- Bug item #946 "Case sensitive type check causes broken match for SVG" was fixed.
+	- Bug item #945 "Imagick load doesn't account for passed data string " was fixed.
+
+6.0.087 (2014-06-25)
+	- A bug affecting fitcell option in Multicell was fixed.
+
+6.0.086 (2014-06-20)
+	- Bug item #938 "Hyphenation-dash extends outside of cell" was fixed (collateral effect).
+
+6.0.085 (2014-06-19)
+	- Some example images were replaced.
+	- A race condition bug was fixed.
+	- Bug item #938 "Hyphenation-dash extends outside of cell" was fixed.
+
+6.0.084 (2014-06-13)
+	- A bug related to MultiCell fitcell feature was fixed.
+	- Bug item #931 "Documentation error for setPageFormat()" was fixed.
+
+6.0.083 (2014-05-29)
+	- Bug item #928 "setHtmlVSpace with HR element" was fixed.
+
+6.0.082 (2014-05-23)
+	- Bug item #926 "test statement instead of assignment used in tcpdf_fonts.php" was fixed.
+	- Bug item #925 "924 transparent images bug" was fixed.
+
+6.0.081 (2014-05-22)
+	- Bug item #922 "writehtml tables thead repeating" was fixed.
+	- Patch #71 "External and internal links, local and remote" wa applied.
+
+6.0.080 (2014-05-20)
+	- Bug item #921 "Fatal error in hyphenateText() function" was fixed.
+	- Bug item #923 "Automatic Hyphenation error" was fixed.
+	- Patch #70 "Augument TCPDFBarcode classes with ability to return raw png image data" was applied.
+
+6.0.079 (2014-05-19)
+	- Patch item #69 "Named destinations, HTML internal and external links" was merged.
+	- Bug item #920 "hyphenateText() should not hyphenate the content of style-tags in HTML mode" was fixed.
+	- Image method now trigs an error in case the cache is now writeable.
+	- Fixed issue with layer default status.
+
+6.0.078 (2014-05-12)
+	- A warning issue in addTTFfont() method was fixed.
+	- Fonts were updated to include cbbox metrics.
+
+6.0.077 (2014-05-06)
+	- A Datamatrix barcode bug was fixed.
+
+6.0.076 (2014-05-06)
+	- A bug in Datamatrix Base256 encoding was fixed.
+	- Merged fix for SVG use/clip-gradient.
+	- Now it is possible to prefix a page number in Link methods with the * character to avoid been changed when adding/deleting/moving pages (see example_045.php).
+
+6.0.075 (2014-05-05)
+	- Bug #917 "Using realtive Units like ex or em for images distort output in HTML mode" was fixed.
+
+6.0.074 (2014-05-03)
+	- Part of Bug #917 "Using realtive Units like ex or em for images distort output in HTML mode" was fixed.
+	- Bug #915 "Problem with SVG Image using Radial Gradients" was fixed.
+
+6.0.073 (2014-04-29)
+	- Bug #913 "Possible bug with line-height" was fixed.
+	- Bug #914 "MultiCell and FitCell" was fixed.
+	- Bug #915 "Problem with SVG Image using Radial Gradients" was fixed.
+
+6.0.072 (2014-04-27)
+	- Deprecated curly braces substring syntax was replaced with square braces.
+
+6.0.071 (2014-04-25)
+	- Bug #911 "error with buffered png pics" was fixed.
+
+6.0.070 (2014-04-24)
+	- Bug #910 "An SVG image is being cut off (with clipping mask) when you use align options" was fixed.
+
+6.0.069 (2014-04-24)
+	- Datamatrix Base256 encoding was fixed.
+
+6.0.068 (2014-04-22)
+	- Some Datamatrix barcode bugs were fixed.
+
+6.0.067 (2014-04-21)
+	- startLayer() method signature was changed to include a new "lock" parameter.
+
+6.0.066 (2014-04-20)
+	- Bug #908 "Linebreak is not considered when getting length of the next string" was fixed.
+
+6.0.065 (2014-04-10)
+	- Bug #905 "RGB percentage color bug in convertHTMLColorToDec()" was fixed.
+
+6.0.064 (2014-04-07)
+	- Header and Footer fonts are now set by default.
+	- Bug #904 "PDF corrupted" was fixed.
+
+6.0.063 (2014-04-03)
+	- Method TCPDF_IMAGES::_parsepng() was fixed to support transparency in Indexed images.
+
 6.0.062 (2014-03-02)
 	- The method startLayer() now accepts the NULL value for the $print parameter to not set the print layer option.
 

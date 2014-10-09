@@ -90,10 +90,12 @@ class edit_item_form extends moodleform {
         $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->setType('grademax', PARAM_RAW);
 
-        $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
-        $mform->addHelpButton('grademin', 'grademin', 'grades');
-        $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setType('grademin', PARAM_RAW);
+        if ((bool) get_config('moodle', 'grade_report_showmin')) {
+            $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
+            $mform->addHelpButton('grademin', 'grademin', 'grades');
+            $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+            $mform->setType('grademin', PARAM_RAW);
+        }
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
@@ -235,7 +237,9 @@ class edit_item_form extends moodleform {
             if ($grade_item->is_outcome_item()) {
                 // we have to prevent incompatible modifications of outcomes if outcomes disabled
                 $mform->removeElement('grademax');
-                $mform->removeElement('grademin');
+                if ($mform->elementExists('grademin')) {
+                    $mform->removeElement('grademin');
+                }
                 $mform->removeElement('gradetype');
                 $mform->removeElement('display');
                 $mform->removeElement('decimals');
@@ -244,7 +248,11 @@ class edit_item_form extends moodleform {
             } else {
                 if ($grade_item->is_external_item()) {
                     // following items are set up from modules and should not be overrided by user
-                    $mform->hardFreeze('itemname,gradetype,grademax,grademin,scaleid');
+                    if ($mform->elementExists('grademin')) {
+                        // The site setting grade_report_showmin may have prevented grademin being added to the form.
+                        $mform->hardFreeze('grademin');
+                    }
+                    $mform->hardFreeze('itemname,gradetype,grademax,scaleid');
                     if ($grade_item->itemnumber == 0) {
                         // the idnumber of grade itemnumber 0 is synced with course_modules
                         $mform->hardFreeze('idnumber');
@@ -315,7 +323,6 @@ class edit_item_form extends moodleform {
             $mform->removeElement('headerparent');
         }
     }
-
 
 /// perform extra validation before submission
     function validation($data, $files) {

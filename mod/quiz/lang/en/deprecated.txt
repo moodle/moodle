@@ -1,0 +1,8 @@
+invalidnumericanswer,mod_quiz
+multiplier,mod_quiz
+invalidnumerictolerance,mod_quiz
+unusedcategorydeleted,mod_quiz
+categories,mod_quiz
+import,mod_quiz
+export,mod_quiz
+category,mod_quiz

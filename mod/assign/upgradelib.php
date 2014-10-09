@@ -212,6 +212,8 @@ class assign_upgrade_manager {
                 $submission->timecreated = $oldsubmission->timecreated;
                 $submission->timemodified = $oldsubmission->timemodified;
                 $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+                // Because in mod_assignment there could only be one submission per student, it is always the latest.
+                $submission->latest = 1;
                 $submission->id = $DB->insert_record('assign_submission', $submission);
                 if (!$submission->id) {
                     $log .= get_string('couldnotinsertsubmission', 'mod_assign', $submission->userid);

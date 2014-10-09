@@ -129,23 +129,25 @@ class mod_assign_external extends external_api {
         if (count ($requestedassignmentids) > 0) {
             $placeholders = array();
             list($inorequalsql, $placeholders) = $DB->get_in_or_equal($requestedassignmentids, SQL_PARAMS_NAMED);
-            list($inorequalsql2, $placeholders2) = $DB->get_in_or_equal($requestedassignmentids, SQL_PARAMS_NAMED);
 
-            $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt
-                                FROM {assign_grades} mxg
-                                WHERE mxg.assignment ' . $inorequalsql2 . ' GROUP BY mxg.userid';
+            $sql = "SELECT ag.id,
+                           ag.assignment,
+                           ag.userid,
+                           ag.timecreated,
+                           ag.timemodified,
+                           ag.grader,
+                           ag.grade,
+                           ag.attemptnumber
+                      FROM {assign_grades} ag, {assign_submission} s
+                     WHERE s.assignment $inorequalsql
+                       AND s.userid = ag.userid
+                       AND s.latest = 1
+                       AND s.attemptnumber = ag.attemptnumber
+                       AND ag.timemodified  >= :since
+                       AND ag.assignment = s.assignment
+                  ORDER BY ag.assignment, ag.id";
 
-            $sql = "SELECT ag.id,ag.assignment,ag.userid,ag.timecreated,ag.timemodified,".
-                   "ag.grader,ag.grade,ag.attemptnumber ".
-                   "FROM {assign_grades} ag ".
-                   "JOIN ( " . $grademaxattempt . " ) gmx ON ag.userid = gmx.userid".
-                   " WHERE ag.assignment ".$inorequalsql.
-                   " AND ag.timemodified  >= :since".
-                   " AND ag.attemptnumber = gmx.maxattempt" .
-                   " ORDER BY ag.assignment, ag.id";
             $placeholders['since'] = $params['since'];
-            // Combine the parameters.
-            $placeholders += $placeholders2;
             $rs = $DB->get_recordset_sql($sql, $placeholders);
             $currentassignmentid = null;
             $assignment = null;

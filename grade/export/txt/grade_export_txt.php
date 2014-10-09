@@ -67,9 +67,11 @@ class grade_export_txt extends grade_export {
             $exporttitle[] = get_string("suspended");
         }
 
-        // Add a feedback column.
+        // Add grades and feedback columns.
         foreach ($this->columns as $grade_item) {
-            $exporttitle[] = $this->format_column_name($grade_item);
+            foreach ($this->displaytype as $gradedisplayname => $gradedisplayconst) {
+                $exporttitle[] = $this->format_column_name($grade_item, false, $gradedisplayname);
+            }
             if ($this->export_feedback) {
                 $exporttitle[] = $this->format_column_name($grade_item, true);
             }
@@ -100,7 +102,9 @@ class grade_export_txt extends grade_export {
                     $status = $geub->track($grade);
                 }
 
-                $exportdata[] = $this->format_grade($grade);
+                foreach ($this->displaytype as $gradedisplayconst) {
+                    $exportdata[] = $this->format_grade($grade, $gradedisplayconst);
+                }
 
                 if ($this->export_feedback) {
                     $exportdata[] = $this->format_feedback($userdata->feedbacks[$itemid]);

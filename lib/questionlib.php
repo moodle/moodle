@@ -360,7 +360,7 @@ function question_delete_course($course, $feedback=true) {
     $feedbackdata   = array();
 
     //Cache some strings
-    $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
+    $strcatdeleted = get_string('unusedcategorydeleted', 'question');
     $coursecontext = context_course::instance($course->id);
     $categoriescourse = $DB->get_records('question_categories',
             array('contextid' => $coursecontext->id), 'parent', 'id, parent, name, contextid');
@@ -391,7 +391,7 @@ function question_delete_course($course, $feedback=true) {
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
             $table = new html_table();
-            $table->head = array(get_string('category', 'quiz'), get_string('action'));
+            $table->head = array(get_string('category', 'question'), get_string('action'));
             $table->data = $feedbackdata;
             echo html_writer::table($table);
         }
@@ -417,7 +417,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
     if (empty($newcategory)) {
         $feedbackdata   = array(); // To store feedback to be showed at the end of the process
         $rescueqcategory = null; // See the code around the call to question_save_from_deletion.
-        $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
+        $strcatdeleted = get_string('unusedcategorydeleted', 'question');
 
         // Loop over question categories.
         if ($categories = $DB->get_records('question_categories',
@@ -544,7 +544,7 @@ function question_delete_activity($cm, $feedback=true) {
     $feedbackdata   = array();
 
     //Cache some strings
-    $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
+    $strcatdeleted = get_string('unusedcategorydeleted', 'question');
     $modcontext = context_module::instance($cm->id);
     if ($categoriesmods = $DB->get_records('question_categories',
             array('contextid' => $modcontext->id), 'parent', 'id, parent, name, contextid')) {
@@ -572,7 +572,7 @@ function question_delete_activity($cm, $feedback=true) {
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
             $table = new html_table();
-            $table->head = array(get_string('category', 'quiz'), get_string('action'));
+            $table->head = array(get_string('category', 'question'), get_string('action'));
             $table->data = $feedbackdata;
             echo html_writer::table($table);
         }
@@ -1496,19 +1496,19 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
 
     $contexts = new question_edit_contexts($context);
     if ($contexts->have_one_edit_tab_cap('questions')) {
-        $questionnode->add(get_string('questions', 'quiz'), new moodle_url(
+        $questionnode->add(get_string('questions', 'question'), new moodle_url(
                 '/question/edit.php', $params), navigation_node::TYPE_SETTING);
     }
     if ($contexts->have_one_edit_tab_cap('categories')) {
-        $questionnode->add(get_string('categories', 'quiz'), new moodle_url(
+        $questionnode->add(get_string('categories', 'question'), new moodle_url(
                 '/question/category.php', $params), navigation_node::TYPE_SETTING);
     }
     if ($contexts->have_one_edit_tab_cap('import')) {
-        $questionnode->add(get_string('import', 'quiz'), new moodle_url(
+        $questionnode->add(get_string('import', 'question'), new moodle_url(
                 '/question/import.php', $params), navigation_node::TYPE_SETTING);
     }
     if ($contexts->have_one_edit_tab_cap('export')) {
-        $questionnode->add(get_string('export', 'quiz'), new moodle_url(
+        $questionnode->add(get_string('export', 'question'), new moodle_url(
                 '/question/export.php', $params), navigation_node::TYPE_SETTING);
     }
 

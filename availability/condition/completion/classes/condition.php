@@ -74,6 +74,21 @@ class condition extends \core_availability\condition {
                 'cm' => $this->cmid, 'e' => $this->expectedcompletion);
     }
 
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param int $cmid Course-module id of other activity
+     * @param int $expectedcompletion Expected completion value (COMPLETION_xx)
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($cmid, $expectedcompletion) {
+        return (object)array('type' => 'completion', 'cm' => (int)$cmid,
+                'e' => (int)$expectedcompletion);
+    }
+
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
         $modinfo = $info->get_modinfo();
         $completion = new \completion_info($modinfo->get_course());

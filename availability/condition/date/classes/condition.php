@@ -77,6 +77,20 @@ class condition extends \core_availability\condition {
                 'd' => $this->direction, 't' => $this->time);
     }
 
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param string $direction DIRECTION_xx constant
+     * @param int $time Time in epoch seconds
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($direction, $time) {
+        return (object)array('type' => 'date', 'd' => $direction, 't' => (int)$time);
+    }
+
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
         return $this->is_available_for_all($not);
     }
@@ -208,5 +222,16 @@ class condition extends \core_availability\condition {
      */
     protected static function is_midnight($time) {
         return usergetmidnight($time) == $time;
+    }
+
+    public function update_after_restore(
+            $restoreid, $courseid, \base_logger $logger, $name) {
+        // Update the date, if restoring with changed date.
+        $dateoffset = \core_availability\info::get_restore_date_offset($restoreid);
+        if ($dateoffset) {
+            $this->time += $dateoffset;
+            return true;
+        }
+        return false;
     }
 }

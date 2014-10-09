@@ -68,7 +68,7 @@ class grade_export_xml extends grade_export {
             foreach ($userdata->grades as $itemid => $grade) {
                 $grade_item = $this->grade_items[$itemid];
                 $grade->grade_item =& $grade_item;
-                $gradestr = $this->format_grade($grade); // no formating for now
+                $gradestr = $this->format_grade($grade, $this->displaytype); // no formating for now
 
                 // MDL-11669, skip exported grades or bad grades (if setting says so)
                 if ($export_tracking) {

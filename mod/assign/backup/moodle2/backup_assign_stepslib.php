@@ -88,7 +88,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                       'timemodified',
                                                       'status',
                                                       'groupid',
-                                                      'attemptnumber'));
+                                                      'attemptnumber',
+                                                      'latest'));
 
         $grades = new backup_nested_element('grades');
 

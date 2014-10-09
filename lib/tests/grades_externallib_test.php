@@ -114,6 +114,9 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         $outcomegradeitem->itemnumber = 1; // The activity's original grade item will be 0.
         $outcomegradeitem->gradetype = GRADE_TYPE_SCALE;
         $outcomegradeitem->scaleid = $outcome->scaleid;
+        // This next two values for testing that returns parameters are correcly formatted.
+        $outcomegradeitem->set_locked(true);
+        $outcomegradeitem->hidden = '';
         $outcomegradeitem->insert();
 
         $assignmentgradeitem = grade_item::fetch(

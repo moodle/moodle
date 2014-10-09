@@ -377,9 +377,9 @@ class external_api {
      */
     protected static function get_context_from_params($param) {
         $levels = context_helper::get_all_levels();
-        if (isset($param['contextid'])) {
+        if (!empty($param['contextid'])) {
             return context::instance_by_id($param['contextid'], IGNORE_MISSING);
-        } else if (isset($param['contextlevel']) && isset($param['instanceid'])) {
+        } else if (!empty($param['contextlevel']) && isset($param['instanceid'])) {
             $contextlevel = "context_".$param['contextlevel'];
             if (!array_search($contextlevel, $levels)) {
                 throw new invalid_parameter_exception('Invalid context level = '.$param['contextlevel']);

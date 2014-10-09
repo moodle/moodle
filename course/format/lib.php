@@ -109,6 +109,11 @@ abstract class format_base {
             return self::$classesforformat[$format];
         }
 
+        if (PHPUNIT_TEST && class_exists('format_' . $format)) {
+            // Allow unittests to use non-existing course formats.
+            return $format;
+        }
+
         // Else return default format
         $defaultformat = get_config('moodlecourse', 'format');
         if (!in_array($defaultformat, $plugins)) {
@@ -136,7 +141,7 @@ abstract class format_base {
         if (!isset($classnames[$format])) {
             $plugins = core_component::get_plugin_list('format');
             $usedformat = self::get_format_or_default($format);
-            if (file_exists($plugins[$usedformat].'/lib.php')) {
+            if (isset($plugins[$usedformat]) && file_exists($plugins[$usedformat].'/lib.php')) {
                 require_once($plugins[$usedformat].'/lib.php');
             }
             $classnames[$format] = 'format_'. $usedformat;
@@ -905,6 +910,29 @@ abstract class format_base {
             $sectionnum = $section;
         }
         return ($sectionnum && ($course = $this->get_course()) && $course->marker == $sectionnum);
+    }
+
+    /**
+     * Allows to specify for modinfo that section is not available even when it is visible and conditionally available.
+     *
+     * Note: affected user can be retrieved as: $section->modinfo->userid
+     *
+     * Course format plugins can override the method to change the properties $available and $availableinfo that were
+     * calculated by conditional availability.
+     * To make section unavailable set:
+     *     $available = false;
+     * To make unavailable section completely hidden set:
+     *     $availableinfo = '';
+     * To make unavailable section visible with availability message set:
+     *     $availableinfo = get_string('sectionhidden', 'format_xxx');
+     *
+     * @param section_info $section
+     * @param bool $available the 'available' propery of the section_info as it was evaluated by conditional availability.
+     *     Can be changed by the method but 'false' can not be overridden by 'true'.
+     * @param string $availableinfo the 'availableinfo' propery of the section_info as it was evaluated by conditional availability.
+     *     Can be changed by the method
+     */
+    public function section_get_available_hook(section_info $section, &$available, &$availableinfo) {
     }
 }
 

@@ -60,6 +60,7 @@ $string['cannotretrieveqcat'] = 'Could not retrieve question category';
 $string['cannotunhidequestion'] = 'Failed to unhide the question.';
 $string['cannotunzip'] = 'Could not unzip file.';
 $string['cannotwriteto'] = 'Cannot write exported questions to {$a}';
+$string['categories'] = 'Categories';
 $string['categorycurrent'] = 'Current category';
 $string['categorycurrentuse'] = 'Use this category';
 $string['categorydoesnotexist'] = 'This category does not exist';
@@ -129,6 +130,7 @@ $string['errorduringregrade'] = 'Could not regrade question {$a->qid}, going to 
 $string['errorfilecannotbecopied'] = 'Error: cannot copy file {$a}.';
 $string['errorfilecannotbemoved'] = 'Error: cannot move file {$a}.';
 $string['errorfileschanged'] = 'Error: files linked to from questions have changed since form was displayed.';
+$string['erroritemappearsmorethanoncewithdifferentweight'] = 'Question ({$a}) appears more than once with different weights in different positions of the test. This is not currently supported by the statistics report and may make the statistics for this question unreliable.';
 $string['errormanualgradeoutofrange'] = 'The grade {$a->grade} is not between 0 and {$a->maxgrade} for question {$a->name}. The score and comment have not been saved.';
 $string['errormovingquestions'] = 'Error while moving questions with ids {$a}.';
 $string['errorpostprocess'] = 'Error occurred during post-processing!';
@@ -138,6 +140,7 @@ $string['errorprocessingresponses'] = 'An error occurred while processing your r
 $string['errorsavingcomment'] = 'Error saving the comment for question {$a->name} in the database.';
 $string['errorupdatingattempt'] = 'Error updating attempt {$a->id} in the database.';
 $string['eventquestioncategorycreated'] = 'Question category created';
+$string['export'] = 'Export';
 $string['exportcategory'] = 'Export category';
 $string['exportcategory_help'] = 'This setting determines the category from which the exported questions will be taken.
 
@@ -166,6 +169,7 @@ $string['chooseqtypetoadd'] = 'Choose a question type to add';
 $string['editquestions'] = 'Edit questions';
 $string['ignorebroken'] = 'Ignore broken links';
 $string['impossiblechar'] = 'Impossible character {$a} detected as parenthesis character';
+$string['import'] = 'Import';
 $string['importcategory'] = 'Import category';
 $string['importcategory_help'] = 'This setting determines the category into which the imported questions will go.
 
@@ -333,7 +337,6 @@ $string['generalfeedback'] = 'General feedback';
 $string['generalfeedback_help'] = 'General feedback is shown to the student after they have completed the question. Unlike specific feedback, which depends on the question type and what response the student gave, the same general feedback text is shown to all students.
 
 You can use the general feedback to give students a fully worked answer and perhaps a link to more information they can use if they did not understand the questions.';
-$string['hidden'] = 'Hidden';
 $string['hintn'] = 'Hint {no}';
 $string['hintnoptions'] = 'Hint {no} options';
 $string['hinttext'] = 'Hint text';
@@ -343,6 +346,7 @@ $string['howquestionsbehave_help'] = 'Students can interact with the questions i
 Alternatively, you may wish for students to submit each question as they go along to get immediate feedback, and if they do not get it right immediately, have another try for fewer marks. That would be \'Interactive with multiple tries\' mode.
 
 Those are probably the two most commonly used modes of behaviour. ';
+$string['howquestionsbehave_link'] = 'question/behaviour';
 $string['importfromcoursefiles'] = '... or choose a course file to import.';
 $string['importfromupload'] = 'Select a file to upload ...';
 $string['includesubcategories'] = 'Also show questions from subcategories';
@@ -429,9 +433,14 @@ $string['unknownorunhandledtype'] = 'Unknown or unhandled question type: {$a}';
 $string['unknownquestion'] = 'Unknown question: {$a}.';
 $string['unknownquestioncatregory'] = 'Unknown question category: {$a}.';
 $string['unknownquestiontype'] = 'Unknown question type: {$a}.';
+$string['unusedcategorydeleted'] = 'This category has been deleted because, after deleting the course, its questions weren\'t used any more.';
 $string['whethercorrect'] = 'Whether correct';
 $string['whethercorrect_help'] = 'This covers both the textual description \'Correct\', \'Partially correct\' or \'Incorrect\', and any coloured highlighting that conveys the same information.';
 $string['whichtries'] = 'Which tries';
 $string['withselected'] = 'With selected';
 $string['xoutofmax'] = '{$a->mark} out of {$a->max}';
 $string['yougotnright'] = 'You have correctly selected {$a->num}.';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'Hidden';

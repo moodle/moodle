@@ -119,8 +119,24 @@ class grade_export_form extends moodleform {
             }
         }
         */
-        $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);
-        $mform->setDefault('display', $CFG->grade_export_displaytype);
+        if ($features['multipledisplaytypes']) {
+            /*
+             * Using advcheckbox because we need the grade display type (name) as key and grade display type (constant) as value.
+             * The method format_column_name requires the lang file string and the format_grade method requires the constant.
+             */
+            $checkboxes = array();
+            $checkboxes[] = $mform->createElement('advcheckbox', 'display[real]', null, get_string('real', 'grades'), null, array(0, GRADE_DISPLAY_TYPE_REAL));
+            $checkboxes[] = $mform->createElement('advcheckbox', 'display[percentage]', null, get_string('percentage', 'grades'), null, array(0, GRADE_DISPLAY_TYPE_PERCENTAGE));
+            $checkboxes[] = $mform->createElement('advcheckbox', 'display[letter]', null, get_string('letter', 'grades'), null, array(0, GRADE_DISPLAY_TYPE_LETTER));
+            $mform->addGroup($checkboxes, 'displaytypes', get_string('gradeexportdisplaytypes', 'grades'), ' ', false);
+            $mform->setDefault('display[real]', $CFG->grade_export_displaytype == GRADE_DISPLAY_TYPE_REAL);
+            $mform->setDefault('display[percentage]', $CFG->grade_export_displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE);
+            $mform->setDefault('display[letter]', $CFG->grade_export_displaytype == GRADE_DISPLAY_TYPE_LETTER);
+        } else {
+            // Only used by XML grade export format.
+            $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);
+            $mform->setDefault('display', $CFG->grade_export_displaytype);
+        }
 
         //$default_gradedecimals = $CFG->grade_export_decimalpoints;
         $options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
@@ -183,6 +199,31 @@ class grade_export_form extends moodleform {
         }
 
         $this->add_action_buttons(false, $submitstring);
+    }
+
+    /**
+     * Overrides the mform get_data method.
+     *
+     * Created to force a value since the validation method does not work with multiple checkbox.
+     *
+     * @return stdClass form data object.
+     */
+    public function get_data() {
+        global $CFG;
+        $data = parent::get_data();
+        if ($data && $this->_customdata['multipledisplaytypes']) {
+            if (count(array_filter($data->display)) == 0) {
+                // Ensure that a value was selected as the export plugins expect at least one value.
+                if ($CFG->grade_export_displaytype == GRADE_DISPLAY_TYPE_LETTER) {
+                    $data->display['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+                } else if ($CFG->grade_export_displaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                    $data->display['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+                } else {
+                    $data->display['real'] = GRADE_DISPLAY_TYPE_REAL;
+                }
+            }
+        }
+        return $data;
     }
 }
 
