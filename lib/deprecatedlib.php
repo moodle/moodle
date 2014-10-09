@@ -4522,7 +4522,7 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
         $left JOIN ({cohort_members} cm
                    JOIN ($esql) u ON u.id = cm.userid) ON cm.cohortid = c.id
              WHERE c.contextid $parentsql
-          GROUP BY c.id, c.name, c.contextid, c.idnumber
+          GROUP BY c.id, c.name, c.contextid, c.idnumber, c.visible
            $having
           ORDER BY c.name, c.idnumber, c.visible";
 
