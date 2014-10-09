@@ -937,11 +937,15 @@ class qformat_default {
                 }
             }
 
-            // export the question displaying message
-            $count++;
-
+            // Add the question to result.
             if (!$checkcapabilities || question_has_capability_on($question, 'view')) {
-                $expout .= $this->writequestion($question, $contextid) . "\n";
+                $expquestion = $this->writequestion($question, $contextid);
+                // Don't add anything if witequestion returned nothing.
+                // This will permit qformat plugins to exclude some questions.
+                if ($expquestion !== null) {
+                    $expout .= $expquestion . "\n";
+                    $count++;
+                }
             }
         }
 

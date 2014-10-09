@@ -7,6 +7,10 @@ qtype_numerical and qtype_multianswer plugins in the qtype_numerical_edit_form
 and qtype_multianswer_edit_form classes has been moved to a static function
 in the qtype_numerical class of the qtype_numerical plugin.
 
+The exportprocess function of the qformat_default class doesn't output a blank line
+if the result of the writequestion function is null. This permit to qformat plugins
+to ignore some questions without the need to overwrite this function.
+
 === 3.5 ===
 
 1) The question format exportprocess function now adds a
