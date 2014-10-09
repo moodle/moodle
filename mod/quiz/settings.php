@@ -217,7 +217,7 @@ if ($ADMIN->fulltree) {
         300 => get_string('numminutes', 'moodle', 5),
     );
     $quizsettings->add(new admin_setting_configselect('quiz/autosaveperiod',
-            get_string('autosaveperiod', 'quiz'), get_string('autosaveperiod_desc', 'quiz'), 0, $options));
+            get_string('autosaveperiod', 'quiz'), get_string('autosaveperiod_desc', 'quiz'), 120, $options));
 }
 
 // Now, depending on whether any reports have their own settings page, add
