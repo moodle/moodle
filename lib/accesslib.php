@@ -3110,10 +3110,6 @@ function get_user_roles_in_course($userid, $courseid) {
         $context = context_course::instance($courseid);
     }
 
-    if (empty($CFG->profileroles)) {
-        return array();
-    }
-
     list($rallowed, $params) = $DB->get_in_or_equal(explode(',', $CFG->profileroles), SQL_PARAMS_NAMED, 'a');
     list($contextlist, $cparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'p');
     $params = array_merge($params, $cparams);
