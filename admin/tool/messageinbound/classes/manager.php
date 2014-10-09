@@ -334,6 +334,15 @@ class manager {
             // Now pass it through the Inbound Message processor.
             $status = $this->addressmanager->process_envelope($recipient, $sender);
 
+            if (($status & ~ \core\message\inbound\address_manager::VALIDATION_DISABLED_HANDLER) !== $status) {
+                // The handler is disabled.
+                mtrace("-- Skipped message - Handler is disabled. Fail code {$status}");
+                // In order to handle the user error, we need more information about the message being failed.
+                $this->process_message_data($envelope, $messagedata, $messageid);
+                $this->inform_user_of_error(get_string('handlerdisabled', 'tool_messageinbound', $this->currentmessagedata));
+                return;
+            }
+
             // Check the validation status early. No point processing garbage messages, but we do need to process it
             // for some validation failure types.
             if (!$this->passes_key_validation($status, $messageid)) {

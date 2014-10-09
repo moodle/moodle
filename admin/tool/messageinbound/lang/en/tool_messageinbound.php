@@ -36,6 +36,7 @@ $string['enabled'] = 'Enabled';
 $string['fixedvalidateaddress'] = 'Validate sender address';
 $string['fixedvalidateaddress_help'] = 'You cannot change the address validation for this handler. This may be because the handler requires a specific setting.';
 $string['fixedenabled_help'] = 'You cannot change the state of this handler. This may be because the handler is required by other handlers.';
+$string['handlerdisabled'] = 'The email handler you tried to contact has been disabled. Unable to process message at this time.';
 $string['incomingmailconfiguration'] = 'Incoming mail configuration';
 $string['incomingmailserversettings'] = 'Incoming mail server settings';
 $string['incomingmailserversettings_desc'] = 'Moodle is capable of connecting to appropriately configured IMAP servers. You can specify the settings used to connect to your IMAP server here.';
