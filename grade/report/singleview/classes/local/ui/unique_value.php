@@ -15,22 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The gradebook simple view - Database file
+ * The gradebook simple view - UI factory
  *
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
+namespace gradereport_singleview\local\ui;
 
-    'gradereport/singleview:view' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    )
-);
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * Simple interface for an item with a value.
+ *
+ * @package   gradereport_singleview
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface unique_value {
+    /**
+     * Get the value for this item.
+     * @return string
+     */
+    public function get_value();
+}

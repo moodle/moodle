@@ -15,22 +15,45 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The gradebook simple view - Database file
+ * Element that just generates some text.
  *
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
+namespace gradereport_singleview\local\ui;
 
-    'gradereport/singleview:view' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    )
-);
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * Element that just generates some text.
+ *
+ * @package   gradereport_singleview
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class empty_element extends element {
+
+    /**
+     * Constructor
+     *
+     * @param string $msg The text
+     */
+    public function __construct($msg = null) {
+        if (is_null($msg)) {
+            $this->text = '&nbsp;';
+        } else {
+            $this->text = $msg;
+        }
+    }
+
+    /**
+     * Generate the html (simple case)
+     *
+     * @return string HTML
+     */
+    public function html() {
+        return $this->text;
+    }
+}

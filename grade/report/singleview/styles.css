@@ -1,51 +1,47 @@
-#page-grade-report-singleview-index div.generalbox {
+.path-grade-report-singleview div.generalbox {
   margin: 0 20px 15px 20px;
 }
 
-#page-grade-report-singleview-index div.generalbox div.singleselect form div {
+.path-grade-report-singleview div.generalbox div.singleselect form div {
   text-align: center;
 }
 
-#page-grade-report-singleview-index div.generalbox table.generaltable {
+.path-grade-report-singleview div.generalbox table.generaltable {
   margin: 0 auto 15px auto;
 }
 
-#page-grade-report-singleview-index div.generalbox form div {
+.path-grade-report-singleview div.generalbox form div {
   text-align: center;
 }
 
-#page-grade-report-singleview-index .singleview_buttons {
+.path-grade-report-singleview .singleview_buttons {
     padding: 10px 0;
 }
 
-#page-grade-report-singleview-index table.generaltable .cell {
-   vertical-align: middle;
-}
-
-#page-grade-report-singleview-index div.generalbox h2 {
+.path-grade-report-singleview div.generalbox h2 {
    text-align: center;
 }
 
-#page-grade-report-singleview-index input[name^="finalgrade"] {
+.path-grade-report-singleview input[name^="finalgrade"] {
     width: 50px;
 }
 
-#page-grade-report-singleview-index #region-main h2, .paging{
+.path-grade-report-singleview #region-main h2, .paging{
    text-align: center;
 }
 
-#page-grade-report-singleview-index itemnav.previtem {
+.path-grade-report-singleview itemnav.previtem {
    float:left;
 }
-#page-grade-report-singleview-index itemnav.previtem {
+.path-grade-report-singleview itemnav.previtem {
    float:left;
 }
-#page-grade-report-singleview-index.dir-rtl small.previtem {
+.path-grade-report-singleview.dir-rtl small.previtem {
    float:right;
 }
-#page-grade-report-singleview-index small.nextitem {
+.path-grade-report-singleview small.nextitem {
    float:right;
 }
-#page-grade-report-singleview-index.dir-rtl small.nextitem {
+.path-grade-report-singleview.dir-rtl small.nextitem {
    float:left;
 }

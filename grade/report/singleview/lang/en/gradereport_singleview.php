@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// General Strings
+// General Strings.
 $string['all_grades'] = 'All grades';
 $string['assessmentname'] = 'Assessment Name';
 $string['blanks'] = 'Empty grades';
@@ -37,8 +36,8 @@ $string['excludenone'] = 'Exclude no grades';
 $string['feedbackfor'] = 'Feedback for {$a}';
 $string['filtergrades'] = 'Show grades for {$a}.';
 $string['gradefor'] = 'Grade for {$a}';
-$string['noscreens'] = 'Could not find a suitable Single view screen.';
-$string['notallowed'] = 'Not allowed to use Singleview on this item.';
+$string['noscreens'] = 'Could not find a suitable single view screen.';
+$string['gradeitemcannotbeoverridden'] = 'This grade item cannot be overridden.';
 $string['notvalid'] = 'Not a valid Single view screen: {$a}';
 $string['override'] = 'Override';
 $string['overrideall'] = 'Override all grades';

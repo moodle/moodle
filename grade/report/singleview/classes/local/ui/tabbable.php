@@ -15,22 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The gradebook simple view - Database file
+ * The gradebook simple view - UI factory
  *
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
+namespace gradereport_singleview\local\ui;
 
-    'gradereport/singleview:view' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    )
-);
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * This element has a tabindex
+ *
+ * @package   gradereport_singleview
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface tabbable {
+    /**
+     * Get the tabindex for this element
+     * @return int
+     */
+    public function get_tabindex();
+}
+

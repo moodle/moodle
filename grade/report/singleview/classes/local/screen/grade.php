@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,62 +15,94 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The gradebook simple view - grades view (for an activity)
+ * The screen with a list of users.
  *
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class gradereport_singleview_grade extends gradereport_singleview_tablelike
-    implements gradereport_selectable_items, gradereport_item_filtering {
+namespace gradereport_singleview\local\screen;
 
+use gradereport_singleview\local\ui\range;
+use grade_item;
+use moodle_url;
+use pix_icon;
+use html_writer;
+use gradereport_singleview;
+
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * The screen with a list of users.
+ *
+ * @package   gradereport_singleview
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class grade extends tablelike implements selectable_items, filterable_items {
+
+    /** @var int $totalitemcount Used for paging */
     private $totalitemcount = 0;
 
+    /** @var bool $requiresextra True if this is a manual grade item */
     private $requiresextra = false;
 
+    /** @var bool $requirepaging True if there are more users than our limit. */
     private $requirespaging = true;
 
-    public $structure;
-
-    private static $allowcategories;
-
+    /**
+     * True if $CFG->grade_overridecat is true
+     *
+     * @return bool
+     */
     public static function allowcategories() {
-        if (is_null(self::$allowcategories)) {
-            self::$allowcategories = get_config('moodle', 'grade_overridecat');
-        }
-
-        return self::$allowcategories;
+        return get_config('moodle', 'grade_overridecat');
     }
 
+    /**
+     * Filter the list excluding category items (if required)?
+     * @param grade_item $item The grade item.
+     */
     public static function filter($item) {
-        return (
-            self::allowcategories() or !(
-                $item->is_course_item() or $item->is_category_item()
-            )
-        );
+        return get_config('moodle', 'grade_overridecat') ||
+                !($item->is_course_item() || $item->is_category_item());
     }
 
+    /**
+     * Get the description of this page
+     * @return string
+     */
     public function description() {
         return get_string('users');
     }
 
+    /**
+     * Convert this list of items into an options list
+     *
+     * @return array
+     */
     public function options() {
-        $options = array_map(function($user) {
-            if (!empty($user->alternatename)) {
-                return $user->alternatename . ' (' . $user->firstname . ') ' . $user->lastname;
-            } else {
-                return fullname($user);
-            }
-        }, $this->items);
+        $options = array();
+        foreach ($this->items as $userid => $user) {
+            $options[$userid] = fullname($user);
+        }
 
         return $options;
     }
 
+    /**
+     * Return the type of the things in this list.
+     * @return string
+     */
     public function item_type() {
         return 'user';
     }
 
+    /**
+     * Get the original settings for this item
+     * @return array
+     */
     public function original_definition() {
         $def = array('finalgrade', 'feedback');
 
@@ -84,14 +115,17 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
         return $def;
     }
 
+    /**
+     * Init this page
+     *
+     * @param bool $selfitemisempty True if we have not selected a user.
+     */
     public function init($selfitemisempty = false) {
         $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
         $this->items = get_role_users(
             $roleids, $this->context, false, '',
-            'u.lastname, u.firstname', null, $this->groupid,
-            $this->perpage * $this->page, $this->perpage
-        );
+            'u.lastname, u.firstname', null, $this->groupid);
 
         $this->totalitemcount = count_role_users($roleids, $this->context);
 
@@ -99,21 +133,15 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
             return;
         }
 
-        global $DB;
-
         $params = array(
             'id' => $this->itemid,
             'courseid' => $this->courseid
         );
 
         $this->item = grade_item::fetch($params);
-
-        $filterfun = gradereport_singleview::filters();
-
-        $allowed = $filterfun($this->item);
-
-        if (empty($allowed)) {
-            print_error('notallowed', 'gradereport_singleview');
+        if (!self::filter($this->item)) {
+            $this->items = array();
+            $this->set_init_error(get_string('gradeitemcannotbeoverridden', 'gradereport_singleview'));
         }
 
         $this->requiresextra = !$this->item->is_manual_item();
@@ -124,6 +152,11 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
         $this->set_headers($this->original_headers());
     }
 
+    /**
+     * Get the table headers
+     *
+     * @return array
+     */
     public function original_headers() {
         return array(
             '', // For filter icon.
@@ -137,6 +170,12 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
         );
     }
 
+    /**
+     * Format a row in the table
+     *
+     * @param user $item
+     * @return string
+     */
     public function format_line($item) {
         global $OUTPUT;
 
@@ -152,8 +191,9 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
             $lockedgradeitem = 1;
         }
         // Check both grade and grade item.
-        if ( $lockedgrade || $lockedgradeitem )
+        if ( $lockedgrade || $lockedgradeitem ) {
             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
+        }
 
         if (!empty($item->alternatename)) {
             $fullname = $lockicon . $item->alternatename . ' (' . $item->firstname . ') ' . $item->lastname;
@@ -176,18 +216,33 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
         return $this->format_definition($line, $grade);
     }
 
+    /**
+     * Get the range ui element for this grade_item
+     *
+     * @return element;
+     */
     public function item_range() {
         if (empty($this->range)) {
-            $this->range = $this->factory()->create('range')->format($this->item);
+            $this->range = new range($this->item);
         }
 
         return $this->range;
     }
 
+    /**
+     * Does this page require paging?
+     *
+     * @return bool
+     */
     public function supports_paging() {
         return $this->requirespaging;
     }
 
+    /**
+     * Get the pager for this page.
+     *
+     * @return string
+     */
     public function pager() {
         global $OUTPUT;
 
@@ -203,7 +258,75 @@ class gradereport_singleview_grade extends gradereport_singleview_tablelike
         );
     }
 
+    /**
+     * Get the heading for this page.
+     *
+     * @return string
+     */
     public function heading() {
         return $this->item->get_name();
     }
+
+    /**
+     * Process the data from the form.
+     *
+     * @param array $data
+     * @return array of warnings
+     */
+    public function process($data) {
+        $bulk = new bulk_insert($this->item);
+        // Bulk insert messages the data to be passed in
+        // ie: for all grades of empty grades apply the specified value.
+        if ($bulk->is_applied($data)) {
+            $filter = $bulk->get_type($data);
+            $insertvalue = $bulk->get_insert_value($data);
+            // Appropriately massage data that may not exist.
+            if ($this->supports_paging()) {
+                $gradeitem = grade_item::fetch(array(
+                    'courseid' => $this->courseid,
+                    'id' => $this->item->id
+                ));
+
+                $null = $gradeitem->gradetype == GRADE_TYPE_SCALE ? -1 : '';
+
+                foreach ($this->items as $itemid => $item) {
+                    $field = "finalgrade_{$gradeitem->id}_{$itemid}";
+                    if (isset($data->$field)) {
+                        continue;
+                    }
+
+                    $grade = grade_grade::fetch(array(
+                        'itemid' => $gradeitem->id,
+                        'userid' => $itemid
+                    ));
+
+                    $data->$field = empty($grade) ? $null : $grade->finalgrade;
+                    $data->{"old$field"} = $data->$field;
+                }
+            }
+
+            foreach ($data as $varname => $value) {
+                if (!preg_match('/^finalgrade_(\d+)_/', $varname, $matches)) {
+                    continue;
+                }
+
+                $gradeitem = grade_item::fetch(array(
+                    'courseid' => $this->courseid,
+                    'id' => $matches[1]
+                ));
+
+                $isscale = ($gradeitem->gradetype == GRADE_TYPE_SCALE);
+
+                $empties = (trim($value) === '' or ($isscale and $value == -1));
+
+                if ($filter == 'all' or $empties) {
+                    $data->$varname = ($isscale and empty($insertvalue)) ?
+                        -1 : $insertvalue;
+                }
+            }
+        }
+
+        return parent::process($data);
+    }
+
 }

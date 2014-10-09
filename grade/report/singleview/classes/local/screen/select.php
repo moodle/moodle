@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,7 +22,27 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class gradereport_singleview_select extends gradereport_singleview_screen {
+namespace gradereport_singleview\local\screen;
+
+use gradereport_singleview;
+use moodle_url;
+
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * The gradebook simple view - initial view to select your search options
+ *
+ * @package   gradereport_singleview
+ * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class select extends screen {
+
+    /**
+     * Initialise this screen
+     *
+     * @param bool $selfitemisempty Has an item been selected (will be false)
+     */
     public function init($selfitemisempty = false) {
         global $DB;
 
@@ -37,6 +56,20 @@ class gradereport_singleview_select extends gradereport_singleview_screen {
         $this->item = $DB->get_record('course', array('id' => $this->courseid));
     }
 
+    /**
+     * Get the type of items on this screen, not valid so return false.
+     *
+     * @return bool
+     */
+    public function item_type() {
+        return false;
+    }
+
+    /**
+     * Return the HTML for the page.
+     *
+     * @return string
+     */
     public function html() {
         global $OUTPUT;
 
@@ -45,11 +78,11 @@ class gradereport_singleview_select extends gradereport_singleview_screen {
         $types = gradereport_singleview::valid_screens();
 
         foreach ($types as $type) {
-            $class = gradereport_singleview::classname($type);
+            $classname = "gradereport_singleview\\local\\screen\\${type}";
 
-            $screen = new $class($this->courseid, null, $this->groupid);
+            $screen = new $classname($this->courseid, null, $this->groupid);
 
-            if (!$screen instanceof gradereport_selectable_items) {
+            if (!$screen instanceof selectable_items) {
                 continue;
             }
 
@@ -76,5 +109,13 @@ class gradereport_singleview_select extends gradereport_singleview_screen {
         }
 
         return $html;
+    }
+
+    /**
+     * Should we show the next prev selector?
+     * @return bool
+     */
+    public function supports_next_prev() {
+        return false;
     }
 }

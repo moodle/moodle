@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,5 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$plugin->component = 'gradereport_singleview'; // Full name of the plugin (used for diagnostics).
 $plugin->version  = 2013081002;
 $plugin->requires = 2010090501;
