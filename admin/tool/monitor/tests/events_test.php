@@ -288,4 +288,50 @@ class tool_monitor_events_testcase extends advanced_testcase {
         $this->assertEquals($subscription1->id, $event->objectid);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the subscription criteria met event.
+     */
+    public function test_subscription_criteria_met() {
+        // Create the items we need to test this.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
+        $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        // Create a rule we want to subscribe to.
+        $rule = new stdClass();
+        $rule->userid = $user->id;
+        $rule->courseid = $course->id;
+        $rule->plugin = 'mod_book';
+        $rule->eventname = '\mod_book\event\chapter_viewed';
+        $rule->frequency = 1;
+        $rule->timewindow = 60;
+        $rule = $monitorgenerator->create_rule($rule);
+
+        // Create the subscription.
+        $sub = new stdClass();
+        $sub->courseid = $course->id;
+        $sub->userid = $user->id;
+        $sub->ruleid = $rule->id;
+        $monitorgenerator->create_subscription($sub);
+
+        // Now create the \mod_book\event\chapter_viewed event we are listening for.
+        $context = context_module::instance($book->cmid);
+        $event = \mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        \tool_monitor\eventobservers::process_event($event);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Confirm that the event contains the expected values.
+        $this->assertInstanceOf('\tool_monitor\event\subscription_criteria_met', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
 }
