@@ -60,7 +60,8 @@ Y.extend(POPUP, Y.Base, {
             extraClasses: ['mod_quiz_qbank_dialogue']
         };
         this.dialogue = new M.core.dialogue(config);
-        this.dialogue.bodyNode.delegate('click', this.link_clicked, 'a[href]', this);
+        this.dialogue.bodyNode.delegate('click', this.link_clicked,
+                '.paging a[href], thead tr a[href]', this);
         this.dialogue.hide();
 
         this.loadingDiv = this.dialogue.bodyNode.getHTML();
@@ -133,6 +134,20 @@ Y.extend(POPUP, Y.Base, {
             Y.later(0, this.dialogue, this.dialogue.centerDialogue);
         }
         M.question.qbankmanager.init();
+
+        if (Y.one('#advancedsearch')) {
+            M.util.init_collapsible_region(Y, "advancedsearch", "question_bank_advanced_search",
+                    M.util.get_string('clicktohideshow'));
+        }
+
+        this.dialogue.fire('widget:contentUpdate');
+        // TODO MDL-47602 really, the base class should listen for the even fired
+        // on the previous line, and fix things like makeResponsive.
+        // However, it does not. So the next two lines are a hack to fix up
+        // display issues (e.g. overall scrollbars on the page). Once the base class
+        // is fixed, this comment and the following two lines should be deleted.
+        this.dialogue.hide();
+        this.dialogue.show();
     },
 
     load_failed: function() {
