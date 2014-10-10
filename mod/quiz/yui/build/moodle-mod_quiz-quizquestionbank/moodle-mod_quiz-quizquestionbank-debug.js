@@ -145,9 +145,11 @@ Y.extend(POPUP, Y.Base, {
         // on the previous line, and fix things like makeResponsive.
         // However, it does not. So the next two lines are a hack to fix up
         // display issues (e.g. overall scrollbars on the page). Once the base class
-        // is fixed, this comment and the following two lines should be deleted.
-        this.dialogue.hide();
-        this.dialogue.show();
+        // is fixed, this comment and the following four lines should be deleted.
+        if (this.dialogue.get('visible')) {
+            this.dialogue.hide();
+            this.dialogue.show();
+        }
     },
 
     load_failed: function() {
