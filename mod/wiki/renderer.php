@@ -310,7 +310,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
                     array('wid' => $wiki->id, 'title' => $page->title, 'pageid' => $page->id));
             break;
         case 'search':
-            $search = optional_param('searchstring', null, PARAM_ALPHANUMEXT);
+            $search = optional_param('searchstring', null, PARAM_TEXT);
             $searchcontent = optional_param('searchwikicontent', 0, PARAM_INT);
             $baseurl = new moodle_url('/mod/wiki/search.php',
                     array('cmid' => $cm->id, 'courseid' => $cm->course,

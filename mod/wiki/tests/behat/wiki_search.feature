@@ -52,6 +52,10 @@ Feature: Users can search wikis
     And I press "Search wikis"
     And I should not see "New page created by student1"
     And I should see "Collaborative teacher1 page"
+    And I set the field "searchstring" to "teacher1 page"
+    And I press "Search wikis"
+    And I should not see "New page created by student1"
+    And I should see "Collaborative teacher1 page"
     And I log out
 
 
