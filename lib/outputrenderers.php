@@ -3040,10 +3040,9 @@ EOD;
 
         $am = new action_menu();
         $am->initialise_js($this->page);
-        $am->set_menu_trigger(html_writer::span(
-            get_string('usermenu', 'moodle'),
-            "accesshide"
-        ));
+        $am->set_menu_trigger(
+            $returnstr
+        );
         $am->set_alignment(action_menu::TR, action_menu::BR);
         if ($withlinks) {
             $navitemcount = count($opts->navitems);
@@ -3072,10 +3071,6 @@ EOD;
         }
 
         return html_writer::div(
-            html_writer::div(
-                $returnstr,
-                'userinfo'
-            ) .
             $this->render($am),
             $usermenuclasses
         );
