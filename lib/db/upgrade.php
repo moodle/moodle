@@ -3918,6 +3918,9 @@ function xmldb_main_upgrade($oldversion) {
 
             foreach ($courses as $course) {
                 set_config('show_sumofgrades_upgrade_' . $course->courseid, 1);
+                // Set each of the grade items to needing an update so that when the user visits the grade reports the
+                // figures will be updated.
+                $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $course->courseid));
             }
 
             set_config('grades_sumofgrades_upgrade_flagged', 1);
