@@ -1031,27 +1031,61 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_EXTRACREDIT_MEAN: // special average
+                $this->load_grade_item();
                 $num = 0;
                 $sum = null;
 
                 foreach ($grade_values as $itemid=>$grade_value) {
-
                     if ($items[$itemid]->aggregationcoef == 0) {
                         $num += 1;
                         $sum += $grade_value;
                         if ($weights !== null) {
                             $weights[$itemid] = 1;
                         }
+                    }
+                }
 
-                    } else if ($items[$itemid]->aggregationcoef > 0) {
+                // Treating the extra credit items separately to get a chance to calculate their effective weights.
+                foreach ($grade_values as $itemid=>$grade_value) {
+                    if ($items[$itemid]->aggregationcoef > 0) {
+                        $oldsum = $sum;
                         $sum += $items[$itemid]->aggregationcoef * $grade_value;
+
                         if ($weights !== null) {
-                            $weights[$itemid] = 1;
+                            if ($num <= 0) {
+                                // The category only contains extra credit items, not setting the weight.
+                                continue;
+                            }
+
+                            $oldgrade = $oldsum / $num;
+                            $grade = $sum / $num;
+                            $normoldgrade = grade_grade::standardise_score($oldgrade, 0, 1, $grademin, $grademax);
+                            $normgrade = grade_grade::standardise_score($grade, 0, 1, $grademin, $grademax);
+                            $boundedoldgrade = $this->grade_item->bounded_grade($normoldgrade);
+                            $boundedgrade = $this->grade_item->bounded_grade($normgrade);
+
+                            if ($boundedgrade - $boundedoldgrade <= 0) {
+                                // Nothing new was added to the grade.
+                                $weights[$itemid] = 0;
+                            } else if ($boundedgrade < $normgrade) {
+                                // The grade has been bounded, the extra credit item needs to have a different weight.
+                                $gradediff = $boundedgrade - $normoldgrade;
+                                $gradediffnorm = grade_grade::standardise_score($gradediff, $grademin, $grademax, 0, 1);
+                                $weights[$itemid] = $gradediffnorm / $grade_value;
+                            } else {
+                                // Default weighting.
+                                $weights[$itemid] = 1.0 / $num;
+                            }
                         }
                     }
                 }
+
                 if ($weights !== null && $num > 0) {
                     foreach ($grade_values as $itemid=>$grade_value) {
+                        if ($items[$itemid]->aggregationcoef > 0) {
+                            // Extra credit weights were already calculated.
+                            continue;
+                        }
                         if ($weights[$itemid]) {
                             $weights[$itemid] = 1.0 / $num;
                         }
@@ -1064,6 +1098,7 @@ class grade_category extends grade_object {
                 } else {
                     $agg_grade = $sum / $num;
                 }
+
                 break;
 
             case GRADE_AGGREGATE_SUM:    // Add up all the items.
