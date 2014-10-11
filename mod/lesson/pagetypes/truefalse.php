@@ -245,6 +245,8 @@ class lesson_page_type_truefalse extends lesson_page {
         $formattextdefoptions = new stdClass(); //I'll use it widely in this page
         $formattextdefoptions->para = false;
         $formattextdefoptions->noclean = true;
+        $formattextdefoptions->context = $answerpage->context;
+
         foreach ($answers as $answer) {
             $answer = parent::rewrite_answers_urls($answer);
             if ($this->properties->qoption) {

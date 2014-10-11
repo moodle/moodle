@@ -2086,12 +2086,20 @@ abstract class lesson_page extends lesson_base {
                     $options->noclean = true;
                     $options->para = true;
                     $options->overflowdiv = true;
+                    $options->context = $context;
                     $result->response = file_rewrite_pluginfile_urls($result->response, 'pluginfile.php', $context->id,
                             'mod_lesson', 'page_responses', $result->answerid);
-
                     $result->feedback = $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options), 'generalbox boxaligncenter');
-                    $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.$result->studentanswer; // already in clean html
-                    $result->feedback .= $OUTPUT->box($result->response, $class); // already conerted to HTML
+                    if (isset($result->studentanswerformat)) {
+                        // This is the student's answer so it should be cleaned.
+                        $studentanswer = format_text($result->studentanswer, $result->studentanswerformat,
+                                array('context' => $context, 'para' => true));
+                    } else {
+                        $studentanswer = format_string($result->studentanswer);
+                    }
+                    $result->feedback .= '<div class="correctanswer generalbox"><em>'
+                            . get_string("youranswer", "lesson").'</em> : ' . $studentanswer;
+                    $result->feedback .= $OUTPUT->box($result->response, $class); // Already converted to HTML.
                     $result->feedback .= '</div>';
                 }
             }
