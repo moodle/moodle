@@ -466,6 +466,7 @@ if ($action === 'delete') {
         $options = new stdClass;
         $options->noclean = true;
         $options->overflowdiv = true;
+        $options->context = $context;
         $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
 
         $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
