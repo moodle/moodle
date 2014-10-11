@@ -122,7 +122,7 @@ class lesson_page_type_essay extends lesson_page {
         $userresponse->response = "";
         $result->userresponse = serialize($userresponse);
         $result->studentanswerformat = $studentanswerformat;
-        $result->studentanswer = s($studentanswer);
+        $result->studentanswer = $studentanswer;
         return $result;
     }
     public function update($properties, $context = null, $maxbytes = null) {
@@ -179,9 +179,6 @@ class lesson_page_type_essay extends lesson_page {
     }
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
         $answers = $this->get_answers();
-        $formattextdefoptions = new stdClass;
-        $formattextdefoptions->para = false;  //I'll use it widely in this page
-        $formattextdefoptions->context = $answerpage->context;
 
         foreach ($answers as $answer) {
             if ($useranswer != null) {
@@ -224,7 +221,9 @@ class lesson_page_type_essay extends lesson_page {
                 // dont think this should ever be reached....
                 $avescore = get_string("nooneansweredthisquestion", "lesson");
             }
-            $answerdata->answers[] = array(format_text($essayinfo->answer, $essayinfo->answerformat, $formattextdefoptions), $avescore);
+            // This is the student's answer so it should be cleaned.
+            $answerdata->answers[] = array(format_text($essayinfo->answer, $essayinfo->answerformat,
+                    array('para' => true, 'context' => $answerpage->context)), $avescore);
             $answerpage->answerdata = $answerdata;
         }
         return $answerpage;
