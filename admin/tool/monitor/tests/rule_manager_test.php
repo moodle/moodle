@@ -108,11 +108,14 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
 
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
 
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
         $record = new stdClass();
-        $record->courseid = 3;
+        $record->courseid = $course1->id;
 
         $record2 = new stdClass();
-        $record2->courseid = 4;
+        $record2->courseid = $course2->id;
 
         $ruleids = array();
         for ($i = 0; $i < 10; $i++) {
@@ -122,7 +125,7 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
             $ruleids[] = $rule->id;
             $rule = $monitorgenerator->create_rule($record2); // Create rules in a different course.
         }
-        $ruledata = \tool_monitor\rule_manager::get_rules_by_courseid(3);
+        $ruledata = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id);
         $this->assertEquals($ruleids, array_keys($ruledata));
         $this->assertCount(20, $ruledata);
     }

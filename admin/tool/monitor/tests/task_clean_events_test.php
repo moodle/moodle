@@ -114,13 +114,11 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
             \mod_scorm\event\course_module_instance_list_viewed::create($eventparams)->trigger();
         }
 
-        // Check that there are a bunch of events now. There will be additional events for creating courses and modules.
-        $this->assertEquals(20, $DB->count_records('tool_monitor_events'));
+        // Check that the events exist - there will be additional events for creating courses, modules and rules.
+        $this->assertEquals(26, $DB->count_records('tool_monitor_events'));
 
-        // Run the task and check that all the mod_quiz/mod_scorm events are removed as well as the course_module_*
-        // viewed events in the second course. The chapter_viewed event in the second course should remain though as
-        // there is a rule associated with that event in that course. The chapter_viewed event in the first course
-        // should also remain as there is a site wide rule.
+        // Run the task and check that all the quiz, scorm and rule events are removed as well as the course_module_*
+        // viewed events in the second course.
         $task = new \tool_monitor\task\clean_events();
         $task->execute();
 
