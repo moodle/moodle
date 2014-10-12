@@ -356,11 +356,11 @@ switch ($mode) {
                     $attributes = array();
                     // Different colors for all the states of an essay (graded, if sent, not graded)
                     if (!$essayinfo->graded) {
-                        $attributes['class'] = "graded";
+                        $attributes['class'] = "essayungraded";
                     } elseif (!$essayinfo->sent) {
-                        $attributes['class'] = "sent";
+                        $attributes['class'] = "essaygraded";
                     } else {
-                        $attributes['class'] = "ungraded";
+                        $attributes['class'] = "essaysent";
                     }
                     $essaylinks[] = html_writer::link($url, userdate($essay->timeseen, get_string('strftimedatetime')).' '.format_string($pages[$essay->pageid]->title,true), $attributes);
                 }
