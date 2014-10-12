@@ -36,7 +36,7 @@ $timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look.
 $action     = optional_param('action', '', PARAM_ALPHA);
 $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
 $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-$currentgroup = optional_param('group', 0, PARAM_INT); // Get the active group.
+$currentgroup = optional_param('group', null, PARAM_INT); // Get the active group.
 
 $url = new moodle_url('/report/participation/index.php', array('id'=>$id));
 if ($roleid !== 0) $url->param('roleid');
@@ -163,8 +163,15 @@ echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
 echo html_writer::select($actionoptions,'action',$action,false);
 echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
-$baseurl =  $CFG->wwwroot.'/report/participation/index.php?id='.$course->id.'&amp;roleid='
-    .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
+$baseurl = new moodle_url('/report/participation/index.php', array(
+    'id' => $course->id,
+    'roleid' => $roleid,
+    'instanceid' => $instanceid,
+    'timefrom' => $timefrom,
+    'action' => $action,
+    'perpage' => $perpage,
+    'group' => $currentgroup
+));
 $select = groups_allgroups_course_menu($course, $baseurl, true, $currentgroup);
 
 // User cannot see any group.
@@ -328,10 +335,15 @@ if (!empty($instanceid) && !empty($roleid)) {
     $table->print_html();
 
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>'."\n";
-    }
-    else if ($matchcount > 0 && $perpage < $matchcount) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>'."\n";
+        $perpageurl = new moodle_url($baseurl, array('perpage' => DEFAULT_PAGE_SIZE));
+        echo html_writer::start_div('', array('id' => 'showall'));
+        echo html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE));
+        echo html_writer::end_div();
+    } else if ($matchcount > 0 && $perpage < $matchcount) {
+        $perpageurl = new moodle_url($baseurl, array('perpage' => SHOW_ALL_PAGE_SIZE));
+        echo html_writer::start_div('', array('id' => 'showall'));
+        echo html_writer::link($perpageurl, get_string('showall', '', $matchcount));
+        echo html_writer::end_div();
     }
 
     echo '<div class="selectbuttons">';
