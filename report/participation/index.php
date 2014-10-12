@@ -278,8 +278,9 @@ if (!empty($instanceid) && !empty($roleid)) {
                        AND anonymous = 0
                        AND contextlevel = :contextlevel
                        AND (origin = 'web' OR origin = 'ws')
-                  GROUP BY userid,timecreated) l ON (l.userid = ra.userid)
-             GROUP BY ra.userid, $usernamefields, u.idnumber";
+                  GROUP BY userid,timecreated) l ON (l.userid = ra.userid)";
+        // We add this after the WHERE statement that may come below.
+        $groupbysql = " GROUP BY ra.userid, $usernamefields, u.idnumber";
 
         $params['edulevel'] = core\event\base::LEVEL_PARTICIPATING;
         $params['contextlevel'] = CONTEXT_MODULE;
@@ -287,7 +288,7 @@ if (!empty($instanceid) && !empty($roleid)) {
         if ($twhere) {
             $sql .= ' WHERE '.$twhere; // Initial bar.
         }
-
+        $sql .= $groupbysql;
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();
         }
