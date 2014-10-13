@@ -170,7 +170,7 @@ class subscription_manager {
      * @param int $courseid course id.
      * @param int $userid Id of the user for which the subscription needs to be fetched. Defaults to $USER;
      *
-     * @return array list of subscriptions
+     * @return int number of subscriptions
      */
     public static function count_user_subscriptions_for_course($courseid, $userid = 0) {
         global $DB, $USER;
@@ -181,6 +181,46 @@ class subscription_manager {
         $sql .= "WHERE s.courseid = :courseid AND s.userid = :userid";
 
         return $DB->count_records_sql($sql, array('courseid' => $courseid, 'userid' => $userid));
+    }
+
+    /**
+     * Get an array of subscriptions for a given user.
+     *
+     * @param int $limitfrom Limit from which to fetch rules.
+     * @param int $limitto  Limit to which rules need to be fetched.
+     * @param int $userid Id of the user for which the subscription needs to be fetched. Defaults to $USER;
+     * @param string $order Order to sort the subscriptions.
+     *
+     * @return array list of subscriptions
+     */
+    public static function get_user_subscriptions($limitfrom = 0, $limitto = 0, $userid = 0,
+                                                             $order = 's.timecreated DESC' ) {
+        global $DB, $USER;
+        if ($userid == 0) {
+            $userid = $USER->id;
+        }
+        $sql = self::get_subscription_join_rule_sql();
+        $sql .= "WHERE s.userid = :userid ORDER BY $order";
+
+        return self::get_instances($DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitto));
+    }
+
+    /**
+     * Get count of subscriptions for a given user.
+     *
+     * @param int $userid Id of the user for which the subscription needs to be fetched. Defaults to $USER;
+     *
+     * @return int number of subscriptions
+     */
+    public static function count_user_subscriptions($userid = 0) {
+        global $DB, $USER;;
+        if ($userid == 0) {
+            $userid = $USER->id;
+        }
+        $sql = self::get_subscription_join_rule_sql(true);
+        $sql .= "WHERE s.userid = :userid";
+
+        return $DB->count_records_sql($sql, array('userid' => $userid));
     }
 
     /**

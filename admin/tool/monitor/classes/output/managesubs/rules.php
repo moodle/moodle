@@ -44,6 +44,11 @@ class rules extends \table_sql implements \renderable {
     public $courseid;
 
     /**
+     * @var int total rules present.
+     */
+    public $totalcount = 0;
+
+    /**
      * @var \context_course|\context_system context of the page to be rendered.
      */
     protected $context;
@@ -84,6 +89,8 @@ class rules extends \table_sql implements \renderable {
         $this->is_downloadable(false);
         $this->define_baseurl($url);
         $this->helpiconrenderer = $PAGE->get_renderer('tool_monitor', 'helpicon');
+        $total = \tool_monitor\rule_manager::count_rules_by_courseid($this->courseid);
+        $this->totalcount = $total;
     }
 
     /**
@@ -142,5 +149,23 @@ class rules extends \table_sql implements \renderable {
         if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);
         }
+    }
+
+    /**
+     * Gets a list of courses where the current user can subscribe to rules as a dropdown.
+     *
+     * @return \single_select list of courses.
+     */
+    public function get_user_courses_select() {
+        $courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname');
+        $options = array(0 => get_string('site'));
+        $systemcontext = \context_system::instance();
+        foreach ($courses as $course) {
+            $options[$course->id] = format_text($course->fullname, array('context' => $systemcontext));
+        }
+        $url = new \moodle_url('/admin/tool/monitor/index.php');
+        $select = new \single_select($url, 'courseid', $options, $this->courseid);
+        $select->set_label(get_string('selectacourse', 'tool_monitor'));
+        return $select;
     }
 }

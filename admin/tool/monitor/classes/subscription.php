@@ -157,4 +157,36 @@ class subscription {
         }
         return $string;
     }
+
+    /**
+     * Get properly formatted name of the course associated.
+     *
+     * @param \context $context context where this name would be displayed.
+     *
+     * @return string Formatted name of the rule.
+     */
+    public function get_course_name(\context $context) {
+        global $SITE;
+        $courseid = $this->courseid;
+        if (empty($courseid)) {
+            $coursename = format_string($SITE->fullname, true, array('context' => $context));
+        } else {
+            $course = get_course($this->courseid);
+            $link = new \moodle_url('/course/view.php', array('id' => $course->id));
+            $coursename = format_string($course->fullname, true, array('context' => $context));
+            $coursename = \html_writer::link($link, $coursename);
+        }
+        return $coursename;
+    }
+
+    /**
+     * Can the current user manage the rule associate with this subscription?
+     *
+     * @return bool true if the current user can manage this rule, else false.
+     */
+    public function can_manage_rule() {
+        $courseid = $this->rulecourseid;
+        $context = empty($courseid) ? \context_system::instance() : \context_course::instance($courseid);
+        return has_capability('tool/monitor:managerules', $context);
+    }
 }

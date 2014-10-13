@@ -67,11 +67,13 @@ class subs extends \table_sql implements \renderable {
         parent::__construct($uniqueid);
 
         $this->set_attribute('class', 'toolmonitor subscriptions generaltable generalbox');
-        $this->define_columns(array('name', 'instance', 'unsubscribe'));
+        $this->define_columns(array('name', 'course', 'instance', 'unsubscribe', 'editrule'));
         $this->define_headers(array(
                 get_string('name'),
+                get_string('course'),
                 get_string('moduleinstance', 'tool_monitor'),
-                get_string('unsubscribe', 'tool_monitor')
+                get_string('unsubscribe', 'tool_monitor'),
+                get_string('editrule', 'tool_monitor')
             )
         );
         $this->courseid = $courseid;
@@ -99,6 +101,17 @@ class subs extends \table_sql implements \renderable {
         $helpicon = $this->helpiconrenderer->render($helpicon);
 
         return $name . $helpicon;
+    }
+
+    /**
+     * Generate content for course column.
+     *
+     * @param \tool_monitor\subscription $sub subscription object
+     *
+     * @return string html used to display the column field.
+     */
+    public function col_course(\tool_monitor\subscription $sub) {
+       return $sub->get_course_name($this->context);
     }
 
     /**
@@ -133,6 +146,23 @@ class subs extends \table_sql implements \renderable {
     }
 
     /**
+     * Generate content for edit rule column.
+     *
+     * @param \tool_monitor\subscription $sub subscription object
+     *
+     * @return string html used to display the column field.
+     */
+    public function col_editrule(\tool_monitor\subscription $sub) {
+        if ($sub->can_manage_rule()) {
+            // User can manage rule.
+            $editurl = new \moodle_url('/admin/tool/monitor/edit.php', array('ruleid' => $sub->ruleid,
+                    'courseid' => $sub->rulecourseid));
+            return \html_writer::link($editurl, get_string('editrule', 'tool_monitor'));
+        }
+        return '-';
+    }
+
+    /**
      * Query the reader. Store results in the object for use by build_table.
      *
      * @param int $pagesize size of page for paginated displayed table.
@@ -140,10 +170,9 @@ class subs extends \table_sql implements \renderable {
      */
     public function query_db($pagesize, $useinitialsbar = true) {
 
-        $total = \tool_monitor\subscription_manager::count_user_subscriptions_for_course($this->courseid);
+        $total = \tool_monitor\subscription_manager::count_user_subscriptions();
         $this->pagesize($pagesize, $total);
-        $subs = \tool_monitor\subscription_manager::get_user_subscriptions_for_course($this->courseid, $this->get_page_start(),
-                $this->get_page_size());
+        $subs = \tool_monitor\subscription_manager::get_user_subscriptions($this->get_page_start(), $this->get_page_size());
         $this->rawdata = $subs;
         // Set initial bars.
         if ($useinitialsbar) {

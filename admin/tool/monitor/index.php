@@ -34,22 +34,24 @@ $subscriptionid = optional_param('subscriptionid', 0, PARAM_INT);
 // Validate course id.
 if (empty($courseid)) {
     require_login();
-    $context = context_system::instance();
-    $coursename = format_string($SITE->fullname, true, array('context' => $context));
-    $PAGE->set_context($context);
 } else {
+    // They might want to see rules for this course.
     $course = get_course($courseid);
     require_login($course);
-    $context = context_course::instance($course->id);
-    $coursename = format_string($course->fullname, true, array('context' => $context));
+    $coursecontext = context_course::instance($course->id);
+    // Check for caps.
+    require_capability('tool/monitor:subscribe', $coursecontext);
+    $coursename = format_string($course->fullname, true, array('context' => $coursecontext));
 }
 
-// Check for caps.
-require_capability('tool/monitor:subscribe', $context);
+// Always build the page in site context.
+$context = context_system::instance();
+$sitename = format_string($SITE->fullname, true, array('context' => $context));
+$PAGE->set_context($context);
 
 // Set up the page.
 $a = new stdClass();
-$a->coursename = $coursename;
+$a->coursename = $sitename;
 $a->reportname = get_string('pluginname', 'tool_monitor');
 $title = get_string('title', 'tool_monitor', $a);
 $indexurl = new moodle_url("/admin/tool/monitor/index.php", array('courseid' => $courseid));
@@ -58,11 +60,6 @@ $PAGE->set_url($indexurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-
-// Site level report.
-if (empty($courseid)) {
-    admin_externalpage_setup('toolmonitorsubscriptions', '', null, '', array('pagelayout' => 'report'));
-}
 
 echo $OUTPUT->header();
 
@@ -84,7 +81,7 @@ if (!empty($action)) {
 }
 
 // Render the current subscriptions list.
-$totalsubs = \tool_monitor\subscription_manager::count_user_subscriptions_for_course($courseid);
+$totalsubs = \tool_monitor\subscription_manager::count_user_subscriptions();
 $renderer = $PAGE->get_renderer('tool_monitor', 'managesubs');
 if (!empty($totalsubs)) {
     // Show the subscriptions section only if there are subscriptions.
@@ -96,11 +93,11 @@ if (!empty($totalsubs)) {
 // Render the potential rules list.
 $totalrules = \tool_monitor\rule_manager::count_rules_by_courseid($courseid);
 echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'));
-if (!empty($totalrules)) {
-    $rules = new \tool_monitor\output\managesubs\rules('toolmonitorrules', $indexurl, $courseid);
-    echo $renderer->render($rules);
-} else {
+$rules = new \tool_monitor\output\managesubs\rules('toolmonitorrules', $indexurl, $courseid);
+echo $renderer->render($rules);
+if (empty($totalrules)) {
     // No rules present. Show a link to manage rules page if permissions permit.
+    echo html_writer::start_div();
     echo html_writer::tag('span', get_string('norules', 'tool_monitor'));
     if (has_capability('tool/monitor:managerules', $context)) {
         $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
@@ -109,5 +106,6 @@ if (!empty($totalrules)) {
         $link .= html_writer::tag('span', get_string('manageruleslink', 'tool_monitor', $a));
         echo $link;
     }
+    echo html_writer::end_div();
 }
 echo $OUTPUT->footer();

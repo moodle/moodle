@@ -56,8 +56,23 @@ class renderer extends \plugin_renderer_base {
      * @return string to display on the mangesubs page.
      */
     protected function render_rules(rules $renderable) {
-        $o = $this->render_table($renderable);
+        $o = $this->render_course_select($renderable);
+        if (!empty($renderable->totalcount)) {
+            $o .= $this->render_table($renderable);
+        }
         return $o;
+    }
+
+    /**
+     * Get html to display on the page for select dropdown..
+     *
+     * @param rules $renderable renderable widget
+     *
+     * @return string to display on the mangesubs page.
+     */
+    protected function render_course_select(rules $renderable) {
+        $select = $renderable->get_user_courses_select();
+        return $this->render($select);;
     }
 
     /**

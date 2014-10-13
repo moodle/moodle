@@ -105,7 +105,7 @@ class rule_form extends \moodleform {
         $mform->addHelpButton('description', 'description', 'tool_monitor');
 
         // Filters.
-        $mform->addElement('header', 'customizefilters', get_string('customizefilters', 'tool_monitor'));
+        $mform->addElement('header', 'customisefilters', get_string('customisefilters', 'tool_monitor'));
         $freq = array(1 => 1, 5 => 5, 10 => 10, 20 => 20, 30 => 30, 40 => 40, 50 => 50, 60 => 60, 70 => 70, 80 => 80, 90 => 90,
                 100 => 100, 1000 => 1000);
         $mform->addElement('select', 'frequency', get_string('selectfrequency', 'tool_monitor'), $freq);
@@ -118,7 +118,7 @@ class rule_form extends \moodleform {
         $mform->addRule('minutes', get_string('required'), 'required');
 
         // Message template.
-        $mform->addElement('header', 'customizemessage', get_string('customizemessage', 'tool_monitor'));
+        $mform->addElement('header', 'customisemessage', get_string('customisemessage', 'tool_monitor'));
         $mform->addElement('editor', 'template', get_string('messagetemplate', 'tool_monitor'), $editoroptions);
         $mform->setDefault('template', get_string('defaultmessagetpl', 'tool_monitor'));
         $mform->addRule('template', get_string('required'), 'required');
