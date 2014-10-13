@@ -77,17 +77,21 @@ class gradeimport_csv_load_data {
         $csvimport->load_csv_content($text, $encoding, $separator);
         $this->error = $csvimport->get_error();
 
-        // Get header (field names).
-        $this->headers = $csvimport->get_columns();
-        $this->trim_headers();
+        // If there are no import errors then proceed.
+        if (empty($this->error)) {
 
-        $csvimport->init();
-        $this->previewdata = array();
+            // Get header (field names).
+            $this->headers = $csvimport->get_columns();
+            $this->trim_headers();
 
-        for ($numlines = 0; $numlines <= $previewrows; $numlines++) {
-            $lines = $csvimport->next();
-            if ($lines) {
-                $this->previewdata[] = $lines;
+            $csvimport->init();
+            $this->previewdata = array();
+
+            for ($numlines = 0; $numlines <= $previewrows; $numlines++) {
+                $lines = $csvimport->next();
+                if ($lines) {
+                    $this->previewdata[] = $lines;
+                }
             }
         }
     }

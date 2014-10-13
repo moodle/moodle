@@ -69,7 +69,7 @@ if (!$iid) {
         $csvimport->load_csv_content($text, $formdata->encoding, 'tab', $formdata->previewrows);
         $csvimporterror = $csvimport->get_error();
         if (!empty($csvimporterror)) {
-            echo $renderer->errors($csvimport->get_error());
+            echo $renderer->errors(array($csvimport->get_error()));
             echo $OUTPUT->footer();
             die();
         }
