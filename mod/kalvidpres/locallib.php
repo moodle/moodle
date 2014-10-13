@@ -24,10 +24,3 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-function kalvidpres_get_pres_properties() {
-    return array('width' => '780',
-                 'height' => '400',
-                 'uiconf_id' => local_kaltura_get_player_uiconf('presentation'),
-                 'video_title' => 'Video presentation');
-}
-
