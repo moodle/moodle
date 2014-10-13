@@ -250,3 +250,18 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
   Then the field "Weight of Test assignment five" matches value "80.0"
   And the field "Weight of Test assignment six" matches value "40.0"
   And the field "Weight of Test assignment seven" matches value "60.0"
+
+  @javascript
+  Scenario: Overriding a grade item with a negative value results in the value being changed to zero.
+
+  When I set the field "Override weight of Test assignment five" to "1"
+  And I set the field "Weight of Test assignment five" to "-15"
+  And I press "Save changes"
+  Then the field "Weight of Test assignment five" matches value "0.0"
+  And the field "Weight of Test assignment six" matches value "40.0"
+  And the field "Weight of Test assignment seven" matches value "60.0"
+  And I set the field "Override weight of Test assignment six" to "1"
+  And I set the field "Weight of Test assignment six" to "-25"
+  And I press "Save changes"
+  Then the field "Weight of Test assignment six" matches value "0.0"
+  And the field "Weight of Test assignment seven" matches value "100.0"

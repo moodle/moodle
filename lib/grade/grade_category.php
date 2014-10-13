@@ -1373,10 +1373,13 @@ class grade_category extends grade_object {
                             (1 - $totaloverriddenweight);
                 }
                 $gradeitem->update();
-            } else if ((!$automaticgradeitemspresent && $normalisetotal != 1) || ($requiresnormalising)) {
+            } else if ((!$automaticgradeitemspresent && $normalisetotal != 1) || ($requiresnormalising)
+                    || $overridearray[$gradeitem->id]['weight'] < 0) {
                 // Just divide the overriden weight for this item against the total weight override of all
                 // items in this category.
-                if ($normalisetotal == 0) {
+                if ($normalisetotal == 0 || $overridearray[$gradeitem->id]['weight'] < 0) {
+                    // If the normalised total equals zero, or the weight value is less than zero,
+                    // set the weight for the grade item to zero.
                     $gradeitem->aggregationcoef2 = 0;
                 } else {
                     $gradeitem->aggregationcoef2 = $overridearray[$gradeitem->id]['weight'] / $normalisetotal;
