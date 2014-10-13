@@ -24,6 +24,7 @@ information provided here is intended especially for developers.
   it must be amended. It does not apply to lib/googleapi.php. See MDL-47297
 * Added an extra parameter to the function get_formatted_help_string() (default null) which is used to specify
   additional string parameters.
+* User settings node and course node in navigation now support callbacks from admin tools.
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.

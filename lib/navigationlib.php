@@ -4212,7 +4212,7 @@ class settings_navigation extends navigation_node {
             if (empty($passwordchangeurl)) {
                 $passwordchangeurl = new moodle_url('/login/change_password.php', array('id'=>$course->id));
             }
-            $usersetting->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING);
+            $usersetting->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING, null, 'changepassword');
         }
 
         // View the roles settings
@@ -4328,6 +4328,12 @@ class settings_navigation extends navigation_node {
         if (!$user->deleted and !$currentuser && !\core\session\manager::is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
             $url = new moodle_url('/course/loginas.php', array('id'=>$course->id, 'user'=>$user->id, 'sesskey'=>sesskey()));
             $usersetting->add(get_string('loginas'), $url, self::TYPE_SETTING);
+        }
+
+        // Let admin tools hook into user settings navigation.
+        $tools = get_plugin_list_with_function('tool', 'extend_navigation_user_settings', 'lib.php');
+        foreach ($tools as $toolfunction) {
+            $toolfunction($usersetting, $user, $usercontext, $course, $coursecontext);
         }
 
         return $usersetting;
