@@ -24,11 +24,12 @@ YUI.add('moodle-mod_quiz-quizquestionbank', function (Y, NAME) {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 var CSS = {
-        QBANKLOADING: 'div.questionbankloading',
-        ADDQUESTIONLINKS: 'ul.menu a.questionbank',
-        ADDTOQUIZCONTAINER: 'td.addtoquizaction'
+        QBANKLOADING:       'div.questionbankloading',
+        ADDQUESTIONLINKS:   'ul.menu a.questionbank',
+        ADDTOQUIZCONTAINER: 'td.addtoquizaction',
+        PREVIEWCONTAINER:   'td.previewaction',
+        SEARCHOPTIONS:      '#advancedsearch'
 };
 
 var PARAMS = {
@@ -44,6 +45,7 @@ Y.extend(POPUP, Y.Base, {
     loadingDiv: '',
     dialogue: null,
     addonpage: 0,
+    searchRegionInitialised: false,
 
     create_dialogue: function() {
         // Create a dialogue on the page and hide it.
@@ -60,8 +62,7 @@ Y.extend(POPUP, Y.Base, {
             extraClasses: ['mod_quiz_qbank_dialogue']
         };
         this.dialogue = new M.core.dialogue(config);
-        this.dialogue.bodyNode.delegate('click', this.link_clicked,
-                '.paging a[href], thead tr a[href]', this);
+        this.dialogue.bodyNode.delegate('click', this.link_clicked, 'a[href]', this);
         this.dialogue.hide();
 
         this.loadingDiv = this.dialogue.bodyNode.getHTML();
@@ -91,6 +92,7 @@ Y.extend(POPUP, Y.Base, {
             hidden.set('value', this.addonpage);
         }
 
+        this.initialiseSearchRegion();
         this.dialogue.show();
     },
 
@@ -132,9 +134,9 @@ Y.extend(POPUP, Y.Base, {
         }
         M.question.qbankmanager.init();
 
-        if (Y.one('#advancedsearch')) {
-            M.util.init_collapsible_region(Y, "advancedsearch", "question_bank_advanced_search",
-                    M.util.get_string('clicktohideshow'));
+        this.searchRegionInitialised = false;
+        if (this.dialogue.get('visible')) {
+            this.initialiseSearchRegion();
         }
 
         this.dialogue.fire('widget:contentUpdate');
@@ -153,11 +155,29 @@ Y.extend(POPUP, Y.Base, {
     },
 
     link_clicked: function(e) {
+        // Add question to quiz. mofify the URL, then let it work as normal.
         if (e.currentTarget.ancestor(CSS.ADDTOQUIZCONTAINER)) {
-            // These links need to work like normal, after we modify the URL.
             e.currentTarget.set('href', e.currentTarget.get('href') + '&addonpage=' + this.addonpage);
             return;
         }
+
+        // Question preview. Needs to open in a pop-up.
+        if (e.currentTarget.ancestor(CSS.PREVIEWCONTAINER)) {
+            openpopup(e, {
+                url: e.currentTarget.get('href'),
+                name: 'questionpreview',
+                options: 'height=600,width=800,top=0,left=0,menubar=0,location=0,scrollbars,resizable,toolbar,status,directories=0,fullscreen=0,dependent'
+            });
+            return;
+        }
+
+        // Click on expand/collaspse search-options. Has its own handler.
+        // We should not interfere.
+        if (e.currentTarget.ancestor(CSS.SEARCHOPTIONS)) {
+            return;
+        }
+
+        // Anything else means reload the pop-up contents.
         e.preventDefault();
         this.load_content(e.currentTarget.get('search'));
     },
@@ -165,6 +185,19 @@ Y.extend(POPUP, Y.Base, {
     options_changed: function(e) {
         e.preventDefault();
         this.load_content('?' + Y.IO.stringify(e.currentTarget.get('form')));
+    },
+
+    initialiseSearchRegion: function() {
+        if (this.searchRegionInitialised === true) {
+            return;
+        }
+        if (!Y.one(CSS.SEARCHOPTIONS)) {
+            return;
+        }
+
+        M.util.init_collapsible_region(Y, "advancedsearch", "question_bank_advanced_search",
+                M.util.get_string('clicktohideshow', 'moodle'));
+        this.searchRegionInitialised = true;
     }
 });
 

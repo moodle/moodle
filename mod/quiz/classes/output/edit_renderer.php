@@ -877,22 +877,22 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Require various strings for the command toolbox.
         $this->page->requires->strings_for_js(array(
-                'moveleft',
+                'clicktohideshow',
                 'deletechecktype',
                 'deletechecktypename',
                 'edittitle',
                 'edittitleinstructions',
-                'show',
+                'emptydragdropregion',
                 'hide',
-                'clicktochangeinbrackets',
-                'markthistopic',
                 'markedthistopic',
+                'markthistopic',
                 'move',
-                'movesection',
                 'movecontent',
+                'moveleft',
+                'movesection',
                 'selectall',
+                'show',
                 'tocontent',
-                'emptydragdropregion'
         ), 'moodle');
 
         $this->page->requires->strings_for_js(array(
