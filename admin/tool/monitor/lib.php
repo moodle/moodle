@@ -32,36 +32,37 @@ defined('MOODLE_INTERNAL') || die;
  * @param context         $context    The context of the course
  */
 function tool_monitor_extend_navigation_course($navigation, $course, $context) {
-    $node = navigation_node::create(get_string('pluginname', 'tool_monitor'), null, navigation_node::TYPE_CONTAINER, null,
-        'eventmonitor', new pix_icon('i/tool', ''));
 
     if (has_capability('tool/monitor:managerules', $context)) {
         $url = new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $course->id));
         $settingsnode = navigation_node::create(get_string('managerules', 'tool_monitor'), $url, navigation_node::TYPE_SETTING,
-            null, null, new pix_icon('i/settings', ''));
-    }
+                null, null, new pix_icon('i/settings', ''));
+        $reportnode = $navigation->get('coursereports');
 
-    if (has_capability('tool/monitor:subscribe', $context)) {
+        if (isset($settingsnode) && !empty($reportnode)) {
+            $reportnode->add_node($settingsnode);
+        }
+    }
+}
+
+/**
+ * This function extends the navigation with the tool items for user settings node.
+ *
+ * @param navigation_node $navigation  The navigation node to extend
+ * @param stdClass        $user        The user object
+ * @param context         $usercontext The context of the user
+ * @param stdClass        $course      The course to object for the tool
+ * @param context         $coursecontext     The context of the course
+ */
+function tool_monitor_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
+    global $USER;
+    if (($USER->id == $user->id)) {
         $url = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $course->id));
         $subsnode = navigation_node::create(get_string('managesubscriptions', 'tool_monitor'), $url,
-            navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
-    }
+                navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
 
-    $reportnode = $navigation->get('coursereports');
-
-    if ((isset($subsnode) || isset($settingsnode)) && !empty($reportnode)) {
-        // Add the node only if there are sub pages.
-        $node = $reportnode->add_node($node);
-
-        // Our navigation lib can not handle nodes that have active child, so we need to always add parent first without
-        // children. Refer MDL-45872 .
-
-        if (isset($settingsnode)) {
-            $node->add_node($settingsnode);
-        }
-
-        if (isset($subsnode)) {
-            $node->add_node($subsnode);
+        if (isset($subsnode) && !empty($navigation)) {
+            $navigation->add_node($subsnode, 'changepassword');
         }
     }
 }

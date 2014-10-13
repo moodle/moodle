@@ -26,19 +26,10 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $ADMIN->add('reports', new admin_category('toolmonitor', new lang_string('pluginname', 'tool_monitor')));
 
     // Manage rules page.
     $url = new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => 0));
     $temp = new admin_externalpage('toolmonitorrules', get_string('managerules', 'tool_monitor'), $url,
         'tool/monitor:managerules');
-    $ADMIN->add('toolmonitor', $temp);
-
-    // Manage subscriptions page.
-    $url = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => 0));
-    $temp = new admin_externalpage('toolmonitorsubscriptions', get_string('managesubscriptions', 'tool_monitor'), $url,
-        'tool/monitor:subscribe');
-    $ADMIN->add('toolmonitor', $temp);
-
-    $settings = null;
+    $ADMIN->add('reports', $temp);
 }
