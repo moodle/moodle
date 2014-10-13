@@ -51,6 +51,8 @@ class submissions_table extends table_sql {
     public $tilast;
     /* @var int The current page number. */
     public $page;
+    /* @var int The current course ID */
+    public $courseId;
 
     /**
      * Constructor function for the submissions table class.
@@ -71,6 +73,8 @@ class submissions_table extends table_sql {
         $this->gradinginfo = $gradinginfo;
 
         $instance = $DB->get_record('kalvidassign', array('id' => $cm->instance), 'id,grade');
+        
+        $this->courseId = $cm->course;
 
         $instance->cmid = $cm->id;
 
@@ -263,14 +267,14 @@ class submissions_table extends table_sql {
                 $attr = array('src' => $metadata->thumbnailurl, 'class' => 'kalsubthumb');
                 $thumbnail = html_writer::empty_tag('img', $attr);
 
-                $attr = array('name' => 'submission_source', 'href' => local_kaltura_add_kaf_uri_token($data->source), 'class' => 'kalsubthumbanchor');
+                $attr = array('name' => 'submission_source', 'href' => $this->_generateLtiLaunchLink($data->source, $data), 'class' => 'kalsubthumbanchor');
                 $output .= html_writer::tag('a', $thumbnail, $attr);
                 $output .= html_writer::end_tag('center');
 
             } else {
 
                 $output .= html_writer::start_tag('center');
-                $attr = array('name' => 'submission_source', 'href' => local_kaltura_add_kaf_uri_token($data->source), 'class' => 'kalsubanchor');
+                $attr = array('name' => 'submission_source', 'href' => $this->_generateLtiLaunchLink($data->source, $data), 'class' => 'kalsubanchor');
                 $output .= html_writer::tag('a', get_string('viewsubmission', 'kalvidassign'), $attr);
                 $output .= html_writer::end_tag('center');
             }
@@ -411,6 +415,24 @@ class submissions_table extends table_sql {
             }
             return '-';
         }
+    }
+    
+    private function _generateLtiLaunchLink($source, $data)
+    {
+        $cmid = $data->id;
+        
+        $width = 485;
+        $height = 450;
+        if(isset($data->height) && isset($data->width))
+        {
+            $width = $data->width;
+            $height = $data->height;
+        }
+        $realSource = local_kaltura_add_kaf_uri_token($source);
+        $hashedSource = base64_encode($realSource);
+        
+        $target = new moodle_url('/mod/kalvidassign/lti_launch_grade.php?cmid='.$cmid.'&source='.urlencode($source).'&height='.$height.'&width='.$width.'&courseid='.$this->courseId);
+        return $target;
     }
 }
 

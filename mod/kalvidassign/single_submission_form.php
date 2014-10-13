@@ -66,7 +66,7 @@ class kalvidassign_singlesubmission_form extends moodleform {
 
         if (!empty($submission->entry_id) && !empty($submission->source)) {
             $attr = array(
-                'src' => local_kaltura_add_kaf_uri_token($submission->source),
+                'src' => $this->_generateLtiLaunchLink($submission->source, $submission),
                 'height' => $submission->height,
                 'width' => $submission->width,
                 'allowfullscreen' => "true",
@@ -205,5 +205,24 @@ class kalvidassign_singlesubmission_form extends moodleform {
         $editoroptions['context'] = $this->_customdata->context;
 
         return $editoroptions;
+    }
+    
+    private function _generateLtiLaunchLink($source, $data)
+    {
+        $cmid = $this->_customdata->cm->id;
+        $courseId = $this->_customdata->cm->course;
+        
+        $width = 485;
+        $height = 450;
+        if(isset($data->height) && isset($data->width))
+        {
+            $width = $data->width;
+            $height = $data->height;
+        }
+        $realSource = local_kaltura_add_kaf_uri_token($source);
+        $hashedSource = base64_encode($realSource);
+        
+        $target = new moodle_url('/mod/kalvidassign/lti_launch_grade.php?cmid='.$cmid.'&source='.urlencode($source).'&height='.$height.'&width='.$width.'&courseid='.$courseId);
+        return $target;
     }
 }
