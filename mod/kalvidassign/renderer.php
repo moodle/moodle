@@ -794,6 +794,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
                     $groupswhere .= ' AND g.id IN ('.$groupids.') ';
 
                 }
+                break;
 
             case VISIBLEGROUPS:
                 // if visible groups but displaying a specific group then we must display users within
