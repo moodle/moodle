@@ -398,7 +398,7 @@ if (!isset($hiddenfields['mycourses'])) {
                 $courselisting .= ', ';
             }
             $shown++;
-            if (!$showallcourses && $shown == 20) {
+            if (!$showallcourses && $shown == $CFG->navcourselimit) {
                 $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
                 $courselisting .= html_writer::link($url, '...', array('title' => get_string('viewmore')));
                 break;
