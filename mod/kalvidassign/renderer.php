@@ -1058,7 +1058,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         }
 
         // Print the feedback
-        echo $OUTPUT->heading(get_string('feedbackfromteacher', 'assignment', fullname($teacher)));
+        echo $OUTPUT->heading(get_string('feedbackfromteacher', 'kalvidassign', fullname($teacher)));
 
         echo '<table cellspacing="0" class="feedback">';
 
