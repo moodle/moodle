@@ -39,6 +39,8 @@ class mysqli_native_moodle_database extends moodle_database {
 
     /** @var mysqli $mysqli */
     protected $mysqli = null;
+    /** @var bool is compressed row format supported cache */
+    protected $compressedrowformatsupported = null;
 
     private $transactions_supported = null;
 
@@ -278,6 +280,73 @@ class mysqli_native_moodle_database extends moodle_database {
         // Cache the result to improve performance.
         $this->dboptions['dbcollation'] = $collation;
         return $collation;
+    }
+
+    /**
+     * Get the row format from the database schema.
+     *
+     * @param string $table
+     * @return string row_format name or null if not known or table does not exist.
+     */
+    public function get_row_format($table) {
+        $rowformat = null;
+        $table = $this->mysqli->real_escape_string($table);
+        $sql = "SELECT row_format
+                  FROM INFORMATION_SCHEMA.TABLES
+                 WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}$table'";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            $rowformat = $rec['row_format'];
+        }
+        $result->close();
+
+        return $rowformat;
+    }
+
+    /**
+     * Is this database compatible with compressed row format?
+     * This feature is necessary for support of large number of text
+     * columns in InnoDB/XtraDB database.
+     *
+     * @param bool $cached use cached result
+     * @return bool true if table can be created or changed to compressed row format.
+     */
+    public function is_compressed_row_format_supported($cached = true) {
+        if ($cached and isset($this->compressedrowformatsupported)) {
+            return($this->compressedrowformatsupported);
+        }
+
+        $engine = strtolower($this->get_dbengine());
+        $info = $this->get_server_info();
+
+        if (version_compare($info['version'], '5.5.0') < 0) {
+            // MySQL 5.1 is not supported here because we cannot read the file format.
+            $this->compressedrowformatsupported = false;
+
+        } else if ($engine !== 'innodb' and $engine !== 'xtradb') {
+            // Other engines are not supported, most probably not compatible.
+            $this->compressedrowformatsupported = false;
+
+        } else if (!$filepertable = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_file_per_table'")) {
+            $this->compressedrowformatsupported = false;
+
+        } else if ($filepertable->value !== 'ON') {
+            $this->compressedrowformatsupported = false;
+
+        } else if (!$fileformat = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_file_format'")) {
+            $this->compressedrowformatsupported = false;
+
+        } else  if ($fileformat->value !== 'Barracuda') {
+            $this->compressedrowformatsupported = false;
+
+        } else {
+            // All the tests passed, we can safely use ROW_FORMAT=Compressed in sql statements.
+            $this->compressedrowformatsupported = true;
+        }
+
+        return $this->compressedrowformatsupported;
     }
 
     /**
