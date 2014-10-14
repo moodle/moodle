@@ -464,7 +464,7 @@ function grade_get_graded_users_select($report, $course, $userid, $groupid, $inc
  * @param int $courseid The current course id.
  */
 function hide_natural_aggregation_upgrade_notice($courseid) {
-    set_config('show_sumofgrades_upgrade_' . $courseid, false);
+    unset_config('show_sumofgrades_upgrade_' . $courseid);
 }
 
 /**
