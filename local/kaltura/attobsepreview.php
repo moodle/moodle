@@ -34,7 +34,7 @@ $playurl = urldecode($url);
         'url': "<?php echo $playurl; ?>",
         'width': <?php echo $width; ?>,
         'height': <?php echo $height; ?>,
-        'title': "<?php echo $title; ?>"
+        'title': "<?php echo addcslashes($title, '"'); ?>"
     };
     parent.kaltura_atto_embed_callback(data);
     var iframe = Y.Node.create('<iframe></iframe>');
