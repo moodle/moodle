@@ -204,6 +204,15 @@ FloatingHeaders.prototype = {
     firstUserCellWidth: 0,
 
     /**
+     * The width of the dock if it is visible.
+     *
+     * @property dockWidth
+     * @type Number
+     * @protected
+     */
+    dockWidth: 0,
+
+    /**
      * The position of the top of the final user cell.
      * This is used when processing the scroll event as an optimisation. It must be updated when
      * additional rows are loaded, or the window changes in some fashion.
@@ -301,6 +310,13 @@ FloatingHeaders.prototype = {
         // The footer row shows the grade averages and will be floated to the page bottom.
         if (this.tableFooterRow) {
             this.footerRowPosition = this.tableFooterRow.getY();
+        }
+
+        // Add the width of the dock if it is visible.
+        this.dockWidth = 0;
+        var dock = Y.one('.has_dock #dock');
+        if (dock) {
+            this.dockWidth = dock.get(OFFSETWIDTH);
         }
 
         var userCellList = Y.all(SELECTORS.USERCELL);
@@ -436,7 +452,9 @@ FloatingHeaders.prototype = {
             // Listen for window scrolls, resizes, and rotation events.
             Y.one(Y.config.win).on('scroll', this._handleScrollEvent, this),
             Y.one(Y.config.win).on('resize', this._handleResizeEvent, this),
-            Y.one(Y.config.win).on('orientationchange', this._handleResizeEvent, this)
+            Y.one(Y.config.win).on('orientationchange', this._handleResizeEvent, this),
+            Y.Global.on('dock:shown', this._handleResizeEvent, this),
+            Y.Global.on('dock:hidden', this._handleResizeEvent, this)
         );
     },
 
@@ -451,7 +469,7 @@ FloatingHeaders.prototype = {
         var userColumn = Y.all(SELECTORS.USERCELL),
 
         // Create a floating table.
-            floatingUserColumn = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater"></div>'),
+            floatingUserColumn = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater sideonly"></div>'),
 
         // Get the XY for the floating element.
             coordinates = this._getRelativeXY(this.firstUserCell);
@@ -498,7 +516,7 @@ FloatingHeaders.prototype = {
         this.headerCell = Y.one(SELECTORS.STUDENTHEADER);
 
         // Create the floating row and cell.
-        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater heading"></div>'),
+        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater sideonly heading"></div>'),
             floatingUserHeaderCell = Y.Node.create('<div></div>'),
             nodepos = this._getRelativeXY(this.headerCell)[0],
             coordinates = this._getRelativeXY(this.headerRow),
@@ -678,7 +696,7 @@ FloatingHeaders.prototype = {
         }
 
         // Create the floating row and cell.
-        var floatingRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater"></div>'),
+        var floatingRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater sideonly"></div>'),
             floatingCell = Y.Node.create('<div></div>'),
             coordinates = this._getRelativeXY(origin),
             width = this.firstUserCell.getComputedStyle(WIDTH),
@@ -761,14 +779,14 @@ FloatingHeaders.prototype = {
 
         // User column position.
         if (right_to_left()) {
-            floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset;
+            floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset - this.dockWidth;
             floatingUserRelativePoint = floatingUserTriggerPoint - this.firstUserCellWidth;
             userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + this.firstUserCellWidth);
             leftTitleFloats = (floatingUserTriggerPoint - this.firstNonUserCellWidth) <
                               (this.firstNonUserCellLeft + this.firstUserCellWidth);
         } else {
-            floatingUserTriggerPoint = Y.config.win.pageXOffset;
-            floatingUserRelativePoint = floatingUserTriggerPoint;
+            floatingUserRelativePoint = Y.config.win.pageXOffset;
+            floatingUserTriggerPoint = floatingUserRelativePoint + this.dockWidth;
             userFloats = floatingUserTriggerPoint > this.firstUserCellLeft;
             leftTitleFloats = floatingUserTriggerPoint > (this.firstNonUserCellLeft - this.firstUserCellWidth);
         }

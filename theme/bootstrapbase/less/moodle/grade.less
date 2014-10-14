@@ -460,3 +460,33 @@
         }
     }
 }
+
+.has_dock.path-grade-report-grader {
+    .gradeparent .sideonly.floating > .cell,
+    .gradeparent .sideonly.floating > .cell,
+    .gradeparent .sideonly.floating > .cell {
+        padding-left: 5 + (@dockWidth + (@dockTitleMargin * 2));
+    }
+
+    &.dir-rtl {
+        .gradeparent .sideonly.floating > .cell,
+        .gradeparent .sideonly.floating > .cell,
+        .gradeparent .sideonly.floating > .cell {
+            padding-left: 5px;
+            padding-right: 5 + (@dockWidth + (@dockTitleMargin * 2));
+        }
+    }
+}
+
+.content-only.path-grade-report-grader {
+    .gradeparent table {
+        margin-left: (@dockWidth + (@dockTitleMargin * 2));
+    }
+
+    &.dir-rtl {
+        .gradeparent table {
+            margin-left: 0;
+            margin-right: (@dockWidth + (@dockTitleMargin * 2));
+        }
+    }
+}
