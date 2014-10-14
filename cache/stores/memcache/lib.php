@@ -330,7 +330,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
     public function set_many(array $keyvaluearray) {
         $count = 0;
         foreach ($keyvaluearray as $pair) {
-            if ($this->connection->set($this->parse_key($pair['key']), $pair['value'], MEMCACHE_COMPRESSED, $this->definition->get_ttl())) {
+            if ($this->set($pair['key'], $pair['value'])) {
                 $count++;
             }
         }
