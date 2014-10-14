@@ -293,7 +293,6 @@ class user extends tablelike implements selectable_items {
             // Appropriately massage data that may not exist.
 
             $userid = $this->item->id;
-
             foreach ($this->items as $gradeitemid => $gradeitem) {
                 $null = $gradeitem->gradetype == GRADE_TYPE_SCALE ? -1 : '';
                 $field = "finalgrade_{$gradeitem->id}_{$gradeitemid}";

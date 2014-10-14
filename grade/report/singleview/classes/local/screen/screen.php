@@ -263,13 +263,20 @@ abstract class screen {
                 continue;
             }
 
-            if (!in_array($matches[1], $fields)) {
-                continue;
-            }
-
             $gradeitem = grade_item::fetch(array(
                 'id' => $itemid, 'courseid' => $this->courseid
             ));
+
+            if (preg_match('/^old[oe]{1}/', $varname)) {
+                $elementname = preg_replace('/^old/', '', $varname);
+                if (!isset($data->$elementname)) {
+                    $data->$elementname = false;
+                }
+            }
+
+            if (!in_array($matches[1], $fields)) {
+                continue;
+            }
 
             if (!$gradeitem) {
                 continue;

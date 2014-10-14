@@ -85,12 +85,6 @@ class checkbox_attribute extends element {
             $attributes['disabled'] = 'DISABLED';
         }
 
-        $alt = array(
-            'type' => 'hidden',
-            'name' => $this->name,
-            'value' => 0
-        );
-
         $hidden = array(
             'type' => 'hidden',
             'name' => 'old' . $this->name
@@ -111,7 +105,6 @@ class checkbox_attribute extends element {
         }
 
         return (
-            html_writer::empty_tag('input', $alt) .
             html_writer::tag('label',
                              get_string($type . 'for', 'gradereport_singleview', $this->label),
                              array('for' => $this->name, 'class' => 'accesshide')) .
