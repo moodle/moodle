@@ -628,6 +628,7 @@ class grade_category extends grade_object {
             $grade->finalgrade = null;
 
             if (!is_null($oldfinalgrade)) {
+                $grade->timemodified = time();
                 $success = $grade->update('aggregation');
 
                 // If successful trigger a user_graded event.
@@ -712,6 +713,7 @@ class grade_category extends grade_object {
             $grade->finalgrade = null;
 
             if (!is_null($oldfinalgrade)) {
+                $grade->timemodified = time();
                 $success = $grade->update('aggregation');
 
                 // If successful trigger a user_graded event.
@@ -754,6 +756,7 @@ class grade_category extends grade_object {
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade) ||
                 grade_floats_different($grade->rawgrademax, $oldrawgrademax) ||
                 grade_floats_different($grade->rawgrademin, $oldrawgrademin)) {
+            $grade->timemodified = time();
             $success = $grade->update('aggregation');
 
             // If successful trigger a user_graded event.
