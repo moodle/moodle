@@ -101,10 +101,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 // The user is deleting the activity.
                 this.delete_with_confirmation(ev, node, activity, action);
                 break;
-            case 'linkpage':
-            case 'unlinkpage':
-                // The user is linking or unlinking pages.
-                this.link_page(ev, node, activity, action);
+            case 'addpagebreak':
+            case 'removepagebreak':
+                // The user is adding or removing a page break.
+                this.update_page_break(ev, node, activity, action);
                 break;
             default:
                 // Nothing to do here!
@@ -140,10 +140,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @chainable
      */
     delete_with_confirmation: function(ev, button, activity) {
-        // Prevent the default button action
+        // Prevent the default button action.
         ev.preventDefault();
 
-        // Get the element we're working on
+        // Get the element we're working on.
         var element   = activity,
             // Create confirm string (different if element has or does not have name)
             confirmstring = '',
@@ -160,19 +160,24 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // If it is confirmed.
         confirm.on('complete-yes', function() {
 
-            // Actually remove the element.
-            element.remove();
-            Y.Moodle.mod_quiz.util.slot.reorder_slots();
+            var spinner = this.add_spinner(element);
             var data = {
                 'class': 'resource',
                 'action': 'DELETE',
                 'id': Y.Moodle.mod_quiz.util.slot.getId(element)
             };
-            this.send_request(data);
-            if (M.core.actionmenu && M.core.actionmenu.instance) {
-                M.core.actionmenu.instance.hideMenu();
-            }
-            window.location.reload(true);
+            this.send_request(data, spinner, function(response) {
+                if (response.deleted) {
+                    // Actually remove the element.
+                    Y.Moodle.mod_quiz.util.slot.remove(element);
+                    this.reorganise_edit_page();
+                    if (M.core.actionmenu && M.core.actionmenu.instance) {
+                        M.core.actionmenu.instance.hideMenu();
+                    }
+                } else {
+                    window.location.reload(true);
+                }
+            });
 
         }, this);
 
@@ -215,12 +220,12 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 M.core.actionmenu.instance.hideMenu();
             }
 
-            // Try to retrieve the existing string from the server
+            // Try to retrieve the existing string from the server.
             if (response.instancemaxmark) {
                 maxmarktext = response.instancemaxmark;
             }
 
-            // Create the editor and submit button
+            // Create the editor and submit button.
             var editform = Y.Node.create('<form action="#" />');
             var editinstructions = Y.Node.create('<span class="' + CSS.EDITINSTRUCTIONS + '" id="id_editinstructions" />')
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
@@ -232,7 +237,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 'size' : parseInt(this.get('config').questiondecimalpoints, 10) + 2
             });
 
-            // Clear the existing content and put the editor in
+            // Clear the existing content and put the editor in.
             editform.appendChild(editor);
             editform.setData('anchor', anchor);
             instance.insert(editinstructions, 'before');
@@ -247,7 +252,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             // We hide various components whilst editing:
             activity.addClass(CSS.EDITINGMAXMARK);
 
-            // Focus and select the editor text
+            // Focus and select the editor text.
             editor.focus().select();
 
             // Cancel the edit if we lose focus or the escape key is pressed.
@@ -272,7 +277,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {String} originalmaxmark The original maxmark the activity or resource had.
      */
     edit_maxmark_submit : function(ev, activity, originalmaxmark) {
-        // We don't actually want to submit anything
+        // We don't actually want to submit anything.
         ev.preventDefault();
         var newmaxmark = Y.Lang.trim(activity.one(SELECTOR.ACTIVITYFORM + ' ' + SELECTOR.ACTIVITYMAXMARK).get('value'));
         var spinner = this.add_spinner(activity);
@@ -350,97 +355,59 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * the other slots
      *
      * @protected
-     * @method link_page
+     * @method update_page_break
      * @param {EventFacade} ev The event that was fired.
      * @param {Node} button The button that triggered this action.
      * @param {Node} activity The activity node that this action will be performed on.
      * @chainable
      */
-    link_page: function(ev, button, activity, action) {
+    update_page_break: function(ev, button, activity, action) {
         // Prevent the default button action
         ev.preventDefault();
 
-        activity = activity.next('li.activity.slot');
-        var spinner = this.add_spinner(activity),
+        nextactivity = activity.next('li.activity.slot');
+        var spinner = this.add_spinner(nextactivity),
             slotid = 0;
-        var value = action === 'linkpage' ? 1:2;
+        var value = action === 'removepagebreak' ? 1 : 2;
 
         var data = {
             'class': 'resource',
-            'field': 'linkslottopage',
+            'field': 'updatepagebreak',
             'id':    slotid,
             'value': value
         };
 
-        slotid = Y.Moodle.mod_quiz.util.slot.getId(activity);
+        slotid = Y.Moodle.mod_quiz.util.slot.getId(nextactivity);
         if (slotid) {
             data.id = Number(slotid);
         }
         this.send_request(data, spinner, function(response) {
-            window.location.reload(true);
-//            if (response.slots) {
-//                this.repaginate_slots(response.slots);
-//            }
+            if (response.slots) {
+                if (action === 'addpagebreak') {
+                    Y.Moodle.mod_quiz.util.page.add(activity);
+                } else {
+                    var page = activity.next(Y.Moodle.mod_quiz.util.page.SELECTORS.PAGE);
+                    Y.Moodle.mod_quiz.util.page.remove(page, true);
+                }
+                this.reorganise_edit_page();
+            } else {
+                window.location.reload(true);
+            }
         });
 
         return this;
     },
-    repaginate_slots: function(slots) {
-        this.slots = slots;
-        var section = Y.one(SELECTOR.PAGECONTENT + ' ' + SELECTOR.SECTIONUL),
-            activities = section.all(SELECTOR.ACTIVITYLI);
-        activities.each(function(node) {
 
-            // What element is it? page/slot/link
-            // what is the current slot?
-            var type;
-            var slot;
-            if(node.hasClass(CSS.PAGE)){
-                type = this.NODE_PAGE;
-                slot = node.next(SELECTOR.SLOTLI);
-            } else if (node.hasClass(CSS.SLOT)){
-                type = this.NODE_SLOT;
-                slot = node;
-            } else if (node.hasClass(CSS.JOIN)){
-                type = this.NODE_JOIN;
-                slot = node.previous(SELECTOR.SLOTLI);
-            }
-
-            // getSlotnumber() Should be a method of util.slot
-            var slotnumber = Number(Y.Moodle.mod_quiz.util.slot.getNumber(slot));
-            if(!type){
-                // Nothing we can do.
-                return;
-            }
-
-            // Is it correct?
-            if(!this.slots.hasOwnProperty(slotnumber)){
-                // An error. We should handle this.
-                return;
-            }
-
-            var slotdata = this.slots[slotnumber];
-
-            if(type === this.NODE_PAGE){
-                // Get page number
-                var pagenumber = Y.Moodle.mod_quiz.util.page.getNumber(node);
-                // Is the page number correct?
-                if (slotdata.page === pagenumber) {
-                    console.log('slotdata.page == pagenumber return');
-                    return;
-                }
-
-                if (pagenumber < slotdata.page) {
-                    // Remove page node.
-                    node.remove();
-                }
-                else {
-                    // Add page node.
-                    console.log('pagenumber > slotdata.page update page number');
-                }
-
-            }
-        }, this);
+    /**
+     * Reorganise the UI after every edit action.
+     *
+     * @protected
+     * @method reorganise_edit_page
+     */
+    reorganise_edit_page: function() {
+        Y.Moodle.mod_quiz.util.slot.reorderSlots();
+        Y.Moodle.mod_quiz.util.slot.reorderPageBreaks();
+        Y.Moodle.mod_quiz.util.page.reorderPages();
     },
 
     NAME : 'mod_quiz-resource-toolbox',

@@ -129,6 +129,22 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
+     * Check whether a particular question is not on a particular page of the quiz on the Edit quiz page.
+     * @Given /^I should not see "(?P<question_name>(?:[^"]|\\")*)" on quiz page "(?P<page_number>\d+)"$/
+     * @param string $questionname the name of the question we are looking for.
+     * @param number $pagenumber the page it should be found on.
+     * @return array of steps.
+     */
+    public function i_should_not_see_on_quiz_page($questionname, $pagenumber) {
+        $xpath = "//li[contains(., '" . $this->escape($questionname) .
+                "')][./preceding-sibling::li[contains(@class, 'pagenumber')][1][contains(., 'Page " .
+                $pagenumber . "')]]";
+        return array(
+            new Given('"' . $xpath . '" "xpath_element" should not exist'),
+        );
+    }
+
+    /**
      * Check whether one question comes before another on the Edit quiz page.
      * The two questions must be on the same page.
      * @Given /^I should see "(?P<first_q_name>(?:[^"]|\\")*)" before "(?P<second_q_name>(?:[^"]|\\")*)" on the edit quiz page$/
@@ -153,11 +169,22 @@ class behat_mod_quiz extends behat_question_base {
      * @return array of steps.
      */
     public function should_have_number_on_the_edit_quiz_page($questionname, $number) {
-        $xpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
-                "')]//span[@class = 'slotnumber' and normalize-space(text()) = '" . $this->escape($number) . "']";
+        $xpath = "//li[contains(@class, 'slot') and contains(., '" . $this->escape($questionname) .
+                "')]//span[contains(@class, 'slotnumber') and normalize-space(text()) = '" . $this->escape($number) . "']";
         return array(
             new Given('"' . $xpath . '" "xpath_element" should exist'),
         );
+    }
+
+    /**
+     * Get the xpath for a partcular add/remove page-break icon.
+     * @param string $addorremoves 'Add' or 'Remove'.
+     * @param string $questionname the name of the question before the icon.
+     * @return string the requried xpath.
+     */
+    protected function get_xpath_page_break_icon_after_question($addorremoves, $questionname) {
+        return "//li[contains(@class, 'slot') and contains(., '" . $this->escape($questionname) .
+                "')]//a[contains(@class, 'page_split_join') and @title = '" . $addorremoves . " page break']";
     }
 
     /**
@@ -168,8 +195,50 @@ class behat_mod_quiz extends behat_question_base {
      * @return array of steps.
      */
     public function i_click_on_the_page_break_icon_after_question($addorremoves, $questionname) {
-        $xpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
-                "')]//a[@class = 'page_split_join' and @title = '" . $addorremoves . " page break']";
+        $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
+        return array(
+            new Given('I click on "' . $xpath . '" "xpath_element"'),
+        );
+    }
+
+    /**
+     * Assert the add or remove page-break icon after a particular question exists.
+     * @When /^the "(Add|Remove)" page break icon after question "(?P<question_name>(?:[^"]|\\")*)" should exist$/
+     * @param string $addorremoves 'Add' or 'Remove'.
+     * @param string $questionname the name of the question before the icon to click.
+     * @return array of steps.
+     */
+    public function the_page_break_icon_after_question_should_exist($addorremoves, $questionname) {
+        $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
+        return array(
+            new Given('"' . $xpath . '" "xpath_element" should exist'),
+        );
+    }
+
+    /**
+     * Assert the add or remove page-break icon after a particular question does not exist.
+     * @When /^the "(Add|Remove)" page break icon after question "(?P<question_name>(?:[^"]|\\")*)" should not exist$/
+     * @param string $addorremoves 'Add' or 'Remove'.
+     * @param string $questionname the name of the question before the icon to click.
+     * @return array of steps.
+     */
+    public function the_page_break_icon_after_question_should_not_exist($addorremoves, $questionname) {
+        $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
+        return array(
+            new Given('"' . $xpath . '" "xpath_element" should not exist'),
+        );
+    }
+
+    /**
+     * Check the add or remove page-break link after a particular question contains the given parameters in its url.
+     * @When /^the "(Add|Remove)" page break link after question "(?P<question_name>(?:[^"]|\\")*) should contain:"$/
+     * @param string $addorremoves 'Add' or 'Remove'.
+     * @param string $questionname the name of the question before the icon to click.
+     * @param TableNode $paramdata with data for checking the page break url
+     * @return array of steps.
+     */
+    public function the_page_break_link_after_question_should_contain($addorremoves, $questionname, $paramdata) {
+        $xpath = $this->get_xpath_page_break_icon_after_question($addorremoves, $questionname);
         return array(
             new Given('I click on "' . $xpath . '" "xpath_element"'),
         );
@@ -208,6 +277,23 @@ class behat_mod_quiz extends behat_question_base {
         return array(
             new Given('I drag "' . $iconxpath . '" "xpath_element" ' .
                 'and I drop it in "' . $destinationxpath . '" "xpath_element"'),
+        );
+    }
+
+    /**
+     * Delete a question on the Edit quiz page by first clicking on the Delete icon,
+     * then clicking one of the "After ..." links.
+     * @When /^I delete "(?P<question_name>(?:[^"]|\\")*)" in the quiz by clicking the delete icon$/
+     * @param string $questionname the name of the question we are looking for.
+     * @return array of steps.
+     */
+    public function i_delete_question_by_clicking_the_delete_icon($questionname) {
+        $slotxpath = "//li[contains(@class, ' slot ') and contains(., '" . $this->escape($questionname) .
+                "')]";
+        $deletexpath = "//a[contains(@class, 'editing_delete')]";
+        return array(
+            new Given('I click on "' . $slotxpath . $deletexpath . '" "xpath_element"'),
+            new Given('I click on "Yes" "button" in the "Confirm" "dialogue"'),
         );
     }
 }
