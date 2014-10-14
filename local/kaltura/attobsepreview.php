@@ -39,7 +39,7 @@ $playurl = urldecode($url);
     parent.kaltura_atto_embed_callback(data);
     var iframe = Y.Node.create('<iframe></iframe>');
     iframe.setAttribute('src', '<?php echo $playurl; ?>');
-    iframe.setAttribute('alt', '<?php echo $title; ?>');
+    iframe.setAttribute('alt', '<?php echo addcslashes($title, "'"); ?>');
     iframe.setStyles({
             height: '<?php echo $height; ?>px',
             border: 'none',
