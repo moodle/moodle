@@ -52,7 +52,7 @@ $help =
 
 By default InnoDB storage table is using legacy Antelope file format
 which has major restriction on database row size.
-Use this script to detect and fix database tables with potentail data
+Use this script to detect and fix database tables with potential data
 overflow problems.
 
 Options:
