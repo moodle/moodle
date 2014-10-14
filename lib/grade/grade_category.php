@@ -969,15 +969,14 @@ class grade_category extends grade_object {
                 $sum       = 0;
 
                 foreach ($grade_values as $itemid=>$grade_value) {
-
+                    if ($weights !== null) {
+                        $weights[$itemid] = $items[$itemid]->aggregationcoef;
+                    }
                     if ($items[$itemid]->aggregationcoef <= 0) {
                         continue;
                     }
                     $weightsum += $items[$itemid]->aggregationcoef;
                     $sum       += $items[$itemid]->aggregationcoef * $grade_value;
-                    if ($weights !== null) {
-                        $weights[$itemid] = $items[$itemid]->aggregationcoef;
-                    }
                 }
                 if ($weightsum == 0) {
                     $agg_grade = null;

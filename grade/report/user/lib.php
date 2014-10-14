@@ -712,12 +712,12 @@ class grade_report_user extends grade_report {
                 // Normalise the gradeval.
                 $gradecat = $grade_object->load_parent_category();
                 if ($gradecat->aggregation == GRADE_AGGREGATE_SUM) {
-                    // Natural aggregation/Sum of grades does not consider the mingrade.
+                    // Natural aggregation/Sum of grades does not consider the mingrade, cannot traditionnally normalise it.
                     $graderange = $this->aggregationhints[$itemid]['grademax'];
                     $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
                 } else {
-                    $graderange = $this->aggregationhints[$itemid]['grademax'] - $this->aggregationhints[$itemid]['grademin'];
-                    $gradeval = ($this->aggregationhints[$itemid]['grade'] - $this->aggregationhints[$itemid]['grademin']) / $graderange;
+                    $gradeval = grade_grade::standardise_score($this->aggregationhints[$itemid]['grade'],
+                        $this->aggregationhints[$itemid]['grademin'], $this->aggregationhints[$itemid]['grademax'], 0, 1);
                 }
 
                 // Multiply the normalised value by the weight
