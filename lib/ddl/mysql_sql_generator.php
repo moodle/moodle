@@ -261,7 +261,7 @@ class mysql_sql_generator extends sql_generator {
 
         return $sqls;
     }
-    
+
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array).
