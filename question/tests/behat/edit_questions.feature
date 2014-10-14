@@ -40,5 +40,4 @@ Feature: A teacher can edit questions in the question bank
     And I switch to "questionpreview" window
     And I should see "Edited question name"
     And I should see "Write a lot about what you want"
-    And I press "Close preview"
     And I switch to the main window
