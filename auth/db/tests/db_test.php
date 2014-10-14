@@ -46,14 +46,9 @@ class auth_db_testcase extends advanced_testcase {
             set_config('host', $CFG->dbhost.':'.$CFG->dboptions['dbport'], 'auth/db');
         }
 
-        switch (get_class($DB)) {
-            case 'mssql_native_moodle_database':
-                set_config('type', 'mssql_n', 'auth/db');
-                set_config('sybasequoting', '1', 'auth/db');
-                break;
+        switch ($DB->get_dbfamily()) {
 
-            case 'mariadb_native_moodle_database':
-            case 'mysqli_native_moodle_database':
+            case 'mysql':
                 set_config('type', 'mysqli', 'auth/db');
                 set_config('setupsql', "SET NAMES 'UTF-8'", 'auth/db');
                 set_config('sybasequoting', '0', 'auth/db');
@@ -66,12 +61,12 @@ class auth_db_testcase extends advanced_testcase {
                 }
                 break;
 
-            case 'oci_native_moodle_database':
+            case 'oracle':
                 set_config('type', 'oci8po', 'auth/db');
                 set_config('sybasequoting', '1', 'auth/db');
                 break;
 
-            case 'pgsql_native_moodle_database':
+            case 'postgres':
                 set_config('type', 'postgres7', 'auth/db');
                 $setupsql = "SET NAMES 'UTF-8'";
                 if (!empty($CFG->dboptions['dbschema'])) {
@@ -92,13 +87,17 @@ class auth_db_testcase extends advanced_testcase {
                 }
                 break;
 
-            case 'sqlsrv_native_moodle_database':
-                set_config('type', 'mssqlnative', 'auth/db');
+            case 'mssql':
+                if (get_class($DB) == 'mssql_native_moodle_database') {
+                    set_config('type', 'mssql_n', 'auth/db');
+                } else {
+                    set_config('type', 'mssqlnative', 'auth/db');
+                }
                 set_config('sybasequoting', '1', 'auth/db');
                 break;
 
             default:
-                throw new exception('Unknown database driver '.get_class($DB));
+                throw new exception('Unknown database family ' . $DB->get_dbfamily());
         }
 
         $table = new xmldb_table('auth_db_users');
