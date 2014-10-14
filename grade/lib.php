@@ -1564,16 +1564,17 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_reset_icon($element, $gpr) {
+    public function get_reset_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
 
         // Limit to category items set to use the natural weights aggregation method, and users
         // with the capability to manage grades.
         if ($element['type'] != 'category' || $element['object']->aggregation != GRADE_AGGREGATE_SUM ||
                 !has_capability('moodle/grade:manage', $this->context)) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         $str = get_string('resetweights', 'grades', $this->get_params_for_iconstr($element));
@@ -1584,7 +1585,12 @@ class grade_structure {
             'sesskey' => sesskey(),
         ));
 
-        return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/reset', $str));
+        if ($returnactionmenulink) {
+            return new action_menu_link_secondary($gpr->add_url_params($url), new pix_icon('t/reset', $str),
+                get_string('resetweightsshort', 'grades'));
+        } else {
+            return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/reset', $str));
+        }
     }
 
     /**
@@ -1592,17 +1598,17 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     *
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_edit_icon($element, $gpr) {
+    public function get_edit_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
 
         if (!has_capability('moodle/grade:manage', $this->context)) {
             if ($element['type'] == 'grade' and has_capability('moodle/grade:edit', $this->context)) {
                 // oki - let them override grade
             } else {
-                return '';
+                return $returnactionmenulink ? null : '';
             }
         }
 
@@ -1656,10 +1662,16 @@ class grade_structure {
         }
 
         if ($url) {
-            return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/edit', $stredit));
+            if ($returnactionmenulink) {
+                return new action_menu_link_secondary($gpr->add_url_params($url),
+                    new pix_icon('t/edit', $stredit),
+                    get_string('editsettings'));
+            } else {
+                return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/edit', $stredit));
+            }
 
         } else {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
     }
 
@@ -1668,19 +1680,19 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     *
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_hiding_icon($element, $gpr) {
+    public function get_hiding_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
 
         if (!$element['object']->can_control_visibility()) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         if (!has_capability('moodle/grade:manage', $this->context) and
             !has_capability('moodle/grade:hide', $this->context)) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         $strparams = $this->get_params_for_iconstr($element);
@@ -1703,11 +1715,19 @@ class grade_structure {
 
             $url->param('action', 'show');
 
-            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'smallicon')));
+            if ($returnactionmenulink) {
+                $hideicon = new action_menu_link_secondary($url, new pix_icon('t/'.$type, $tooltip), get_string('show'));
+            } else {
+                $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'smallicon')));
+            }
 
         } else {
             $url->param('action', 'hide');
-            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/hide', $strhide));
+            if ($returnactionmenulink) {
+                $hideicon = new action_menu_link_secondary($url, new pix_icon('t/hide', $strhide), get_string('hide'));
+            } else {
+                $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/hide', $strhide));
+            }
         }
 
         return $hideicon;
@@ -1775,13 +1795,13 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     *
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_calculation_icon($element, $gpr) {
+    public function get_calculation_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
         if (!has_capability('moodle/grade:manage', $this->context)) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         $type   = $element['type'];
@@ -1804,11 +1824,17 @@ class grade_structure {
 
                 $url = new moodle_url('/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
                 $url = $gpr->add_url_params($url);
-                return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation));
+                if ($returnactionmenulink) {
+                    return new action_menu_link_secondary($url,
+                        new pix_icon($icon, $streditcalculation),
+                        get_string('editcalculation', 'grades'));
+                } else {
+                    return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation));
+                }
             }
         }
 
-        return '';
+        return $returnactionmenulink ? null : '';
     }
 }
 

@@ -504,15 +504,12 @@ Feature: We can use calculated grade totals
   @javascript
   Scenario: Natural aggregation from the setup screen
     And I set the field "Grade report" to "Categories and items"
-    And I follow "Edit   Course 1"
-    And I set the field "Aggregation" to "Natural"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 1"
-    And I set the field "Aggregation" to "Natural"
-    And I press "Save changes"
-    And I follow "Edit   Sub category 2"
-    And I set the field "Aggregation" to "Natural"
-    And I press "Save changes"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation          | Natural |
+    And I set the following settings for grade item "Sub category 1":
+      | Aggregation          | Natural |
+    And I set the following settings for grade item "Sub category 2":
+      | Aggregation          | Natural |
 
     And I set the field "Override weight of Test assignment one" to "1"
     And the field "Weight of Test assignment one" matches value "37.975"
@@ -553,7 +550,7 @@ Feature: We can use calculated grade totals
     And I set the field "Override weight of Sub category 1" to "1"
     And the field "Weight of Test assignment one" matches value "37.975"
     And the field "Weight of Sub category 1" matches value "5.696"
-    And I click on "Reset weights of Sub category 2" "link"
+    And I reset weights for grade category "Sub category 2"
     And the field "Weight of Test assignment ten" matches value "33.333"
 
   @javascript

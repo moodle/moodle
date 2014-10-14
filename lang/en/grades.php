@@ -576,6 +576,7 @@ $string['reportdefault'] = 'Report default ({$a})';
 $string['reportplugins'] = 'Report plugins';
 $string['reportsettings'] = 'Report settings';
 $string['reprintheaders'] = 'Reprint headers';
+$string['resetweightsshort'] = 'Reset weights';
 $string['resetweights'] = 'Reset weights of {$a->itemname}';
 $string['respectingcurrentdata'] = 'leaving current configuration unmodified';
 $string['rowpreviewnum'] = 'Preview rows';

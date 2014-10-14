@@ -59,14 +59,49 @@ class behat_grade extends behat_base {
      * @return Given[]
      */
     public function i_set_the_following_settings_for_grade_item($gradeitem, TableNode $data) {
+
+        $steps = array();
+        $gradeitem = $this->getSession()->getSelectorsHandler()->xpathLiteral($gradeitem);
+
+        if ($this->running_javascript()) {
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
+                $steps[] = new Given('I click on "' . $this->escape($xpath) . '" "xpath_element"');
+            }
+        }
+
         $savechanges = get_string('savechanges', 'grades');
         $edit = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('edit') . '  ');
-        $gradeitem = $this->getSession()->getSelectorsHandler()->xpathLiteral($gradeitem);
         $linkxpath = "//a[./img[starts-with(@title,$edit) and contains(@title,$gradeitem)]]";
-        return array(
-            new Given('I click on "' . $this->escape($linkxpath) . '" "xpath_element"'),
-            new Given('I set the following fields to these values:', $data),
-            new Given('I press "' . $this->escape($savechanges) . '"'),
-        );
+        $steps[] = new Given('I click on "' . $this->escape($linkxpath) . '" "xpath_element"');
+        $steps[] = new Given('I set the following fields to these values:', $data);
+        $steps[] = new Given('I press "' . $this->escape($savechanges) . '"');
+        return $steps;
+    }
+
+    /**
+     * Resets the weights for the grade category
+     *
+     * Teacher must be on the grade setup page.
+     *
+     * @Given /^I reset weights for grade category "(?P<grade_item_string>(?:[^"]|\\")*)"$/
+     * @param $gradeitem
+     * @return array
+     */
+    public function i_reset_weights_for_grade_category($gradeitem) {
+
+        $steps = array();
+
+        if ($this->running_javascript()) {
+            $gradeitemliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($gradeitem);
+            $xpath = "//tr[contains(.,$gradeitemliteral)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
+                $steps[] = new Given('I click on "' . $this->escape($xpath) . '" "xpath_element"');
+            }
+        }
+
+        $linktext = get_string('resetweights', 'grades', (object)array('itemname' => $gradeitem));
+        $steps[] = new Given('I click on "' . $this->escape($linktext) . '" "link"');
+        return $steps;
     }
 }
