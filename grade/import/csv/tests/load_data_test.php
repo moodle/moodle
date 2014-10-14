@@ -59,6 +59,10 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,75.00';
     /** @var array $columns The first row of the csv file. These are the columns of the import file.*/
     protected $columns;
 
+    public function tearDown() {
+        $this->csvimport = null;
+    }
+
     /**
      * Load up the above text through the csv import.
      *
