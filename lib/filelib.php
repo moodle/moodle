@@ -1953,6 +1953,13 @@ function file_mimetype_in_typegroup($mimetype, $groups) {
  */
 function send_file_not_found() {
     global $CFG, $COURSE;
+
+    // Allow cross-origin requests only for Web Services.
+    // This allow to receive requests done by Web Workers or webapps in different domains.
+    if (WS_SERVER) {
+        header('Access-Control-Allow-Origin: *');
+    }
+
     send_header_404();
     print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
 }
@@ -2474,6 +2481,12 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: no-cache');
         }
+    }
+
+    // Allow cross-origin requests only for Web Services.
+    // This allow to receive requests done by Web Workers or webapps in different domains.
+    if (WS_SERVER) {
+        header('Access-Control-Allow-Origin: *');
     }
 
     if (empty($filter)) {
