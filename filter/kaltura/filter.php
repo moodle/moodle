@@ -165,6 +165,9 @@ function filter_kaltura_callback($link) {
     if (14 == count($link) && $newurl == $kafuri) {
         // Get the height and width of the iframe.
         $properties = explode('||', $link[13]);
+        
+        $width = $properties[2];
+        $height = $properties[3];
 
         if (4 != count($properties)) {
             return $link[0];
@@ -172,13 +175,13 @@ function filter_kaltura_callback($link) {
 
         $source = filter_kaltura::$kafuri.'/browseandembed/index/media/entryid/'.$link[2].'/showDescription/'.$link[4].'/showTitle/'.$link[5];
         $source .= '/showTags/'.$link[6].'/showDuration/'.$link[7].'/showOwner/'.$link[8].'/showUploadDate/'.$link[9];
-        $source .= '/playerSize/'.$properties[3].'x'.$properties[2].'/playerSkin/'.$link[12];
+        $source .= '/playerSize/'.$width.'x'.$height.'/playerSkin/'.$link[12];
 
         // Iniitate an LTI launch.
         $params = array(
             'courseid' => filter_kaltura::$pagecontext->instanceid,
-            'height' => $properties[2],
-            'width' => $properties[3],
+            'height' => $height,
+            'width' => $width,
             'withblocks' => 0,
             'source' => $source
         );
@@ -186,8 +189,8 @@ function filter_kaltura_callback($link) {
 
         $attr = array(
             'id' => 'contentframe',
-            'height' => $properties[2],
-            'width' => $properties[3],
+            'height' => $height,
+            'width' => $width,
             'allowfullscreen' => 'true',
             'webkitallowfullscreen' => 'true',
             'mozallowfullscreen' => 'true',
