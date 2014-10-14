@@ -93,10 +93,16 @@ class manager {
         $tasks = self::load_default_scheduled_tasks_for_component($componentname);
 
         $tasklocks = array();
-        foreach ($tasks as $task) {
+        foreach ($tasks as $taskid => $task) {
             $classname = get_class($task);
             if (strpos($classname, '\\') !== 0) {
                 $classname = '\\' . $classname;
+            }
+
+            // If there is an existing task with a custom schedule, do not override it.
+            $currenttask = self::get_scheduled_task($classname);
+            if ($currenttask && $currenttask->is_customised()) {
+                $tasks[$taskid] = $currenttask;
             }
 
             if (!$lock = $cronlockfactory->get_lock($classname, 10, 60)) {
@@ -330,7 +336,7 @@ class manager {
 
         $tasks = array();
         // We are just reading - so no locks required.
-        $records = $DB->get_records('task_scheduled', array('componentname' => $componentname), 'classname', '*', IGNORE_MISSING);
+        $records = $DB->get_records('task_scheduled', array('component' => $componentname), 'classname', '*', IGNORE_MISSING);
         foreach ($records as $record) {
             $task = self::scheduled_task_from_record($record);
             // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
