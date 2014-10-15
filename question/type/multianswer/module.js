@@ -41,6 +41,7 @@ M.qtype_multianswer.init = function (Y, questiondiv) {
                 points: [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.BC]
             },
             constrain: subqspan.ancestor('div.que'),
+            zIndex: 1,
             preventOverlap: true
         });
         overlay.render();
