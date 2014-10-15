@@ -343,107 +343,101 @@ div#dock {
 
 // Usermenu
 .usermenu {
-    font-size: 14px;
-    &.withoutlinks {
-        .withoutlinks {
-            display: none;
-        }
-    }
     .login {
         color: @navbarText;
         line-height: 40px;
         a {
-            color: @navbarLinkColor;
-        }
-    }
-    > .moodle-actionmenu > .menubar {
-        display: block;
-        margin: -40px 0px 2px 0px;
-        li {
-            display: block;
-            a {
-                line-height: 40px;
+            color: @linkColor;
+            &:hover,
+            &:focus {
+                color: @linkColorHover;
+                text-decoration: underline;
             }
         }
     }
-    > div {
-        height: 40px;
-    }
-    .toggle-display {
-        color: @navbarLinkColor;
-        outline: none;
-    }
-    .userbutton {
-        height: 40px;
-        line-height: 40px;
-        .avatars{
-            display: inline-block;
-            height: 36px;
-            vertical-align: middle;
-            margin-right: 6px;
+    .moodle-actionmenu {
 
-            .avatar,
-            img {
-                display: block;
+        .toggle-display {
+            display: block;
+            opacity: 1;
+            color: @navbarLinkColor;
+            line-height: 40px;
+            height: 40px;
+            &:hover {
+                color: @navbarLinkColorHover;
             }
-        }
-        .usertext {
-            display: inline-block;
-            vertical-align: middle;
-            line-height: 1em;
-            .meta,
-            .role {
-                display: block;
-                font-size: 12px;
-                .value {
-                    font-weight: bold;
+
+            .userbutton {
+                height: 40px;
+                line-height: 40px;
+                .avatars{
+                    display: inline-block;
+                    height: 36px;
+                    width: 36px;
+                    vertical-align: middle;
+                    margin-right: 6px;
+                    margin-left: 6px;
+
+                    .avatar,
+                    img {
+                        display: block;
+                    }
+                }
+                .usertext {
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: 1em;
+                    color: inherit;
+                    .meta,
+                    .role {
+                        display: block;
+                        font-size: 12px;
+                        .value {
+                            font-weight: bold;
+                        }
+                    }
+                    .role {
+                        font-weight: bold;
+                    }
                 }
             }
-            .role {
-                font-weight: bold;
+
+            // Hide caret when JS is disabled.
+            .caret {
+                display: none;
             }
         }
-    }
-    .moodle-actionmenu[data-enhanced].show .menu a {
-        white-space: nowrap;
-    }
-    .menu .filler {
-        width: auto;
-        height: 1px;
-        margin: 4px 0px;
-        display: block;
-        background: #e5e5e5;
-    }
-}
-.userloggedinas .usermenu .userbutton .avatars {
-    .avatar {
-        &.current {
-            position: relative;
-            top: 4px;
-            left: 4px;
-            width: 20px;
-            height: 20px;
-            margin-top: 11px;
-            border: 1px solid #fff;
-            border-radius: 50%;
-            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+
+
+        // A little bit of visual feedback for the action menu when Javascript is disabled.
+        .menu {
+            .menu-action.icon {
+                img {
+                    border-radius: 0;
+                    background: transparent;
+                    box-shadow: none;
+                }
+                &:hover img {
+                    background: #fff;
+                    border-radius: 4px;
+                    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.125);
+                }
+            }
         }
-        img {
-            width: inherit;
-            height: inherit;
+        &[data-enhanced] .menu {
+            .menu-action.icon,
+            .menu-action.icon:hover {
+                img {
+                    border-radius: 0;
+                    background: transparent;
+                    box-shadow: none;
+                }
+            }
         }
-        display: inline-block;
-        overflow: hidden;
+
     }
 }
-.jsenabled .usermenu .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
-    position: relative;
-    .caret {
-        margin-top: 0;
-        vertical-align: middle;
-    }
-}
-.jsenabled .navbar-inverse {
+.navbar-inverse {
     .usermenu {
         .login {
             color: @navbarInverseText;
@@ -454,57 +448,174 @@ div#dock {
                 }
             }
         }
-        .toggle-display {
-            color: @navbarInverseLinkColor;
-        }
-        .userinfo .usertext {
-            color: @navbarInverseLinkColor;
-            .meta {
-                color: @navbarInverseText;
-                .value {
-                    color: @navbarInverseLinkColor;
-                }
+        .moodle-actionmenu {
+            .toggle-display {
+                color: @navbarInverseLinkColor;
             }
-        }
-        &:hover {
-            .userinfo .usertext {
-                color: @navbarInverseLinkColorHover;
-                .meta {
-                    color: @navbarInverseText;
-                    .value {
-                        color: @navbarInverseLinkColorHover;
+            .userbutton {
+                .usertext {
+                    color: @navbarInverseLinkColor;
+                    .meta {
+                        color: @navbarInverseText;
+                        .value {
+                            color: @navbarInverseLinkColor;
+                        }
                     }
                 }
             }
-            .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
+            &:hover {
+                .usertext {
+                    color: @navbarInverseLinkColorHover;
+                    .meta {
+                        color: @navbarInverseText;
+                        .value {
+                            color: @navbarInverseLinkColorHover;
+                        }
+                    }
+                }
+            }
+            &[data-enhanced] .toggle-display.textmenu {
                 .caret {
                     border-top-color: @navbarInverseLinkColorHover;
+                }
+            }
+
+            // A little bit of visual feedback for the action menu when Javascript is disabled.
+            .menu {
+                .menu-action.icon {
+                    img {
+                        border-radius: 0;
+                        background: transparent;
+                        box-shadow: none;
+                    }
+                    &:hover img {
+                        background: #333;
+                        border-radius: 4px;
+                        box-shadow: 0px 0px 16px rgba(255, 255, 255, 1);
+                    }
+                }
+            }
+            &[data-enhanced] .menu {
+                .menu-action.icon,
+                .menu-action.icon:hover {
+                    img {
+                        border-radius: 0;
+                        background: transparent;
+                        box-shadow: none;
+                    }
                 }
             }
         }
     }
 }
+
+.jsenabled {
+    .usermenu {
+        .moodle-actionmenu {
+            .toggle-display {
+                display: block;
+
+                &.textmenu {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+
+                // Show caret when JS is enabled.
+                .caret {
+                    display: inline-block;
+                    position: relative;
+                    top: 9px;
+                }
+            }
+
+            > .menubar {
+                display: block;
+                margin: 0px 0px 2px 0px;
+            }
+            > .menu {
+                min-width: 160px;
+                .filler {
+                    display: block;
+                    .nav-divider();
+                }
+            }
+
+            &.show {
+                background-color: @navbarLinkBackgroundActive;
+                .menu {
+                    padding: 5px 0;
+                    margin: 2px 0 0;
+                    background-clip: padding-box;
+                    &:before {
+                        content: '';
+                        display: inline-block;
+                        border-left:   7px solid transparent;
+                        border-right:  7px solid transparent;
+                        border-bottom: 7px solid #ccc;
+                        border-bottom-color: @dropdownBorder;
+                        position: absolute;
+                        top: -7px;
+                    }
+                    &:after {
+                        content: '';
+                        display: inline-block;
+                        border-left:   6px solid transparent;
+                        border-right:  6px solid transparent;
+                        border-bottom: 6px solid @dropdownBackground;
+                        position: absolute;
+                        top: -6px;
+                    }
+
+                    a {
+                        white-space: nowrap;
+                        border-radius: 0;
+
+                        &:hover {
+                            #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
+                        }
+                    }
+                    &.align-tr-br {
+                        margin-top: 2px;
+                    }
+                    .box-shadow (0 5px 10px rgba(0, 0, 0, 0.2));
+                }
+                &:hover .toggle-display {}
+            }
+        }
+    }
+    .navbar-inverse {
+        .usermenu {
+            .moodle-actionmenu {
+
+                &.show {
+                    background-color: @navbarInverseLinkBackgroundActive;
+                }
+            }
+        }
+    }
+}
+
 .dir-ltr {
     .usermenu {
         float: right;
-        .userinfo {
-            padding-left: 20px;
-        }
-        .userbutton {
-            margin-right: 4px;
-            padding-right: 8px;
-            .avatars{
-                margin-left: 6px;
+        > .moodle-actionmenu {
+            > .menu {
+                &:before {
+                    right: 9px;
+                }
+                &:after {
+                    right: 10px;
+                }
             }
-        }
-        > .moodle-actionmenu > .menubar li a {
-            text-align: right;
+            > .menubar li a {
+                text-align: right;
+            }
         }
     }
     &.userloggedinas .usermenu .userbutton .avatars {
         .avatar {
             &.current {
-                margin-right: -34px;
+                left: 16px;
             }
         }
     }
@@ -513,22 +624,49 @@ div#dock {
 .dir-rtl {
     .usermenu {
         float: left;
-        .userbutton {
-            margin-left: 4px;
-            padding-left: 8px;
-            .avatars{
-                margin-right: 6px;
+        > .moodle-actionmenu {
+            > .menu {
+                margin-right: 0px;
+                &:before {
+                    left: 9px;
+                }
+                &:after {
+                    left: 10px;
+                }
             }
-        }
-        > .moodle-actionmenu > .menubar li a {
-            text-align: left;
+            > .menubar li a {
+                text-align: left;
+            }
         }
     }
     &.userloggedinas .usermenu .userbutton .avatars {
         .avatar {
             &.current {
-                margin-left: -42px;
+                left: -14px;
             }
         }
+    }
+}
+
+
+.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            position: relative;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            margin-top: 11px;
+            margin-bottom: -34px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+        }
+        img {
+            width: inherit;
+            height: inherit;
+        }
+        overflow: hidden;
     }
 }
