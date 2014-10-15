@@ -192,7 +192,7 @@ class user extends tablelike implements selectable_items {
         $gradetreeitem['object'] = $item;
         $gradetreeitem['userid'] = $this->item->id;
 
-        $itemlabel = $this->structure->get_element_header($gradetreeitem, true, false);
+        $itemlabel = $this->structure->get_element_header($gradetreeitem, true, false, false, false, true);
         $grade->label = $item->get_name();
 
         $line = array(
