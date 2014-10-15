@@ -275,7 +275,7 @@ function url_export_contents($cm, $baseurl) {
 
     $url = array();
     $url['type'] = 'url';
-    $url['filename']     = $urlrecord->name;
+    $url['filename']     = clean_param(format_string($urlrecord->name), PARAM_FILE);
     $url['filepath']     = null;
     $url['filesize']     = 0;
     $url['fileurl']      = $fullurl;
