@@ -65,6 +65,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $data = new stdClass();
         $data->id = $course->id;
         $data->report = 'grader';
+        $data->timepageload = time();
 
         $data->grade = array();
         $data->grade[$student->id] = array();
