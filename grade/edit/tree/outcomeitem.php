@@ -104,6 +104,7 @@ if (empty($parent_category)) {
     $item->aggregationcoef = 0;
 } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
     $item->aggregationcoef = $item->aggregationcoef > 0 ? 1 : 0;
+    $item->aggregationcoef2 = format_float($item->aggregationcoef2 * 100.0);
 } else {
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }
@@ -131,11 +132,14 @@ if ($data = $mform->get_data()) {
     unset($data->locked);
     unset($data->locktime);
 
-    $convert = array('gradepass', 'aggregationcoef');
+    $convert = array('gradepass', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
         }
+    }
+    if (isset($data->aggregationcoef2) && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+        $data->aggregationcoef2 = $data->aggregationcoef2 / 100.0;
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));

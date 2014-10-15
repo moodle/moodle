@@ -73,6 +73,14 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addHelpButton('cmid', 'linkedactivity', 'grades');
         $mform->setDefault('cmid', 0);
 
+        $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
+
+        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
+        $mform->setType('aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('aggregationcoef2', 'weightoverride');
+
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
@@ -125,8 +133,9 @@ class edit_outcomeitem_form extends moodleform {
         }
 
         if ($coefstring !== '') {
-            if ($coefstring == 'aggregationcoefextrasum') {
+            if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
                 // advcheckbox is not compatible with disabledIf!
+                $coefstring = 'aggregationcoefextrasum';
                 $mform->addElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
             } else {
                 $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
@@ -193,7 +202,7 @@ class edit_outcomeitem_form extends moodleform {
 
                 $parent_category->apply_forced_settings();
 
-                if (!$parent_category->is_aggregationcoef_used() or $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+                if (!$parent_category->is_aggregationcoef_used()) {
                     if ($mform->elementExists('aggregationcoef')) {
                         $mform->removeElement('aggregationcoef');
                     }
@@ -217,6 +226,15 @@ class edit_outcomeitem_form extends moodleform {
                     if ($aggcoef !== '') {
                         $agg_el->setLabel(get_string($aggcoef, 'grades'));
                         $mform->addHelpButton('aggregationcoef', $aggcoef, 'grades');
+                    }
+                }
+                // Remove fields used by natural weighting if the parent category is not using natural weighting.
+                if ($parent_category->aggregation != GRADE_AGGREGATE_SUM) {
+                    if ($mform->elementExists('weightoverride')) {
+                        $mform->removeElement('weightoverride');
+                    }
+                    if ($mform->elementExists('aggregationcoef2')) {
+                        $mform->removeElement('aggregationcoef2');
                     }
                 }
             }

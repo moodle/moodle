@@ -247,6 +247,126 @@ Feature: We can use calculated grade totals
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
   @javascript
+  Scenario: Natural aggregation on outcome items with natural weights
+    And I log out
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Enable outcomes | 1 |
+    And the following "scales" exist:
+      | name       | scale                                     |
+      | Test Scale | Disappointing, Good, Very good, Excellent |
+    And the following "grade outcomes" exist:
+      | fullname  | shortname | course | scale      |
+      | Outcome 1 | OT1       | C1     | Test Scale |
+    And the following "grade items" exist:
+      | itemname              | course | outcome | gradetype | scale      |
+      | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
+    And I log out
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I expand "Setup" node
+    And I follow "Categories and items"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation                     | Natural |
+      | Include outcomes in aggregation | 1       |
+      | Exclude empty grades            | 0       |
+    And I follow "Grader report"
+    And I turn editing mode on
+    And I press "Save changes"
+    And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
+    And I press "Save changes"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
+    And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I press "Save changes"
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
+    And I set the field "Grade report" to "Overview report"
+    And I should see "114.82 (18.27 %)" in the "overview-grade" "table"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I expand "Setup" node
+    And I follow "Categories and items"
+    And I set the following settings for grade item "Test outcome item one":
+     | Extra credit     | 1   |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
+    And I set the field "Grade report" to "Overview report"
+    And I should see "114.00 (18.39 %)" in the "overview-grade" "table"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I expand "Setup" node
+    And I follow "Categories and items"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation                     | Natural |
+      | Include outcomes in aggregation | 0       |
+    And I set the following settings for grade item "Test outcome item one":
+     | Extra credit     | 0   |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
+    And I set the field "Grade report" to "Overview report"
+    And I should see "110.00 (17.74 %)" in the "overview-grade" "table"
+
+  @javascript
+  Scenario: Natural aggregation on outcome items with modified weights
+    And I log out
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Enable outcomes | 1 |
+    And the following "scales" exist:
+      | name       | scale                                     |
+      | Test Scale | Disappointing, Good, Very good, Excellent |
+    And the following "grade outcomes" exist:
+      | fullname  | shortname | course | scale      |
+      | Outcome 1 | OT1       | C1     | Test Scale |
+    And the following "grade items" exist:
+      | itemname              | course | outcome | gradetype | scale      |
+      | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
+    And I log out
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I expand "Setup" node
+    And I follow "Categories and items"
+    And I set the following settings for grade item "Course 1":
+      | Aggregation                     | Natural |
+      | Include outcomes in aggregation | 1       |
+      | Exclude empty grades            | 0       |
+    And I set the following settings for grade item "Test outcome item one":
+     | Weight adjusted  | 1   |
+     | aggregationcoef2 | 100 |
+    And I follow "Grader report"
+    And I turn editing mode on
+    And I press "Save changes"
+    And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
+    And I press "Save changes"
+    And I navigate to "Course grade settings" node in "Grade administration > Setup"
+    And I set the field "report_overview_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I set the field "report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
+    And I press "Save changes"
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Grades"
+    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
+    And I set the field "Grade report" to "Overview report"
+    And I should see "4.00 (100.00 %)" in the "overview-grade" "table"
+
+  @javascript
   Scenario: Natural aggregation
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
