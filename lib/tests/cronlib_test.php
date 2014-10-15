@@ -43,7 +43,7 @@ class cronlib_testcase extends basic_testcase {
         $time = 0;
 
         // Relative time stamps. Did you know data providers get executed during phpunit init?
-        $lastweekstime = -(7 * 24 * 60 * 60);
+        $lastweekstime = strtotime('-1 week') - time();
         $beforelastweekstime = $lastweekstime - 60;
         $afterlastweekstime = $lastweekstime + 60;
 
@@ -54,8 +54,8 @@ class cronlib_testcase extends basic_testcase {
         // New Directory to keep.
         $nodes[] = $this->generate_test_path('/dir1/dir1_2/', true, $time, true);
 
-        // Directory exactly 1 week old, keep.
-        $nodes[] = $this->generate_test_path('/dir2/', true, $lastweekstime, true);
+        // Directory a little less than 1 week old, keep.
+        $nodes[] = $this->generate_test_path('/dir2/', true, $afterlastweekstime, true);
 
         // Directory older than 1 week old, remove.
         $nodes[] = $this->generate_test_path('/dir3/', true, $beforelastweekstime, false);
