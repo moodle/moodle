@@ -73,14 +73,6 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addHelpButton('cmid', 'linkedactivity', 'grades');
         $mform->setDefault('cmid', 0);
 
-        $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
-        $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
-
-        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
-        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
-        $mform->setType('aggregationcoef2', PARAM_RAW);
-        $mform->disabledIf('aggregationcoef2', 'weightoverride');
-
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
@@ -95,6 +87,14 @@ class edit_outcomeitem_form extends moodleform {
 
 /// parent category related settings
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
+
+        $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
+
+        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
+        $mform->setType('aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('aggregationcoef2', 'weightoverride');
 
         $options = array();
         $default = '';
