@@ -1436,6 +1436,9 @@ class grade_category extends grade_object {
             if ($gradeitem->gradetype == GRADE_TYPE_NONE || $gradeitem->gradetype == GRADE_TYPE_TEXT) {
                 // Text items and none items do not have a weight.
                 continue;
+            } else if (!$this->aggregateoutcomes && $gradeitem->is_outcome_item()) {
+                // We will not aggregate outcome items, so we can ignore them.
+                continue;
             }
 
             // Record the ID and the weight for this grade item.
@@ -1505,6 +1508,9 @@ class grade_category extends grade_object {
             if ($gradeitem->gradetype == GRADE_TYPE_NONE || $gradeitem->gradetype == GRADE_TYPE_TEXT) {
                 // Text items and none items do not have a weight, no need to set their weight to
                 // zero as they must never be used during aggregation.
+                continue;
+            } else if (!$this->aggregateoutcomes && $gradeitem->is_outcome_item()) {
+                // We will not aggregate outcome items, so we can ignore updating their weights.
                 continue;
             }
 
