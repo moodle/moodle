@@ -1478,7 +1478,9 @@ class grade_category extends grade_object {
             if (!$gradeitemdetail['extracredit']) {
                 $normalisetotal += $gradeitemdetail['weight'];
             }
-            if ($gradeitemdetail['weightoverride'] && !$gradeitemdetail['extracredit']) {
+            // The overridden total comprises of items that are set as overridden, that aren't extra credit and have a value
+            // greater than zero.
+            if ($gradeitemdetail['weightoverride'] && !$gradeitemdetail['extracredit'] && $gradeitemdetail['weight'] > 0) {
                 // Add overriden weights up to see if they are greater than 1.
                 $overriddentotal += $gradeitemdetail['weight'];
             }
