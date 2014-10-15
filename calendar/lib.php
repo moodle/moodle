@@ -715,7 +715,7 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         return array();
     }
 
-    if((is_array($users) && !empty($users)) or is_numeric($users)) {
+    if ((is_array($users) && !empty($users)) or is_numeric($users)) {
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
@@ -729,7 +729,7 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         // No user at all, do nothing
     }
 
-    if((is_array($groups) && !empty($groups)) or is_numeric($groups)) {
+    if ((is_array($groups) && !empty($groups)) or is_numeric($groups)) {
         // Events from a number of groups
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
@@ -742,7 +742,7 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
     }
     // boolean false (no groups at all): we don't need to do anything
 
-    if((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
+    if ((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlcourses, $inparamscourses) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
         $whereclause .= " (groupid = 0 AND courseid $insqlcourses)";
