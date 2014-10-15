@@ -16,7 +16,7 @@ Feature: tool_monitor_subscriptions
       | teacher1 | C1 | editingteacher |
     And   I log in as "admin"
     And   I follow "Course 1"
-    And   I navigate to "Manage rules" node in "Course administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And   I press "Add a new rule"
     And   I set the following fields to these values:
       | name              | New rule course level                             |
@@ -27,7 +27,7 @@ Feature: tool_monitor_subscriptions
       | minutes           | 1                                                 |
       | Message template  | The course was viewed. {modulelink}               |
     And   I press "Save changes"
-    And   I navigate to "Manage rules" node in "Site administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And   I press "Add a new rule"
     And   I set the following fields to these values:
       | name              | New rule site level                               |
@@ -43,7 +43,8 @@ Feature: tool_monitor_subscriptions
   Scenario: Subscribe to a rule on course level
     Given I log in as "teacher1"
     And   I follow "Course 1"
-    And   I navigate to "Manage subscriptions" node in "Course administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    And   I set the field "courseid" to "Course 1"
     When  I set the field "cmid" to "All events"
     Then  I should see "Subscription successfully created"
     And   "#toolmonitorsubs_r0" "css_element" should exist
@@ -51,7 +52,8 @@ Feature: tool_monitor_subscriptions
   Scenario: Delete a subscription on course level
     Given I log in as "teacher1"
     And   I follow "Course 1"
-    And   I navigate to "Manage subscriptions" node in "Course administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    And   I set the field "courseid" to "Course 1"
     And   I set the field "cmid" to "All events"
     And   I should see "Subscription successfully created"
     When  I click on "Delete subscription" "link"
@@ -62,14 +64,16 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Subscribe to a rule on site level
     Given I log in as "admin"
-    And   I navigate to "Manage subscriptions" node in "Site administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    And   I set the field "courseid" to "Site"
     When  I set the field "cmid" to "All events"
     Then  I should see "Subscription successfully created"
     And   "#toolmonitorsubs_r0" "css_element" should exist
 
   Scenario: Delete a subscription on site level
     Given I log in as "admin"
-    And   I navigate to "Manage subscriptions" node in "Site administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    And   I set the field "courseid" to "Site"
     And   I set the field "cmid" to "All events"
     And   I should see "Subscription successfully created"
     And   "#toolmonitorsubs_r0" "css_element" should exist
@@ -86,7 +90,8 @@ Feature: tool_monitor_subscriptions
     And   I press "Update profile"
     And   I am on homepage
     And   I follow "Course 1"
-    And   I navigate to "Manage subscriptions" node in "Site administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    And   I set the field "courseid" to "Site"
     And   I set the field "cmid" to "All events"
     And   I should see "Subscription successfully created"
     And   "#toolmonitorsubs_r0" "css_element" should exist
@@ -105,7 +110,8 @@ Feature: tool_monitor_subscriptions
     And   I press "Update profile"
     And   I am on homepage
     And   I follow "Course 1"
-    And   I navigate to "Manage subscriptions" node in "Course administration > Reports > Event monitor"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    And   I set the field "courseid" to "Course 1"
     And   I set the field "cmid" to "All events"
     And   I should see "Subscription successfully created"
     And   "#toolmonitorsubs_r0" "css_element" should exist
