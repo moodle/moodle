@@ -6,6 +6,10 @@ This files describes API changes in the quiz code.
   folder to take advantage of auto-loading. This has involved renaming them.
   see the list in mod/quiz/db/renamedclasses.php.
 
+* The quiz no longer handles its own \mod_quiz\event\attempt_becameoverdue event,
+  and so the event handler function quiz_attempt_overdue_handler has been deleted.
+  Also, the internal function quiz_send_overdue_message has add the arguments
+  changed. It now takes the $attemptobj object, not separate stdClass objects.
 
 * Major changes to the Edit quiz page.
 
