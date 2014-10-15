@@ -15,15 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the user gradebook report
+ * Gradereport user plugin upgrade code
  *
- * @package    gradereport_user
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    gradereport_user 
+ * @copyright  2014 Zachary Durber
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_gradereport_user_upgrade($oldversion) {
 
-$plugin->version   = 2014101500;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800;        // Requires this Moodle version
-$plugin->component = 'gradereport_user'; // Full name of the plugin (used for diagnostics)
+    if ($oldversion < 2014101500) {
+        // Need to always show weight and contribution to course total.
+        set_config('grade_report_user_showweight', 1);
+
+        // User savepoint reached.
+        upgrade_plugin_savepoint(true, 2014101500, 'gradereport', 'user');
+    }
+    return true;
+}
