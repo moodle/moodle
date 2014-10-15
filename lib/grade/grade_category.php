@@ -1299,6 +1299,11 @@ class grade_category extends grade_object {
                 $gradeitem = $child['object']->load_grade_item();
             }
 
+            if ($gradeitem->gradetype == GRADE_TYPE_NONE || $gradeitem->gradetype == GRADE_TYPE_TEXT) {
+                // Text items and none items do not have a weight.
+                continue;
+            }
+
             // Record the ID and the weight for this grade item.
             $overridearray[$gradeitem->id] = array();
             $overridearray[$gradeitem->id]['extracredit'] = intval($gradeitem->aggregationcoef);
@@ -1361,6 +1366,12 @@ class grade_category extends grade_object {
                 $gradeitem = $child['object'];
             } else if ($child['type'] == 'category') {
                 $gradeitem = $child['object']->load_grade_item();
+            }
+
+            if ($gradeitem->gradetype == GRADE_TYPE_NONE || $gradeitem->gradetype == GRADE_TYPE_TEXT) {
+                // Text items and none items do not have a weight, no need to set their weight to
+                // zero as they must never be used during aggregation.
+                continue;
             }
 
             if (!$gradeitem->weightoverride) {
