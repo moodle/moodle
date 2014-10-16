@@ -97,14 +97,6 @@ class edit_item_form extends moodleform {
             $mform->setType('grademin', PARAM_RAW);
         }
 
-        $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
-        $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
-
-        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
-        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
-        $mform->setType('aggregationcoef2', PARAM_RAW);
-        $mform->disabledIf('aggregationcoef2', 'weightoverride');
-
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
@@ -183,6 +175,14 @@ class edit_item_form extends moodleform {
 
 /// parent category related settings
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
+
+        $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
+
+        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
+        $mform->setType('aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('aggregationcoef2', 'weightoverride');
 
         $options = array();
         $coefstring = '';
