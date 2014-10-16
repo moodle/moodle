@@ -178,11 +178,15 @@ class edit_item_form extends moodleform {
 
         $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
         $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
+        $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
         $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
         $mform->setType('aggregationcoef2', PARAM_RAW);
         $mform->disabledIf('aggregationcoef2', 'weightoverride');
+        $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $options = array();
         $coefstring = '';
@@ -300,7 +304,8 @@ class edit_item_form extends moodleform {
                     }
                     $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
                 }
-
+                $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
+                $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
                 $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parent_category->id);
             }
 
