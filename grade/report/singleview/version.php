@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $plugin->component = 'gradereport_singleview'; // Full name of the plugin (used for diagnostics).
 $plugin->version  = 2013081002;
 $plugin->requires = 2010090501;
