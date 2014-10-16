@@ -570,7 +570,11 @@ div#dock {
                         white-space: nowrap;
                         border-radius: 0;
 
+                        &:focus {
+                            text-decoration: none;
+                        }
                         &:hover {
+                            text-decoration: none;
                             #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
                         }
                     }
