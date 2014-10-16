@@ -706,6 +706,7 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
     }
 
     public function get_item_cell($item, $params) {
+        global $CFG;
         if (empty($params['element'])) {
             throw new Exception('Array key (element) missing from 2nd param of grade_edit_tree_column_weightorextracredit::get_item_cell($item, $params)');
         }
@@ -715,7 +716,8 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
 
         if (!in_array($object->itemtype, array('courseitem', 'categoryitem', 'category'))
                 && !in_array($object->gradetype, array(GRADE_TYPE_NONE, GRADE_TYPE_TEXT))
-                && (!$object->is_outcome_item() || $object->load_parent_category()->aggregateoutcomes)) {
+                && (!$object->is_outcome_item() || $object->load_parent_category()->aggregateoutcomes)
+                && ($object->gradetype != GRADE_TYPE_SCALE || !empty($CFG->grade_includescalesinaggregation))) {
             $itemcell->text = grade_edit_tree::get_weight_input($item);
         }
 
