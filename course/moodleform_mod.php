@@ -331,6 +331,14 @@ abstract class moodleform_mod extends moodleform {
             }
         }
 
+        // Ratings: Don't let them select an aggregate type without selecting a scale.
+        // If the user has selected to use ratings but has not chosen a scale or set max points then the form is
+        // invalid. If ratings have been selected then the user must select either a scale or max points.
+        // This matches (horrible) logic in data_preprocessing.
+        if (isset($data['assessed']) && $data['assessed'] > 0 && empty($data['scale'])) {
+            $errors['assessed'] = get_string('scaleselectionrequired', 'rating');
+        }
+
         // Completion: Don't let them choose automatic completion without turning
         // on some conditions. Ignore this check when completion settings are
         // locked, as the options are then disabled.
