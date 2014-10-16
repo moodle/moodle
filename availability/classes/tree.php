@@ -198,7 +198,7 @@ class tree extends tree_node {
 
         // For unit tests, also allow the mock plugin type (even though it
         // isn't configured in the code as a proper plugin).
-        if (defined('PHPUNIT_TEST')) {
+        if (PHPUNIT_TEST) {
             $enabled['mock'] = true;
         }
 
