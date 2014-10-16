@@ -17,7 +17,7 @@
 /**
  * Gradereport user plugin upgrade code
  *
- * @package    gradereport_user 
+ * @package    gradereport_user
  * @copyright  2014 Zachary Durber
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
