@@ -196,69 +196,77 @@ a.skip:active {position: static;display: block;}
  * User menu
  */
 .usermenu {
-    border: 1px solid #333;
-    padding: 4px 6px;
-    margin: 0.5em 0em;
-    font-size: 14px;
+
 }
-.jsenabled .usermenu.withoutlinks .moodle-actionmenu[data-enhance]
-{
-    display: none;
-}
-.usermenu .menu .filler {
-    width: auto;
-    height: 1px;
-    margin: 9px 0px;
+.usermenu .moodle-actionmenu {  }
+.usermenu .moodle-actionmenu .toggle-display {
     display: block;
-    background: #e5e5e5;
+    opacity: 1;
+    height: 40px;
+    line-height: 40px;
+    padding: 6px;
+    color: inherit;
 }
-.usermenu .toggle-display {
-    outline: none;
+.usermenu .moodle-actionmenu .toggle-display .userbutton {
+    height: 40px;
+    line-height: 40px;
 }
-.usermenu .userbutton {
-    background: #fff;
+.usermenu .moodle-actionmenu .toggle-display .userbutton .avatars {
+    display: inline-block;
+    height: 36px;
+    width: 36px;
+    vertical-align: middle;
+    margin-right: 6px;
+    margin-left: 6px;
+}
+.usermenu .moodle-actionmenu .toggle-display .userbutton .avatars .avatar,
+.usermenu .moodle-actionmenu .toggle-display .userbutton .avatars img {
+    display: block;
+}
+.usermenu .moodle-actionmenu .toggle-display .userbutton .usertext {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 14px;
+    line-height: 1em;
+    color: #777;
+}
+.usermenu .moodle-actionmenu:hover .toggle-display .userbutton .usertext {
     color: #000;
-    display: inline-block;
-    font-size: 15px;
 }
-.usermenu .userbutton > * {
-    display: inline-block;
-    vertical-align: middle;
-}
-.usermenu .userbutton .avatars {
-    display: inline-block;
-    vertical-align: middle;
-}
-.usermenu .userbutton .usertext {
-    display: inline-block;
-    text-align: left;
-}
-.usermenu .userbutton .usertext .meta{
+.usermenu .moodle-actionmenu .toggle-display .userbutton .usertext .meta,
+.usermenu .moodle-actionmenu .toggle-display .userbutton .usertext .role {
     display: block;
     font-size: 12px;
 }
-.usermenu .userbutton .usertext .meta .value {
+.usermenu .moodle-actionmenu .toggle-display .userbutton .usertext .meta .value,
+.usermenu .moodle-actionmenu .toggle-display .userbutton .usertext .role .value {
     font-weight: bold;
 }
-.usermenu .moodle-actionmenu .toggle-display.textmenu .caret {
+.usermenu .moodle-actionmenu .toggle-display .userbutton .usertext .role {
+    font-weight: bold;
+}
+/* Hide caret when JS is disabled. */
+.usermenu .moodle-actionmenu .toggle-display .caret {
     display: none;
 }
-.jsenabled .usermenu .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
-    margin-left: 0;
-    padding-left: 0;
+/* A little bit of visual feedback for the action menu when Javascript is disabled. */
+.usermenu .moodle-actionmenu .menu .menu-action.icon img {
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
-.jsenabled.dir-rtl .usermenu .moodle-actionmenu[data-enhanced] .toggle-display.textmenu {
-    margin-right: 0;
-    margin-left: 4px;
+.usermenu .moodle-actionmenu .menu .menu-action.icon:hover img {
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 }
-.jsenabled .usermenu .moodle-actionmenu[data-enhanced] .toggle-display.textmenu .caret {
-    display: inline-block;
-    margin-top: 0;
-    vertical-align: middle;
+.usermenu .moodle-actionmenu[data-enhanced] .menu .menu-action.icon img,
+.usermenu .moodle-actionmenu[data-enhanced] .menu .menu-action.icon:hover img {
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 .userloggedinas .usermenu .userbutton .avatars .avatar {
-    display: inline-block;
-    vertical-align:middle;
     overflow: hidden;
 }
 .userloggedinas .usermenu .userbutton .avatars .avatar img {
@@ -272,24 +280,102 @@ a.skip:active {position: static;display: block;}
     width: 20px;
     height: 20px;
     margin-top: 11px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+    margin-bottom: -34px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    box-shadow: -2px -2px 16px rgba(0, 0, 0, 0.25);
 }
-.dir-ltr .usermenu .userbutton .avatars {
-    margin-right: 6px;
+
+.jsenabled .usermenu .moodle-actionmenu .toggle-display {
+    display: block;
 }
-.dir-rtl .usermenu .userbutton {
-    margin-right: -4px;
+.jsenabled .usermenu .moodle-actionmenu .toggle-display .caret {
+    display: inline-block;
+    position: relative;
+    top: 9px;
 }
-.dir-rtl .usermenu .userbutton .avatars {
-    margin-left: 6px;
+.jsenabled .usermenu .moodle-actionmenu > .menubar {
+    display: block;
+    margin: 0px 0px 2px 0px;
+}
+.jsenabled .usermenu .moodle-actionmenu > .menu {
+    min-width: 160px;
+    font-size: 14px;
+}
+.jsenabled .usermenu .moodle-actionmenu > .menu .filler {
+    display: block;
+    height: 1px;
+    margin: 9px 1px;
+    overflow: hidden;
+    background-color: #e5e5e5;
+    border-bottom: 1px solid #fff;
+}
+.jsenabled .usermenu .moodle-actionmenu.show .menu {
+    padding: 5px 0;
+    margin: 2px 0 0;
+    background-clip: padding-box;
+}
+.jsenabled .usermenu .moodle-actionmenu.show .menu:before {
+    content: '';
+    display: inline-block;
+    border-left:   7px solid transparent;
+    border-right:  7px solid transparent;
+    border-bottom: 7px solid #ccc;
+    border-bottom-color: rgba(0,0,0,.2);
+    position: absolute;
+    top: -7px;
+}
+.jsenabled .usermenu .moodle-actionmenu.show .menu:after {
+    content: '';
+    display: inline-block;
+    border-left:   6px solid transparent;
+    border-right:  6px solid transparent;
+    border-bottom: 6px solid #fff;
+    position: absolute;
+    top: -6px;
+}
+.jsenabled .usermenu .moodle-actionmenu.show .menu li a {
+    white-space: nowrap;
+    border-radius: 0;
+}
+.jsenabled .usermenu .moodle-actionmenu.show .menu a:focus,
+.jsenabled .usermenu .moodle-actionmenu.show .menu a:hover {
+    text-decoration: none;
+}
+
+.dir-ltr .usermenu {
+    float: right;
+}
+.dir-ltr .usermenu > .moodle-actionmenu > .menu:before {
+    right: 9px;
+}
+.dir-ltr .usermenu > .moodle-actionmenu > .menu:after {
+    right: 10px;
+}
+.dir-ltr .usermenu > .moodle-actionmenu > .menubar li a {
+    text-align: right;
 }
 .dir-ltr.userloggedinas .usermenu .userbutton .avatars .avatar.current {
-    margin-right: -34px;
+    left: 16px;
+}
+
+.dir-rtl .usermenu {
+    float: left;
+}
+.dir-rtl .usermenu > .moodle-actionmenu > .menu {
+    margin-right: 0px;
+}
+.dir-rtl .usermenu > .moodle-actionmenu > .menu:before {
+    left: 9px;
+}
+.dir-rtl .usermenu > .moodle-actionmenu > .menu:after {
+    left: 10px;
+}
+.dir-rtl .usermenu > .moodle-actionmenu > .menubar li a {
+    text-align: left;
 }
 .dir-rtl.userloggedinas .usermenu .userbutton .avatars .avatar.current {
-    margin-left: -42px;
+    left: -14px;
 }
 
 /**
@@ -1035,7 +1121,7 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 * Overide for RTL layout
 **/
 .dir-rtl .headermain {float:right;}
-.dir-rtl .headermenu {float:left;}
+.dir-rtl .headermenu {float:left; text-align: left; }
 .dir-rtl .breadcrumb {float:right;}
 .dir-rtl .navbutton {float: left;}
 .dir-rtl .navbutton .singlebutton {margin-right: 4px}
