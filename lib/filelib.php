@@ -3090,8 +3090,9 @@ class curl {
                 $this->responsefinished = false;
                 $this->response = array();
             }
-            list($key, $value) = explode(" ", rtrim($header, "\r\n"), 2);
-            $key = rtrim($key, ':');
+            $parts = explode(" ", rtrim($header, "\r\n"), 2);
+            $key = rtrim($parts[0], ':');
+            $value = isset($parts[1]) ? $parts[1] : null;
             if (!empty($this->response[$key])) {
                 if (is_array($this->response[$key])) {
                     $this->response[$key][] = $value;
