@@ -783,6 +783,24 @@ class grade_category extends grade_object {
     private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit) {
         global $DB;
 
+        // First set them all to weight null and status = 'unknown'.
+        if ($allitems = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($allitems), SQL_PARAMS_NAMED, 'g');
+
+            $itemlist['userid'] = $userid;
+
+            $DB->set_field_select('grade_grades',
+                                  'aggregationstatus',
+                                  'unknown',
+                                  "itemid $itemsql AND userid = :userid",
+                                  $itemlist);
+            $DB->set_field_select('grade_grades',
+                                  'aggregationweight',
+                                  0,
+                                  "itemid $itemsql AND userid = :userid",
+                                  $itemlist);
+        }
+
         // Included.
         if (!empty($usedweights)) {
             // The usedweights items are updated individually to record the weights.
