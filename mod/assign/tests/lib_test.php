@@ -126,9 +126,13 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
     public function test_print_recent_activity() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
+        $data = new stdClass();
+        $data->userid = $this->students[0]->id;
+        $notices = array();
+        $this->setUser($this->students[0]);
+        $assign->submit_for_grading($data, $notices);
 
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
-
+        $this->setUser($this->editingteachers[0]);
         $this->expectOutputRegex('/submitted:/');
         assign_print_recent_activity($this->course, true, time() - 3600);
     }
@@ -138,8 +142,13 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
-        $assign->get_user_submission($this->students[0]->id, true);
+        $data = new stdClass();
+        $data->userid = $this->students[0]->id;
+        $notices = array();
+        $this->setUser($this->students[0]);
+        $assign->submit_for_grading($data, $notices);
 
+        $this->setUser($this->editingteachers[0]);
         $this->expectOutputRegex('/submitted:/');
         set_config('fullnamedisplay', 'firstname, lastnamephonetic');
         assign_print_recent_activity($this->course, false, time() - 3600);
@@ -149,8 +158,13 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
-        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $data = new stdClass();
+        $data->userid = $this->students[0]->id;
+        $notices = array();
+        $this->setUser($this->students[0]);
+        $assign->submit_for_grading($data, $notices);
 
+        $this->setUser($this->editingteachers[0]);
         $activities = array();
         $index = 0;
 
