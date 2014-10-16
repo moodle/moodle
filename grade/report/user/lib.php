@@ -207,10 +207,10 @@ class grade_report_user extends grade_report {
         $this->showfeedback    = grade_get_setting($this->courseid, 'report_user_showfeedback',    !empty($CFG->grade_report_user_showfeedback));
 
         $this->showweight = grade_get_setting($this->courseid, 'report_user_showweight',
-            empty($CFG->grade_report_user_showweight));
+            !empty($CFG->grade_report_user_showweight));
 
         $this->showcontributiontocoursetotal = grade_get_setting($this->courseid, 'report_user_showcontributiontocoursetotal',
-            empty($CFG->grade_report_user_showcontributiontocoursetotal));
+            !empty($CFG->grade_report_user_showcontributiontocoursetotal));
 
         $this->showlettergrade = grade_get_setting($this->courseid, 'report_user_showlettergrade', !empty($CFG->grade_report_user_showlettergrade));
         $this->showaverage     = grade_get_setting($this->courseid, 'report_user_showaverage',     !empty($CFG->grade_report_user_showaverage));
@@ -1023,9 +1023,9 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->addElement('select', 'report_user_showfeedback', get_string('showfeedback', 'grades'), $options);
 
     if (empty($CFG->grade_report_user_showweight)) {
-        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
-    } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
+    } else {
+        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
     }
 
     $mform->addElement('select', 'report_user_showweight', get_string('showweight', 'grades'), $options);
@@ -1047,7 +1047,7 @@ function grade_report_user_settings_definition(&$mform) {
 
     $mform->addElement('select', 'report_user_showlettergrade', get_string('showlettergrade', 'grades'), $options);
     if (empty($CFG->grade_report_user_showcontributiontocoursetotal)) {
-        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+        $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[$CFG->grade_report_user_showcontributiontocoursetotal]);
     }
