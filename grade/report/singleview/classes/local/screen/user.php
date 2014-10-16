@@ -211,13 +211,13 @@ class user extends tablelike implements selectable_items {
      * @return grade_category
      */
     private function category($item) {
+        global $DB;
+
         if (empty($item->categoryid)) {
 
             if ($item->itemtype == 'course') {
                 return $this->course->fullname;
             }
-
-            global $DB;
 
             $params = array('id' => $item->iteminstance);
             $elem = $DB->get_record('grade_categories', $params);
@@ -249,11 +249,11 @@ class user extends tablelike implements selectable_items {
      * @return string
      */
     public function pager() {
+        global $OUTPUT;
+
         if (!$this->supports_paging()) {
             return '';
         }
-
-        global $OUTPUT;
 
         return $OUTPUT->paging_bar(
             count($this->items), $this->page, $this->perpage,
