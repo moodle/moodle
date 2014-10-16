@@ -3706,5 +3706,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014051201.10);
     }
 
+    if ($oldversion < 2014051202.10) {
+        // Run script restoring missing folder records for draft file areas.
+        upgrade_fix_missing_root_folders_draft();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014051202.10);
+    }
+
     return true;
 }
