@@ -62,7 +62,7 @@ function tool_monitor_extend_navigation_user_settings($navigation, $user, $userc
                 navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
 
         if (isset($subsnode) && !empty($navigation)) {
-            $navigation->add_node($subsnode, 'changepassword');
+            $navigation->add_node($subsnode);
         }
     }
 }
