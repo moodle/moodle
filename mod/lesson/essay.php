@@ -38,7 +38,7 @@ $lesson = new lesson($dblesson);
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/lesson:edit', $context);
+require_capability('mod/lesson:grade', $context);
 
 $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$id));
 if ($mode !== 'display') {
