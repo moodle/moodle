@@ -73,6 +73,8 @@ class grade_export_xls extends grade_export {
                 $myxls->write_string(0, $pos++, $this->format_column_name($grade_item, true));
             }
         }
+        // Last downloaded column header.
+        $myxls->write_string(0, $pos++, get_string('timeexported', 'gradeexport_xls'));
 
         // Print all the lines of data.
         $i = 0;
@@ -111,6 +113,8 @@ class grade_export_xls extends grade_export {
                     $myxls->write_string($i, $j++, $this->format_feedback($userdata->feedbacks[$itemid]));
                 }
             }
+            // Time exported.
+            $myxls->write_string($i, $j++, time());
         }
         $gui->close();
         $geub->close();

@@ -271,7 +271,7 @@ class gradeimport_csv_load_data {
      * @param array $map Mapping information provided by the user.
      * @param int $key The line that we are currently working on.
      * @param bool $verbosescales Form setting for grading with scales.
-     * @param string $value The grade value .
+     * @param string $value The grade value.
      * @return array grades to be updated.
      */
     protected function update_grade_item($courseid, $map, $key, $verbosescales, $value) {
@@ -429,15 +429,19 @@ class gradeimport_csv_load_data {
         $this->headers = $header;
         $this->studentid = null;
         $this->gradebookerrors = null;
+        $forceimport = $formdata->forceimport;
         // Temporary array to keep track of what new headers are processed.
         $this->newgradeitems = array();
         $this->trim_headers();
-
+        $timeexportkey = null;
         $map = array();
         // Loops mapping_0, mapping_1 .. mapping_n and construct $map array.
         foreach ($header as $i => $head) {
             if (isset($formdata->{'mapping_'.$i})) {
                 $map[$i] = $formdata->{'mapping_'.$i};
+            }
+            if ($head == get_string('timeexported', 'gradeexport_txt')) {
+                $timeexportkey = $i;
             }
         }
 
@@ -530,6 +534,24 @@ class gradeimport_csv_load_data {
                             // Individual grade locked.
                             $this->cleanup_import(get_string('gradelocked', 'grades'));
                             return $this->status;
+                        }
+                        // Check if the force import option is disabled and the last exported date column is present.
+                        if (!$forceimport && !empty($timeexportkey)) {
+                            $exportedtime = $line[$timeexportkey];
+                            if (clean_param($exportedtime, PARAM_INT) != $exportedtime || $exportedtime > time() ||
+                                    $exportedtime < strtotime("-1 year", time())) {
+                                // The date is invalid, or in the future, or more than a year old.
+                                $this->cleanup_import(get_string('invalidgradeexporteddate', 'grades'));
+                                return $this->status;
+
+                            }
+                            $timemodified = $gradegrade->get_dategraded();
+                            if (!empty($timemodified) && ($exportedtime < $timemodified)) {
+                                // The item was graded after we exported it, we return here not to override it.
+                                $user = core_user::get_user($this->studentid);
+                                $this->cleanup_import(get_string('gradealreadyupdated', 'grades', fullname($user)));
+                                return $this->status;
+                            }
                         }
                     }
                     $insertid = self::insert_grade_record($newgrade, $this->studentid);

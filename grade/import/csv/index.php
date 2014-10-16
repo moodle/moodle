@@ -27,6 +27,7 @@ $separator     = optional_param('separator', '', PARAM_ALPHA);
 $verbosescales = optional_param('verbosescales', 1, PARAM_BOOL);
 $iid           = optional_param('iid', null, PARAM_INT);
 $importcode    = optional_param('importcode', '', PARAM_FILE);
+$forceimport   = optional_param('forceimport', false, PARAM_BOOL);
 
 $url = new moodle_url('/grade/import/csv/index.php', array('id'=>$id));
 if ($separator !== '') {
@@ -100,6 +101,7 @@ $mappingformdata = array(
     'iid' => $iid,
     'id' => $id,
     'importcode' => $importcode,
+    'forceimport' => $forceimport,
     'verbosescales' => $verbosescales
 );
 // we create a form to handle mapping data from the file to the database.
