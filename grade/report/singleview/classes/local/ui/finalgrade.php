@@ -26,6 +26,7 @@ namespace gradereport_singleview\local\ui;
 
 defined('MOODLE_INTERNAL') || die;
 
+use stdClass;
 /**
  * UI element representing the finalgrade column.
  *
