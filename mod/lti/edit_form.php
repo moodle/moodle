@@ -58,7 +58,7 @@ class mod_lti_edit_types_form extends moodleform{
 
         $mform    =& $this->_form;
 
-        $istool = $this->_customdata->istool;
+        $istool = $this->_customdata && $this->_customdata->istool;
 
         // Add basiclti elements.
         $mform->addElement('header', 'setup', get_string('tool_settings', 'lti'));
