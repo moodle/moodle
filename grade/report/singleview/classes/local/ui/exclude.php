@@ -26,6 +26,8 @@ namespace gradereport_singleview\local\ui;
 
 defined('MOODLE_INTERNAL') || die;
 
+use grade_grade;
+
 /**
  * Class that represents the exclude checkbox on a grade_grade.
  *
