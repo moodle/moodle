@@ -24,6 +24,8 @@
 
 namespace gradereport_singleview\local\ui;
 
+use html_writer;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
