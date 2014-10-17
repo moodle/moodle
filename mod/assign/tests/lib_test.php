@@ -105,7 +105,6 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         global $DB;
         $courses = $DB->get_records('course', array('id' => $this->course->id));
 
-
         // Check the overview as the different users.
         $this->setUser($this->students[0]);
         $overview = array();
@@ -124,6 +123,10 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_print_recent_activity() {
+        // Submitting an assignment generates a notification.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
         $data = new stdClass();
@@ -135,10 +138,16 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $this->expectOutputRegex('/submitted:/');
         assign_print_recent_activity($this->course, true, time() - 3600);
+
+        $sink->close();
     }
 
     /** Make sure fullname dosn't trigger any warnings when assign_print_recent_activity is triggered. */
     public function test_print_recent_activity_fullname() {
+        // Submitting an assignment generates a notification.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -152,9 +161,15 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->expectOutputRegex('/submitted:/');
         set_config('fullnamedisplay', 'firstname, lastnamephonetic');
         assign_print_recent_activity($this->course, false, time() - 3600);
+
+        $sink->close();
     }
 
     public function test_assign_get_recent_mod_activity() {
+        // Submitting an assignment generates a notification.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
 
@@ -180,6 +195,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
                                         $assign->get_course_module()->id);
 
         $this->assertEquals("assign", $activities[1]->type);
+        $sink->close();
     }
 
     public function test_assign_user_complete() {
