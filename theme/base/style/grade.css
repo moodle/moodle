@@ -31,7 +31,8 @@
 }
 .path-grade-edit-tree .setup-grades .category input[type="text"],
 .path-grade-edit-tree .setup-grades .category .column-range,
-.path-grade-edit-tree .setup-grades .categoryitem {
+.path-grade-edit-tree .setup-grades .categoryitem,
+.path-grade-edit-tree .setup-grades .courseitem {
     font-weight: bold;
 }
 .path-grade-edit-tree .setup-grades .emptyrow {
