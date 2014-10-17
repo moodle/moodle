@@ -189,8 +189,11 @@ abstract class tablelike extends screen {
 
         $buttons = html_writer::tag('div', $buttonhtml, $buttonattr);
 
+        $sessionvalidation = html_writer::empty_tag('input',
+            array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+
         return html_writer::tag('form',
-            $buttons . html_writer::table($table) . $this->bulk_insert() . $buttons,
+            $buttons . html_writer::table($table) . $this->bulk_insert() . $buttons . $sessionvalidation,
             array('method' => 'POST')
         );
     }

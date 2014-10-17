@@ -99,6 +99,7 @@ $pageparams = array(
 $currentpage = new moodle_url('/grade/report/singleview/index.php', $pageparams);
 
 if ($data = data_submitted()) {
+    require_sesskey(); // Must have a sesskey for all actions.
     $warnings = $report->process_data($data);
 
     if (empty($warnings)) {
