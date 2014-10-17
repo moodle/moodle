@@ -318,9 +318,9 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
     }
 
     // Now display all the calendar
-    $daytime = $display->tstart - DAYSECS;
+    $daytime = strtotime('-1 day', $display->tstart);
     for($day = 1; $day <= $display->maxdays; ++$day, ++$dayweek) {
-        $daytime += DAYSECS;
+        $daytime = strtotime('+1 day', $daytime);
         if($dayweek > $display->maxwday) {
             // We need to change week (table row)
             $content .= '</tr><tr>';
