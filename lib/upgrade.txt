@@ -3,6 +3,12 @@ information provided here is intended especially for developers.
 
 === 2.8 ===
 
+* Gradebook grade category option "aggregatesubcats" has been removed completely.
+  This means that the database column is removed, the admin settings are removed and
+  the properties from the grade_category object have been removed. If any courses were
+  found to be using this setting, a warning to check the grades will be shown in the
+  course grader report after upgrading the site. The same warning will be shown on
+  courses restored from backup that had this setting enabled (see MDL-47503).
 * lib/excelllib.class.php has been updated. The class MoodleExcelWorkbook will now only produce excel 2007 files.
 * renderers: We now remove the suffix _renderable when looking for a render method for a renderable.
   If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"

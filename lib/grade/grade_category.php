@@ -47,7 +47,7 @@ class grade_category extends grade_object {
      */
     public $required_fields = array('id', 'courseid', 'parent', 'depth', 'path', 'fullname', 'aggregation',
                                  'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes',
-                                 'aggregatesubcats', 'timecreated', 'timemodified', 'hidden');
+                                 'timecreated', 'timemodified', 'hidden');
 
     /**
      * The course this category belongs to.
@@ -117,12 +117,6 @@ class grade_category extends grade_object {
     public $aggregateoutcomes = 0;
 
     /**
-     * Ignore subcategories when aggregating
-     * @var int $aggregatesubcats
-     */
-    public $aggregatesubcats = 0;
-
-    /**
      * Array of grade_items or grade_categories nested exactly 1 level below this category
      * @var array $children
      */
@@ -152,7 +146,7 @@ class grade_category extends grade_object {
      * List of options which can be "forced" from site settings.
      * @var array $forceable
      */
-    public $forceable = array('aggregation', 'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats');
+    public $forceable = array('aggregation', 'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes');
 
     /**
      * String representing the aggregation coefficient. Variable is used as cache.
@@ -410,9 +404,8 @@ class grade_category extends grade_object {
         $droplowdiff     = $db_item->droplow             != $this->droplow;
         $aggonlygrddiff  = $db_item->aggregateonlygraded != $this->aggregateonlygraded;
         $aggoutcomesdiff = $db_item->aggregateoutcomes   != $this->aggregateoutcomes;
-        $aggsubcatsdiff  = $db_item->aggregatesubcats    != $this->aggregatesubcats;
 
-        return ($aggregationdiff || $keephighdiff || $droplowdiff || $aggonlygrddiff || $aggoutcomesdiff || $aggsubcatsdiff);
+        return ($aggregationdiff || $keephighdiff || $droplowdiff || $aggonlygrddiff || $aggoutcomesdiff);
     }
 
     /**
@@ -1613,8 +1606,6 @@ class grade_category extends grade_object {
     /**
      * Recursive function to find which weight/extra credit field to use in the grade item form.
      *
-     * Inherits from a parent category if that category has aggregatesubcats set to true.
-     *
      * @param string $first Whether or not this is the first item in the recursion
      * @return string
      */
@@ -1625,8 +1616,8 @@ class grade_category extends grade_object {
 
         $overriding_coefstring = null;
 
-        // Stop recursing upwards if this category aggregates subcats or has no parent
-        if (!$first && !$this->aggregatesubcats) {
+        // Stop recursing upwards if this category has no parent
+        if (!$first) {
 
             if ($parent_category = $this->load_parent_category()) {
                 return $parent_category->get_coefstring(false);
@@ -1637,11 +1628,8 @@ class grade_category extends grade_object {
 
         } else if ($first) {
 
-            if (!$this->aggregatesubcats) {
-
-                if ($parent_category = $this->load_parent_category()) {
-                    $overriding_coefstring = $parent_category->get_coefstring(false);
-                }
+            if ($parent_category = $this->load_parent_category()) {
+                $overriding_coefstring = $parent_category->get_coefstring(false);
             }
         }
 
@@ -2009,9 +1997,6 @@ class grade_category extends grade_object {
         }
         if (!$this->aggregateonlygraded) {
             $allhelp[] = get_string('aggregatenotonlygraded', 'grades');
-        }
-        if ($this->aggregatesubcats) {
-            $allhelp[] = get_string('aggregatesubcatsshort', 'grades');
         }
         if ($allhelp) {
             return implode('. ', $allhelp) . '.';

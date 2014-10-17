@@ -468,6 +468,15 @@ function hide_natural_aggregation_upgrade_notice($courseid) {
 }
 
 /**
+ * Hide warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_aggregatesubcats_upgrade_notice($courseid) {
+    unset_config('show_aggregatesubcats_upgrade_' . $courseid);
+}
+
+/**
  * Print warning about changed grades during upgrade to 2.8.
  *
  * @param int $courseid The current course id.
@@ -479,13 +488,26 @@ function hide_natural_aggregation_upgrade_notice($courseid) {
 function print_natural_aggregation_upgrade_notice($courseid, $context, $return=false) {
     global $OUTPUT;
     $html = '';
-    $show = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
 
+    $show = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
     if ($show) {
         $message = get_string('sumofgradesupgradedgrades', 'grades');
-        $hidemessage = get_string('sumofgradesupgradedgradeshidemessage', 'grades');
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
         $urlparams = array( 'id' => $courseid,
                             'seensumofgradesupgradedgrades' => true,
+                            'sesskey' => sesskey());
+        $goawayurl = new moodle_url('/grade/report/grader/index.php', $urlparams);
+        $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $html .= $OUTPUT->notification($message, 'notifysuccess');
+        $html .= $goawaybutton;
+    }
+
+    $show = get_config('core', 'show_aggregatesubcats_upgrade_' . $courseid);
+    if ($show) {
+        $message = get_string('aggregatesubcatsupgradedgrades', 'grades');
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
+        $urlparams = array( 'id' => $courseid,
+                            'seenaggregatesubcatsupgradedgrades' => true,
                             'sesskey' => sesskey());
         $goawayurl = new moodle_url('/grade/report/grader/index.php', $urlparams);
         $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');

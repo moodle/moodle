@@ -4018,5 +4018,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014101001.00);
     }
 
+    if ($oldversion < 2014102000.00) {
+
+        // Define field aggregatesubcats to be dropped from grade_categories.
+        $table = new xmldb_table('grade_categories');
+        $field = new xmldb_field('aggregatesubcats');
+
+        // Conditionally launch drop field aggregatesubcats.
+        if ($dbman->field_exists($table, $field)) {
+
+            $sql = 'SELECT DISTINCT courseid
+                      FROM {grade_categories}
+                     WHERE aggregatesubcats = ?';
+            $courses = $DB->get_records_sql($sql, array(1));
+
+            foreach ($courses as $course) {
+                set_config('show_aggregatesubcats_upgrade_' . $course->courseid, 1);
+                // Set each of the grade items to needing an update so that when the user visits the grade reports the
+                // figures will be updated.
+                $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $course->courseid));
+            }
+
+
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014102000.00);
+    }
+
     return true;
 }

@@ -132,6 +132,10 @@ print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $butt
 if (optional_param('seensumofgradesupgradedgrades', false, PARAM_BOOL) && confirm_sesskey()) {
     hide_natural_aggregation_upgrade_notice($courseid);
 }
+// Hide the following warning if the user told it to go away.
+if (optional_param('seenaggregatesubcatsupgradedgrades', false, PARAM_BOOL) && confirm_sesskey()) {
+    hide_aggregatesubcats_upgrade_notice($courseid);
+}
 // This shows a notice about the upgrade to Natural aggregation.
 print_natural_aggregation_upgrade_notice($COURSE->id, $context);
 

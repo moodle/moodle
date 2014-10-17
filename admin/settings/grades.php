@@ -112,8 +112,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
         $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', new lang_string('aggregateoutcomes', 'grades'),
                     new lang_string('aggregateoutcomes_help', 'grades'), $defaults, $options));
-        $temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', new lang_string('aggregatesubcats', 'grades'),
-                    new lang_string('aggregatesubcats_help', 'grades'), $defaults, $options));
 
         $options = array(0 => new lang_string('none'));
         for ($i=1; $i<=20; $i++) {
