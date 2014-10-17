@@ -129,6 +129,7 @@ class eventobservers {
         $select = "SELECT COUNT(id) FROM {tool_monitor_events} ";
         $now = time();
         $messagestosend = array();
+        $allsubids = array();
 
         // Let us now process the events and check for subscriptions.
         foreach ($events as $eventobj) {
@@ -136,6 +137,7 @@ class eventobservers {
             $idstosend = array();
             foreach ($subscriptions as $subscription) {
                 $starttime = $now - $subscription->timewindow;
+                $starttime = ($starttime > $subscription->lastnotificationsent) ? $starttime : $subscription->lastnotificationsent;
                 if ($subscription->courseid == 0) {
                     // Site level subscription. Count all events.
                     $where = "eventname = :eventname AND timecreated >  :starttime";
@@ -188,7 +190,16 @@ class eventobservers {
             }
             if (!empty($idstosend)) {
                 $messagestosend[] = array('subscriptionids' => $idstosend, 'event' => $eventobj);
+                $allsubids = array_merge($allsubids, $idstosend);
             }
+        }
+
+        if (!empty($allsubids)) {
+            // Update the last trigger flag.
+            list($sql, $params) = $DB->get_in_or_equal($allsubids, SQL_PARAMS_NAMED);
+            $params['now'] = $now;
+            $sql = "UPDATE {tool_monitor_subscriptions} SET lastnotificationsent = :now WHERE id $sql";
+            $DB->execute($sql, $params);
         }
 
         // Schedule a task to send notification.

@@ -267,6 +267,53 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that same events are not used twice to calculate conditions for a single subscription.
+     */
+    public function test_multiple_notification_not_sent() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $messagesink = $this->redirectMessages();
+
+        // Generate data.
+        $course = $this->getDataGenerator()->create_course();
+        $toolgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
+
+        $rulerecord = new stdClass();
+        $rulerecord->courseid = $course->id;
+        $rulerecord->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rulerecord->frequency = 5;
+
+        $rule = $toolgenerator->create_rule($rulerecord);
+
+        $subrecord = new stdClass();
+        $subrecord->courseid = $course->id;
+        $subrecord->ruleid = $rule->id;
+        $subrecord->userid = $USER->id;
+        $toolgenerator->create_subscription($subrecord);
+
+        for ($i = 0; $i < 7; $i++) {
+            // Now let us trigger 7 instances of the event.
+            $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+            $event->trigger();
+            sleep(1); // Add a second delay, to prevent time collisions.
+        }
+        $this->run_adhock_tasks();
+        $messages = $messagesink->get_messages();
+        $this->assertCount(1, $messages); // There should be only one message not 3.
+        for ($i = 0; $i < 3; $i++) {
+            // Now let us trigger 5 more instances of the event.
+            $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
+            $event->trigger();
+        }
+
+        $this->run_adhock_tasks();
+        $messages = $messagesink->get_messages();
+        $this->assertCount(2, $messages); // There should be two messages now.
+    }
+
+    /**
      * Run adhoc tasks.
      */
     protected function run_adhock_tasks() {
