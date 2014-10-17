@@ -1178,6 +1178,9 @@ class question_attempt {
             if ($pendingstep->response_summary_changed()) {
                 $this->responsesummary = $pendingstep->get_new_response_summary();
             }
+            if ($pendingstep->variant_number_changed()) {
+                $this->variant = $pendingstep->get_new_variant_number();
+            }
         }
     }
 

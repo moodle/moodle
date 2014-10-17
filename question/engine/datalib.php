@@ -781,6 +781,7 @@ ORDER BY
     public function update_question_attempt(question_attempt $qa) {
         $record = new stdClass();
         $record->id = $qa->get_database_id();
+        $record->variant = $qa->get_variant();
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
         $record->maxfraction = $qa->get_max_fraction();
