@@ -50,16 +50,18 @@ class mod_lti_register_types_form extends moodleform {
 
         // Tool Provider name.
 
+        $strrequired = get_string('required');
         $mform->addElement('text', 'lti_registrationname', get_string('registrationname', 'lti'));
         $mform->setType('lti_registrationname', PARAM_TEXT);
         $mform->addHelpButton('lti_registrationname', 'registrationname', 'lti');
-        $mform->addRule('lti_registrationname', null, 'required', null, 'client');
+        $mform->addRule('lti_registrationname', $strrequired, 'required', null, 'client');
 
         // Registration URL.
 
         $mform->addElement('text', 'lti_registrationurl', get_string('registrationurl', 'lti'), array('size' => '64'));
-        $mform->setType('lti_registrationurl', PARAM_TEXT);
+        $mform->setType('lti_registrationurl', PARAM_URL);
         $mform->addHelpButton('lti_registrationurl', 'registrationurl', 'lti');
+        $mform->addRule('lti_registrationurl', $strrequired, 'required', null, 'client');
 
         // LTI Capabilities.
 
@@ -70,6 +72,7 @@ class mod_lti_register_types_form extends moodleform {
             array_combine($options, $options), $attributes);
         $mform->setType('lti_capabilities', PARAM_TEXT);
         $mform->addHelpButton('lti_capabilities', 'capabilities', 'lti');
+        $mform->addRule('lti_capabilities', $strrequired, 'required', null, 'client');
 
         // LTI Services.
 
@@ -82,6 +85,7 @@ class mod_lti_register_types_form extends moodleform {
         $mform->addElement('select', 'lti_services', get_string('services', 'lti'), $options, $attributes);
         $mform->setType('lti_services', PARAM_TEXT);
         $mform->addHelpButton('lti_services', 'services', 'lti');
+        $mform->addRule('lti_services', $strrequired, 'required', null, 'client');
 
         $mform->addElement('hidden', 'toolproxyid');
         $mform->setType('toolproxyid', PARAM_INT);
@@ -97,7 +101,6 @@ class mod_lti_register_types_form extends moodleform {
         // Add standard buttons, common to all modules.
 
         $this->add_action_buttons();
-
     }
 
     /**
@@ -112,16 +115,4 @@ class mod_lti_register_types_form extends moodleform {
         $mform->disabledIf('lti_services', null);
 
     }
-
-    /**
-     * Set up rules for required fields.
-     */
-    public function required_fields() {
-
-        $mform    =& $this->_form;
-
-        $mform->addRule('lti_registrationurl', null, 'required', null, 'client');
-
-    }
-
 }

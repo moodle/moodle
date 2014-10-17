@@ -81,11 +81,7 @@ if ($form->is_cancelled()) {
         $form->set_data($toolproxy);
         if ($toolproxy->state == LTI_TOOL_PROXY_STATE_ACCEPTED) {
             $form->disable_fields();
-        } else {
-            $form->required_fields();
         }
-    } else {
-        $form->required_fields();
     }
     $form->display();
 
