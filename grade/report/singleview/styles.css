@@ -33,9 +33,6 @@
 .path-grade-report-singleview itemnav.previtem {
    float:left;
 }
-.path-grade-report-singleview itemnav.previtem {
-   float:left;
-}
 .path-grade-report-singleview.dir-rtl small.previtem {
    float:right;
 }
@@ -44,4 +41,14 @@
 }
 .path-grade-report-singleview.dir-rtl small.nextitem {
    float:left;
+}
+.path-grade-report-singleview .generaltable {
+    width: 100%;
+}
+.path-grade-report-singleview .generaltable th {
+    text-align: left;
+}
+
+.dir-rtl.path-grade-report-singleview .generaltable th {
+  text-align: right;
 }
