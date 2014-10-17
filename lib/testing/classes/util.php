@@ -527,7 +527,12 @@ abstract class testing_util {
 
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
-                    $nextid = self::get_next_sequence_starting_value($records);
+                    $lastrecord = end($records);
+                    if ($lastrecord) {
+                        $nextid = $lastrecord->id + 1;
+                    } else {
+                        $nextid = 1;
+                    }
                     if (!isset($current[$table])) {
                         $DB->get_manager()->reset_sequence($table);
                     } else if ($nextid == $current[$table]) {
