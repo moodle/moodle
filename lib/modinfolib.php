@@ -1188,6 +1188,7 @@ class cm_info implements IteratorAggregate {
         unset($props['showavailability']);
         unset($props['availablefrom']);
         unset($props['availableuntil']);
+        unset($props['groupmembersonly']);
 
         foreach ($props as $key => $unused) {
             $ret[$key] = $this->__get($key);
