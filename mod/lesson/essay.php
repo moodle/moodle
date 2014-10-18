@@ -170,7 +170,7 @@ switch ($mode) {
 
         $pages = $lesson->load_all_pages();
         foreach ($pages as $key=>$page) {
-            if ($page->qtype !== LESSON_PAGE_ESSAY) {
+            if ($page->qtype != LESSON_PAGE_ESSAY) {
                 unset($pages[$key]);
             }
         }
@@ -255,7 +255,7 @@ switch ($mode) {
         // Get lesson pages that are essay
         $pages = $lesson->load_all_pages();
         foreach ($pages as $key=>$page) {
-            if ($page->qtype !== LESSON_PAGE_ESSAY) {
+            if ($page->qtype != LESSON_PAGE_ESSAY) {
                 unset($pages[$key]);
             }
         }
