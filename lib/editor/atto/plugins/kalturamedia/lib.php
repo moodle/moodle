@@ -33,3 +33,7 @@ function atto_kalturamedia_strings_for_js() {
                                           'kalturauritoken',),
                                     'atto_kalturamedia');
 }
+
+function atto_kalturamedia_params_for_js() {
+    return array('kalturauritoken' => KALTURA_URI_TOKEN);
+}
