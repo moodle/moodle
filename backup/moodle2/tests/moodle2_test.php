@@ -39,6 +39,13 @@ require_once($CFG->libdir . '/completionlib.php');
 class core_backup_moodle2_testcase extends advanced_testcase {
 
     /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
+    /**
      * Tests the availability field on modules and sections is correctly
      * backed up and restored.
      */
