@@ -337,7 +337,8 @@ class availability_profile_condition_testcase extends advanced_testcase {
         // The list of fields should include the text field added in setUp(),
         // but should not include the textarea field added just now.
         $fields = condition::get_custom_profile_fields();
-        $this->assertEquals(array('frogtype'), array_keys($fields));
+        $this->assertArrayHasKey('frogtype', $fields);
+        $this->assertArrayNotHasKey('longtext', $fields);
     }
 
     /**
