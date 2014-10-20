@@ -468,26 +468,68 @@ function hide_natural_aggregation_upgrade_notice($courseid) {
 }
 
 /**
+ * Hide warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_aggregatesubcats_upgrade_notice($courseid) {
+    unset_config('show_aggregatesubcats_upgrade_' . $courseid);
+}
+
+/**
  * Print warning about changed grades during upgrade to 2.8.
  *
  * @param int $courseid The current course id.
  * @param context $context The course context.
+ * @param string $thispage The relative path for the current page. E.g. /grade/report/user/index.php
  * @param boolean $return return as string
  *
  * @return nothing or string if $return true
  */
-function print_natural_aggregation_upgrade_notice($courseid, $context, $return=false) {
+function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage, $return=false) {
     global $OUTPUT;
     $html = '';
-    $show = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
 
-    if ($show) {
+    $hidesubcatswarning = optional_param('seenaggregatesubcatsupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
+    $showsubcatswarning = get_config('core', 'show_aggregatesubcats_upgrade_' . $courseid);
+    $hidenaturalwarning = optional_param('seensumofgradesupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
+    $shownaturalwarning = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
+
+    // Do not do anything if they are not a teacher.
+    if ($hidesubcatswarning || $showsubcatswarning || $hidenaturalwarning || $shownaturalwarning) {
+        if (!has_capability('moodle/grade:manage', $context)) {
+            return '';
+        }
+    }
+
+    // Hide the warning if the user told it to go away.
+    if ($hidenaturalwarning) {
+        hide_natural_aggregation_upgrade_notice($courseid);
+    }
+    // Hide the warning if the user told it to go away.
+    if ($hidesubcatswarning) {
+        hide_aggregatesubcats_upgrade_notice($courseid);
+    }
+
+    if (!$hidenaturalwarning && $shownaturalwarning) {
         $message = get_string('sumofgradesupgradedgrades', 'grades');
-        $hidemessage = get_string('sumofgradesupgradedgradeshidemessage', 'grades');
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
         $urlparams = array( 'id' => $courseid,
                             'seensumofgradesupgradedgrades' => true,
                             'sesskey' => sesskey());
-        $goawayurl = new moodle_url('/grade/report/grader/index.php', $urlparams);
+        $goawayurl = new moodle_url($thispage, $urlparams);
+        $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $html .= $OUTPUT->notification($message, 'notifysuccess');
+        $html .= $goawaybutton;
+    }
+
+    if (!$hidesubcatswarning && $showsubcatswarning) {
+        $message = get_string('aggregatesubcatsupgradedgrades', 'grades');
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
+        $urlparams = array( 'id' => $courseid,
+                            'seenaggregatesubcatsupgradedgrades' => true,
+                            'sesskey' => sesskey());
+        $goawayurl = new moodle_url($thispage, $urlparams);
         $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
         $html .= $OUTPUT->notification($message, 'notifysuccess');
         $html .= $goawaybutton;
@@ -852,6 +894,11 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
             $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return);
         }
     }
+
+    $returnval .= print_natural_aggregation_upgrade_notice($courseid,
+                                                           context_course::instance($courseid),
+                                                           '/grade/report/' . $active_plugin . '/index.php',
+                                                           $return);
 
     if ($return) {
         return $returnval;

@@ -282,6 +282,11 @@ class restore_gradebook_structure_step extends restore_structure_step {
             }
         }
 
+        // Add a warning about a removed setting.
+        if (!empty($data->aggregatesubcats)) {
+            set_config('show_aggregatesubcats_upgrade_' . $data->courseid, 1);
+        }
+
         //need to insert a course category
         if (empty($newitemid)) {
             $newitemid = $DB->insert_record('grade_categories', $data);

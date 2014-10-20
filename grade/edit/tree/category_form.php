@@ -70,13 +70,6 @@ class edit_category_form extends moodleform {
             }
         }
 
-        $mform->addElement('advcheckbox', 'aggregatesubcats', get_string('aggregatesubcats', 'grades'));
-        $mform->addHelpButton('aggregatesubcats', 'aggregatesubcats', 'grades');
-
-        if ((int)$CFG->grade_aggregatesubcats_flag & 2) {
-            $mform->setAdvanced('aggregatesubcats');
-        }
-
         $mform->addElement('text', 'keephigh', get_string('keephigh', 'grades'), 'size="3"');
         $mform->setType('keephigh', PARAM_INT);
         $mform->addHelpButton('keephigh', 'keephigh', 'grades');
@@ -359,9 +352,6 @@ class edit_category_form extends moodleform {
                 }
                 if ($mform->elementExists('aggregateoutcomes')) {
                     $mform->removeElement('aggregateoutcomes');
-                }
-                if ($mform->elementExists('aggregatesubcats')) {
-                    $mform->removeElement('aggregatesubcats');
                 }
             }
 

@@ -485,33 +485,34 @@ class core_grade_item_testcase extends grade_base_testcase {
         sort($deps, SORT_NUMERIC); // For comparison.
         $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
         $this->assertEquals($res, $deps);
+    }
 
+    protected function scales_outcomes_test_grade_item_depends_on() {
         $CFG->enableoutcomes = 1;
         $origgradeincludescalesinaggregation = $CFG->grade_includescalesinaggregation;
         $CFG->grade_includescalesinaggregation = 1;
 
-        // Item in category with aggregate sub categories + $CFG->grade_includescalesinaggregation = 1.
-        $grade_item = new grade_item($this->grade_items[12], false);
+        // Scale item in category with $CFG->grade_includescalesinaggregation = 1.
+        $grade_item = new grade_item($this->grade_items[14], false);
         $deps = $grade_item->depends_on();
         sort($deps, SORT_NUMERIC);
-        $res = array($this->grade_items[15]->id, $this->grade_items[16]->id);
+        $res = array($this->grade_items[16]->id);
         $this->assertEquals($res, $deps);
 
-        // Item in category with aggregate sub categories + $CFG->grade_includescalesinaggregation = 0.
+        // Scale item in category with $CFG->grade_includescalesinaggregation = 0.
         $CFG->grade_includescalesinaggregation = 0;
-        $grade_item = new grade_item($this->grade_items[12], false);
+        $grade_item = new grade_item($this->grade_items[14], false);
         $deps = $grade_item->depends_on();
-        sort($deps, SORT_NUMERIC);
-        $res = array($this->grade_items[15]->id);
+        $res = array();
         $this->assertEquals($res, $deps);
         $CFG->grade_includescalesinaggregation = 1;
 
-        // Outcome item in category with with aggregate sub categories.
+        // Outcome item in category with outcomes disabled.
         $CFG->enableoutcomes = 0;
-        $grade_item = new grade_item($this->grade_items[12], false);
+        $grade_item = new grade_item($this->grade_items[14], false);
         $deps = $grade_item->depends_on();
         sort($deps, SORT_NUMERIC);
-        $res = array($this->grade_items[15]->id, $this->grade_items[16]->id, $this->grade_items[17]->id);
+        $res = array($this->grade_items[16]->id, $this->grade_items[17]->id);
         $this->assertEquals($res, $deps);
 
         $CFG->enableoutcomes = $origenableoutcomes;
