@@ -581,6 +581,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $attributes['class'] = $class;
         }
         $output = html_writer::tag('p', $contents, $attributes);
+        return $output;
     }
     /**
      * Returns HTML to display add_highscores_form
