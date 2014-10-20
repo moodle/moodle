@@ -739,9 +739,14 @@ class grade_report_user extends grade_report {
 
                 // Multiply the normalised value by the weight
                 // of all the categories higher in the tree.
+                $parent = null;
                 do {
                     if (!is_null($this->aggregationhints[$itemid]['weight'])) {
                         $gradeval *= $this->aggregationhints[$itemid]['weight'];
+                    } else if (empty($parent)) {
+                        // If we are in the first loop, and the weight is null, then we cannot calculate the contribution.
+                        $gradeval = null;
+                        break;
                     }
 
                     // The second part of this if is to prevent infinite loops
@@ -756,8 +761,11 @@ class grade_report_user extends grade_report {
                     }
                 } while ($parent);
 
-                // Convert to percent.
-                $gradeval *= 100;
+                // Finally multiply by the course grademax.
+                if (!is_null($gradeval)) {
+                    // Convert to percent.
+                    $gradeval *= 100;
+                }
 
                 // Now we need to loop through the "built" table data and update the
                 // contributions column for the current row.
@@ -765,8 +773,12 @@ class grade_report_user extends grade_report {
                 foreach ($this->tabledata as $key => $row) {
                     if (isset($row['itemname']) && ($row['itemname']['id'] == $header_row)) {
                         // Found it - update the column.
-                        $decimals = $grade_object->get_decimals();
-                        $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true) . ' %';
+                        $content = '-';
+                        if (!is_null($gradeval)) {
+                            $decimals = $grade_object->get_decimals();
+                            $content = format_float($gradeval, $decimals, true) . ' %';
+                        }
+                        $this->tabledata[$key]['contributiontocoursetotal']['content'] = $content;
                         break;
                     }
                 }

@@ -510,6 +510,13 @@ abstract class grade_report {
                 if (array_key_exists($course_item->id, $hiding_affected['alteredaggregationweight'])) {
                     $aggregationweight = $hiding_affected['alteredaggregationweight'][$course_item->id];
                 }
+
+                if (!$this->showtotalsifcontainhidden[$courseid]) {
+                    // If the course total is hidden we must hide the weight otherwise
+                    // it can be used to compute the course total.
+                    $aggregationstatus = 'unknown';
+                    $aggregationweight = null;
+                }
             }
         } else if (!empty($hiding_affected['unknown'][$course_item->id])) {
             //not sure whether or not this item depends on a hidden item
