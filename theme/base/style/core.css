@@ -1734,7 +1734,7 @@ img#persona_signin { cursor: pointer; }
 .moodle-actionmenu[data-enhanced].show .menu {position: absolute;text-align:left;z-index: 1000;display: block;background-color: #fff;border: 1px solid #ccc;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;-webkit-box-shadow: 5px 5px 20px 0 #666666;-moz-box-shadow: 5px 5px 20px 0 #666666;box-shadow: 5px 5px 20px 0 #666666;}
 .moodle-actionmenu[data-enhanced].show .menu a {
     display: block;
-    padding: 4px 1em 4px 28px;
+    padding: 2px 1em 2px 28px;
     color: #333333;
 }
 .moodle-actionmenu[data-enhanced].show .menu a > img {
@@ -1742,6 +1742,11 @@ img#persona_signin { cursor: pointer; }
     padding: 4px;
     width: 12px;
     height: 12px;
+}
+.moodle-actionmenu[data-enhanced].show .menu a > img,
+.moodle-actionmenu[data-enhanced].show .menu a > span {
+    display: inline-block;
+    vertical-align: middle;
 }
 .moodle-actionmenu[data-enhanced].show .menu a:hover {color: #ffffff;background-color: #0088cc;}
 .moodle-actionmenu[data-enhanced].show .menu a:first-child {-webkit-border-top-right-radius: 4px;border-top-right-radius: 4px;-webkit-border-top-left-radius: 4px;border-top-left-radius: 4px;-moz-border-radius-topright: 4px;-moz-border-radius-topleft: 4px;}
@@ -1752,8 +1757,10 @@ img#persona_signin { cursor: pointer; }
 .block .moodle-actionmenu {text-align: right;}
 
 .dir-rtl .block .moodle-actionmenu {text-align: right;}
+.dir-rtl .moodle-actionmenu[data-enhanced].show .menu a { display: block; padding: 2px 28px 2px 1em; }
 .dir-rtl .moodle-actionmenu[data-enhanced].show .menu {text-align: right;right: auto;left: 0;}
-.dir-rtl .moodle-actionmenu[data-enhanced].show .menu .iconsmall {margin-right: 0;margin-left: 8px;}
+.dir-rtl .moodle-actionmenu[data-enhanced].show .menu .iconsmall,
+.dir-rtl .moodle-actionmenu[data-enhanced].show .menu .smallicon { margin-right: -24px; margin-left: 4px; }
 
 .jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tl-bl {top: 100%;left: 0;margin-top: 4px;}
 .jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tr-bl {top: 100%;right: 100%;}
