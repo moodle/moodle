@@ -61,6 +61,7 @@ $string['messagetemplate_help'] = 'This is the content of the message that will 
 $string['minutes'] = 'in minutes:';
 $string['name'] = 'Name of the rule: ';
 $string['name_help'] = "Choose a name for the rule.";
+$string['nopermission'] = "No permission";
 $string['pluginname'] = 'Event monitor';
 $string['processevents'] = 'Process events';
 $string['ruleareyousure'] = 'Are you sure you want to delete rule "{$a}"?';

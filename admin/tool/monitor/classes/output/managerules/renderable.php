@@ -154,7 +154,7 @@ class renderable extends \table_sql implements \renderable {
         $manage = '';
         // We don't need to check for capability at course level since, user is never shown this page,
         // if he doesn't have the capability.
-        if ($this->hassystemcap || ($rule->courseid !== 0)) {
+        if ($this->hassystemcap || ($rule->courseid != 0)) {
             // There might be site rules which the user can not manage.
             $editurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/edit.php', array('ruleid' => $rule->id,
                     'courseid' => $rule->courseid, 'sesskey' => sesskey()));
@@ -175,7 +175,7 @@ class renderable extends \table_sql implements \renderable {
             $icon = $OUTPUT->action_link($deleteurl, new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')), $action);
             $manage .= $icon;
         } else {
-            $manage = '-';
+            $manage = get_string('nopermission', 'tool_monitor');
         }
         return $manage;
     }
