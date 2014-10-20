@@ -42,5 +42,4 @@ Feature: A teacher can preview questions in the question bank
     And I press "Start again"
     And I press "Fill in correct responses"
     And the field "Answer:" matches value "2"
-    And I press "Close preview"
     And I switch to the main window
