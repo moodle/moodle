@@ -90,4 +90,13 @@ if (!empty($action) && $ruleid) {
 $renderable = new \tool_monitor\output\managerules\renderable('toolmonitorrules', $manageurl, $courseid);
 $renderer = $PAGE->get_renderer('tool_monitor', 'managerules');
 echo $renderer->render($renderable);
+if (has_capability('tool/monitor:subscribe', $context)) {
+    echo html_writer::start_div();
+    $params = $courseid == 0 ? array('courseid' => 1) : array('courseid' => $courseid);
+    $manageurl = new moodle_url("/" . $CFG->admin . "/tool/monitor/index.php", $params);
+    $a = html_writer::link($manageurl, get_string('managesubscriptions', 'tool_monitor'));
+    $link = html_writer::tag('span', get_string('managesubscriptionslink', 'tool_monitor', $a));
+    echo $link;
+    echo html_writer::end_div();
+}
 echo $OUTPUT->footer();
