@@ -114,3 +114,4 @@ $string['viewsubmission'] = 'View submission';
 $string['failedtoinsertsubmission'] = 'Failed to insert submission record.';
 $string['video_thumbnail'] = 'Video thumbnail';
 $string['feedbackfromteacher'] = 'Feedback From Teacher';
+$string['currentgrade'] = 'Current grade in gradebook';
