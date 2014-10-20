@@ -76,7 +76,7 @@ Feature: View gradebook when single item scales are used
     And I set the field "Select all or one user" to "Student 2"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range     | Contribution to course total |
-      | Test assignment one | -     | Ace!–Ace! | 0.00 %                       |
+      | Test assignment one | -     | Ace!–Ace! | -                            |
       | Category total      | -     | 0–1       | -                            |
       | Course total        | -     | 0–1       | -                            |
     And I set the field "jump" to "Categories and items"

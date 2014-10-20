@@ -399,7 +399,7 @@ Feature: We can use calculated grade totals
       | Test assignment seven | 21.43 % | - | 0–15 | 0.00 % |
       | Test assignment eight | 66.67 % | 10.00 (50.00 %) | 0–20 | 1.60 % |
       | Test assignment nine | 33.33 % | 5.00 (50.00 %) | 0–10 | 0.80 % |
-      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 % |
+      | Test assignment ten | 0.00 %( Empty ) | - | 0–15 | 0.00 % |
       | Test assignment one | 48.00 % | 60.00 (20.00 %) | 0–300 | 9.60 % |
       | Test assignment two | 16.00 % | 20.00 (20.00 %) | 0–100 | 3.20 % |
       | Test assignment three | 24.00 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 6.40 % |
