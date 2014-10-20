@@ -64,6 +64,12 @@ class tablelog extends \table_sql implements \renderable {
     protected $cms;
 
     /**
+     * @var int The default number of decimal points to use in this course
+     * when a grade item does not itself define the number of decimal points.
+     */
+    protected $defaultdecimalpoints;
+
+    /**
      * Sets up the table_log parameters.
      *
      * @param string $uniqueid unique id of table.
@@ -83,6 +89,7 @@ class tablelog extends \table_sql implements \renderable {
      */
     public function __construct($uniqueid, \context_course $context, $url, $filters = array(), $download = '', $page = 0,
                                 $perpage = 100) {
+        global $CFG;
         parent::__construct($uniqueid);
 
         $this->set_attribute('class', 'gradereport_history generaltable generalbox');
@@ -96,6 +103,7 @@ class tablelog extends \table_sql implements \renderable {
         $this->gradeitems = \grade_item::fetch_all(array('courseid' => $this->courseid));
         $this->cms = get_fast_modinfo($this->courseid);
         $this->useridfield = 'userid';
+        $this->defaultdecimalpoints = grade_get_setting($this->courseid, 'decimalpoints', $CFG->grade_decimalpoints);
 
         // Define columns in the table.
         $this->define_table_columns();
@@ -165,6 +173,40 @@ class tablelog extends \table_sql implements \renderable {
 
         $this->define_columns(array_keys($cols));
         $this->define_headers(array_values($cols));
+    }
+
+    /**
+     * Method to display the final grade.
+     *
+     * @param \stdClass $history an entry of history record.
+     *
+     * @return string HTML to display
+     */
+    public function col_finalgrade(\stdClass $history) {
+        if (!empty($this->gradeitems[$history->itemid])) {
+            $decimalpoints = $this->gradeitems[$history->itemid]->get_decimals();
+        } else {
+            $decimalpoints = $this->defaultdecimalpoints;
+        }
+
+        return format_float($history->finalgrade, $decimalpoints);
+    }
+
+    /**
+     * Method to display the previous grade.
+     *
+     * @param \stdClass $history an entry of history record.
+     *
+     * @return string HTML to display
+     */
+    public function col_prevgrade(\stdClass $history) {
+        if (!empty($this->gradeitems[$history->itemid])) {
+            $decimalpoints = $this->gradeitems[$history->itemid]->get_decimals();
+        } else {
+            $decimalpoints = $this->defaultdecimalpoints;
+        }
+
+        return format_float($history->prevgrade, $decimalpoints);
     }
 
     /**
