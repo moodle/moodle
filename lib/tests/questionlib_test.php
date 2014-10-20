@@ -37,6 +37,13 @@ require_once($CFG->libdir . '/questionlib.php');
  */
 class core_questionlib_testcase extends basic_testcase {
 
+    /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
     public function test_question_reorder_qtypes() {
         $this->assertEquals(
             array(0 => 't2', 1 => 't1', 2 => 't3'),
