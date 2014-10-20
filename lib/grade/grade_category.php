@@ -996,30 +996,82 @@ class grade_category extends grade_object {
             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                 // Weighted average of all existing final grades with optional extra credit flag,
                 // weight is the range of grade (usually grademax)
+                $this->load_grade_item();
                 $weightsum = 0;
                 $sum       = null;
 
                 foreach ($grade_values as $itemid=>$grade_value) {
-                    $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
+                    if ($items[$itemid]->aggregationcoef > 0) {
+                        continue;
+                    }
 
+                    $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
                     if ($weight <= 0) {
                         continue;
                     }
 
-                    if ($items[$itemid]->aggregationcoef == 0) {
-                        $weightsum += $weight;
-                    }
+                    $weightsum += $weight;
                     $sum += $weight * $grade_value;
                 }
+
+                // Handle the extra credit items separately to calculate their weight accurately.
+                foreach ($grade_values as $itemid => $grade_value) {
+                    if ($items[$itemid]->aggregationcoef <= 0) {
+                        continue;
+                    }
+
+                    $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
+                    if ($weight <= 0) {
+                        $weights[$itemid] = 0;
+                        continue;
+                    }
+
+                    $oldsum = $sum;
+                    $weightedgrade = $weight * $grade_value;
+                    $sum += $weightedgrade;
+
+                    if ($weights !== null) {
+                        if ($weightsum <= 0) {
+                            $weights[$itemid] = 0;
+                            continue;
+                        }
+
+                        $oldgrade = $oldsum / $weightsum;
+                        $grade = $sum / $weightsum;
+                        $normoldgrade = grade_grade::standardise_score($oldgrade, 0, 1, $grademin, $grademax);
+                        $normgrade = grade_grade::standardise_score($grade, 0, 1, $grademin, $grademax);
+                        $boundedoldgrade = $this->grade_item->bounded_grade($normoldgrade);
+                        $boundedgrade = $this->grade_item->bounded_grade($normgrade);
+
+                        if ($boundedgrade - $boundedoldgrade <= 0) {
+                            // Nothing new was added to the grade.
+                            $weights[$itemid] = 0;
+                        } else if ($boundedgrade < $normgrade) {
+                            // The grade has been bounded, the extra credit item needs to have a different weight.
+                            $gradediff = $boundedgrade - $normoldgrade;
+                            $gradediffnorm = grade_grade::standardise_score($gradediff, $grademin, $grademax, 0, 1);
+                            $weights[$itemid] = $gradediffnorm / $grade_value;
+                        } else {
+                            // Default weighting.
+                            $weights[$itemid] = $weight / $weightsum;
+                        }
+                    }
+                }
+
                 if ($weightsum == 0) {
                     $agg_grade = $sum; // only extra credits
 
                 } else {
                     $agg_grade = $sum / $weightsum;
                 }
+
                 // Record the weights as used.
                 if ($weights !== null) {
                     foreach ($grade_values as $itemid=>$grade_value) {
+                        if ($items[$itemid]->aggregationcoef > 0) {
+                            // Ignore extra credit items, the weights have already been computed.
+                            continue;
+                        }
                         if ($weightsum > 0) {
                             $weight = $items[$itemid]->grademax - $items[$itemid]->grademin;
                             $weights[$itemid] = $weight / $weightsum;
@@ -1031,27 +1083,61 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_EXTRACREDIT_MEAN: // special average
+                $this->load_grade_item();
                 $num = 0;
                 $sum = null;
 
                 foreach ($grade_values as $itemid=>$grade_value) {
-
                     if ($items[$itemid]->aggregationcoef == 0) {
                         $num += 1;
                         $sum += $grade_value;
                         if ($weights !== null) {
                             $weights[$itemid] = 1;
                         }
+                    }
+                }
 
-                    } else if ($items[$itemid]->aggregationcoef > 0) {
+                // Treating the extra credit items separately to get a chance to calculate their effective weights.
+                foreach ($grade_values as $itemid=>$grade_value) {
+                    if ($items[$itemid]->aggregationcoef > 0) {
+                        $oldsum = $sum;
                         $sum += $items[$itemid]->aggregationcoef * $grade_value;
+
                         if ($weights !== null) {
-                            $weights[$itemid] = 1;
+                            if ($num <= 0) {
+                                // The category only contains extra credit items, not setting the weight.
+                                continue;
+                            }
+
+                            $oldgrade = $oldsum / $num;
+                            $grade = $sum / $num;
+                            $normoldgrade = grade_grade::standardise_score($oldgrade, 0, 1, $grademin, $grademax);
+                            $normgrade = grade_grade::standardise_score($grade, 0, 1, $grademin, $grademax);
+                            $boundedoldgrade = $this->grade_item->bounded_grade($normoldgrade);
+                            $boundedgrade = $this->grade_item->bounded_grade($normgrade);
+
+                            if ($boundedgrade - $boundedoldgrade <= 0) {
+                                // Nothing new was added to the grade.
+                                $weights[$itemid] = 0;
+                            } else if ($boundedgrade < $normgrade) {
+                                // The grade has been bounded, the extra credit item needs to have a different weight.
+                                $gradediff = $boundedgrade - $normoldgrade;
+                                $gradediffnorm = grade_grade::standardise_score($gradediff, $grademin, $grademax, 0, 1);
+                                $weights[$itemid] = $gradediffnorm / $grade_value;
+                            } else {
+                                // Default weighting.
+                                $weights[$itemid] = 1.0 / $num;
+                            }
                         }
                     }
                 }
+
                 if ($weights !== null && $num > 0) {
                     foreach ($grade_values as $itemid=>$grade_value) {
+                        if ($items[$itemid]->aggregationcoef > 0) {
+                            // Extra credit weights were already calculated.
+                            continue;
+                        }
                         if ($weights[$itemid]) {
                             $weights[$itemid] = 1.0 / $num;
                         }
@@ -1064,14 +1150,17 @@ class grade_category extends grade_object {
                 } else {
                     $agg_grade = $sum / $num;
                 }
+
                 break;
 
             case GRADE_AGGREGATE_SUM:    // Add up all the items.
+                $this->load_grade_item();
                 $num = count($grade_values);
                 $sum = 0;
                 $sumweights = 0;
                 $grademin = 0;
                 $grademax = 0;
+                $extracredititems = array();
                 foreach ($grade_values as $itemid => $gradevalue) {
                     // We need to check if the grademax/min was adjusted per user because of excluded items.
                     $usergrademin = $items[$itemid]->grademin;
@@ -1083,8 +1172,13 @@ class grade_category extends grade_object {
                         $usergrademax = $grademaxoverrides[$itemid];
                     }
 
+                    // Keep track of the extra credit items, we will need them later on.
+                    if ($items[$itemid]->aggregationcoef > 0) {
+                        $extracredititems[$itemid] = $items[$itemid];
+                    }
+
                     // Ignore extra credit and items with a weight of 0.
-                    if ($items[$itemid]->aggregationcoef <= 0 && $items[$itemid]->aggregationcoef2 > 0) {
+                    if (!isset($extracredititems[$itemid]) && $items[$itemid]->aggregationcoef2 > 0) {
                         $grademin += $usergrademin;
                         $grademax += $usergrademax;
                         $sumweights += $items[$itemid]->aggregationcoef2;
@@ -1135,11 +1229,58 @@ class grade_category extends grade_object {
 
                 // We can use our freshly corrected weights below.
                 foreach ($grade_values as $itemid => $gradevalue) {
+                    if (isset($extracredititems[$itemid])) {
+                        // We skip the extra credit items first.
+                        continue;
+                    }
                     $sum += $gradevalue * $userweights[$itemid] * $grademax;
                     if ($weights !== null) {
                         $weights[$itemid] = $userweights[$itemid];
                     }
                 }
+
+                // No we proceed with the extra credit items. They might have a different final
+                // weight in case the final grade was bounded. So we need to treat them different.
+                // Also, as we need to use the bounded_grade() method, we have to inject the
+                // right values there, and restore them afterwards.
+                $oldgrademax = $this->grade_item->grademax;
+                $oldgrademin = $this->grade_item->grademin;
+                foreach ($grade_values as $itemid => $gradevalue) {
+                    if (!isset($extracredititems[$itemid])) {
+                        continue;
+                    }
+                    $oldsum = $sum;
+                    $weightedgrade = $gradevalue * $userweights[$itemid] * $grademax;
+                    $sum += $weightedgrade;
+
+                    // Only go through this when we need to record the weights.
+                    if ($weights !== null) {
+                        if ($grademax <= 0) {
+                            // There are only extra credit items in this category,
+                            // all the weights should be accurate (and be 0).
+                            $weights[$itemid] = $userweights[$itemid];
+                            continue;
+                        }
+
+                        $oldfinalgrade = $this->grade_item->bounded_grade($oldsum);
+                        $newfinalgrade = $this->grade_item->bounded_grade($sum);
+                        $finalgradediff = $newfinalgrade - $oldfinalgrade;
+                        if ($finalgradediff <= 0) {
+                            // This item did not contribute to the category total at all.
+                            $weights[$itemid] = 0;
+                        } else if ($finalgradediff < $weightedgrade) {
+                            // The weight needs to be adjusted because only a portion of the
+                            // extra credit item contributed to the category total.
+                            $weights[$itemid] = $finalgradediff / ($gradevalue * $grademax);
+                        } else {
+                            // The weight was accurate.
+                            $weights[$itemid] = $userweights[$itemid];
+                        }
+                    }
+                }
+                $this->grade_item->grademax = $oldgrademax;
+                $this->grade_item->grademin = $oldgrademin;
+
                 if ($grademax > 0) {
                     $agg_grade = $sum / $grademax; // Re-normalize score.
                 } else {
