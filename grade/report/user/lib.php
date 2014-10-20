@@ -215,16 +215,6 @@ class grade_report_user extends grade_report {
         // Grab the grade_tree for this course
         $this->gtree = new grade_tree($this->courseid, false, $this->switch, null, !$CFG->enableoutcomes);
 
-        // Determine the number of rows and indentation
-        $this->maxdepth = 1;
-        $this->inject_rowspans($this->gtree->top_element);
-        $this->maxdepth++; // Need to account for the lead column that spans all children
-        for ($i = 1; $i <= $this->maxdepth; $i++) {
-            $this->evenodd[$i] = 0;
-        }
-
-        $this->tabledata = array();
-
         // Get the user (for full name).
         $this->user = $DB->get_record('user', array('id' => $userid));
 
@@ -237,6 +227,16 @@ class grade_report_user extends grade_report {
             $this->modinfo = $this->gtree->modinfo;
             $this->canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
         }
+
+        // Determine the number of rows and indentation.
+        $this->maxdepth = 1;
+        $this->inject_rowspans($this->gtree->top_element);
+        $this->maxdepth++; // Need to account for the lead column that spans all children.
+        for ($i = 1; $i <= $this->maxdepth; $i++) {
+            $this->evenodd[$i] = 0;
+        }
+
+        $this->tabledata = array();
 
         // base url for sorting by first/last name
         $this->baseurl = $CFG->wwwroot.'/grade/report?id='.$courseid.'&amp;userid='.$userid;
@@ -266,7 +266,15 @@ class grade_report_user extends grade_report {
         $count = 1;
 
         foreach ($element['children'] as $key=>$child) {
-            $count += $this->inject_rowspans($element['children'][$key]);
+            // If category is hidden then do not include it in the rowspan.
+            if ($child['type'] == 'category' && $child['object']->is_hidden() && !$this->canviewhidden
+                    && ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_HIDDEN
+                    || ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$child['object']->is_hiddenuntil()))) {
+                // Just calculate the rowspans for children of this category, don't add them to the count.
+                $this->inject_rowspans($element['children'][$key]);
+            } else {
+                $count += $this->inject_rowspans($element['children'][$key]);
+            }
         }
 
         $element['rowspan'] = $count;
