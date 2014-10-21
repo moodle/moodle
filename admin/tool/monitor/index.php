@@ -108,12 +108,7 @@ if (empty($totalrules)) {
     }
     echo html_writer::end_div();
 } else if (has_capability('tool/monitor:managerules', $context)) {
-    echo html_writer::start_div();
-    $params = $courseid == 1 ? array() : array('courseid' => $courseid);
-    $manageurl = new moodle_url("/" . $CFG->admin . "/tool/monitor/managerules.php", $params);
-    $a = html_writer::link($manageurl, get_string('managerules', 'tool_monitor'));
-    $link = html_writer::tag('span', get_string('manageruleslink', 'tool_monitor', $a));
-    echo $link;
-    echo html_writer::end_div();
+    $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
+    echo $renderer->render_rules_link($manageurl);
 }
 echo $OUTPUT->footer();
