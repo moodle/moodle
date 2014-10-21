@@ -29,11 +29,21 @@ function atto_kalturamedia_strings_for_js() {
     global $PAGE;
 
     $PAGE->requires->strings_for_js(array('popuptitle',
-                                          'embedbuttontext',
-                                          'kalturauritoken',),
+                                          'embedbuttontext',),
                                     'atto_kalturamedia');
 }
 
-function atto_kalturamedia_params_for_js() {
-    return array('kalturauritoken' => KALTURA_URI_TOKEN);
+function atto_kalturamedia_params_for_js($elementid, $options, $fpoptions) {
+    global $CFG;
+    require_once($CFG->dirroot.'/local/kaltura/locallib.php');
+
+    $context = $options['context'];
+    if (!$context) {
+        $context = context_system::instance();
+    }
+    
+    return array(
+        'kalturauritoken' => KALTURA_URI_TOKEN,
+        'contextid' => $context->id,
+        );
 }
