@@ -743,8 +743,9 @@ class grade_report_user extends grade_report {
                         $parent = false;
                     }
                 } while ($parent);
-                // Finally multiply by the course grademax.
-                $gradeval *= $this->aggregationhints[$itemid]['grademax'];
+
+                // Convert to percent.
+                $gradeval *= 100;
 
                 // Now we need to loop through the "built" table data and update the
                 // contributions column for the current row.
@@ -753,7 +754,7 @@ class grade_report_user extends grade_report {
                     if (isset($row['itemname']) && ($row['itemname']['id'] == $header_row)) {
                         // Found it - update the column.
                         $decimals = $grade_object->get_decimals();
-                        $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true);
+                        $this->tabledata[$key]['contributiontocoursetotal']['content'] = format_float($gradeval, $decimals, true) . ' %';
                         break;
                     }
                 }
