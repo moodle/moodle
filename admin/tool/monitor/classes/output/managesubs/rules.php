@@ -154,14 +154,24 @@ class rules extends \table_sql implements \renderable {
     /**
      * Gets a list of courses where the current user can subscribe to rules as a dropdown.
      *
-     * @return \single_select list of courses.
+     * @return \single_select|bool returns the list of courses, or false if the select box
+     *      should not be displayed.
      */
     public function get_user_courses_select() {
-        $courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname');
+        global $DB;
+
+        // If the number of courses on the site exceed the maximum drop down limit do not display the select box.
+        $numcourses = $DB->count_records('course');
+        if ($numcourses > COURSE_MAX_COURSES_PER_DROPDOWN) {
+            return false;
+        }
+
         $options = array(0 => get_string('site'));
-        $systemcontext = \context_system::instance();
-        foreach ($courses as $course) {
-            $options[$course->id] = format_text($course->fullname, array('context' => $systemcontext));
+        if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname')) {
+            foreach ($courses as $course) {
+                $options[$course->id] = format_string($course->fullname, true,
+                    array('context' => \context_course::instance($course->id)));
+            }
         }
         $url = new \moodle_url('/admin/tool/monitor/index.php');
         $select = new \single_select($url, 'courseid', $options, $this->courseid);

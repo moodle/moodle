@@ -71,8 +71,9 @@ class renderer extends \plugin_renderer_base {
      * @return string to display on the mangesubs page.
      */
     protected function render_course_select(rules $renderable) {
-        $select = $renderable->get_user_courses_select();
-        return $this->render($select);;
+        if ($select = $renderable->get_user_courses_select()) {
+            return $this->render($select);
+        }
     }
 
     /**
