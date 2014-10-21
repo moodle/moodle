@@ -48,7 +48,7 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'history';
 
-$select = "itemtype != 'course' AND itemname != '' AND courseid = :courseid";
+$select = "itemtype <> 'course' AND courseid = :courseid AND " . $DB->sql_isnotempty('grade_items', 'itemname', true, true);
 $itemids = $DB->get_records_select_menu('grade_items', $select, array('courseid' => $course->id), 'itemname ASC', 'id, itemname');
 $itemids = array(0 => get_string('allgradeitems', 'gradereport_history')) + $itemids;
 
