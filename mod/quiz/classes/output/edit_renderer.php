@@ -380,7 +380,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Page split/join icon.
         $joinhtml = '';
-        if (!$structure->is_last_slot_in_quiz($question->slot)) {
+        if ($structure->can_be_edited() && !$structure->is_last_slot_in_quiz($question->slot)) {
             $joinhtml = $this->page_split_join_button($structure->get_quiz(),
                     $question, !$structure->is_last_slot_on_page($question->slot));
         }
@@ -759,6 +759,16 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function marked_out_of_field($quiz, $question) {
+        if ($question->length == 0) {
+            $output = html_writer::span('',
+                    'instancemaxmark decimalplaces_' . quiz_get_grade_format($quiz));
+
+            $output .= html_writer::span(
+                    $this->pix_icon('spacer', '', 'moodle', array('class' => 'editicon visibleifjs', 'title' => '')),
+                    'editing_maxmark');
+            return html_writer::span($output, 'instancemaxmarkcontainer infoitem');
+        }
+
         $output = html_writer::span(quiz_format_question_grade($quiz, $question->maxmark),
                 'instancemaxmark decimalplaces_' . quiz_get_grade_format($quiz),
                 array('title' => get_string('maxmark', 'quiz')));
@@ -766,7 +776,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::span(
             html_writer::link(
                 new \moodle_url('#'),
-                $this->pix_icon('t/editstring', '', 'moodle', array('class' => 'smallicon visibleifjs', 'title' => '')),
+                $this->pix_icon('t/editstring', '', 'moodle', array('class' => 'editicon visibleifjs', 'title' => '')),
                 array(
                     'class' => 'editing_maxmark',
                     'data-action' => 'editmaxmark',

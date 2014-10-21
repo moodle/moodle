@@ -622,6 +622,12 @@ table.quizreviewsummary td.cell {
     padding: 0.2em;
     margin: 0.4em;
 }
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer .editicon {
+    width: 13px;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer.infoitem {
+    background: transparent;
+}
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form {
     display: inline;
 }
