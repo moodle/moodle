@@ -4201,7 +4201,7 @@ function count_role_users($roleid, context $context, $parent = false) {
  *   otherwise use a comma-separated list of the fields you require, not including id
  * @param string $orderby If set, use a comma-separated list of fields from course
  *   table with sql modifiers (DESC) if needed
- * @return array Array of courses, may have zero entries. Or false if query failed.
+ * @return array|bool Array of courses, if none found false is returned.
  */
 function get_user_capability_course($capability, $userid = null, $doanything = true, $fieldsexceptid = '', $orderby = '') {
     global $DB;
