@@ -281,6 +281,5 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014111000.1, 'forum');
     }
 
-
     return true;
 }

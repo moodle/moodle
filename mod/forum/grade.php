@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file performs the grading functions for forum
+ *
  * @package   mod_forum
  * @copyright 2014 Dan Marsden <dan@danmarsden.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -58,7 +60,8 @@ if ($userid !== $USER->id) {
 
 // Check advanced grading is enabled for this forum.
 $sql = "contextid = ? AND component = ? AND ". $DB->sql_isnotempty('grading_areas', 'activemethod', true, false);
-$advancedgrading = $DB->get_records_select_menu('grading_areas', $sql, array($context->id, 'mod_forum'), '', 'areaname, activemethod');
+$advancedgrading = $DB->get_records_select_menu('grading_areas', $sql, array($context->id, 'mod_forum'),
+                                                '', 'areaname, activemethod');
 
 if (!empty($postid) && !empty($advancedgrading['posts'])) {
     $post = forum_get_post_full($postid);

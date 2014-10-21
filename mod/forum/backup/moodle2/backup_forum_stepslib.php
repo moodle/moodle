@@ -95,7 +95,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
         $grades = new backup_nested_element('grades');
 
-        $grade = new backup_nested_element('grade', array('id'), array('userid', 'timecreated', 'timemodified', 'grader', 'grade', 'postid'));
+        $grade = new backup_nested_element('grade', array('id'), array(
+            'userid', 'timecreated', 'timemodified', 'grader', 'grade', 'postid'));
 
         // Build the tree
 

@@ -3181,7 +3181,8 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
  * @return void
  */
 function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=false, $reply=false, $link=false,
-                          $footer="", $highlight="", $postisread=null, $dummyifcantsee=true, $istracked=null, $return=false, $showgrade = false) {
+                          $footer="", $highlight="", $postisread=null, $dummyifcantsee=true, $istracked=null,
+                          $return=false, $showgrade = false) {
     global $USER, $CFG, $OUTPUT;
 
     require_once($CFG->libdir . '/filelib.php');
@@ -3520,7 +3521,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         if ($post->grade >= 0) {
             $grade .= $post->grade;
         }
-        $output .= html_writer::tag('div', $grade, array('class'=>'forum-post-grade'));
+        $output .= html_writer::tag('div', $grade, array('class' => 'forum-post-grade'));
     }
 
     // Output the commands
@@ -7814,22 +7815,22 @@ function forum_get_context($forumid, $context = null) {
  * @example $manager = get_grading_manager($areaid);
  * @example $manager = get_grading_manager(context_system::instance());
  * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
- * @param stdClass|int|null $context_or_areaid if $areaid is passed, no other parameter is needed
+ * @param stdClass|int|null $contextorareaid if $areaid is passed, no other parameter is needed
  * @param string|null $component the frankenstyle name of the component
  * @param string|null $area the name of the gradable area
  * @return mod_forum_grading_manager
  */
-function get_forum_grading_manager($context_or_areaid = null, $component = null, $area = null) {
+function get_forum_grading_manager($contextorareaid = null, $component = null, $area = null) {
 
     $manager = new mod_forum_grading_manager();
 
-    if (is_object($context_or_areaid)) {
-        $context = $context_or_areaid;
+    if (is_object($contextorareaid)) {
+        $context = $contextorareaid;
     } else {
         $context = null;
 
-        if (is_numeric($context_or_areaid)) {
-            $manager->load($context_or_areaid);
+        if (is_numeric($contextorareaid)) {
+            $manager->load($contextorareaid);
             return $manager;
         }
     }
@@ -7853,9 +7854,12 @@ function get_forum_grading_manager($context_or_areaid = null, $component = null,
  * Get an instance of a grading form if advanced grading is enabled.
  * This is specific to the forum, marker and student.
  *
+ * @param stdClass $forum - The forum record.
  * @param int $userid - The student userid
  * @param stdClass|false $grade - The grade record
  * @param bool $gradingdisabled
+ * @param stdClass $context
+ * @param string $area - grading area (posts/forum)
  * @return mixed gradingform_instance|null $gradinginstance
  */
 function mod_forum_get_grading_instance($forum, $userid, $grade, $gradingdisabled, $context, $area = 'posts') {
@@ -7897,7 +7901,6 @@ function mod_forum_get_grading_instance($forum, $userid, $grade, $gradingdisable
  *
  * @param stdClass $formdata - the data from the form
  * @param int $userid - the user to apply the grade to
- * @param int $attemptnumber - The attempt number to apply the grade to.
  * @param string $area - the grading area to apply the grade to.
  * @return void
  */
@@ -7948,7 +7951,8 @@ function forum_apply_grade_to_user($formdata, $userid, $area) {
  *
  * @param int $userid The user we are grading
  * @param bool $create If true the grade will be created if it does not exist
- * @param int $postid The post to retrieve the grade for. 0 means the overal forum grade.
+ * @param int $forumid - the id of the forum instance.
+ * @param int $postid The post to retrieve the grade for. 0 means the overall forum grade.
  * @return stdClass The grade record
  */
 function forum_get_user_grade($userid, $create, $forumid, $postid=0) {
@@ -7959,7 +7963,7 @@ function forum_get_user_grade($userid, $create, $forumid, $postid=0) {
         $userid = $USER->id;
     }
 
-    $params = array('forum'=>$forumid, 'userid' => $userid, 'postid' => $postid);
+    $params = array('forum' => $forumid, 'userid' => $userid, 'postid' => $postid);
 
     $grade = $DB->get_record('forum_grades', $params);
 

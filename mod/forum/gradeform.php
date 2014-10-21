@@ -17,7 +17,7 @@
 /**
  * This file contains the forms to create and edit an instance of this module
  *
- * @package   mod_form
+ * @package   mod_forum
  * @copyright 2014 Dan Marsden <dan@danmarsden.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ require_once('HTML/QuickForm/input.php');
 /**
  * forum grade form
  *
- * @package   mod_form
+ * @package   mod_forum
  * @copyright 2014 Dan Marsden <dan@danmarsden.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -94,7 +94,7 @@ class mod_forum_grade_form extends moodleform {
         $mform->addElement('hidden', 'action', 'submitgrade');
         $mform->setType('action', PARAM_ALPHA);
 
-        $buttonarray=array();
+        $buttonarray = array();
         $name = get_string('savechanges', 'forum');
         $buttonarray[] = $mform->createElement('submit', 'savegrade', $name);
 
