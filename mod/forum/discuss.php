@@ -104,7 +104,8 @@
             $forum,
             $discussiongroup,
             $modcontext,
-            'u.id'
+            'u.id',
+            true
         );
 
         // Pre-seed the subscribed_discussion caches.
