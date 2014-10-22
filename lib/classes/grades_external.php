@@ -126,11 +126,9 @@ class core_grades_external extends external_api {
             $iteminstance = $cm->instance;
         }
 
-        if (empty($cm)) {
-            // If we're dealing with multiple activites load all the module info.
-            $modinfo = get_fast_modinfo($params['courseid']);
-            $activityinstances = $modinfo->get_instances();
-        }
+        // Load all the module info.
+        $modinfo = get_fast_modinfo($params['courseid']);
+        $activityinstances = $modinfo->get_instances();
 
         $gradeparams = array('courseid' => $params['courseid']);
         if (!empty($itemtype)) {
@@ -162,9 +160,7 @@ class core_grades_external extends external_api {
                     $grades->outcomes = array();
 
                 } else {
-                    if (!$cm) {
-                        $cm = $activityinstances[$activitygrade->itemmodule][$activitygrade->iteminstance];
-                    }
+                    $cm = $activityinstances[$activitygrade->itemmodule][$activitygrade->iteminstance];
                     $instance = $cm->instance;
                     $grades = grade_get_grades($params['courseid'], $activitygrade->itemtype,
                                                 $activitygrade->itemmodule, $instance, $params['userids']);
