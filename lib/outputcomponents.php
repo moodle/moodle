@@ -1581,7 +1581,11 @@ class html_writer {
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
-                    $output .= html_writer::tag('td', html_writer::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
+                    $output .= html_writer::start_tag('tr');
+                    $output .= html_writer::start_tag('td', array('colspan' => $countcols));
+                    $output .= html_writer::tag('div', '', array('class' => 'tabledivider'));
+                    $output .= html_writer::end_tag('td');
+                    $output .= html_writer::end_tag('tr') . "\n";
                 } else {
                     // Convert array rows to html_table_rows and cell strings to html_table_cell objects
                     if (!($row instanceof html_table_row)) {
@@ -1655,8 +1659,8 @@ class html_writer {
                         }
                         $output .= html_writer::tag($tagtype, $cell->text, $tdattributes) . "\n";
                     }
+                    $output .= html_writer::end_tag('tr') . "\n";
                 }
-                $output .= html_writer::end_tag('tr') . "\n";
             }
             $output .= html_writer::end_tag('tbody') . "\n";
         }
