@@ -89,7 +89,7 @@ Feature: View gradebook when scales are used
     And I click on "Select all or one user" "select"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
-      | Test assignment one | C     | F–A   | 50.00 %    | 3.00                         |
+      | Test assignment one | C     | F–A   | 50.00 %    | 60.00 %                      |
       | Category total      | 3.00  | 0–5   | 60.00 %    | -                            |
       | Course total        | 3.00  | 0–5   | 60.00 %    | -                            |
     And I set the field "jump" to "Categories and items"
@@ -104,7 +104,7 @@ Feature: View gradebook when scales are used
     And I follow "Grades"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
-      | Test assignment one | B     | F–A   | 75.00 %    | 4.00                         |
+      | Test assignment one | B     | F–A   | 75.00 %    | 80.00 %                      |
       | Category total      | 4.00  | 0–5   | 80.00 %    | -                            |
       | Course total        | 4.00  | 0–5   | 80.00 %    | -                            |
 
@@ -158,11 +158,11 @@ Feature: View gradebook when scales are used
 
     Examples:
       | aggregation                         | coursetotal1 | coursetotal2 | coursetotal3 | coursetotal4 | coursetotal5 |overallavg | courseperc2 | courseperc3 | contrib2 | contrib3 |
-      | Mean of grades                      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
-      | Weighted mean of grades             | -            | -            | -            | -            | -            | -         | -           | -           | 0.00     | 0.00     |
-      | Simple weighted mean of grades      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
-      | Mean of grades (with extra credits) | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
-      | Median of grades                    | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
-      | Lowest grade                        | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
-      | Highest grade                       | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
-      | Mode of grades                      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00    | 50.00    |
+      | Mean of grades                      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
+      | Weighted mean of grades             | -            | -            | -            | -            | -            | -         | -           | -           | 0.00 %   | 0.00 %   |
+      | Simple weighted mean of grades      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
+      | Mean of grades (with extra credits) | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
+      | Median of grades                    | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
+      | Lowest grade                        | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
+      | Highest grade                       | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
+      | Mode of grades                      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |

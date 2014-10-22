@@ -105,18 +105,18 @@ Feature: We can use a minimum grade different than zero
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
-      | Manual item 1 | 18.18 %           | -25.00 | -25.00                       |
-      | Manual item 2 | 18.18 %           | 50.00  | 50.00                        |
-      | Manual item 3 | 33.33 %           | -80.00 | -80.00                       |
-      | Manual item 4 | 66.67 %           | -10.00 | -10.00                       |
-      | Manual item 5 | 50.00 %           | 50.00  | 50.00                        |
-      | Manual item 6 | 50.00 %           | 75.00  | 75.00                        |
+      | Manual item 1 | 18.18 %           | -25.00 | -4.55 %                      |
+      | Manual item 2 | 18.18 %           | 50.00  | 9.09 %                       |
+      | Manual item 3 | 33.33 %           | -80.00 | -14.55 %                     |
+      | Manual item 4 | 66.67 %           | -10.00 | -1.82 %                      |
+      | Manual item 5 | 50.00 %           | 50.00  | 9.09 %                       |
+      | Manual item 6 | 50.00 %           | 75.00  | 13.64 %                      |
     And I set the field "Select all or one user" to "Student 2"
     And the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
-      | Manual item 1 | 18.18 %           | 0.00   | 0.00                         |
-      | Manual item 2 | 18.18 %           | 50.00  | 50.00                        |
-      | Manual item 3 | 33.33 %           | -10.00 | -10.00                       |
-      | Manual item 4 | 66.67 %           | 50.00  | 50.00                        |
-      | Manual item 5 | 50.00 %           | 50.00  | 50.00                        |
-      | Manual item 6 | 50.00 %           | 50.00  | 50.00                        |
+      | Manual item 1 | 18.18 %           | 0.00   | 0.00 %                       |
+      | Manual item 2 | 18.18 %           | 50.00  | 9.09 %                       |
+      | Manual item 3 | 33.33 %           | -10.00 | -1.82 %                      |
+      | Manual item 4 | 66.67 %           | 50.00  | 9.09 %                       |
+      | Manual item 5 | 50.00 %           | 50.00  | 9.09 %                       |
+      | Manual item 6 | 50.00 %           | 50.00  | 9.09 %                       |

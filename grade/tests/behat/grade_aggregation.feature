@@ -394,16 +394,16 @@ Feature: We can use calculated grade totals
     And I set the field "Select all or one user" to "Student 1"
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
-      | Test assignment five | 28.57 % | 10.00 (50.00 %) | 0–20 | 6.43 |
-      | Test assignment six | 50.00 % | 5.00 (50.00 %) | 0–10 | 11.25 |
-      | Test assignment seven | 21.43 % | - | 0–15 | 0.00 |
-      | Test assignment eight | 66.67 % | 10.00 (50.00 %) | 0–20 | 10.00 |
-      | Test assignment nine | 33.33 % | 5.00 (50.00 %) | 0–10 | 5.00 |
-      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 |
-      | Test assignment one | 48.00 % | 60.00 (20.00 %) | 0–300 | 60.00 |
-      | Test assignment two | 16.00 % | 20.00 (20.00 %) | 0–100 | 20.00 |
-      | Test assignment three | 24.00 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 40.00 |
-      | Test assignment four | 24.00 % | - | 0–150 | 0.00 |
+      | Test assignment five | 28.57 % | 10.00 (50.00 %) | 0–20 | 1.03 % |
+      | Test assignment six | 50.00 % | 5.00 (50.00 %) | 0–10 | 1.80 % |
+      | Test assignment seven | 21.43 % | - | 0–15 | 0.00 % |
+      | Test assignment eight | 66.67 % | 10.00 (50.00 %) | 0–20 | 1.60 % |
+      | Test assignment nine | 33.33 % | 5.00 (50.00 %) | 0–10 | 0.80 % |
+      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 % |
+      | Test assignment one | 48.00 % | 60.00 (20.00 %) | 0–300 | 9.60 % |
+      | Test assignment two | 16.00 % | 20.00 (20.00 %) | 0–100 | 3.20 % |
+      | Test assignment three | 24.00 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 6.40 % |
+      | Test assignment four | 24.00 % | - | 0–150 | 0.00 % |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
@@ -413,13 +413,13 @@ Feature: We can use calculated grade totals
     And I set the field "Grade report" to "User report"
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
-      | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 | 8.75 |
-      | Test assignment seven | 30.00 % | - | 0–15 | 0.00 |
-      | Test assignment nine | 100.00 % | 5.00 (50.00 %) | 0–10 | 5.00 |
-      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 |
-      | Test assignment one | 61.86 % | 60.00 (20.00 %) | 0–300 | 60.0 |
-      | Test assignment three | 30.93 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 40.0 |
-      | Test assignment four | 30.93 % | - | 0–150 | 0.00 |
+      | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 | 1.80 % |
+      | Test assignment seven | 30.00 % | - | 0–15 | 0.00 % |
+      | Test assignment nine | 100.00 % | 5.00 (50.00 %) | 0–10 | 1.03 % |
+      | Test assignment ten | -( Empty ) | - | 0–15 | 0.00 % |
+      | Test assignment one | 61.86 % | 60.00 (20.00 %) | 0–300 | 12.37 % |
+      | Test assignment three | 30.93 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 8.25 % |
+      | Test assignment four | 30.93 % | - | 0–150 | 0.00 % |
 
   @javascript
   Scenario: Natural aggregation with drop lowest
@@ -587,15 +587,15 @@ Feature: We can use calculated grade totals
     And I set the field "Select all or one user" to "Student 1"
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
-      | Test assignment five  | 57.14 %           | 10.00 (50.00 %) | 10.00                        |
-      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00                         |
-      | Test assignment seven | 42.86 %           | -               | 0.00                         |
-      | Test assignment eight | 0.00 %            | 10.00 (50.00 %) | 0.00                         |
-      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 5.00                         |
-      | Test assignment ten   | 0.00 %            | -               | 0.00                         |
-      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00                         |
-      | Test assignment two   | 22.47 %           | 20.00 (20.00 %) | 20.00                        |
-      | Test assignment three | 33.71 %           | 40.00 (26.67 %) | 40.00                        |
+      | Test assignment five  | 57.14 %           | 10.00 (50.00 %) | 2.25 %                        |
+      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00 %                        |
+      | Test assignment seven | 42.86 %           | -               | 0.00 %                        |
+      | Test assignment eight | 0.00 %            | 10.00 (50.00 %) | 0.00 %                        |
+      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 1.12 %                         |
+      | Test assignment ten   | 0.00 %            | -               | 0.00 %                         |
+      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00 %                         |
+      | Test assignment two   | 22.47 %           | 20.00 (20.00 %) | 4.49 %                        |
+      | Test assignment three | 33.71 %           | 40.00 (26.67 %) | 8.99 %                        |
       | Test assignment four  | 33.71 %           | -               | 0.00                         |
     And I log out
     And I log in as "student1"
@@ -606,10 +606,10 @@ Feature: We can use calculated grade totals
     And I set the field "Grade report" to "User report"
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
-      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00                         |
-      | Test assignment seven | 100.00 %          | -               | 0.00                         |
-      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 5.00                         |
-      | Test assignment ten   | 0.00              | -               | 0.00                         |
-      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00                         |
-      | Test assignment three | 46.15 %           | 40.00 (26.67 %) | 40.00                        |
-      | Test assignment four  | 46.15 %           | -               | 0.00                         |
+      | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00 %                         |
+      | Test assignment seven | 100.00 %          | -               | 0.00 %                         |
+      | Test assignment nine  | 100.00 %          | 5.00 (50.00 %)  | 1.54 %                         |
+      | Test assignment ten   | 0.00              | -               | 0.00 %                         |
+      | Test assignment one   | 0.00 %            | 60.00 (20.00 %) | 0.00 %                         |
+      | Test assignment three | 46.15 %           | 40.00 (26.67 %) | 12.31 %                        |
+      | Test assignment four  | 46.15 %           | -               | 0.00 %                        |
