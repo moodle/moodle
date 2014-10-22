@@ -117,12 +117,16 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         grade_update('mod/quiz', $course->id, 'mod', 'quiz', $quiz->id, 0, $grade);
         $events = $sink->get_events();
-        $event = reset($events);
         $sink->close();
 
-        // Ensure we have a user_graded event.
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
+        // Ensure we have two user_graded events - for the quiz and for the course total.
+        $this->assertEquals(2, count($events));
+        $eventitem = reset($events);
+        $eventcourse = next($events);
+        $this->assertInstanceOf('\core\event\user_graded', $eventitem);
+        $this->AssertEquals($quiz->name, $eventitem->get_grade()->grade_item->get_name());
+        $this->assertInstanceOf('\core\event\user_graded', $eventcourse);
+        $this->AssertEquals('Course total', $eventcourse->get_grade()->grade_item->get_name());
 
         // Get the grade item.
         $gradeitem = grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'quiz', 'iteminstance' => $quiz->id,
