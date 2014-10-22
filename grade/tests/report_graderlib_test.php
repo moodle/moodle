@@ -80,6 +80,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         // Grade above max. Should be pulled down to max.
         $toobig = 200.00;
         $data->grade[$student->id][$forum1->id] = $toobig;
+        $data->timepageload = time();
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 1);
 
@@ -89,6 +90,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         // Grade below min. Should be pulled up to min.
         $toosmall = -10.00;
         $data->grade[$student->id][$forum1->id] = $toosmall;
+        $data->timepageload = time();
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 1);
 
@@ -99,6 +101,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $CFG->unlimitedgrades = 1;
 
         $data->grade[$student->id][$forum1->id] = $toobig;
+        $data->timepageload = time();
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 0);
 
