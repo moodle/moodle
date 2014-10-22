@@ -3712,6 +3712,12 @@ class core_renderer_cli extends core_renderer {
         }
         return "!! $message !!\n";
     }
+
+    /**
+     * There is no footer for a cli request, however we must override the
+     * footer method to prevent the default footer.
+     */
+    public function footer() {}
 }
 
 
