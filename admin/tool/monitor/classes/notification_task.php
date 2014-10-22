@@ -45,7 +45,9 @@ class notification_task extends \core\task\adhoc_task {
             $subscriptionids = $data->subscriptionids;
             foreach ($subscriptionids as $id) {
                 if ($message = $this->generate_message($id, $eventobj)) {
+                    mtrace("Sending message to the user with id " . $message->userto->id . " for the subscription with id $id...");
                     message_send($message);
+                    mtrace("Sent.");
                 }
             }
         }
@@ -68,6 +70,10 @@ class notification_task extends \core\task\adhoc_task {
             return false;
         }
         $user = \core_user::get_user($subscription->userid);
+        if (empty($user)) {
+            // User doesn't exist. Should never happen, nothing to do return.
+            return false;
+        }
         $context = \context_user::instance($user->id, IGNORE_MISSING);
         if ($context === false) {
             // User context doesn't exist. Should never happen, nothing to do return.
