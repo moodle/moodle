@@ -507,7 +507,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Create an assignment with a description that should be hidden.
         $assign = $this->create_instance(array('duedate'=>$now + 160,
                                                'alwaysshowdescription'=>false,
-                                               'allowsubmissionsfromdate'=>$now+3,
+                                               'allowsubmissionsfromdate'=>$now + 60,
                                                'intro'=>'Some text'));
 
         // Get the event from the calendar.
@@ -515,7 +515,11 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $event = $DB->get_record('event', $params);
 
         $this->assertEmpty($event->description);
-        sleep(6);
+
+        // Change the allowsubmissionfromdate to the past - do this directly in the DB
+        // because if we call the assignment update method - it will update the calendar
+        // and we want to test that this works from cron.
+        $DB->set_field('assign', 'allowsubmissionsfromdate', $now - 60, array('id'=>$assign->get_instance()->id));
         // Run cron to update the event in the calendar.
         assign::cron();
         $event = $DB->get_record('event', $params);
