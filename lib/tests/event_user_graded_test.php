@@ -108,115 +108,131 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $quizitemparams = array('itemtype' => 'mod', 'itemmodule' => 'quiz', 'iteminstance' => $quiz->id,
+            'courseid' => $course->id);
+        $gradeitem = grade_item::fetch($quizitemparams);
+        $courseitem = grade_item::fetch_course_item($course->id);
 
         // Now mark the quiz using grade_update as this is the function that modules use.
         $grade = array();
         $grade['userid'] = $user->id;
-        $grade['rawgrade'] = 50;
+        $grade['rawgrade'] = 60;
 
         $sink = $this->redirectEvents();
         grade_update('mod/quiz', $course->id, 'mod', 'quiz', $quiz->id, 0, $grade);
         $events = $sink->get_events();
         $sink->close();
 
-        // Ensure we have two user_graded events - for the quiz and for the course total.
+        // Ensure we have two user_graded events, one for the item, one for the course.
         $this->assertEquals(2, count($events));
-        $eventitem = reset($events);
-        $eventcourse = next($events);
-        $this->assertInstanceOf('\core\event\user_graded', $eventitem);
-        $this->AssertEquals($quiz->name, $eventitem->get_grade()->grade_item->get_name());
-        $this->assertInstanceOf('\core\event\user_graded', $eventcourse);
-        $this->AssertEquals('Course total', $eventcourse->get_grade()->grade_item->get_name());
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Get the grade item.
-        $gradeitem = grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'quiz', 'iteminstance' => $quiz->id,
-            'courseid' => $course->id));
-
-        // Let's alter the grade in the DB so when we call regrade_final_grades() it is changed and an event is called.
-        $sql = "UPDATE {grade_grades}
-                   SET finalgrade = '2'
-                 WHERE itemid = :itemid
-                   AND userid = :userid";
-        $DB->execute($sql, array('itemid' => $gradeitem->id, 'userid' => $user->id));
-
-        // Now check when we regrade this that there is a user graded event.
-        $sink = $this->redirectEvents();
-        $gradeitem->regrade_final_grades();
-        $events = $sink->get_events();
-        $event = reset($events);
-        $sink->close();
-
-        // Ensure we have a user_graded event.
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
-
-        // Remove the grades.
+        // Remove the grades, force the regrading and re-fetch the item. This is needed because the item
+        // will be set as needing an update when the grades are deleted.
         $gradeitem->delete_all_grades();
+        grade_regrade_final_grades($course->id);
+        $gradeitem = grade_item::fetch($quizitemparams);
 
-        // Now, create a grade using update_raw_grade().
+        // Now, create a grade using grade_item::update_final_grade().
         $sink = $this->redirectEvents();
-        $gradeitem->update_raw_grade($user->id, 50);
+        $gradeitem->update_raw_grade($user->id, 10);
         $events = $sink->get_events();
-        $event = reset($events);
         $sink->close();
 
-        // Ensure we have a user_graded event.
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
+        // Ensure we have two user_graded events, one for the item, one for the course.
+        $this->assertEquals(2, count($events));
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Now, update this grade using update_raw_grade().
+        // Now, update this grade using grade_item::update_raw_grade().
         $sink = $this->redirectEvents();
-        $gradeitem->update_raw_grade($user->id, 100);
+        $gradeitem->update_raw_grade($user->id, 20);
         $events = $sink->get_events();
-        $event = reset($events);
         $sink->close();
 
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
+        // Ensure we have two user_graded events, one for the item, one for the course.
+        $this->assertEquals(2, count($events));
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Remove the grades.
+        // Remove the grades, force the regrading and re-fetch the item. This is needed because the item
+        // will be set as needing an update when the grades are deleted.
         $gradeitem->delete_all_grades();
+        grade_regrade_final_grades($course->id);
+        $gradeitem = grade_item::fetch($quizitemparams);
 
-        // Now, create a grade using update_final_grade().
+        // Now, create a grade using grade_item::update_final_grade().
         $sink = $this->redirectEvents();
-        $gradeitem->update_final_grade($user->id, 50);
+        $gradeitem->update_final_grade($user->id, 30);
         $events = $sink->get_events();
-        $event = reset($events);
         $sink->close();
 
-        // Ensure we have a user_graded event.
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
+        // Ensure we have two user_graded events, one for the item, one for the course.
+        $this->assertEquals(2, count($events));
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Now, update this grade using update_final_grade().
+        // Now, update this grade using grade_item::update_final_grade().
         $sink = $this->redirectEvents();
-        $gradeitem->update_final_grade($user->id, 100);
+        $gradeitem->update_final_grade($user->id, 40);
         $events = $sink->get_events();
-        $event = reset($events);
         $sink->close();
 
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
+        // Ensure we have two user_graded events, one for the item, one for the course.
+        $this->assertEquals(2, count($events));
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
+
+        // Remove the overridden flag from the grade, this was set by grade_item::update_final_grade().
+        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user->id));
+        $gradegrade->set_overridden(false, false);
 
         // Let's change the calculation to anything that won't cause an error.
         $calculation = calc_formula::unlocalize("=3");
         $gradeitem->set_calculation($calculation);
 
-        // Let's alter the grade in the DB so when we call compute() it is changed and an event is called.
-        $sql = "UPDATE {grade_grades}
-                   SET finalgrade = 2, overridden = 0
-                 WHERE itemid = :itemid
-                   AND userid = :userid";
-        $DB->execute($sql, array('itemid' => $gradeitem->id, 'userid' => $user->id));
-
-        // Now check when we compute that there is a user graded event.
+        // Now force the computation of the grade.
         $sink = $this->redirectEvents();
-        $gradeitem->compute();
+        grade_regrade_final_grades($course->id);
         $events = $sink->get_events();
-        $event = reset($events);
         $sink->close();
 
-        $this->assertEquals(1, count($events));
-        $this->assertInstanceOf('\core\event\user_graded', $event);
+        // Ensure we have two user_graded events, one for the item, one for the course.
+        $this->assertEquals(2, count($events));
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
+
+        // Now, let's trick the gradebook, we manually update a grade, and flag the grade item as
+        // needing a regrading, so we can trigger the event in grade_item::regrade_final_grades().
+        $gradeitem = grade_item::fetch($quizitemparams);
+        $gradeitem->set_calculation('');
+        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user->id));
+        $gradegrade->rawgrade = 50;
+        $gradegrade->update();
+
+        $sink = $this->redirectEvents();
+        grade_regrade_final_grades($course->id);
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Ensure we have two user_graded events, one for the item, one for the course.
+        $this->assertEquals(2, count($events));
+        $this->assertInstanceOf('\core\event\user_graded', $events[0]);
+        $this->assertEquals($gradeitem->id, $events[0]->other['itemid']);
+        $this->assertInstanceOf('\core\event\user_graded', $events[1]);
+        $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
     }
 }
