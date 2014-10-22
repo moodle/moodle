@@ -608,12 +608,16 @@ class manager {
     /**
      * Terminate all sessions of given user unconditionally.
      * @param int $userid
+     * @param string $keepsid keep this sid if present
      */
-    public static function kill_user_sessions($userid) {
+    public static function kill_user_sessions($userid, $keepsid = null) {
         global $DB;
 
         $sessions = $DB->get_records('sessions', array('userid'=>$userid), 'id DESC', 'id, sid');
         foreach ($sessions as $session) {
+            if ($keepsid and $keepsid === $session->sid) {
+                continue;
+            }
             self::kill_session($session->sid);
         }
     }
