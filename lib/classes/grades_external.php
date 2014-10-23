@@ -55,7 +55,9 @@ class core_grades_external extends external_api {
     }
 
     /**
-     * Retrieve grade items and, optionally, student grades
+     * Returns student course total grade and grades for activities.
+     * This function does not return category or manual items.
+     * This function is suitable for managers or teachers not students.
      *
      * @param  int $courseid        Course id
      * @param  string $component    Component name
@@ -85,6 +87,8 @@ class core_grades_external extends external_api {
             $exceptionparam->courseid = $params['courseid'];
             throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
+
+        require_capability('moodle/grade:viewhidden', $coursecontext);
 
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
