@@ -150,8 +150,8 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
             $this->load_test_data($assignmentname, $student1rawgrade, $student2rawgrade);
         $assigmentcm = get_coursemodule_from_id('assign', $assignment->id, 0, false, MUST_EXIST);
 
-        // Student requesting their own grade for the assignment.
-        $this->setUser($student1);
+        // Teacher requesting a student grade for the assignment.
+        $this->setUser($teacher);
         $grades = core_grades_external::get_grades(
             $course->id,
             'mod_assign',
@@ -161,7 +161,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         $grades = external_api::clean_returnvalue(core_grades_external::get_grades_returns(), $grades);
         $this->assertEquals($student1rawgrade, $this->get_activity_student_grade($grades, $assigmentcm->id, $student1->id));
 
-        // Student requesting all of their grades in a course.
+        // Teacher requesting all the grades of student1 in a course.
         $grades = core_grades_external::get_grades(
             $course->id,
             null,
@@ -177,7 +177,20 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($outcome['name'], 'Team work');
         $this->assertEquals(0, $this->get_outcome_student_grade($grades, $assigmentcm->id, $student1->id));
 
+        // Teacher requesting all the grades of all the students in a course.
+        $grades = core_grades_external::get_grades(
+            $course->id,
+            null,
+            null,
+            array($student1->id, $student2->id)
+        );
+        $grades = external_api::clean_returnvalue(core_grades_external::get_grades_returns(), $grades);
+        $this->assertTrue(count($grades['items']) == 2);
+        $this->assertTrue(count($grades['items'][0]['grades']) == 2);
+        $this->assertTrue(count($grades['items'][1]['grades']) == 2);
+
         // Student requesting another student's grade for the assignment (should fail).
+        $this->setUser($student1);
         try {
             $grades = core_grades_external::get_grades(
                 $course->id,
@@ -190,16 +203,19 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
             $this->assertTrue(true);
         }
 
-        // Parent requesting their child's grade for the assignment.
+        // Parent requesting their child's grade for the assignment (should fail).
         $this->setUser($parent);
-        $grades = core_grades_external::get_grades(
-            $course->id,
-            'mod_assign',
-            $assigmentcm->id,
-            array($student1->id)
-        );
-        $grades = external_api::clean_returnvalue(core_grades_external::get_grades_returns(), $grades);
-        $this->assertEquals($student1rawgrade, $this->get_activity_student_grade($grades, $assigmentcm->id, $student1->id));
+        try {
+            $grades = core_grades_external::get_grades(
+                $course->id,
+                'mod_assign',
+                $assigmentcm->id,
+                array($student1->id)
+            );
+            $this->fail('moodle_exception expected');
+        } catch (moodle_exception $ex) {
+            $this->assertTrue(true);
+        }
 
         // Parent requesting another student's grade for the assignment(should fail).
         try {
@@ -293,17 +309,6 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         // Check it's definitely hidden.
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id);
         $this->assertEquals($grades->items[0]->hidden, 1);
-
-        // Student should now not be able to see it.
-        $this->setUser($student1);
-        $grades = core_grades_external::get_grades(
-            $course->id,
-            'mod_assign',
-            $assigmentcm->id,
-            array($student1->id)
-        );
-        $grades = external_api::clean_returnvalue(core_grades_external::get_grades_returns(), $grades);
-        $this->assertEquals(null, $this->get_activity($grades, $assigmentcm->id));
 
         // Teacher should still be able to see the hidden grades.
         $this->setUser($teacher);

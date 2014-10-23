@@ -104,9 +104,11 @@ $functions = array(
     'core_grades_get_grades' => array(
         'classname'     => 'core_grades_external',
         'methodname'    => 'get_grades',
-        'description'   => 'Returns grade item details and optionally student grades.',
+        'description'   => 'Returns student course total grade and grades for activities.
+                                This function does not return category or manual items.
+                                This function is suitable for managers or teachers not students.',
         'type'          => 'read',
-        'capabilities'  => 'moodle/grade:view, moodle/grade:viewall',
+        'capabilities'  => 'moodle/grade:view, moodle/grade:viewall, moodle/grade:viewhidden',
     ),
 
     'core_grades_update_grades' => array(
@@ -946,7 +948,6 @@ $services = array(
             'mod_assign_reveal_identities',
             'message_airnotifier_is_system_configured',
             'message_airnotifier_are_notification_preferences_configured',
-            'core_grades_get_grades',
             'core_grades_update_grades',
             'mod_forum_get_forums_by_courses',
             'mod_forum_get_forum_discussions',
