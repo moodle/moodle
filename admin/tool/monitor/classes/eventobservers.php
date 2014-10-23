@@ -54,8 +54,12 @@ class eventobservers {
      */
     public static function course_deleted(\core\event\course_deleted $event) {
         $rules = rule_manager::get_rules_by_courseid($event->courseid);
+        $context = null;
+        if ($event->contextlevel == CONTEXT_COURSE) {
+            $context = $event->get_context();
+        }
         foreach ($rules as $rule) {
-            rule_manager::delete_rule($rule->id);
+            rule_manager::delete_rule($rule->id, $context);
         }
     }
 
@@ -156,6 +160,30 @@ class eventobservers {
                 $count = $DB->count_records_sql($sql, $params);
                 if (!empty($count) && $count >= $subscription->frequency) {
                     $idstosend[] = $subscription->id;
+
+                    // Trigger a subscription_criteria_met event.
+                    // It's possible that the course has been deleted since the criteria was met, so in that case use
+                    // the system context. Set it here and change later if needed.
+                    $context = \context_system::instance();
+                    // We can't perform if (!empty($subscription->courseid)) below as it uses the magic method
+                    // __get to return the variable, which will always result in being empty.
+                    $courseid = $subscription->courseid;
+                    if (!empty($courseid)) {
+                        if ($coursecontext = \context_course::instance($courseid, IGNORE_MISSING)) {
+                            $context = $coursecontext;
+                        }
+                    }
+
+                    $params = array(
+                        'userid' => $subscription->userid,
+                        'courseid' => $subscription->courseid,
+                        'context' => $context,
+                        'other' => array(
+                            'subscriptionid' => $subscription->id
+                        )
+                    );
+                    $event = \tool_monitor\event\subscription_criteria_met::create($params);
+                    $event->trigger();
                 }
             }
             if (!empty($idstosend)) {
