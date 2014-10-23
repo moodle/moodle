@@ -623,6 +623,62 @@ class manager {
     }
 
     /**
+     * Terminate other sessions of current user depending
+     * on $CFG->limitconcurrentlogins restriction.
+     *
+     * This is expected to be called right after complete_user_login().
+     *
+     * NOTE:
+     *  * Do not use from SSO auth plugins, this would not work.
+     *  * Do not use from web services because they do not have sessions.
+     *
+     * @param int $userid
+     * @param string $sid session id to be always keep, usually the current one
+     * @return void
+     */
+    public static function apply_concurrent_login_limit($userid, $sid = null) {
+        global $CFG, $DB;
+
+        // NOTE: the $sid parameter is here mainly to allow testing,
+        //       in most cases it should be current session id.
+
+        if (isguestuser($userid) or empty($userid)) {
+            // This applies to real users only!
+            return;
+        }
+
+        if (empty($CFG->limitconcurrentlogins) or $CFG->limitconcurrentlogins < 0) {
+            return;
+        }
+
+        $count = $DB->count_records('sessions', array('userid' => $userid));
+
+        if ($count <= $CFG->limitconcurrentlogins) {
+            return;
+        }
+
+        $i = 0;
+        $select = "userid = :userid";
+        $params = array('userid' => $userid);
+        if ($sid) {
+            if ($DB->record_exists('sessions', array('sid' => $sid, 'userid' => $userid))) {
+                $select .= " AND sid <> :sid";
+                $params['sid'] = $sid;
+                $i = 1;
+            }
+        }
+
+        $sessions = $DB->get_records_select('sessions', $select, $params, 'timecreated DESC', 'id, sid');
+        foreach ($sessions as $session) {
+            $i++;
+            if ($i <= $CFG->limitconcurrentlogins) {
+                continue;
+            }
+            self::kill_session($session->sid);
+        }
+    }
+
+    /**
      * Set current user.
      *
      * @param \stdClass $user record

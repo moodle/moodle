@@ -254,6 +254,8 @@ function core_login_process_password_set($token) {
         }
         complete_user_login($user); // Triggers the login event.
 
+        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+
         $urltogo = core_login_get_return_url();
         unset($SESSION->wantsurl);
         redirect($urltogo, get_string('passwordset'), 1);

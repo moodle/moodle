@@ -184,6 +184,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     /// Let's get them all set up.
         complete_user_login($user);
 
+        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+
         // sets the username cookie
         if (!empty($CFG->nolastloggedin)) {
             // do not store last logged in user in cookie
