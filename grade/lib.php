@@ -897,7 +897,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
 
     $returnval .= print_natural_aggregation_upgrade_notice($courseid,
                                                            context_course::instance($courseid),
-                                                           '/grade/report/' . $active_plugin . '/index.php',
+                                                           $PAGE->url,
                                                            $return);
 
     if ($return) {
