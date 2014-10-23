@@ -107,5 +107,8 @@ if (empty($totalrules)) {
         echo $link;
     }
     echo html_writer::end_div();
+} else if (has_capability('tool/monitor:managerules', $context)) {
+    $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
+    echo $renderer->render_rules_link($manageurl);
 }
 echo $OUTPUT->footer();

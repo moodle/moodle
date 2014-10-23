@@ -90,4 +90,8 @@ if (!empty($action) && $ruleid) {
 $renderable = new \tool_monitor\output\managerules\renderable('toolmonitorrules', $manageurl, $courseid);
 $renderer = $PAGE->get_renderer('tool_monitor', 'managerules');
 echo $renderer->render($renderable);
+if (has_capability('tool/monitor:subscribe', $context)) {
+    $manageurl = new moodle_url("/admin/tool/monitor/index.php", array('courseid' => $courseid));
+    echo $renderer->render_subscriptions_link($manageurl);
+}
 echo $OUTPUT->footer();
