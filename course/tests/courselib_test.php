@@ -34,6 +34,13 @@ require_once($CFG->dirroot . '/tag/lib.php');
 class core_course_courselib_testcase extends advanced_testcase {
 
     /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
+    /**
      * Set forum specific test values for calling create_module().
      *
      * @param object $moduleinfo - the moduleinfo to add some specific values - passed in reference.
