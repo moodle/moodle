@@ -75,7 +75,6 @@ echo $OUTPUT->doctype() ?>
             <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
         </div>
         <?php echo $OUTPUT->page_heading(); ?>
-        <?php echo $OUTPUT->user_menu(); ?>
         <div id="course-header">
             <?php echo $OUTPUT->course_header(); ?>
         </div>
