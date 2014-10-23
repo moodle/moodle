@@ -49,6 +49,26 @@ class rule_manager {
         $ruledata->timemodified = $now;
 
         $ruledata->id = $DB->insert_record('tool_monitor_rules', $ruledata);
+
+        // Trigger a rule created event.
+        if ($ruledata->id) {
+            if (!empty($ruledata->courseid)) {
+                $courseid = $ruledata->courseid;
+                $context = \context_course::instance($ruledata->courseid);
+            } else {
+                $courseid = 0;
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $ruledata->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\rule_created::create($params);
+            $event->trigger();
+        }
+
         return new rule($ruledata);
     }
 
@@ -85,14 +105,47 @@ class rule_manager {
      * Delete a rule and associated subscriptions, by rule id.
      *
      * @param int $ruleid id of rule to be deleted.
+     * @param \context|null $coursecontext the context of the course - this is passed when we
+     *      can not get the context via \context_course as the course has been deleted.
      *
      * @return bool
      */
-    public static function delete_rule($ruleid) {
+    public static function delete_rule($ruleid, $coursecontext = null) {
         global $DB;
 
-        subscription_manager::remove_all_subscriptions_for_rule($ruleid);
-        return $DB->delete_records('tool_monitor_rules', array('id' => $ruleid));
+        subscription_manager::remove_all_subscriptions_for_rule($ruleid, $coursecontext);
+
+        // Retrieve the rule from the DB before we delete it, so we have a record when we trigger a rule deleted event.
+        $rule = $DB->get_record('tool_monitor_rules', array('id' => $ruleid));
+
+        $success = $DB->delete_records('tool_monitor_rules', array('id' => $ruleid));
+
+        // If successful trigger a rule deleted event.
+        if ($success) {
+            // It is possible that we are deleting rules associated with a deleted course, so we should be
+            // passing the context as the second parameter.
+            if (!is_null($coursecontext)) {
+                $context = $coursecontext;
+                $courseid = $rule->courseid;
+            } else if (!empty($rule->courseid) && ($context = \context_course::instance($rule->courseid,
+                    IGNORE_MISSING))) {
+                $courseid = $rule->courseid;
+            } else {
+                $courseid = 0;
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $rule->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\rule_deleted::create($params);
+            $event->add_record_snapshot('tool_monitor_rules', $rule);
+            $event->trigger();
+        }
+
+        return $success;
     }
 
     /**
@@ -127,7 +180,34 @@ class rule_manager {
             throw new \coding_exception('Invalid rule ID.');
         }
         $ruledata->timemodified = time();
-        return $DB->update_record('tool_monitor_rules', $ruledata);
+
+        $success = $DB->update_record('tool_monitor_rules', $ruledata);
+
+        // If successful trigger a rule updated event.
+        if ($success) {
+            // If we do not have the course id we need to retrieve it.
+            if (!isset($ruledata->courseid)) {
+                $courseid = $DB->get_field('tool_monitor_rules', 'courseid', array('id' => $ruledata->id), MUST_EXIST);
+            } else {
+                $courseid = $ruledata->courseid;
+            }
+
+            if (!empty($courseid)) {
+                $context = \context_course::instance($courseid);
+            } else {
+                $context = \context_system::instance();
+            }
+
+            $params = array(
+                'objectid' => $ruledata->id,
+                'courseid' => $courseid,
+                'context' => $context
+            );
+            $event = \tool_monitor\event\rule_updated::create($params);
+            $event->trigger();
+        }
+
+        return $success;
     }
 
     /**
