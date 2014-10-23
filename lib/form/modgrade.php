@@ -207,30 +207,82 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
      *
      * @param string $event Name of event
      * @param mixed $arg event arguments
-     * @param object $caller calling object
+     * @param moodleform $caller calling object
      * @return mixed
      */
     public function onQuickFormEvent($event, $arg, &$caller) {
-        global $COURSE;
-
         switch ($event) {
-            case 'updateValue':
-                $value = $this->_findValue($caller->_constantValues);
-                if (null === $value) {
-                    if ($caller->isSubmitted()) {
-                        $value = $this->_findValue($caller->_submitValues);
-                    } else {
-                        $value = $this->_findValue($caller->_defaultValues);
-                    }
-                }
-
-                $name = $this->getName();
+            case 'createElement':
+                // The first argument is the name.
+                $name = $arg[0];
 
                 // Set disable actions.
                 $caller->disabledIf($name.'[modgrade_scale]', $name.'[modgrade_type]', 'neq', 'scale');
                 $caller->disabledIf($name.'[modgrade_point]', $name.'[modgrade_type]', 'neq', 'point');
 
+                // Set validation rules for the sub-elements belonging to this element.
+                // A handy note: the parent scope of a closure is the function in which the closure was declared.
+                // Because of this using $this is safe despite the closures being called statically.
+                // A nasty magic hack!
+                $checkmaxgrade = function($val) {
+                    // Closure to validate a max points value. See the note above about scope if this confuses you.
+                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'point') {
+                        if (!isset($val['modgrade_point'])) {
+                            return false;
+                        }
+                        return $this->validate_point($val['modgrade_point']);
+                    }
+                    return true;
+                };
+                $checkvalidscale = function($val) {
+                    // Closure to validate a scale value. See the note above about scope if this confuses you.
+                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'scale') {
+                        if (!isset($val['modgrade_scale'])) {
+                            return false;
+                        }
+                        return $this->validate_scale($val['modgrade_scale']);
+                    }
+                    return true;
+                };
+
+                $maxgradeexceeded = get_string('modgradeerrorbadpoint', 'grades', get_config('core', 'gradepointmax'));
+                $invalidscale = get_string('modgradeerrorbadscale', 'grades');
+                // When creating the rules the sixth arg is $force, we set it to true because otherwise the form
+                // will attempt to validate the existence of the element, we don't want this because the element
+                // is being created right now and doesn't actually exist as a registered element yet.
+                $caller->addRule($name, $maxgradeexceeded, 'callback', $checkmaxgrade, 'server', false, true);
+                $caller->addRule($name, $invalidscale, 'callback', $checkvalidscale, 'server', false, true);
+
+                break;
+
+            case 'updateValue':
+                // As this is a group element with no value of its own we are only interested in situations where the
+                // default value or a constant value are being provided to the actual element.
+                // In this case we expect an int that is going to translate to a scale if negative, or to max points
+                // if positive.
+
+                // A constant value should be given as an int.
+                // The default value should be an int and should really be $CFG->gradepointdefault.
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    if ($caller->isSubmitted()) {
+                        break;
+                    }
+                    $value = $this->_findValue($caller->_defaultValues);
+                }
+
+                if (!is_null($value) && !is_scalar($value)) {
+                    // Something unexpected (likely an array of subelement values) has been given - this will be dealt
+                    // with somewhere else - where exactly... likely the subelements.
+                    debugging('An invalid value (type '.gettype($value).') has arrived at '.__METHOD__, DEBUG_DEVELOPER);
+                    break;
+                }
+
                 // Set element state for existing data.
+                // This is really a pretty hacky thing to do, when data is being set the group element is called
+                // with the data first and the subelements called afterwards.
+                // This means that the subelements data (inc const and default values) can be overridden by form code.
+                // So - when we call this code really we can't be sure that will be the end value for the element.
                 if (!empty($this->_elements)) {
                     if (!empty($value)) {
                         if ($value < 0) {
@@ -245,38 +297,10 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
                         $this->_elements[7]->setValue('');
                     }
                 }
-
-                // Value Validation.
-                if ($name && $caller->elementExists($name)) {
-                    $checkmaxgrade = function($val) {
-                        if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'point') {
-                            if (!isset($val['modgrade_point'])) {
-                                return false;
-                            }
-                            return $this->validate_point($val['modgrade_point']);
-                        }
-                        return true;
-                    };
-
-                    $checkvalidscale = function($val) {
-                        if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'scale') {
-                            if (!isset($val['modgrade_scale'])) {
-                                return false;
-                            }
-                            return $this->validate_scale($val['modgrade_scale']);
-                        }
-                        return true;
-                    };
-
-                    $maxgradeexceeded = get_string('modgradeerrorbadpoint', 'grades', get_config('core', 'gradepointmax'));
-                    $invalidscale = get_string('modgradeerrorbadscale', 'grades');
-                    $caller->addRule($name, $maxgradeexceeded, 'callback', $checkmaxgrade);
-                    $caller->addRule($name, $invalidscale, 'callback', $checkvalidscale);
-                }
                 break;
-
         }
 
+        // Always let the parent do its thing!
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
 
