@@ -703,6 +703,8 @@ class grade_grade extends grade_object {
             } else if ($grade_grade->is_hidden()) {
                 $hiddenfound = true;
                 $altered[$grade_grade->itemid] = null;
+                $alteredaggregationstatus[$grade_grade->itemid] = 'dropped';
+                $alteredaggregationweight[$grade_grade->itemid] = 0;
             } else if ($grade_grade->is_locked() or $grade_grade->is_overridden()) {
                 // no need to recalculate locked or overridden grades
             } else {
