@@ -51,6 +51,7 @@ $string['frequency'] = 'Frequency';
 $string['invalidmodule'] = 'Invalid module';
 $string['norules'] = 'There are no rules you can subscribe to.';
 $string['manageruleslink'] = 'You can manage rules from {$a} page.';
+$string['managesubscriptionslink'] = 'You can subscribe to rules from the {$a} page.';
 $string['moduleinstance'] = 'Module instance';
 $string['manage'] = 'Manage';
 $string['managesubscriptions'] = 'Event monitoring';

@@ -68,7 +68,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Html to add a button for adding a new rul.
+     * Html to add a button for adding a new rule.
      *
      * @param int $courseid course id.
      *
@@ -80,5 +80,20 @@ class renderer extends \plugin_renderer_base {
         $button = \html_writer::tag('button', get_string('addrule', 'tool_monitor'));
         $addurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/edit.php', array('courseid' => $courseid));
         return \html_writer::link($addurl, $button);
+    }
+
+    /**
+     * Html to add a link to go to the subscription page.
+     *
+     * @param moodle_url $manageurl The url of the subscription page.
+     *
+     * @return string html for the link to the subscription page.
+     */
+    public function render_subscriptions_link($manageurl) {
+        echo \html_writer::start_div();
+        $a = \html_writer::link($manageurl, get_string('managesubscriptions', 'tool_monitor'));
+        $link = \html_writer::tag('span', get_string('managesubscriptionslink', 'tool_monitor', $a));
+        echo $link;
+        echo \html_writer::end_div();
     }
 }

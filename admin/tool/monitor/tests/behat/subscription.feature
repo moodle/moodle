@@ -123,3 +123,16 @@ Feature: tool_monitor_subscriptions
     When  I follow "Messages"
     And   I follow "Do not reply to this email (1)"
     Then  I should see "The course was viewed."
+
+  Scenario: Navigating via quick link to rules
+    Given I log in as "admin"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    Then  I should see "You can manage rules from Event monitoring rules page."
+    And   I follow "Event monitoring rules"
+    And   I should see "Event monitor"
+    And   I should see "You can subscribe to rules from the Event monitoring page."
+    And   I log out
+    And   I log in as "teacher1"
+    And   I follow "Course 1"
+    And   I navigate to "Event monitoring" node in "My profile settings"
+    Then  I should not see "You can manage rules from Event monitoring rules page."
