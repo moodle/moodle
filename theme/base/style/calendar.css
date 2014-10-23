@@ -81,7 +81,8 @@
 }
 .ical-link:hover,
 .ical-link:active,
-.ical-link:focus {
+.ical-link:focus,
+.ical-link:visited {
     color: #fff;
     text-decoration: none;
 }
