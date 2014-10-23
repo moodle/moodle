@@ -244,30 +244,7 @@ class question_type {
     public function display_question_editing_page($mform, $question, $wizardnow) {
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
-
         echo $OUTPUT->heading_with_help($heading, 'pluginname', $this->plugin_name());
-
-        $permissionstrs = array();
-        if (!empty($question->id)) {
-            if ($question->formoptions->canedit) {
-                $permissionstrs[] = get_string('permissionedit', 'question');
-            }
-            if ($question->formoptions->canmove) {
-                $permissionstrs[] = get_string('permissionmove', 'question');
-            }
-            if ($question->formoptions->cansaveasnew) {
-                $permissionstrs[] = get_string('permissionsaveasnew', 'question');
-            }
-        }
-        if (count($permissionstrs)) {
-            echo $OUTPUT->heading(get_string('permissionto', 'question'), 3);
-            $html = '<ul>';
-            foreach ($permissionstrs as $permissionstr) {
-                $html .= '<li>'.$permissionstr.'</li>';
-            }
-            $html .= '</ul>';
-            echo $OUTPUT->box($html, 'boxwidthnarrow boxaligncenter generalbox');
-        }
         $mform->display();
     }
 
