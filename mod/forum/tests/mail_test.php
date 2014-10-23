@@ -55,9 +55,9 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $messages = $helper->mailsink->get_messages();
         $this->assertEquals(0, count($messages));
 
-        // Forcibly reduce the maxeditingtime to a one second to ensure that
-        // messages are sent out.
-        $CFG->maxeditingtime = 1;
+        // Forcibly reduce the maxeditingtime to a second in the past to
+        // ensure that messages are sent out.
+        $CFG->maxeditingtime = -1;
 
         // Ensure that we don't prevent e-mail as this will cause unit test failures.
         $CFG->noemailever = false;
@@ -107,6 +107,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
      * @param array An array containing the discussion object, and the post object
      */
     protected function helper_post_to_forum($forum, $author) {
+        global $DB;
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Create a discussion in the forum, and then add a post to that discussion.
@@ -116,13 +117,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $record->forum = $forum->id;
         $discussion = $generator->create_discussion($record);
 
-        $record = new stdClass();
-        $record->course = $forum->course;
-        $record->userid = $author->id;
-        $record->forum = $forum->id;
-        $record->discussion = $discussion->id;
-        $record->mailnow = 1;
-        $post = $generator->create_post($record);
+        // Retrieve the post which was created by create_discussion.
+        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
 
         return array($discussion, $post);
     }
