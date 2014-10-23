@@ -33,6 +33,7 @@ $string['exclude'] = 'Exclude';
 $string['excludeall'] = 'Exclude all grades';
 $string['excludefor'] = 'Exclude for {$a}';
 $string['excludenone'] = 'Exclude no grades';
+$string['eventgradereportviewed'] = 'Grade single view report viewed.';
 $string['feedbackfor'] = 'Feedback for {$a}';
 $string['filtergrades'] = 'Show grades for {$a}.';
 $string['gradefor'] = 'Grade for {$a}';
