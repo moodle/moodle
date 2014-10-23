@@ -773,12 +773,10 @@ function lesson_supports($feature) {
 function lesson_extend_settings_navigation($settings, $lessonnode) {
     global $PAGE, $DB;
 
-    $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
-
     $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
     $lessonnode->add(get_string('preview', 'lesson'), $url);
 
-    if ($canedit) {
+    if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('edit', 'lesson'), $url);
     }
@@ -791,7 +789,7 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
         $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
     }
 
-    if ($canedit) {
+    if (has_capability('mod/lesson:grade', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
     }
