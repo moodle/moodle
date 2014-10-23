@@ -202,7 +202,7 @@ class edit_outcomeitem_form extends moodleform {
 
                 $parent_category->apply_forced_settings();
 
-                if (!$parent_category->is_aggregationcoef_used()) {
+                if (!$parent_category->is_aggregationcoef_used() || !$parent_category->aggregateoutcomes) {
                     if ($mform->elementExists('aggregationcoef')) {
                         $mform->removeElement('aggregationcoef');
                     }
@@ -228,8 +228,11 @@ class edit_outcomeitem_form extends moodleform {
                         $mform->addHelpButton('aggregationcoef', $aggcoef, 'grades');
                     }
                 }
-                // Remove fields used by natural weighting if the parent category is not using natural weighting.
-                if ($parent_category->aggregation != GRADE_AGGREGATE_SUM) {
+
+                // Remove the natural weighting fields for other aggregations,
+                // or when the category does not aggregate outcomes.
+                if ($parent_category->aggregation != GRADE_AGGREGATE_SUM ||
+                        !$parent_category->aggregateoutcomes) {
                     if ($mform->elementExists('weightoverride')) {
                         $mform->removeElement('weightoverride');
                     }
