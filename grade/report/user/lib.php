@@ -446,6 +446,32 @@ class grade_report_user extends grade_report {
                 }
             }
 
+            // Actual Grade - We need to calculate this whether the row is hidden or not.
+            $gradeval = $grade_grade->finalgrade;
+            $hint = $grade_grade->get_aggregation_hint();
+            if (!$this->canviewhidden) {
+                /// Virtual Grade (may be calculated excluding hidden items etc).
+                $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
+                                                                             $grade_grade->grade_item,
+                                                                             $gradeval);
+
+                $gradeval = $adjustedgrade['grade'];
+
+                // We temporarily adjust the view of this grade item - because the min and
+                // max are affected by the hidden values in the aggregation.
+                $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
+                $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
+                $hint['status'] = $adjustedgrade['aggregationstatus'];
+                $hint['weight'] = $adjustedgrade['aggregationweight'];
+            } else {
+                // The max and min for an aggregation may be different to the grade_item.
+                if (!is_null($gradeval)) {
+                    $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
+                    $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
+                }
+            }
+
+
             if (!$hide) {
                 /// Excluded Item
                 /**
@@ -472,31 +498,6 @@ class grade_report_user extends grade_report {
                 $data['itemname']['colspan'] = ($this->maxdepth - $depth);
                 $data['itemname']['celltype'] = 'th';
                 $data['itemname']['id'] = $header_row;
-
-                /// Actual Grade
-                $gradeval = $grade_grade->finalgrade;
-                $hint = $grade_grade->get_aggregation_hint();
-                if (!$this->canviewhidden) {
-                    /// Virtual Grade (may be calculated excluding hidden items etc).
-                    $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($this->courseid,
-                                                                                 $grade_grade->grade_item,
-                                                                                 $gradeval);
-
-                    $gradeval = $adjustedgrade['grade'];
-
-                    // We temporarily adjust the view of this grade item - because the min and
-                    // max are affected by the hidden values in the aggregation.
-                    $grade_grade->grade_item->grademax = $adjustedgrade['grademax'];
-                    $grade_grade->grade_item->grademin = $adjustedgrade['grademin'];
-                    $hint['status'] = $adjustedgrade['aggregationstatus'];
-                    $hint['weight'] = $adjustedgrade['aggregationweight'];
-                } else {
-                    // The max and min for an aggregation may be different to the grade_item.
-                    if (!is_null($gradeval)) {
-                        $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
-                        $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
-                    }
-                }
 
                 if ($this->showfeedback) {
                     // Copy $class before appending itemcenter as feedback should not be centered
@@ -649,16 +650,19 @@ class grade_report_user extends grade_report {
                     $data['contributiontocoursetotal']['content'] = '-';
                     $data['contributiontocoursetotal']['headers'] = "$header_cat $header_row contributiontocoursetotal";
 
-                    $hint['grademax'] = $grade_grade->grade_item->grademax;
-                    $hint['grademin'] = $grade_grade->grade_item->grademin;
-                    $hint['grade'] = $gradeval;
-                    $parent = $grade_object->load_parent_category();
-                    if ($grade_object->is_category_item()) {
-                        $parent = $parent->load_parent_category();
-                    }
-                    $hint['parent'] = $parent->load_grade_item()->id;
-                    $this->aggregationhints[$grade_grade->itemid] = $hint;
                 }
+            }
+            // We collect the aggregation hints whether they are hidden or not.
+            if ($this->showcontributiontocoursetotal) {
+                $hint['grademax'] = $grade_grade->grade_item->grademax;
+                $hint['grademin'] = $grade_grade->grade_item->grademin;
+                $hint['grade'] = $gradeval;
+                $parent = $grade_object->load_parent_category();
+                if ($grade_object->is_category_item()) {
+                    $parent = $parent->load_parent_category();
+                }
+                $hint['parent'] = $parent->load_grade_item()->id;
+                $this->aggregationhints[$grade_grade->itemid] = $hint;
             }
         }
 
