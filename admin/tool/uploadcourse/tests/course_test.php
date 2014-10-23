@@ -35,6 +35,13 @@ global $CFG;
  */
 class tool_uploadcourse_course_testcase extends advanced_testcase {
 
+    /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
     public function test_proceed_without_prepare() {
         $this->resetAfterTest(true);
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;

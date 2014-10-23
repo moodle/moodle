@@ -36,6 +36,13 @@ require_once($CFG->libdir . '/csvlib.class.php');
  */
 class tool_uploadcourse_processor_testcase extends advanced_testcase {
 
+    /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
     public function test_basic() {
         global $DB;
         $this->resetAfterTest(true);
