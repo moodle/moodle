@@ -931,11 +931,7 @@ class moodle_page {
             } else {
                 // We do not want devs to do weird switching of context levels on the fly because we might have used
                 // the context already such as in text filter in page title.
-                // This is explicitly allowed for webservices though which may
-                // call "external_api::validate_context on many contexts in a single request.
-                if (!WS_SERVER) {
-                    debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
-                }
+                debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
             }
         }
 
