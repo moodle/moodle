@@ -126,7 +126,7 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
             $rule = $monitorgenerator->create_rule($record2); // Create rules in a different course.
         }
         $ruledata = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id);
-        $this->assertEquals($ruleids, array_keys($ruledata));
+        $this->assertEmpty(array_merge(array_diff(array_keys($ruledata), $ruleids), array_diff($ruleids, array_keys($ruledata))));
         $this->assertCount(20, $ruledata);
     }
 
@@ -153,7 +153,7 @@ class tool_monitor_rule_manager_testcase extends advanced_testcase {
         }
 
         $ruledata = \tool_monitor\rule_manager::get_rules_by_plugin('core');
-        $this->assertEquals($ruleids, array_keys($ruledata));
+        $this->assertEmpty(array_merge(array_diff(array_keys($ruledata), $ruleids), array_diff($ruleids, array_keys($ruledata))));
         $this->assertCount(10, $ruledata);
     }
 
