@@ -15,6 +15,9 @@ Feature: We can use Single view
       | student2 | Student | 2 | student1@asd.com | s2 | holly |
       | student3 | Student | 3 | student1@asd.com | s3 | anna |
       | student4 | Student | 4 | student1@asd.com | s4 | zac |
+    And the following "grade items" exist:
+      | itemname | course  |
+      | new grade item 1 | C1 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -36,7 +39,7 @@ Feature: We can use Single view
     And I follow "Course 1"
     And I follow "Grades"
 
- @javascript
+  @javascript
   Scenario: I can update grades, add feedback and exclude grades.
     Given I click on "Single view" "option"
     And I click on "Student 4" "option"
@@ -71,10 +74,8 @@ Feature: We can use Single view
     And I follow "Single view for Student 1"
     Then I should see "Student 1"
 
-  @javascript
   Scenario: Navigation works in the Single view.
-    Given I click on "Single view" "option"
-    Then I click on "Student 1" "option"
+    Given I follow "Single view for Student 1"
     Then I should see "Student 1"
     And I follow "Student 2"
     Then I should see "Student 2"
@@ -86,3 +87,10 @@ Feature: We can use Single view
     Then I should see "Test assignment three"
     And I follow "Test assignment four"
     Then I should see "Test assignment four"
+
+  Scenario: Activities are clickable only when
+    it has a valid activity page.
+    Given I follow "Single view for Student 1"
+    And "new grade item 1" "link" should not exist in the "//tbody//tr[position()=1]//td[position()=2]" "xpath_element"
+    Then "Category total" "link" should not exist in the "//tbody//tr[position()=2]//td[position()=2]" "xpath_element"
+    And "Course total" "link" should not exist in the "//tbody//tr[position()=last()]//td[position()=2]" "xpath_element"
