@@ -53,7 +53,7 @@ abstract class handler {
     /**
      * @var int $defaultexpiration The default expiration time to use when created a new key.
      */
-    private $defaultexpiration = 86400;
+    private $defaultexpiration = WEEKSECS;
 
     /**
      * @var bool $validateaddress Whether to validate the sender address when processing this handler.

@@ -67,7 +67,7 @@ class tool_messageinbound_edit_handler_form extends moodleform {
             DAYSECS => get_string('oneday', 'tool_messageinbound'),
             WEEKSECS => get_string('oneweek', 'tool_messageinbound'),
             YEARSECS => get_string('oneyear', 'tool_messageinbound'),
-            '' => get_string('noexpiry', 'tool_messageinbound'),
+            0 => get_string('noexpiry', 'tool_messageinbound'),
         );
         $mform->addElement('select', 'defaultexpiration', get_string('defaultexpiration', 'tool_messageinbound'), $options);
         $mform->addHelpButton('defaultexpiration', 'defaultexpiration', 'tool_messageinbound');
