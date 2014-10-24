@@ -311,8 +311,6 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 0       |
-    And I set the following settings for grade item "Test outcome item one":
-     | Extra credit     | 0   |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
