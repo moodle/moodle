@@ -137,7 +137,10 @@
         $newdiscussion->forum = $forumto->id;
         foreach ($subscriptionchanges as $userid => $preference) {
             if ($preference === \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED) {
-                \mod_forum\subscriptions::subscribe_user_to_discussion($userid, $newdiscussion, $destinationctx);
+                // Users must have viewdiscussion to a discussion.
+                if (has_capability('mod/forum:viewdiscussion', $destinationctx, $userid)) {
+                    \mod_forum\subscriptions::subscribe_user_to_discussion($userid, $newdiscussion, $destinationctx);
+                }
             } else {
                 \mod_forum\subscriptions::unsubscribe_user_from_discussion($userid, $newdiscussion, $destinationctx);
             }

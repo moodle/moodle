@@ -37,6 +37,7 @@ $cm             = get_coursemodule_from_instance('forum', $forum->id, $course->i
 $context        = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
+require_capability('mod/forum:viewdiscussion', $context);
 
 $return = new stdClass();
 
