@@ -44,10 +44,6 @@
 .path-grade-edit-tree .setup-grades.generaltable .leveleven {
     background-color: #fafafa;
 }
-.path-grade-edit-tree .setup-grades.generaltable tbody tr:hover > td,
-.path-grade-edit-tree .setup-grades.generaltable tbody tr:hover > th {
-    background-color: #f5f5f5;
-}
 .path-grade-edit-tree .setup-grades .column-weight.level3 {
     padding-left: 37px;
 }
@@ -245,8 +241,8 @@
 }
 
 .path-grade-edit-tree table.setup-grades .gradeitemdescription {
+    padding-left: 24px;
     font-weight: normal;
-    font-style: italic;
 }
 
 /** User report **/
@@ -258,10 +254,6 @@
 }
 .path-grade-report-user .user-grade.generaltable .leveleven {
     background-color: #fafafa;
-}
-.path-grade-report-user .user-grade.generaltable tbody tr:hover > td,
-.path-grade-report-user .user-grade.generaltable tbody tr:hover > th {
-    background-color: #f5f5f5;
 }
 
 .has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
