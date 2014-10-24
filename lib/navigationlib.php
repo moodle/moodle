@@ -2277,7 +2277,14 @@ class global_navigation extends navigation_node {
             $userscourses = enrol_get_users_courses($user->id);
             $userscoursesnode = $usernode->add(get_string('courses'));
 
+            $count = 0;
             foreach ($userscourses as $usercourse) {
+                if ($count === (int)$CFG->navcourselimit) {
+                    $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
+                    $userscoursesnode->add(get_string('showallcourses'), $url);
+                    break;
+                }
+                $count++;
                 $usercoursecontext = context_course::instance($usercourse->id);
                 $usercourseshortname = format_string($usercourse->shortname, true, array('context' => $usercoursecontext));
                 $usercoursenode = $userscoursesnode->add($usercourseshortname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$usercourse->id)), self::TYPE_CONTAINER);
