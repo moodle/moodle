@@ -148,7 +148,7 @@ echo $OUTPUT->header();
                   onfocus="document.getElementById('assignform').add.disabled=true;
                            document.getElementById('assignform').remove.disabled=false;
                            document.getElementById('assignform').addselect.selectedIndex=-1;">
-          <?php echo $currentmembersoptions ?>          
+          <?php echo $currentmembersoptions ?>
           </select></div></td>
       <td id="buttonscell">
         <p class="arrow_button">
