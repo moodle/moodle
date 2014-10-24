@@ -55,7 +55,7 @@ Feature: tool_monitor_rule
       | minutes           | 1                                                 |
       | Message template  | The forum post was created. {modulelink}          |
     And   I press "Save changes"
-    Then  I should see "New rule"
+    Then  "New rule" row "Context" column of "toolmonitorrules_table" table should contain "Course"
     And   I should see "I want a rule to monitor posts created on a forum"
     And   I should see "Forum"
     And   I should see "Post created"
@@ -116,7 +116,7 @@ Feature: tool_monitor_rule
       | minutes           | 1                                                 |
       | Message template  | The forum post was created. {modulelink}          |
     And   I press "Save changes"
-    Then  I should see "New rule"
+    Then  "New rule" row "Context" column of "toolmonitorrules_table" table should contain "System"
     And   I should see "I want a rule to monitor posts created on a forum"
     And   I should see "Forum"
     And   I should see "Post created"

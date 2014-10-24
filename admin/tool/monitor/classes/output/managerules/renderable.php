@@ -64,11 +64,13 @@ class renderable extends \table_sql implements \renderable {
     public function __construct($uniqueid, \moodle_url $url, $courseid = 0, $perpage = 100) {
         parent::__construct($uniqueid);
 
+        $this->set_attribute('id', 'toolmonitorrules_table');
         $this->set_attribute('class', 'toolmonitor managerules generaltable generalbox');
-        $this->define_columns(array('name', 'description', 'plugin', 'eventname', 'filters', 'manage'));
+        $this->define_columns(array('name', 'description', 'context', 'plugin', 'eventname', 'filters', 'manage'));
         $this->define_headers(array(
                 get_string('name'),
                 get_string('description'),
+                get_string('context', 'tool_monitor'),
                 get_string('plugin'),
                 get_string('eventname'),
                 get_string('frequency', 'tool_monitor'),
@@ -197,5 +199,16 @@ class renderable extends \table_sql implements \renderable {
         if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);
         }
+    }
+
+    /**
+     * Generate content for context column.
+     *
+     * @param \tool_monitor\rule $rule rule object
+     *
+     * @return string html used to display the context column field.
+     */
+    public function col_context(\tool_monitor\rule $rule) {
+        return ($rule->courseid == 0) ? get_string('system', 'tool_monitor') : get_string('course');
     }
 }
