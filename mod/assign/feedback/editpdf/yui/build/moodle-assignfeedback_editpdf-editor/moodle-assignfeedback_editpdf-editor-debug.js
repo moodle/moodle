@@ -3330,6 +3330,7 @@ EDITOR.prototype = {
         }
         this.dialogue.centerDialogue();
         this.dialogue.show();
+        drawingcanvas.on('windowresize', this.resize, this);
     },
 
     /**
@@ -3837,6 +3838,16 @@ EDITOR.prototype = {
     },
 
     /**
+     * Resize the dialogue window when the browser is resized.
+     * @public
+     * @method resize
+     */
+    resize : function() {
+        this.dialogue.centerDialogue();
+        return true;
+    },
+
+    /**
      * Factory method for creating annotations of the correct subclass.
      * @public
      * @method create_annotation
@@ -4124,6 +4135,7 @@ M.assignfeedback_editpdf.editor.init = M.assignfeedback_editpdf.editor.init || f
         "graphics",
         "json",
         "event-move",
+        "event-resize",
         "querystring-stringify-simple",
         "moodle-core-notification-dialog",
         "moodle-core-notification-exception",
