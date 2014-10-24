@@ -152,11 +152,11 @@ echo $OUTPUT->header();
           </select></div></td>
       <td id="buttonscell">
         <p class="arrow_button">
-            <input name="add" id="add" type="submit" 
-                   value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" 
+            <input name="add" id="add" type="submit"
+                   value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>"
                    title="<?php print_string('add'); ?>" /><br>
-            <input name="remove" id="remove" type="submit" 
-                   value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" 
+            <input name="remove" id="remove" type="submit"
+                   value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>"
                    title="<?php print_string('remove'); ?>" />
         </p>
       </td>
