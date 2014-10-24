@@ -108,9 +108,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
     public function original_definition() {
         $def = array('finalgrade', 'feedback');
 
-        if ($this->requiresextra) {
-            $def[] = 'override';
-        }
+        $def[] = 'override';
 
         $def[] = 'exclude';
 
