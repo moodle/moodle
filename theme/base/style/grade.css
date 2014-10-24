@@ -263,3 +263,26 @@
 .path-grade-report-user .user-grade.generaltable tbody tr:hover > th {
     background-color: #f5f5f5;
 }
+
+.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
+.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
+.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell {
+    padding-left: 35px;
+}
+
+.dir-rtl.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
+.dir-rtl.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
+.dir-rtl.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell {
+    padding-left: 5px;
+    padding-right: 35px;
+}
+
+.content-only.path-grade-report-grader .gradeparent table {
+    margin-left: 30px;
+}
+
+.dir-rtl.content-only.path-grade-report-grader .gradeparent table {
+    margin-left: 0;
+    margin-right: 30px;
+}
+
