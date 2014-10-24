@@ -2881,10 +2881,11 @@ class global_navigation_for_ajax extends global_navigation {
                 require_course_login($course, true, $cm, false, true);
                 $this->page->set_context(context_module::instance($cm->id));
                 $coursenode = $this->load_course($course);
-                if ($course->id != $SITE->id) {
-                    $this->load_course_sections($course, $coursenode, null, $cm);
+                $this->load_course_sections($course, $coursenode, null, $cm);
+                $activitynode = $coursenode->find($cm->id, self::TYPE_ACTIVITY);
+                if ($activitynode) {
+                    $modulenode = $this->load_activity($cm, $course, $activitynode);
                 }
-                $modulenode = $this->load_activity($cm, $course, $coursenode->find($cm->id, self::TYPE_ACTIVITY));
                 break;
             default:
                 throw new Exception('Unknown type');
