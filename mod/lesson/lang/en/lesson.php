@@ -408,6 +408,7 @@ $string['thatsthecorrectanswer'] = 'That\'s the correct answer';
 $string['thatsthewronganswer'] = 'That\'s the wrong answer';
 $string['thefollowingpagesjumptothispage'] = 'The following pages jump to this page';
 $string['thispage'] = 'This page';
+$string['timeisup'] = 'Time is up';
 $string['timeremaining'] = 'Time remaining';
 $string['timespenterror'] = 'Spend at least {$a} minutes in the lesson';
 $string['timespentminutes'] = 'Time spent (minutes)';
