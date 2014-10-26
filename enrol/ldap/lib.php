@@ -704,6 +704,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             $usergroups = $this->ldap_find_user_groups($extmemberuid);
             if(count($usergroups) > 0) {
                 foreach ($usergroups as $group) {
+                    $group = ldap_filter_addslashes($group);
                     $ldap_search_pattern .= '('.$this->get_config('memberattribute_role'.$role->id).'='.$group.')';
                 }
             }
