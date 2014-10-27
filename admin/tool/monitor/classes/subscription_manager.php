@@ -201,6 +201,8 @@ class subscription_manager {
             }
         }
 
+        $subscriptions->close();
+
         return $success;
     }
 

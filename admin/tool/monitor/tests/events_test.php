@@ -264,13 +264,12 @@ class tool_monitor_events_testcase extends advanced_testcase {
         $this->assertEquals(context_system::instance(), $event->get_context());
 
         // Now, create a bunch of subscriptions for the rule we created.
+        $subids = array();
         $sub->courseid = $course->id;
         for ($i = 1; $i <= 10; $i++) {
             $sub->userid = $i;
             $subscription = $monitorgenerator->create_subscription($sub);
-            if ($i == 1) {
-                $subscription1 = $subscription;
-            }
+            $subids[$subscription->id] = $subscription;
         }
 
         // Trigger and capture the events.
@@ -281,12 +280,17 @@ class tool_monitor_events_testcase extends advanced_testcase {
         // Check that there were 10 events in total.
         $this->assertCount(10, $events);
 
-        // Get the first event and ensure it is valid (we can assume the rest are the same).
-        $event = reset($events);
-        $this->assertInstanceOf('\tool_monitor\event\subscription_deleted', $event);
-        $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $this->assertEquals($subscription1->id, $event->objectid);
-        $this->assertEventContextNotUsed($event);
+        // Get all the events and ensure they are valid.
+        foreach ($events as $event) {
+            $this->assertInstanceOf('\tool_monitor\event\subscription_deleted', $event);
+            $this->assertEquals(context_course::instance($course->id), $event->get_context());
+            $this->assertEventContextNotUsed($event);
+            $this->assertArrayHasKey($event->objectid, $subids);
+            unset($subids[$event->objectid]);
+        }
+
+        // We should have found all the subscriptions.
+        $this->assertEmpty($subids);
     }
 
     /**
