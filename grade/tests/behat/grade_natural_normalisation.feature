@@ -257,7 +257,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
   And I press "Save changes"
   And the field "Weight of Test assignment six" matches value "0.0"
   And the field "Weight of Test assignment seven" matches value "100.0"
-  And I follow "Reset weights of Sub category 1"
+  And I reset weights for grade category "Sub category 1"
   And I set the field "Override weight of Test assignment five" to "1"
   And I set the field "Override weight of Test assignment six" to "1"
   And I set the field "Weight of Test assignment five" to "-10"
