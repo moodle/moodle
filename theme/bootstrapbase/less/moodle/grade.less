@@ -233,6 +233,9 @@
 
 // Set up grades layout.
 .path-grade-edit-tree .setup-grades {
+    h4 {
+        margin: 0;
+    }
     .column-rowspan {
         padding: 0;
         width: 24px;
@@ -257,7 +260,12 @@
     .emptyrow {
         display: none;
     }
+    .gradeitemdescription {
+        font-weight: normal;
+        padding-left: 24px;
+    }
     .column-weight {
+        white-space: nowrap;
         &.level3 {
             padding-left: 37px;
         }
@@ -319,10 +327,6 @@
         .leveleven {
             background-color: @tableBackground;
         }
-        tbody tr:hover > td,
-        tbody tr:hover > th {
-            background-color: @tableBackgroundHover;
-        }
     }
 }
 
@@ -336,6 +340,10 @@
         }
         .column-name h4 img.icon {
             padding-left: 4px;
+        }
+        .gradeitemdescription {
+            padding-left: 0;
+            padding-right: 24px;
         }
         .column-weight {
             &.level3 {
@@ -412,15 +420,6 @@
     }
 }
 
-.path-grade-edit-tree table.setup-grades .column-weight {
-    white-space: nowrap;
-}
-
-.path-grade-edit-tree table.setup-grades .gradeitemdescription {
-    font-weight: normal;
-    font-style: italic;
-}
-
 /**
  * Grader report.
  */
@@ -455,10 +454,6 @@
         }
         .leveleven {
             background-color: @tableBackground;
-        }
-        tbody tr:hover > td,
-        tbody tr:hover > th {
-            background-color: @tableBackgroundHover;
         }
     }
 }
