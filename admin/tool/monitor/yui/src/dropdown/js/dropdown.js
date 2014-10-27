@@ -55,6 +55,9 @@ Y.extend(DropDown, Y.Base, {
     initializer: function() {
         this.plugin = Y.one(SELECTORS.PLUGIN);
         this.eventname = Y.one(SELECTORS.EVENTNAME);
+        var selection = this.eventname.get('value'); // Get selected event name.
+        this.updateEventsList();
+        this.updateSelection(selection);
         this.plugin.on('change', this.updateEventsList, this);
     },
 
@@ -83,6 +86,20 @@ Y.extend(DropDown, Y.Base, {
             }
         }, this);
 
+    },
+
+    /**
+     * Method to update the selected node from the options list.
+     *
+     * @method updateSelection
+     * @param {string} selection The options node value that should be selected.
+     */
+    updateSelection: function(selection) {
+        this.eventname.get('options').each(function(opt) {
+            if (opt.get('value') === selection) {
+                opt.set('selected', 'selected');
+            }
+        }, this);
     }
 }, {
     NAME: 'dropDown',
