@@ -589,7 +589,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id,
             'intro' => $labeldescription));
         $labelcm = get_coursemodule_from_instance('label', $label->id);
-        $url = $this->getDataGenerator()->create_module('url', array('course' => $course->id));
+        $url = $this->getDataGenerator()->create_module('url', array('course' => $course->id,
+            'name' => 'URL: % & $ ../'));
+        $urlcm = get_coursemodule_from_instance('url', $url->id);
 
         // Set the required capabilities by the external function.
         $context = context_course::instance($course->id);
