@@ -171,11 +171,8 @@ class renderable extends \table_sql implements \renderable {
             $icon = $OUTPUT->render(new \pix_icon('t/copy', get_string('duplicaterule', 'tool_monitor')));
             $manage .= \html_writer::link($copyurl, $icon, array('class' => 'action-icon'));
 
-            $a = $rule->get_name($this->context);
-            $action = new \component_action('click', 'M.util.show_confirm_dialog', array('message' => get_string('ruleareyousure',
-                    'tool_monitor', $a)));
-            $icon = $OUTPUT->action_link($deleteurl, new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')), $action);
-            $manage .= $icon;
+            $icon = $OUTPUT->render(new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')));
+            $manage .= \html_writer::link($deleteurl, $icon, array('class' => 'action-icon'));
         } else {
             $manage = get_string('nopermission', 'tool_monitor');
         }

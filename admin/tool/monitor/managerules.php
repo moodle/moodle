@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $ruleid = optional_param('ruleid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 // Validate course id.
 if (empty($courseid)) {
@@ -62,12 +63,17 @@ if (empty($courseid)) {
     admin_externalpage_setup('toolmonitorrules', '', null, '', array('pagelayout' => 'report'));
 }
 
-echo $OUTPUT->header();
-
 // Copy/delete rule if needed.
 if (!empty($action) && $ruleid) {
     require_sesskey();
-    $rule = \tool_monitor\rule_manager::get_rule($ruleid);
+
+    // If the rule does not exist, then redirect back as the rule must have already been deleted.
+    if (!$rule = $DB->get_record('tool_monitor_rules', array('id' => $ruleid), '*', IGNORE_MISSING)) {
+        redirect(new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $courseid)));
+    }
+
+    echo $OUTPUT->header();
+    $rule = \tool_monitor\rule_manager::get_rule($rule);
     if ($rule->can_manage_rule()) {
         switch ($action) {
             case 'copy' :
@@ -75,8 +81,20 @@ if (!empty($action) && $ruleid) {
                 echo $OUTPUT->notification(get_string('rulecopysuccess', 'tool_monitor'), 'notifysuccess');
                 break;
             case 'delete' :
-                $rule->delete_rule();
-                echo $OUTPUT->notification(get_string('ruledeletesuccess', 'tool_monitor'), 'notifysuccess');
+                $confirmurl = new moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php',
+                    array('ruleid' => $ruleid, 'courseid' => $courseid, 'action' => 'delete',
+                        'confirm' => true, 'sesskey' => sesskey()));
+                $cancelurl = new moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php',
+                    array('courseid' => $courseid));
+                if ($confirm) {
+                    $rule->delete_rule();
+                    echo $OUTPUT->notification(get_string('ruledeletesuccess', 'tool_monitor'), 'notifysuccess');
+                } else {
+                    echo $OUTPUT->confirm(get_string('ruleareyousure', 'tool_monitor', $rule->get_name($context)),
+                        $confirmurl, $cancelurl);
+                    echo $OUTPUT->footer();
+                    exit();
+                }
                 break;
             default:
         }
@@ -84,6 +102,8 @@ if (!empty($action) && $ruleid) {
         // User doesn't have permissions. Should never happen for real users.
         throw new moodle_exception('rulenopermissions', 'tool_monitor', $manageurl, $action);
     }
+} else {
+    echo $OUTPUT->header();
 }
 
 // Render the rule list.

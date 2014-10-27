@@ -30,6 +30,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $ruleid = optional_param('ruleid', 0, PARAM_INT);
 $subscriptionid = optional_param('subscriptionid', 0, PARAM_INT);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 // Validate course id.
 if (empty($courseid)) {
@@ -61,8 +62,6 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-echo $OUTPUT->header();
-
 // Create/delete subscription if needed.
 if (!empty($action)) {
     require_sesskey();
@@ -70,14 +69,38 @@ if (!empty($action)) {
         case 'subscribe' :
             $rule = \tool_monitor\rule_manager::get_rule($ruleid);
             $rule->subscribe_user($courseid, $cmid);
+            echo $OUTPUT->header();
             echo $OUTPUT->notification(get_string('subcreatesuccess', 'tool_monitor'), 'notifysuccess');
             break;
         case 'unsubscribe' :
-            \tool_monitor\subscription_manager::delete_subscription($subscriptionid);
-            echo $OUTPUT->notification(get_string('subdeletesuccess', 'tool_monitor'), 'notifysuccess');
+            // If the subscription does not exist, then redirect back as the subscription must have already been deleted.
+            if (!$subscription = $DB->record_exists('tool_monitor_subscriptions', array('id' => $subscriptionid))) {
+                redirect(new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid)));
+            }
+
+            // Set the URLs.
+            $confirmurl = new moodle_url('/admin/tool/monitor/index.php', array('subscriptionid' => $subscriptionid,
+                'courseid' => $courseid, 'action' => 'unsubscribe', 'confirm' => true,
+                'sesskey' => sesskey()));
+            $cancelurl = new moodle_url('/admin/tool/monitor/index.php', array('subscriptionid' => $subscriptionid,
+                'courseid' => $courseid, 'sesskey' => sesskey()));
+            if ($confirm) {
+                \tool_monitor\subscription_manager::delete_subscription($subscriptionid);
+                echo $OUTPUT->header();
+                echo $OUTPUT->notification(get_string('subdeletesuccess', 'tool_monitor'), 'notifysuccess');
+            } else {
+                $subscription = \tool_monitor\subscription_manager::get_subscription($subscriptionid);
+                echo $OUTPUT->header();
+                echo $OUTPUT->confirm(get_string('subareyousure', 'tool_monitor', $subscription->get_name($context)),
+                    $confirmurl, $cancelurl);
+                echo $OUTPUT->footer();
+                exit();
+            }
             break;
         default:
     }
+} else {
+    echo $OUTPUT->header();
 }
 
 // Render the current subscriptions list.
