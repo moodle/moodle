@@ -195,6 +195,12 @@ class user extends tablelike implements selectable_items {
         $itemlabel = $this->structure->get_element_header($gradetreeitem, true, false);
         $grade->label = $item->get_name();
 
+        $itemlabel = $item->get_name();
+        if (!empty($realmodid)) {
+            $url = new moodle_url('/mod/' . $item->itemmodule . '/view.php', array('id' => $realmodid));
+            $itemlabel = html_writer::link($url, $item->get_name());
+        }
+
         $line = array(
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', $iconstring)),
             $this->format_icon($item) . $lockicon, $itemlabel, $this->category($item), (new range($item))

@@ -15,9 +15,15 @@ Feature: We can use Single view
       | student2 | Student | 2 | student1@asd.com | s2 | holly |
       | student3 | Student | 3 | student1@asd.com | s3 | anna |
       | student4 | Student | 4 | student1@asd.com | s4 | zac |
+    And the following "scales" exist:
+      | name | scale |
+      | Test Scale | Disappointing, Good, Very good, Excellent |
     And the following "grade items" exist:
-      | itemname | course  |
-      | new grade item 1 | C1 |
+      | itemname | course | gradetype | scale |
+      | new grade item 1 | C1 | Scale | Test Scale |
+    And the following "scales" exist:
+      | name       | scale                                     |
+      | Test Scale | Disappointing, Good, Very good, Excellent |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -35,6 +41,9 @@ Feature: We can use Single view
       | assign | C1 | a2 | Test assignment two | Submit something! | 100 |
       | assign | C1 | a3 | Test assignment three | Submit something! | 150 |
       | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
+    And the following "grade items" exist:
+      | itemname | course | gradetype |
+      | Test grade item | C1 | Scale |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
@@ -66,6 +75,12 @@ Feature: We can use Single view
         | Test assignment three |
         | 12.05 |
         | Excluded |
+    And I click on "Single view" "link"
+    And I click on "new grade item 1" "option"
+    And I click on "Very good" "option"
+    And I press "Update"
+    And the following should exist in the "generaltable" table:
+        | Grade for james (Student) 1 | "Very good" |
 
   Scenario: Single view links work on grade report.
     Given I follow "Single view for Test assignment one"
