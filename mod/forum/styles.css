@@ -142,3 +142,17 @@ span.unread {
     display: inline-block;
     width: 12px;
 }
+
+.path-mod-forum .discussionsubscription {
+    margin-top: -10px;
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.path-mod-forum .discussionsubscription > a {
+    padding: 0 4px;
+}
+
+.dir-rtl .path-mod-forum .discussionsubscription {
+    text-align: left;
+}

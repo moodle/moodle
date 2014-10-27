@@ -56,6 +56,6 @@ if (\mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, 
 }
 
 // Now return the updated subscription icon.
-$return->icon = forum_get_discussion_subscription_icon($forum, $discussion->id);
+$return->icon = forum_get_discussion_subscription_icon($forum, $discussion->id, null, true);
 echo json_encode($return);
 die;

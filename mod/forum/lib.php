@@ -3768,7 +3768,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
  * @param int $discussionid The discussion to create an icon for.
  * @return string The generated markup.
  */
-function forum_get_discussion_subscription_icon($forum, $discussionid, $returnurl = null) {
+function forum_get_discussion_subscription_icon($forum, $discussionid, $returnurl = null, $includetext = false) {
     global $USER, $OUTPUT, $PAGE;
 
     if ($returnurl === null && $PAGE->url) {
@@ -3801,6 +3801,10 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
                 'data-forumid' => $forum->id,
                 'data-discussionid' => $discussionid,
         ));
+    }
+
+    if ($includetext) {
+        $o .= $subscriptionstatus ? get_string('subscribed', 'mod_forum') : get_string('notsubscribed', 'mod_forum');
     }
 
     return $o;

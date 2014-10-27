@@ -234,17 +234,18 @@
 
     echo $OUTPUT->header();
 
-    $headingvalue = format_string($forum->name);
+    echo $OUTPUT->heading(format_string($forum->name), 2);
+    echo $OUTPUT->heading(format_string($discussion->name), 3, 'discussionname');
+
     if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
-            $headingvalue .= '&nbsp;';
-            $headingvalue .= html_writer::tag('span', forum_get_discussion_subscription_icon($forum, $post->discussion), array(
-                'class' => 'discussionsubscription',
-            ));
+            echo html_writer::div(
+                forum_get_discussion_subscription_icon($forum, $post->discussion, null, true),
+                'discussionsubscription'
+            );
         }
     }
-    echo $OUTPUT->heading($headingvalue, 2);
 
 
 /// Check to see if groups are being used in this forum
