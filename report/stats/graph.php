@@ -57,7 +57,8 @@ if (!empty($userid)) {
     if (!report_stats_can_access_user_report($user, $course, true)) {
         require_capability('report/stats:view', $coursecontext);
     }
-
+} else if ($mode === STATS_MODE_DETAILED) {
+    print_error('invaliduser');
 } else {
     require_capability('report/stats:view', $coursecontext);
 }
