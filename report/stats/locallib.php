@@ -161,7 +161,11 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
     echo '</div>';
     echo '</form>';
 
-    if (!empty($report) && !empty($time)) {
+    // Display the report if:
+    //  - A report has been selected.
+    //  - A time frame has been provided
+    //  - If the mode is not detailed OR a valid user has been selected.
+    if (!empty($report) && !empty($time) && ($mode !== STATS_MODE_DETAILED || !empty($userid))) {
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
             print_error('reportnotavailable');
         }
