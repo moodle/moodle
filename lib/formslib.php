@@ -2889,7 +2889,7 @@ class MoodleQuickForm_Rule_Required extends HTML_QuickForm_Rule {
         }
         $stripvalues = array(
             '#</?(?!img|canvas|hr).*?>#im', // all tags except img, canvas and hr
-            '#(\xc2|\xa0|\s|&nbsp;)#', //any whitespaces actually
+            '#(\xc2\xa0|\s|&nbsp;)#', // Any whitespaces actually.
         );
         if (!empty($CFG->strictformsrequired)) {
             $value = preg_replace($stripvalues, '', (string)$value);
