@@ -254,7 +254,7 @@ M.mod_quiz.secure_window = {
         if (n === null) {
             return false;
         }
-        return M.mod_quiz.is_content_editable(n);
+        return M.mod_quiz.secure_window.is_content_editable(n);
     },
 
     prevent_selection: function(e) {
@@ -271,7 +271,7 @@ M.mod_quiz.secure_window = {
             // Left click on a button or similar. No worries.
             return;
         }
-        if (e.button == 1 && M.mod_quiz.is_content_editable(e.target)) {
+        if (e.button == 1 && M.mod_quiz.secure_window.is_content_editable(e.target)) {
             // Left click in Atto or similar.
             return;
         }
