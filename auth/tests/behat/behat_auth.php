@@ -96,7 +96,7 @@ class behat_auth extends behat_base {
         // hamburger.
 
         // However, the user menu *always* needs to be expanded.
-        $xpath ="//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
+        $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
         array_unshift($steps, new When('I click on "'.$xpath.'" "xpath_element"'));
 
         return $steps;
