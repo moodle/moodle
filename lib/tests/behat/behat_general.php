@@ -50,6 +50,12 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 class behat_general extends behat_base {
 
     /**
+     * @var string used by {@link switch_to_window()} and
+     * {@link switch_to_the_main_window()} to work-around a Chrome browser issue.
+     */
+    const MAIN_WINDOW_NAME = '__moodle_behat_main_window_name';
+
+    /**
      * Opens Moodle homepage.
      *
      * @Given /^I am on homepage$/
@@ -157,6 +163,15 @@ class behat_general extends behat_base {
      * @param string $windowname
      */
     public function switch_to_window($windowname) {
+        // In Behat, some browsers (e.g. Chrome) are unable to switch to a
+        // window without a name, and by default the main browser window does
+        // not have a name. To work-around this, when we switch away from an
+        // unnamed window (presumably the main window) to some other named
+        // window, then we first set the main window name to a conventional
+        // value that we can later use this name to switch back.
+        $this->getSession()->evaluateScript(
+                'if (window.name == "") window.name = "' . self::MAIN_WINDOW_NAME . '"');
+
         $this->getSession()->switchToWindow($windowname);
     }
 
@@ -166,7 +181,7 @@ class behat_general extends behat_base {
      * @Given /^I switch to the main window$/
      */
     public function switch_to_the_main_window() {
-        $this->getSession()->switchToWindow();
+        $this->getSession()->switchToWindow(self::MAIN_WINDOW_NAME);
     }
 
     /**
