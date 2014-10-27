@@ -8,12 +8,17 @@ Feature: tool_monitor_subscriptions
     Given the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
+      | Course 2 | C2        |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher2 | Teacher | 2 | teacher2@asd.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+      | teacher1 | C2 | teacher |
+      | teacher2 | C1 | teacher |
+      | teacher2 | C2 | editingteacher |
     And I log in as "admin"
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
@@ -40,6 +45,11 @@ Feature: tool_monitor_subscriptions
       | frequency            | 1                                                 |
       | minutes              | 1                                                 |
       | Notification message | The course was viewed. {modulelink}               |
+    And I press "Save changes"
+    And I navigate to "Define roles" node in "Site administration > Users > Permissions"
+    And I follow "Non-editing teacher"
+    And I press "Edit"
+    And I click on "tool/monitor:managerules" "checkbox"
     And I press "Save changes"
     And I log out
 
@@ -130,10 +140,40 @@ Feature: tool_monitor_subscriptions
     When I navigate to "Event monitoring" node in "My profile settings"
     Then I should see "You can manage rules from the Event monitoring rules page."
     And I follow "Event monitoring rules"
-    And I should see "Event monitor"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Event monitoring" node in "My profile settings"
     And I should see "You can manage rules from the Event monitoring rules page."
+    And I follow "Event monitoring rules"
+    And I should see "You can subscribe to rules from the Event monitoring page."
+    And I click on "//a[text()='Event monitoring']" "xpath_element"
+    And the field "courseid" matches value "Course 1"
+    And I set the field "courseid" to "Site"
+    And I should not see "You can manage rules from the Event monitoring rules page."
+    And I log out
+    And I log in as "teacher2"
+    And I follow "Course 1"
+    And I navigate to "Event monitoring" node in "My profile settings"
+    And I should not see "You can manage rules the from the Event monitoring rules page."
+
+  Scenario: No manage rules link when user does not have permission
+    Given I log in as "teacher1"
+    When I follow "Course 1"
+    And I navigate to "Event monitoring" node in "My profile settings"
+    Then I should see "You can manage rules from the Event monitoring rules page."
+    And I log out
+    And I log in as "teacher2"
+    And I follow "Course 1"
+    And I navigate to "Event monitoring" node in "My profile settings"
+    And I should not see "You can manage rules from the Event monitoring rules page."
+    And I follow "Home"
+    And I follow "Course 2"
+    And I navigate to "Event monitoring" node in "My profile settings"
+    And I should see "You can manage rules from the Event monitoring rules page."
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 2"
+    And I navigate to "Event monitoring" node in "My profile settings"
+    And I should not see "You can manage rules from the Event monitoring rules page."
