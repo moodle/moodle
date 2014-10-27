@@ -1202,7 +1202,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
         if (storetotaltime) {
             if (cmi.mode == 'normal') {
                 if (cmi.credit == 'credit') {
-                    if ((cmi.completion_threshold != null) && (cmi.progress_measure != null)) {
+                    if ((cmi.completion_threshold) && (cmi.progress_measure)) {
                         if (cmi.progress_measure >= cmi.completion_threshold) {
                             cmi.completion_status = 'completed';
                         } else {
