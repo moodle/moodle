@@ -168,7 +168,6 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
             $record->approved = 0;
         }
 
-        $record->groupid = $currentgroup;
         $record->timemodified = time();
         $DB->update_record('data_records', $record);
 
