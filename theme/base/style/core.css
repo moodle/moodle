@@ -1211,7 +1211,7 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 audio.mediaplugin_html5audio {width: 300px}
 
 /* TinyMCE moodle media preview frame should not have padding */
-.core_media_preview.pagelayout-embedded #content {padding:0;}
+.core_media_preview.pagelayout-embedded #page-content {padding:0;}
 .core_media_preview.pagelayout-embedded #maincontent {height:0;}
 .core_media_preview.pagelayout-embedded .mediaplugin {margin:0;}
 
