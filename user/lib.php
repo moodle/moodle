@@ -615,6 +615,79 @@ function user_count_login_failures($user, $reset = true) {
 }
 
 /**
+ * Converts a string into a flat array of links, where each link is a
+ * stdClass with fields url, title, pix, and imgsrc.
+ *
+ * @param string $text the menu items definition
+ * @param moodle_page $page the current page
+ * @return array
+ */
+function user_convert_text_to_menu_items($text, $page) {
+    global $OUTPUT, $CFG;
+
+    $lines = explode("\n", $text);
+    $items = array();
+    $lastchild = null;
+    $lastdepth = null;
+    $lastsort = 0;
+    foreach ($lines as $line) {
+        $line = trim($line);
+        $bits = explode('|', $line, 3);
+        if (!array_key_exists(0, $bits) or empty($bits[0])) {
+            // Every item must have a name to be valid.
+            continue;
+        } else {
+            $bits[0] = ltrim($bits[0], '-');
+        }
+
+        // Create the child.
+        $child = new stdClass();
+
+        // Name processing.
+        $namebits = explode(',', $bits[0], 2);
+        if (count($namebits) == 2) {
+            // Treat this as a language string.
+            $child->title = get_string($namebits[0], $namebits[1]);
+        } else {
+            // Use it as is, don't even clean it.
+            $child->title = $bits[0];
+        }
+
+        // URL processing.
+        if (!array_key_exists(1, $bits) or empty($bits[1])) {
+            // Set the url to null.
+            $bits[1] = null;
+        } else {
+            // Make sure the url is a moodle url.
+            $bits[1] = new moodle_url(trim($bits[1]));
+        }
+        $child->url = $bits[1];
+
+        // PIX processing.
+        $pixpath = "t/edit";
+        if (!array_key_exists(2, $bits) or empty($bits[2])) {
+            // Use the default.
+            $child->pix = $pixpath;
+        } else {
+            // Check for the specified image existing.
+            $pixpath = "t/" . $bits[2];
+            if ($page->theme->resolve_image_location($pixpath, 'moodle', true)) {
+                // Use the image.
+                $child->pix = $pixpath;
+            } else {
+                // Treat it like a URL.
+                $child->pix = null;
+                $child->imgsrc = $bits[2];
+            }
+        }
+
+        // Add this child to the list of children.
+        $children[] = $child;
+    }
+    return $children;
+}
+
+/**
  * Get a list of essential user navigation items.
  *
  * @param stdclass $user user object.
@@ -789,6 +862,13 @@ function user_get_user_navigation_info($user, $page) {
         $logout->pix = "a/logout";
         $logout->title = get_string('logout');
         $lastobj = $logout;
+    }
+
+    // Before we add the last item (usually a logout link), add any
+    // custom-defined items.
+    $customitems = user_convert_text_to_menu_items($CFG->customusermenuitems, $page);
+    foreach ($customitems as $item) {
+        $returnobject->navitems[] = $item;
     }
 
     // Add the last item to the list.
