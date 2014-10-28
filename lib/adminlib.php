@@ -2425,6 +2425,7 @@ class admin_setting_configfile extends admin_setting_configtext {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
+        global $CFG;
         $default = $this->get_defaultsetting();
 
         if ($data) {
@@ -2436,9 +2437,14 @@ class admin_setting_configfile extends admin_setting_configtext {
         } else {
             $executable = '';
         }
+        $readonly = '';
+        if (!empty($CFG->preventexecpath)) {
+            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $readonly = 'readonly="readonly"';
+        }
 
         return format_admin_setting($this, $this->visiblename,
-        '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+        '<div class="form-file defaultsnext"><input '.$readonly.' type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
         $this->description, true, '', $default, $query);
     }
 
@@ -2490,12 +2496,14 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         } else {
             $executable = '';
         }
+        $readonly = '';
         if (!empty($CFG->preventexecpath)) {
             $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $readonly = 'readonly="readonly"';
         }
 
         return format_admin_setting($this, $this->visiblename,
-        '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+        '<div class="form-file defaultsnext"><input '.$readonly.' type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
         $this->description, true, '', $default, $query);
     }
 }
@@ -2516,6 +2524,7 @@ class admin_setting_configdirectory extends admin_setting_configfile {
      * @return string XHTML
      */
     public function output_html($data, $query='') {
+        global $CFG;
         $default = $this->get_defaultsetting();
 
         if ($data) {
@@ -2527,9 +2536,14 @@ class admin_setting_configdirectory extends admin_setting_configfile {
         } else {
             $executable = '';
         }
+        $readonly = '';
+        if (!empty($CFG->preventexecpath)) {
+            $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $readonly = 'readonly="readonly"';
+        }
 
         return format_admin_setting($this, $this->visiblename,
-        '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
+        '<div class="form-file defaultsnext"><input '.$readonly.' type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
         $this->description, true, '', $default, $query);
     }
 }
