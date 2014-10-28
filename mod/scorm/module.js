@@ -807,6 +807,9 @@ M.mod_scorm.connectPrereqCallback = {
             }
             var el_new_tree = document.createElement('div');
             var pagecontent = document.getElementById("page-content");
+            if (!pagecontent) {
+                pagecontent = document.getElementById("content");
+            }
             el_new_tree.setAttribute('id','scormtree123');
             el_new_tree.innerHTML = o.responseText;
             // Make sure it does not show.
