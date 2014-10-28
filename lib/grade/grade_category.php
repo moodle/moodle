@@ -1419,6 +1419,7 @@ class grade_category extends grade_object {
      * @return void
      */
     private function auto_update_weights() {
+        global $CFG;
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             // This is only required if we are using natural weights.
             return;
@@ -1456,6 +1457,9 @@ class grade_category extends grade_object {
                 continue;
             } else if (!$this->aggregateoutcomes && $gradeitem->is_outcome_item()) {
                 // We will not aggregate outcome items, so we can ignore them.
+                continue;
+            } else if (empty($CFG->grade_includescalesinaggregation) && $gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                // The scales are not included in the aggregation, ignore them.
                 continue;
             }
 
@@ -1531,6 +1535,9 @@ class grade_category extends grade_object {
                 continue;
             } else if (!$this->aggregateoutcomes && $gradeitem->is_outcome_item()) {
                 // We will not aggregate outcome items, so we can ignore updating their weights.
+                continue;
+            } else if (empty($CFG->grade_includescalesinaggregation) && $gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                // We will not aggregate the scales, so we can ignore upating their weights.
                 continue;
             }
 
