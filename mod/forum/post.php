@@ -658,7 +658,14 @@ $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     array('discussion'=>$discussion->id):
                                     array()));
 
-if ($fromform = $mform_post->get_data()) {
+if ($mform_post->is_cancelled()) {
+    if (!isset($discussion->id) || $forum->type === 'qanda') {
+        // Q and A forums don't have a discussion page, so treat them like a new thread..
+        redirect(new moodle_url('/mod/forum/view.php', array('f' => $forum->id)));
+    } else {
+        redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
+    }
+} else if ($fromform = $mform_post->get_data()) {
 
     if (empty($SESSION->fromurl)) {
         $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";
