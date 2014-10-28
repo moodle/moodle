@@ -92,7 +92,7 @@ class message_output_airnotifier extends message_output {
             }
 
             // Sending the message to the device.
-            $serverurl = $CFG->airnotifierurl . ':' . $CFG->airnotifierport . '/api/v2/push';
+            $serverurl = $CFG->airnotifierurl . ':' . $CFG->airnotifierport . '/api/v2/push/';
             $header = array('Accept: application/json', 'X-AN-APP-NAME: ' . $CFG->airnotifierappname,
                 'X-AN-APP-KEY: ' . $CFG->airnotifieraccesskey);
             $curl = new curl;
