@@ -71,7 +71,7 @@ Feature: Control the aggregation of the scales
       | Course total<totalstr> | <coursetotal2> | <coursepc2> | -                            |
 
     Examples:
-      | aggregation                         | totalstr                             | coursetotal | coursepc | gradecontrib | scalecontrib | coursetotal2 | coursepc2 | gradecontrib2 | scalecontrib2 | 
+      | aggregation                         | totalstr                             | coursetotal | coursepc | gradecontrib | scalecontrib | coursetotal2 | coursepc2 | gradecontrib2 | scalecontrib2 |
       | Natural                             |                                      | 10.00       | 10.00 %  | 10.00        | 0.00         | 14.00        | 13.33 %   | 9.52 %        | 3.81 %        |
       | Mean of grades                      | Mean of grades.                      | 10.00       | 10.00 %  | 10.00        | 0.00         | 42.50        | 42.50 %   | 5.00 %        | 37.50 %       |
       | Weighted mean of grades             | Weighted mean of grades.             | 10.00       | 10.00 %  | 10.00        | 0.00         | 42.50        | 42.50 %   | 5.00 %        | 37.50 %       |
