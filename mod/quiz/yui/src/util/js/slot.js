@@ -296,32 +296,25 @@ Y.Moodle.mod_quiz.util.slot = {
             var pagebreaklink = pagebreak.get('childNodes').item(0);
 
             // Get the correct title.
-            var nextactivity = slot.next('li.activity');
-
-            var titlename = '', action = '', uri = M.cfg.wwwroot;
-            var iconsrc = uri + '/theme/image.php?theme=clean&component=core';
-            // IE8 can't handle svg images.
-            if (Y.one('body.ie8')) {
-                iconsrc += '&svg=e%2F0';
-            }
-            if (Y.Moodle.mod_quiz.util.page.isPage(nextactivity)) {
-                action = titlename = 'removepagebreak';
-                iconsrc += '&image=e%2Fremove_page_break';
+            var action = '', iconname = '';
+            if (Y.Moodle.mod_quiz.util.page.isPage(slot.next('li.activity'))) {
+                action = 'removepagebreak';
+                iconname = 'e/remove_page_break';
             } else {
-                action = titlename = 'addpagebreak';
-                iconsrc += '&image=e%2Finsert_page_break';
+                action = 'addpagebreak';
+                iconname = 'e/insert_page_break';
             }
-            var title = M.util.get_string(titlename, 'quiz');
 
             // Update the link and image titles
-            pagebreaklink.set('title', title);
+            pagebreaklink.set('title', M.util.get_string(action, 'quiz'));
             pagebreaklink.setData('action', action);
             // Update the image title.
             var icon = pagebreaklink.one(this.SELECTORS.ICON);
-            icon.set('title', title);
+            icon.set('title', M.util.get_string(action, 'quiz'));
+            icon.set('alt', M.util.get_string(action, 'quiz'));
 
             // Update the image src.
-            icon.set('src', iconsrc);
+            icon.set('src', M.util.image_url(iconname));
 
             // Get anchor url parameters as an associative array.
             var params = Y.QueryString.parse(pagebreaklink.get('href'));
