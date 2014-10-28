@@ -27,11 +27,12 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 $top = optional_param('top', 0, PARAM_INT);
-$msg = optional_param('lti_msg', '', PARAM_RAW);
-$err = optional_param('lti_errormsg', '', PARAM_RAW);
+$msg = optional_param('lti_msg', '', PARAM_TEXT);
+$err = optional_param('lti_errormsg', '', PARAM_TEXT);
 $id = optional_param('id', 0, PARAM_INT);
 
 // No guest autologin.
+require_sesskey();
 require_login(0, false);
 
 $systemcontext = context_system::instance();
@@ -40,6 +41,7 @@ require_capability('moodle/site:config', $systemcontext);
 if (empty($top)) {
 
     $params = array();
+    $params['sesskey'] = sesskey();
     $params['top'] = '1';
     if (!empty($msg)) {
         $params['lti_msg'] = $msg;
@@ -57,6 +59,7 @@ if (empty($top)) {
     $html = <<< EOD
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript">
 //<![CDATA[
 top.location.href = '{$redirect}';
@@ -70,11 +73,15 @@ top.location.href = '{$redirect}';
 </body>
 </html>
 EOD;
+
+    // We always send the headers because they set the encoding.
+    send_headers('text/html; charset=utf-8', false);
     echo $html;
 
 } else if (!empty($msg) && !empty($err)) {
 
     $params = array();
+    $params['sesskey'] = sesskey();
     $params['top'] = '1';
     if (!empty($err)) {
         $params['lti_errormsg'] = $err;

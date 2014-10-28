@@ -275,7 +275,7 @@ function lti_register($toolproxy) {
     $requestparams['tc_profile_url'] = $profileservice->parse_value('$ToolConsumerProfile.url');
 
     // Add the return URL.
-    $returnurlparams = array('id' => $toolproxy->id);
+    $returnurlparams = array('id' => $toolproxy->id, 'sesskey'=>sesskey());
     $url = new \moodle_url('/mod/lti/registrationreturn.php', $returnurlparams);
     $returnurl = $url->out(false);
 
