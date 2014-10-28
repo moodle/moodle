@@ -35,6 +35,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
+        \mod_forum\subscriptions::reset_discussion_cache();
 
         global $CFG;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
