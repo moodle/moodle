@@ -147,6 +147,11 @@ class award_criteria_manual extends award_criteria {
     public function review($userid) {
         global $DB;
 
+        // Roles should always have a parameter.
+        if (empty($this->params)) {
+            return false;
+        }
+
         $overall = false;
         foreach ($this->params as $param) {
             $crit = $DB->get_record('badge_manual_award', array('issuerrole' => $param['role'], 'recipientid' => $userid, 'badgeid' => $this->badgeid));
