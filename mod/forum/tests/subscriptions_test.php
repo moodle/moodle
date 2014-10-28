@@ -79,6 +79,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
      * @param array An array containing the discussion object, and the post object
      */
     protected function helper_post_to_forum($forum, $author) {
+        global $DB;
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Create a discussion in the forum, and then add a post to that discussion.
@@ -88,13 +89,8 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $record->forum = $forum->id;
         $discussion = $generator->create_discussion($record);
 
-        $record = new stdClass();
-        $record->course = $forum->course;
-        $record->userid = $author->id;
-        $record->forum = $forum->id;
-        $record->discussion = $discussion->id;
-        $record->mailnow = 1;
-        $post = $generator->create_post($record);
+        // Retrieve the post which was created by create_discussion.
+        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
 
         return array($discussion, $post);
     }
@@ -1046,7 +1042,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $record->userid = $users[2]->id;
         $record->forum = $forum->id;
         $record->discussion = $discussion->id;
-        $record->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $record->preference = time();
         $DB->insert_record('forum_discussion_subs', $record);
 
         // The discussion count should not have changed.

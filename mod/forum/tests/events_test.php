@@ -1914,7 +1914,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -1973,7 +1973,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2027,7 +2027,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2078,7 +2078,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2129,7 +2129,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2317,7 +2317,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2371,7 +2371,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2422,7 +2422,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 
@@ -2473,7 +2473,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $subscription->userid  = $user->id;
         $subscription->forum = $forum->id;
         $subscription->discussion = $discussion->id;
-        $subscription->preference = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+        $subscription->preference = time();
 
         $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
 

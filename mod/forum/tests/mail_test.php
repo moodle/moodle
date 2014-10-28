@@ -132,12 +132,42 @@ class mod_forum_mail_testcase extends advanced_testcase {
      * @return array An array of the messages caught by the message sink
      */
     protected function helper_run_cron_check_count($post, $expected) {
+
         // Clear the sinks before running cron.
         $this->helper->messagesink->clear();
         $this->helper->mailsink->clear();
 
         // Cron daily uses mtrace, turn on buffering to silence output.
         $this->expectOutputRegex("/{$expected} users were sent post {$post->id}, '{$post->subject}'/");
+        forum_cron();
+
+        // Now check the results in the message sink.
+        $messages = $this->helper->messagesink->get_messages();
+
+        // There should be the expected number of messages.
+        $this->assertEquals($expected, count($messages));
+
+        return $messages;
+    }
+
+    /**
+     * Run the forum cron, and check that the specified posts were sent the
+     * specified number of times.
+     *
+     * @param stdClass $post The forum post object
+     * @param integer $expected The number of times that the post should have been sent
+     * @return array An array of the messages caught by the message sink
+     */
+    protected function helper_run_cron_check_counts($posts, $expected) {
+
+        // Clear the sinks before running cron.
+        $this->helper->messagesink->clear();
+        $this->helper->mailsink->clear();
+
+        // Cron daily uses mtrace, turn on buffering to silence output.
+        foreach ($posts as $post) {
+            $this->expectOutputRegex("/{$post['count']} users were sent post {$post['id']}, '{$post['subject']}'/");
+        }
         forum_cron();
 
         // Now check the results in the message sink.
@@ -409,6 +439,9 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // Unsubscribe the 'author' user from the discussion.
         \mod_forum\subscriptions::unsubscribe_user_from_discussion($author->id, $discussion);
 
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribed($author->id, $forum, $discussion->id));
+        $this->assertTrue(\mod_forum\subscriptions::is_subscribed($recipient->id, $forum, $discussion->id));
+
         // We expect only one user to receive this post.
         $expected = 1;
 
@@ -546,5 +579,65 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // Run cron and check that the expected number of users received the notification.
         $messages = $this->helper_run_cron_check_count($post, $expected);
+    }
+
+    /**
+     * Test that a user unsubscribed from a forum who has subscribed to a discussion, only receives posts made after
+     * they subscribed to the discussion.
+     */
+    public function test_forum_discussion_subscription_forum_unsubscribed_discussion_subscribed_after_post() {
+        $this->resetAfterTest(true);
+        global $DB;
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $expectedmessages = array();
+
+        // Create a user enrolled in the course as a student.
+        list($author) = $this->helper_create_users($course, 1);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Update the original post to have a timecreated in the past by a few minutes.
+        $post->created = $post->created - 600;
+        $DB->update_record('forum_posts', $post);
+
+        $expectedmessages[] = array(
+            'id' => $post->id,
+            'subject' => $post->subject,
+            'count' => 0,
+        );
+
+        // Then subscribe the user to the discussion.
+        $this->assertTrue(\mod_forum\subscriptions::subscribe_user_to_discussion($author->id, $discussion));
+
+        // Then post a reply to the first discussion.
+        $record = new stdClass();
+        $record->course = $forum->course;
+        $record->userid = $author->id;
+        $record->forum = $forum->id;
+        $record->discussion = $discussion->id;
+        $record->mailnow = 1;
+        $record->created = time();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+        $reply = $generator->create_post($record);
+
+        $expectedmessages[] = array(
+            'id' => $reply->id,
+            'subject' => $reply->subject,
+            'count' => 1,
+        );
+
+        // We expect there to be two notifications, and not three.
+        $expectedcount = 1;
+
+        // Run cron and check that the expected number of users received the notification.
+        $messages = $this->helper_run_cron_check_counts($expectedmessages, $expectedcount);
+
     }
 }
