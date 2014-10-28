@@ -268,7 +268,7 @@ if ($generalforums) {
         }
 
         if ($can_subscribe) {
-            if (\mod_forum\subscriptions::subscription_disabled($forum)) {
+            if (!\mod_forum\subscriptions::subscription_disabled($forum)) {
                 $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
                         'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
                         'cantsubscribe' => '-'), false, false, true);
