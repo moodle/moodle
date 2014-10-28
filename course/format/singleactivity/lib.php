@@ -79,7 +79,7 @@ class format_singleactivity extends format_base {
                 $orphanednode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $orphanednode->add_class('orphaned');
                 foreach ($modinfo->sections[1] as $cmid) {
-                    if (has_capability('moodle/course:viewhiddenactivities', context_module($cmid))) {
+                    if (has_capability('moodle/course:viewhiddenactivities', context_module::instance($cmid))) {
                         $this->navigation_add_activity($orphanednode, $modinfo->cms[$cmid]);
                     }
                 }
