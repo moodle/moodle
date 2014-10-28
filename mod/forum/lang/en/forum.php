@@ -489,6 +489,7 @@ $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
 $string['unreadpostsone'] = '1 unread post';
 $string['unsubscribe'] = 'Unsubscribe from this forum';
+$string['unsubscribediscussion'] = 'Unsubscribe from this discussion';
 $string['unsubscribeall'] = 'Unsubscribe from all forums';
 $string['unsubscribeallconfirm'] = 'You are subscribed to {$a} forums now. Do you really want to unsubscribe from all forums and disable forum auto-subscribe?';
 $string['unsubscribealldone'] = 'All optional forum subscriptions were removed. You will still receive notifications from forums with forced subscription. To manage forum notifications go to Messaging in My Profile Settings.';

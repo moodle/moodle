@@ -1175,7 +1175,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
 
     $strforums = get_string('forums', 'forum');
 
-    $canunsubscribe = ! \mod_forum\subscriptions::is_forcesubscribed($forum);
+    $canunsubscribe = !\mod_forum\subscriptions::is_forcesubscribed($forum);
 
     $posttext = '';
 
@@ -1204,15 +1204,25 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     $posttext .= "\n\n";
     $posttext .= forum_print_attachments($post, $cm, "text");
 
-    if (!$bare && $canreply) {
-        $posttext .= "---------------------------------------------------------------------\n";
-        $posttext .= get_string("postmailinfo", "forum", $shortname)."\n";
-        $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
-    }
-    if (!$bare && $canunsubscribe) {
-        $posttext .= "\n---------------------------------------------------------------------\n";
-        $posttext .= get_string("unsubscribe", "forum");
-        $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
+    if (!$bare) {
+        if ($canreply) {
+            $posttext .= "---------------------------------------------------------------------\n";
+            $posttext .= get_string("postmailinfo", "forum", $shortname)."\n";
+            $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
+        }
+
+        if ($canunsubscribe) {
+            if (\mod_forum\subscriptions::is_subscribed($userto->id, $forum, null, $cm)) {
+                // If subscribed to this forum, offer the unsubscribe link.
+                $posttext .= "\n---------------------------------------------------------------------\n";
+                $posttext .= get_string("unsubscribe", "forum");
+                $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
+            }
+            // Always offer the unsubscribe from discussion link.
+            $posttext .= "\n---------------------------------------------------------------------\n";
+            $posttext .= get_string("unsubscribediscussion", "forum");
+            $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?d=$discussion->id\n";
+        }
     }
 
     $posttext .= "\n---------------------------------------------------------------------\n";
@@ -1283,7 +1293,15 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
 
     $footerlinks = array();
     if ($canunsubscribe) {
-        $footerlinks[] = '<a href="' . $CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id . '">' . get_string('unsubscribe', 'forum') . '</a>';
+        if (\mod_forum\subscriptions::is_subscribed($userto->id, $forum, null, $cm)) {
+            // If subscribed to this forum, offer the unsubscribe link.
+            $unsublink = new moodle_url('/mod/forum/subscribe.php', array('id' => $forum->id));
+            $footerlinks[] = html_writer::link($unsublink, get_string('unsubscribe', 'mod_forum'));
+        }
+        // Always offer the unsubscribe from discussion link.
+        $unsublink = new moodle_url('/mod/forum/subscribe.php', array('d' => $discussion->id));
+        $footerlinks[] = html_writer::link($unsublink, get_string('unsubscribediscussion', 'mod_forum'));
+
         $footerlinks[] = '<a href="' . $CFG->wwwroot . '/mod/forum/unsubscribeall.php">' . get_string('unsubscribeall', 'forum') . '</a>';
     }
     $footerlinks[] = "<a href='{$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}'>" . get_string('digestmailpost', 'forum') . '</a>';
