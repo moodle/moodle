@@ -15,17 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version info
- *
- * This file contains version information about tool_monitor.
+ * Event monitor cache definitions.
  *
  * @package    tool_monitor
- * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2014111001;     // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014110400;     // Requires this Moodle version.
-$plugin->component = 'tool_monitor'; // Full name of the plugin (used for diagnostics).
+$definitions = array(
+    'eventsubscriptions' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 10
+    )
+);
