@@ -50,6 +50,8 @@ class tool_monitor_events_testcase extends advanced_testcase {
         $ruledata = new stdClass();
         $ruledata->userid = $user->id;
         $ruledata->courseid = $course->id;
+        $ruledata->plugin = 'mod_assign';
+        $ruledata->eventname = '\mod_assign\event\submission_viewed';
         $ruledata->description = 'Rule description';
         $ruledata->descriptionformat = FORMAT_HTML;
         $ruledata->template = 'A message template';
