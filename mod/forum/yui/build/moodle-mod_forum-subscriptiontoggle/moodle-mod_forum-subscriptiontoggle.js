@@ -48,7 +48,8 @@ Y.extend(SubscriptionToggle, Y.Base, {
             data: {
                 sesskey: M.cfg.sesskey,
                 forumid: clickedLink.getData('forumid'),
-                discussionid: clickedLink.getData('discussionid')
+                discussionid: clickedLink.getData('discussionid'),
+                includetext: clickedLink.getData('includetext')
             },
             context: this,
             'arguments': {
