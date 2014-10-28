@@ -770,7 +770,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($mod->uservisible) {
             $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
             $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
-                has_capability('moodle/course:viewhiddenactivities', $mod->get_context());
+                has_capability('moodle/course:viewhiddenactivities', $mod->context);
             if ($accessiblebutdim) {
                 $linkclasses .= ' dimmed';
                 $textclasses .= ' dimmed_text';
@@ -827,7 +827,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($mod->uservisible) {
             $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
             $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
-                has_capability('moodle/course:viewhiddenactivities', $mod->get_context());
+                has_capability('moodle/course:viewhiddenactivities', $mod->context);
             if ($accessiblebutdim) {
                 $textclasses .= ' dimmed_text';
                 if ($conditionalhidden) {
