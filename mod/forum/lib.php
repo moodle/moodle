@@ -3791,6 +3791,7 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
                 'class' => 'discussiontoggle iconsmall',
                 'data-forumid' => $forum->id,
                 'data-discussionid' => $discussionid,
+                'data-includetext' => $includetext,
         ));
     } else {
         $o .= html_writer::link($subscriptionlink,
@@ -3800,6 +3801,7 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
                 'class' => 'discussiontoggle iconsmall',
                 'data-forumid' => $forum->id,
                 'data-discussionid' => $discussionid,
+                'data-includetext' => $includetext,
         ));
     }
 
