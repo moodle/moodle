@@ -1362,7 +1362,7 @@ END;
 
         $mc->layout = 0;
         $mc->single = 1;
-        $mc->shuffleanswers = 1;
+        $mc->shuffleanswers = 0;
         $mc->correctfeedback =          array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
         $mc->partiallycorrectfeedback = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
         $mc->incorrectfeedback =        array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
