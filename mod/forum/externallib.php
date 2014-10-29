@@ -459,9 +459,13 @@ class mod_forum_external extends external_api {
             }
 
             // Function forum_get_all_discussion_posts adds postread field.
-            if (!isset($post->postread)) {
+            // Note that the value returned can be a boolean or an integer. The WS expects a boolean.
+            if (empty($post->postread)) {
                 $posts[$pid]->postread = false;
+            } else {
+                $posts[$pid]->postread = true;
             }
+
             $posts[$pid]->canreply = $canreply;
             if (!empty($posts[$pid]->children)) {
                 $posts[$pid]->children = array_keys($posts[$pid]->children);
