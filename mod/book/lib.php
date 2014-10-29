@@ -42,6 +42,28 @@ function book_get_numbering_types() {
 }
 
 /**
+ * Returns list of available navigation link types.
+ * @return array
+ */
+function book_get_nav_types() {
+    require_once(dirname(__FILE__).'/locallib.php');
+
+    return array (
+        BOOK_LINK_TOCONLY   => get_string('navtoc', 'mod_book'),
+        BOOK_LINK_IMAGE     => get_string('navimages', 'mod_book'),
+        BOOK_LINK_TEXT      => get_string('navtext', 'mod_book'),
+    );
+}
+
+/**
+ * Returns list of available navigation link CSS classes.
+ * @return array
+ */
+function book_get_nav_classes() {
+    return array ('navtoc', 'navimages', 'navtext');
+}
+
+/**
  * Returns all other caps used in module
  * @return array
  */

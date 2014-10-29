@@ -203,6 +203,19 @@ function xmldb_book_upgrade($oldversion) {
 
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2014051201) {
+        // MDL-36874 Book update.
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('navstyle', XMLDB_TYPE_INTEGER, '4' , XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1);
+
+        // Conditionally launch add field navstyle.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // MDL-36874 savepoint reached.
+        upgrade_mod_savepoint(true, 2014051201, 'book');
+    }
 
     return true;
 }

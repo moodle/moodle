@@ -70,6 +70,25 @@ class mod_book_mod_form extends moodleform_mod {
         $mform->addHelpButton('numbering', 'numbering', 'mod_book');
         $mform->setDefault('numbering', $config->numbering);
 
+        $alloptions = book_get_nav_types();
+        $allowed = explode(',', $config->navoptions);
+        $options = array();
+        foreach ($allowed as $type) {
+            if (isset($alloptions[$type])) {
+                $options[$type] = $alloptions[$type];
+            }
+        }
+        if ($this->current->instance) {
+            if (!isset($options[$this->current->navstyle])) {
+                if (isset($alloptions[$this->current->navstyle])) {
+                    $options[$this->current->navstyle] = $alloptions[$this->current->navstyle];
+                }
+            }
+        }
+        $mform->addElement('select', 'navstyle', get_string('navstyle', 'book'), $options);
+        $mform->addHelpButton('navstyle', 'navstyle', 'mod_book');
+        $mform->setDefault('navstyle', $config->navstyle);
+
         $mform->addElement('checkbox', 'customtitles', get_string('customtitles', 'book'));
         $mform->addHelpButton('customtitles', 'customtitles', 'mod_book');
         $mform->setDefault('customtitles', 0);
