@@ -266,7 +266,8 @@
 
     // Output the links to neighbour discussions.
     $neighbours = forum_get_discussion_neighbours($cm, $discussion);
-    echo $renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
+    $neighbourlinks = $renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
+    echo $neighbourlinks;
 
 /// Print the controls across the top
     echo '<div class="discussioncontrols clearfix">';
@@ -352,6 +353,8 @@
 
     $canrate = has_capability('mod/forum:rate', $modcontext);
     forum_print_discussion($course, $cm, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
+
+    echo $neighbourlinks;
 
     // Add the subscription toggle JS.
     $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
