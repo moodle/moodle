@@ -958,8 +958,8 @@ function calendar_top_controls($type, $data) {
         case 'day':
             $days = calendar_get_days();
 
-            $prevtimestamp = $time - DAYSECS;
-            $nexttimestamp = $time + DAYSECS;
+            $prevtimestamp = strtotime('-1 day', $time);
+            $nexttimestamp = strtotime('+1 day', $time);
 
             $prevdate = $calendartype->timestamp_to_date_array($prevtimestamp);
             $nextdate = $calendartype->timestamp_to_date_array($nexttimestamp);
@@ -1705,7 +1705,7 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
             $timeend = calendar_time_representation($event->timestart + $event->timeduration);
 
             // Set printable representation.
-            if ($now >= $usermidnightstart && $now < ($usermidnightstart + DAYSECS)) {
+            if ($now >= $usermidnightstart && $now < strtotime('+1 day', $usermidnightstart)) {
                 $url = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $linkparams), 0, 0, 0, $endtime);
                 $eventtime = $timestart . ' <strong>&raquo;</strong> ' . html_writer::link($url, $dayend) . $timeend;
             } else {
@@ -2752,7 +2752,7 @@ class calendar_information {
      * @return int tomorrow timestamp
      */
     public function timestamp_tomorrow() {
-        return $this->time + DAYSECS;
+        return strtotime('+1 day', $this->time);
     }
     /**
      * Adds the pretend blocks for the calendar

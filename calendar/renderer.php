@@ -503,9 +503,9 @@ class core_calendar_renderer extends plugin_renderer_base {
             $weekend = intval($CFG->calendar_weekend);
         }
 
-        $daytime = $display->tstart - DAYSECS;
+        $daytime = strtotime('-1 day', $display->tstart);
         for ($day = 1; $day <= $display->maxdays; ++$day, ++$dayweek) {
-            $daytime = $daytime + DAYSECS;
+            $daytime = strtotime('+1 day', $daytime);
             if($dayweek > $display->maxwday) {
                 // We need to change week (table row)
                 $table->data[] = $row;
