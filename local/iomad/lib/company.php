@@ -886,7 +886,9 @@ class company {
     public static function get_department_users($departmentid) {
         global $DB;
         if ($departmentusers = $DB->get_records('company_users',
-                                                 array('departmentid' => $departmentid))) {
+                                                 array('departmentid' => $departmentid),
+                                                 null,
+                                                 'userid,id,companyid,managertype,departmentid,suspended')) {
             return $departmentusers;
         } else {
             return array();
