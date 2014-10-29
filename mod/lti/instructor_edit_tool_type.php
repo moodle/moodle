@@ -37,6 +37,8 @@ $PAGE->set_pagelayout('popup');
 $action = optional_param('action', null, PARAM_TEXT);
 $typeid = optional_param('typeid', null, PARAM_INT);
 
+require_sesskey();
+
 require_capability('mod/lti:addcoursetool', context_course::instance($courseid));
 
 if (!empty($typeid)) {
