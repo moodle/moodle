@@ -631,7 +631,7 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $params->username = fullname($userto);
     $params->badgelink = $issuedlink;
     $message = badge_message_from_template($badge->message, $params);
-    $plaintext = format_text_email($message, FORMAT_HTML);
+    $plaintext = html_to_text($message);
 
     // Notify recipient.
     $eventdata = new stdClass();
@@ -642,9 +642,9 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $eventdata->notification      = 1;
     $eventdata->subject           = $badge->messagesubject;
     $eventdata->fullmessage       = $plaintext;
-    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessageformat = FORMAT_HTML;
     $eventdata->fullmessagehtml   = $message;
-    $eventdata->smallmessage      = $plaintext;
+    $eventdata->smallmessage      = '';
 
     // Attach badge image if possible.
     if (!empty($CFG->allowattachments) && $badge->attachment && is_string($filepathhash)) {
@@ -677,10 +677,10 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
         $eventdata->userto            = $creator;
         $eventdata->notification      = 1;
         $eventdata->subject           = $creatorsubject;
-        $eventdata->fullmessage       = format_text_email($creatormessage, FORMAT_HTML);
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessage       = html_to_text($creatormessage);
+        $eventdata->fullmessageformat = FORMAT_HTML;
         $eventdata->fullmessagehtml   = $creatormessage;
-        $eventdata->smallmessage      = $creatorsubject;
+        $eventdata->smallmessage      = '';
 
         message_send($eventdata);
         $DB->set_field('badge_issued', 'issuernotified', time(), array('badgeid' => $badge->id, 'userid' => $userid));
