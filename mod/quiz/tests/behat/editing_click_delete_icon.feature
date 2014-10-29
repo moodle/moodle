@@ -91,14 +91,14 @@ Feature: Edit quiz page - delete
     And "Question C" should have number "i" on the edit quiz page
     And "Question D" should have number "2" on the edit quiz page
     And "Question E" should have number "3" on the edit quiz page
-    
+
     # Delete from first question in the last remaining page. Are the page breaks updated?
     When I delete "Question A" in the quiz by clicking the delete icon
     Then "Question B" should have number "1" on the edit quiz page
     And "Question C" should have number "i" on the edit quiz page
     And "Question D" should have number "2" on the edit quiz page
     And "Question E" should have number "3" on the edit quiz page
-    
+
     When I click on the "Add" page break icon after question "Question C"
     Then I should see "Page 1"
     And I should see "Question B" on quiz page "1"
@@ -106,7 +106,7 @@ Feature: Edit quiz page - delete
     Then I should see "Page 2"
     And I should see "Question D" on quiz page "2"
     And I should see "Question E" on quiz page "2"
-    
+
     # Test reorder of pages
     When I click on the "Add" page break icon after question "Question B"
     Then I should see "Page 1"
