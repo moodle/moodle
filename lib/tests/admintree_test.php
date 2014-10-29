@@ -272,7 +272,7 @@ class core_admintree_testcase extends advanced_testcase {
         $setting->write_setting('/mm/nn');
         $this->assertSame('', get_config('abc_cde', 'execpath'));
 
-        // This also (most probably incorrectly) affects admin_setting_configfile.
+        // This also affects admin_setting_configfile and admin_setting_configdirectory.
 
         set_config('preventexecpath', 0);
         set_config('execpath', null, 'abc_cde');
@@ -297,5 +297,27 @@ class core_admintree_testcase extends advanced_testcase {
         $setting->write_setting('/mm/nn');
         $this->assertSame('', get_config('abc_cde', 'execpath'));
 
+        set_config('preventexecpath', 0);
+        set_config('execpath', null, 'abc_cde');
+        $this->assertFalse(get_config('abc_cde', 'execpath'));
+        $setting = new admin_setting_configdirectory('abc_cde/execpath', 'some desc', '', '/xx/yy');
+        $setting->write_setting('/oo/pp');
+        $this->assertSame('/oo/pp', get_config('abc_cde', 'execpath'));
+
+        // Prevent changes.
+        set_config('preventexecpath', 1);
+        $setting->write_setting('/mm/nn');
+        $this->assertSame('/oo/pp', get_config('abc_cde', 'execpath'));
+
+        // Use default in install.
+        set_config('execpath', null, 'abc_cde');
+        $setting->write_setting('/mm/nn');
+        $this->assertSame('/xx/yy', get_config('abc_cde', 'execpath'));
+
+        // Use empty value if no default.
+        $setting = new admin_setting_configdirectory('abc_cde/execpath', 'some desc', '', null);
+        set_config('execpath', null, 'abc_cde');
+        $setting->write_setting('/mm/nn');
+        $this->assertSame('', get_config('abc_cde', 'execpath'));
     }
 }
