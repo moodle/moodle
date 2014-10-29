@@ -57,7 +57,10 @@ $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
 $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-require_login($course);
+$context = context_module::instance($cm->id);
+
+require_login($course, true, $cm);
+require_capability('mod/lti:view', $context);
 
 add_to_log($course->id, "lti", "launch", "launch.php?id=$cm->id", "$lti->id");
 
