@@ -645,7 +645,8 @@ class gradingform_guide_controller extends gradingform_controller {
         $returnvalue['maxscore'] = $maxscore;
         $returnvalue['minscore'] = 0;
         if (!empty($this->moduleinstance->grade)) {
-            $returnvalue['modulegrade'] = $this->moduleinstance->grade;
+            $graderange = make_grades_menu($this->moduleinstance->grade);
+            $returnvalue['modulegrade'] = count($graderange) - 1;
         }
         return $returnvalue;
     }
