@@ -798,6 +798,27 @@ session_get_instance();
 $SESSION = &$_SESSION['SESSION'];
 $USER    = &$_SESSION['USER'];
 
+// Set default content type and encoding, developers are still required to use
+// echo $OUTPUT->header() everywhere, anything that gets set later should override these headers.
+// This is intended to mitigate some security problems.
+if (AJAX_SCRIPT) {
+    $supportsjsoncontenttype = !check_browser_version('MSIE') ||
+        (check_browser_version('MSIE', 8) &&
+            !(preg_match("/MSIE 7.0/", $_SERVER['HTTP_USER_AGENT']) && preg_match("/Trident\/([0-9\.]+)/", $_SERVER['HTTP_USER_AGENT'])));
+    if (!$supportsjsoncontenttype) {
+        // Some bloody old IE.
+        @header('Content-type: text/plain; charset=utf-8');
+        @header('X-Content-Type-Options: nosniff');
+    } else if (!empty($_FILES)) {
+        // Some ajax code may have problems with json and file uploads.
+        @header('Content-type: text/plain; charset=utf-8');
+    } else {
+        @header('Content-type: application/json; charset=utf-8');
+    }
+} else if (!CLI_SCRIPT) {
+    @header('Content-type: text/html; charset=utf-8');
+}
+
 // Late profiling, only happening if early one wasn't started
 if (!empty($CFG->profilingenabled)) {
     require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
