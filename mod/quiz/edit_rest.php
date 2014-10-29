@@ -134,7 +134,7 @@ switch($requestmethod) {
                 quiz_delete_previews($quiz);
                 quiz_update_sumgrades($quiz);
                 echo json_encode(array('newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),
-                            'deleted' => true));
+                            'deleted' => true, 'newnumquestions' => $structure->get_question_count()));
                 break;
         }
         break;

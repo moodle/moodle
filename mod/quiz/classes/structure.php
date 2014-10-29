@@ -613,6 +613,8 @@ class structure {
             question_delete_question($slot->questionid);
         }
 
+        unset($this->questions[$slot->questionid]);
+
         $this->refresh_page_numbers_and_update_db($quiz);
 
         $trans->allow_commit();

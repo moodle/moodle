@@ -51,6 +51,7 @@
         INSTANCEMAXMARK : 'span.instancemaxmark',
         MODINDENTDIV : '.mod-indent',
         MODINDENTOUTER : '.mod-indent-outer',
+        NUMQUESTIONS : '.numberofquestions',
         PAGECONTENT : 'div#page-content',
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
@@ -123,6 +124,9 @@ Y.extend(TOOLBOX, Y.Base, {
                     // Run the callback if we have one.
                     if (responsetext.newsummarks) {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
+                    }
+                    if (responsetext.newnumquestions) {
+                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(M.util.get_string('numquestionsx', 'quiz', responsetext.newnumquestions));
                     }
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();
