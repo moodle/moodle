@@ -10,7 +10,9 @@
             "moodle-core-dragdrop",
             "moodle-core-notification",
             "moodle-mod_quiz-quizbase",
-            "moodle-mod_quiz-util",
+            "moodle-mod_quiz-util-base",
+            "moodle-mod_quiz-util-page",
+            "moodle-mod_quiz-util-slot",
             "moodle-course-util"
         ]
     }

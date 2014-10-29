@@ -41,6 +41,7 @@ $string['addnewgroupoverride'] = 'Add group override';
 $string['addnewpagesafterselected'] = 'Add new pages after selected questions';
 $string['addnewquestionsqbank'] = 'Add questions to the category {$a->catname}: {$a->link}';
 $string['addnewuseroverride'] = 'Add user override';
+$string['addpagebreak'] = 'Add page break';
 $string['addpagehere'] = 'Add page here';
 $string['addquestion'] = 'Add question';
 $string['addquestionfrombanktopage'] = 'Add from the question bank to page {$a}';
@@ -431,7 +432,6 @@ $string['invalidquizid'] = 'Invalid quiz ID';
 $string['invalidsource'] = 'The source is not accepted as valid.';
 $string['invalidsourcetype'] = 'Invalid source type.';
 $string['invalidstateid'] = 'Invalid state id';
-$string['joinpages'] = 'Remove page break';
 $string['lastanswer'] = 'Your last answer was';
 $string['layout'] = 'Layout';
 $string['layoutasshown'] = 'Page layout as shown.';
@@ -694,6 +694,7 @@ $string['regradingquiz'] = 'Regrading quiz "{$a}"';
 $string['remove'] = 'Remove';
 $string['removeallquizattempts'] = 'Delete all quiz attempts';
 $string['removeemptypage'] = 'Remove empty page';
+$string['removepagebreak'] = 'Remove page break';
 $string['removeselected'] = 'Remove selected';
 $string['rename'] = 'Rename';
 $string['renderingserverconnectfailed'] = 'The server {$a} failed to process an RQP request. Check that the URL is correct.';
@@ -833,7 +834,6 @@ $string['sortsubmit'] = 'Sort questions';
 $string['sorttypealpha'] = 'Sort by type, name';
 $string['specificapathnotonquestion'] = 'The specified file path is not on the specified question';
 $string['specificquestionnotonquiz'] = 'Specified question is not on the specified quiz';
-$string['splitpages'] = 'Add page break';
 $string['startagain'] = 'Start again';
 $string['startattempt'] = 'Start attempt';
 $string['startedon'] = 'Started on';
@@ -912,7 +912,7 @@ $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
 
-// Deprecated since Moodle 2.8
+// Deprecated since Moodle 2.8.
 
 $string['categories'] = 'Categories';
 $string['category'] = 'Category';

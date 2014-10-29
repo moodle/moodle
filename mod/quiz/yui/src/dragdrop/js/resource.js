@@ -14,7 +14,6 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         this.groups = ['resource'];
         this.samenodeclass = CSS.ACTIVITY;
         this.parentnodeclass = CSS.SECTION;
-        //this.resourcedraghandle = this.get_drag_handle(M.util.get_string('movecoursemodule', 'moodle'), CSS.EDITINGMOVE, CSS.ICONCLASS, true);
         this.resourcedraghandle = this.get_drag_handle(M.str.moodle.move, CSS.EDITINGMOVE, CSS.ICONCLASS, true);
 
         this.samenodelabel = {
@@ -168,12 +167,11 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
                     var responsetext = Y.JSON.parse(response.responseText);
                     var params = {element: dragnode, visible: responsetext.visible};
                     M.mod_quiz.quizbase.invoke_function('set_visibility_resource_ui', params);
-                    Y.Moodle.mod_quiz.util.slot.reorder_slots();
                     this.unlock_drag_handle(drag, CSS.EDITINGMOVE);
                     window.setTimeout(function() {
                         spinner.hide();
                     }, 250);
-                    window.location.reload(true);
+                    M.mod_quiz.resource_toolbox.reorganise_edit_page();
                 },
                 failure: function(tid, response) {
                     this.ajax_failure(response);

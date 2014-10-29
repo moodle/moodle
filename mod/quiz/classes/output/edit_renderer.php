@@ -83,7 +83,8 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->end_section_list();
 
         // Inialise the JavaScript.
-        $this->initialise_editing_javascript($quizobj->get_course(), $quizobj->get_quiz());
+        $this->initialise_editing_javascript($quizobj->get_course(), $quizobj->get_quiz(),
+                $structure, $contexts, $pagevars, $pageurl);
 
         // Include the contents of any other popups required.
         if ($structure->can_be_edited()) {
@@ -361,6 +362,38 @@ class edit_renderer extends \plugin_renderer_base {
     public function question_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
         $output = '';
 
+        $output .= $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
+
+        // Page split/join icon.
+        $joinhtml = '';
+        if ($structure->can_be_edited() && !$structure->is_last_slot_in_quiz($question->slot)) {
+            $joinhtml = $this->page_split_join_button($structure->get_quiz(),
+                    $question, !$structure->is_last_slot_on_page($question->slot));
+        }
+
+        // Question HTML.
+        $questionhtml = $this->question($structure, $question, $pageurl);
+        $questionclasses = 'activity ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
+
+        $output .= html_writer::tag('li', $questionhtml . $joinhtml,
+                array('class' => $questionclasses, 'id' => 'slot-' . $question->slotid));
+
+        return $output;
+    }
+
+    /**
+     * Displays one question with the surrounding controls.
+     *
+     * @param structure $structure object containing the structure of the quiz.
+     * @param \stdClass $question data from the question and quiz_slots tables.
+     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param \moodle_url $pageurl the canonical URL of this page.
+     * @return string HTML to output.
+     */
+    public function page_row(structure $structure, $question, $contexts, $pagevars, $pageurl) {
+        $output = '';
+
         // Put page in a span for easier styling.
         $page = html_writer::tag('span', get_string('page') . ' ' . $question->page,
                 array('class' => 'text'));
@@ -377,20 +410,6 @@ class edit_renderer extends \plugin_renderer_base {
             $output .= html_writer::tag('li', $page . $addmenu . $addquestionform,
                     array('class' => 'pagenumber activity yui3-dd-drop page', 'id' => 'page-' . $question->page));
         }
-
-        // Page split/join icon.
-        $joinhtml = '';
-        if ($structure->can_be_edited() && !$structure->is_last_slot_in_quiz($question->slot)) {
-            $joinhtml = $this->page_split_join_button($structure->get_quiz(),
-                    $question, !$structure->is_last_slot_on_page($question->slot));
-        }
-
-        // Question HTML.
-        $questionhtml = $this->question($structure, $question, $pageurl);
-        $questionclasses = 'activity ' . $question->qtype . ' qtype_' . $question->qtype . ' slot';
-
-        $output .= html_writer::tag('li', $questionhtml . $joinhtml,
-                array('class' => $questionclasses, 'id' => 'slot-' . $question->slotid));
 
         return $output;
     }
@@ -644,8 +663,8 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \stdClass $quiz the quiz settings from the database.
      * @param \stdClass $question data from the question and quiz_slots tables.
-     * @param string $insertpagebreak if true, show an insert page break icon.
-     *      Else show a join pages icon.
+     * @param bool $insertpagebreak if true, show an insert page break icon.
+     *      else show a join pages icon.
      * @return string HTML to output.
      */
     public function page_split_join_button($quiz, $question, $insertpagebreak) {
@@ -653,13 +672,13 @@ class edit_renderer extends \plugin_renderer_base {
                     'slot' => $question->slot, 'repag' => $insertpagebreak ? 2 : 1, 'sesskey' => sesskey()));
 
         if ($insertpagebreak) {
-            $title = get_string('splitpages', 'quiz');
+            $title = get_string('addpagebreak', 'quiz');
             $image = $this->pix_icon('e/insert_page_break', $title);
-            $action = 'unlinkpage';
+            $action = 'addpagebreak';
         } else {
-            $title = get_string('joinpages', 'quiz');
+            $title = get_string('removepagebreak', 'quiz');
             $image = $this->pix_icon('e/remove_page_break', $title);
-            $action = 'linkpage';
+            $action = 'removepagebreak';
         }
 
         // Disable the link if quiz has attempts.
@@ -668,7 +687,7 @@ class edit_renderer extends \plugin_renderer_base {
             $disabled = "disabled";
         }
         return html_writer::span($this->action_link($url, $image, null, array('title' => $title,
-                    'class' => 'page_split_join', 'disabled' => $disabled, 'data-action' => $action)),
+                    'class' => 'page_split_join cm-edit-action', 'disabled' => $disabled, 'data-action' => $action)),
                 'page_split_join_wrapper');
     }
 
@@ -837,17 +856,23 @@ class edit_renderer extends \plugin_renderer_base {
      *
      * @param \stdClass $course the course settings from the database.
      * @param \stdClass $quiz the quiz settings from the database.
+     * @param structure $structure object containing the structure of the quiz.
+     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param \moodle_url $pageurl the canonical URL of this page.
      * @return bool Always returns true
      */
-    protected function initialise_editing_javascript($course, $quiz) {
+    protected function initialise_editing_javascript($course, $quiz, structure $structure,
+            \question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
 
         $config = new \stdClass();
         $config->resourceurl = '/mod/quiz/edit_rest.php';
         $config->sectionurl = '/mod/quiz/edit_rest.php';
         $config->pageparams = array();
         $config->questiondecimalpoints = $quiz->questiondecimalpoints;
+        $config->pagehtml = $this->new_page_template($structure, $contexts, $pagevars, $pageurl);
+        $config->addpageiconhtml = $this->add_page_icon_template($structure, $quiz);
 
-        // Include toolboxes.
         $this->page->requires->yui_module('moodle-mod_quiz-toolboxes',
                 'M.mod_quiz.init_resource_toolbox',
                 array(array(
@@ -857,6 +882,9 @@ class edit_renderer extends \plugin_renderer_base {
                         'config' => $config,
                 ))
         );
+        unset($config->pagehtml);
+        unset($config->addpageiconhtml);
+
         $this->page->requires->yui_module('moodle-mod_quiz-toolboxes',
                 'M.mod_quiz.init_section_toolbox',
                 array(array(
@@ -868,7 +896,6 @@ class edit_renderer extends \plugin_renderer_base {
                 ))
         );
 
-        // Include course dragdrop.
         $this->page->requires->yui_module('moodle-mod_quiz-dragdrop', 'M.mod_quiz.init_section_dragdrop',
                 array(array(
                         'courseid' => $course->id,
@@ -900,15 +927,19 @@ class edit_renderer extends \plugin_renderer_base {
                 'movecontent',
                 'moveleft',
                 'movesection',
+                'page',
+                'question',
                 'selectall',
                 'show',
                 'tocontent',
         ), 'moodle');
 
         $this->page->requires->strings_for_js(array(
+                'addpagebreak',
                 'confirmremovequestion',
                 'dragtoafter',
                 'dragtostart',
+                'removepagebreak',
         ), 'quiz');
 
         foreach (\question_bank::get_all_qtypes() as $qtype => $notused) {
@@ -916,6 +947,61 @@ class edit_renderer extends \plugin_renderer_base {
         }
 
         return true;
+    }
+
+    /**
+     * HTML for a page, with ids stripped, so it can be used as a javascript template.
+     *
+     * @param structure $structure object containing the structure of the quiz.
+     * @param \question_edit_contexts $contexts the relevant question bank contexts.
+     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @param \moodle_url $pageurl the canonical URL of this page.
+     * @return string HTML for a new page.
+     */
+    protected function new_page_template(structure $structure,
+            \question_edit_contexts $contexts, array $pagevars, \moodle_url $pageurl) {
+        if (!$structure->has_questions()) {
+            return '';
+        }
+
+        $question = $structure->get_question_in_slot(1);
+        $pagehtml = $this->page_row($structure, $question, $contexts, $pagevars, $pageurl);
+
+        // Normalise the page number.
+        $pagenumber = $question->page;
+        $strcontexts = array();
+        $strcontexts[] = 'page-';
+        $strcontexts[] = get_string('page') . ' ';
+        $strcontexts[] = 'addonpage%3D';
+        $strcontexts[] = 'addonpage=';
+        $strcontexts[] = 'addonpage="';
+        $strcontexts[] = get_string('addquestionfrombanktopage', 'quiz', '');
+        $strcontexts[] = 'data-addonpage%3D';
+        $strcontexts[] = 'action-menu-';
+
+        foreach ($strcontexts as $strcontext) {
+            $pagehtml = str_replace($strcontext . $pagenumber, $strcontext . '%%PAGENUMBER%%', $pagehtml);
+        }
+
+        return $pagehtml;
+    }
+
+    /**
+     * HTML for a page, with ids stripped, so it can be used as a javascript template.
+     *
+     * @param structure $structure object containing the structure of the quiz.
+     * @param \stdClass $quiz the quiz settings.
+     * @return string HTML for a new icon
+     */
+    protected function add_page_icon_template(structure $structure, $quiz) {
+
+        if (!$structure->has_questions()) {
+            return '';
+        }
+
+        $question = $structure->get_question_in_slot(1);
+        $html = $this->page_split_join_button($quiz, $question, true);
+        return str_replace('&amp;slot=1&amp;', '&amp;slot=%%SLOT%%&amp;', $html);
     }
 
     /**
