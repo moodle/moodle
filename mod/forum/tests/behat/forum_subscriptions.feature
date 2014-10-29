@@ -34,7 +34,7 @@ Feature: A user can control their own subscription preferences for a forum
     Then I should not see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject" "table_row"
-    And "Not subscribed. Click to subscribe." "link" should not exist in the "Test post subject" "table_row"
+    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject" "table_row"
 
   Scenario: A forced subscription forum cannot be subscribed to
     Given I add a "Forum" to section "1" and I fill the form with:
@@ -52,7 +52,7 @@ Feature: A user can control their own subscription preferences for a forum
     Then I should not see "Subscribe to this forum"
     And I should not see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject" "table_row"
-    And "Not subscribed. Click to subscribe." "link" should not exist in the "Test post subject" "table_row"
+    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject" "table_row"
 
   Scenario: An optional forum can be subscribed to
     Given I add a "Forum" to section "1" and I fill the form with:
