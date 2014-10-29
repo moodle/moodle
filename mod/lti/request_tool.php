@@ -37,6 +37,8 @@ $context = context_module::instance($cm->id);
 
 require_login($course);
 
+require_sesskey();
+
 require_capability('mod/lti:requesttooladd', context_course::instance($lti->course));
 
 $baseurl = lti_get_domain_from_url($lti->toolurl);
