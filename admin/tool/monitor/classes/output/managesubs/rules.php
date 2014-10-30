@@ -129,6 +129,7 @@ class rules extends \table_sql implements \renderable {
     public function col_select(\tool_monitor\rule $rule) {
         global $OUTPUT;
         $select = $rule->get_module_select($this->courseid);
+        $select->set_label(get_string('subscribeto', 'tool_monitor', $rule->get_name($this->context)), array('class' => 'accesshide'));
         return is_object($select) ? $OUTPUT->render($select) : $select;
     }
 
