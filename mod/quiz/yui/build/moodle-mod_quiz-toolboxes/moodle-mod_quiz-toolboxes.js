@@ -124,10 +124,10 @@ Y.extend(TOOLBOX, Y.Base, {
                     } catch (e) {}
 
                     // Run the callback if we have one.
-                    if (responsetext.newsummarks) {
+                    if (responsetext.hasOwnProperty('newsummarks')) {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
                     }
-                    if (responsetext.newnumquestions) {
+                    if (responsetext.hasOwnProperty('newnumquestions')) {
                         Y.one(SELECTOR.NUMQUESTIONS).setHTML(M.util.get_string('numquestionsx', 'quiz', responsetext.newnumquestions));
                     }
                     if (success_callback) {
