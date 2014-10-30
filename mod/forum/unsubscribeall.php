@@ -68,9 +68,9 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     if ($count->forums || $count->discussions) {
         if ($count->forums && $count->discussions) {
             $msg = get_string('unsubscribeallconfirm', 'forum', $count);
-        } elseif ($count->forums) {
+        } else if ($count->forums) {
             $msg = get_string('unsubscribeallconfirmforums', 'forum', $count);
-        } elseif ($count->discussions) {
+        } else if ($count->discussions) {
             $msg = get_string('unsubscribeallconfirmdiscussions', 'forum', $count);
         }
         echo $OUTPUT->confirm($msg, new moodle_url('unsubscribeall.php', array('confirm'=>1)), $return);
