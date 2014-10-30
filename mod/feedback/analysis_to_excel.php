@@ -258,7 +258,7 @@ function feedback_excelprint_detailed_items(&$worksheet, $xls_formats,
     //anonymous users are separated automatically because the userid in the completed is "0"
     if ($user = $DB->get_record('user', array('id'=>$completed->userid))) {
         if ($completed->anonymous_response == FEEDBACK_ANONYMOUS_NO) {
-            $worksheet->write_string($row_offset, $col_offset, $user->idnumber, $xls_formats->head2);
+            $worksheet->write_string($row_offset, $col_offset, $user->id, $xls_formats->head2);
             $col_offset++;
             $userfullname = fullname($user);
             $worksheet->write_string($row_offset, $col_offset, $user->username, $xls_formats->head2);
