@@ -37,6 +37,15 @@ defined('MOODLE_INTERNAL') || die();
 class grade_report_viewed extends \core\event\grade_report_viewed {
 
     /**
+     * Initialise the event data.
+     * @return void
+     */
+    protected function init() {
+        parent::init();
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+    }
+
+    /**
      * Returns localised general event name.
      *
      * @return string
