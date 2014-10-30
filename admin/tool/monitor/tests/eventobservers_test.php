@@ -35,6 +35,13 @@ require_once($CFG->dirroot . '/blog/lib.php');
  * Tests for event observers
  */
 class tool_monitor_eventobservers_testcase extends advanced_testcase {
+    /**
+     * Set up method.
+     */
+    public function setUp() {
+        // Enable monitor.
+        set_config('enablemonitor', 1, 'tool_monitor');
+    }
 
     /**
      * Test observer for course delete event.

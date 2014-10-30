@@ -15,6 +15,9 @@ Feature: tool_monitor_subscriptions
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
+    And I navigate to "Event monitoring rules" node in "Site administration > Reports"
+    And I click on "Enable" "link"
+    And I am on homepage
     And I follow "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
