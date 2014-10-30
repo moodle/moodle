@@ -93,6 +93,7 @@ $string['subcreatesuccess'] = "Subscription successfully created";
 $string['subdeletesuccess'] = "Subscription successfully removed";
 $string['subhelp'] = 'Subscription details';
 $string['subhelp_help'] = 'This subscription listens for when the event \'{$a->eventname}\' has been triggered in \'{$a->moduleinstance}\' {$a->frequency} time(s) in {$a->minutes} minute(s).';
+$string['subscribeto'] = 'Subscribe to rule "{$a}"';
 $string['system'] = "System";
 $string['taskcleanevents'] = 'Removes any unnecessary event monitor events';
 $string['title'] = '{$a->coursename} : {$a->reportname}';
