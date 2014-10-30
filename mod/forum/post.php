@@ -616,9 +616,8 @@ $postid = empty($post->id) ? null : $post->id;
 $draftid_editor = file_get_submitted_draft_itemid('message');
 $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', $postid, mod_forum_post_form::editor_options($modcontext, $postid), $post->message);
 
-// Always suggest that the user be subscribed to a discussion that they're posting in unless they've already posted, in
-// which case use their existing preference.
-$discussionsubscribe = true;
+// Respect the user's discussion autosubscribe preference unless they have already posted - in which case, use that preference.
+$discussionsubscribe = $USER->autosubscribe;
 if (isset($discussion) && forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
     $discussionsubscribe = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, $cm);
 }
