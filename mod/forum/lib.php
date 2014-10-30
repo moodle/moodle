@@ -4654,15 +4654,16 @@ function forum_post_subscription($fromform, $forum, $discussion) {
 
     $info = new stdClass();
     $info->name  = fullname($USER);
+    $info->discussion = format_string($discussion->name);
     $info->forum = format_string($forum->name);
 
     if ($fromform->discussionsubscribe) {
         if ($result = \mod_forum\subscriptions::subscribe_user_to_discussion($USER->id, $discussion)) {
-            return html_writer::tag('p', get_string('nowsubscribed', 'forum', $info));
+            return html_writer::tag('p', get_string('discussionnowsubscribed', 'forum', $info));
         }
     } else {
         if ($result = \mod_forum\subscriptions::unsubscribe_user_from_discussion($USER->id, $discussion)) {
-            return html_writer::tag('p', get_string('nownotsubscribed', 'forum', $info));
+            return html_writer::tag('p', get_string('discussionnownotsubscribed', 'forum', $info));
         }
     }
 
