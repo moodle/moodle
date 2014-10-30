@@ -1351,15 +1351,14 @@ class grade_structure {
             return $header;
         }
 
-        if ($withlink) {
-            $url = $this->get_activity_link($element);
-            if ($url) {
-                $a = new stdClass();
-                $a->name = get_string('modulename', $element['object']->itemmodule);
-                $title = get_string('linktoactivity', 'grades', $a);
+        if ($withlink && $url = $this->get_activity_link($element)) {
+            $a = new stdClass();
+            $a->name = get_string('modulename', $element['object']->itemmodule);
+            $title = get_string('linktoactivity', 'grades', $a);
 
-                $header = html_writer::link($url, $header, array('title' => $title));
-            }
+            $header = html_writer::link($url, $header, array('title' => $title));
+        } else {
+            $header = html_writer::span($header);
         }
 
         if ($withdescription) {

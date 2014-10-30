@@ -160,7 +160,6 @@ class grade extends tablelike implements selectable_items, filterable_items {
     public function original_headers() {
         return array(
             '', // For filter icon.
-            '', // For user picture.
             get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
@@ -208,12 +207,31 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $line = array(
             $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', $iconstring)),
-            $OUTPUT->user_picture($item),
+            $OUTPUT->user_picture($item, array('visibletoscreenreaders' => false)) .
             html_writer::link($url, $fullname),
             $this->item_range()
         );
+        $lineclasses = array(
+            "action",
+            "user",
+            "range"
+        );
+        $outputline = array();
+        $i = 0;
+        foreach ($line as $key => $value) {
+            $cell = new \html_table_cell($value);
+            if ($isheader = $i == 1) {
+                $cell->header = $isheader;
+                $cell->scope = "row";
+            }
+            if (array_key_exists($key, $lineclasses)) {
+                $cell->attributes['class'] = $lineclasses[$key];
+            }
+            $outputline[] = $cell;
+            $i++;
+        }
 
-        return $this->format_definition($line, $grade);
+        return $this->format_definition($outputline, $grade);
     }
 
     /**
@@ -265,6 +283,15 @@ class grade extends tablelike implements selectable_items, filterable_items {
      */
     public function heading() {
         return $this->item->get_name();
+    }
+
+    /**
+     * Get the summary for this table.
+     *
+     * @return string
+     */
+    public function summary() {
+        return get_string('summarygrade', 'gradereport_singleview');
     }
 
     /**

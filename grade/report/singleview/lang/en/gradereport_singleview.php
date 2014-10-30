@@ -46,3 +46,5 @@ $string['overridefor'] = 'Override for {$a}';
 $string['overridenone'] = 'Override no grades';
 $string['pluginname'] = 'Single view';
 $string['singleview:view'] = 'View report';
+$string['summarygrade'] = 'A table of users, with columns for range, grade, feedback, and whether to override or exclude a particular grade.';
+$string['summaryuser'] = 'A table of grade items, with columns for grade category, range, grade, feedback, and whether to override or exclude a particular grade.';
