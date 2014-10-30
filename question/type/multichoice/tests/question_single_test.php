@@ -165,4 +165,21 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $this->assertEquals('Frog', $mc->make_html_inline('<p>Frog</p><p></p>'));
         $this->assertEquals('Frog<br />†', $mc->make_html_inline('<p>Frog</p><p>†</p>'));
     }
+
+    public function test_simulated_post_data() {
+        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc->shuffleanswers = false;
+        $mc->answers[13]->answer = '<p>A</p>';
+        $mc->answers[14]->answer = '<p>B</p>';
+        $mc->answers[15]->answer = '<p>C</p>';
+        $mc->start_attempt(new question_attempt_step(), 1);
+
+        $originalresponse = array('answer' => 1);
+
+        $simulated = $mc->get_student_response_values_for_simulation($originalresponse);
+        $this->assertEquals(array('answer' => 'B'), $simulated);
+
+        $reconstucted = $mc->prepare_simulated_post_data($simulated);
+        $this->assertEquals($originalresponse, $reconstucted);
+    }
 }
