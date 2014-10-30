@@ -432,6 +432,7 @@ class edit_renderer extends \plugin_renderer_base {
         }
         $menu = new \action_menu();
         $menu->set_alignment(\action_menu::TR, \action_menu::BR);
+        $menu->set_constraint('.mod-quiz-edit-content');
         $trigger = html_writer::tag('span', get_string('add', 'quiz'), array('class' => 'add-menu'));
         $menu->set_menu_trigger($trigger);
 
