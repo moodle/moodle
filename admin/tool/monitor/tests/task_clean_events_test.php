@@ -122,7 +122,7 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
         $task = new \tool_monitor\task\clean_events();
         $task->execute();
 
-        $events = $DB->get_records('tool_monitor_events');
+        $events = $DB->get_records('tool_monitor_events', array(), 'id');
         $this->assertEquals(4, count($events));
         $event1 = array_shift($events);
         $event2 = array_shift($events);
@@ -162,7 +162,7 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
         $task->execute();
 
         // We now should only have the chapter_viewed events.
-        $events = $DB->get_records('tool_monitor_events');
+        $events = $DB->get_records('tool_monitor_events', array(), 'id');
         $this->assertEquals(2, count($events));
         $event1 = array_shift($events);
         $event2 = array_shift($events);
