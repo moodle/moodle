@@ -34,6 +34,12 @@ require_sesskey();
 $quizobj = quiz::create($quizid);
 require_login($quizobj->get_course(), false, $quizobj->get_cm());
 require_capability('mod/quiz:manage', $quizobj->get_context());
+if (quiz_has_attempts($quizid)) {
+    $reportlink = quiz_attempt_summary_link_to_reports($quizobj->get_quiz(),
+                    $quizobj->get_cm(), $quizobj->get_context());
+    throw new \moodle_exception('cannoteditafterattempts', 'quiz',
+            new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid)), $reportlink);
+}
 
 $slotnumber++;
 $repage = new \mod_quiz\repaginate($quizid);

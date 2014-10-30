@@ -98,6 +98,7 @@ if ($scrollpos) {
 
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the quiz.
+    $structure->check_can_be_edited();
     $questionsperpage = optional_param('questionsperpage', $quiz->questionsperpage, PARAM_INT);
     quiz_repaginate_questions($quiz->id, $questionsperpage );
     quiz_delete_previews($quiz);
@@ -106,6 +107,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
     // Add a single question to the current quiz.
+    $structure->check_can_be_edited();
     quiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
@@ -116,6 +118,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
 }
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+    $structure->check_can_be_edited();
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     // Add selected questions to the current quiz.
     $rawdata = (array) data_submitted();
@@ -133,6 +136,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
 
 if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the quiz.
+    $structure->check_can_be_edited();
     $recurse = optional_param('recurse', 0, PARAM_BOOL);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     $categoryid = required_param('categoryid', PARAM_INT);
@@ -145,6 +149,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
 }
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
+    $structure->check_can_be_edited();
     $deletepreviews = false;
     $recomputesummarks = false;
 
