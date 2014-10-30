@@ -27,16 +27,32 @@ define('AJAX_SCRIPT', true);
 require_once('../config.php');
 require_once('lib.php');
 
-require_login();
-
 if (empty($CFG->usetags)) {
-    print_error('tagsaredisabled', 'tag');
+    // Tags are disabled.
+    die();
 }
 
-$query = optional_param('query', '', PARAM_RAW);
-
-if ($similar_tags = tag_autocomplete($query)) {
-    foreach ($similar_tags as $tag) {
-        echo clean_param($tag->name, PARAM_TAG) . "\t" . tag_display_name($tag) . "\n";
-    }
+require_login(0, false);
+if (isguestuser()) {
+    // Guests should not be using this.
+    die();
 }
+
+// If a user cannot edit tags, they cannot add related tags which is what this auto complete is for.
+require_capability('moodle/tag:edit', context_system::instance());
+
+$query = optional_param('query', '', PARAM_TAG);
+
+echo $OUTPUT->header();
+
+// Limit the query to a minimum of 3 characters.
+$similartags = array();
+if (core_text::strlen($query) >= 3) {
+    $similartags = tag_autocomplete($query);
+}
+
+foreach ($similartags as $tag) {
+    echo clean_param($tag->name, PARAM_TAG) . "\t" . tag_display_name($tag) . "\n";
+}
+
+echo $OUTPUT->footer();
