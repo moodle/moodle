@@ -101,23 +101,6 @@ class data_field_picture extends data_field_base {
         $str .= '</fieldset>';
         $str .= '</div>';
 
-        $module = array(
-            'name'=>'form_filemanager',
-            'fullpath'=>'/lib/form/filemanager.js',
-            'requires' => array('core_filepicker', 'base', 'io-base', 'node',
-                    'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
-            'strings' => array(
-                array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
-                array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
-                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
-                array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
-                array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
-                array('confirmrenamefile', 'repository'), array('edit', 'moodle')
-            )
-        );
-
-        $PAGE->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
-
         return $str;
     }
 
