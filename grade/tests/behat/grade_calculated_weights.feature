@@ -225,7 +225,7 @@ Feature: We can understand the gradebook user report
       | Test assignment four | 33.33 % | 10.00 | 1.11 % |
       | Test assignment five | 33.33 % | 70.00 | 7.78 % |
       | Test assignment six | 33.33 % | 30.00 | 3.33 % |
-      | Category totalWeighted mean of grades. | 33.33 % | 36.67 | - |
+      | Sub category totalWeighted mean of grades. | 33.33 % | 36.67 | - |
       | Course total | - | 156.67 | - |
 
   @javascript
@@ -244,5 +244,5 @@ Feature: We can understand the gradebook user report
       | Test assignment four | 33.33 % | 10.00 | 2.00 % |
       | Test assignment five | 33.33 % | 70.00 | 14.00 % |
       | Test assignment six | 33.33 % | 30.00 | 6.00 % |
-      | Category total | 60.00 % | 110.00 | - |
+      | Sub category total | 60.00 % | 110.00 | - |
       | Course total | - | 230.00 | - |

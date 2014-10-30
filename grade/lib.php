@@ -1334,17 +1334,20 @@ class grade_structure {
      * @param bool  $icon Whether or not to display an icon with this header
      * @param bool  $spacerifnone return spacer if no icon found
      * @param bool  $withdescription Show description if defined by this item.
+     * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
+     *                         instead of "Category total" or "Course total"
      *
      * @return string header
      */
-    public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false, $withdescription=false) {
+    public function get_element_header(&$element, $withlink = false, $icon = true, $spacerifnone = false,
+        $withdescription = false, $fulltotal = false) {
         $header = '';
 
         if ($icon) {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name();
+        $header .= $element['object']->get_name($fulltotal);
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and
             $element['type'] != 'courseitem') {

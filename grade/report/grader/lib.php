@@ -816,7 +816,7 @@ class grade_report_grader extends grade_report {
                         $arrow = $this->get_sort_arrow('move', $sortlink);
                     }
 
-                    $headerlink = $this->gtree->get_element_header($element, true, $showactivityicons, false);
+                    $headerlink = $this->gtree->get_element_header($element, true, $showactivityicons, false, false, true);
 
                     $itemcell = new html_table_cell();
                     $itemcell->attributes['class'] = $type . ' ' . $catlevel . ' highlightable'. ' i'. $element['object']->id;
