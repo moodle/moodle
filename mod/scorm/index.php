@@ -90,7 +90,7 @@ foreach ($scorms as $scorm) {
         $trackedusers = scorm_get_count_users($scorm->id, $scorm->groupingid);
         if ($trackedusers > 0) {
             $reportshow = html_writer::link('report.php?id='.$scorm->coursemodule,
-                                                get_string('viewallreports', 'scorm', $trackedusers)).html_writer::end_div();
+                                                get_string('viewallreports', 'scorm', $trackedusers));
         } else {
             $reportshow = get_string('noreports', 'scorm');
         }
