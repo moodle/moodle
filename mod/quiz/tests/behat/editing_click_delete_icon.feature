@@ -38,6 +38,8 @@ Feature: Edit quiz page - delete
     And I should see "Question B" on quiz page "1"
     And I should see "Question C" on quiz page "2"
     And I should see "Total of marks: 3.00"
+    And I should see "Questions: 3"
+    And I should see "This quiz is open"
 
     # Delete last question in last page. Page contains multiple questions
     When I delete "Question C" in the quiz by clicking the delete icon
@@ -45,6 +47,7 @@ Feature: Edit quiz page - delete
     And I should see "Question B" on quiz page "1"
     And I should not see "Question C" on quiz page "2"
     And I should see "Total of marks: 2.00"
+    And I should see "Questions: 2"
 
     # Delete last question in last page. The page contains multiple questions and there are multiple pages.
     When I click on the "Add" page break icon after question "Question A"

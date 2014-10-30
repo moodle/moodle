@@ -939,6 +939,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'confirmremovequestion',
                 'dragtoafter',
                 'dragtostart',
+                'numquestionsx',
                 'removepagebreak',
         ), 'quiz');
 
