@@ -60,6 +60,13 @@ abstract class tablelike extends screen {
     public abstract function format_line($item);
 
     /**
+     * Get the summary for this table.
+     *
+     * @return string
+     */
+    public abstract function summary();
+
+    /**
      * Get the table headers
      *
      * @return array
@@ -165,6 +172,11 @@ abstract class tablelike extends screen {
         $table = new html_table();
 
         $table->head = $this->headers();
+
+        $summary = $this->summary();
+        if (!empty($summary)) {
+            $table->summary = $summary;
+        }
 
         // To be used for extra formatting.
         $this->index = 0;
