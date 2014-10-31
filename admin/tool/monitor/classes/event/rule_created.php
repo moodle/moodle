@@ -44,7 +44,7 @@ class rule_created extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'tool_monitor_rules';
         $this->data['crud'] = 'c';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**
