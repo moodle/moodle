@@ -53,6 +53,7 @@ $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
 $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
 require_login($course, false, $cm);
+
 $quizobj = new quiz($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 $modcontext = context_module::instance($cm->id);

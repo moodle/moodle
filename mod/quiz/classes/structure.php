@@ -182,6 +182,19 @@ class structure {
     }
 
     /**
+     * This quiz can only be edited if they have not been attempted.
+     * Throw an exception if this is not the case.
+     */
+    public function check_can_be_edited() {
+        if (!$this->can_be_edited()) {
+            $reportlink = quiz_attempt_summary_link_to_reports($this->get_quiz(),
+                    $this->quizobj->get_cm(), $this->quizobj->get_context());
+            throw new \moodle_exception('cannoteditafterattempts', 'quiz',
+                    new \moodle_url('/mod/quiz/edit.php', array('cmid' => $this->get_cmid())), $reportlink);
+        }
+    }
+
+    /**
      * How many questions are allowed per page in the quiz.
      * This setting controls how frequently extra page-breaks should be inserted
      * automatically when questions are added to the quiz.
@@ -472,6 +485,8 @@ class structure {
     public function move_slot($idmove, $idbefore, $page) {
         global $DB;
 
+        $this->check_can_be_edited();
+
         $movingslot = $this->slots[$idmove];
         if (empty($movingslot)) {
             throw new moodle_exception('Bad slot ID ' . $idmove);
@@ -575,6 +590,8 @@ class structure {
      */
     public function refresh_page_numbers_and_update_db($quiz) {
         global $DB;
+        $this->check_can_be_edited();
+
         $slots = $this->refresh_page_numbers($quiz);
 
         // Record new page order.
@@ -593,6 +610,8 @@ class structure {
      */
     public function remove_slot($quiz, $slotnumber) {
         global $DB;
+
+        $this->check_can_be_edited();
 
         $slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'slot' => $slotnumber));
         $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', array($quiz->id));
@@ -662,6 +681,8 @@ class structure {
      */
     public function update_page_break($quiz, $slotid, $type) {
         global $DB;
+
+        $this->check_can_be_edited();
 
         $quizslots = $DB->get_records('quiz_slots', array('quizid' => $quiz->id), 'slot');
         $repaginate = new \mod_quiz\repaginate($quiz->id, $quizslots);
