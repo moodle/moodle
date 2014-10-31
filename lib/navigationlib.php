@@ -4512,7 +4512,7 @@ class settings_navigation extends navigation_node {
 
         // View course reports.
         if (has_capability('moodle/site:viewreports', $coursecontext)) { // Basic capability for listing of reports.
-            $frontpagenav = $frontpage->add(get_string('reports'), null, self::TYPE_CONTAINER, null, null,
+            $frontpagenav = $frontpage->add(get_string('reports'), null, self::TYPE_CONTAINER, null, 'frontpagereports',
                     new pix_icon('i/stats', ''));
             $coursereports = core_component::get_plugin_list('coursereport');
             foreach ($coursereports as $report=>$dir) {
@@ -4554,6 +4554,13 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/folder', ''));
         }
+
+        // Let admin tools hook into frontpage navigation.
+        $tools = get_plugin_list_with_function('tool', 'extend_navigation_frontpage', 'lib.php');
+        foreach ($tools as $toolfunction) {
+            $toolfunction($frontpage, $course, $coursecontext);
+        }
+
         return $frontpage;
     }
 
