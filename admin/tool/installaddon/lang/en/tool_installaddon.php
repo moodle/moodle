@@ -66,6 +66,7 @@ $string['validationmsg_filenotexists'] = 'Extracted file not found';
 $string['validationmsg_filesnumber'] = 'Not enough files found in the package';
 $string['validationmsg_filestatus'] = 'Unable to extract all files';
 $string['validationmsg_filestatus_info'] = 'Attempting to extract file {$a->file} resulted in error \'{$a->status}\'.';
+$string['validationmsg_foundlangfile'] = 'Found language file';
 $string['validationmsg_maturity'] = 'Declared maturity level';
 $string['validationmsg_maturity_help'] = 'The add-on can declare its maturity level. If the maintainer considers the add-on stable, the declared maturity level will read MATURITY_STABLE. All other maturity levels (such as alpha or beta) should be considered unstable and a warning is raised.';
 $string['validationmsg_missingexpectedlangenfile'] = 'English language file name mismatch';
