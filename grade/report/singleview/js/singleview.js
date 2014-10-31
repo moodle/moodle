@@ -12,9 +12,9 @@ M.gradereport_singleview.init = function(Y) {
             };
         };
 
-        link.on('click', function() {
+        link.on('click', function(e) {
+            e.preventDefault();
             Y.all('input[name^=' + type + ']').each(toggle(link.hasClass('all')));
-            return false;
         });
     });
 
