@@ -120,16 +120,14 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
                 $options,
                 $this->get_label(),
                 $this->get_value(),
-                $this->is_disabled(),
-                $this->get_tabindex()
+                $this->is_disabled()
             );
         } else {
             return new text_attribute(
                 $this->get_name(),
                 $this->get_value(),
                 $this->get_label(),
-                $this->is_disabled(),
-                $this->get_tabindex()
+                $this->is_disabled()
             );
         }
     }

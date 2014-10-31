@@ -54,12 +54,10 @@ class dropdown_attribute extends element {
      * @param string $label The form label for this input.
      * @param string $selected The name of the selected item in this input.
      * @param bool $isdisabled Are we disabled?
-     * @param int $tabindex The tab index for this field
      */
-    public function __construct($name, $options, $label, $selected = '', $isdisabled = false, $tabindex = null) {
+    public function __construct($name, $options, $label, $selected = '', $isdisabled = false) {
         $this->selected = $selected;
         $this->options = $options;
-        $this->tabindex = $tabindex;
         $this->isdisabled = $isdisabled;
         parent::__construct($name, $selected, $label);
     }
@@ -86,9 +84,6 @@ class dropdown_attribute extends element {
         );
 
         $attributes = array();
-        if (!empty($this->tabindex)) {
-            $attributes['tabindex'] = $this->tabindex;
-        }
 
         if (!empty($this->isdisabled)) {
             $attributes['disabled'] = 'DISABLED';

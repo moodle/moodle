@@ -39,21 +39,16 @@ class checkbox_attribute extends element {
     /** @var bool $ischecked Is it checked? */
     private $ischecked;
 
-    /** @var int $tabindex The tab index for this form element. */
-    private $tabindex;
-
     /**
      * Constructor
      *
      * @param string $name The element name
      * @param string $label The label for the form element
      * @param bool $ischecked Is this thing on?
-     * @param int $tabindex The tab index for the form element.
      * @param int $locked Is this element locked either 0 or a time.
      */
-    public function __construct($name, $label, $ischecked = false, $tabindex = null, $locked=0) {
+    public function __construct($name, $label, $ischecked = false, $locked=0) {
         $this->ischecked = $ischecked;
-        $this->tabindex = $tabindex;
         $this->locked = $locked;
         parent::__construct($name, 1, $label);
     }
@@ -89,10 +84,6 @@ class checkbox_attribute extends element {
             'type' => 'hidden',
             'name' => 'old' . $this->name
         );
-
-        if (!empty($this->tabindex)) {
-            $attributes['tabindex'] = $this->tabindex;
-        }
 
         if ($this->ischecked) {
             $attributes['checked'] = 'CHECKED';
