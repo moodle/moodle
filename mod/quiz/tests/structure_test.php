@@ -282,6 +282,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         // Setup a quiz with 1 standard and 1 random question.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $SITE->id);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
@@ -293,7 +294,8 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         // Get the random question.
         $randomq = $DB->get_record('question', array('qtype' => 'random'));
 
-        $structure = \mod_quiz\structure::create_for($quiz);
+        $quizobj = new quiz($quiz, $cm, $SITE);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
 
         // Check that the setup looks right.
         $this->assertEquals(2, $structure->get_question_count());
@@ -303,7 +305,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         // Remove the standard question.
         $structure->remove_slot($quiz, 1);
 
-        $alteredstructure = \mod_quiz\structure::create_for($quiz);
+        $alteredstructure = \mod_quiz\structure::create_for_quiz($quizobj);
 
         // Check the new ordering, and that the slot number was updated.
         $this->assertEquals(1, $alteredstructure->get_question_count());
@@ -314,7 +316,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
 
         // Remove the random question.
         $structure->remove_slot($quiz, 1);
-        $alteredstructure = \mod_quiz\structure::create_for($quiz);
+        $alteredstructure = \mod_quiz\structure::create_for_quiz($quizobj);
 
         // Check that new ordering.
         $this->assertEquals(0, $alteredstructure->get_question_count());

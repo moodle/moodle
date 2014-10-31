@@ -72,23 +72,13 @@ class structure {
 
     /**
      * Create an instance of this class representing the structure of a given quiz.
-     * @param \stdClass $quiz the quiz settings.
-     * @return structure
-     */
-    public static function create_for($quiz) {
-        $structure = self::create();
-        $structure->populate_structure($quiz);
-        return $structure;
-    }
-
-    /**
-     * Create an instance of this class representing the structure of a given quiz.
      * @param \quiz $quizobj the quiz.
      * @return structure
      */
     public static function create_for_quiz($quizobj) {
-        $structure = self::create_for($quizobj->get_quiz());
+        $structure = self::create();
         $structure->quizobj = $quizobj;
+        $structure->populate_structure($quizobj->get_quiz());
         return $structure;
     }
 

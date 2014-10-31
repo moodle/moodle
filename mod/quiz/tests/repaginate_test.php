@@ -90,6 +90,7 @@ class mod_quiz_repaginate_test extends advanced_testcase {
 
         $quiz = $quizgenerator->create_instance(array(
                 'course' => $SITE->id, 'questionsperpage' => 0, 'grade' => 100.0, 'sumgrades' => 2));
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $SITE->id);
 
         // Create five questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -109,7 +110,8 @@ class mod_quiz_repaginate_test extends advanced_testcase {
         quiz_add_quiz_question($match->id, $quiz);
 
         // Return the quiz object.
-        return \mod_quiz\structure::create_for($quiz);
+        $quizobj = new quiz($quiz, $cm, $SITE);
+        return \mod_quiz\structure::create_for_quiz($quizobj);
     }
 
     /**
