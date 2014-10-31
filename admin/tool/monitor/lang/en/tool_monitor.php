@@ -37,6 +37,7 @@ $string['defaultmessagetpl'] = 'Rule "{rulename}" has happened. You can find fur
 $string['deleterule'] = 'Delete rule';
 $string['deletesubscription'] = 'Delete subscription';
 $string['description'] = 'Description:';
+$string['disablefieldswarning'] = 'Plugin and events fields can not be edited because this rule already has subscriptions.';
 $string['duplicaterule'] = 'Duplicate rule';
 $string['editrule'] = 'Edit rule';
 $string['eventnotfound'] = 'Event not found';
