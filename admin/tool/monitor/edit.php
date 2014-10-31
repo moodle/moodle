@@ -78,12 +78,14 @@ if (empty($courseid)) {
 if (!empty($ruleid)) {
     $rule = \tool_monitor\rule_manager::get_rule($ruleid)->get_mform_set_data();
     $rule->minutes = $rule->timewindow / MINSECS;
+    $subscriptioncount = \tool_monitor\subscription_manager::count_rule_subscriptions($ruleid);
 } else {
     $rule = new stdClass();
+    $subscriptioncount = 0;
 }
 
 $mform = new tool_monitor\rule_form(null, array('eventlist' => $eventlist, 'pluginlist' => $pluginlist, 'rule' => $rule,
-        'courseid' => $courseid));
+        'courseid' => $courseid, 'subscriptioncount' => $subscriptioncount));
 
 if ($mformdata = $mform->get_data()) {
     $rule = \tool_monitor\rule_manager::clean_ruledata_form($mformdata);
@@ -98,6 +100,10 @@ if ($mformdata = $mform->get_data()) {
 } else {
     echo $OUTPUT->header();
     $mform->set_data($rule);
+    // If there's any subscription for this rule, display an information message.
+    if ($subscriptioncount > 0) {
+        echo $OUTPUT->notification(get_string('disablefieldswarning', 'tool_monitor'), 'notifyproblem');
+    }
     $mform->display();
     echo $OUTPUT->footer();
 }

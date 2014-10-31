@@ -365,4 +365,19 @@ class subscription_manager {
         }
         return $result;
     }
+
+    /**
+     * Get count of subscriptions for a given rule.
+     *
+     * @param int $ruleid rule id of the subscription.
+     *
+     * @return int number of subscriptions
+     */
+    public static function count_rule_subscriptions($ruleid) {
+        global $DB;
+        $sql = self::get_subscription_join_rule_sql(true);
+        $sql .= "WHERE s.ruleid = :ruleid";
+
+        return $DB->count_records_sql($sql, array('ruleid' => $ruleid));
+    }
 }

@@ -46,6 +46,7 @@ class rule_form extends \moodleform {
         $pluginlist = $this->_customdata['pluginlist'];
         $rule = $this->_customdata['rule'];
         $courseid = $this->_customdata['courseid'];
+        $subscriptioncount = $this->_customdata['subscriptioncount'];
 
         // General section header.
         $mform->addElement('header', 'general', get_string('general'));
@@ -99,6 +100,14 @@ class rule_form extends \moodleform {
         $mform->addElement('select', 'eventname', get_string('selectevent', 'tool_monitor'), $eventlist);
         $mform->addRule('eventname', get_string('required'), 'required');
         $mform->addHelpButton('eventname', 'selectevent', 'tool_monitor');
+
+        // Freeze plugin and event fields for editing if there's a subscription for this rule.
+        if ($subscriptioncount > 0) {
+            $mform->freeze('plugin');
+            $mform->setConstant('plugin', $rule->plugin);
+            $mform->freeze('eventname');
+            $mform->setConstant('eventname', $rule->eventname);
+        }
 
         // Description field.
         $mform->addElement('editor', 'description', get_string('description', 'tool_monitor'), $editoroptions);
