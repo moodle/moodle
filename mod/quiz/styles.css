@@ -556,7 +556,7 @@ table.quizreviewsummary td.cell {
     left: 0;
 }
 
-#page-mod-quiz-edit .moodle-actionmenu[data-enhanced].show .menu a {
+#page-mod-quiz-edit .mod-quiz-edit-content .moodle-actionmenu[data-enhanced].show .menu a {
     white-space: nowrap;
 }
 
