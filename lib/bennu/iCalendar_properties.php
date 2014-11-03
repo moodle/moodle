@@ -1227,6 +1227,8 @@ class iCalendar_property_x extends iCalendar_property {
     function __construct() {
         parent::__construct();
         $this->valid_parameters = array(
+            // X-ALT-DESC (Description) can have FMTTYPE declaration of text/html is a property for HTML content.
+            'FMTTYPE'     => RFC2445_OPTIONAL | RFC2445_ONCE,
             'LANGUAGE'    => RFC2445_OPTIONAL | RFC2445_ONCE,
             RFC2445_XNAME => RFC2445_OPTIONAL
         );
