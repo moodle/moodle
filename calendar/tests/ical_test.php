@@ -74,4 +74,63 @@ class core_calendar_ical_testcase extends advanced_testcase {
         $this->setExpectedException('coding_exception');
         calendar_update_subscription($subscription);
     }
+
+    public function test_calendar_add_subscription() {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/lib/bennu/bennu.inc.php');
+
+        $this->resetAfterTest(true);
+
+        // Test for Microsoft Outlook 2010.
+        $subscription = new stdClass();
+        $subscription->name = 'Microsoft Outlook 2010';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = calendar_add_subscription($subscription);
+
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/ms_outlook_2010.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, array());
+
+        $sub = calendar_get_subscription($id);
+        $result = calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
+        $this->assertEquals($count, 1);
+
+        // Test for OSX Yosemite.
+        $subscription = new stdClass();
+        $subscription->name = 'OSX Yosemite';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = calendar_add_subscription($subscription);
+
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/osx_yosemite.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, array());
+
+        $sub = calendar_get_subscription($id);
+        $result = calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
+        $this->assertEquals($count, 1);
+
+        // Test for Google Gmail.
+        $subscription = new stdClass();
+        $subscription->name = 'Google Gmail';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = calendar_add_subscription($subscription);
+
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/google_gmail.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, array());
+
+        $sub = calendar_get_subscription($id);
+        $result = calendar_import_icalendar_events($ical, $sub->courseid, $sub->id);
+        $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
+        $this->assertEquals($count, 1);
+    }
 }
