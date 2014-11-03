@@ -48,7 +48,7 @@ abstract class grade_report_viewed extends base {
         $this->reporttype = $shorttype[1];
 
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
