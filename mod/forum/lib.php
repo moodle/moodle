@@ -3781,7 +3781,9 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
-    if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
+    // is_guest should be used here as this also checks whether the user is a guest in the current course.
+    // Guests and visitors cannot subscribe - only enrolled users.
+    if ((!is_guest($modcontext, $USER) && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
             echo '<td class="discussionsubscription">';
@@ -5425,7 +5427,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
             }
         }
         echo '<th class="header lastpost" scope="col">'.get_string('lastpost', 'forum').'</th>';
-        if (has_capability('mod/forum:viewdiscussion', $context)) {
+        if ((!is_guest($context, $USER) && isloggedin()) && has_capability('mod/forum:viewdiscussion', $context)) {
             if (\mod_forum\subscriptions::is_subscribable($forum)) {
                 echo '<th class="header discussionsubscription" scope="col">';
                 echo forum_get_discussion_subscription_icon_preloaders();

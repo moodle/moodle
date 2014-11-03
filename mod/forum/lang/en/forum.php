@@ -332,6 +332,7 @@ $string['nodiscussions'] = 'There are no discussion topics yet in this forum';
 $string['nodiscussionsstartedby'] = '{$a} has not started any discussions';
 $string['nodiscussionsstartedbyyou'] = 'You haven\'t started any discussions yet';
 $string['noguestpost'] = 'Sorry, guests are not allowed to post.';
+$string['noguestsubscribe'] = 'Sorry, guests are not allowed to subscribe.';
 $string['noguesttracking'] = 'Sorry, guests are not allowed to set tracking options.';
 $string['nomorepostscontaining'] = 'No more posts containing \'{$a}\' were found';
 $string['nonews'] = 'No news has been posted yet';

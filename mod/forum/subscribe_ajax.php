@@ -42,6 +42,12 @@ require_capability('mod/forum:viewdiscussion', $context);
 
 $return = new stdClass();
 
+if (is_guest($context, $USER)) {
+    // is_guest should be used here as this also checks whether the user is a guest in the current course.
+    // Guests and visitors cannot subscribe - only enrolled users.
+    throw new moodle_exception('noguestsubscribe', 'mod_forum');
+}
+
 if (!\mod_forum\subscriptions::is_subscribable($forum)) {
     // Nothing to do. We won't actually output any content here though.
     echo json_encode($return);

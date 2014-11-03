@@ -238,7 +238,9 @@
     echo $OUTPUT->heading(format_string($forum->name), 2);
     echo $OUTPUT->heading(format_string($discussion->name), 3, 'discussionname');
 
-    if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
+    // is_guest should be used here as this also checks whether the user is a guest in the current course.
+    // Guests and visitors cannot subscribe - only enrolled users.
+    if ((!is_guest($modcontext, $USER) && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
             echo html_writer::div(
