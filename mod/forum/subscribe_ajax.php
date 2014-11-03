@@ -28,7 +28,6 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 $forumid        = required_param('forumid', PARAM_INT);             // The forum to subscribe or unsubscribe.
 $discussionid   = optional_param('discussionid', null, PARAM_INT);  // The discussionid to subscribe.
-$sesskey        = optional_param('sesskey', null, PARAM_RAW);
 $includetext    = optional_param('includetext', false, PARAM_BOOL);
 
 $forum          = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
@@ -37,6 +36,7 @@ $discussion     = $DB->get_record('forum_discussions', array('id' => $discussion
 $cm             = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 $context        = context_module::instance($cm->id);
 
+require_sesskey();
 require_login($course, false, $cm);
 require_capability('mod/forum:viewdiscussion', $context);
 
