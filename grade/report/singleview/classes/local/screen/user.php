@@ -341,13 +341,13 @@ class user extends tablelike implements selectable_items {
             $userid = $this->item->id;
             foreach ($this->items as $gradeitemid => $gradeitem) {
                 $null = $gradeitem->gradetype == GRADE_TYPE_SCALE ? -1 : '';
-                $field = "finalgrade_{$gradeitem->id}_{$gradeitemid}";
+                $field = "finalgrade_{$gradeitem->id}_{$this->itemid}";
                 if (isset($data->$field)) {
                     continue;
                 }
 
                 $grade = grade_grade::fetch(array(
-                    'itemid' => $gradeitem->id,
+                    'itemid' => $this->itemid,
                     'userid' => $userid
                 ));
 
@@ -359,7 +359,7 @@ class user extends tablelike implements selectable_items {
                 if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
                     $data->$matches[0] = '1';
                 }
-                if (!preg_match('/^finalgrade_(\d+)_/', $varname, $matches)) {
+                if (!preg_match('/^finalgrade_(\d+)_(\d+)/', $varname, $matches)) {
                     continue;
                 }
 
