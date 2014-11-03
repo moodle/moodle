@@ -4076,7 +4076,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             }
 
             \core\session\manager::write_close(); // Unlock session during file serving.
-            send_stored_file($file, 60*60, 0, $forcedownload, array('preview' => $preview));
+            send_stored_file($file, 0, 0, true, array('preview' => $preview));
 
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSE) {
 
