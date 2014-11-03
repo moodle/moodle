@@ -4,12 +4,12 @@
 }
 
 .que.ddmarker div.droparea img, form.mform fieldset#id_previewareaheader div.droparea img  {
-    border: 1px solid #000000;
+    border: 1px solid #000;
     max-width: none;
 }
 
 .que.ddmarker .draghome img, .que.ddmarker .draghome span {
-    visibility : hidden;
+    visibility: hidden;
 }
 
 .que.ddmarker .dragitems .dragitem {
@@ -18,26 +18,24 @@
     z-index: 2;
 }
 .que.ddmarker .dragitems .draghome {
-    margin : 10px;
+    margin: 10px;
 }
 .que.ddmarker .dragitems {
-    margin-top : 10px;
+    margin-top: 10px;
 }
 .que.ddmarker .dragitems.readonly .dragitem {
     cursor: auto;
 }
 .que.ddmarker div.ddarea, form.mform fieldset#id_previewareaheader div.ddarea {
-    text-align : center;
+    text-align: center;
 }
 .que.ddmarker .dropbackground, form.mform fieldset#id_previewareaheader .dropbackground {
-    margin:0 auto;
+    margin: 0 auto;
 }
 
 .que.ddmarker div.dragitems div.draghome, .que.ddmarker div.dragitems div.dragitem,
 form.mform fieldset#id_previewareaheader div.draghome, form.mform fieldset#id_previewareaheader div.drag {
-    font:13px/1.231 arial,helvetica,clean,sans-serif;
-    *font-size:small; /* for IE */
-    *font:x-small; /* for IE in quirks mode */
+    font: 13px/1.231 arial,helvetica,clean,sans-serif;
 }
 .que.ddmarker div.dragitems span.markertext,
 .que.ddmarker div.markertexts span.markertext,
@@ -47,57 +45,42 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     background-color: white;
     border: 2px solid black;
     padding: 5px;
-    display: -moz-inline-stack;
-    display:inline-block;
+    display: inline-block;
     zoom: 1;
-    *display: inline;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -khtml-border-radius: 10px;
     border-radius: 10px;
 }
 .que.ddmarker div.markertexts span.markertext {
     z-index: 2;
     background-color: yellow;
-    border-style : solid;
-    border-width : 2px;
-    border-color : khaki;
+    border-style: solid;
+    border-width: 2px;
+    border-color: khaki;
 }
 .que.ddmarker span.wrongpart {
     background-color: yellow;
-    border-style : solid;
-    border-width : 2px;
-    border-color : khaki;
+    border-style: solid;
+    border-width: 2px;
+    border-color: khaki;
     padding: 5px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -khtml-border-radius: 10px;
     border-radius: 10px;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
     filter: alpha(opacity=60);
-    -moz-opacity:0.6;
-    -khtml-opacity: 0.6;
     opacity: 0.6;
     margin: 5px;
-    display : inline-block;
+    display: inline-block;
 }
 .que.ddmarker div.dragitems img.target {
-    position:absolute;
-    left:-7px;
-    top :-7px;
+    position: absolute;
+    left: -7px;
+    top: -3px;
 }
 .que.ddmarker div.dragitems div.draghome img.target {
-    display:none;
+    display: none;
 }
 .que.ddmarker .dragitem.yui3-dd-dragging span.markertext {
     z-index: 3;
     -moz-box-shadow: 3px 3px 4px #000;
     -webkit-box-shadow: 3px 3px 4px #000;
     box-shadow: 3px 3px 4px #000;
-    /* For IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
-    /* For IE 5.5 - 7 */
-    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
 }
 #page-question-type-ddmarker .ddarea .grid {
     position: absolute;

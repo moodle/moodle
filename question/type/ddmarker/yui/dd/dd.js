@@ -474,7 +474,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         drag_home_xy : function (choiceno) {
             var dragitemhome = this.doc.drag_item_home(choiceno);
-            return [dragitemhome.getX(), dragitemhome.get('parentNode').getY()];
+            return [dragitemhome.getX(), dragitemhome.getY()-12];
         },
         get_choiceno_for_node : function(node) {
             return +this.doc.get_classname_numeric_suffix(node, 'choice');
