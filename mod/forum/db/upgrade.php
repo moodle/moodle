@@ -224,5 +224,18 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014103000, 'forum');
     }
 
+    if ($oldversion < 2014110300) {
+
+        // Changing precision of field preference on table forum_discussion_subs to (10).
+        $table = new xmldb_table('forum_discussion_subs');
+        $field = new xmldb_field('preference', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '1', 'discussion');
+
+        // Launch change of precision for field preference.
+        $dbman->change_field_precision($table, $field);
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2014110300, 'forum');
+    }
+
     return true;
 }

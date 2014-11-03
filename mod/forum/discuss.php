@@ -114,12 +114,13 @@
         // And also for the discussion being moved.
         \mod_forum\subscriptions::fill_subscription_cache($forum->id);
         $subscriptionchanges = array();
+        $subscriptiontime = time();
         foreach ($potentialsubscribers as $subuser) {
             $userid = $subuser->id;
             $targetsubscription = \mod_forum\subscriptions::is_subscribed($userid, $forumto, null, $cmto);
             if (\mod_forum\subscriptions::is_subscribed($userid, $forum, $discussion->id)) {
                 if (!$targetsubscription) {
-                    $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+                    $subscriptionchanges[$userid] = $subscriptiontime;
                 }
             } else {
                 if ($targetsubscription) {
@@ -136,7 +137,7 @@
         $newdiscussion = clone $discussion;
         $newdiscussion->forum = $forumto->id;
         foreach ($subscriptionchanges as $userid => $preference) {
-            if ($preference === \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED) {
+            if ($preference != \mod_forum\subscriptions::FORUM_DISCUSSION_UNSUBSCRIBED) {
                 // Users must have viewdiscussion to a discussion.
                 if (has_capability('mod/forum:viewdiscussion', $destinationctx, $userid)) {
                     \mod_forum\subscriptions::subscribe_user_to_discussion($userid, $newdiscussion, $destinationctx);
