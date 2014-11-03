@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $courseid = required_param('course', PARAM_INT);
 $instanceid = required_param('instanceid', PARAM_INT);
 
-$errormsg = optional_param('lti_errormsg', '', PARAM_RAW);
+$errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
 $unsigned = optional_param('unsigned', '0', PARAM_INT);
 
 $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
@@ -39,6 +39,7 @@ $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDO
 $course = $DB->get_record('course', array('id' => $courseid));
 
 require_login($course);
+require_sesskey();
 
 if (!empty($errormsg)) {
     $url = new moodle_url('/mod/lti/return.php', array('course' => $courseid));
@@ -59,7 +60,7 @@ if (!empty($errormsg)) {
 
     echo get_string('lti_launch_error', 'lti');
 
-    echo htmlspecialchars($errormsg);
+    p($errormsg);
 
     if ($unsigned == 1) {
 
