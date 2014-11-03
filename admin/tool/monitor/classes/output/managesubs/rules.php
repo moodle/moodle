@@ -165,13 +165,19 @@ class rules extends \table_sql implements \renderable {
     public function col_select(\tool_monitor\rule $rule) {
         global $OUTPUT;
 
-        $select = $rule->get_module_select($this->courseid);
+        $options = $rule->get_subscribe_options($this->courseid);
+        $text = get_string('subscribeto', 'tool_monitor', $rule->get_name($this->context));
 
-        if ($select instanceof \single_select) {
-            $select->set_label(get_string('subscribeto', 'tool_monitor', $rule->get_name($this->context)), array('class' => 'accesshide'));
-            return $OUTPUT->render($select);
+        if ($options instanceof \single_select) {
+            $options->set_label($text, array('class' => 'accesshide'));
+            return $OUTPUT->render($options);
+        } else if ($options instanceof \moodle_url) {
+            // A \moodle_url to subscribe.
+            $icon = $OUTPUT->pix_icon('t/add', $text);
+            $link = new \action_link($options, $icon);
+            return $OUTPUT->render($link);
         } else {
-            return $select;
+            return $options;
         }
     }
 
