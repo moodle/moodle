@@ -25,11 +25,11 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-if ($hassiteconfig) {
-
-    // Manage rules page.
-    $url = new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => 0));
-    $temp = new admin_externalpage('toolmonitorrules', get_string('managerules', 'tool_monitor'), $url,
-        'tool/monitor:managerules');
-    $ADMIN->add('reports', $temp);
-}
+// Manage rules page.
+$temp = new admin_externalpage(
+    'toolmonitorrules',
+    get_string('managerules', 'tool_monitor'),
+    new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => 0)),
+    'tool/monitor:managerules'
+);
+$ADMIN->add('reports', $temp);
