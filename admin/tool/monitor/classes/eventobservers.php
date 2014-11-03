@@ -72,6 +72,9 @@ class eventobservers {
      * @param \core\event\base $event event object
      */
     public static function process_event(\core\event\base $event) {
+        if (!get_config('tool_monitor', 'enablemonitor')) {
+            return; // The tool is disabled. Nothing to do.
+        }
 
         if (empty(self::$instance)) {
             self::$instance = new static();

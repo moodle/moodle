@@ -44,6 +44,10 @@ class clean_events extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
+        if (!get_config('tool_monitor', 'enablemonitor')) {
+            return; // The tool is disabled. Nothing to do.
+        }
+
         // Array to store which events have been triggered in which course.
         $courses = array();
 

@@ -32,8 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param context         $context    The context of the course
  */
 function tool_monitor_extend_navigation_course($navigation, $course, $context) {
-
-    if (has_capability('tool/monitor:managerules', $context)) {
+    if (has_capability('tool/monitor:managerules', $context) && get_config('tool_monitor', 'enablemonitor')) {
         $url = new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $course->id));
         $settingsnode = navigation_node::create(get_string('managerules', 'tool_monitor'), $url, navigation_node::TYPE_SETTING,
                 null, null, new pix_icon('i/settings', ''));
@@ -56,7 +55,8 @@ function tool_monitor_extend_navigation_course($navigation, $course, $context) {
  */
 function tool_monitor_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
     global $USER;
-    if (($USER->id == $user->id) && (has_capability('tool/monitor:subscribe', $coursecontext))) {
+    if (($USER->id == $user->id) && (has_capability('tool/monitor:subscribe', $coursecontext)
+            && get_config('tool_monitor', 'enablemonitor'))) {
         $url = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $course->id));
         $subsnode = navigation_node::create(get_string('managesubscriptions', 'tool_monitor'), $url,
                 navigation_node::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));

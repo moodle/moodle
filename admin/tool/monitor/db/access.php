@@ -49,5 +49,13 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
     ),
-);
 
+    'tool/monitor:managetool' => array(
+        'riskbitmask' => RISK_XSS, RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
+);

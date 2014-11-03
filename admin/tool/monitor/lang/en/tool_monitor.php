@@ -29,6 +29,7 @@ $string['allevents'] = 'All events';
 $string['allmodules'] = 'All instances';
 $string['area'] = 'Area';
 $string['areatomonitor'] = 'Area to monitor';
+$string['contactadmin'] = 'Contact your administrator to enable it.';
 $string['core'] = 'Core';
 $string['currentsubscriptions'] = 'Your current subscriptions';
 $string['defaultmessagetemplate'] = 'The rule "{rulename}" you have subscribed to has occurred - please find further details at {link}';
@@ -38,6 +39,8 @@ $string['description'] = 'Description:';
 $string['disablefieldswarning'] = 'Some fields can not be edited as this rule already has subscriptions.';
 $string['duplicaterule'] = 'Duplicate rule';
 $string['editrule'] = 'Edit rule';
+$string['enablehelp'] = 'Enable/disable event monitoring';
+$string['enablehelp_help'] = 'Event monitoring must be enabled before it can be used. Please note that enabling event monitoring can have associated permformance implications.';
 $string['event'] = 'Event';
 $string['eventnotfound'] = 'Event not found';
 $string['eventrulecreated'] = 'Rule created';
@@ -68,7 +71,10 @@ $string['messagetemplate_help'] = 'A notification message is sent to subscribers
 * Description {description}<br />
 * Event {eventname}';
 $string['moduleinstance'] = 'Instance';
+$string['monitorenabled'] = 'Event monitoring is currently enabled. ';
+$string['monitordisabled'] = 'Event monitoring is currently disabled.';
 $string['monitor:managerules'] = 'Manage event monitor rules';
+$string['monitor:managetool'] = 'Enable/disable event monitoring';
 $string['monitor:subscribe'] = 'Subscribe to event monitor rules';
 $string['norules'] = 'There are no event monitoring rules.';
 $string['pluginname'] = 'Event monitor';
