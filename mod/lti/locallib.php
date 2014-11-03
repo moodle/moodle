@@ -153,7 +153,10 @@ function lti_view($instance) {
     $requestparams = lti_build_request($instance, $typeconfig, $course);
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
-    $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer, 'instanceid' => $instance->id);
+    $returnurlparams = array('course' => $course->id,
+                             'launch_container' => $launchcontainer,
+                             'instanceid' => $instance->id,
+                             'sesskey' => sesskey());
 
     if ( $orgid ) {
         $requestparams["tool_consumer_instance_guid"] = $orgid;
