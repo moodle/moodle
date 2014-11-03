@@ -162,7 +162,7 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $c
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         if (\mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $discussion, $context)) {
-            $info->name = $discussion->name;
+            $info->discussion = $discussion->name;
             redirect($returnto, get_string("discussionnownotsubscribed", "forum", $info), 1);
         } else {
             print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
@@ -191,7 +191,7 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $c
         redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
-        $info->name = $discussion->name;
+        $info->discussion = $discussion->name;
         \mod_forum\subscriptions::subscribe_user_to_discussion($user->id, $discussion, $context);
         redirect($returnto, get_string("discussionnowsubscribed", "forum", $info), 1);
     }
