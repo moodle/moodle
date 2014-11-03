@@ -200,4 +200,48 @@ class core_upgradelib_testcase extends advanced_testcase {
         // Verify the hash is correctly created.
         $this->assertSame($oldrecord->pathnamehash, $newrecord->pathnamehash);
     }
+
+    public function test_upgrade_fix_missing_root_folders_draft() {
+        global $DB, $SITE;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+        $this->setUser($user);
+        $resource1 = $this->getDataGenerator()->get_plugin_generator('mod_resource')
+            ->create_instance(array('course' => $SITE->id));
+        $context = context_module::instance($resource1->cmid);
+        $draftitemid = 0;
+        file_prepare_draft_area($draftitemid, $context->id, 'mod_resource', 'content', 0);
+
+        $queryparams = array(
+            'component' => 'user',
+            'contextid' => $usercontext->id,
+            'filearea' => 'draft',
+            'itemid' => $draftitemid,
+        );
+
+        // Make sure there are two records in files for the draft file area and one of them has filename '.'.
+        $records = $DB->get_records_menu('files', $queryparams, '', 'id, filename');
+        $this->assertEquals(2, count($records));
+        $this->assertTrue(in_array('.', $records));
+        $originalhash = $DB->get_field('files', 'pathnamehash', $queryparams + array('filename' => '.'));
+
+        // Delete record with filename '.' and make sure it does not exist any more.
+        $DB->delete_records('files', $queryparams + array('filename' => '.'));
+
+        $records = $DB->get_records_menu('files', $queryparams, '', 'id, filename');
+        $this->assertEquals(1, count($records));
+        $this->assertFalse(in_array('.', $records));
+
+        // Run upgrade script and make sure the record is restored.
+        upgrade_fix_missing_root_folders_draft();
+
+        $records = $DB->get_records_menu('files', $queryparams, '', 'id, filename');
+        $this->assertEquals(2, count($records));
+        $this->assertTrue(in_array('.', $records));
+        $newhash = $DB->get_field('files', 'pathnamehash', $queryparams + array('filename' => '.'));
+        $this->assertEquals($originalhash, $newhash);
+    }
 }

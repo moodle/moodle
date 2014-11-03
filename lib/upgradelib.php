@@ -2148,3 +2148,33 @@ function upgrade_fix_missing_root_folders() {
     $rs->close();
     $transaction->allow_commit();
 }
+
+/**
+ * Detect draft file areas with missing root directory records and add them.
+ */
+function upgrade_fix_missing_root_folders_draft() {
+    global $DB;
+
+    $transaction = $DB->start_delegated_transaction();
+
+    $sql = "SELECT contextid, itemid, MAX(timecreated) AS timecreated, MAX(timemodified) AS timemodified
+              FROM {files}
+             WHERE (component = 'user' AND filearea = 'draft')
+          GROUP BY contextid, itemid
+            HAVING MAX(CASE WHEN filename = '.' AND filepath = '/' THEN 1 ELSE 0 END) = 0";
+
+    $rs = $DB->get_recordset_sql($sql);
+    $defaults = array('component' => 'user',
+        'filearea' => 'draft',
+        'filepath' => '/',
+        'filename' => '.',
+        'userid' => 0, // Don't rely on any particular user for these system records.
+        'filesize' => 0,
+        'contenthash' => sha1(''));
+    foreach ($rs as $r) {
+        $r->pathnamehash = sha1("/$r->contextid/user/draft/$r->itemid/.");
+        $DB->insert_record('files', (array)$r + $defaults);
+    }
+    $rs->close();
+    $transaction->allow_commit();
+}
