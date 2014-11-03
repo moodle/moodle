@@ -208,10 +208,25 @@ class rule {
     }
 
     /**
+     * Get properly formatted name of the course associated.
+     *
+     * @param \context $context context where this name would be displayed.
+     * @return string The course fullname.
+     */
+    public function get_course_name($context) {
+        $courseid = $this->courseid;
+        if (empty($courseid)) {
+            return get_string('site');
+        } else {
+            $course = get_course($courseid);
+            return format_string($course->fullname, true, array('context' => $context));
+        }
+    }
+
+    /**
      * Get properly formatted name of the rule associated.
      *
      * @param \context $context context where this name would be displayed.
-     *
      * @return string Formatted name of the rule.
      */
     public function get_name(\context $context) {
@@ -222,7 +237,6 @@ class rule {
      * Get properly formatted description of the rule associated.
      *
      * @param \context $context context where this description would be displayed.
-     *
      * @return string Formatted description of the rule.
      */
     public function get_description(\context $context) {

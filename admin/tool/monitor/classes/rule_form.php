@@ -86,20 +86,17 @@ class rule_form extends \moodleform {
         );
 
         // Name field.
-        $mform->addElement('text', 'name', get_string('name', 'tool_monitor'), 'size="50"');
+        $mform->addElement('text', 'name', get_string('rulename', 'tool_monitor'), 'size="50"');
         $mform->addRule('name', get_string('required'), 'required');
         $mform->setType('name', PARAM_TEXT);
-        $mform->addHelpButton('name', 'name', 'tool_monitor');
 
         // Plugin field.
-        $mform->addElement('select', 'plugin', get_string('selectplugin', 'tool_monitor'), $pluginlist);
+        $mform->addElement('select', 'plugin', get_string('areatomonitor', 'tool_monitor'), $pluginlist);
         $mform->addRule('plugin', get_string('required'), 'required');
-        $mform->addHelpButton('plugin', 'selectplugin', 'tool_monitor');
 
         // Event field.
-        $mform->addElement('select', 'eventname', get_string('selectevent', 'tool_monitor'), $eventlist);
+        $mform->addElement('select', 'eventname', get_string('event', 'tool_monitor'), $eventlist);
         $mform->addRule('eventname', get_string('required'), 'required');
-        $mform->addHelpButton('eventname', 'selectevent', 'tool_monitor');
 
         // Freeze plugin and event fields for editing if there's a subscription for this rule.
         if ($subscriptioncount > 0) {
@@ -110,31 +107,28 @@ class rule_form extends \moodleform {
         }
 
         // Description field.
-        $mform->addElement('editor', 'description', get_string('description', 'tool_monitor'), $editoroptions);
-        $mform->addHelpButton('description', 'description', 'tool_monitor');
+        $mform->addElement('editor', 'description', get_string('description'), $editoroptions);
 
         // Filters.
-        $mform->addElement('header', 'customisefilters', get_string('customisefilters', 'tool_monitor'));
         $freq = array(1 => 1, 5 => 5, 10 => 10, 20 => 20, 30 => 30, 40 => 40, 50 => 50, 60 => 60, 70 => 70, 80 => 80, 90 => 90,
                 100 => 100, 1000 => 1000);
-        $mform->addElement('select', 'frequency', get_string('selectfrequency', 'tool_monitor'), $freq);
+        $mform->addElement('select', 'frequency', get_string('frequency', 'tool_monitor'), $freq);
         $mform->addRule('frequency', get_string('required'), 'required');
-        $mform->addHelpButton('frequency', 'selectfrequency', 'tool_monitor');
+        $mform->addHelpButton('frequency', 'frequency', 'tool_monitor');
 
         $mins = array(1 => 1, 5 => 5, 10 => 10, 15 => 15, 20 => 20, 25 => 25, 30 => 30, 35 => 35, 40 => 40, 45 => 45, 50 => 50,
                 55 => 55,  60 => 60);
-        $mform->addElement('select', 'minutes', get_string('selectminutes', 'tool_monitor'), $mins);
+        $mform->addElement('select', 'minutes', get_string('inminutes', 'tool_monitor'), $mins);
         $mform->addRule('minutes', get_string('required'), 'required');
 
         // Message template.
-        $mform->addElement('header', 'customisemessage', get_string('customisemessage', 'tool_monitor'));
         $mform->addElement('editor', 'template', get_string('messagetemplate', 'tool_monitor'), $editoroptions);
-        $mform->setDefault('template', get_string('defaultmessagetpl', 'tool_monitor'));
+        $mform->setDefault('template', get_string('defaultmessagetemplate', 'tool_monitor'));
         $mform->addRule('template', get_string('required'), 'required');
         $mform->addHelpButton('template', 'messagetemplate', 'tool_monitor');
 
         // Action buttons.
-        $this->add_action_buttons(false, get_string('savechanges'));
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 
     /**

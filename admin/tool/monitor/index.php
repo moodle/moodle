@@ -30,6 +30,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $ruleid = optional_param('ruleid', 0, PARAM_INT);
 $subscriptionid = optional_param('subscriptionid', 0, PARAM_INT);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 // Validate course id.
 if (empty($courseid)) {
@@ -50,18 +51,11 @@ $sitename = format_string($SITE->fullname, true, array('context' => $context));
 $PAGE->set_context($context);
 
 // Set up the page.
-$a = new stdClass();
-$a->coursename = $sitename;
-$a->reportname = get_string('pluginname', 'tool_monitor');
-$title = get_string('title', 'tool_monitor', $a);
-$indexurl = new moodle_url("/admin/tool/monitor/index.php", array('courseid' => $courseid));
-
+$indexurl = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid));
 $PAGE->set_url($indexurl);
 $PAGE->set_pagelayout('report');
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-
-echo $OUTPUT->header();
+$PAGE->set_title($sitename);
+$PAGE->set_heading($sitename);
 
 // Create/delete subscription if needed.
 if (!empty($action)) {
@@ -70,14 +64,38 @@ if (!empty($action)) {
         case 'subscribe' :
             $rule = \tool_monitor\rule_manager::get_rule($ruleid);
             $rule->subscribe_user($courseid, $cmid);
+            echo $OUTPUT->header();
             echo $OUTPUT->notification(get_string('subcreatesuccess', 'tool_monitor'), 'notifysuccess');
             break;
         case 'unsubscribe' :
-            \tool_monitor\subscription_manager::delete_subscription($subscriptionid);
-            echo $OUTPUT->notification(get_string('subdeletesuccess', 'tool_monitor'), 'notifysuccess');
+            // If the subscription does not exist, then redirect back as the subscription must have already been deleted.
+            if (!$subscription = $DB->record_exists('tool_monitor_subscriptions', array('id' => $subscriptionid))) {
+                redirect(new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid)));
+            }
+
+            // Set the URLs.
+            $confirmurl = new moodle_url('/admin/tool/monitor/index.php', array('subscriptionid' => $subscriptionid,
+                'courseid' => $courseid, 'action' => 'unsubscribe', 'confirm' => true,
+                'sesskey' => sesskey()));
+            $cancelurl = new moodle_url('/admin/tool/monitor/index.php', array('subscriptionid' => $subscriptionid,
+                'courseid' => $courseid, 'sesskey' => sesskey()));
+            if ($confirm) {
+                \tool_monitor\subscription_manager::delete_subscription($subscriptionid);
+                echo $OUTPUT->header();
+                echo $OUTPUT->notification(get_string('subdeletesuccess', 'tool_monitor'), 'notifysuccess');
+            } else {
+                $subscription = \tool_monitor\subscription_manager::get_subscription($subscriptionid);
+                echo $OUTPUT->header();
+                echo $OUTPUT->confirm(get_string('subareyousure', 'tool_monitor', $subscription->get_name($context)),
+                    $confirmurl, $cancelurl);
+                echo $OUTPUT->footer();
+                exit();
+            }
             break;
         default:
     }
+} else {
+    echo $OUTPUT->header();
 }
 
 // Render the current subscriptions list.
@@ -86,20 +104,27 @@ $renderer = $PAGE->get_renderer('tool_monitor', 'managesubs');
 if (!empty($totalsubs)) {
     // Show the subscriptions section only if there are subscriptions.
     $subs = new \tool_monitor\output\managesubs\subs('toolmonitorsubs', $indexurl, $courseid);
-    echo $OUTPUT->heading(get_string('currentsubscriptions', 'tool_monitor'));
+    echo $OUTPUT->heading(get_string('currentsubscriptions', 'tool_monitor'), 3);
     echo $renderer->render($subs);
 }
 
 // Render the potential rules list.
 $totalrules = \tool_monitor\rule_manager::count_rules_by_courseid($courseid);
-echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'));
+echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'), 3);
 $rules = new \tool_monitor\output\managesubs\rules('toolmonitorrules', $indexurl, $courseid);
 echo $renderer->render($rules);
+
+// Check if the user can manage the course rules we are viewing.
+if (empty($courseid)) {
+    $canmanagerules = has_capability('tool/monitor:managerules', $context);
+} else {
+    $canmanagerules = has_capability('tool/monitor:managerules', $coursecontext);
+}
 if (empty($totalrules)) {
     // No rules present. Show a link to manage rules page if permissions permit.
     echo html_writer::start_div();
     echo html_writer::tag('span', get_string('norules', 'tool_monitor'));
-    if (has_capability('tool/monitor:managerules', $context)) {
+    if ($canmanagerules) {
         $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
         $a = html_writer::link($manageurl, get_string('managerules', 'tool_monitor'));
         $link = "&nbsp;";
@@ -107,7 +132,7 @@ if (empty($totalrules)) {
         echo $link;
     }
     echo html_writer::end_div();
-} else if (has_capability('tool/monitor:managerules', $context)) {
+} else if ($canmanagerules) {
     $manageurl = new moodle_url("/admin/tool/monitor/managerules.php", array('courseid' => $courseid));
     echo $renderer->render_rules_link($manageurl);
 }

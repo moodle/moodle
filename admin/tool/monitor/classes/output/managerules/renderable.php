@@ -66,13 +66,13 @@ class renderable extends \table_sql implements \renderable {
 
         $this->set_attribute('id', 'toolmonitorrules_table');
         $this->set_attribute('class', 'toolmonitor managerules generaltable generalbox');
-        $this->define_columns(array('name', 'description', 'context', 'plugin', 'eventname', 'filters', 'manage'));
+        $this->define_columns(array('name', 'description', 'course', 'plugin', 'eventname', 'filters', 'manage'));
         $this->define_headers(array(
-                get_string('name'),
+                get_string('rulename', 'tool_monitor'),
                 get_string('description'),
-                get_string('context', 'tool_monitor'),
-                get_string('plugin'),
-                get_string('eventname'),
+                get_string('course'),
+                get_string('area', 'tool_monitor'),
+                get_string('event', 'tool_monitor'),
                 get_string('frequency', 'tool_monitor'),
                 get_string('manage', 'tool_monitor'),
             )
@@ -93,7 +93,6 @@ class renderable extends \table_sql implements \renderable {
      * Generate content for name column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
      * @return string html used to display the column field.
      */
     public function col_name(\tool_monitor\rule $rule) {
@@ -104,7 +103,6 @@ class renderable extends \table_sql implements \renderable {
      * Generate content for description column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
      * @return string html used to display the column field.
      */
     public function col_description(\tool_monitor\rule $rule) {
@@ -112,10 +110,26 @@ class renderable extends \table_sql implements \renderable {
     }
 
     /**
+     * Generate content for course column.
+     *
+     * @param \tool_monitor\rule $rule rule object
+     * @return string html used to display the context column field.
+     */
+    public function col_course(\tool_monitor\rule $rule) {
+        $coursename = $rule->get_course_name($this->context);
+
+        $courseid = $rule->courseid;
+        if (empty($courseid)) {
+            return $coursename;
+        } else {
+            return \html_writer::link(new \moodle_url('/course/view.php', array('id' => $this->courseid)), $coursename);
+        }
+    }
+
+    /**
      * Generate content for plugin column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
      * @return string html used to display the column field.
      */
     public function col_plugin(\tool_monitor\rule $rule) {
@@ -126,7 +140,6 @@ class renderable extends \table_sql implements \renderable {
      * Generate content for eventname column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
      * @return string html used to display the column field.
      */
     public function col_eventname(\tool_monitor\rule $rule) {
@@ -137,7 +150,6 @@ class renderable extends \table_sql implements \renderable {
      * Generate content for filters column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
      * @return string html used to display the filters column field.
      */
     public function col_filters(\tool_monitor\rule $rule) {
@@ -148,7 +160,6 @@ class renderable extends \table_sql implements \renderable {
      * Generate content for manage column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
      * @return string html used to display the manage column field.
      */
     public function col_manage(\tool_monitor\rule $rule) {
@@ -171,11 +182,8 @@ class renderable extends \table_sql implements \renderable {
             $icon = $OUTPUT->render(new \pix_icon('t/copy', get_string('duplicaterule', 'tool_monitor')));
             $manage .= \html_writer::link($copyurl, $icon, array('class' => 'action-icon'));
 
-            $a = $rule->get_name($this->context);
-            $action = new \component_action('click', 'M.util.show_confirm_dialog', array('message' => get_string('ruleareyousure',
-                    'tool_monitor', $a)));
-            $icon = $OUTPUT->action_link($deleteurl, new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')), $action);
-            $manage .= $icon;
+            $icon = $OUTPUT->render(new \pix_icon('t/delete', get_string('deleterule', 'tool_monitor')));
+            $manage .= \html_writer::link($deleteurl, $icon, array('class' => 'action-icon'));
         } else {
             $manage = get_string('nopermission', 'tool_monitor');
         }
@@ -199,16 +207,5 @@ class renderable extends \table_sql implements \renderable {
         if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);
         }
-    }
-
-    /**
-     * Generate content for context column.
-     *
-     * @param \tool_monitor\rule $rule rule object
-     *
-     * @return string html used to display the context column field.
-     */
-    public function col_context(\tool_monitor\rule $rule) {
-        return ($rule->courseid == 0) ? get_string('system', 'tool_monitor') : get_string('course');
     }
 }

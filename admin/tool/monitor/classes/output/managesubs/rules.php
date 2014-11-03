@@ -54,11 +54,6 @@ class rules extends \table_sql implements \renderable {
     protected $context;
 
     /**
-     * @var \tool_monitor\output\helpicon\renderer the help icon renderer.
-     */
-    protected $helpiconrenderer;
-
-    /**
      * Sets up the table_log parameters.
      *
      * @param string $uniqueid unique id of form.
@@ -67,16 +62,18 @@ class rules extends \table_sql implements \renderable {
      * @param int $perpage Number of rules to display per page.
      */
     public function __construct($uniqueid, \moodle_url $url, $courseid = 0, $perpage = 100) {
-        global $PAGE;
-
         parent::__construct($uniqueid);
 
         $this->set_attribute('class', 'toolmonitor subscriberules generaltable generalbox');
-        $this->define_columns(array('name', 'description', 'select'));
+        $this->define_columns(array('name', 'description', 'course', 'plugin', 'eventname', 'filters', 'select'));
         $this->define_headers(array(
-                get_string('name'),
+                get_string('rulename', 'tool_monitor'),
                 get_string('description'),
-                get_string('select')
+                get_string('course'),
+                get_string('area', 'tool_monitor'),
+                get_string('event', 'tool_monitor'),
+                get_string('frequency', 'tool_monitor'),
+                ''
             )
         );
         $this->courseid = $courseid;
@@ -88,7 +85,6 @@ class rules extends \table_sql implements \renderable {
         $this->pageable(true);
         $this->is_downloadable(false);
         $this->define_baseurl($url);
-        $this->helpiconrenderer = $PAGE->get_renderer('tool_monitor', 'helpicon');
         $total = \tool_monitor\rule_manager::count_rules_by_courseid($this->courseid);
         $this->totalcount = $total;
     }
@@ -97,34 +93,74 @@ class rules extends \table_sql implements \renderable {
      * Generate content for name column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
-     * @return string html used to display the column field.
+     * @return string html used to display the rule name.
      */
     public function col_name(\tool_monitor\rule $rule) {
-        $name = $rule->get_name($this->context);
-        $helpicon = new \tool_monitor\output\helpicon\renderable('rule', $rule->id);
-        $helpicon = $this->helpiconrenderer->render($helpicon);
-
-        return $name . $helpicon;
+        return $rule->get_name($this->context);
     }
 
     /**
      * Generate content for description column.
      *
      * @param \tool_monitor\rule $rule rule object
-     *
-     * @return string html used to display the column field.
+     * @return string html used to display the description.
      */
     public function col_description(\tool_monitor\rule $rule) {
         return $rule->get_description($this->context);
     }
 
     /**
+     * Generate content for course column.
+     *
+     * @param \tool_monitor\rule $rule rule object
+     * @return string html used to display the course name.
+     */
+    public function col_course(\tool_monitor\rule $rule) {
+        $coursename = $rule->get_course_name($this->context);
+
+        $courseid = $rule->courseid;
+        if (empty($courseid)) {
+            return $coursename;
+        } else {
+            return \html_writer::link(new \moodle_url('/course/view.php', array('id' => $this->courseid)), $coursename);
+        }
+    }
+
+    /**
      * Generate content for plugin column.
      *
      * @param \tool_monitor\rule $rule rule object
+     * @return string html used to display the plugin name.
+     */
+    public function col_plugin(\tool_monitor\rule $rule) {
+        return $rule->get_plugin_name();
+    }
+
+    /**
+     * Generate content for eventname column.
      *
-     * @return string html used to display the column field.
+     * @param \tool_monitor\rule $rule rule object
+     * @return string html used to display the event name.
+     */
+    public function col_eventname(\tool_monitor\rule $rule) {
+        return $rule->get_event_name();
+    }
+
+    /**
+     * Generate content for filters column.
+     *
+     * @param \tool_monitor\rule $rule rule object
+     * @return string html used to display the filters.
+     */
+    public function col_filters(\tool_monitor\rule $rule) {
+        return $rule->get_filters_description();
+    }
+
+    /**
+     * Generate content for select column.
+     *
+     * @param \tool_monitor\rule $rule rule object
+     * @return string html used to display the select field.
      */
     public function col_select(\tool_monitor\rule $rule) {
         global $OUTPUT;
