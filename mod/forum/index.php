@@ -240,7 +240,10 @@ if ($generalforums) {
                 } else if ($forum->trackingtype === FORUM_TRACKING_OFF || ($USER->trackforums == 0)) {
                     $trackedlink = '-';
                 } else {
-                    $aurl = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
+                    $aurl = new moodle_url('/mod/forum/settracking.php', array(
+                            'id' => $forum->id,
+                            'sesskey' => sesskey(),
+                        ));
                     if (!isset($untracked[$forum->id])) {
                         $trackedlink = $OUTPUT->single_button($aurl, $stryes, 'post', array('title'=>$strnotrackforum));
                     } else {

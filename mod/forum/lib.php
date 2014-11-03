@@ -7107,7 +7107,10 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
             } else {
                 $linktext = get_string('trackforum', 'forum');
             }
-            $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
+            $url = new moodle_url('/mod/forum/settracking.php', array(
+                    'id' => $forumobject->id,
+                    'sesskey' => sesskey(),
+                ));
             $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
         }
     }

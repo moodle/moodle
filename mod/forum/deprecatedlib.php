@@ -338,7 +338,10 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
         // use <noscript> to print button in case javascript is not enabled
         $link .= '<noscript>';
     }
-    $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forum->id));
+    $url = new moodle_url('/mod/forum/settracking.php', array(
+            'id' => $forum->id,
+            'sesskey' => sesskey(),
+        ));
     $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
 
     if ($fakelink) {
