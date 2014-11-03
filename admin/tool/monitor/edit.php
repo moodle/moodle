@@ -106,6 +106,7 @@ if ($mformdata = $mform->get_data()) {
     }
     $mform->display();
     echo $OUTPUT->footer();
+    exit;
 }
 
 echo $OUTPUT->header();
