@@ -179,7 +179,10 @@ function lti_view($instance) {
         $instance->instructorcustomparameters, $islti2));
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
-    $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer, 'instanceid' => $instance->id);
+    $returnurlparams = array('course' => $course->id,
+                             'launch_container' => $launchcontainer,
+                             'instanceid' => $instance->id,
+                             'sesskey' => sesskey());
 
     // Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
     $url = new \moodle_url('/mod/lti/return.php', $returnurlparams);
