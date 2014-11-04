@@ -1980,20 +1980,19 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
 function message_print_message_history($user1, $user2 ,$search = '', $messagelimit = 0, $messagehistorylink = false, $viewingnewmessages = false, $showactionlinks = true) {
     global $CFG, $OUTPUT;
 
-    echo $OUTPUT->box_start('center');
-    echo html_writer::start_tag('table', array('cellpadding' => '10', 'class' => 'message_user_pictures'));
-    echo html_writer::start_tag('tr');
-
-    echo html_writer::start_tag('td', array('align' => 'center', 'id' => 'user1'));
+    echo $OUTPUT->box_start('center', 'message_user_pictures');
+    echo $OUTPUT->box_start('user');
+    echo $OUTPUT->box_start('generalbox', 'user1');
     echo $OUTPUT->user_picture($user1, array('size' => 100, 'courseid' => SITEID));
     echo html_writer::tag('div', fullname($user1), array('class' => 'heading'));
-    echo html_writer::end_tag('td');
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->box_end();
 
-    echo html_writer::start_tag('td', array('align' => 'center'));
-    echo html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/twoway'), 'alt' => ''));
-    echo html_writer::end_tag('td');
+    $imgattr = array('src' => $OUTPUT->pix_url('i/twoway'), 'alt' => '', 'width' => 16, 'height' => 16);
+    echo $OUTPUT->box(html_writer::empty_tag('img', $imgattr), 'between');
 
-    echo html_writer::start_tag('td', array('align' => 'center', 'id' => 'user2'));
+    echo $OUTPUT->box_start('user');
+    echo $OUTPUT->box_start('generalbox', 'user2');
     // Show user picture with link is real user else without link.
     if (core_user::is_real_user($user2->id)) {
         echo $OUTPUT->user_picture($user2, array('size' => 100, 'courseid' => SITEID));
@@ -2014,10 +2013,8 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
 
         echo html_writer::tag('div', $useractionlinks, array('class' => 'useractionlinks'));
     }
-
-    echo html_writer::end_tag('td');
-    echo html_writer::end_tag('tr');
-    echo html_writer::end_tag('table');
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->box_end();
     echo $OUTPUT->box_end();
 
     if (!empty($messagehistorylink)) {
