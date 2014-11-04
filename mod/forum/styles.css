@@ -143,18 +143,14 @@ span.unread {
     float: left;
 }
 
-.path-mod-forum .discussiontoggle {
-    display: inline-block;
-    width: 12px;
-}
-
 .path-mod-forum .discussionsubscription {
     margin-top: -10px;
     text-align: right;
     margin-bottom: 10px;
 }
 
-.path-mod-forum .discussionsubscription > a {
+.path-mod-forum .discussionsubscription > a > img {
+    width: 12px;
     padding: 0 4px;
 }
 
