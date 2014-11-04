@@ -255,7 +255,17 @@ abstract class screen {
 
         $fields = $this->definition();
 
+        // Avoiding execution timeouts when updating
+        // a large amount of grades.
+        $progress = 0;
+        $progressbar = new \core\progress\display_if_slow();
+        $progressbar->start_html();
+        $progressbar->start_progress(get_string('savegrades', 'gradereport_singleview'), count((array) $data) - 1);
+        $changecount = array();
+
         foreach ($data as $varname => $throw) {
+            $progressbar->progress($progress);
+            $progress++;
             if (preg_match("/(\w+)_(\d+)_(\d+)/", $varname, $matches)) {
                 $itemid = $matches[2];
                 $userid = $matches[3];
@@ -270,6 +280,9 @@ abstract class screen {
             if (preg_match('/^old[oe]{1}/', $varname)) {
                 $elementname = preg_replace('/^old/', '', $varname);
                 if (!isset($data->$elementname)) {
+                    // Decrease the progress because we've increased the
+                    // size of the array we are iterating through.
+                    $progress--;
                     $data->$elementname = false;
                 }
             }
@@ -309,6 +322,9 @@ abstract class screen {
             if (!empty($msg)) {
                 $warnings[] = $msg;
             }
+            if (preg_match('/_(\d+)_(\d+)/', $varname, $matchelement)) {
+                $changecount[$matchelement[0]] = 1;
+            }
         }
 
         // Some post-processing.
@@ -316,8 +332,11 @@ abstract class screen {
         $eventdata->warnings = $warnings;
         $eventdata->post_data = $data;
         $eventdata->instance = $this;
+        $eventdata->changecount = $changecount;
 
-        return $eventdata->warnings;
+        $progressbar->end_html();
+
+        return $eventdata;
     }
 
     /**

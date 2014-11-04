@@ -48,7 +48,6 @@ if (!$course = $DB->get_record('course', $courseparams)) {
 }
 
 require_login($course);
-$PAGE->set_pagelayout('report');
 
 if (!in_array($itemtype, gradereport_singleview::valid_screens())) {
     print_error('notvalid', 'gradereport_singleview', '', $itemtype);
@@ -99,15 +98,25 @@ $pageparams = array(
 $currentpage = new moodle_url('/grade/report/singleview/index.php', $pageparams);
 
 if ($data = data_submitted()) {
-    require_sesskey(); // Must have a sesskey for all actions.
-    $warnings = $report->process_data($data);
+    $PAGE->set_pagelayout('redirect');
+    $PAGE->set_title(get_string('savegrades', 'gradereport_singleview'));
+    echo $OUTPUT->header();
 
-    if (empty($warnings)) {
-        redirect($currentpage);
-        die();
+    require_sesskey(); // Must have a sesskey for all actions.
+    $result = $report->process_data($data);
+
+    if (!empty($result->warnings)) {
+        foreach ($result->warnings as $warning) {
+            echo $OUTPUT->notification($warning);
+        }
     }
+    echo $OUTPUT->notification(get_string('savegradessuccess', 'gradereport_singleview', count ((array)$result->changecount)));
+    echo $OUTPUT->continue_button($currentpage);
+    echo $OUTPUT->footer();
+    die();
 }
 
+$PAGE->set_pagelayout('report');
 print_grade_page_head($course->id, 'report', 'singleview', $reportname);
 
 $graderrightnav = $graderleftnav = null;
@@ -155,12 +164,6 @@ if ($report->screen->supports_paging()) {
 
 if ($report->screen->display_group_selector()) {
     echo $report->group_selector;
-}
-
-if (!empty($warnings)) {
-    foreach ($warnings as $warning) {
-        echo $OUTPUT->notification($warning);
-    }
 }
 
 echo $report->output();

@@ -337,7 +337,6 @@ class user extends tablelike implements selectable_items {
         if ($bulk->is_applied($data)) {
             $filter = $bulk->get_type($data);
             $insertvalue = $bulk->get_insert_value($data);
-            // Appropriately massage data that may not exist.
 
             $userid = $this->item->id;
             foreach ($this->items as $gradeitemid => $gradeitem) {
@@ -357,6 +356,9 @@ class user extends tablelike implements selectable_items {
             }
 
             foreach ($data as $varname => $value) {
+                if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
+                    $data->$matches[0] = '1';
+                }
                 if (!preg_match('/^finalgrade_(\d+)_/', $varname, $matches)) {
                     continue;
                 }
@@ -376,7 +378,6 @@ class user extends tablelike implements selectable_items {
                 }
             }
         }
-
         return parent::process($data);
     }
 }

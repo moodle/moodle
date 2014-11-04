@@ -58,7 +58,9 @@ Feature: We can use Single view
         | Feedback for Test assignment one | test data |
     And I click on "Exclude for Test assignment four" "checkbox"
     And I press "Update"
-    Then the following should exist in the "generaltable" table:
+    Then I should see "Grades were set for 2 items"
+    And I press "Continue"
+    And the following should exist in the "generaltable" table:
         | Test assignment four |
         | excluded |
     And the following should exist in the "generaltable" table:
@@ -71,6 +73,8 @@ Feature: We can use Single view
         | Feedback for james (Student) 1 | test data2 |
     And I click on "Exclude for holly (Student) 2" "checkbox"
     And I press "Update"
+    Then I should see "Grades were set for 2 items"
+    And I press "Continue"
     And the following should exist in the "generaltable" table:
         | Test assignment three |
         | 12.05 |
@@ -79,6 +83,8 @@ Feature: We can use Single view
     And I click on "new grade item 1" "option"
     And I click on "Very good" "option"
     And I press "Update"
+    Then I should see "Grades were set for 1 items"
+    And I press "Continue"
     And the following should exist in the "generaltable" table:
         | Grade for james (Student) 1 | "Very good" |
 

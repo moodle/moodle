@@ -333,6 +333,9 @@ class grade extends tablelike implements selectable_items, filterable_items {
             }
 
             foreach ($data as $varname => $value) {
+                if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
+                    $data->$matches[0] = '1';
+                }
                 if (!preg_match('/^finalgrade_(\d+)_/', $varname, $matches)) {
                     continue;
                 }
