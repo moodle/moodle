@@ -35,7 +35,7 @@ $string['defaultmessagetemplate'] = 'The rule "{rulename}" you have subscribed t
 $string['deleterule'] = 'Delete rule';
 $string['deletesubscription'] = 'Delete subscription';
 $string['description'] = 'Description:';
-$string['disablefieldswarning'] = 'Plugin and events fields can not be edited because this rule already has subscriptions.';
+$string['disablefieldswarning'] = 'Some fields can not be edited as this rule already has subscriptions.';
 $string['duplicaterule'] = 'Duplicate rule';
 $string['editrule'] = 'Edit rule';
 $string['event'] = 'Event';
@@ -67,6 +67,7 @@ $string['messagetemplate_help'] = 'A notification message is sent to subscribers
 * Rule name {rulename}<br />
 * Description {description}<br />
 * Event {eventname}';
+$string['moduleinstance'] = 'Instance';
 $string['monitor:managerules'] = 'Manage event monitor rules';
 $string['monitor:subscribe'] = 'Subscribe to event monitor rules';
 $string['norules'] = 'There are no event monitoring rules.';

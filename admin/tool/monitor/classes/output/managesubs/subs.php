@@ -60,12 +60,14 @@ class subs extends \table_sql implements \renderable {
         parent::__construct($uniqueid);
 
         $this->set_attribute('class', 'toolmonitor subscriptions generaltable generalbox');
-        $this->define_columns(array('name', 'description', 'course', 'plugin', 'eventname', 'filters', 'unsubscribe'));
+        $this->define_columns(array('name', 'description', 'course', 'plugin', 'instance', 'eventname',
+            'filters', 'unsubscribe'));
         $this->define_headers(array(
                 get_string('rulename', 'tool_monitor'),
                 get_string('description'),
                 get_string('course'),
                 get_string('area', 'tool_monitor'),
+                get_string('moduleinstance', 'tool_monitor'),
                 get_string('event', 'tool_monitor'),
                 get_string('frequency', 'tool_monitor'),
                 get_string('unsubscribe', 'tool_monitor')
@@ -127,6 +129,16 @@ class subs extends \table_sql implements \renderable {
      */
     public function col_plugin(\tool_monitor\subscription $sub) {
         return $sub->get_plugin_name();
+    }
+
+    /**
+     * Generate content for instance column.
+     *
+     * @param \tool_monitor\subscription $sub subscription object
+     * @return string html used to display the instance name.
+     */
+    public function col_instance(\tool_monitor\subscription $sub) {
+        return $sub->get_instance_name();
     }
 
     /**
