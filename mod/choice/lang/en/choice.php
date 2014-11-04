@@ -110,6 +110,6 @@ $string['taken'] = 'Taken';
 $string['timerestrict'] = 'Restrict answering to this time period';
 $string['viewallresponses'] = 'View {$a} responses';
 $string['withselected'] = 'With selected';
-$string['userchoosethisoption'] = 'User choose this option';
+$string['userchoosethisoption'] = 'Users who chose this option';
 $string['yourselection'] = 'Your selection';
 $string['skipresultgraph'] = 'Skip result graph';
