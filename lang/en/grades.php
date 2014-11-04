@@ -68,9 +68,9 @@ $string['aggregationhintextra'] = '( Extra credit )';
 $string['aggregation_link'] = 'grade/aggregation';
 $string['aggregationcoef'] = 'Aggregation coefficient';
 $string['aggregationcoefextra'] = 'Extra credit'; // for the header of the table at Edit categories and items page
-$string['aggregationcoefextra_help'] = 'If the aggregation is Natural or Simple weighted mean and the extra credit checkbox is ticked, the grade item\'s maximum grade is not added to the category\'s maximum grade, resulting in the possibility of achieving the maximum grade (or grades over the maximum if enabled by the site administrator) in the category without having the maximum grade in all the grade items.
+$string['aggregationcoefextra_help'] = 'If the aggregation is \'Natural\' or \'Simple weighted mean\' and the extra credit checkbox is ticked, the grade item\'s maximum grade is not added to the category\'s maximum grade. This will result in the possibility of achieving the maximum grade in the category without having the maximum grade in all the grade items. If the site administrator has enabled grades over the maximum, there might be grades over the maximum.
 
-If the aggregation is Mean of grades (with extra credits) and the extra credit is set to a value greater than zero, the extra credit is the factor by which the grade is multiplied before adding it to the total after the computation of the mean.';
+If the aggregation is \'Mean of grades (with extra credits)\' and the extra credit is set to a value greater than zero, the extra credit is the factor by which the grade is multiplied before adding it to the total after the computation of the mean.';
 $string['aggregationcoefextra_link'] = 'grade/aggregation';
 $string['aggregationcoefextrasum'] = 'Extra credit'; // for the form with checkboxes: Natural or Simple weighted mean
 $string['aggregationcoefextrasumabbr'] = '+';
