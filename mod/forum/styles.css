@@ -148,6 +148,14 @@ span.unread {
     width: 12px;
 }
 
+.path-mod-forum .preload-subscribe {
+    background: url([[pix:mod_forum|t/subscribed]]) no-repeat -9999px -9999px;
+}
+
+.path-mod-forum .preload-unsubscribe {
+    background: url([[pix:mod_forum|t/unsubscribed]]) no-repeat -9999px -9999px;
+}
+
 .path-mod-forum .discussionsubscription {
     margin-top: -10px;
     text-align: right;
