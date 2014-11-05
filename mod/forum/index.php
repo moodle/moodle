@@ -268,13 +268,9 @@ if ($generalforums) {
         }
 
         if ($can_subscribe) {
-            if (!\mod_forum\subscriptions::subscription_disabled($forum)) {
-                $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
-                        'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), false, false, true);
-            } else {
-                $row[] = '-';
-            }
+            $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                    'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                    'cantsubscribe' => '-'), false, false, true);
 
             $digestoptions_selector->url->param('id', $forum->id);
             if ($forum->maildigest === null) {
@@ -418,13 +414,9 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
             }
 
             if ($can_subscribe) {
-                if (!\mod_forum\subscriptions::subscription_disabled($forum)) {
-                    $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
-                        'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-                        'cantsubscribe' => '-'), false, false, true);
-                } else {
-                    $row[] = '-';
-                }
+                $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                    'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                    'cantsubscribe' => '-'), false, false, true);
 
                 $digestoptions_selector->url->param('id', $forum->id);
                 if ($forum->maildigest === null) {
