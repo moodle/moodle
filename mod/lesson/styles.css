@@ -81,12 +81,5 @@
 
 /* Countdown timer. */
 #lesson-timer {
-    font-weight: bold;
-    font-size: 14px;
     text-align: center;
-    background: #ffeeee;
-}
-
-#lesson-timer.timeleft1 {
-    color: #ff1111;
 }
