@@ -1186,6 +1186,10 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
 
     $posttext = '';
 
+    if ($replyaddress) {
+        $posttext .= "--" . get_string('deleteoriginalonreply', 'mod_forum') . "--\n";
+    }
+
     if (!$bare) {
         $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
         $posttext  = "$shortname -> $strforums -> ".format_string($forum->name,true);
@@ -1237,7 +1241,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     $posttext .= ": {$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}\n";
 
     if ($replyaddress) {
-        $posttext .= "\n\n" . get_string('replytoforumpost', 'mod_forum', $replyaddress);
+        $posttext .= "\n\n" . get_string('replytoforumpost', 'mod_forum');
     }
 
     return $posttext;
@@ -1282,6 +1286,10 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     $posthtml .= '</head>';
     $posthtml .= "\n<body id=\"email\">\n\n";
 
+    if ($replyaddress) {
+        $posttext .= "<p><em>--" . get_string('deleteoriginalonreply', 'mod_forum') . "--</em></p>";
+    }
+
     $posthtml .= '<div class="navbar">'.
     '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$shortname.'</a> &raquo; '.
     '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/index.php?id='.$course->id.'">'.$strforums.'</a> &raquo; '.
@@ -1295,7 +1303,7 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
 
     if ($replyaddress) {
-        $posthtml .= "<p>" . get_string('replytoforumpost_html', 'mod_forum', $replyaddress) . "</p>";
+        $posthtml .= html_writer::tag('p', get_string('replytoforumpost', 'mod_forum'));
     }
 
     $footerlinks = array();
