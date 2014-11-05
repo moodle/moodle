@@ -117,7 +117,7 @@ class subs extends \table_sql implements \renderable {
         if (empty($courseid)) {
             return $coursename;
         } else {
-            return \html_writer::link(new \moodle_url('/course/view.php', array('id' => $this->courseid)), $coursename);
+            return \html_writer::link(new \moodle_url('/course/view.php', array('id' => $courseid)), $coursename);
         }
     }
 
