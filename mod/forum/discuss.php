@@ -245,6 +245,7 @@
                 forum_get_discussion_subscription_icon($forum, $post->discussion, null, true),
                 'discussionsubscription'
             );
+            echo forum_get_discussion_subscription_icon_preloaders();
         }
     }
 

@@ -3852,6 +3852,19 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
 }
 
 /**
+ * Return a pair of spans containing classes to allow the subscribe and
+ * unsubscribe icons to be pre-loaded by a browser.
+ *
+ * @return string The generated markup
+ */
+function forum_get_discussion_subscription_icon_preloaders() {
+    $o = '';
+    $o .= html_writer::span('&nbsp;', 'preload-subscribe');
+    $o .= html_writer::span('&nbsp;', 'preload-unsubscribe');
+    return $o;
+}
+
+/**
  * Print the drop down that allows the user to select how they want to have
  * the discussion displayed.
  *
@@ -5414,7 +5427,9 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
         echo '<th class="header lastpost" scope="col">'.get_string('lastpost', 'forum').'</th>';
         if (has_capability('mod/forum:viewdiscussion', $context)) {
             if (\mod_forum\subscriptions::is_subscribable($forum)) {
-                echo '<th class="header discussionsubscription" scope="col">&nbsp;</th>';
+                echo '<th class="header discussionsubscription" scope="col">';
+                echo forum_get_discussion_subscription_icon_preloaders();
+                echo '</th>';
             }
         }
         echo '</tr>';
