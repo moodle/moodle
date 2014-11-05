@@ -556,10 +556,6 @@ table.quizreviewsummary td.cell {
     left: 0;
 }
 
-#page-mod-quiz-edit .mod-quiz-edit-content .moodle-actionmenu[data-enhanced].show .menu a {
-    white-space: nowrap;
-}
-
 #page-mod-quiz-edit .slotnumber {
     background-color: #D3D3D3;
     text-align: center;

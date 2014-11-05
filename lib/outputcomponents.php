@@ -3401,6 +3401,34 @@ class action_menu implements renderable {
     public function will_be_enhanced() {
         return isset($this->attributes['data-enhance']);
     }
+
+    /**
+     * Sets nowrap on items. If true menu items should not wrap lines if they are longer than the available space.
+     *
+     * This property can be useful when the action menu is displayed within a parent element that is either floated
+     * or relatively positioned.
+     * In that situation the width of the menu is determined by the width of the parent element which may not be large
+     * enough for the menu items without them wrapping.
+     * This disables the wrapping so that the menu takes on the width of the longest item.
+     *
+     * @param bool $value If true nowrap gets set, if false it gets removed. Defaults to true.
+     */
+    public function set_nowrap_on_items($value = true) {
+        $class = 'nowrap-items';
+        if (!empty($this->attributes['class'])) {
+            $pos = strpos($this->attributes['class'], $class);
+            if ($value === true && $pos === false) {
+                // The value is true and the class has not been set yet. Add it.
+                $this->attributes['class'] .= ' '.$class;
+            } else if ($value === false && $pos !== false) {
+                // The value is false and the class has been set. Remove it.
+                $this->attributes['class'] = substr($this->attributes['class'], $pos, strlen($class));
+            }
+        } else if ($value) {
+            // The value is true and the class has not been set yet. Add it.
+            $this->attributes['class'] = $class;
+        }
+    }
 }
 
 /**

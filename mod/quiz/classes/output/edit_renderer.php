@@ -435,6 +435,9 @@ class edit_renderer extends \plugin_renderer_base {
         $menu->set_constraint('.mod-quiz-edit-content');
         $trigger = html_writer::tag('span', get_string('add', 'quiz'), array('class' => 'add-menu'));
         $menu->set_menu_trigger($trigger);
+        // The menu appears within an absolutely positioned element causing width problems.
+        // Make sure no-wrap is set so that we don't get a squashed menu.
+        $menu->set_nowrap_on_items(true);
 
         // Disable the link if quiz has attempts.
         if (!$structure->can_be_edited()) {
