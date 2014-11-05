@@ -31,7 +31,7 @@ $string['area'] = 'Area';
 $string['areatomonitor'] = 'Area to monitor';
 $string['core'] = 'Core';
 $string['currentsubscriptions'] = 'Your current subscriptions';
-$string['defaultmessagetemplate'] = 'The rule "{rulename}" you have subscribed to has occurred - please find further details at {link}';
+$string['defaultmessagetemplate'] = 'Rule name: {rulename}<br />Description: {description}<br />Event name: {eventname}';
 $string['deleterule'] = 'Delete rule';
 $string['deletesubscription'] = 'Delete subscription';
 $string['description'] = 'Description:';
@@ -67,6 +67,7 @@ $string['messagetemplate_help'] = 'A notification message is sent to subscribers
 * Rule name {rulename}<br />
 * Description {description}<br />
 * Event {eventname}';
+$string['messagetemplate_link'] = 'admin/tool/monitor/managerules';
 $string['moduleinstance'] = 'Instance';
 $string['monitor:managerules'] = 'Manage event monitor rules';
 $string['monitor:subscribe'] = 'Subscribe to event monitor rules';
