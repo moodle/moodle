@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014051200;
-$plugin->requires  = 2014050800;
+$plugin->version   = 2014111000;
+$plugin->requires  = 2014110400;
 $plugin->component = 'assignfeedback_comments';
