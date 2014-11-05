@@ -489,14 +489,15 @@ function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
         return null;
     }
 
-    $content = '<div class="jshidewhenenabled">';
+    $content = '<div id="lesson-timer">';
     $content .=  $lesson->time_remaining($timer->starttime);
     $content .= '</div>';
 
     $clocksettings = array('starttime'=>$timer->starttime, 'servertime'=>time(),'testlength'=>($lesson->maxtime * 60));
-    $page->requires->data_for_js('clocksettings', $clocksettings);
+    $page->requires->data_for_js('clocksettings', $clocksettings, true);
+    $page->requires->strings_for_js(array('timeisup'), 'lesson');
     $page->requires->js('/mod/lesson/timer.js');
-    $page->requires->js_function_call('show_clock');
+    $page->requires->js_init_call('show_clock');
 
     $bc = new block_contents();
     $bc->title = get_string('timeremaining', 'lesson');
