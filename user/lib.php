@@ -630,6 +630,7 @@ function user_convert_text_to_menu_items($text, $page) {
     $lastchild = null;
     $lastdepth = null;
     $lastsort = 0;
+    $children = array();
     foreach ($lines as $line) {
         $line = trim($line);
         $bits = explode('|', $line, 3);
