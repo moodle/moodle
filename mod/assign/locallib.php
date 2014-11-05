@@ -770,6 +770,12 @@ class assign {
                 // Remove all grades from gradebook.
                 require_once($CFG->dirroot.'/mod/assign/lib.php');
                 assign_reset_gradebook($data->courseid);
+
+                // Reset revealidentities if both submissions and grades have been reset.
+                $instance = $this->get_instance();
+                if ($this->get_instance()->blindmarking && $this->get_instance()->revealidentities) {
+                    $DB->set_field('assign', 'revealidentities', 0, array('id' => $instance->id));
+                }
             }
         }
         // Updating dates - shift may be negative too.
