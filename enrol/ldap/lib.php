@@ -146,7 +146,11 @@ class enrol_ldap_plugin extends enrol_plugin {
         global $DB;
 
         // Do not try to print anything to the output because this method is called during interactive login.
-        $trace = new error_log_progress_trace($this->errorlogtag);
+        if (PHPUNIT_TEST) {
+            $trace = new null_progress_trace();
+        } else {
+            $trace = new error_log_progress_trace($this->errorlogtag);
+        }
 
         if (!$this->ldap_connect($trace)) {
             $trace->finished();
