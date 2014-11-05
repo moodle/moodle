@@ -489,6 +489,7 @@ $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
 $string['unreadpostsone'] = '1 unread post';
 $string['unsubscribe'] = 'Unsubscribe from this forum';
+$string['unsubscribediscussion'] = 'Unsubscribe from this discussion';
 $string['unsubscribeall'] = 'Unsubscribe from all forums';
 $string['unsubscribeallconfirm'] = 'You are currently subscribed to {$a->forums} forums, and {$a->discussions} discussions. Do you really want to unsubscribe from all forums and discussions, and disable discussion auto-subscription?';
 $string['unsubscribeallconfirmforums'] = 'You are currently subscribed to {$a->forums} forums. Do you really want to unsubscribe from all forums and disable discussion auto-subscription?';
