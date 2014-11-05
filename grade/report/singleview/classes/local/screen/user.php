@@ -353,6 +353,13 @@ class user extends tablelike implements selectable_items {
 
                 $data->$field = empty($grade) ? $null : $grade->finalgrade;
                 $data->{"old$field"} = $data->$field;
+
+                preg_match('/_(\d+)_(\d+)/', $field, $oldoverride);
+                $oldoverride = 'oldoverride' . $oldoverride[0];
+                if (empty($data->$oldoverride)) {
+                    $data->$field = (!isset($grade->rawgrade)) ? $null : $grade->rawgrade;
+                }
+
             }
 
             foreach ($data as $varname => $value) {
