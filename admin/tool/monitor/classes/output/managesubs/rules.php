@@ -214,9 +214,9 @@ class rules extends \table_sql implements \renderable {
         if ($numcourses > COURSE_MAX_COURSES_PER_DROPDOWN) {
             return false;
         }
-
+        $orderby = 'visible DESC, sortorder ASC';
         $options = array(0 => get_string('site'));
-        if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname')) {
+        if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname', $orderby)) {
             foreach ($courses as $course) {
                 $options[$course->id] = format_string($course->fullname, true,
                     array('context' => \context_course::instance($course->id)));
