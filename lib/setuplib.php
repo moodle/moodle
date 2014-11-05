@@ -817,6 +817,7 @@ function initialise_fullme() {
         }
         $rurl['scheme'] = 'https'; // make moodle believe it runs on https, squid or something else it doing it
         $_SERVER['HTTPS'] = 'on'; // Override $_SERVER to help external libraries with their HTTPS detection.
+        $_SERVER['SERVER_PORT'] = 443; // Assume default ssl port for the proxy.
     }
 
     // hopefully this will stop all those "clever" admins trying to set up moodle
