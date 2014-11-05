@@ -37,6 +37,14 @@ defined('MOODLE_INTERNAL') || die();
 class tool_monitor_generator_testcase extends advanced_testcase {
 
     /**
+     * Set up method.
+     */
+    public function setUp() {
+        // Enable monitor.
+        set_config('enablemonitor', 1, 'tool_monitor');
+    }
+
+    /**
      * Test create_rule data generator.
      */
     public function test_create_rule() {

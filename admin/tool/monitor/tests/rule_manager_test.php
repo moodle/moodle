@@ -35,6 +35,14 @@ global $CFG;
 class tool_monitor_rule_manager_testcase extends advanced_testcase {
 
     /**
+     * Set up method.
+     */
+    public function setUp() {
+        // Enable monitor.
+        set_config('enablemonitor', 1, 'tool_monitor');
+    }
+
+    /**
      * Test add_rule method.
      */
     public function test_add_rule() {

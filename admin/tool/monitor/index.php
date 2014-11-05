@@ -45,6 +45,11 @@ if (empty($courseid)) {
     $coursename = format_string($course->fullname, true, array('context' => $coursecontext));
 }
 
+if (!get_config('tool_monitor', 'enablemonitor')) {
+    // This should never happen as the this page does not appear in navigation when the tool is disabled.
+    throw new coding_exception('Event monitoring is disabled');
+}
+
 // Always build the page in site context.
 $context = context_system::instance();
 $sitename = format_string($SITE->fullname, true, array('context' => $context));
