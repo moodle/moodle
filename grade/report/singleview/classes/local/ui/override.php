@@ -88,7 +88,6 @@ class override extends grade_attribute_format implements be_checked, be_disabled
             $this->get_name(),
             $this->get_label(),
             $this->is_checked(),
-            null,
             $this->is_disabled()
         );
     }

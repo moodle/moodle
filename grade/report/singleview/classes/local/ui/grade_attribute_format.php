@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class grade_attribute_format extends attribute_format implements unique_name, tabbable {
+abstract class grade_attribute_format extends attribute_format implements unique_name {
 
     /** @var string $name The first part of the name attribute of the form input */
     public $name;
@@ -44,19 +44,13 @@ abstract class grade_attribute_format extends attribute_format implements unique
     /** @var grade_grade $grade The grade_grade of the input */
     public $grade;
 
-    /** @var int $tabindex The tabindex of the input */
-    public $tabindex;
-
     /**
      * Constructor
      *
      * @param grade_grade $grade The grade_grade we are editing.
-     * @param int $tabindex The tabindex for the input.
      */
-    public function __construct($grade = 0, $tabindex = 1) {
-
+    public function __construct($grade = 0) {
         $this->grade = $grade;
-        $this->tabindex = $tabindex;
     }
 
     /**
@@ -66,15 +60,6 @@ abstract class grade_attribute_format extends attribute_format implements unique
      */
     public function get_name() {
         return "{$this->name}_{$this->grade->itemid}_{$this->grade->userid}";
-    }
-
-    /**
-     * Get the tabindex for this form input
-     *
-     * @return int The tab index
-     */
-    public function get_tabindex() {
-        return isset($this->tabindex) ? $this->tabindex : null;
     }
 
     /**

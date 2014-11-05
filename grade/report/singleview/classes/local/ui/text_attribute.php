@@ -39,9 +39,6 @@ class text_attribute extends element {
     /** @var bool $isdisabled Is this input disabled? */
     private $isdisabled;
 
-    /** @var int $tabindex Tabindex value for this input. */
-    private $tabindex;
-
     /**
      * Constructor
      *
@@ -49,11 +46,9 @@ class text_attribute extends element {
      * @param string $value The input initial value.
      * @param string $label The label for this input field.
      * @param bool $isdisabled Is this input disabled.
-     * @param int $tabindex Tab index for this input.
      */
-    public function __construct($name, $value, $label, $isdisabled = false, $tabindex = null) {
+    public function __construct($name, $value, $label, $isdisabled = false) {
         $this->isdisabled = $isdisabled;
-        $this->tabindex = $tabindex;
         parent::__construct($name, $value, $label);
     }
 
@@ -77,9 +72,6 @@ class text_attribute extends element {
             'id' => $this->name
         );
 
-        if (!empty($this->tabindex)) {
-            $attributes['tabindex'] = $this->tabindex;
-        }
         if ($this->isdisabled) {
             $attributes['disabled'] = 'DISABLED';
         }

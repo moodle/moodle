@@ -95,8 +95,7 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
             $this->get_name(),
             $this->get_value(),
             $this->get_label(),
-            $this->is_disabled(),
-            $this->get_tabindex()
+            $this->is_disabled()
         );
     }
 
