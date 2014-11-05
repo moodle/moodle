@@ -123,7 +123,8 @@ class rule_form extends \moodleform {
 
         // Message template.
         $mform->addElement('editor', 'template', get_string('messagetemplate', 'tool_monitor'), $editoroptions);
-        $mform->setDefault('template', get_string('defaultmessagetemplate', 'tool_monitor'));
+        $mform->setDefault('template', array('text' => get_string('defaultmessagetemplate', 'tool_monitor'),
+                'format' => FORMAT_HTML));
         $mform->addRule('template', get_string('required'), 'required');
         $mform->addHelpButton('template', 'messagetemplate', 'tool_monitor');
 
