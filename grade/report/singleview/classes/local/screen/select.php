@@ -99,9 +99,10 @@ class select extends screen {
             );
 
             $url = new moodle_url('/grade/report/singleview/index.php', $params);
-            $html .= $OUTPUT->heading($screen->description());
 
-            $html .= $OUTPUT->single_select($url, 'itemid', $options);
+            $select = new \single_select($url, 'itemid', $options);
+            $select->set_label($screen->description());
+            $html .= $OUTPUT->render($select);
         }
 
         if (empty($html)) {

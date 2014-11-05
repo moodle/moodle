@@ -26,8 +26,10 @@
 $string['all_grades'] = 'All grades';
 $string['assessmentname'] = 'Assessment Name';
 $string['blanks'] = 'Empty grades';
-$string['bulkappliesto'] = 'for';
-$string['bulkinsertgrade'] = 'Bulk insert';
+$string['bulkappliesto'] = 'For';
+$string['bulkinsertvalue'] = 'Insert value';
+$string['bulklegend'] = 'Bulk insert';
+$string['bulkperform'] = 'Perform bulk insert';
 $string['bulkfor'] = 'Grades for {$a}';
 $string['exclude'] = 'Exclude';
 $string['excludeall'] = 'Exclude all grades';

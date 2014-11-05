@@ -85,22 +85,56 @@ class bulk_insert extends element {
      * @return string HTML
      */
     public function html() {
-        $insertgrade = get_string('bulkinsertgrade', 'gradereport_singleview');
+        $insertvalue = get_string('bulkinsertvalue', 'gradereport_singleview');
         $insertappliesto = get_string('bulkappliesto', 'gradereport_singleview');
 
-        $apply = html_writer::checkbox($this->applyname, 1, false, $insertgrade);
         $insertoptions = array(
             'all' => get_string('all_grades', 'gradereport_singleview'),
             'blanks' => get_string('blanks', 'gradereport_singleview')
         );
 
+        $selectlabel = html_writer::label(
+            $insertappliesto,
+            $this->selectname
+        );
         $select = html_writer::select(
             $insertoptions, $this->selectname, 'blanks', false
         );
 
-        $label = html_writer::tag('label', $insertappliesto);
+        $textlabel = html_writer::label(
+            $insertvalue,
+            $this->insertname
+        );
         $text = new text_attribute($this->insertname, "0", 'bulk');
-        return implode(' ', array($apply, $text->html(), $label, $select));
+
+        $inner = implode(' ', array(
+            $selectlabel,
+            $select,
+            $textlabel,
+            $text->html()
+        ));
+
+        $fieldset = html_writer::tag(
+            'fieldset',
+            html_writer::tag(
+                'legend',
+                get_string('bulklegend', 'gradereport_singleview'),
+                array(
+                    'class' => 'accesshide'
+                )
+            ) .
+            $inner
+        );
+
+        $apply = html_writer::checkbox(
+            $this->applyname,
+            1,
+            false,
+            get_string('bulkperform', 'gradereport_singleview')
+        );
+        $applydiv = html_writer::div($apply, 'enable');
+
+        return $applydiv . $fieldset;
     }
 
     /**
