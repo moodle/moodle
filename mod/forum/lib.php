@@ -1232,7 +1232,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
             // Always offer the unsubscribe from discussion link.
             $posttext .= "\n---------------------------------------------------------------------\n";
             $posttext .= get_string("unsubscribediscussion", "forum");
-            $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?d=$discussion->id\n";
+            $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id&amp;d=$discussion->id\n";
         }
     }
 
@@ -1314,7 +1314,10 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
             $footerlinks[] = html_writer::link($unsublink, get_string('unsubscribe', 'mod_forum'));
         }
         // Always offer the unsubscribe from discussion link.
-        $unsublink = new moodle_url('/mod/forum/subscribe.php', array('d' => $discussion->id));
+        $unsublink = new moodle_url('/mod/forum/subscribe.php', array(
+                'id' => $forum->id,
+                'd' => $discussion->id,
+            ));
         $footerlinks[] = html_writer::link($unsublink, get_string('unsubscribediscussion', 'mod_forum'));
 
         $footerlinks[] = '<a href="' . $CFG->wwwroot . '/mod/forum/unsubscribeall.php">' . get_string('unsubscribeall', 'forum') . '</a>';
