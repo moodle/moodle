@@ -218,7 +218,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject one" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | Send me email copies of posts to this discussion |
+      | Discussion subscription | I don't want to be notified of new posts in this discussion |
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
@@ -228,7 +228,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I follow "Test post subject one"
     And I follow "Reply"
-    And the field "Discussion subscription" matches value "Send me email copies of posts to this discussion"
+    And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
     And I follow "Test forum name"
     And I follow "Test post subject two"
     And I follow "Reply"
@@ -254,7 +254,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject one" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | Send me email copies of posts to this discussion |
+      | Discussion subscription | I don't want to be notified of new posts in this discussion |
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
@@ -264,7 +264,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I follow "Test post subject one"
     And I follow "Reply"
-    And the field "Discussion subscription" matches value "Send me email copies of posts to this discussion"
+    And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
     And I follow "Test forum name"
     And I follow "Test post subject two"
     And I follow "Reply"
