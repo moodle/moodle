@@ -344,18 +344,25 @@ function groups_update_group_icon($group, $data, $editform) {
 
     $fs = get_file_storage();
     $context = context_course::instance($group->courseid, MUST_EXIST);
+    $newpicture = $group->picture;
 
-    //TODO: it would make sense to allow picture deleting too (skodak)
-    if ($iconfile = $editform->save_temp_file('imagefile')) {
+    if (!empty($data->deletepicture)) {
+        $fs->delete_area_files($context->id, 'group', 'icon', $group->id);
+        $newpicture = 0;
+    } else if ($iconfile = $editform->save_temp_file('imagefile')) {
         if ($rev = process_new_icon($context, 'group', 'icon', $group->id, $iconfile)) {
-            $DB->set_field('groups', 'picture', $rev, array('id'=>$group->id));
-            $group->picture = $rev;
+            $newpicture = $rev;
         } else {
             $fs->delete_area_files($context->id, 'group', 'icon', $group->id);
-            $DB->set_field('groups', 'picture', 0, array('id'=>$group->id));
-            $group->picture = 0;
+            $newpicture = 0;
         }
         @unlink($iconfile);
+    }
+
+    if ($newpicture != $group->picture) {
+        $DB->set_field('groups', 'picture', $newpicture, array('id' => $group->id));
+        $group->picture = $newpicture;
+
         // Invalidate the group data as we've updated the group record.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($group->courseid));
     }
