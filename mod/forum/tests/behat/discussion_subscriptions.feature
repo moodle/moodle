@@ -222,7 +222,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | I don't want email copies of posts to this discussion |
+      | Discussion subscription | I don't want to be notified of new posts in this discussion |
     And I follow "Test forum name"
     Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -232,7 +232,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "Test forum name"
     And I follow "Test post subject two"
     And I follow "Reply"
-    And the field "Discussion subscription" matches value "I don't want email copies of posts to this discussion"
+    And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
 
   Scenario: An automatic forum prompts a user to subscribe to a discussion when posting unless they have already chosen not to subscribe
     Given I add a "Forum" to section "1" and I fill the form with:
@@ -258,7 +258,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | I don't want email copies of posts to this discussion |
+      | Discussion subscription | I don't want to be notified of new posts in this discussion |
     And I follow "Test forum name"
     Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -268,7 +268,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "Test forum name"
     And I follow "Test post subject two"
     And I follow "Reply"
-    And the field "Discussion subscription" matches value "I don't want email copies of posts to this discussion"
+    And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
 
  Scenario: A guest should not be able to subscribe to a discussion
    Given I click on "Home" "link" in the "Navigation" "block"
