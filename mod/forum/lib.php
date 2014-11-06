@@ -1192,7 +1192,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
 
     if (!$bare) {
         $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-        $posttext  = "$shortname -> $strforums -> ".format_string($forum->name,true);
+        $posttext  .= "$shortname -> $strforums -> ".format_string($forum->name,true);
 
         if ($discussion->name != $forum->name) {
             $posttext  .= " -> ".format_string($discussion->name,true);
