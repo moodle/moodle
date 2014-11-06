@@ -95,10 +95,16 @@ class bulk_insert extends element {
 
         $selectlabel = html_writer::label(
             $insertappliesto,
-            $this->selectname
+            'menu' . $this->selectname
         );
         $select = html_writer::select(
-            $insertoptions, $this->selectname, 'blanks', false
+            $insertoptions,
+            $this->selectname,
+            'blanks',
+            false,
+            array(
+                'id' => 'menu' . $this->selectname
+            )
         );
 
         $textlabel = html_writer::label(
