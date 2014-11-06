@@ -2576,11 +2576,6 @@ function get_group_picture_url($group, $courseid, $large = false, $includetoken 
         return;
     }
 
-    // If picture is hidden, only show to those with course:managegroups.
-    if ($group->hidepicture and !has_capability('moodle/course:managegroups', $context)) {
-        return;
-    }
-
     if ($large) {
         $file = 'f1';
     } else {

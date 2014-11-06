@@ -2450,7 +2450,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     // Group picture
     if ($group !== -1) {  // Groups are active - group is a group data object or NULL
         echo '<td class="picture group">';
-        if (!empty($group->picture) and empty($group->hidepicture)) {
+        if (!empty($group->picture)) {
             if ($canviewparticipants && $COURSE->groupmode) {
                 $picturelink = true;
             } else {

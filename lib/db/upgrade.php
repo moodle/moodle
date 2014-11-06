@@ -2393,5 +2393,56 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.55);
     }
 
+    if ($oldversion < 2021052500.59) {
+
+        // We are going to remove the field 'hidepicture' from the groups
+        // so we need to remove the pictures from those groups. But we prevent
+        // the execution twice because this could be executed again when upgrading
+        // to different versions.
+        if ($dbman->field_exists('groups', 'hidepicture')) {
+
+            $sql = "SELECT g.id, g.courseid, ctx.id AS contextid
+                       FROM {groups} g
+                       JOIN {context} ctx
+                         ON ctx.instanceid = g.courseid
+                        AND ctx.contextlevel = :contextlevel
+                      WHERE g.hidepicture = 1";
+
+            // Selecting all the groups that have hide picture enabled, and organising them by context.
+            $groupctx = [];
+            $records = $DB->get_recordset_sql($sql, ['contextlevel' => CONTEXT_COURSE]);
+            foreach ($records as $record) {
+                if (!isset($groupctx[$record->contextid])) {
+                    $groupctx[$record->contextid] = [];
+                }
+                $groupctx[$record->contextid][] = $record->id;
+            }
+            $records->close();
+
+            // Deleting the group files.
+            $fs = get_file_storage();
+            foreach ($groupctx as $contextid => $groupids) {
+                list($in, $inparams) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED);
+                $fs->delete_area_files_select($contextid, 'group', 'icon', $in, $inparams);
+            }
+
+            // Updating the database to remove picture from all those groups.
+            $sql = "UPDATE {groups} SET picture = :pic WHERE hidepicture = :hide";
+            $DB->execute($sql, ['pic' => 0, 'hide' => 1]);
+        }
+
+        // Define field hidepicture to be dropped from groups.
+        $table = new xmldb_table('groups');
+        $field = new xmldb_field('hidepicture');
+
+        // Conditionally launch drop field hidepicture.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.59);
+    }
+
     return true;
 }
