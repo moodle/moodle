@@ -2490,6 +2490,9 @@ abstract class moodle_database {
         // now enable transactions again
         $this->transactions = array();
         $this->force_rollback = false;
+
+        \core\event\manager::database_transaction_rolledback();
+        \core\message\manager::database_transaction_rolledback();
     }
 
     /**

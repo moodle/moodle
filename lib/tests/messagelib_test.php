@@ -712,6 +712,104 @@ class core_messagelib_testcase extends advanced_testcase {
         $DB->delete_records('message_read', array());
     }
 
+    public function test_rollback() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        set_config('noemailever', 1);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        message_send($message);
+        $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
+
+        $transaction1 = $DB->start_delegated_transaction();
+
+        message_send($message);
+        $this->assertDebuggingNotCalled();
+
+        $transaction2 = $DB->start_delegated_transaction();
+
+        message_send($message);
+        $this->assertDebuggingNotCalled();
+
+        try {
+            $transaction2->rollback(new Exception('x'));
+            $this->fail('Expecting exception');
+        } catch (Exception $e) {}
+        $this->assertDebuggingNotCalled();
+
+        $this->assertTrue($DB->is_transaction_started());
+
+        try {
+            $transaction1->rollback(new Exception('x'));
+            $this->fail('Expecting exception');
+        } catch (Exception $e) {}
+        $this->assertDebuggingNotCalled();
+
+        $this->assertFalse($DB->is_transaction_started());
+
+        message_send($message);
+        $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
+    }
+
+    public function test_forced_rollback() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        set_config('noemailever', 1);
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = $user1;
+        $message->userto            = $user2;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->notification      = '0';
+
+        message_send($message);
+        $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
+
+        $transaction1 = $DB->start_delegated_transaction();
+
+        message_send($message);
+        $this->assertDebuggingNotCalled();
+
+        $transaction2 = $DB->start_delegated_transaction();
+
+        message_send($message);
+        $this->assertDebuggingNotCalled();
+
+        $DB->force_transaction_rollback();
+        $this->assertFalse($DB->is_transaction_started());
+        $this->assertDebuggingNotCalled();
+
+        message_send($message);
+        $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
+    }
+
     public function test_message_attachment_send() {
         global $CFG;
         $this->preventResetByRollback();
