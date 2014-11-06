@@ -77,9 +77,6 @@ class group_form extends moodleform {
         $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
         $mform->setDefault('deletepicture', 0);
 
-        $options = array(get_string('no'), get_string('yes'));
-        $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
-
         $mform->addElement('filepicker', 'imagefile', get_string('newpicture', 'group'));
         $mform->addHelpButton('imagefile', 'newpicture', 'group');
 
