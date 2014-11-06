@@ -1287,7 +1287,7 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     $posthtml .= "\n<body id=\"email\">\n\n";
 
     if ($replyaddress) {
-        $posttext .= "<p><em>--" . get_string('deleteoriginalonreply', 'mod_forum') . "--</em></p>";
+        $posthtml .= "<p><em>--" . get_string('deleteoriginalonreply', 'mod_forum') . "--</em></p>";
     }
 
     $posthtml .= '<div class="navbar">'.
