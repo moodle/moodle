@@ -3088,12 +3088,14 @@ class navbar extends navigation_node {
         } else if ($this->hasitems !== false) {
             return true;
         }
-        $this->page->navigation->initialise($this->page);
-
-        $activenodefound = ($this->page->navigation->contains_active_node() ||
-                            $this->page->settingsnav->contains_active_node());
-
-        $outcome = (count($this->children) > 0 || count($this->prependchildren) || (!$this->ignoreactive && $activenodefound));
+        if (count($this->children) > 0 || count($this->prependchildren) > 0) {
+            // There have been manually added items - there are definitely items.
+            $outcome = true;
+        } else if (!$this->ignoreactive) {
+            // We will need to initialise the navigation structure to check if there are active items.
+            $this->page->navigation->initialise($this->page);
+            $outcome = ($this->page->navigation->contains_active_node() || $this->page->settingsnav->contains_active_node());
+        }
         $this->hasitems = $outcome;
         return $outcome;
     }
@@ -3148,11 +3150,10 @@ class navbar extends navigation_node {
             $items = array_reverse($this->children);
         }
 
-        $navigationactivenode = $this->page->navigation->find_active_node();
-        $settingsactivenode = $this->page->settingsnav->find_active_node();
-
         // Check if navigation contains the active node
         if (!$this->ignoreactive) {
+            $navigationactivenode = $this->page->navigation->find_active_node();
+            $settingsactivenode = $this->page->settingsnav->find_active_node();
 
             if ($navigationactivenode && $settingsactivenode) {
                 // Parse a combined navigation tree
