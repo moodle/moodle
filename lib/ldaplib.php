@@ -365,7 +365,7 @@ function ldap_get_dn_special_chars() {
 function ldap_addslashes($text) {
     $special_dn_chars = ldap_get_dn_special_chars();
 
-    // Use the preferred/universal quotation method: ESC HEX HEX 
+    // Use the preferred/universal quotation method: ESC HEX HEX
     // (i.e., the 'numerically' quoted characters)
     $text = str_replace ($special_dn_chars[LDAP_DN_SPECIAL_CHARS],
                          $special_dn_chars[LDAP_DN_SPECIAL_CHARS_QUOTED_NUM],
