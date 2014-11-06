@@ -157,12 +157,25 @@ abstract class screen {
     public function make_toggle($key) {
         $attrs = array('href' => '#');
 
+        // Do proper lang strings for title attributes exist for the given key?
+        $strmanager = \get_string_manager();
+        $titleall = get_string('all');
+        $titlenone = get_string('none');
+        if ($strmanager->string_exists(strtolower($key) . 'all', 'gradereport_singleview')) {
+            $titleall = get_string(strtolower($key) . 'all', 'gradereport_singleview');
+        }
+        if ($strmanager->string_exists(strtolower($key) . 'none', 'gradereport_singleview')) {
+            $titlenone = get_string(strtolower($key) . 'none', 'gradereport_singleview');
+        }
+
         $all = html_writer::tag('a', get_string('all'), $attrs + array(
-            'class' => 'include all ' . $key
+            'class' => 'include all ' . $key,
+            'title' => $titleall
         ));
 
         $none = html_writer::tag('a', get_string('none'), $attrs + array(
-            'class' => 'include none ' . $key
+            'class' => 'include none ' . $key,
+            'title' => $titlenone
         ));
 
         return html_writer::tag('span', "$all / $none", array(

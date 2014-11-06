@@ -95,6 +95,16 @@ Feature: We can use Single view
     And I follow "Single view for Student 1"
     Then I should see "Student 1"
 
+  @javascript
+  Scenario: I can bulk update grades.
+    Given I follow "Single view for Student 1"
+    Then I should see "Student 1"
+    When I click on "All grades" "option"
+    And I set the field "Insert value" to "1.0"
+    And I click on "Perform bulk insert" "checkbox"
+    And I press "Update"
+    Then I should see "Grades were set for 9 items"
+
   Scenario: Navigation works in the Single view.
     Given I follow "Single view for Student 1"
     Then I should see "Student 1"
