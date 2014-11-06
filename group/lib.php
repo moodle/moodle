@@ -347,9 +347,9 @@ function groups_update_group_icon($group, $data, $editform) {
 
     //TODO: it would make sense to allow picture deleting too (skodak)
     if ($iconfile = $editform->save_temp_file('imagefile')) {
-        if (process_new_icon($context, 'group', 'icon', $group->id, $iconfile)) {
-            $DB->set_field('groups', 'picture', 1, array('id'=>$group->id));
-            $group->picture = 1;
+        if ($rev = process_new_icon($context, 'group', 'icon', $group->id, $iconfile)) {
+            $DB->set_field('groups', 'picture', $rev, array('id'=>$group->id));
+            $group->picture = $rev;
         } else {
             $fs->delete_area_files($context->id, 'group', 'icon', $group->id);
             $DB->set_field('groups', 'picture', 0, array('id'=>$group->id));
