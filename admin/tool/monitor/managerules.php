@@ -132,7 +132,7 @@ if ($status) {
         echo ' ' . html_writer::link($enableurl, get_string('enable'));
         echo $OUTPUT->render($help);
     } else {
-        echo get_string('contactadmin', 'tool_monitor');
+        echo ' ' . get_string('contactadmin', 'tool_monitor');
     }
     echo $OUTPUT->footer(); // Do not render anything else.
     exit();
