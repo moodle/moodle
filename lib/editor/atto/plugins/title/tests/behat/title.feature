@@ -10,7 +10,7 @@ Feature: Atto title
     And I set the field "Description" to "How The Rock Has Made the WWE World Heavyweight Title More Important Than Ever"
     And I select the text in the "Description" Atto editor
     When I click on "Paragraph styles" "button"
-    When I click on "Heading 1" "link"
+    When I click on "Heading (large)" "link"
     And I press "Update profile"
     And I follow "Edit profile"
     Then I should see "<h3>How The Rock"
