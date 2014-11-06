@@ -88,7 +88,7 @@ class calendar_event_deleted extends base {
         if (empty($this->other['name'])) {
             throw new \coding_exception('The \'name\' value must be set in other.');
         }
-        if (empty($this->other['timestart'])) {
+        if (!isset($this->other['timestart'])) {
             throw new \coding_exception('The \'timestart\' value must be set in other.');
         }
     }
