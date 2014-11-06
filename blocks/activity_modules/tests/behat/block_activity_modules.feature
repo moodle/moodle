@@ -55,7 +55,7 @@ Feature: Block activity modules
     And I click on "Forums" "link" in the "Activities" "block"
     And I should see "Frontpage forum name"
     And I am on homepage
-    And I click on "External Tools" "link" in the "Activities" "block"
+    And I click on "External tools" "link" in the "Activities" "block"
     And I should see "Frontpage lti name"
     And I am on homepage
     And I click on "Quizzes" "link" in the "Activities" "block"
@@ -134,7 +134,7 @@ Feature: Block activity modules
     And I click on "Forums" "link" in the "Activities" "block"
     And I should see "Test forum name"
     And I follow "Course 1"
-    And I click on "External Tools" "link" in the "Activities" "block"
+    And I click on "External tools" "link" in the "Activities" "block"
     And I should see "Test lti name"
     And I follow "Course 1"
     And I click on "Quizzes" "link" in the "Activities" "block"
