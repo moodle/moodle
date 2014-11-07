@@ -521,7 +521,7 @@ class potential_department_user_selector extends user_selector_base {
         }
 
         if ($search) {
-            if ($this->roletye != 0) {
+            if ($this->roletype != 0) {
                 $groupname = get_string('potmanagersmatching', 'block_iomad_company_admin', $search);
             } else {
                 $groupname = get_string('potusersmatching', 'block_iomad_company_admin', $search);
