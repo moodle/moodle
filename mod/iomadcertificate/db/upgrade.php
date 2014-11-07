@@ -484,5 +484,21 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2012090901, 'iomadcertificate');
     }
 
+    if ($oldversion < 2014110701) {
+        $systemcontext = context_system::instance();
+        if ($companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'))) {
+            assign_capability( 'mod/iomadcertificate:viewother', CAP_ALLOW, $companymanagerrole->id, $systemcontext->id );
+        }
+        if ($companydepartmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanger'))) {
+            assign_capability( 'mod/iomadcertificate:viewother', CAP_ALLOW, $companydepartmentmanagerrole->id, $systemcontext->id );
+        }
+        if ($clientadministratorrole = $DB->get_record('role', array('shortname' => 'clientadministrator'))) {
+            assign_capability( 'mod/iomadcertificate:viewother', CAP_ALLOW, $clientadministratorrole->id, $systemcontext->id );
+        }
+
+        // Certificate savepoint reached
+        upgrade_mod_savepoint(true, 2014110701, 'iomadcertificate');
+    }
+
     return true;
 }

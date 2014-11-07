@@ -49,6 +49,14 @@ $capabilities = array(
         )
     ),
 
+    'mod/iomadcertificate:viewother' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+        )
+    ),
+
     'mod/iomadcertificate:manage' => array(
 
         'captype' => 'read',

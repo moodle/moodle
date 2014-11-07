@@ -92,7 +92,7 @@ $pdf->SetTextColor(0, 0, 120);
 iomadcertificate_print_text($pdf, $x, $y, 'C', 'freesans', '', 30, get_string('title', 'iomadcertificate'));
 $pdf->SetTextColor(0, 0, 0);
 iomadcertificate_print_text($pdf, $x, $y + 20, 'C', 'freeserif', '', 20, get_string('certify', 'iomadcertificate'));
-iomadcertificate_print_text($pdf, $x, $y + 36, 'C', 'freesans', '', 30, fullname($USER));
+iomadcertificate_print_text($pdf, $x, $y + 36, 'C', 'freesans', '', 30, fullname($certuser));
 iomadcertificate_print_text($pdf, $x, $y + 55, 'C', 'freesans', '', 20, get_string('statement', 'iomadcertificate'));
 iomadcertificate_print_text($pdf, $x, $y + 72, 'C', 'freesans', '', 20, $course->fullname);
 iomadcertificate_print_text($pdf, $x, $y + 92, 'C', 'freesans', '', 14,  iomadcertificate_get_date($iomadcertificate, $certrecord, $course));

@@ -32,6 +32,14 @@ require_once("$CFG->libdir/pdflib.php");
 $id = required_param('id', PARAM_INT);    // Course Module ID
 $action = optional_param('action', '', PARAM_ALPHA);
 $edit = optional_param('edit', -1, PARAM_BOOL);
+$userid = optional_param('userid', 0, PARAM_INT);
+
+// Are we doing this for another user?
+if (!empty($userid)  && has_capability('mod/iomadcertificate:viewother', context_system::instance())) {
+    $certuser = $DB->get_record('user', array('id' => $userid));
+} else {
+    $certuser = $USER;
+}
 
 if (!$cm = get_coursemodule_from_id('iomadcertificate', $id)) {
     print_error('Course Module ID was incorrect');
@@ -89,7 +97,7 @@ if ($iomadcertificate->requiredtime && !has_capability('mod/iomadcertificate:man
 }
 
 // Create new iomadcertificate record, or return existing record
-$certrecord = iomadcertificate_get_issue($course, $USER, $iomadcertificate, $cm);
+$certrecord = iomadcertificate_get_issue($course, $certuser, $iomadcertificate, $cm);
 
 make_cache_directory('tcpdf');
 

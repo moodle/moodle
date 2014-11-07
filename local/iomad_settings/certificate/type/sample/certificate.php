@@ -52,7 +52,7 @@ $serialnumber = iomad_settings_create_serial_number($certificate, $certrecord, $
 // Grade formatting.
 $grade = '';
 // Print the course grade.
-$coursegrade = certificate_print_course_grade($course, $user->id);
+$coursegrade = certificate_print_course_grade($course, $certuser->id);
 if ($certificate->printgrade == 1 && $certrecord->reportgrade == !null) {
     $reportgrade = $certrecord->reportgrade;
     $grade = $reportgrade;
