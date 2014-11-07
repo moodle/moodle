@@ -280,7 +280,7 @@ class subscription_manager {
      * @return array list of subscriptions
      */
     public static function get_user_subscriptions($limitfrom = 0, $limitto = 0, $userid = 0,
-                                                             $order = 's.timecreated DESC' ) {
+                                                             $order = 's.courseid ASC, r.name' ) {
         global $DB, $USER;
         if ($userid == 0) {
             $userid = $USER->id;
