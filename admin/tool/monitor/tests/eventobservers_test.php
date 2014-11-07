@@ -114,20 +114,88 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Create events and verify data is fine.
+        // Create the necessary items for testing.
+        $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
 
-        $initialevents = $DB->get_records('tool_monitor_events');
-        $initalcount = count($initialevents);
+        // Fire a bunch of events.
+        // Trigger a bunch of other events.
+        $eventparams = array(
+            'context' => context_course::instance($course->id)
+        );
+        for ($i = 0; $i < 5; $i++) {
+            \core\event\course_viewed::create($eventparams)->trigger();
+            \mod_quiz\event\course_module_instance_list_viewed::create($eventparams)->trigger();
+            \mod_scorm\event\course_module_instance_list_viewed::create($eventparams)->trigger();
+        }
+
+        // Confirm that nothing was stored in the tool_monitor_events table
+        // as we do not have any subscriptions associated for the above events.
+        $this->assertEquals(0, $DB->count_records('tool_monitor_events'));
+
+        // Now, let's create a rule so an event can be stored.
+        $rule = new stdClass();
+        $rule->courseid = $course->id;
+        $rule->plugin = 'mod_book';
+        $rule->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rule = $monitorgenerator->create_rule($rule);
+
+        // Let's subscribe to this rule.
+        $sub = new stdClass;
+        $sub->courseid = $course->id;
+        $sub->ruleid = $rule->id;
+        $sub->userid = $user->id;
+        $monitorgenerator->create_subscription($sub);
+
+        // Again, let's just fire more events to make sure they still aren't stored.
+        for ($i = 0; $i < 5; $i++) {
+            \core\event\course_viewed::create($eventparams)->trigger();
+            \mod_quiz\event\course_module_instance_list_viewed::create($eventparams)->trigger();
+            \mod_scorm\event\course_module_instance_list_viewed::create($eventparams)->trigger();
+        }
+
+        // Fire the event we want to capture.
         $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
         $event->trigger();
 
+        // Check that the event data is valid.
         $events = $DB->get_records('tool_monitor_events');
-        $count = count($events);
-        $this->assertEquals($initalcount + 1, $count);
+        $this->assertEquals(1, count($events));
         $monitorevent = array_pop($events);
+        $this->assertEquals($event->eventname, $monitorevent->eventname);
+        $this->assertEquals($event->contextid, $monitorevent->contextid);
+        $this->assertEquals($event->contextlevel, $monitorevent->contextlevel);
+        $this->assertEquals($event->get_url()->out(), $monitorevent->link);
+        $this->assertEquals($event->courseid, $monitorevent->courseid);
+        $this->assertEquals($event->timecreated, $monitorevent->timecreated);
 
-        // Match values.
+        // Remove the stored events.
+        $DB->delete_records('tool_monitor_events');
+
+        // Now, let's create a site wide rule.
+        $rule = new stdClass();
+        $rule->courseid = 0;
+        $rule->plugin = 'mod_book';
+        $rule->eventname = '\mod_book\event\course_module_instance_list_viewed';
+        $rule = $monitorgenerator->create_rule($rule);
+
+        // Let's subscribe to this rule.
+        $sub = new stdClass;
+        $sub->courseid = 0;
+        $sub->ruleid = $rule->id;
+        $sub->userid = $user->id;
+        $monitorgenerator->create_subscription($sub);
+
+        // Fire the event we want to capture - but in a different course.
+        $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course2);
+        $event->trigger();
+
+        // Check that the event data is valid.
+        $events = $DB->get_records('tool_monitor_events');
+        $this->assertEquals(1, count($events));
+        $monitorevent = array_pop($events);
         $this->assertEquals($event->eventname, $monitorevent->eventname);
         $this->assertEquals($event->contextid, $monitorevent->contextid);
         $this->assertEquals($event->contextlevel, $monitorevent->contextlevel);

@@ -94,6 +94,31 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
         $rule->timewindow = 500;
         $rule6 = $monitorgenerator->create_rule($rule);
 
+
+        // Let's subscribe to these rules.
+        $sub = new stdClass;
+        $sub->courseid = $course->id;
+        $sub->ruleid = $rule1->id;
+        $sub->userid = $user->id;
+        $monitorgenerator->create_subscription($sub);
+
+        $sub->ruleid = $rule2->id;
+        $monitorgenerator->create_subscription($sub);
+
+        $sub->ruleid = $rule3->id;
+        $monitorgenerator->create_subscription($sub);
+
+        $sub->ruleid = $rule4->id;
+        $monitorgenerator->create_subscription($sub);
+
+        $sub->ruleid = $rule5->id;
+        $sub->courseid = $course2->id;
+        $monitorgenerator->create_subscription($sub);
+
+        $sub->ruleid = $rule6->id;
+        $sub->courseid = 0;
+        $monitorgenerator->create_subscription($sub);
+
         // Now let's populate the tool_monitor table with the events associated with those rules.
         \mod_book\event\course_module_viewed::create_from_book($book, $bookcontext)->trigger();
         \mod_book\event\course_module_instance_list_viewed::create_from_course($course)->trigger();
@@ -115,8 +140,8 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
             \mod_scorm\event\course_module_instance_list_viewed::create($eventparams)->trigger();
         }
 
-        // Check that the events exist - there will be additional events for creating courses, modules and rules.
-        $this->assertEquals(26, $DB->count_records('tool_monitor_events'));
+        // We do not store events that have no subscriptions - so there will be only 4 events.
+        $this->assertEquals(4, $DB->count_records('tool_monitor_events'));
 
         // Run the task and check that all the quiz, scorm and rule events are removed as well as the course_module_*
         // viewed events in the second course.

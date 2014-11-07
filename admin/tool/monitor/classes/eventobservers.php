@@ -98,6 +98,11 @@ class eventobservers {
      */
     protected function buffer_event(\core\event\base $event) {
 
+        // If there are no subscriptions for this event do not buffer it.
+        if (!\tool_monitor\subscription_manager::event_has_subscriptions($event->eventname, $event->courseid)) {
+            return;
+        }
+
         $eventdata = $event->get_data();
         $eventobj = new \stdClass();
         $eventobj->eventname = $eventdata['eventname'];

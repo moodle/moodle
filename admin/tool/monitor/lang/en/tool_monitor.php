@@ -29,6 +29,7 @@ $string['allevents'] = 'All events';
 $string['allmodules'] = 'All instances';
 $string['area'] = 'Area';
 $string['areatomonitor'] = 'Area to monitor';
+$string['cachedef_rules'] = 'This stores the list of event subscriptions for individual courses';
 $string['contactadmin'] = 'Contact your administrator to enable it.';
 $string['core'] = 'Core';
 $string['currentsubscriptions'] = 'Your current subscriptions';
@@ -98,4 +99,3 @@ $string['subhelp_help'] = 'This subscription listens for when the event \'{$a->e
 $string['subscribeto'] = 'Subscribe to rule "{$a}"';
 $string['taskcleanevents'] = 'Removes any unnecessary event monitor events';
 $string['unsubscribe'] = 'Unsubscribe';
-
