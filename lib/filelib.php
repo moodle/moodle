@@ -3920,7 +3920,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             }
 
             session_get_instance()->write_close(); // unlock session during fileserving
-            send_stored_file($file, 60*60, 0, $forcedownload, array('preview' => $preview));
+            send_stored_file($file, 0, 0, true, array('preview' => $preview));
 
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSE) {
 

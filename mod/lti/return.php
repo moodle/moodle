@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $courseid = required_param('course', PARAM_INT);
 $instanceid = required_param('instanceid', PARAM_INT);
 
-$errormsg = optional_param('lti_errormsg', '', PARAM_RAW);
+$errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
 $unsigned = optional_param('unsigned', '0', PARAM_INT);
 
 $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
@@ -39,6 +39,7 @@ $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDO
 $course = $DB->get_record('course', array('id' => $courseid));
 
 require_login($course);
+require_sesskey();
 
 if (!empty($errormsg)) {
     $url = new moodle_url('/mod/lti/return.php', array('course' => $courseid));
@@ -59,23 +60,29 @@ if (!empty($errormsg)) {
 
     echo get_string('lti_launch_error', 'lti');
 
-    echo htmlspecialchars($errormsg);
+    p($errormsg);
 
-    $canaddtools = has_capability('mod/lti:addcoursetool', context_course::instance($courseid));
+    if ($unsigned == 1) {
 
-    if ($unsigned == 1 && $canaddtools) {
         echo '<br /><br />';
-
         $links = new stdClass();
-        $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php', array('course' => $courseid, 'action' => 'add'));
-        $links->course_tool_editor = $coursetooleditor->out(false);
+        $coursecontext = context_course::instance($courseid);
 
-        $adminrequesturl = new moodle_url('/mod/lti/request_tool.php', array('instanceid' => $instanceid));
-        $links->admin_request_url = $adminrequesturl->out(false);
+        if (has_capability('mod/lti:addcoursetool', $coursecontext)) {
+            $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php',
+                array('course' => $courseid, 'action' => 'add', 'sesskey' => sesskey()));
+            $links->course_tool_editor = $coursetooleditor->out(false);
 
-        echo get_string('lti_launch_error_unsigned_help', 'lti', $links);
+            echo get_string('lti_launch_error_unsigned_help', 'lti', $links);
+        }
 
-        echo get_string('lti_launch_error_tool_request', 'lti', $links);
+        if (has_capability('mod/lti:requesttooladd', $coursecontext)) {
+            $adminrequesturl = new moodle_url('/mod/lti/request_tool.php',
+                array('instanceid' => $instanceid, 'sesskey' => sesskey()));
+            $links->admin_request_url = $adminrequesturl->out(false);
+
+            echo get_string('lti_launch_error_tool_request', 'lti', $links);
+        }
     }
 
     echo $OUTPUT->footer();
