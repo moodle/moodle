@@ -94,8 +94,12 @@ if (!empty($action) && $ruleid) {
                     $rule->delete_rule();
                     echo $OUTPUT->notification(get_string('ruledeletesuccess', 'tool_monitor'), 'notifysuccess');
                 } else {
-                    echo $OUTPUT->confirm(get_string('ruleareyousure', 'tool_monitor', $rule->get_name($context)),
-                        $confirmurl, $cancelurl);
+                    $strconfirm = get_string('ruleareyousure', 'tool_monitor', $rule->get_name($context));
+                    if ($numberofsubs = $DB->count_records('tool_monitor_subscriptions', array('ruleid' => $ruleid))) {
+                        $strconfirm .= '<br />';
+                        $strconfirm .= get_string('ruleareyousureextra', 'tool_monitor', $numberofsubs);
+                    }
+                    echo $OUTPUT->confirm($strconfirm, $confirmurl, $cancelurl);
                     echo $OUTPUT->footer();
                     exit();
                 }

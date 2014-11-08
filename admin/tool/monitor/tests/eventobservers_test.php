@@ -82,26 +82,38 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
             $monitorgenerator->create_subscription($sub);
         }
 
+        // Add a site rule.
+        $rule = new stdClass();
+        $rule->userid = $user->id;
+        $rule->courseid = 0;
+        $rule->plugin = 'core';
+        $monitorgenerator->create_rule($rule);
+
+        // Verify that if we do not specify that we do not want the site rules, they are returned.
+        $courserules = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id);
+        $this->assertCount(11, $courserules);
+
         // Verify data before course delete.
         $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');
         $this->assertCount(20, $totalrules);
-        $courserules = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id);
+        $courserules = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id, 0, 0, false);
         $this->assertCount(10, $courserules);
-        $totalsubs = $DB->get_records('tool_monitor_subscriptions');
-        $this->assertCount(20, $totalsubs);
+        $this->assertEquals(20, $DB->count_records('tool_monitor_subscriptions'));
         $coursesubs = \tool_monitor\subscription_manager::get_user_subscriptions_for_course($course1->id, 0, 0, $user->id);
         $this->assertCount(10, $coursesubs);
 
         // Let us delete the course now.
         delete_course($course1->id, false);
 
+        // Confirm the site rule still exists.
+        $this->assertEquals(1, $DB->count_records('tool_monitor_rules', array('courseid' => 0)));
+
         // Verify data after course delete.
         $totalrules = \tool_monitor\rule_manager::get_rules_by_plugin('test');
         $this->assertCount(10, $totalrules);
-        $courserules = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id);
+        $courserules = \tool_monitor\rule_manager::get_rules_by_courseid($course1->id, 0, 0, false);
         $this->assertCount(0, $courserules); // Making sure all rules are deleted.
-        $totalsubs = $DB->get_records('tool_monitor_subscriptions');
-        $this->assertCount(10, $totalsubs);
+        $this->assertEquals(10, $DB->count_records('tool_monitor_subscriptions'));
         $coursesubs = \tool_monitor\subscription_manager::get_user_subscriptions_for_course($course1->id, 0, 0, $user->id);
         $this->assertCount(0, $coursesubs); // Making sure all subscriptions are deleted.
     }

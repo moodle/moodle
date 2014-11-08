@@ -70,7 +70,7 @@ Feature: tool_monitor_subscriptions
     And I follow "Subscribe to rule \"New rule course level\""
     And I should see "Subscription successfully created"
     When I click on "Delete subscription" "link" in the "New rule course level" "table_row"
-    And I should see "Are you sure you want to delete this subscription for the rule \"New rule course level\"?"
+    And I should see "Are you sure you want to delete the subscription to the rule \"New rule course level\"?"
     And I press "Continue"
     Then I should see "Subscription successfully removed"
     And "#toolmonitorsubs_r0" "css_element" should not exist
@@ -91,7 +91,7 @@ Feature: tool_monitor_subscriptions
     And I should see "Subscription successfully created"
     And "#toolmonitorsubs_r0" "css_element" should exist
     When I click on "Delete subscription" "link" in the "New rule site level" "table_row"
-    And I should see "Are you sure you want to delete this subscription for the rule \"New rule site level\"?"
+    And I should see "Are you sure you want to delete the subscription to the rule \"New rule site level\"?"
     And I press "Continue"
     Then I should see "Subscription successfully removed"
     And "#toolmonitorsubs_r0" "css_element" should not exist

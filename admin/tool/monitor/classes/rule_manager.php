@@ -216,14 +216,23 @@ class rule_manager {
      * @param int $courseid course id of the rule.
      * @param int $limitfrom Limit from which to fetch rules.
      * @param int $limitto  Limit to which rules need to be fetched.
+     * @param bool $includesite Determines whether we return site wide rules or not.
      *
-     * @return array List of rules for the given course id, also includes system wide rules.
+     * @return array List of rules for the given course id, if specified will also include site rules.
      */
-    public static function get_rules_by_courseid($courseid, $limitfrom = 0, $limitto = 0) {
+    public static function get_rules_by_courseid($courseid, $limitfrom = 0, $limitto = 0, $includesite = true) {
         global $DB;
-        $select = "courseid = ? OR courseid = ?";
-        $orderby = "courseid DESC, name ASC";
-        return self::get_instances($DB->get_records_select('tool_monitor_rules', $select, array(0, $courseid), $orderby,
+
+        $select = 'courseid = ?';
+        $params = array();
+        $params[] = $courseid;
+        if ($includesite) {
+            $select .= ' OR courseid = ?';
+            $params[] = 0;
+        }
+        $orderby = 'courseid DESC, name ASC';
+
+        return self::get_instances($DB->get_records_select('tool_monitor_rules', $select, $params, $orderby,
                 '*', $limitfrom, $limitto));
     }
 
