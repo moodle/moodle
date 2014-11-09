@@ -1475,6 +1475,10 @@ class theme_config {
             $lifetime = 0;
         } else {
             $lifetime = 60*60*24*60;
+            // By default, theme files must be cache-able by both browsers and proxies.
+            if (!array_key_exists('cacheability', $options)) {
+                $options['cacheability'] = 'public';
+            }
         }
 
         $fs = get_file_storage();
