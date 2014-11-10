@@ -120,7 +120,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         $this->standard_grading_coursemodule_elements();
 
         $mform->removeElement('grade');
-        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
+        if (property_exists($this->current, 'grade')) {
+            $currentgrade = $this->current->grade;
+        } else {
+            $currentgrade = $quizconfig->maximumgrade;
+        }
+        $mform->addElement('hidden', 'grade', $currentgrade);
         $mform->setType('grade', PARAM_FLOAT);
 
         // Number of attempts.
@@ -471,7 +476,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
                 if ($feedback->mingrade > 0) {
                     $toform['feedbackboundaries['.$key.']'] =
-                            (100.0 * $feedback->mingrade / $toform['grade']) . '%';
+                            round(100.0 * $feedback->mingrade / $toform['grade'], 6) . '%';
                 }
                 $key++;
             }
