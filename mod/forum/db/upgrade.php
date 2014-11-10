@@ -237,5 +237,8 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014110300, 'forum');
     }
 
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
