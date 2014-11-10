@@ -146,10 +146,10 @@ if (!$edit) {
                 if ($letter == '') {
                     continue;
                 }
-                $boundary = floatval($data->$gradeboundaryname);
 
+                $boundary = floatval($data->$gradeboundaryname);
                 if ($boundary < 0 || $boundary > 100) {
-                    continue;    // skip if out of range
+                    continue;    // Skip if out of range.
                 }
 
                 // The keys need to be strings so floats are not truncated.
@@ -160,7 +160,7 @@ if (!$edit) {
         $pool = array();
         if ($records = $DB->get_records('grade_letters', array('contextid' => $context->id), 'lowerboundary ASC')) {
             foreach ($records as $r) {
-                // will re-use the lowerboundary to avoid duplicate during the update process
+                // Will re-use the lowerboundary to avoid duplicate during the update process.
                 $pool[number_format($r->lowerboundary, 5)] = $r;
             }
         }
@@ -171,27 +171,25 @@ if (!$edit) {
             $record->lowerboundary = $boundary;
             $record->contextid     = $context->id;
 
-            // re-use the existing boundary to avoid key constraint
             if (isset($pool[$boundary])) {
-                // skip if the letter has been assigned to the boundary already
-                if ($letter == $pool[$boundary]->letter) {
-                    unset($pool[$boundary]); // take it out of the pool
-                }
-                else {
+                // Re-use the existing boundary to avoid key constraint.
+                if ($letter != $pool[$boundary]->letter) {
+                    // The letter has been assigned to another boundary, we update it.
                     $record->id = $pool[$boundary]->id;
                     $DB->update_record('grade_letters', $record);
-                    unset($pool[$boundary]);    // remove the ID from the pool
                 }
-            }
-            else if ($candidate = array_pop($pool)) {
+                unset($pool[$boundary]);    // Remove the letter from the pool.
+            } else if ($candidate = array_pop($pool)) {
+                // The boundary is new, we update a random record from the pool.
                 $record->id = $candidate->id;
                 $DB->update_record('grade_letters', $record);
             } else {
+                // No records were found, this must be a new letter.
                 $DB->insert_record('grade_letters', $record);
             }
         }
 
-        // delete the unused records
+        // Delete the unused records.
         foreach($pool as $leftover) {
             $DB->delete_records('grade_letters', array('id' => $leftover->id));
         }
