@@ -35,5 +35,9 @@ function xmldb_gradereport_user_upgrade($oldversion) {
         // User savepoint reached.
         upgrade_plugin_savepoint(true, 2014101500, 'gradereport', 'user');
     }
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -4055,5 +4055,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014110300.00);
     }
 
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

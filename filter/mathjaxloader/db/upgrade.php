@@ -44,5 +44,8 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014081100, 'filter', 'mathjaxloader');
     }
 
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

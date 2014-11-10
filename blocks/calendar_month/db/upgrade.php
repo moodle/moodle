@@ -73,5 +73,8 @@ function xmldb_block_calendar_month_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2014062600, $blockname);
     }
 
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
