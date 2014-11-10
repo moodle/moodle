@@ -544,14 +544,14 @@ function forum_cron() {
                 }
             }
 
+            // Save the Inbound Message datakey here to reduce DB queries later.
+            $messageinboundgenerator->set_data($pid);
+            $messageinboundhandlers[$pid] = $messageinboundgenerator->fetch_data_key();
+
             // Caching subscribed users of each forum.
             if (!isset($subscribedusers[$forumid])) {
                 $modcontext = context_module::instance($coursemodules[$forumid]->id);
                 if ($subusers = \mod_forum\subscriptions::fetch_subscribed_users($forums[$forumid], 0, $modcontext, 'u.*', true)) {
-
-                    // Save the Inbound Message datakey here to reduce DB queries later.
-                    $messageinboundgenerator->set_data($pid);
-                    $messageinboundhandlers[$pid] = $messageinboundgenerator->fetch_data_key();
 
                     foreach ($subusers as $postuser) {
                         // this user is subscribed to this forum

@@ -79,6 +79,23 @@ class mod_forum_mail_testcase extends advanced_testcase {
     }
 
     /**
+     * Perform message inbound setup for the mod_forum reply handler.
+     */
+    protected function helper_spoof_message_inbound_setup() {
+        global $CFG, $DB;
+        // Setup the default Inbound Message mailbox settings.
+        $CFG->messageinbound_domain = 'example.com';
+        $CFG->messageinbound_enabled = true;
+
+        // Must be no longer than 15 characters.
+        $CFG->messageinbound_mailbox = 'moodlemoodle123';
+
+        $record = $DB->get_record('messageinbound_handlers', array('classname' => '\mod_forum\message\inbound\reply_handler'));
+        $record->enabled = true;
+        $record->id = $DB->update_record('messageinbound_handlers', $record);
+    }
+
+    /**
      * Helper to create the required number of users in the specified
      * course.
      * Users are enrolled as students.
@@ -729,5 +746,68 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // Run cron and check that the expected number of users received the notification.
         $messages = $this->helper_run_cron_check_counts($expectedmessages, $expectedcount);
+    }
+
+    public function test_forum_message_inbound_multiple_posts() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create a user enrolled in the course as a student.
+        list($author) = $this->helper_create_users($course, 1);
+
+        $expectedmessages = array();
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+        $this->helper_update_post_time($post, -90);
+
+        $expectedmessages[] = array(
+            'id' => $post->id,
+            'subject' => $post->subject,
+            'count' => 0,
+        );
+
+        // Then post a reply to the first discussion.
+        $reply = $this->helper_post_to_discussion($forum, $discussion, $author);
+        $this->helper_update_post_time($reply, -60);
+
+        $expectedmessages[] = array(
+            'id' => $reply->id,
+            'subject' => $reply->subject,
+            'count' => 1,
+        );
+
+        $expectedcount = 2;
+
+        // Ensure that messageinbound is enabled and configured for the forum handler.
+        $this->helper_spoof_message_inbound_setup();
+
+        $author->emailstop = '0';
+        set_user_preference('message_provider_mod_forum_posts_loggedoff', 'email', $author);
+        set_user_preference('message_provider_mod_forum_posts_loggedin', 'email', $author);
+
+        // Run cron and check that the expected number of users received the notification.
+        // Clear the mailsink, and close the messagesink.
+        $this->helper->mailsink->clear();
+        $this->helper->messagesink->close();
+
+        // Cron daily uses mtrace, turn on buffering to silence output.
+        foreach ($expectedmessages as $post) {
+            $this->expectOutputRegex("/{$post['count']} users were sent post {$post['id']}, '{$post['subject']}'/");
+        }
+
+        forum_cron();
+        $messages = $this->helper->mailsink->get_messages();
+
+        // There should be the expected number of messages.
+        $this->assertEquals($expectedcount, count($messages));
+
+        foreach ($messages as $message) {
+            $this->assertRegExp('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
+        }
     }
 }
