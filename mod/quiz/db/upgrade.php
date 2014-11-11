@@ -803,6 +803,10 @@ function xmldb_quiz_upgrade($oldversion) {
         // Quiz savepoint reached.
         upgrade_mod_savepoint(true, 2014052801, 'quiz');
     }
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
 
