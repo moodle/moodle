@@ -238,10 +238,10 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
 
         // Now try with optional parameters.
-        $sectionid = 34;
+        $sectionnumber = 7;
         $eventparams = array();
         $eventparams['context'] = $context;
-        $eventparams['other'] = array('coursesectionid' => $sectionid);
+        $eventparams['other'] = array('coursesectionnumber' => $sectionnumber);
         $event = \core\event\course_viewed::create($eventparams);
 
         // Trigger and capture the event.
@@ -254,8 +254,8 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\course_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'course', 'view section', 'view.php?id=' . $course->id . '&amp;sectionid='
-                . $sectionid, $sectionid);
+        $expected = array($course->id, 'course', 'view section', 'view.php?id=' . $course->id . '&amp;section='
+                . $sectionnumber, $sectionnumber);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
