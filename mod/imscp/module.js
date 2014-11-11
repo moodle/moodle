@@ -56,6 +56,30 @@ M.mod_imscp.init = function(Y) {
                     obj.setAttribute('type', 'text/html');
                     obj.setAttribute('data', node.href);
                 }
+            } else {
+                // No href, so create links to children.
+                var obj = document.createElement('div');
+                obj.setAttribute('id', 'imscp_child_list');
+
+                var title = document.createElement('h2');
+                title.appendChild(document.createTextNode(node.label));
+                title.setAttribute('class', 'sectionname');
+                obj.appendChild(title);
+
+                var ul = document.createElement('ul');
+                obj.appendChild(ul);
+                for (var i = 0; i < node.children.length; i++) {
+                    var childnode = node.children[i];
+                    var li = document.createElement('li');
+                    var a = document.createElement('a');
+                    a.appendChild(document.createTextNode(childnode.label));
+                    a.setAttribute('id', 'ref_' + childnode.index);
+                    Y.YUI2.util.Event.addListener(a, "click", function () {
+                        imscp_activate_item_by_index(this.id.substr(4));
+                    });
+                    ul.appendChild(li);
+                    li.appendChild(a);
+                }
             }
             var old = Y.YUI2.util.Dom.get('imscp_object');
             if (old) {
