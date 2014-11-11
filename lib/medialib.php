@@ -1071,8 +1071,11 @@ OET;
                         continue;
                     }
                 } else {
-                    // Formats .m4v and .mp4 are not supported in Firefox or Opera.
-                    if (core_useragent::is_firefox() || core_useragent::is_opera()) {
+                    // Formats .m4v and .mp4 are not supported in Opera, or in Firefox before 27.
+                    // https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
+                    // has the details.
+                    if (core_useragent::is_opera() || (core_useragent::is_firefox() &&
+                            !core_useragent::check_firefox_version(27))) {
                         continue;
                     }
                 }
@@ -1140,8 +1143,15 @@ OET;
                         continue;
                     }
                 } else {
-                    // Formats .aac, .mp3, and .m4a are not supported in Firefox or Opera.
-                    if (core_useragent::is_firefox() || core_useragent::is_opera()) {
+                    // Formats .aac, .mp3, and .m4a are not supported in Opera.
+                    if (core_useragent::is_opera()) {
+                        continue;
+                    }
+                    // Formats .mp3 and .m4a were not reliably supported in Firefox before 27.
+                    // https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
+                    // has the details. .aac is still not supported.
+                    if (core_useragent::is_firefox() && ($ext === 'aac' ||
+                            !core_useragent::check_firefox_version(27))) {
                         continue;
                     }
                 }
