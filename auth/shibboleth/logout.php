@@ -8,6 +8,8 @@ require_once("../../config.php");
 
 require_once($CFG->dirroot."/auth/shibboleth/auth.php");
 
+$action = optional_param('action', '', PARAM_ALPHA);
+$redirect = optional_param('return', '', PARAM_URL);
 
 // Find out whether host supports https
 $protocol = 'http://';
@@ -15,38 +17,32 @@ if ( isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] 
     $protocol = 'https://';
 }
 
-// Front channel logout
-if (
-        isset($_GET['return'])
-        && isset($_GET['action'])
-        && $_GET['action'] == 'logout'
-   ){
-
-    // Logout out user from application
-    // E.g. destroy application session/cookie etc
-    require_logout();
-
-    // Finally, send user to the return URL
-    redirect($_GET['return']);
+// If the shibboleth plugin is not enable, throw an exception.
+if (!is_enabled_auth('shibboleth')) {
+    throw new moodle_exception(get_string('pluginnotenabled', 'auth', 'shibboleth'));
 }
 
-// Back channel logout
-elseif (!empty($HTTP_RAW_POST_DATA)) {
+// Front channel logout.
+if ($action == 'logout' && !empty($redirect)) {
 
-    // Requires PHP 5
+    if ($USER->auth == 'shibboleth') {
+        // Logout out user from application.
+        require_logout();
+         // Finally, send user to the return URL.
+        redirect($redirect);
+    }
 
+} else if (!empty($HTTP_RAW_POST_DATA)) {
 
-    // Set SOAP header
+    // Back channel logout.
+    // Set SOAP header.
     $server = new SoapServer($protocol.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'/LogoutNotification.wsdl');
-
-
     $server->addFunction("LogoutNotification");
     $server->handle();
-}
 
-// Return WSDL
-else {
+} else {
 
+    // Return WSDL.
     header('Content-Type: text/xml');
 
     echo <<<WSDL
@@ -119,9 +115,7 @@ For more information see:
 </definitions>
 WSDL;
     exit;
-
 }
-
 /******************************************************************************/
 
 function LogoutNotification($SessionID){
