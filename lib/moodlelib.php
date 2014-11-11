@@ -8619,8 +8619,22 @@ function getremoteaddr($default='0.0.0.0') {
     }
     if (!($variablestoskip & GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR)) {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $hdr = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $address = cleanremoteaddr($hdr[0]);
+            $forwardedaddresses = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $address = $forwardedaddresses[0];
+
+            if (substr_count($address, ":") > 1) {
+                // Remove port and brackets from IPv6.
+                if (preg_match("/\[(.*)\]:/", $address, $matches)) {
+                    $address = $matches[1];
+                }
+            } else {
+                // Remove port from IPv4.
+                if (substr_count($address, ":") == 1) {
+                    $address = explode(":", $address)[0];
+                }
+            }
+
+            $address = cleanremoteaddr($address);
             return $address ? $address : $default;
         }
     }
