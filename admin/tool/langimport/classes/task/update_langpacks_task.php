@@ -45,6 +45,13 @@ class update_langpacks_task extends \core\task\scheduled_task {
      * Run langpack update
      */
     public function execute() {
+        global $CFG;
+
+        // No need to run upgrade, if skiplangupgrade is set.
+        if (!empty($CFG->skiplangupgrade)) {
+            return;
+        }
+
         $controller = new \tool_langimport\controller();
         if ($controller->update_all_installed_languages()) {
             foreach ($controller->info as $message) {
