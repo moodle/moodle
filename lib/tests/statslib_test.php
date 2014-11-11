@@ -35,9 +35,6 @@ require_once(__DIR__ . '/fixtures/stats_events.php');
  * Test functions that affect daily stats.
  */
 class core_statslib_testcase extends advanced_testcase {
-    /** The student role ID **/
-    const STID = 5;
-
     /** The day to use for testing **/
     const DAY = 1272672000;
 
@@ -88,15 +85,7 @@ class core_statslib_testcase extends advanced_testcase {
         $user2   = $datagen->create_user(array('username'=>'user2'));
 
         $course1 = $datagen->create_course(array('shortname'=>'course1'));
-
-        $success = enrol_try_internal_enrol($course1->id, $user1->id, 5);
-
-        if (!$success) {
-            trigger_error('User enrollment failed', E_USER_ERROR);
-        }
-
-        $context = context_system::instance();
-        role_assign(self::STID, $user2->id, $context->id);
+        $datagen->enrol_user($user1->id, $course1->id);
 
         $this->generate_replacement_list();
 
@@ -164,6 +153,7 @@ class core_statslib_testcase extends advanced_testcase {
         $start      = stats_get_base_daily(self::DAY + 3600);
         $startnolog = stats_get_base_daily(stats_get_start_from('daily'));
         $gr         = get_guest_role();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
         $this->replacements = array(
             // Start and end times.
@@ -187,7 +177,7 @@ class core_statslib_testcase extends advanced_testcase {
             // Role ids.
             '[frontpage_roleid]' => (int) $CFG->defaultfrontpageroleid,
             '[guest_roleid]'     => $gr->id,
-            '[student_roleid]'   => self::STID,
+            '[student_roleid]'   => $studentrole->id,
         );
     }
 
