@@ -149,140 +149,15 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
 }
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
-    $structure->check_can_be_edited();
-    $deletepreviews = false;
-    $recomputesummarks = false;
-
-    $rawdata = (array) data_submitted();
-    $moveonpagequestions = array();
-    $moveselectedonpage = optional_param('moveselectedonpagetop', 0, PARAM_INT);
-    if (!$moveselectedonpage) {
-        $moveselectedonpage = optional_param('moveselectedonpagebottom', 0, PARAM_INT);
-    }
-
-    $newslotorder = array();
-    foreach ($rawdata as $key => $value) {
-        if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
-            // Parse input for question -> grades.
-            $slotnumber = $matches[1];
-            $newgrade = unformat_float($value);
-            quiz_update_slot_maxmark($DB->get_record('quiz_slots',
-                    array('quizid' => $quiz->id, 'slot' => $slotnumber), '*', MUST_EXIST), $newgrade);
-            $deletepreviews = true;
-            $recomputesummarks = true;
-
-        } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
-            // Parse input for ordering info.
-            $slotnumber = $matches[2];
-            // Make sure two questions don't overwrite each other. If we get a second
-            // question with the same position, shift the second one along to the next gap.
-            $value = clean_param($value, PARAM_INT);
-            while (array_key_exists($value, $newslotorder)) {
-                $value++;
-            }
-            if ($matches[1]) {
-                // This is a page-break entry.
-                $newslotorder[$value] = 0;
-            } else {
-                $newslotorder[$value] = $slotnumber;
-            }
-            $deletepreviews = true;
-        }
-    }
-
-    if ($moveselectedonpage) {
-
-        // Make up a $newslotorder, then let the next if statement do the work.
-        $oldslots = $DB->get_records('quiz_slots', array('quizid' => $quiz->id), 'slot');
-
-        $beforepage = array();
-        $onpage = array();
-        $afterpage = array();
-        foreach ($oldslots as $oldslot) {
-            if (in_array($oldslot->slot, $selectedslots)) {
-                $onpage[] = $oldslot;
-            } else if ($oldslot->page <= $moveselectedonpage) {
-                $beforepage[] = $oldslot;
-            } else {
-                $afterpage[] = $oldslot;
-            }
-        }
-
-        $newslotorder = array();
-        $currentpage = 1;
-        $index = 10;
-        foreach ($beforepage as $slot) {
-            while ($currentpage < $slot->page) {
-                $newslotorder[$index] = 0;
-                $index += 10;
-                $currentpage += 1;
-            }
-            $newslotorder[$index] = $slot->slot;
-            $index += 10;
-        }
-
-        while ($currentpage < $moveselectedonpage) {
-            $newslotorder[$index] = 0;
-            $index += 10;
-            $currentpage += 1;
-        }
-        foreach ($onpage as $slot) {
-            $newslotorder[$index] = $slot->slot;
-            $index += 10;
-        }
-
-        foreach ($afterpage as $slot) {
-            while ($currentpage < $slot->page) {
-                $newslotorder[$index] = 0;
-                $index += 10;
-                $currentpage += 1;
-            }
-            $newslotorder[$index] = $slot->slot;
-            $index += 10;
-        }
-    }
-
-    // If ordering info was given, reorder the questions.
-    if ($newslotorder) {
-        ksort($newslotorder);
-        $currentpage = 1;
-        $currentslot = 1;
-        $slotreorder = array();
-        $slotpages = array();
-        foreach ($newslotorder as $slotnumber) {
-            if ($slotnumber == 0) {
-                $currentpage += 1;
-                continue;
-            }
-            $slotreorder[$slotnumber] = $currentslot;
-            $slotpages[$currentslot] = $currentpage;
-            $currentslot += 1;
-        }
-        $trans = $DB->start_delegated_transaction();
-        update_field_with_unique_index('quiz_slots',
-                'slot', $slotreorder, array('quizid' => $quiz->id));
-        foreach ($slotpages as $slotnumber => $page) {
-            $DB->set_field('quiz_slots', 'page', $page, array('quizid' => $quiz->id, 'slot' => $slotnumber));
-        }
-        $trans->allow_commit();
-        $deletepreviews = true;
-    }
 
     // If rescaling is required save the new maximum.
     $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
     if ($maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
-    }
-
-    if ($deletepreviews) {
-        quiz_delete_previews($quiz);
-    }
-    if ($recomputesummarks) {
-        quiz_update_sumgrades($quiz);
-        quiz_update_all_attempt_sumgrades($quiz);
         quiz_update_all_final_grades($quiz);
         quiz_update_grades($quiz, 0, true);
     }
+
     redirect($afteractionurl);
 }
 
