@@ -33,6 +33,10 @@ M.mod_imscp.init = function(Y) {
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
+        var imscp_activate_item_by_index = function(index) {
+            imscp_activate_item(Y.YUI2.widget.TreeView.getNode('imscp_tree', index));
+        }
+
         var imscp_activate_item = function(node) {
             if (!node) {
                 return;
@@ -56,8 +60,13 @@ M.mod_imscp.init = function(Y) {
             var old = Y.YUI2.util.Dom.get('imscp_object');
             if (old) {
                 content.replaceChild(obj, old);
-            } else if (obj) {
-                content.appendChild(obj);
+            } else {
+                old = Y.YUI2.util.Dom.get('imscp_child_list');
+                if (old) {
+                    content.replaceChild(obj, old);
+                } else {
+                    content.appendChild(obj);
+                }
             }
             imscp_resize_frame();
 
@@ -138,6 +147,17 @@ M.mod_imscp.init = function(Y) {
                     obj.style.width = (content.offsetWidth - 6)+'px';
                     obj.style.height = (content.offsetHeight - 10)+'px';
                 }
+            }
+        };
+
+        var imscp_firstlinked = function(node) {
+            // Return first item with an href
+            if (node.href) {
+                return node;
+            } else if (node.children) {
+                return imscp_firstlinked(node.children[0]);
+            } else {
+                return null
             }
         };
 
@@ -273,7 +293,7 @@ M.mod_imscp.init = function(Y) {
         });
 
         // finally activate the first item
-        imscp_activate_item(tree.getRoot().children[0]);
+        imscp_activate_item(imscp_firstlinked(tree.getRoot().children[0]));
 
         // resizing
         imscp_resize_layout(false);
