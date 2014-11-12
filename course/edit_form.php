@@ -27,6 +27,7 @@ class course_edit_form extends moodleform {
         $category      = $this->_customdata['category'];
         $editoroptions = $this->_customdata['editoroptions'];
         $returnto = $this->_customdata['returnto'];
+        $returnurl = $this->_customdata['returnurl'];
 
         $systemcontext   = context_system::instance();
         $categorycontext = context_coursecat::instance($category->id);
@@ -50,6 +51,10 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'returnto', null);
         $mform->setType('returnto', PARAM_ALPHANUM);
         $mform->setConstant('returnto', $returnto);
+
+        $mform->addElement('hidden', 'returnurl', null);
+        $mform->setType('returnurl', PARAM_LOCALURL);
+        $mform->setConstant('returnurl', $returnurl);
 
         $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
         $mform->addHelpButton('fullname', 'fullnamecourse');
@@ -296,7 +301,15 @@ class course_edit_form extends moodleform {
             }
         }
 
-        $this->add_action_buttons();
+        // When two elements we need a group.
+        $buttonarray = array();
+        if ($returnto !== 0) {
+            $buttonarray[] = &$mform->createElement('submit', 'saveandreturn', get_string('savechangesandreturn'));
+        }
+        $buttonarray[] = &$mform->createElement('submit', 'saveanddisplay', get_string('savechangesanddisplay'));
+        $buttonarray[] = &$mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
 
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);

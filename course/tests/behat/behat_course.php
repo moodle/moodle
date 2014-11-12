@@ -108,7 +108,7 @@ class behat_course extends behat_base {
             $steps[] = new Given('I set the following fields to these values:', $table);
         }
 
-        $steps[] = new Given('I press "' . get_string('savechanges') . '"');
+        $steps[] = new Given('I press "' . get_string('savechangesanddisplay') . '"');
 
         return $steps;
     }
