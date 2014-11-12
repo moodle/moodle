@@ -129,11 +129,10 @@ class backup_root_task extends backup_task {
         $activities->add_dependency($badges);
         $users->add_dependency($badges);
 
-        // Define calendar events (dependent of users)
+        // Define calendar events.
         $events = new backup_calendarevents_setting('calendarevents', base_setting::IS_BOOLEAN, true);
         $events->set_ui(new backup_setting_ui_checkbox($events, get_string('rootsettingcalendarevents', 'backup')));
         $this->add_setting($events);
-        $users->add_dependency($events);
 
         // Define completion (dependent of users)
         $completion = new backup_userscompletion_setting('userscompletion', base_setting::IS_BOOLEAN, true);
