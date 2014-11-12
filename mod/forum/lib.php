@@ -3723,7 +3723,12 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     if ($group !== -1) {  // Groups are active - group is a group data object or NULL
         echo '<td class="picture group">';
         if (!empty($group->picture) and empty($group->hidepicture)) {
-            print_group_picture($group, $forum->course, false, false, true);
+            if ($canviewparticipants && $COURSE->groupmode) {
+                $picturelink = true;
+            } else {
+                $picturelink = false;
+            }
+            print_group_picture($group, $forum->course, false, false, $picturelink);
         } else if (isset($group->id)) {
             if ($canviewparticipants && $COURSE->groupmode) {
                 echo '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
