@@ -3002,11 +3002,52 @@ class restore_block_instance_structure_step extends restore_structure_step {
         }
 
         if (!$bi->instance_allow_multiple()) {
-            if ($DB->record_exists_sql("SELECT bi.id
-                                          FROM {block_instances} bi
-                                          JOIN {block} b ON b.name = bi.blockname
-                                         WHERE bi.parentcontextid = ?
-                                           AND bi.blockname = ?", array($data->parentcontextid, $data->blockname))) {
+            // The block cannot be added twice, so we will check if the same block is already being
+            // displayed on the same page. For this, rather than mocking a page and using the block_manager
+            // we use a similar query to the one in block_manager::load_blocks(), this will give us
+            // a very good idea of the blocks already displayed in the context.
+            $params =  array(
+                'blockname' => $data->blockname
+            );
+
+            // Context matching test.
+            $context = context::instance_by_id($data->parentcontextid);
+            $contextsql = 'bi.parentcontextid = :contextid';
+            $params['contextid'] = $context->id;
+
+            $parentcontextids = $context->get_parent_context_ids();
+            if ($parentcontextids) {
+                list($parentcontextsql, $parentcontextparams) =
+                        $DB->get_in_or_equal($parentcontextids, SQL_PARAMS_NAMED);
+                $contextsql = "($contextsql OR (bi.showinsubcontexts = 1 AND bi.parentcontextid $parentcontextsql))";
+                $params = array_merge($params, $parentcontextparams);
+            }
+
+            // Page type pattern test.
+            $pagetypepatterns = matching_page_type_patterns_from_pattern($data->pagetypepattern);
+            list($pagetypepatternsql, $pagetypepatternparams) =
+                $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED);
+            $params = array_merge($params, $pagetypepatternparams);
+
+            // Sub page pattern test.
+            $subpagepatternsql = 'bi.subpagepattern IS NULL';
+            if ($data->subpagepattern !== null) {
+                $subpagepatternsql = "($subpagepatternsql OR bi.subpagepattern = :subpagepattern)";
+                $params['subpagepattern'] = $data->subpagepattern;
+            }
+
+            $exists = $DB->record_exists_sql("SELECT bi.id
+                                                FROM {block_instances} bi
+                                                JOIN {block} b ON b.name = bi.blockname
+                                               WHERE bi.blockname = :blockname
+                                                 AND $contextsql
+                                                 AND bi.pagetypepattern $pagetypepatternsql
+                                                 AND $subpagepatternsql", $params);
+            if ($exists) {
+                // There is at least one very similar block visible on the page where we
+                // are trying to restore the block. In these circumstances the block API
+                // would not allow the user to add another instance of the block, so we
+                // apply the same rule here.
                 return false;
             }
         }
