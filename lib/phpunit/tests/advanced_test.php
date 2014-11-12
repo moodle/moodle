@@ -432,6 +432,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message2->notification      = 0;
 
         // There should be debugging message without redirection.
+        $mailsink = $this->redirectEmails();
+        $mailsink->close();
         message_send($message1);
         $this->assertDebuggingCalled(null, null, 'message_send() must print debug message that messaging is disabled in phpunit tests.');
 

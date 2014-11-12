@@ -81,8 +81,6 @@ class core_course_courserequest_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
 
-        unset_config('noemailever');
-
         $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         set_config('enablecourserequests', 1);
         set_config('requestcategoryselection', 0);
@@ -137,8 +135,6 @@ class core_course_courserequest_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
-
-        unset_config('noemailever');
 
         $this->setAdminUser();
         set_config('enablecourserequests', 1);
