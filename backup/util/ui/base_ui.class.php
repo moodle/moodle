@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * This file contains the backup user interface class
  *
- * @package   moodlecore
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,32 +28,53 @@
  * The backup user interface class manages the user interface and backup for
  * Moodle.
  *
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_ui {
     /**
      * The progress of this instance of the backup ui class
+     * It is in the initial stage.
      */
     const PROGRESS_INTIAL = 0;
+
+    /**
+     * The progress of this instance of the backup ui class
+     * It is processed.
+     */
     const PROGRESS_PROCESSED = 1;
+
+    /**
+     * The progress of this instance of the backup ui class
+     * It is saved.
+     */
     const PROGRESS_SAVED = 2;
+
+    /**
+     * The progress of this instance of the backup ui class
+     * It has been executed.
+     */
     const PROGRESS_EXECUTED = 3;
+
     /**
      * The controller
      * @var backup_controller|restore_controller
      */
     protected $controller;
+
     /**
      * The current stage
      * @var base_ui_stage
      */
     protected $stage;
+
     /**
      * The current progress of the UI
      * @var int One of self::PROGRESS_*
      */
     protected $progress;
+
     /**
      * The number of changes made by dependency enforcement
      * @var int
@@ -64,14 +84,16 @@ abstract class base_ui {
     /**
      * Yay for constructors
      * @param backup_controller $controller
+     * @param array $params
      */
-    public function __construct($controller, array $params=null) {
+    public function __construct($controller, array $params = null) {
         $this->controller = $controller;
         $this->progress = self::PROGRESS_INTIAL;
         $this->stage = $this->initialise_stage(null, $params);
-        // Process UI event before to be safe
+        // Process UI event before to be safe.
         $this->controller->process_ui_event();
     }
+
     /**
      * Destorys the backup controller and the loaded stage.
      */
@@ -83,16 +105,20 @@ abstract class base_ui {
         unset($this->stage);
 
     }
+
     /**
      * Intialises what ever stage is requested. If none are requested we check
      * params for 'stage' and default to initial
      *
      * @param int|null $stage The desired stage to intialise or null for the default
+     * @param array $params
      * @return base_ui_stage
      */
-    abstract protected function initialise_stage($stage = null, array $params=null);
+    abstract protected function initialise_stage($stage = null, array $params = null);
+
     /**
      * This processes the current stage of the backup
+     * @throws backup_ui_exception
      * @return bool
      */
     public function process() {
@@ -106,22 +132,24 @@ abstract class base_ui {
             return false;
         }
 
-        // Process the stage
+        // Process the stage.
         $processoutcome = $this->stage->process();
 
         if ($processoutcome !== false) {
             $this->stage = $this->initialise_stage($this->stage->get_next_stage(), $this->stage->get_params());
         }
 
-        // Process UI event after to check changes are valid
+        // Process UI event after to check changes are valid.
         $this->controller->process_ui_event();
         return $processoutcome;
     }
+
     /**
      * Saves the backup controller.
      *
      * Once this has been called nothing else can be changed in the controller.
      *
+     * @throws base_ui_exception
      * @return bool
      */
     public function save_controller() {
@@ -129,17 +157,19 @@ abstract class base_ui {
             throw new base_ui_exception('backupuialreadysaved');
         }
         $this->progress = self::PROGRESS_SAVED;
-        // First enforce dependencies
+        // First enforce dependencies.
         $this->enforce_dependencies();
-        // Process UI event after to check any changes are valid
+        // Process UI event after to check any changes are valid.
         $this->controller->process_ui_event();
-        // Save the controller
+        // Save the controller.
         $this->controller->save_controller();
         return true;
     }
+
     /**
      * Displays the UI for the backup!
      *
+     * @throws base_ui_exception
      * @param core_backup_renderer $renderer
      * @return string HTML code to echo
      */
@@ -149,6 +179,7 @@ abstract class base_ui {
         }
         return $this->stage->display($renderer);
     }
+
     /**
      * Gets all backup tasks from the controller
      * @return array Array of backup_task
@@ -158,6 +189,7 @@ abstract class base_ui {
         $tasks = $plan->get_tasks();
         return $tasks;
     }
+
     /**
      * Gets the stage we are on
      * @return int
@@ -165,6 +197,7 @@ abstract class base_ui {
     public function get_stage() {
         return $this->stage->get_stage();
     }
+
     /**
      * Gets the name of the stage we are on
      * @return string
@@ -172,44 +205,48 @@ abstract class base_ui {
     public function get_stage_name() {
         return $this->stage->get_name();
     }
+
     /**
      * Gets the backup id from the controller
      * @return string
      */
     abstract public function get_uniqueid();
+
     /**
      * Executes the backup plan
      * @return bool
      */
     abstract public function execute();
+
     /**
      * Enforces dependencies on all settings. Call before save
      * @return bool True if dependencies were enforced and changes were made
      */
     protected function enforce_dependencies() {
-        // Get the plan
+        // Get the plan.
         $plan = $this->controller->get_plan();
-        // Get the tasks as a var so we can iterate by reference
+        // Get the tasks as a var so we can iterate by reference.
         $tasks = $plan->get_tasks();
         $changes = 0;
         foreach ($tasks as &$task) {
-            // Store as a var so we can iterate by reference
+            // Store as a var so we can iterate by reference.
             $settings = $task->get_settings();
             foreach ($settings as &$setting) {
-                // Get all dependencies for iteration by reference
+                // Get all dependencies for iteration by reference.
                 $dependencies = $setting->get_dependencies();
                 foreach ($dependencies as &$dependency) {
-                    // Enforce each dependency
+                    // Enforce each dependency.
                     if ($dependency->enforce()) {
                         $changes++;
                     }
                 }
             }
         }
-        // Store the number of settings that changed through enforcement
+        // Store the number of settings that changed through enforcement.
         $this->dependencychanges = $changes;
-        return ($changes>0);
+        return ($changes > 0);
     }
+
     /**
      * Returns true if enforce_dependencies changed any settings
      * @return bool
@@ -217,11 +254,14 @@ abstract class base_ui {
     public function enforce_changed_dependencies() {
         return ($this->dependencychanges > 0);
     }
+
     /**
      * Loads the backup controller if we are tracking one
+     * @throws coding_exception
+     * @param string|bool $uniqueid
      * @return backup_controller|false
      */
-    public static function load_controller($uniqueid=false) {
+    public static function load_controller($uniqueid = false) {
         throw new coding_exception('load_controller() method needs to be overridden in each subclass of base_ui');
     }
 
@@ -230,11 +270,11 @@ abstract class base_ui {
      */
     public function cancel_process() {
         global $PAGE;
-        // Determine the appropriate URL to redirect the user to
+        // Determine the appropriate URL to redirect the user to.
         if ($PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->cm !== null) {
-            $relevanturl = new moodle_url('/mod/'.$PAGE->cm->modname.'/view.php', array('id'=>$PAGE->cm->id));
+            $relevanturl = new moodle_url('/mod/'.$PAGE->cm->modname.'/view.php', array('id' => $PAGE->cm->id));
         } else {
-            $relevanturl = new moodle_url('/course/view.php', array('id'=>$PAGE->course->id));
+            $relevanturl = new moodle_url('/course/view.php', array('id' => $PAGE->course->id));
         }
         redirect($relevanturl);
     }
@@ -258,6 +298,11 @@ abstract class base_ui {
     public function get_type() {
         return $this->controller->get_type();
     }
+
+    /**
+     * Returns the controller object.
+     * @return backup_controller|restore_controller
+     */
     public function get_controller() {
         return $this->controller;
     }
@@ -271,6 +316,7 @@ abstract class base_ui {
     /**
      * Gets the requested setting
      * @param string $name
+     * @param bool $default
      * @return mixed
      */
     public function get_setting($name, $default = false) {
@@ -285,6 +331,7 @@ abstract class base_ui {
      * Gets the value for the requested setting
      *
      * @param string $name
+     * @param bool $default
      * @return mixed
      */
     public function get_setting_value($name, $default = false) {
@@ -296,12 +343,24 @@ abstract class base_ui {
         }
     }
 
+    /**
+     * Returns the name of this stage.
+     * @return mixed
+     */
     abstract public function get_name();
 
+    /**
+     * Returns the first stage ID.
+     * @return mixed
+     */
     abstract public function get_first_stage_id();
 }
 
 /**
  * Backup user interface exception. Modelled off the backup_exception class
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class base_ui_exception extends backup_exception {}

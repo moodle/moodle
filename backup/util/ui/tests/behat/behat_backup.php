@@ -57,7 +57,8 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Backups the specified course using the provided options. If you are interested in restoring this backup would be useful to provide a 'Filename' option.
+     * Backups the specified course using the provided options. If you are interested in restoring this backup would be
+     * useful to provide a 'Filename' option.
      *
      * @Given /^I backup "(?P<course_fullname_string>(?:[^"]|\\")*)" course using this options:$/
      * @param string $backupcourse
@@ -195,7 +196,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Restores the backup into the specified course and the provided options. You should be in the 'Restore' page where the backup is.
+     * Restores the backup into the specified course and the provided options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I restore "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into "(?P<existing_course_fullname_string>(?:[^"]|\\")*)" course using this options:$/
      * @param string $backupfilename
@@ -229,7 +232,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Restores the specified backup into a new course using the provided options. You should be in the 'Restore' page where the backup is.
+     * Restores the specified backup into a new course using the provided options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I restore "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into a new course using this options:$/
      * @param string $backupfilename
@@ -258,7 +263,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Merges the backup into the current course using the provided restore options. You should be in the 'Restore' page where the backup is.
+     * Merges the backup into the current course using the provided restore options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I merge "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into the current course using this options:$/
      * @param string $backupfilename
@@ -286,7 +293,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Merges the backup into the current course after deleting this contents, using the provided restore options. You should be in the 'Restore' page where the backup is.
+     * Merges the backup into the current course after deleting this contents, using the provided restore options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I merge "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into the current course after deleting it's contents using this options:$/
      * @param string $backupfilename
