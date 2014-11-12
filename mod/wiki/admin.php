@@ -66,7 +66,7 @@ require_capability('mod/wiki:managewiki', $context);
 if (!empty($delete) && confirm_sesskey()) {
     if ($pageid != $delete) {
         // Validate that we are deleting from the same subwiki.
-        $deletepage = wiki_get_page($delete)
+        $deletepage = wiki_get_page($delete);
         if (!$deletepage || $deletepage->subwikiid != $page->subwikiid) {
             print_error('incorrectsubwikiid', 'wiki');
         }
