@@ -24,14 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
-$plugin->version  = 2013070100;
-$plugin->requires = 2013051400;
+$plugin->version   = 2014111200;
+$plugin->requires  = 2013101800;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_ddwtos';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.3 for Moodle 2.5+';
+$plugin->release   = '1.4 for Moodle 2.6+';
 
 $plugin->dependencies = array(
-    'qtype_gapselect' => 2013070100,
+    'qtype_gapselect' => 2014111200,
 );
