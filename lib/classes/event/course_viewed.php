@@ -59,7 +59,13 @@ class course_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed the course with id '$this->courseid'.";
+
+        $sectionstr = '';
+        if (!empty($this->other['coursesectionid'])) {
+            $sectionstr = "section number '{$this->other['coursesectionid']}' of the ";
+        }
+        $description = "The user with id '$this->userid' viewed the " . $sectionstr . "course with id '$this->courseid'.";
+        return $description;
     }
 
     /**
@@ -102,7 +108,7 @@ class course_viewed extends base {
         }
 
         if (isset($this->other['coursesectionid'])) {
-            return array($this->courseid, 'course', 'view section', 'view.php?id=' . $this->courseid . '&amp;sectionid='
+            return array($this->courseid, 'course', 'view section', 'view.php?id=' . $this->courseid . '&amp;section='
                     . $this->other['coursesectionid'], $this->other['coursesectionid']);
         }
         return array($this->courseid, 'course', 'view', 'view.php?id=' . $this->courseid, $this->courseid);
