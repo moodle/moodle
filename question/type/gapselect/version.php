@@ -17,16 +17,16 @@
 /**
  * Version information for the select missing words question type.
  *
- * @package    qtype_gapselect
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_gapselect
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2014010800;
-$plugin->requires = 2013051400;
+$plugin->version   = 2014111200;
+$plugin->requires  = 2013101800;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_gapselect';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.5 for Moodle 2.5+';
+$plugin->release   = '1.6 for Moodle 2.6+';
