@@ -26,11 +26,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Chris Scribner
  */
+define('AJAX_SCRIPT', true);
 
 require_once(dirname(__FILE__) . "/../../config.php");
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 $courseid = required_param('course', PARAM_INT);
+$context = context_course::instance($courseid);
 
 require_login($courseid, false);
 
@@ -43,6 +45,9 @@ switch ($action) {
         $toolurl = required_param('toolurl', PARAM_RAW);
         $toolid = optional_param('toolid', 0, PARAM_INT);
 
+        require_capability('moodle/course:manageactivities', $context);
+        require_capability('mod/lti:addinstance', $context);
+
         if (empty($toolid) && !empty($toolurl)) {
             $tool = lti_get_tool_by_url_match($toolurl, $courseid);
 
@@ -50,8 +55,8 @@ switch ($action) {
                 $toolid = $tool->id;
 
                 $response->toolid = $tool->id;
-                $response->toolname = htmlspecialchars($tool->name);
-                $response->tooldomain = htmlspecialchars($tool->tooldomain);
+                $response->toolname = s($tool->name);
+                $response->tooldomain = s($tool->tooldomain);
             }
         } else {
             $response->toolid = $toolid;
@@ -68,14 +73,19 @@ switch ($action) {
             ';
 
             $privacyconfigs = $DB->get_records_sql($query, array('typeid' => $toolid));
+            $success = count($privacyconfigs) > 0;
             foreach ($privacyconfigs as $config) {
                 $configname = $config->name;
                 $response->$configname = $config->value;
             }
+            if (!$success) {
+                $response->error = s(get_string('tool_config_not_found', 'mod_lti'));
+            }
         }
+
         break;
 }
-
+echo $OUTPUT->header();
 echo json_encode($response);
 
 die;
