@@ -47,8 +47,9 @@ class update_langpacks_task extends \core\task\scheduled_task {
     public function execute() {
         global $CFG;
 
-        // No need to run upgrade, if skiplangupgrade is set.
         if (!empty($CFG->skiplangupgrade)) {
+            mtrace('Langpack update skipped. ($CFG->skiplangupgrade set)');
+
             return;
         }
 
