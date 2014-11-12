@@ -435,7 +435,7 @@ class phpunit_util extends testing_util {
         global $CFG;
 
         $template = '
-        <testsuite name="@component@ test suite">
+        <testsuite name="@component@_testsuite">
             <directory suffix="_test.php">@dir@</directory>
         </testsuite>';
         $data = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
