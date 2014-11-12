@@ -683,7 +683,7 @@ class restore_update_availability extends restore_execution_step {
             if (!is_null($section->availability)) {
                 $info = new \core_availability\info_section($section);
                 $info->update_after_restore($this->get_restoreid(),
-                        $this->get_courseid(), $this->get_logger(), $dateoffset);
+                        $this->get_courseid(), $this->get_logger(), $dateoffset, $this->task);
             }
         }
         $rs->close();
@@ -703,7 +703,7 @@ class restore_update_availability extends restore_execution_step {
             if (!is_null($cm->availability)) {
                 $info = new \core_availability\info_module($cm);
                 $info->update_after_restore($this->get_restoreid(),
-                        $this->get_courseid(), $this->get_logger(), $dateoffset);
+                        $this->get_courseid(), $this->get_logger(), $dateoffset, $this->task);
             }
         }
         $rs->close();

@@ -127,6 +127,13 @@ class condition extends \core_availability\condition {
         return $this->groupid ? '#' . $this->groupid : 'any';
     }
 
+    public function include_after_restore($restoreid, $courseid, \base_logger $logger,
+            $name, \base_task $task) {
+        // Include this condition only if we are including groups in restore, or
+        // if it's a generic 'any group' one.
+        return !$this->groupid || $task->get_setting_value('groups');
+    }
+
     public function update_after_restore($restoreid, $courseid, \base_logger $logger, $name) {
         global $DB;
         if (!$this->groupid) {
