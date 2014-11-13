@@ -266,6 +266,7 @@ class core_backup_renderer extends plugin_renderer_base {
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-course-selector backup-restore'));
         if ($wholecourse && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
+
             // New course
             $hasrestoreoption = true;
             $html .= $form;
