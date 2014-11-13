@@ -524,7 +524,7 @@ abstract class backup_controller_dbops extends backup_dbops {
      */
     public static function backup_get_original_course_info($courseid) {
         global $DB;
-        return $DB->get_record('course', array('id' => $courseid), 'fullname, shortname, startdate');
+        return $DB->get_record('course', array('id' => $courseid), 'fullname, shortname, startdate, format');
     }
 
     /**
