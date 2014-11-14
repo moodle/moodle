@@ -35,7 +35,8 @@ $string['replicaset_help'] = 'The name of the replica set to connect to. If this
 $string['server'] = 'Server';
 $string['server_help'] = 'This is the connection string for the server you want to use. Multiple servers can be specified using a comma-separated list.';
 $string['testserver'] = 'Test server';
-$string['testserver_desc'] = 'This is the connection string for the test server you want to use. Test servers are entirely optional, by specifiying a test server you can run PHPunit tests for this store and can run the performance tests.';
+$string['testserver_desc'] = 'The connection string for a server to use for testing. If a test server has been specified then MongoDB performance can be tested using the cache performance page in the administration block.
+As an example: mongodb://127.0.0.1:27017';
 $string['username'] = 'Username';
 $string['username_help'] = 'The username to use when making a connection.';
 $string['usesafe'] = 'Use safe';
