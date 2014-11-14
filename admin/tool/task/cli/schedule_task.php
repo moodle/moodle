@@ -123,6 +123,7 @@ if ($execute = $options['execute']) {
         } else {
             $task->set_cron_lock($cronlock);
         }
+        get_mailer('buffer');
         $task->execute();
         if (isset($predbqueries)) {
             mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
@@ -130,6 +131,7 @@ if ($execute = $options['execute']) {
         }
         mtrace("Task completed.");
         \core\task\manager::scheduled_task_complete($task);
+        get_mailer('close');
         exit(0);
     } catch (Exception $e) {
         if ($DB->is_transaction_started()) {
@@ -139,6 +141,7 @@ if ($execute = $options['execute']) {
         mtrace("... used " . (microtime(true) - $pretime) . " seconds");
         mtrace("Task failed: " . $e->getMessage());
         \core\task\manager::scheduled_task_failed($task);
+        get_mailer('close');
         exit(1);
     }
 }
