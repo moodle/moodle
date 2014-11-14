@@ -24,6 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+define('COHORT_ALL', 0);
+define('COHORT_COUNT_MEMBERS', 1);
+define('COHORT_COUNT_ENROLLED_MEMBERS', 3);
+define('COHORT_WITH_MEMBERS_ONLY', 5);
+define('COHORT_WITH_ENROLLED_MEMBERS_ONLY', 17);
+define('COHORT_WITH_NOTENROLLED_MEMBERS_ONLY', 23);
+
 /**
  * Add new cohort.
  *
@@ -44,6 +51,9 @@ function cohort_add_cohort($cohort) {
     }
     if (!isset($cohort->descriptionformat)) {
         $cohort->descriptionformat = FORMAT_HTML;
+    }
+    if (!isset($cohort->visible)) {
+        $cohort->visible = 1;
     }
     if (empty($cohort->component)) {
         $cohort->component = '';
@@ -200,55 +210,153 @@ function cohort_is_member($cohortid, $userid) {
 }
 
 /**
- * Returns list of cohorts from course parent contexts.
+ * Returns the list of cohorts visible to the current user in the given course.
  *
- * Note: this function does not implement any capability checks,
- *       it means it may disclose existence of cohorts,
- *       make sure it is displayed to users with appropriate rights only.
+ * The following fields are returned in each record: id, name, contextid, idnumber, visible
+ * Fields memberscnt and enrolledcnt will be also returned if requested
  *
- * @param  stdClass $course
- * @param  bool $onlyenrolled true means include only cohorts with enrolled users
- * @return array of cohort names with number of enrolled users
+ * @param context $currentcontext
+ * @param int $withmembers one of the COHORT_XXX constants that allows to return non empty cohorts only
+ *      or cohorts with enroled/not enroled users, or just return members count
+ * @param int $offset
+ * @param int $limit
+ * @param string $search
+ * @return array
  */
-function cohort_get_visible_list($course, $onlyenrolled=true) {
+function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset = 0, $limit = 25, $search = '') {
     global $DB;
 
-    $context = context_course::instance($course->id);
-    list($esql, $params) = get_enrolled_sql($context);
-    list($parentsql, $params2) = $DB->get_in_or_equal($context->get_parent_context_ids(), SQL_PARAMS_NAMED);
-    $params = array_merge($params, $params2);
+    $params = array();
 
-    if ($onlyenrolled) {
-        $left = "";
-        $having = "HAVING COUNT(u.id) > 0";
-    } else {
-        $left = "LEFT";
-        $having = "";
+    // Build context subquery. Find the list of parent context where user is able to see any or visible-only cohorts.
+    // Since this method is normally called for the current course all parent contexts are already preloaded.
+    $contextsany = array_filter($currentcontext->get_parent_context_ids(),
+        create_function('$a', 'return has_capability("moodle/cohort:view", context::instance_by_id($a));'));
+    $contextsvisible = array_diff($currentcontext->get_parent_context_ids(), $contextsany);
+    if (empty($contextsany) && empty($contextsvisible)) {
+        // User does not have any permissions to view cohorts.
+        return array();
     }
+    $subqueries = array();
+    if (!empty($contextsany)) {
+        list($parentsql, $params1) = $DB->get_in_or_equal($contextsany, SQL_PARAMS_NAMED, 'ctxa');
+        $subqueries[] = 'c.contextid ' . $parentsql;
+        $params = array_merge($params, $params1);
+    }
+    if (!empty($contextsvisible)) {
+        list($parentsql, $params1) = $DB->get_in_or_equal($contextsvisible, SQL_PARAMS_NAMED, 'ctxv');
+        $subqueries[] = '(c.visible = 1 AND c.contextid ' . $parentsql. ')';
+        $params = array_merge($params, $params1);
+    }
+    $wheresql = '(' . implode(' OR ', $subqueries) . ')';
 
-    $sql = "SELECT c.id, c.name, c.contextid, c.idnumber, COUNT(u.id) AS cnt
-              FROM {cohort} c
-        $left JOIN ({cohort_members} cm
-                   JOIN ($esql) u ON u.id = cm.userid) ON cm.cohortid = c.id
-             WHERE c.contextid $parentsql
-          GROUP BY c.id, c.name, c.contextid, c.idnumber
-           $having
-          ORDER BY c.name, c.idnumber";
-
-    $cohorts = $DB->get_records_sql($sql, $params);
-
-    foreach ($cohorts as $cid=>$cohort) {
-        $cohorts[$cid] = format_string($cohort->name, true, array('context'=>$cohort->contextid));
-        if ($cohort->cnt) {
-            $cohorts[$cid] .= ' (' . $cohort->cnt . ')';
+    // Build the rest of the query.
+    $fromsql = "";
+    $fieldssql = 'c.id, c.name, c.contextid, c.idnumber, c.visible';
+    $groupbysql = '';
+    $havingsql = '';
+    if ($withmembers) {
+        $groupbysql = " GROUP BY $fieldssql";
+        $fromsql = " LEFT JOIN {cohort_members} cm ON cm.cohortid = c.id ";
+        $fieldssql .= ', COUNT(DISTINCT cm.userid) AS memberscnt';
+        if (in_array($withmembers,
+                array(COHORT_COUNT_ENROLLED_MEMBERS, COHORT_WITH_ENROLLED_MEMBERS_ONLY, COHORT_WITH_NOTENROLLED_MEMBERS_ONLY))) {
+            list($esql, $params2) = get_enrolled_sql($currentcontext);
+            $fromsql .= " LEFT JOIN ($esql) u ON u.id = cm.userid ";
+            $params = array_merge($params2, $params);
+            $fieldssql .= ', COUNT(DISTINCT u.id) AS enrolledcnt';
+        }
+        if ($withmembers == COHORT_WITH_MEMBERS_ONLY) {
+            $havingsql = " HAVING COUNT(DISTINCT cm.userid) > 0";
+        } else if ($withmembers == COHORT_WITH_ENROLLED_MEMBERS_ONLY) {
+            $havingsql = " HAVING COUNT(DISTINCT u.id) > 0";
+        } else if ($withmembers == COHORT_WITH_NOTENROLLED_MEMBERS_ONLY) {
+            $havingsql = " HAVING COUNT(DISTINCT cm.userid) > COUNT(DISTINCT u.id)";
         }
     }
+    if ($search) {
+        list($searchsql, $searchparams) = cohort_get_search_query($search);
+        $wheresql .= ' AND ' . $searchsql;
+        $params = array_merge($params, $searchparams);
+    }
 
-    return $cohorts;
+    $sql = "SELECT $fieldssql
+              FROM {cohort} c
+              $fromsql
+             WHERE $wheresql
+             $groupbysql
+             $havingsql
+          ORDER BY c.name, c.idnumber";
+
+    return $DB->get_records_sql($sql, $params, $offset, $limit);
+}
+
+/**
+ * Check if cohort exists and user is allowed to access it from the given context.
+ *
+ * @param stdClass|int $cohortorid cohort object or id
+ * @param context $currentcontext current context (course) where visibility is checked
+ * @return boolean
+ */
+function cohort_can_view_cohort($cohortorid, $currentcontext) {
+    global $DB;
+    if (is_numeric($cohortorid)) {
+        $cohort = $DB->get_record('cohort', array('id' => $cohortorid), 'id, contextid, visible');
+    } else {
+        $cohort = $cohortorid;
+    }
+
+    if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids())) {
+        if ($cohort->visible) {
+            return true;
+        }
+        $cohortcontext = context::instance_by_id($cohort->contextid);
+        if (has_capability('moodle/cohort:view', $cohortcontext)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Produces a part of SQL query to filter cohorts by the search string
+ *
+ * Called from {@link cohort_get_cohorts()}, {@link cohort_get_all_cohorts()} and {@link cohort_get_available_cohorts()}
+ *
+ * @access private
+ *
+ * @param string $search search string
+ * @param string $tablealias alias of cohort table in the SQL query (highly recommended if other tables are used in query)
+ * @return array of two elements - SQL condition and array of named parameters
+ */
+function cohort_get_search_query($search, $tablealias = '') {
+    global $DB;
+    $params = array();
+    if (empty($search)) {
+        // This function should not be called if there is no search string, just in case return dummy query.
+        return array('1=1', $params);
+    }
+    if ($tablealias && substr($tablealias, -1) !== '.') {
+        $tablealias .= '.';
+    }
+    $searchparam = '%' . $DB->sql_like_escape($search) . '%';
+    $conditions = array();
+    $fields = array('name', 'idnumber', 'description');
+    $cnt = 0;
+    foreach ($fields as $field) {
+        $conditions[] = $DB->sql_like($tablealias . $field, ':csearch' . $cnt, false);
+        $params['csearch' . $cnt] = $searchparam;
+        $cnt++;
+    }
+    $sql = '(' . implode(' OR ', $conditions) . ')';
+    return array($sql, $params);
 }
 
 /**
  * Get all the cohorts defined in given context.
+ *
+ * The function does not check user capability to view/manage cohorts in the given context
+ * assuming that it has been already verified.
  *
  * @param int $contextid
  * @param int $page number of the current page
@@ -259,29 +367,143 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
 function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') {
     global $DB;
 
-    // Add some additional sensible conditions
-    $tests = array('contextid = ?');
-    $params = array($contextid);
-
-    if (!empty($search)) {
-        $conditions = array('name', 'idnumber', 'description');
-        $searchparam = '%' . $DB->sql_like_escape($search) . '%';
-        foreach ($conditions as $key=>$condition) {
-            $conditions[$key] = $DB->sql_like($condition, "?", false);
-            $params[] = $searchparam;
-        }
-        $tests[] = '(' . implode(' OR ', $conditions) . ')';
-    }
-    $wherecondition = implode(' AND ', $tests);
-
     $fields = "SELECT *";
     $countfields = "SELECT COUNT(1)";
     $sql = " FROM {cohort}
-             WHERE $wherecondition";
+             WHERE contextid = :contextid";
+    $params = array('contextid' => $contextid);
     $order = " ORDER BY name ASC, idnumber ASC";
-    $allcohorts = $DB->count_records('cohort', array('contextid'=>$contextid));
-    $totalcohorts = $DB->count_records_sql($countfields . $sql, $params);
+
+    if (!empty($search)) {
+        list($searchcondition, $searchparams) = cohort_get_search_query($search);
+        $sql .= ' AND ' . $searchcondition;
+        $params = array_merge($params, $searchparams);
+    }
+
+    $totalcohorts = $allcohorts = $DB->count_records('cohort', array('contextid' => $contextid));
+    if (!empty($search)) {
+        $totalcohorts = $DB->count_records_sql($countfields . $sql, $params);
+    }
     $cohorts = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
 
-    return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts, 'allcohorts'=>$allcohorts);
+    return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts, 'allcohorts' => $allcohorts);
+}
+
+/**
+ * Get all the cohorts defined anywhere in system.
+ *
+ * The function assumes that user capability to view/manage cohorts on system level
+ * has already been verified. This function only checks if such capabilities have been
+ * revoked in child (categories) contexts.
+ *
+ * @param int $page number of the current page
+ * @param int $perpage items per page
+ * @param string $search search string
+ * @return array    Array(totalcohorts => int, cohorts => array, allcohorts => int)
+ */
+function cohort_get_all_cohorts($page = 0, $perpage = 25, $search = '') {
+    global $DB;
+
+    $fields = "SELECT c.*, ".context_helper::get_preload_record_columns_sql('ctx');
+    $countfields = "SELECT COUNT(*)";
+    $sql = " FROM {cohort} c
+             JOIN {context} ctx ON ctx.id = c.contextid ";
+    $params = array();
+    $wheresql = '';
+
+    if ($excludedcontexts = cohort_get_invisible_contexts()) {
+        list($excludedsql, $excludedparams) = $DB->get_in_or_equal($excludedcontexts, SQL_PARAMS_NAMED, 'excl', false);
+        $wheresql = ' WHERE c.contextid '.$excludedsql;
+        $params = array_merge($params, $excludedparams);
+    }
+
+    $totalcohorts = $allcohorts = $DB->count_records_sql($countfields . $sql . $wheresql, $params);
+
+    if (!empty($search)) {
+        list($searchcondition, $searchparams) = cohort_get_search_query($search, 'c');
+        $wheresql .= ($wheresql ? ' AND ' : ' WHERE ') . $searchcondition;
+        $params = array_merge($params, $searchparams);
+        $totalcohorts = $DB->count_records_sql($countfields . $sql . $wheresql, $params);
+    }
+
+    $order = " ORDER BY c.name ASC, c.idnumber ASC";
+    $cohorts = $DB->get_records_sql($fields . $sql . $wheresql . $order, $params, $page*$perpage, $perpage);
+
+    // Preload used contexts, they will be used to check view/manage/assign capabilities and display categories names.
+    foreach (array_keys($cohorts) as $key) {
+        context_helper::preload_from_record($cohorts[$key]);
+    }
+
+    return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts, 'allcohorts' => $allcohorts);
+}
+
+/**
+ * Returns list of contexts where cohorts are present but current user does not have capability to view/manage them.
+ *
+ * This function is called from {@link cohort_get_all_cohorts()} to ensure correct pagination in rare cases when user
+ * is revoked capability in child contexts. It assumes that user's capability to view/manage cohorts on system
+ * level has already been verified.
+ *
+ * @access private
+ *
+ * @return array array of context ids
+ */
+function cohort_get_invisible_contexts() {
+    global $DB;
+    if (is_siteadmin()) {
+        // Shortcut, admin can do anything and can not be prohibited from any context.
+        return array();
+    }
+    $records = $DB->get_recordset_sql("SELECT DISTINCT ctx.id, ".context_helper::get_preload_record_columns_sql('ctx')." ".
+        "FROM {context} ctx JOIN {cohort} c ON ctx.id = c.contextid ");
+    $excludedcontexts = array();
+    foreach ($records as $ctx) {
+        context_helper::preload_from_record($ctx);
+        if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), context::instance_by_id($ctx->id))) {
+            $excludedcontexts[] = $ctx->id;
+        }
+    }
+    return $excludedcontexts;
+}
+
+/**
+ * Returns navigation controls (tabtree) to be displayed on cohort management pages
+ *
+ * @param context $context system or category context where cohorts controls are about to be displayed
+ * @param moodle_url $currenturl
+ * @return null|renderable
+ */
+function cohort_edit_controls(context $context, moodle_url $currenturl) {
+    $tabs = array();
+    $currenttab = 'view';
+    $viewurl = new moodle_url('/cohort/index.php', array('contextid' => $context->id));
+    if (($searchquery = $currenturl->get_param('search'))) {
+        $viewurl->param('search', $searchquery);
+    }
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+        $tabs[] = new tabobject('view', new moodle_url($viewurl, array('showall' => 0)), get_string('systemcohorts', 'cohort'));
+        $tabs[] = new tabobject('viewall', new moodle_url($viewurl, array('showall' => 1)), get_string('allcohorts', 'cohort'));
+        if ($currenturl->get_param('showall')) {
+            $currenttab = 'viewall';
+        }
+    } else {
+        $tabs[] = new tabobject('view', $viewurl, get_string('cohorts', 'cohort'));
+    }
+    if (has_capability('moodle/cohort:manage', $context)) {
+        $addurl = new moodle_url('/cohort/edit.php', array('contextid' => $context->id));
+        $tabs[] = new tabobject('addcohort', $addurl, get_string('addcohort', 'cohort'));
+        if ($currenturl->get_path() === $addurl->get_path() && !$currenturl->param('id')) {
+            $currenttab = 'addcohort';
+        }
+
+        $uploadurl = new moodle_url('/cohort/upload.php', array('contextid' => $context->id));
+        $tabs[] = new tabobject('uploadcohorts', $uploadurl, get_string('uploadcohorts', 'cohort'));
+        if ($currenturl->get_path() === $uploadurl->get_path()) {
+            $currenttab = 'uploadcohorts';
+        }
+    }
+    if (count($tabs) > 1) {
+        return new tabtree($tabs, $currenttab);
+    }
+    return null;
 }

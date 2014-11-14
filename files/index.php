@@ -68,7 +68,7 @@ if ($node = $PAGE->settingsnav->find('coursefiles', navigation_node::TYPE_SETTIN
 
 $PAGE->set_title("$course->shortname: $strfiles");
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 
 $output = $PAGE->get_renderer('core', 'files');
 

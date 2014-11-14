@@ -1,0 +1,90 @@
+.path-grade-report-singleview div.generalbox {
+  margin: 0 20px 15px 20px;
+  text-align: center;
+}
+
+.path-grade-report-singleview div.generalbox div.singleselect form div {
+  text-align: center;
+}
+
+.path-grade-report-singleview div.generalbox table.generaltable {
+  margin: 0 auto 15px auto;
+}
+
+.path-grade-report-singleview div.generalbox form div {
+  text-align: center;
+}
+
+.path-grade-report-singleview .singleview_buttons {
+    padding: 10px 0;
+}
+
+.path-grade-report-singleview div.generalbox h2 {
+   text-align: center;
+}
+
+.path-grade-report-singleview input[name^="finalgrade"] {
+    width: 50px;
+}
+.path-grade-report-singleview .generaltable tbody th {
+  white-space: nowrap;
+}
+.path-grade-report-singleview .generaltable tbody th > * {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.path-grade-report-singleview #region-main h2, .paging{
+   text-align: center;
+}
+
+.path-grade-report-singleview itemnav.previtem {
+   float:left;
+}
+.path-grade-report-singleview.dir-rtl small.previtem {
+   float:right;
+}
+.path-grade-report-singleview small.nextitem {
+   float:right;
+}
+.path-grade-report-singleview.dir-rtl small.nextitem {
+   float:left;
+}
+.path-grade-report-singleview .generaltable {
+    width: 100%;
+}
+.path-grade-report-singleview .generaltable th {
+    text-align: left;
+}
+
+.dir-rtl.path-grade-report-singleview .generaltable th {
+  text-align: right;
+}
+
+.path-grade-report-singleview div.generalbox form div.singleview_bulk {
+  display: inline-block;
+  text-align: left;
+  margin-bottom: 1em;
+}
+.dir-rtl.path-grade-report-singleview div.generalbox form div.singleview_bulk {
+  text-align: right;
+}
+
+.path-grade-report-singleview .singleview_bulk div > *,
+.path-grade-report-singleview .singleview_bulk fieldset > * {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.path-grade-report-singleview .singleview_bulk > fieldset {
+  display: block;
+}
+
+.path-grade-report-singleview div.generalbox form .singleview_bulk > div.enable {
+  text-align: left;
+}
+.dir-rtl.path-grade-report-singleview div.generalbox form .singleview_bulk > div.enable {
+  text-align: right;
+}

@@ -60,7 +60,7 @@ class email_failed extends base {
      * @return string
      */
     public function get_description() {
-        return "Failed to send an email from the user with the id '$this->userid' to the user with the id '$this->relateduserid'
+        return "Failed to send an email from the user with id '$this->userid' to the user with id '$this->relateduserid'
             due to the following error: \"{$this->other['errorinfo']}\".";
     }
 
@@ -80,14 +80,18 @@ class email_failed extends base {
      */
     protected function validate_data() {
         parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
         if (!isset($this->other['subject'])) {
-            throw new \coding_exception('The subject needs to be set in $other');
+            throw new \coding_exception('The \'subject\' value must be set in other.');
         }
         if (!isset($this->other['message'])) {
-            throw new \coding_exception('The message needs to be set in $other');
+            throw new \coding_exception('The \'message\' value must be set in other.');
         }
         if (!isset($this->other['errorinfo'])) {
-            throw new \coding_exception('The error info needs to be set in $other');
+            throw new \coding_exception('The \'errorinfo\' value must be set in other.');
         }
     }
 }

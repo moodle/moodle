@@ -14,19 +14,21 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I set the field "menuselectsortby" to "All categories"
     And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
+    | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
+    | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   Scenario Outline: Test bulk sorting current category.
     Given the following "categories" exist:
@@ -38,7 +40,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Test category" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -52,8 +54,10 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
+    | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
+    | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   Scenario Outline: Test resorting subcategories.
     Given the following "categories" exist:
@@ -65,7 +69,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Master cat" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
@@ -77,8 +81,10 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "resortbyname"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "resortbyidnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
+    | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+    | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   @javascript
   Scenario Outline: Test resorting subcategories with JS enabled.
@@ -91,7 +97,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Master cat" category in the management category listing
   # Redirect.
     And I should see the "Course categories and courses" management page
@@ -103,8 +109,10 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "resortbyname"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "resortbyidnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
+    | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+    | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   # The scenario below this is the same but with JS enabled.
   Scenario: Test moving categories up and down by one.
@@ -118,7 +126,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect. We should a 1, 1a, 1b, 1c, 2.
     And I should see the "Course categories and courses" management page
@@ -178,7 +186,7 @@ Feature: Test we can resort categories in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page

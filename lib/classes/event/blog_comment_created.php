@@ -26,7 +26,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The blog comment created event.
+ * The blog comment created event class.
  *
  * @package    core
  * @since      Moodle 2.7
@@ -50,6 +50,6 @@ class blog_comment_created extends comment_created {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added a comment to the blog with the id '{$this->other['itemid']}'.";
+        return "The user with id '$this->userid' added the comment to the blog with id '{$this->other['itemid']}'.";
     }
 }

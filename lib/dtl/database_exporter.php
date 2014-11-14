@@ -129,7 +129,8 @@ abstract class database_exporter {
     public function export_database($description=null) {
         global $CFG;
 
-        if ($this->check_schema and $errors = $this->manager->check_database_schema($this->schema)) {
+        $options = array('changedcolumns' => false); // Column types may be fixed by transfer.
+        if ($this->check_schema and $errors = $this->manager->check_database_schema($this->schema, $options)) {
             $details = '';
             foreach ($errors as $table=>$items) {
                 $details .= '<div>'.get_string('tablex', 'dbtransfer', $table);

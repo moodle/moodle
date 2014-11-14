@@ -70,7 +70,8 @@ class calendar_event_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The event '" . s($this->other['name']) . "' was updated by the user with the id '{$this->userid}'.";
+        $eventname = s($this->other['name']);
+        return "The user with id '$this->userid' updated the event '$eventname' with id '$this->objectid'.";
     }
 
     /**
@@ -105,7 +106,7 @@ class calendar_event_updated extends base {
         if (empty($this->other['name'])) {
             throw new \coding_exception('The \'name\' value must be set in other.');
         }
-        if (empty($this->other['timestart'])) {
+        if (!isset($this->other['timestart'])) {
             throw new \coding_exception('The \'timestart\' value must be set in other.');
         }
     }

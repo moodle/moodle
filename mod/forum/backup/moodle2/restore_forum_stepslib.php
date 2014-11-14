@@ -40,6 +40,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         if ($userinfo) {
             $paths[] = new restore_path_element('forum_discussion', '/activity/forum/discussions/discussion');
             $paths[] = new restore_path_element('forum_post', '/activity/forum/discussions/discussion/posts/post');
+            $paths[] = new restore_path_element('forum_discussion_sub', '/activity/forum/discussions/discussion/discussion_subs/discussion_sub');
             $paths[] = new restore_path_element('forum_rating', '/activity/forum/discussions/discussion/posts/post/ratings/rating');
             $paths[] = new restore_path_element('forum_subscription', '/activity/forum/subscriptions/subscription');
             $paths[] = new restore_path_element('forum_digest', '/activity/forum/digests/digest');
@@ -148,6 +149,19 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('forum_subscriptions', $data);
+    }
+
+    protected function process_forum_discussion_sub($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->discussion = $this->get_new_parentid('forum_discussion');
+        $data->forum = $this->get_new_parentid('forum');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('forum_discussion_subs', $data);
     }
 
     protected function process_forum_digest($data) {

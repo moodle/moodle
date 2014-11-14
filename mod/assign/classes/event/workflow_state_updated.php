@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string newstatus: status of submission.
+ *      - string newstate: state of submission.
  * }
  *
  * @package    mod_assign
@@ -81,8 +81,8 @@ class workflow_state_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has set the workflow state of the user with the id '$this->relateduserid' " .
-            "to the state '{$this->other['newstate']}' for the assignment with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has set the workflow state of the user with id '$this->relateduserid' " .
+            "to the state '{$this->other['newstate']}' for the assignment with course module id '$this->contextinstanceid'.";
     }
 
     /**

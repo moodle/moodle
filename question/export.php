@@ -50,7 +50,7 @@ $export_form = new question_export_form($thispageurl,
 
 if ($from_form = $export_form->get_data()) {
     $thiscontext = $contexts->lowest();
-    if (!is_readable("format/$from_form->format/format.php")) {
+    if (!is_readable("format/{$from_form->format}/format.php")) {
         print_error('unknowformat', '', '', $from_form->format);
     }
     $withcategories = 'nocategories';

@@ -93,8 +93,8 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
             value = (el.hasClass('level')) ? M.str.gradingform_rubric.levelempty : M.str.gradingform_rubric.criterionempty
             taplain.addClass('empty')
         }
-        taplain.one('.textvalue').set('innerHTML', value)
-        if (tb) tbplain.one('.textvalue').set('innerHTML', tb.get('value'))
+        taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value));
+        if (tb) tbplain.one('.textvalue').set('innerHTML', Y.Escape.html(tb.get('value')));
         // hide/display textarea, textbox and plaintexts
         taplain.removeClass('hiddenelement')
         ta.addClass('hiddenelement')
@@ -109,7 +109,7 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
                 height
             if (el.hasClass('level')) height = parseFloat(el.getComputedStyle('height')) - parseFloat(el.one('.score').getComputedStyle('height'))
             else height = parseFloat(ta.get('parentNode').getComputedStyle('height'))
-            ta.setStyle('width', Math.max(width,50)+'px')
+            ta.setStyle('width', Math.max(width-16,50)+'px')
             ta.setStyle('height', Math.max(height,20)+'px')
         }
         catch (err) {

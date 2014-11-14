@@ -63,9 +63,25 @@ class theme extends base {
         $DB->set_field('user', 'theme', '', array('theme'=>$this->name));
         $DB->set_field('mnet_host', 'theme', '', array('theme'=>$this->name));
 
-        unset_config('thememobile');
-        unset_config('themetablet');
-        unset_config('themelegacy');
+        if (get_config('core', 'thememobile') === $this->name) {
+            unset_config('thememobile');
+        }
+        if (get_config('core', 'themetablet') === $this->name) {
+            unset_config('themetablet');
+        }
+        if (get_config('core', 'themelegacy') === $this->name) {
+            unset_config('themelegacy');
+        }
+
+        $themelist = get_config('core', 'themelist');
+        if (!empty($themelist)) {
+            $themes = explode(',', $themelist);
+            $key = array_search($this->name, $themes);
+            if ($key !== false) {
+                unset($themes[$key]);
+                set_config('themelist', implode(',', $themes));
+            }
+        }
 
         parent::uninstall_cleanup();
     }

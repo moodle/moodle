@@ -1,6 +1,69 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.8 ===
+
+* Gradebook grade category option "aggregatesubcats" has been removed completely.
+  This means that the database column is removed, the admin settings are removed and
+  the properties from the grade_category object have been removed. If any courses were
+  found to be using this setting, a warning to check the grades will be shown in the
+  course grader report after upgrading the site. The same warning will be shown on
+  courses restored from backup that had this setting enabled (see MDL-47503).
+* lib/excelllib.class.php has been updated. The class MoodleExcelWorkbook will now only produce excel 2007 files.
+* renderers: We now remove the suffix _renderable when looking for a render method for a renderable.
+  If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"
+  you will need to change the name of your render method to "render_blah" instead, as renderable at the end is no longer accepted.
+* New functions get_course_and_cm_from_cmid($cmorid, $modulename) and
+  get_course_and_cm_from_instance($instanceorid, $modulename) can be used to
+  more efficiently load these basic data objects at the start of a script.
+* New function cm_info::create($cm) can be used when you need a cm_info
+  object, but have a $cm which might only be a standard database record.
+* $CFG->enablegroupmembersonly no longer exists.
+* Scheduled tasks have gained support for syntax to introduce variability when a
+  task will run across installs. When a when hour or minute are defined as 'R'
+  they will be installed with a random hour/minute value.
+* Several classes grade_edit_tree_column_xxx were removed since grades setup page
+  has been significantly changed. These classes should not be used outside of
+  gradebook or developers can copy them into their plugins from 2.7 branch.
+* Google APIs Client Library (lib/google/) has been upgraded to 1.0.5-beta and
+  API has changed dramatically without backward compatibility. Any code accessing
+  it must be amended. It does not apply to lib/googleapi.php. See MDL-47297
+* Added an extra parameter to the function get_formatted_help_string() (default null) which is used to specify
+  additional string parameters.
+* User settings node and course node in navigation now support callbacks from admin tools.
+* grade_get_grades() optional parameteres $itemtype, $itemmodule, $iteminstance are now required.
+
+DEPRECATIONS:
+* completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
+* grade_category::aggregate_values() is deprecated and will be removed in Moodle 3.0.
+* groups_filter_users_by_course_module_visible() is deprecated; replace with
+  core_availability\info::filter_user_list. Will be removed in Moodle 3.0.
+* groups_course_module_visible() is deprecated; replace with $cm->uservisible.
+* cm_info property $cm->groupmembersonly is deprecated and always returns 0.
+  Use core_availability\info::filter_user_list if trying to determine which
+  other users can see an activity.
+* cm_info method $cm->is_user_access_restricted_by_group() is deprecated and
+  always returns false. Use $cm->uservisible to determine whether the user can
+  access the activity.
+* Constant FEATURE_GROUPMEMBERSONLY (used in module _supports functions) is
+  deprecated.
+* cohort_get_visible_list() is deprecated. There is a better function cohort_get_available_cohorts()
+  that respects user capabilities to view cohorts.
+* enrol_cohort_get_cohorts() and enrol_cohort_search_cohorts() are deprecated since
+  functionality is removed. Please use cohort_get_available_cohorts()
+* enrol_cohort_enrol_all_users() is deprecated; enrol_manual is now responsible for this action
+* enrol_cohort_can_view_cohort() is deprecated; replace with cohort_can_view_cohort()
+
+=== 2.6.4 / 2.7.1 ===
+
+* setnew_password_and_mail() and update_internal_user_password() will trigger
+  \core\event\user_password_updated. Previously they used to generate
+  \core\event\user_updated event.
+* update_internal_user_password() accepts optional boolean $fasthash for fast
+  hashing.
+* user_update_user() and user_create_user() api's accept optional param
+  $triggerevent to avoid respective events to be triggred from the api's.
+
 === 2.7 ===
 
 * PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
@@ -10,8 +73,32 @@ Events and Logging:
 * Significant changes in Logging API. For upgrading existing events_trigger() and
   add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
   For accessing logs from plugins see http://docs.moodle.org/dev/Migrating_log_access_in_reports
-* The validation of the following events is now stricter:
-    - \core\event\course_section_updated
+* The validation of the following events is now stricter (see MDL-45445):
+    - \core\event\blog_entry_created
+    - \core\event\blog_entry_deleted
+    - \core\event\blog_entry_updated
+    - \core\event\cohort_member_added
+    - \core\event\cohort_member_removed
+    - \core\event\course_category_deleted
+    - \core\event\course_completed
+    - \core\event\course_content_deleted
+    - \core\event\course_created
+    - \core\event\course_deleted
+    - \core\event\course_restored
+    - \core\event\course_section_updated (see MDL-45229)
+    - \core\event\email_failed
+    - \core\event\group_member_added
+    - \core\event\group_member_removed
+    - \core\event\note_created
+    - \core\event\note_deleted
+    - \core\event\note_updated
+    - \core\event\role_assigned
+    - \core\event\role_deleted
+    - \core\event\role_unassigned
+    - \core\event\user_graded
+    - \core\event\user_loggedinas
+    - \core\event\user_profile_viewed
+    - \core\event\webservice_token_created
 
 DEPRECATIONS:
 * $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.

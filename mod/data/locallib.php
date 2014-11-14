@@ -348,7 +348,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $includedfiles = array();
         foreach ($fields as $singlefield) {
             if (is_callable(array($singlefield, 'get_file'))) {
-                $includedfiles[] = $singlefield->get_file($record->id);
+                if ($file = $singlefield->get_file($record->id)) {
+                    $includedfiles[] = $file;
+                }
             }
         }
         if (count($includedfiles) == 1 && count($fields) == 1) {

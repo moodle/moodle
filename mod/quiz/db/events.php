@@ -50,15 +50,6 @@ $observers = array(
         'callback' => '\mod_quiz\group_observers::group_member_removed',
     ),
 
-    // Handle our own \mod_quiz\event\attempt_becameoverdue event, to email
-    // the student to let them know they forgot to submit, and that they have another chance.
-    array(
-        'eventname' => '\mod_quiz\event\attempt_becameoverdue',
-        'includefile' => '/mod/quiz/locallib.php',
-        'callback' => 'quiz_attempt_overdue_handler',
-        'internal' => false,
-    ),
-
     // Handle our own \mod_quiz\event\attempt_submitted event, as a way to
     // send confirmation messages asynchronously.
     array(

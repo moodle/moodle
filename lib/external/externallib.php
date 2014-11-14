@@ -45,7 +45,7 @@ class core_external extends external_api {
      *
      * @param array $stringparams
      * @return object|string
-     * @since 2.4
+     * @since Moodle 2.4
      */
     public static function format_string_parameters($stringparams) {
         // Check if there are some string params.

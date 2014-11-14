@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/blog/lib.php');
  */
 class core_bloglib_testcase extends advanced_testcase {
 
-    private $courseid; // To store important ids to be used in tests
+    private $courseid;
     private $cmid;
     private $groupid;
     private $userid;
@@ -45,22 +45,22 @@ class core_bloglib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Create default course
+        // Create default course.
         $course = $this->getDataGenerator()->create_course(array('category'=>1, 'shortname'=>'ANON'));
         $this->assertNotEmpty($course);
         $page = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
         $this->assertNotEmpty($page);
 
-        // Create default group
+        // Create default group.
         $group = new stdClass();
         $group->courseid = $course->id;
         $group->name = 'ANON';
         $group->id = $DB->insert_record('groups', $group);
 
-        // Create default user
+        // Create default user.
         $user = $this->getDataGenerator()->create_user(array('username'=>'testuser', 'firstname'=>'Jimmy', 'lastname'=>'Kinnon'));
 
-        // Create default tag
+        // Create default tag.
         $tag = new stdClass();
         $tag->userid = $user->id;
         $tag->name = 'testtagname';
@@ -68,14 +68,14 @@ class core_bloglib_testcase extends advanced_testcase {
         $tag->tagtype = 'official';
         $tag->id = $DB->insert_record('tag', $tag);
 
-        // Create default post
+        // Create default post.
         $post = new stdClass();
         $post->userid = $user->id;
         $post->groupid = $group->id;
         $post->content = 'test post content text';
         $post->id = $DB->insert_record('post', $post);
 
-        // Grab important ids
+        // Grab important ids.
         $this->courseid = $course->id;
         $this->cmid = $page->cmid;
         $this->groupid  = $group->id;
@@ -88,7 +88,7 @@ class core_bloglib_testcase extends advanced_testcase {
     public function test_overrides() {
         global $SITE;
 
-        // Try all the filters at once: Only the entry filter is active
+        // Try all the filters at once: Only the entry filter is active.
         $filters = array('site' => $SITE->id, 'course' => $this->courseid, 'module' => $this->cmid,
             'group' => $this->groupid, 'user' => $this->userid, 'tag' => $this->tagid, 'entry' => $this->postid);
         $blog_listing = new blog_listing($filters);
@@ -100,7 +100,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertFalse(array_key_exists('tag', $blog_listing->filters));
         $this->assertTrue(array_key_exists('entry', $blog_listing->filters));
 
-        // Again, but without the entry filter: This time, the tag, user and module filters are active
+        // Again, but without the entry filter: This time, the tag, user and module filters are active.
         $filters = array('site' => $SITE->id, 'course' => $this->courseid, 'module' => $this->cmid,
             'group' => $this->groupid, 'user' => $this->userid, 'tag' => $this->postid);
         $blog_listing = new blog_listing($filters);
@@ -111,7 +111,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertTrue(array_key_exists('user', $blog_listing->filters));
         $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
 
-        // We should get the same result by removing the 3 inactive filters: site, course and group:
+        // We should get the same result by removing the 3 inactive filters: site, course and group.
         $filters = array('module' => $this->cmid, 'user' => $this->userid, 'tag' => $this->tagid);
         $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
@@ -128,26 +128,26 @@ class core_bloglib_testcase extends advanced_testcase {
 
     public function test_blog_get_headers_case_1() {
         global $CFG, $PAGE, $OUTPUT;
-        $blog_headers = blog_get_headers();
-        $this->assertEquals($blog_headers['heading'], get_string('siteblog', 'blog', 'phpunit'));
+        $blogheaders = blog_get_headers();
+        $this->assertEquals($blogheaders['heading'], get_string('siteblog', 'blog', 'phpunit'));
     }
 
     public function test_blog_get_headers_case_6() {
         global $CFG, $PAGE, $OUTPUT;
-        $blog_headers = blog_get_headers($this->courseid, NULL, $this->userid);
-        $this->assertNotEquals($blog_headers['heading'], '');
+        $blogheaders = blog_get_headers($this->courseid, null, $this->userid);
+        $this->assertNotEquals($blogheaders['heading'], '');
     }
 
     public function test_blog_get_headers_case_7() {
         global $CFG, $PAGE, $OUTPUT;
-        $blog_headers = blog_get_headers(NULL, $this->groupid);
-        $this->assertNotEquals($blog_headers['heading'], '');
+        $blogheaders = blog_get_headers(null, $this->groupid);
+        $this->assertNotEquals($blogheaders['heading'], '');
     }
 
     public function test_blog_get_headers_case_10() {
         global $CFG, $PAGE, $OUTPUT;
-        $blog_headers = blog_get_headers($this->courseid);
-        $this->assertNotEquals($blog_headers['heading'], '');
+        $blogheaders = blog_get_headers($this->courseid);
+        $this->assertNotEquals($blogheaders['heading'], '');
     }
 
     /**
@@ -326,6 +326,7 @@ class core_bloglib_testcase extends advanced_testcase {
             \core\event\blog_association_created::create(array(
                 'contextid' => 1,
                 'objectid' => 3,
+                'relateduserid' => 2,
                 'other' => array('associateid' => 2 , 'blogid' => 3, 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
             $this->assertContains('The \'associatetype\' value must be set in other and be a valid type.', $e->getMessage());
@@ -334,6 +335,7 @@ class core_bloglib_testcase extends advanced_testcase {
             \core\event\blog_association_created::create(array(
                 'contextid' => 1,
                 'objectid' => 3,
+                'relateduserid' => 2,
                 'other' => array('associateid' => 2 , 'blogid' => 3, 'associatetype' => 'random', 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
             $this->assertContains('The \'associatetype\' value must be set in other and be a valid type.', $e->getMessage());
@@ -343,6 +345,7 @@ class core_bloglib_testcase extends advanced_testcase {
             \core\event\blog_association_created::create(array(
                 'contextid' => 1,
                 'objectid' => 3,
+                'relateduserid' => 2,
                 'other' => array('blogid' => 3, 'associatetype' => 'course', 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
             $this->assertContains('The \'associateid\' value must be set in other.', $e->getMessage());
@@ -352,6 +355,7 @@ class core_bloglib_testcase extends advanced_testcase {
             \core\event\blog_association_created::create(array(
                 'contextid' => 1,
                 'objectid' => 3,
+                'relateduserid' => 2,
                 'other' => array('associateid' => 3, 'associatetype' => 'course', 'subject' => 'blog subject')));
         } catch (coding_exception $e) {
             $this->assertContains('The \'blogid\' value must be set in other.', $e->getMessage());
@@ -361,6 +365,7 @@ class core_bloglib_testcase extends advanced_testcase {
             \core\event\blog_association_created::create(array(
                 'contextid' => 1,
                 'objectid' => 3,
+                'relateduserid' => 2,
                 'other' => array('blogid' => 3, 'associateid' => 3, 'associatetype' => 'course')));
         } catch (coding_exception $e) {
             $this->assertContains('The \'subject\' value must be set in other.', $e->getMessage());

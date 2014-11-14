@@ -31,7 +31,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('grade_report_user_showgrade', get_string('showgrade', 'grades'), get_string('showgrade_help', 'grades'), 1));
     $settings->add(new admin_setting_configcheckbox('grade_report_user_showfeedback', get_string('showfeedback', 'grades'), get_string('showfeedback_help', 'grades'), 1));
     $settings->add(new admin_setting_configcheckbox('grade_report_user_showrange', get_string('showrange', 'grades'), get_string('showrange_help', 'grades'), 1));
-    $settings->add(new admin_setting_configcheckbox('grade_report_user_showweight', get_string('showweight', 'grades'), get_string('showweight_help', 'grades'), 0));
+
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showweight',
+        get_string('showweight', 'grades'), get_string('showweight_help', 'grades'), 1));
+
     $settings->add(new admin_setting_configcheckbox('grade_report_user_showaverage', get_string('showaverage', 'grades'), get_string('showaverage_help', 'grades'), 0));
     $settings->add(new admin_setting_configcheckbox('grade_report_user_showlettergrade', get_string('showlettergrade', 'grades'), get_string('showlettergrade_help', 'grades'), 0));
     $settings->add(new admin_setting_configselect('grade_report_user_rangedecimals', get_string('rangedecimals', 'grades'),
@@ -47,4 +50,7 @@ if ($ADMIN->fulltree) {
                                                       array(GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN => get_string('hide'),
                                                             GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
                                                             GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades'))));
+
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showcontributiontocoursetotal',
+        get_string('showcontributiontocoursetotal', 'grades'), get_string('showcontributiontocoursetotal_help', 'grades'), 1));
 }

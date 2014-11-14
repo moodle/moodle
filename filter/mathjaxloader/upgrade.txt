@@ -1,0 +1,7 @@
+Setting "httpsurl" default changed from:
+
+https://c328740.ssl.cf1.rackcdn.com/mathjax/2.3-latest/MathJax.js
+
+to:
+
+https://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js

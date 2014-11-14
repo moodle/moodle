@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string username name of user.
- *      - int reason failure reason.
+ *      - string username: name of user.
+ *      - int reason: failure reason.
  * }
  *
  * @package    core
@@ -68,7 +68,9 @@ class user_login_failed extends base {
      * @return string
      */
     public function get_description() {
-        return "Login failed for the username '{$this->other['username']}' for the reason with the id '{$this->other['reason']}'.";
+        // Note that username could be any random user input.
+        $username = s($this->other['username']);
+        return "Login failed for the username '{$username}' for the reason with id '{$this->other['reason']}'.";
     }
 
     /**

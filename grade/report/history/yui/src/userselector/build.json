@@ -1,0 +1,10 @@
+{
+    "name": "moodle-gradereport_history-userselector",
+    "builds": {
+        "moodle-gradereport_history-userselector": {
+            "jsfiles": [
+                "userselector.js"
+            ]
+        }
+    }
+}

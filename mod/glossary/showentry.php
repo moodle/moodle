@@ -39,7 +39,7 @@ if ($eid) {
     print_error('invalidelementid');
 }
 
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 
 if ($entries) {
     foreach ($entries as $key => $entry) {

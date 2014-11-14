@@ -131,7 +131,6 @@ class core_test_generator_testcase extends advanced_testcase {
         // Enable advanced functionality.
         $CFG->enablecompletion = 1;
         $CFG->enableavailability = 1;
-        $CFG->enablegroupmembersonly = 1;
         $CFG->enableoutcomes = 1;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/completionlib.php');
@@ -161,10 +160,8 @@ class core_test_generator_testcase extends advanced_testcase {
             'cmidnumber' => 'IDNUM', // Note: alternatively can have key 'idnumber'.
             // Module supports FEATURE_GROUPS;
             'groupmode' => SEPARATEGROUPS, // Note: will be reset to 0 if course groupmodeforce is set.
-            // Module supports FEATURE_GROUPINGS or module supports FEATURE_GROUPMEMBERSONLY:
+            // Module supports FEATURE_GROUPINGS.
             'groupingid' => $grouping->id,
-            // Module supports FEATURE_GROUPMEMBERSONLY:
-            'groupmembersonly' => 1,
         );
 
         // In case completion is enabled on site and for course every module can have manual completion.
@@ -233,7 +230,6 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertEquals($optionsgeneral['cmidnumber'], $cm1->idnumber); // Note difference in key.
         $this->assertEquals($optionsgeneral['groupmode'], $cm1->groupmode);
         $this->assertEquals($optionsgeneral['groupingid'], $cm1->groupingid);
-        $this->assertEquals($optionsgeneral['groupmembersonly'], $cm1->groupmembersonly);
 
         $cm2 = $modinfo->cms[$m2->cmid];
         $this->assertEquals($featurecompletionmanual['completion'], $cm2->completion);
@@ -350,5 +346,35 @@ class core_test_generator_testcase extends advanced_testcase {
         $DB->delete_records('enrol', array('enrol'=>'self', 'courseid'=>$course3->id));
         $result = $this->getDataGenerator()->enrol_user($user2->id, $course3->id, null, 'self');
         $this->assertFalse($result);
+    }
+
+    public function test_create_grade_category() {
+        global $DB, $CFG;
+        require_once $CFG->libdir . '/grade/constants.php';
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Generate category and make sure number of records in DB table increases.
+        // Note we only count grade cats with depth > 1 because the course grade category
+        // is lazily created.
+        $count = $DB->count_records_select('grade_categories', 'depth <> 1');
+        $gradecategory = $generator->create_grade_category(array('courseid'=>$course->id));
+        $this->assertEquals($count+1, $DB->count_records_select('grade_categories', 'depth <> 1'));
+        $this->assertEquals(2, $gradecategory->depth);
+        $this->assertEquals($course->id, $gradecategory->courseid);
+        $this->assertEquals('Grade category 1', $gradecategory->fullname);
+
+        // Generate category and make sure aggregation is set.
+        $gradecategory = $generator->create_grade_category(
+                array('courseid' => $course->id, 'aggregation' => GRADE_AGGREGATE_MEDIAN));
+        $this->assertEquals(GRADE_AGGREGATE_MEDIAN, $gradecategory->aggregation);
+
+        // Generate category and make sure parent is set.
+        $gradecategory2 = $generator->create_grade_category(
+                array('courseid' => $course->id,
+                    'parent' => $gradecategory->id));
+        $this->assertEquals($gradecategory->id, $gradecategory2->parent);
     }
 }

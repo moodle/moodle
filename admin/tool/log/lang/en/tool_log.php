@@ -23,7 +23,7 @@
  */
 
 $string['actlogshdr'] = 'Available log stores';
-$string['configlogplugins'] = 'Please enable all required plugins and arrange then in appropriate order.';
+$string['configlogplugins'] = 'Please enable all required plugins and arrange them in appropriate order.';
 $string['logging'] = 'Logging';
 $string['managelogging'] = 'Manage log stores';
 $string['reportssupported'] = 'Reports supported';

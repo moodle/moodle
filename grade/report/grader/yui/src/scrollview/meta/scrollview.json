@@ -1,8 +1,0 @@
-{
-    "moodle-gradereport_grader-scrollview": {
-        "requires": [
-            "base",
-            "node"
-        ]
-    }
-}

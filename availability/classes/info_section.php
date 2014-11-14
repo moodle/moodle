@@ -65,7 +65,7 @@ class info_section extends info {
     /**
      * Gets the section object. Intended for use by conditions.
      *
-     * @return section_info Section
+     * @return \section_info Section
      */
     public function get_section() {
         return $this->section;

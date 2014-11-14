@@ -1,6 +1,18 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.8 ===
+
+* All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
+  rules for mod_assign in a theme may need to be updated.
+* The following render methods were renamed, if you have overridden any of these you will need to update your renderer:
+  - report_log_renderer::render_report_log_renderable         => report_log_renderer::render_report_log
+  - report_loglive_renderer::render_report_loglive_renderable => report_loglive_renderer::render_report_log
+* On calendar view screen the course selector and new event button have been swapped, custom CSS for .path-calendar might be affected.
+* The functions search_listing() and search_pagination() in the core_course_management_renderer class take the searched string
+  as an extra parameter - see MDL-46902.
+* Themes with non-fixed headers must have the .navbar class in their navbar in order for floating headers in the grader report to work - see MDL-46658.
+
 === 2.7 ===
 
 * CSS related functions in theme class and csslib.php were refactored, addons that are
@@ -21,6 +33,9 @@ Removed themes:
   During the upgrade process the themes will be uninstalled and all their settings will be deleted.
   If you wish to keep your theme and its settings, download it from moodle.org and put it back in
   the theme/ directory BEFORE UPGRADING.
+
+Notes:
+* z-index on #dock has been adjusted from 11000 to 5000 to prevent overlapping issues with fullscreen TinyMCE in Base theme.
 
 === 2.6 ===
 

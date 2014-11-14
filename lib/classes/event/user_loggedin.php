@@ -48,7 +48,7 @@ class user_loggedin extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has logged in.";
+        return "The user with id '$this->userid' has logged in.";
     }
 
     /**

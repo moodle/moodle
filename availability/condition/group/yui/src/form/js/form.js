@@ -48,7 +48,7 @@ M.availability_group.form.getNode = function(json) {
     if (json.creating === undefined) {
         if (json.id !== undefined &&
                 node.one('select[name=id] > option[value=' + json.id + ']')) {
-            node.one('select[name=id]').set('value', json.id);
+            node.one('select[name=id]').set('value', '' + json.id);
         } else if (json.id === undefined) {
             node.one('select[name=id]').set('value', 'any');
         }

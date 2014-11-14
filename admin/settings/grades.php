@@ -68,6 +68,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
         $temp->add(new admin_setting_special_gradelimiting());
 
+        $temp->add(new admin_setting_configcheckbox('grade_report_showmin',
+                                                    get_string('minimum_show', 'grades'),
+                                                    get_string('minimum_show_help', 'grades'), '1'));
+
         $temp->add(new admin_setting_special_gradepointmax());
 
         $temp->add(new admin_setting_special_gradepointdefault());
@@ -92,11 +96,9 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                          GRADE_AGGREGATE_MODE            =>new lang_string('aggregatemode', 'grades'),
                          GRADE_AGGREGATE_SUM             =>new lang_string('aggregatesum', 'grades'));
 
-        $defaultvisible = array(GRADE_AGGREGATE_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN2,
-                                GRADE_AGGREGATE_EXTRACREDIT_MEAN, GRADE_AGGREGATE_MEDIAN, GRADE_AGGREGATE_MIN,
-                                GRADE_AGGREGATE_MAX, GRADE_AGGREGATE_MODE, GRADE_AGGREGATE_SUM);
+        $defaultvisible = array(GRADE_AGGREGATE_SUM);
 
-        $defaults = array('value'=>GRADE_AGGREGATE_WEIGHTED_MEAN2, 'forced'=>false, 'adv'=>false);
+        $defaults = array('value' => GRADE_AGGREGATE_SUM, 'forced' => false, 'adv' => false);
         $temp->add(new admin_setting_gradecat_combo('grade_aggregation', new lang_string('aggregation', 'grades'), new lang_string('aggregation_help', 'grades'), $defaults, $options));
 
         $temp->add(new admin_setting_configmultiselect('grade_aggregations_visible', new lang_string('aggregationsvisible', 'grades'),
@@ -110,8 +112,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
         $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', new lang_string('aggregateoutcomes', 'grades'),
                     new lang_string('aggregateoutcomes_help', 'grades'), $defaults, $options));
-        $temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', new lang_string('aggregatesubcats', 'grades'),
-                    new lang_string('aggregatesubcats_help', 'grades'), $defaults, $options));
 
         $options = array(0 => new lang_string('none'));
         for ($i=1; $i<=20; $i++) {
@@ -125,6 +125,9 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $defaults['forced'] = false;
         $temp->add(new admin_setting_gradecat_combo('grade_droplow', new lang_string('droplow', 'grades'),
                     new lang_string('droplow_help', 'grades'), $defaults, $options));
+
+        $temp->add(new admin_setting_configcheckbox('grade_overridecat', new lang_string('overridecat', 'grades'),
+                   new lang_string('overridecat_help', 'grades'), 1));
     }
     $ADMIN->add('grades', $temp);
 

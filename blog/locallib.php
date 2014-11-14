@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -40,7 +39,7 @@ require_once($CFG->libdir . '/filelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class blog_entry implements renderable {
-    // Public Database fields
+    // Public Database fields.
     public $id;
     public $userid;
     public $subject;
@@ -49,7 +48,7 @@ class blog_entry implements renderable {
     public $attachment;
     public $publishstate;
 
-    // Locked Database fields (Don't touch these)
+    // Locked Database fields (Don't touch these).
     public $courseid = 0;
     public $groupid = 0;
     public $module = 'blog';
@@ -62,14 +61,13 @@ class blog_entry implements renderable {
     public $created;
     public $usermodified;
 
-    // Other class variables
+    // Other class variables.
     public $form;
     public $tags = array();
 
     /** @var StdClass Data needed to render the entry */
     public $renderable;
 
-    // Methods
     /**
      * Constructor. If given an id, will fetch the corresponding record from the DB.
      *
@@ -137,11 +135,12 @@ class blog_entry implements renderable {
             if ($externalblog = $DB->get_record('blog_external', array('id' => $this->content))) {
                 $urlparts = parse_url($externalblog->url);
                 $this->renderable->externalblogtext = get_string('retrievedfrom', 'blog') . get_string('labelsep', 'langconfig');
-                $this->renderable->externalblogtext .= html_writer::link($urlparts['scheme'] . '://'.$urlparts['host'], $externalblog->name);
+                $this->renderable->externalblogtext .= html_writer::link($urlparts['scheme'] . '://' . $urlparts['host'],
+                                                                         $externalblog->name);
             }
         }
 
-        // Retrieve associations
+        // Retrieve associations.
         $this->renderable->unassociatedentry = false;
         if (!empty($CFG->useblogassociations)) {
 
@@ -165,9 +164,11 @@ class blog_entry implements renderable {
 
                     // Course associations.
                     if ($context->contextlevel ==  CONTEXT_COURSE) {
-                        $instancename = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
+                        // TODO: performance!!!!
+                        $instancename = $DB->get_field('course', 'shortname', array('id' => $context->instanceid));
 
-                        $associations[$key]->url = $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
+                        $associations[$key]->url = $assocurl = new moodle_url('/course/view.php',
+                                                                              array('id' => $context->instanceid));
                         $associations[$key]->text = $instancename;
                         $associations[$key]->icon = new pix_icon('i/course', $associations[$key]->text);
                     }
@@ -175,15 +176,17 @@ class blog_entry implements renderable {
                     // Mod associations.
                     if ($context->contextlevel ==  CONTEXT_MODULE) {
 
-                        // Getting the activity type and the activity instance id
+                        // Getting the activity type and the activity instance id.
                         $sql = 'SELECT cm.instance, m.name FROM {course_modules} cm
                                   JOIN {modules} m ON m.id = cm.module
                                  WHERE cm.id = :cmid';
                         $modinfo = $DB->get_record_sql($sql, array('cmid' => $context->instanceid));
-                        $instancename = $DB->get_field($modinfo->name, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
+                        // TODO: performance!!!!
+                        $instancename = $DB->get_field($modinfo->name, 'name', array('id' => $modinfo->instance));
 
                         $associations[$key]->type = get_string('modulename', $modinfo->name);
-                        $associations[$key]->url = new moodle_url('/mod/' . $modinfo->name . '/view.php', array('id' => $context->instanceid));
+                        $associations[$key]->url = new moodle_url('/mod/' . $modinfo->name . '/view.php',
+                                                                  array('id' => $context->instanceid));
                         $associations[$key]->text = $instancename;
                         $associations[$key]->icon = new pix_icon('icon', $associations[$key]->text, $modinfo->name);
                     }
@@ -203,7 +206,7 @@ class blog_entry implements renderable {
      * Gets the entry attachments list
      * @return array List of blog_entry_attachment instances
      */
-    function get_attachments() {
+    public function get_attachments() {
 
         global $CFG;
 
@@ -293,7 +296,13 @@ class blog_entry implements renderable {
         }
 
         $entry = file_postupdate_standard_editor($entry, 'summary', $summaryoptions, $sitecontext, 'blog', 'post', $entry->id);
-        $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $sitecontext, 'blog', 'attachment', $entry->id);
+        $entry = file_postupdate_standard_filemanager($entry,
+                                                      'attachment',
+                                                      $attachmentoptions,
+                                                      $sitecontext,
+                                                      'blog',
+                                                      'attachment',
+                                                      $entry->id);
 
         if (!empty($CFG->useblogassociations)) {
             $entry->add_associations();
@@ -427,7 +436,7 @@ class blog_entry implements renderable {
 
         if ($otags = optional_param('otags', '', PARAM_INT)) {
             foreach ($otags as $tagid) {
-                // TODO : make this use the tag name in the form
+                // TODO : make this use the tag name in the form.
                 if ($tag = tag_get('id', $tagid)) {
                     $tags[] = $tag->name;
                 }
@@ -456,11 +465,11 @@ class blog_entry implements renderable {
         $sitecontext = context_system::instance();
 
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
-            return true; // can edit any blog entry
+            return true; // Can edit any blog entry.
         }
 
         if ($this->userid == $userid && has_capability('moodle/blog:create', $sitecontext)) {
-            return true; // can edit own when having blog:create capability
+            return true; // Can edit own when having blog:create capability.
         }
 
         return false;
@@ -480,23 +489,23 @@ class blog_entry implements renderable {
         $sitecontext = context_system::instance();
 
         if (empty($CFG->enableblogs) || !has_capability('moodle/blog:view', $sitecontext)) {
-            return false; // blog system disabled or user has no blog view capability
+            return false; // Blog system disabled or user has no blog view capability.
         }
 
         if (isloggedin() && $USER->id == $targetuserid) {
-            return true; // can view own entries in any case
+            return true; // Can view own entries in any case.
         }
 
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
-            return true; // can manage all entries
+            return true; // Can manage all entries.
         }
 
-        // coming for 1 entry, make sure it's not a draft
+        // Coming for 1 entry, make sure it's not a draft.
         if ($this->publishstate == 'draft' && !has_capability('moodle/blog:viewdrafts', $sitecontext)) {
-            return false;  // can not view draft of others
+            return false;  // Can not view draft of others.
         }
 
-        // coming for 1 entry, make sure user is logged in, if not a public blog
+        // Coming for 1 entry, make sure user is logged in, if not a public blog.
         if ($this->publishstate != 'public' && !isloggedin()) {
             return false;
         }
@@ -507,7 +516,7 @@ class blog_entry implements renderable {
                 break;
 
             case BLOG_SITE_LEVEL:
-                if (isloggedin()) { // not logged in viewers forbidden
+                if (isloggedin()) { // Not logged in viewers forbidden.
                     return true;
                 }
                 return false;
@@ -533,7 +542,7 @@ class blog_entry implements renderable {
         global $CFG;
         $options = array();
 
-        // everyone gets draft access
+        // Everyone gets draft access.
         if ($CFG->bloglevel >= BLOG_USER_LEVEL) {
             $options['draft'] = get_string('publishtonoone', 'blog');
         }
@@ -577,7 +586,7 @@ class blog_listing {
      * @param array $filters An associative array of filtername => filterid
      */
     public function __construct($filters=array()) {
-        // Unset filters overridden by more specific filters
+        // Unset filters overridden by more specific filters.
         foreach ($filters as $type => $id) {
             if (!empty($type) && !empty($id)) {
                 $this->filters[$type] = blog_filter::get_instance($id, $type);
@@ -615,50 +624,53 @@ class blog_listing {
     public function get_entry_fetch_sql($count=false, $sort='lastmodified DESC', $userid = false) {
         global $DB, $USER, $CFG;
 
-        if(!$userid) {
+        if (!$userid) {
             $userid = $USER->id;
         }
 
         $allnamefields = get_all_user_name_fields(true, 'u');
         // The query used to locate blog entries is complicated.  It will be built from the following components:
-        $requiredfields = "p.*, $allnamefields, u.email";  // the SELECT clause
-        $tables = array('p' => 'post', 'u' => 'user');   // components of the FROM clause (table_id => table_name)
-        $conditions = array('u.deleted = 0', 'p.userid = u.id', '(p.module = \'blog\' OR p.module = \'blog_external\')');  // components of the WHERE clause (conjunction)
+        $requiredfields = "p.*, $allnamefields, u.email";  // The SELECT clause.
+        $tables = array('p' => 'post', 'u' => 'user');   // Components of the FROM clause (table_id => table_name).
+        // Components of the WHERE clause (conjunction).
+        $conditions = array('u.deleted = 0', 'p.userid = u.id', '(p.module = \'blog\' OR p.module = \'blog_external\')');
 
-        // build up a clause for permission constraints
+        // Build up a clause for permission constraints.
 
         $params = array();
 
-        // fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs
-        // admins can see all blogs regardless of publish states, as described on the help page
+        // Fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs.
+        // Admins can see all blogs regardless of publish states, as described on the help page.
         if (has_capability('moodle/user:readuserblogs', context_system::instance())) {
-            // don't add permission constraints
+            // Don't add permission constraints.
 
-        } else if(!empty($this->filters['user']) && has_capability('moodle/user:readuserblogs',
-                context_user::instance((empty($this->filters['user']->id) ? 0 : $this->filters['user']->id)))) {
-            // don't add permission constraints
+        } else if (!empty($this->filters['user'])
+                   && has_capability('moodle/user:readuserblogs',
+                                     context_user::instance((empty($this->filters['user']->id) ? 0 : $this->filters['user']->id)))) {
+            // Don't add permission constraints.
 
         } else {
             if (isloggedin() and !isguestuser()) {
-                $assocexists = $DB->record_exists('blog_association', array());  //dont check association records if there aren't any
+                // Dont check association records if there aren't any.
+                $assocexists = $DB->record_exists('blog_association', array());
 
-                //begin permission sql clause
+                // Begin permission sql clause.
                 $permissionsql =  '(p.userid = ? ';
                 $params[] = $userid;
 
-                if ($CFG->bloglevel >= BLOG_SITE_LEVEL) { // add permission to view site-level entries
+                if ($CFG->bloglevel >= BLOG_SITE_LEVEL) { // Add permission to view site-level entries.
                     $permissionsql .= " OR p.publishstate = 'site' ";
                 }
 
-                if ($CFG->bloglevel >= BLOG_GLOBAL_LEVEL) { // add permission to view global entries
+                if ($CFG->bloglevel >= BLOG_GLOBAL_LEVEL) { // Add permission to view global entries.
                     $permissionsql .= " OR p.publishstate = 'public' ";
                 }
 
-                $permissionsql .= ') ';   //close permissions sql clause
-            } else {  // default is access to public entries
+                $permissionsql .= ') ';   // Close permissions sql clause.
+            } else {  // Default is access to public entries.
                 $permissionsql = "p.publishstate = 'public'";
             }
-            $conditions[] = $permissionsql;  //add permission constraints
+            $conditions[] = $permissionsql;  // Add permission constraints.
         }
 
         foreach ($this->filters as $type => $blogfilter) {
@@ -667,7 +679,7 @@ class blog_listing {
             $tables = array_merge($tables, $blogfilter->tables);
         }
 
-        $tablessql = '';  // build up the FROM clause
+        $tablessql = '';  // Build up the FROM clause.
         foreach ($tables as $tablename => $table) {
             $tablessql .= ($tablessql ? ', ' : '').'{'.$table.'} '.$tablename;
         }
@@ -688,7 +700,7 @@ class blog_listing {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE;
         $sitecontext = context_system::instance();
 
-        // Blog renderer
+        // Blog renderer.
         $output = $PAGE->get_renderer('blog');
 
         $page  = optional_param('blogpage', 0, PARAM_INT);
@@ -711,7 +723,7 @@ class blog_listing {
         echo $OUTPUT->render($pagingbar);
 
         if (has_capability('moodle/blog:create', $sitecontext)) {
-            //the user's blog is enabled and they are viewing their own blog
+            // The user's blog is enabled and they are viewing their own blog.
             $userid = optional_param('userid', null, PARAM_INT);
 
             if (empty($userid) || (!empty($userid) && $userid == $USER->id)) {
@@ -744,7 +756,7 @@ class blog_listing {
             foreach ($entries as $entry) {
                 $blogentry = new blog_entry(null, $entry);
 
-                // Get the required blog entry data to render it
+                // Get the required blog entry data to render it.
                 $blogentry->prepare_render();
                 echo $output->render($blogentry);
 
@@ -762,7 +774,7 @@ class blog_listing {
         }
     }
 
-    /// Find the base url from $_GET variables, for print_paging_bar
+    // Find the base url from $_GET variables, for print_paging_bar.
     public function get_baseurl() {
         $getcopy  = $_GET;
 
@@ -897,11 +909,13 @@ class blog_filter_context extends blog_filter {
             $this->type = $type;
         }
 
-        $this->availabletypes = array('site' => get_string('site'), 'course' => get_string('course'), 'module' => get_string('activity'));
+        $this->availabletypes = array('site' => get_string('site'),
+                                      'course' => get_string('course'),
+                                      'module' => get_string('activity'));
 
         switch ($this->type) {
             case 'course': // Careful of site course!
-                // Ignore course filter if blog associations are not enabled
+                // Ignore course filter if blog associations are not enabled.
                 if ($this->id != $SITE->id && !empty($CFG->useblogassociations)) {
                     $this->overrides = array('site');
                     $context = context_course::instance($this->id);
@@ -910,11 +924,11 @@ class blog_filter_context extends blog_filter {
                     $this->conditions[] = 'ba.contextid = '.$context->id;
                     break;
                 } else {
-                    // We are dealing with the site course, do not break from the current case
+                    // We are dealing with the site course, do not break from the current case.
                 }
 
             case 'site':
-                // No special constraints
+                // No special constraints.
                 break;
             case 'module':
                 if (!empty($CFG->useblogassociations)) {
@@ -961,7 +975,7 @@ class blog_filter_user extends blog_filter {
             $this->params = array($this->id);
             $this->overrides = array('group');
 
-        } elseif ($this->type == 'group') {
+        } else if ($this->type == 'group') {
             $this->overrides = array('course', 'site');
 
             $this->tables['gm'] = 'groups_members';
@@ -969,7 +983,7 @@ class blog_filter_user extends blog_filter {
             $this->conditions[] = 'gm.groupid = ?';
             $this->params[]     = $this->id;
 
-            if (!empty($CFG->useblogassociations)) {  // only show blog entries associated with this course
+            if (!empty($CFG->useblogassociations)) {  // Only show blog entries associated with this course.
                 $coursecontext     = context_course::instance($DB->get_field('groups', 'courseid', array('id' => $this->id)));
                 $this->tables['ba'] = 'blog_association';
                 $this->conditions[] = 'gm.groupid = ?';
@@ -1068,7 +1082,8 @@ class blog_entry_attachment implements renderable {
 
         $this->file = $file;
         $this->filename = $file->get_filename();
-        $this->url = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$entryid.'/'.$this->filename);
+        $this->url = file_encode_url($CFG->wwwroot . '/pluginfile.php',
+                                     '/' . SYSCONTEXTID . '/blog/attachment/' . $entryid . '/' . $this->filename);
     }
 
 }

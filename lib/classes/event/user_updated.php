@@ -60,7 +60,7 @@ class user_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'User profile updated for userid '.$this->objectid;
+        return "The user with id '$this->userid' updated the profile for the user with id '$this->objectid'.";
     }
 
     /**
@@ -97,5 +97,40 @@ class user_updated extends base {
      */
     protected function get_legacy_logdata() {
         return array(SITEID, 'user', 'update', 'view.php?id='.$this->objectid, '');
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            debugging('The \'relateduserid\' value must be specified in the event.', DEBUG_DEVELOPER);
+            $this->relateduserid = $this->objectid;
+        }
+    }
+
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.6.4, 2.7.1
+     *
+     * @param int $userid id of user
+     * @return user_updated
+     */
+    public static function create_from_userid($userid) {
+        $data = array(
+            'objectid' => $userid,
+            'relateduserid' => $userid,
+            'context' => \context_user::instance($userid)
+        );
+
+        // Create user_updated event.
+        $event = self::create($data);
+        return $event;
     }
 }

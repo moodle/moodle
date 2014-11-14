@@ -48,8 +48,8 @@ class condition extends \core_availability\condition {
     /**
      * Constructor.
      *
-     * @param stdClass $structure Data structure from JSON decode
-     * @throws coding_exception If invalid data structure.
+     * @param \stdClass $structure Data structure from JSON decode
+     * @throws \coding_exception If invalid data structure.
      */
     public function __construct($structure) {
         // Get cmid.
@@ -72,6 +72,21 @@ class condition extends \core_availability\condition {
     public function save() {
         return (object)array('type' => 'completion',
                 'cm' => $this->cmid, 'e' => $this->expectedcompletion);
+    }
+
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param int $cmid Course-module id of other activity
+     * @param int $expectedcompletion Expected completion value (COMPLETION_xx)
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($cmid, $expectedcompletion) {
+        return (object)array('type' => 'completion', 'cm' => (int)$cmid,
+                'e' => (int)$expectedcompletion);
     }
 
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
@@ -212,7 +227,7 @@ class condition extends \core_availability\condition {
      * Used in course/lib.php because we need to disable the completion JS if
      * a completion value affects a conditional activity.
      *
-     * @param stdClass $course Moodle course object
+     * @param \stdClass $course Moodle course object
      * @param int $cmid Course-module id
      * @return bool True if this is used in a condition, false otherwise
      */

@@ -477,9 +477,12 @@ class completion_info {
     /**
      * Get incomplete course completion criteria
      *
+     * @deprecated since Moodle 2.8 MDL-46290.
+     * @todo MDL-46294 This will be deleted in Moodle 3.0.
      * @return array
      */
     public function get_incomplete_criteria() {
+        debugging('completion_info->get_incomplete_criteria() is deprecated.', DEBUG_DEVELOPER);
         $incomplete = array();
 
         foreach ($this->get_criteria() as $criteria) {

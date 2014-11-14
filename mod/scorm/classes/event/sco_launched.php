@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event properties.
  *
  *      - string loadedcontent: A reference to the content loaded.
- *      - int instanceid: Instance id of the scorm activity.
+ *      - int instanceid: (optional) Instance id of the scorm activity.
  * }
  *
  * @package    mod_scorm
@@ -57,8 +57,8 @@ class sco_launched extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' launched the sco with the id '$this->objectid' for the scorm with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' launched the sco with id '$this->objectid' for the scorm with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

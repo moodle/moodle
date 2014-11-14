@@ -24,19 +24,24 @@
  */
 
 define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(__FILE__) . "/../../config.php");
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 require_once($CFG->dirroot.'/mod/lti/servicelib.php');
 
-// TODO: Switch to core oauthlib once implemented - MDL-30149
+// TODO: Switch to core oauthlib once implemented - MDL-30149.
 use moodle\mod\lti as lti;
 
 $rawbody = file_get_contents("php://input");
 
+if (lti_should_log_request($rawbody)) {
+    lti_log_request($rawbody);
+}
+
 foreach (lti\OAuthUtil::get_headers() as $name => $value) {
     if ($name === 'Authorization') {
-        // TODO: Switch to core oauthlib once implemented - MDL-30149
+        // TODO: Switch to core oauthlib once implemented - MDL-30149.
         $oauthparams = lti\OAuthUtil::split_header($value);
 
         $consumerkey = $oauthparams['oauth_consumer_key'];
@@ -54,7 +59,14 @@ if ($sharedsecret === false) {
     throw new Exception('Message signature not valid');
 }
 
-$xml = new SimpleXMLElement($rawbody);
+// TODO MDL-46023 Replace this code with a call to the new library.
+$origentity = libxml_disable_entity_loader(true);
+$xml = simplexml_load_string($rawbody);
+if (!$xml) {
+    libxml_disable_entity_loader($origentity);
+    throw new Exception('Invalid XML content');
+}
+libxml_disable_entity_loader($origentity);
 
 $body = $xml->imsx_POXBody;
 foreach ($body->children() as $child) {
@@ -78,7 +90,12 @@ switch ($messagetype) {
 
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
 
+        if (!lti_accepts_grades($ltiinstance)) {
+            throw new Exception('Tool does not accept grades');
+        }
+
         lti_verify_sourcedid($ltiinstance, $parsed);
+        lti_set_session_user($parsed->userid);
 
         $gradestatus = lti_update_grade($ltiinstance, $parsed->userid, $parsed->launchid, $parsed->gradeval);
 
@@ -98,7 +115,11 @@ switch ($messagetype) {
 
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
 
-        //Getting the grade requires the context is set
+        if (!lti_accepts_grades($ltiinstance)) {
+            throw new Exception('Tool does not accept grades');
+        }
+
+        // Getting the grade requires the context is set.
         $context = context_course::instance($ltiinstance->course);
         $PAGE->set_context($context);
 
@@ -107,7 +128,7 @@ switch ($messagetype) {
         $grade = lti_read_grade($ltiinstance, $parsed->userid);
 
         $responsexml = lti_get_response_xml(
-                'success',  // Empty grade is also 'success'
+                'success',  // Empty grade is also 'success'.
                 'Result read',
                 $parsed->messageid,
                 'readResultResponse'
@@ -127,7 +148,12 @@ switch ($messagetype) {
 
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
 
+        if (!lti_accepts_grades($ltiinstance)) {
+            throw new Exception('Tool does not accept grades');
+        }
+
         lti_verify_sourcedid($ltiinstance, $parsed);
+        lti_set_session_user($parsed->userid);
 
         $gradestatus = lti_delete_grade($ltiinstance, $parsed->userid);
 
@@ -143,40 +169,41 @@ switch ($messagetype) {
         break;
 
     default:
-        //Fire an event if we get a web service request which we don't support directly.
-        //This will allow others to extend the LTI services, which I expect to be a common
-        //use case, at least until the spec matures.
+        // Fire an event if we get a web service request which we don't support directly.
+        // This will allow others to extend the LTI services, which I expect to be a common
+        // use case, at least until the spec matures.
         $data = new stdClass();
         $data->body = $rawbody;
         $data->xml = $xml;
+        $data->messageid = lti_parse_message_id($xml);
         $data->messagetype = $messagetype;
         $data->consumerkey = $consumerkey;
         $data->sharedsecret = $sharedsecret;
         $eventdata = array();
         $eventdata['other'] = array();
-        $eventdata['other']['messageid'] = lti_parse_message_id($xml);
+        $eventdata['other']['messageid'] = $data->messageid;
         $eventdata['other']['messagetype'] = $messagetype;
         $eventdata['other']['consumerkey'] = $consumerkey;
 
         // Before firing the event, allow subplugins a chance to handle.
-        if (lti_extend_lti_services((object) $eventdata['other'])) {
+        if (lti_extend_lti_services($data)) {
             break;
         }
 
-        //If an event handler handles the web service, it should set this global to true
-        //So this code knows whether to send an "operation not supported" or not.
-        global $lti_web_service_handled;
-        $lti_web_service_handled = false;
+        // If an event handler handles the web service, it should set this global to true
+        // So this code knows whether to send an "operation not supported" or not.
+        global $ltiwebservicehandled;
+        $ltiwebservicehandled = false;
 
         try {
             $event = \mod_lti\event\unknown_service_api_called::create($eventdata);
             $event->set_message_data($data);
             $event->trigger();
         } catch (Exception $e) {
-            $lti_web_service_handled = false;
+            $ltiwebservicehandled = false;
         }
 
-        if (!$lti_web_service_handled) {
+        if (!$ltiwebservicehandled) {
             $responsexml = lti_get_response_xml(
                 'unsupported',
                 'unsupported',
@@ -189,10 +216,3 @@ switch ($messagetype) {
 
         break;
 }
-
-
-//echo print_r(apache_request_headers(), true);
-
-//echo '<br />';
-
-//echo file_get_contents("php://input");

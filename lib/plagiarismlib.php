@@ -18,7 +18,7 @@
 /**
  * plagiarismlib.php - Contains core Plagiarism related functions.
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    moodlecore
  * @subpackage plagiarism
  * @copyright  2010 Dan Marsden http://danmarsden.com

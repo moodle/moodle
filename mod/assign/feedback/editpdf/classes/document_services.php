@@ -42,6 +42,8 @@ class document_services {
     const COMBINED_PDF_FILEAREA = 'combined';
     /** File area for page images */
     const PAGE_IMAGE_FILEAREA = 'pages';
+    /** File area for readonly page images */
+    const PAGE_IMAGE_READONLY_FILEAREA = 'readonlypages';
     /** Filename for combined pdf */
     const COMBINED_PDF_FILENAME = 'combined.pdf';
 
@@ -268,9 +270,10 @@ class document_services {
      * @param int|\assign $assignment
      * @param int $userid
      * @param int $attemptnumber (-1 means latest attempt)
+     * @param bool $readonly When true we get the number of pages for the readonly version.
      * @return int number of pages
      */
-    public static function page_number_for_attempt($assignment, $userid, $attemptnumber) {
+    public static function page_number_for_attempt($assignment, $userid, $attemptnumber, $readonly = false) {
         global $CFG;
 
         require_once($CFG->libdir . '/pdflib.php');
@@ -279,6 +282,19 @@ class document_services {
 
         if (!$assignment->can_view_submission($userid)) {
             \print_error('nopermission');
+        }
+
+        // When in readonly we can return the number of images in the DB because they should already exist,
+        // if for some reason they do not, then we proceed as for the normal version.
+        if ($readonly) {
+            $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
+            $fs = get_file_storage();
+            $files = $fs->get_directory_files($assignment->get_context()->id, 'assignfeedback_editpdf',
+                self::PAGE_IMAGE_READONLY_FILEAREA, $grade->id, '/');
+            $pagecount = count($files);
+            if ($pagecount > 0) {
+                return $pagecount;
+            }
         }
 
         // Get a combined pdf file from all submitted pdf files.
@@ -363,12 +379,25 @@ class document_services {
 
     /**
      * This function returns a list of the page images from a pdf.
+     *
+     * The readonly version is different than the normal one. The readonly version contains a copy
+     * of the pages in the state they were when the PDF was annotated, by doing so we prevent the
+     * the pages that are displayed to change as soon as the submission changes.
+     *
+     * Though there is an edge case, if the PDF was annotated before MDL-45580, then it is possible
+     * that we do not find any readonly version of the pages. In that case, we will get the normal
+     * pages and copy them to the readonly area. This ensures that the pages will remain in that
+     * state until the submission is updated. When the normal files do not exist, we throw an exception
+     * because the readonly pages should only ever be displayed after a teacher has annotated the PDF,
+     * they would not exist until they do.
+     *
      * @param int|\assign $assignment
      * @param int $userid
      * @param int $attemptnumber (-1 means latest attempt)
+     * @param bool $readonly If true, then we are requesting the readonly version.
      * @return array(stored_file)
      */
-    public static function get_page_images_for_attempt($assignment, $userid, $attemptnumber) {
+    public static function get_page_images_for_attempt($assignment, $userid, $attemptnumber, $readonly = false) {
 
         $assignment = self::get_assignment_from_param($assignment);
 
@@ -385,26 +414,39 @@ class document_services {
 
         $contextid = $assignment->get_context()->id;
         $component = 'assignfeedback_editpdf';
-        $filearea = self::PAGE_IMAGE_FILEAREA;
         $itemid = $grade->id;
         $filepath = '/';
+        $filearea = self::PAGE_IMAGE_FILEAREA;
 
         $fs = \get_file_storage();
 
+        // If we are after the readonly pages...
+        $copytoreadonly = false;
+        if ($readonly) {
+            $filearea = self::PAGE_IMAGE_READONLY_FILEAREA;
+            if ($fs->is_area_empty($contextid, $component, $filearea, $itemid)) {
+                // We have a problem here, we were supposed to find the files...
+                // let's fallback on the other area, and copy the files to the readonly area.
+                $copytoreadonly = true;
+                $filearea = self::PAGE_IMAGE_FILEAREA;
+            }
+        }
+
         $files = $fs->get_directory_files($contextid, $component, $filearea, $itemid, $filepath);
 
+        $pages = array();
         if (!empty($files)) {
             $first = reset($files);
-            if ($first->get_timemodified() < $submission->timemodified) {
-
+            if (!$readonly && $first->get_timemodified() < $submission->timemodified) {
+                // Image files are stale, we need to regenerate them, except in readonly mode.
+                // We also need to remove the draft annotations and comments associated with this attempt.
                 $fs->delete_area_files($contextid, $component, $filearea, $itemid);
-                // Image files are stale - regenerate them.
+                page_editor::delete_draft_content($itemid);
                 $files = array();
             } else {
 
                 // Need to reorder the files following their name.
                 // because get_directory_files() return a different order than generate_page_images_for_attempt().
-                $orderedfiles = array();
                 foreach($files as $file) {
                     // Extract the page number from the file name image_pageXXXX.png.
                     preg_match('/page([\d]+)\./', $file->get_filename(), $matches);
@@ -415,14 +457,26 @@ class document_services {
                     $pagenumber = (int)$matches[1];
 
                     // Save the page in the ordered array.
-                    $orderedfiles[$pagenumber] = $file;
+                    $pages[$pagenumber] = $file;
                 }
-                ksort($orderedfiles);
+                ksort($pages);
 
-                return $orderedfiles;
+                if ($copytoreadonly) {
+                    self::copy_pages_to_readonly_area($assignment, $grade);
+                }
             }
         }
-        return self::generate_page_images_for_attempt($assignment, $userid, $attemptnumber);
+
+        if (empty($pages)) {
+            if ($readonly) {
+                // This should never happen, there should be a version of the pages available
+                // whenever we are requesting the readonly version.
+                throw new \moodle_exception('Could not find readonly pages for grade ' . $grade->id);
+            }
+            $pages = self::generate_page_images_for_attempt($assignment, $userid, $attemptnumber);
+        }
+
+        return $pages;
     }
 
     /**
@@ -465,6 +519,11 @@ class document_services {
 
     /**
      * This function takes the combined pdf and embeds all the comments and annotations.
+     *
+     * This also moves the annotations and comments from drafts to not drafts. And it will
+     * copy all the images stored to the readonly area, so that they can be viewed online, and
+     * not be overwritten when a new submission is sent.
+     *
      * @param int|\assign $assignment
      * @param int $userid
      * @param int $attemptnumber (-1 means latest attempt)
@@ -567,7 +626,39 @@ class document_services {
         @unlink($combined);
         @rmdir($tmpdir);
 
+        self::copy_pages_to_readonly_area($assignment, $grade);
+
         return $file;
+    }
+
+    /**
+     * Copy the pages image to the readonly area.
+     *
+     * @param int|\assign $assignment The assignment.
+     * @param \stdClass $grade The grade record.
+     * @return void
+     */
+    public static function copy_pages_to_readonly_area($assignment, $grade) {
+        $fs = get_file_storage();
+        $assignment = self::get_assignment_from_param($assignment);
+        $contextid = $assignment->get_context()->id;
+        $component = 'assignfeedback_editpdf';
+        $itemid = $grade->id;
+
+        // Get all the pages.
+        $originalfiles = $fs->get_area_files($contextid, $component, self::PAGE_IMAGE_FILEAREA, $itemid);
+        if (empty($originalfiles)) {
+            // Nothing to do here...
+            return;
+        }
+
+        // Delete the old readonly files.
+        $fs->delete_area_files($contextid, $component, self::PAGE_IMAGE_READONLY_FILEAREA, $itemid);
+
+        // Do the copying.
+        foreach ($originalfiles as $originalfile) {
+            $fs->create_file_from_storedfile(array('filearea' => self::PAGE_IMAGE_READONLY_FILEAREA), $originalfile);
+        }
     }
 
     /**

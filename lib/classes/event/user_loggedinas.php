@@ -69,7 +69,7 @@ class user_loggedinas extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has logged in as the user with the id '$this->relateduserid'.";
+        return "The user with id '$this->userid' has logged in as the user with id '$this->relateduserid'.";
     }
 
     /**
@@ -89,5 +89,27 @@ class user_loggedinas extends base {
      */
     public function get_url() {
         return new \moodle_url('/user/view.php', array('id' => $this->objectid));
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception when validation does not pass.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['originalusername'])) {
+            throw new \coding_exception('The \'originalusername\' value must be set in other.');
+        }
+
+        if (!isset($this->other['loggedinasusername'])) {
+            throw new \coding_exception('The \'loggedinasusername\' value must be set in other.');
+        }
     }
 }

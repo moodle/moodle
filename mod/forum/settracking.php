@@ -29,11 +29,7 @@ require_once("lib.php");
 $id         = required_param('id',PARAM_INT);                           // The forum to subscribe or unsubscribe to
 $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
-$url = new moodle_url('/mod/forum/settracking.php', array('id'=>$id));
-if ($returnpage !== 'index.php') {
-    $url->param('returnpage', $returnpage);
-}
-$PAGE->set_url($url);
+require_sesskey();
 
 if (! $forum = $DB->get_record("forum", array("id" => $id))) {
     print_error('invalidforumid', 'forum');
@@ -46,8 +42,7 @@ if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
 if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
     print_error('invalidcoursemodule');
 }
-
-require_course_login($course, false, $cm);
+require_login($course, false, $cm);
 
 $returnto = forum_go_back_to($returnpage.'?id='.$course->id.'&f='.$forum->id);
 

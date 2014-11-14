@@ -41,7 +41,8 @@ class webservice_service_user_added extends base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->relateduserid has been added to the web service service $this->objectid.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to the web service " .
+            "with id '$this->objectid'.";
     }
 
     /**
@@ -88,13 +89,13 @@ class webservice_service_user_added extends base {
     /**
      * Custom validation.
      *
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('The relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
-
 }

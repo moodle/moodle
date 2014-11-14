@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains all the restore steps that will be used
@@ -56,9 +56,14 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
     protected function define_structure() {
 
         $paths = array();
-        $paths[] = new restore_path_element('lti', '/activity/lti');
+        $lti = new restore_path_element('lti', '/activity/lti');
+        $paths[] = $lti;
 
-        // Return the paths wrapped into standard activity structure
+        // Add support for subplugin structures.
+        $this->add_subplugin_structure('ltisource', $lti);
+        $this->add_subplugin_structure('ltiservice', $lti);
+
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
@@ -70,6 +75,9 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         $data->course = $this->get_courseid();
         $data->servicesalt = uniqid('', true);
 
+         // Grade used to be a float (whole numbers only), restore as int.
+        $data->grade = (int) $data->grade;
+
         // Clean any course or site typeid. All modules
         // are restored as self-contained. Note this is
         // an interim solution until the issue below is implemented.
@@ -78,12 +86,12 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         $newitemid = $DB->insert_record('lti', $data);
 
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
     protected function after_execute() {
-        // Add lti related files, no need to match by itemname (just internally handled context)
+        // Add lti related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_lti', 'intro', null);
     }
 }

@@ -63,7 +63,7 @@ abstract class comments_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the comments for '$this->component' with instance id '$this->objectid'.";
+        return "The user with id '$this->userid' viewed the comments for '$this->component' with instance id '$this->objectid'.";
     }
 
     /**

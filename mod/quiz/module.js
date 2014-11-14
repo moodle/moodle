@@ -219,10 +219,10 @@ M.mod_quiz.secure_window = {
             window.location = 'about:blank';
         }
         Y.delegate('contextmenu', M.mod_quiz.secure_window.prevent, document, '*');
-        Y.delegate('mousedown',   M.mod_quiz.secure_window.prevent_mouse, document, '*');
-        Y.delegate('mouseup',     M.mod_quiz.secure_window.prevent_mouse, document, '*');
+        Y.delegate('mousedown',   M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
+        Y.delegate('mouseup',     M.mod_quiz.secure_window.prevent_mouse, 'body', '*');
         Y.delegate('dragstart',   M.mod_quiz.secure_window.prevent, document, '*');
-        Y.delegate('selectstart', M.mod_quiz.secure_window.prevent, document, '*');
+        Y.delegate('selectstart', M.mod_quiz.secure_window.prevent_selection, document, '*');
         Y.delegate('cut',         M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('copy',        M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('paste',       M.mod_quiz.secure_window.prevent, document, '*');
@@ -246,6 +246,21 @@ M.mod_quiz.secure_window = {
         setTimeout(M.mod_quiz.secure_window.clear_status, 10);
     },
 
+    is_content_editable: function(n) {
+        if (n.test('[contenteditable=true]')) {
+            return true;
+        }
+        n = n.get('parentNode');
+        if (n === null) {
+            return false;
+        }
+        return M.mod_quiz.secure_window.is_content_editable(n);
+    },
+
+    prevent_selection: function(e) {
+        return false;
+    },
+
     prevent: function(e) {
         alert(M.str.quiz.functiondisabledbysecuremode);
         e.halt();
@@ -254,6 +269,10 @@ M.mod_quiz.secure_window = {
     prevent_mouse: function(e) {
         if (e.button == 1 && /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/i.test(e.target.get('tagName'))) {
             // Left click on a button or similar. No worries.
+            return;
+        }
+        if (e.button == 1 && M.mod_quiz.secure_window.is_content_editable(e.target)) {
+            // Left click in Atto or similar.
             return;
         }
         e.halt();

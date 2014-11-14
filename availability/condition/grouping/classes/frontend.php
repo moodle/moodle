@@ -74,14 +74,6 @@ class frontend extends \core_availability\frontend {
             \section_info $section = null) {
         global $CFG, $DB;
 
-        // If groupmembersonly is turned on, then you can only add group
-        // restrictions on sections (which don't use groupmembersonly) and
-        // not on modules. This is to avoid confusion - otherwise
-        // there would be two ways to add restrictions based on groups.
-        if (is_null($section) && $CFG->enablegroupmembersonly) {
-            return false;
-        }
-
         // Check if groupings are in use for the course. (Unlike the 'group'
         // condition there is no case where you might want to set up the
         // condition before you set a grouping - there is no 'any grouping'

@@ -30,8 +30,7 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 #filesskin .file-picker.fp-generallayout {width:859px;background:#FFFFFF;border-radius:10px;border:1px solid #CCCCCC;position:relative;}
 .file-picker .fp-repo-area {width:180px;overflow:auto;float:left;height:525px;border-right:1px solid #BBBBBB}
 .dir-rtl .file-picker .fp-repo-area {border-left:1px solid #BBBBBB;border-right:none;float:right;}
-.file-picker .fp-repo-items {float:left;width:693px;}
-.dir-rtl .file-picker .fp-repo-items {float:right;}
+.file-picker .fp-repo-items {overflow: hidden;}
 .file-picker .fp-navbar {background:#F2F2F2;min-height:40px;border-bottom:1px solid #BBBBBB;}
 .file-picker .fp-content {background:#FFFFFF;clear:both;overflow:auto;height:452px;}
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {width:100%;}
@@ -48,6 +47,7 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .dir-rtl #filemenu .yuimenuitemlabel {text-align:right;}
 .dir-rtl .filepicker .yui-layout-unit-left {left:500px;}
 .dir-rtl .filepicker .yui-layout-unit-center {left:0px;}
+.dir-rtl .filepicker.moodle-dialogue-fullscreen .file-picker .fp-repo-items { float:none; }
 
 /**
  * File Manager
@@ -475,4 +475,5 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
     .fp-formset, .fp-forminset {margin:0 10px;width:auto;}
     .fp-formset label, .fp-forminset label {float:none;width:210px;text-align:left;margin:5px 0;}
     .dir-rtl .fp-formset label, .dir-rtl .fp-forminset label {text-align:right;float:none;}
+    .dir-rtl .filepicker.moodle-dialogue-fullscreen .file-picker .fp-repo-items { float:right; }
 }

@@ -91,7 +91,7 @@ class submission_confirmation_form_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the submission confirmation form for the assignment with the " .
+        return "The user with id '$this->userid' viewed the submission confirmation form for the assignment with " .
             "course module id '$this->contextinstanceid'.";
     }
 
@@ -120,7 +120,7 @@ class submission_confirmation_form_viewed extends base {
         parent::validate_data();
 
         if (!isset($this->other['assignid'])) {
-            throw new \coding_exception('The \'assignid\' must be set in other.');
+            throw new \coding_exception('The \'assignid\' value must be set in other.');
         }
     }
 }

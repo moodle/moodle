@@ -68,8 +68,8 @@ class all_submissions_downloaded extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has downloaded all the submissions for the assignment " .
-            "with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has downloaded all the submissions for the assignment " .
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**

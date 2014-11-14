@@ -52,7 +52,7 @@ class core_files_external extends external_api {
                 'filearea'     => new external_value(PARAM_TEXT, 'file area'),
                 'itemid'       => new external_value(PARAM_INT, 'associated id'),
                 'filepath'     => new external_value(PARAM_PATH, 'file path'),
-                'filename'     => new external_value(PARAM_FILE, 'file name'),
+                'filename'     => new external_value(PARAM_TEXT, 'file name'),
                 'modified'     => new external_value(PARAM_INT, 'timestamp to return files changed after this time.', VALUE_DEFAULT, null),
                 'contextlevel' => new external_value(PARAM_ALPHA, 'The context level for the file location.', VALUE_DEFAULT, null),
                 'instanceid'   => new external_value(PARAM_INT, 'The instance id for where the file is located.', VALUE_DEFAULT, null)
@@ -111,9 +111,6 @@ class core_files_external extends external_api {
         }
         if (empty($fileinfo['filearea'])) {
             $fileinfo['filearea'] = null;
-        }
-        if (empty($fileinfo['itemid'])) {
-            $fileinfo['itemid'] = null;
         }
         if (empty($fileinfo['filename'])) {
             $fileinfo['filename'] = null;
@@ -209,7 +206,7 @@ class core_files_external extends external_api {
                             'filearea'  => new external_value(PARAM_AREA, ''),
                             'itemid'   => new external_value(PARAM_INT, ''),
                             'filepath' => new external_value(PARAM_TEXT, ''),
-                            'filename' => new external_value(PARAM_FILE, ''),
+                            'filename' => new external_value(PARAM_TEXT, ''),
                             'isdir'    => new external_value(PARAM_BOOL, ''),
                             'url'      => new external_value(PARAM_TEXT, ''),
                             'timemodified' => new external_value(PARAM_INT, ''),

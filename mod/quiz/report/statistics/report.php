@@ -387,13 +387,19 @@ class quiz_statistics_report extends quiz_default_report {
 
         } else {
             // Work out an appropriate title.
-            $questiontabletitle = '"' . $question->name . '"';
-            if (!empty($question->number)) {
-                $questiontabletitle = '(' . $question->number . ') ' . $questiontabletitle;
+            $a = clone($question);
+            $a->variant = $variantno;
+
+            if (!empty($question->number) && !is_null($variantno)) {
+                $questiontabletitle = get_string('analysisnovariant', 'quiz_statistics', $a);
+            } else if (!empty($question->number)) {
+                $questiontabletitle = get_string('analysisno', 'quiz_statistics', $a);
+            } else if (!is_null($variantno)) {
+                $questiontabletitle = get_string('analysisvariant', 'quiz_statistics', $a);
+            } else {
+                $questiontabletitle = get_string('analysisnameonly', 'quiz_statistics', $a);
             }
-            if (!is_null($variantno)) {
-                $questiontabletitle .= ' '.get_string('variantno', 'quiz_statistics', $variantno);
-            }
+
             if ($this->table->is_downloading() == 'xhtml') {
                 $questiontabletitle = get_string('analysisofresponsesfor', 'quiz_statistics', $questiontabletitle);
             }

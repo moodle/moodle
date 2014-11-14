@@ -191,7 +191,7 @@ class qtype_numerical extends question_type {
                 $answer->answer = $this->apply_unit($answerdata, $units,
                         !empty($question->unitsleft));
                 if ($answer->answer === false) {
-                    $result->notice = get_string('invalidnumericanswer', 'quiz');
+                    $result->notice = get_string('invalidnumericanswer', 'qtype_numerical');
                 }
             }
             $answer->fraction = $question->fraction[$key];
@@ -212,7 +212,7 @@ class qtype_numerical extends question_type {
                 $options->tolerance = $this->apply_unit($question->tolerance[$key],
                         $units, !empty($question->unitsleft));
                 if ($options->tolerance === false) {
-                    $result->notice = get_string('invalidnumerictolerance', 'quiz');
+                    $result->notice = get_string('invalidnumerictolerance', 'qtype_numerical');
                 }
             }
             if (isset($options->id)) {
@@ -433,7 +433,7 @@ class qtype_numerical extends question_type {
                 $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
                         $answer->feedback, $answer->feedbackformat, $answer->tolerance);
                 list($min, $max) = $ans->get_tolerance_interval();
-                $responseclass .= " ($min..$max)";
+                $responseclass .= " ({$min}..{$max})";
             }
 
             $responses[$aid] = new question_possible_response($responseclass,
@@ -569,12 +569,12 @@ class qtype_numerical_answer_processor {
         $decimalsre = $decsep . '(\d*)';
         $exponentre = '(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)';
 
-        $numberbit = "$beforepointre(?:$decimalsre)?(?:$exponentre)?";
+        $numberbit = "{$beforepointre}(?:{$decimalsre})?(?:{$exponentre})?";
 
         if ($this->unitsbefore) {
-            $this->regex = "/$numberbit$/";
+            $this->regex = "/{$numberbit}$/";
         } else {
-            $this->regex = "/^$numberbit/";
+            $this->regex = "/^{$numberbit}/";
         }
         return $this->regex;
     }
@@ -645,9 +645,9 @@ class qtype_numerical_answer_processor {
 
         $regex = '[+-]?(?:\d+(?:\\.\d*)?|\\.\d+)(?:e[-+]?\d+)?';
         if ($this->unitsbefore) {
-            $regex = "/$regex$/";
+            $regex = "/{$regex}$/";
         } else {
-            $regex = "/^$regex/";
+            $regex = "/^{$regex}/";
         }
         if (!preg_match($regex, $response, $matches)) {
             return array(null, null, null);

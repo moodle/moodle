@@ -37,6 +37,7 @@ $action = optional_param('action', '', PARAM_ALPHANUM);
 $assignmentid = required_param('assignmentid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 $attemptnumber = required_param('attemptnumber', PARAM_INT);
+$readonly = optional_param('readonly', false, PARAM_BOOL);
 
 $cm = \get_coursemodule_from_instance('assign', $assignmentid, 0, false, MUST_EXIST);
 $context = \context_module::instance($cm->id);
@@ -53,12 +54,19 @@ if ($action == 'loadallpages') {
     $draft = true;
     if (!has_capability('mod/assign:grade', $context)) {
         $draft = false;
+        $readonly = true; // A student always sees the readonly version.
         require_capability('mod/assign:submit', $context);
+    }
+
+    // Whoever is viewing the readonly version should not use the drafts, but the actual annotations.
+    if ($readonly) {
+        $draft = false;
     }
 
     $pages = document_services::get_page_images_for_attempt($assignment,
                                                             $userid,
-                                                            $attemptnumber);
+                                                            $attemptnumber,
+                                                            $readonly);
 
     $response = new stdClass();
     $response->pagecount = count($pages);
@@ -66,13 +74,19 @@ if ($action == 'loadallpages') {
 
     $grade = $assignment->get_user_grade($userid, true);
 
+    // The readonly files are stored in a different file area.
+    $filearea = document_services::PAGE_IMAGE_FILEAREA;
+    if ($readonly) {
+        $filearea = document_services::PAGE_IMAGE_READONLY_FILEAREA;
+    }
+
     foreach ($pages as $id => $pagefile) {
         $index = count($response->pages);
         $page = new stdClass();
         $comments = page_editor::get_comments($grade->id, $index, $draft);
         $page->url = moodle_url::make_pluginfile_url($context->id,
                                                      'assignfeedback_editpdf',
-                                                     document_services::PAGE_IMAGE_FILEAREA,
+                                                     $filearea,
                                                      $grade->id,
                                                      '/',
                                                      $pagefile->get_filename())->out();

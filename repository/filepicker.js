@@ -496,7 +496,7 @@ M.core_filepicker.loadedpreviews = M.core_filepicker.loadedpreviews || {};
 /**
 * Set selected file info
 *
-* @parma object file info
+* @param object file info
 */
 M.core_filepicker.select_file = function(file) {
     M.core_filepicker.active_filepicker.select_file(file);
@@ -1266,12 +1266,16 @@ M.core_filepicker.init = function(Y, options) {
             var viewbar = this.fpnode.one('.fp-viewbar')
             if (viewbar) {
                 if (mode) {
-                    viewbar.addClass('enabled').removeClass('disabled')
+                    viewbar.addClass('enabled').removeClass('disabled');
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("aria-disabled", "false");
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("tabindex", "");
                 } else {
-                    viewbar.removeClass('enabled').addClass('disabled')
+                    viewbar.removeClass('enabled').addClass('disabled');
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("aria-disabled", "true");
+                    this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').setAttribute("tabindex", "-1");
                 }
             }
-            this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').removeClass('checked')
+            this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').removeClass('checked');
             var modes = {1:'icons', 2:'tree', 3:'details'};
             this.fpnode.all('.fp-vb-'+modes[this.viewmode]).addClass('checked');
         },
@@ -1301,7 +1305,7 @@ M.core_filepicker.init = function(Y, options) {
                 extraClasses : ['filepicker'],
                 draggable    : true,
                 bodyContent  : this.fpnode,
-                headerContent: '<span id="'+ labelid +'">'+ M.str.repository.filepicker +'</span>',
+                headerContent: '<h3 id="'+ labelid +'">'+ M.str.repository.filepicker +'</h3>',
                 centered     : true,
                 modal        : true,
                 visible      : false,
@@ -1319,7 +1323,7 @@ M.core_filepicker.init = function(Y, options) {
 
             var fplabel = 'fp-file_label_'+ client_id;
             this.selectui = new M.core.dialogue({
-                headerContent: '<span id="' + fplabel +'">'+M.str.repository.select+'</span>',
+                headerContent: '<h3 id="' + fplabel +'">'+M.str.repository.select+'</h3>',
                 draggable    : true,
                 width        : '450px',
                 bodyContent  : this.selectnode,

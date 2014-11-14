@@ -185,6 +185,12 @@ Feature: Set up contextual data for tests
       | url        | Test url name          | Test url description          | C1     | url1        |
       | wiki       | Test wiki name         | Test wiki description         | C1     | wiki1       |
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
+    And the following "scales" exist:
+      | name | scale |
+      | Test Scale 1 | Disappointing, Good, Very good, Excellent |
+    And the following "activities" exist:
+      | activity   | name                            | intro                         | course | idnumber    | grade |
+      | assign     | Test assignment name with scale | Test assignment description   | C1     | assign1     | Test Scale 1 |
     When I log in as "admin"
     And I follow "Course 1"
     Then I should see "Test assignment name"
@@ -214,6 +220,10 @@ Feature: Set up contextual data for tests
     And I should see "Test workshop name"
     And I follow "Test assignment name"
     And I should see "Test assignment description"
+    And I follow "C1"
+    And I follow "Test assignment name with scale"
+    And I follow "Edit settings"
+    And the field "Type" matches value "Scale"
 
   @javascript
   Scenario: Add relations between users and groups
@@ -252,3 +262,169 @@ Feature: Set up contextual data for tests
     And the "members" select box should contain "Student 1"
     And I set the field "groups" to "Group 2 (1)"
     And the "members" select box should contain "Student 2"
+
+  Scenario: Add cohorts and cohort members with data generator
+    Given the following "categories" exist:
+      | name  | category | idnumber |
+      | Cat 1 | 0        | CAT1     |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | student1 | Student | 1 | student1@asd.com |
+      | student2 | Student | 2 | student2@asd.com |
+    And the following "cohorts" exist:
+      | name            | idnumber |
+      | System cohort A | CHSA     |
+    And the following "cohorts" exist:
+      | name                 | idnumber | contextlevel | reference |
+      | System cohort B      | CHSB     | System       |           |
+      | Cohort in category   | CHC      | Category     | CAT1      |
+      | Empty cohort         | CHE      | Category     | CAT1      |
+    And the following "cohort members" exist:
+      | user     | cohort |
+      | student1 | CHSA   |
+      | student2 | CHSB   |
+      | student1 | CHSB   |
+      | student1 | CHC    |
+    When I log in as "admin"
+    And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
+    Then the following should exist in the "cohorts" table:
+      | Name            | Cohort size |
+      | System cohort A | 1           |
+      | System cohort B | 2           |
+    And I should not see "Cohort in category"
+    And I follow "Courses"
+    And I follow "Cat 1"
+    And I follow "Cohorts"
+    And I should not see "System cohort"
+    And the following should exist in the "cohorts" table:
+      | Name               | Cohort size |
+      | Cohort in category | 1           |
+      | Empty cohort       | 0           |
+
+  Scenario: Add grade categories with data generator
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "grade categories" exist:
+      | fullname | course |
+      | Grade category 1 | C1 |
+    And the following "grade categories" exist:
+      | fullname | course | gradecategory |
+      | Grade sub category 2 | C1 | Grade category 1 |
+    When I log in as "admin"
+    And I follow "Courses"
+    And I follow "Course 1"
+    And I navigate to "Grades" node in "Course administration"
+    Then I should see "Grade category 1"
+    And I should see "Grade sub category 2"
+
+  Scenario: Add a bunch of grade items
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "grade categories" exist:
+      | fullname | course |
+      | Grade category 1 | C1 |
+    And the following "grade categories" exist:
+      | fullname | course | gradecategory |
+      | Grade sub category 2 | C1 | Grade category 1 |
+    And the following "grade items" exist:
+      | itemname    | course |
+      | Test Grade Item 1 | C1 |
+    And the following "grade items" exist:
+      | itemname    | course | gradecategory |
+      | Test Grade Item 2 | C1 | Grade category 1 |
+      | Test Grade Item 3 | C1 | Grade sub category 2 |
+    When I log in as "admin"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I expand "Setup" node
+    And I follow "Categories and items"
+    Then I should see "Test Grade Item 1"
+    And I follow "Edit   Test Grade Item 1"
+    And I expand all fieldsets
+    And I should see "Course 1"
+    And I press "Cancel"
+    And I should see "Grade category 1"
+    And I should see "Test Grade Item 2"
+    And I follow "Edit   Test Grade Item 2"
+    And I expand all fieldsets
+    And I should see "Grade category 1"
+    And I press "Cancel"
+    And I should see "Grade sub category 2"
+    And I should see "Test Grade Item 3"
+    And I follow "Edit   Test Grade Item 3"
+    And I expand all fieldsets
+    And I should see "Grade sub category 2"
+    And I press "Cancel"
+
+  Scenario: Add a bunch of scales
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "scales" exist:
+      | name | scale |
+      | Test Scale 1 | Disappointing, Good, Very good, Excellent |
+    When I log in as "admin"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I follow "Scales"
+    Then I should see "Test Scale 1"
+    And I should see "Disappointing,  Good,  Very good,  Excellent"
+
+  Scenario: Add a bunch of outcomes
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "scales" exist:
+      | name | scale |
+      | Test Scale 1 | Disappointing, Good, Very good, Excellent |
+    And the following "grade outcomes" exist:
+      | fullname        | shortname | scale        |
+      | Grade outcome 1 | OT1       | Test Scale 1 |
+    And the following "grade outcomes" exist:
+      | fullname        | shortname | course | scale        |
+      | Grade outcome 2 | OT2       | C1     | Test Scale 1 |
+    When I log in as "admin"
+    And I set the following administration settings values:
+      | Enable outcomes | 1 |
+    And I follow "Home"
+    And I follow "Course 1"
+    And I follow "Outcomes"
+    Then I should see "Grade outcome 1" in the "#addoutcomes" "css_element"
+    And I should see "Grade outcome 2" in the "#removeoutcomes" "css_element"
+    And I follow "Edit outcomes"
+    And the following should exist in the "generaltable" table:
+      | Full name       | Short name | Scale        |
+      | Grade outcome 2 | OT2        | Test Scale 1 |
+
+  Scenario: Add a bunch of outcome grade items
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "scales" exist:
+      | name         | scale                                     |
+      | Test Scale 1 | Disappointing, Good, Very good, Excellent |
+    And the following "grade outcomes" exist:
+      | fullname        | shortname | course | scale        |
+      | Grade outcome 1 | OT1       | C1     | Test Scale 1 |
+    And the following "grade categories" exist:
+      | fullname         | course |
+      | Grade category 1 | C1     |
+     And the following "grade items" exist:
+       | itemname                  | course | outcome | gradecategory    |
+       | Test Outcome Grade Item 1 | C1     | OT1     | Grade category 1 |
+    When I log in as "admin"
+    And I set the following administration settings values:
+      | Enable outcomes | 1 |
+    And I follow "Home"
+    And I follow "Course 1"
+    And I follow "Grades"
+    And I expand "Setup" node
+    And I follow "Categories and items"
+    Then I should see "Test Outcome Grade Item 1"
+    And I follow "Edit   Test Outcome Grade Item 1"
+    And the field "Outcome" matches value "Grade outcome 1"
+    And I expand all fieldsets
+    And "//div[contains(@class, 'fitem')]/div[contains(@class, 'fitemtitle')]/div[contains(@class, fstaticlabel) and contains(., 'Grade category')]/../../div[contains(@class, 'felement') and contains(., 'Grade category 1')]" "xpath_element" should exist
+    And I press "Cancel"

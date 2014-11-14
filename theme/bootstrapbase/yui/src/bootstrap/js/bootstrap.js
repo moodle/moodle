@@ -19,8 +19,7 @@ var CSS = {
     SELECTORS = {
         NAVBAR_BUTTON: '.btn-navbar',
         // FIXME This is deliberately wrong because of a breaking issue in the upstream library.
-        TOGGLECOLLAPSE: '*[data-disabledtoggle="collapse"]',
-        NAV_COLLAPSE: '.nav-collapse'
+        TOGGLECOLLAPSE: '*[data-disabledtoggle="collapse"]'
     },
     NS = Y.namespace('Moodle.theme_bootstrapbase.bootstrap');
 
@@ -96,8 +95,18 @@ NS.setup_toggle_show = function() {
  * @param {EventFacade} e
  */
 NS.toggle_show = function(e) {
-    // Toggle the active class on both the clicked .btn-navbar and the .nav-collapse.
-    // Our CSS will set the height for these.
-    Y.one(SELECTORS.NAV_COLLAPSE).toggleClass(CSS.ACTIVE);
+    // Toggle the active class on both the clicked .btn-navbar and the
+    // associated target, defined by a CSS selector string set as the
+    // data-target attribute on the .btn-navbar element in question.
+    //
+    // This will allow for us to have multiple .btn-navbar elements
+    // each with their own collapse/expand targets - these targets
+    // should be of class .nav-collapse.
+    var myTarget = this.get('parentNode').one(this.getAttribute('data-target'));
+    if (myTarget) {
+        this.siblings(".btn-navbar").removeClass(CSS.ACTIVE);
+        myTarget.siblings(".nav-collapse").removeClass(CSS.ACTIVE);
+        myTarget.toggleClass(CSS.ACTIVE);
+    }
     e.currentTarget.toggleClass(CSS.ACTIVE);
 };

@@ -142,14 +142,14 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
         $fieldname = $field;
         if ($fieldname === 'lang') {
             $fieldname = get_string('language');
-        } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
-            $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
-        } elseif ($fieldname == 'url') {
-            $fieldname = get_string('webpage');
         } elseif (!empty($customfields) && in_array($field, $customfields)) {
             // If custom field then pick name from database.
             $fieldshortname = str_replace('profile_field_', '', $fieldname);
             $fieldname = $customfieldname[$fieldshortname]->name;
+        } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
+            $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
+        } elseif ($fieldname == 'url') {
+            $fieldname = get_string('webpage');
         } else {
             $fieldname = get_string($fieldname);
         }

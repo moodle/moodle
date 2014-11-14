@@ -135,8 +135,10 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      * @param string     $driver_options any driver options to use when
      * connecting to the database
      */
-    public function __construct($cas_parent, $dsn_or_pdo, $username='', $password='', $table='', $driver_options=null)
-    {
+    public function __construct(
+        $cas_parent, $dsn_or_pdo, $username='', $password='', $table='',
+        $driver_options=null
+    ) {
         phpCAS::traceBegin();
         // call the ancestor's constructor
         parent::__construct($cas_parent);
@@ -188,7 +190,10 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
         // create the PDO object if it doesn't exist already
         if (!($this->_pdo instanceof PDO)) {
             try {
-                $this->_pdo = new PDO($this->_dsn, $this->_username, $this->_password, $this->_driver_options);
+                $this->_pdo = new PDO(
+                    $this->_dsn, $this->_username, $this->_password,
+                    $this->_driver_options
+                );
             }
             catch(PDOException $e) {
                 phpCAS::error('Database connection error: ' . $e->getMessage());
@@ -247,23 +252,28 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      */
     protected function createTableSql()
     {
-        return 'CREATE TABLE ' . $this->_getTable() . ' (pgt_iou VARCHAR(255) NOT NULL PRIMARY KEY, pgt VARCHAR(255) NOT NULL)';
+        return 'CREATE TABLE ' . $this->_getTable()
+            . ' (pgt_iou VARCHAR(255) NOT NULL PRIMARY KEY, pgt VARCHAR(255) NOT NULL)';
     }
 
     /**
      * This method returns the query used to store a pgt
      *
-     * @return the store PGT SQL, :pgt and :pgt_iou are the bind params contained in the query
+     * @return the store PGT SQL, :pgt and :pgt_iou are the bind params contained
+     *         in the query
      */
     protected function storePgtSql()
     {
-        return 'INSERT INTO ' . $this->_getTable() . ' (pgt_iou, pgt) VALUES (:pgt_iou, :pgt)';
+        return 'INSERT INTO ' . $this->_getTable()
+            . ' (pgt_iou, pgt) VALUES (:pgt_iou, :pgt)';
     }
 
     /**
-     * This method returns the query used to retrieve a pgt. the first column of the first row should contain the pgt
+     * This method returns the query used to retrieve a pgt. the first column
+     * of the first row should contain the pgt
      *
-     * @return the retrieve PGT SQL, :pgt_iou is the only bind param contained in the query
+     * @return the retrieve PGT SQL, :pgt_iou is the only bind param contained
+     *         in the query
      */
     protected function retrievePgtSql()
     {
@@ -273,7 +283,8 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
     /**
      * This method returns the query used to delete a pgt.
      *
-     * @return the delete PGT SQL, :pgt_iou is the only bind param contained in the query
+     * @return the delete PGT SQL, :pgt_iou is the only bind param contained in
+     *         the query
      */
     protected function deletePgtSql()
     {

@@ -1,0 +1,5 @@
+=== 2.7 ===
+
+* The validation of the following events is now stricter (see MDL-45445):
+    - \mod_feedback\event\response_deleted
+    - \mod_feedback\event\response_submitted

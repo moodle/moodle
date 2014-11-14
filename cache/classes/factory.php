@@ -126,6 +126,14 @@ class cache_factory {
                 // situation. It will use disabled alternatives where available.
                 require_once($CFG->dirroot.'/cache/disabledlib.php');
                 self::$instance = new cache_factory_disabled();
+            } else if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+                // We're using the regular factory.
+                require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
+                self::$instance = new cache_phpunit_factory();
+                if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
+                    // The cache stores have been disabled.
+                    self::$instance->set_state(self::STATE_STORES_DISABLED);
+                }
             } else {
                 // We're using the regular factory.
                 self::$instance = new cache_factory();
@@ -309,7 +317,7 @@ class cache_factory {
 
     /**
      * Returns the cache instances that have been used within this request.
-     * @since 2.6
+     * @since Moodle 2.6
      * @return array
      */
     public function get_caches_in_use() {
@@ -325,18 +333,12 @@ class cache_factory {
     public function create_config_instance($writer = false) {
         global $CFG;
 
-        // Check if we need to create a config file with defaults.
-        $needtocreate = !cache_config::config_file_exists();
-
         // The class to use.
         $class = 'cache_config';
-        if ($writer || $needtocreate) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
-            $class .= '_writer';
-        }
+        $unittest = defined('PHPUNIT_TEST') && PHPUNIT_TEST;
 
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
-        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+        if ($unittest) {
             require_once($CFG->dirroot.'/cache/locallib.php');
             require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
             // We have just a single class for PHP unit tests. We don't care enough about its
@@ -345,11 +347,22 @@ class cache_factory {
             $class = 'cache_config_phpunittest';
         }
 
+        // Check if we need to create a config file with defaults.
+        $needtocreate = !$class::config_file_exists();
+
+        if ($writer || $needtocreate) {
+            require_once($CFG->dirroot.'/cache/locallib.php');
+            if (!$unittest) {
+                $class .= '_writer';
+            }
+        }
+
         $error = false;
         if ($needtocreate) {
             // Create the default configuration.
             // Update the state, we are now initialising the cache.
             self::set_state(self::STATE_INITIALISING);
+            /** @var cache_config_writer $class */
             $configuration = $class::create_default_configuration();
             if ($configuration !== true) {
                 // Failed to create the default configuration. Disable the cache stores and update the state.

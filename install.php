@@ -229,17 +229,9 @@ if (defined('COMPONENT_CLASSLOADER')) {
 require('version.php');
 $CFG->target_release = $release;
 
-$_SESSION = array();
-$_SESSION['SESSION'] = new stdClass();
-$_SESSION['SESSION']->lang = $CFG->lang;
-$_SESSION['USER'] = new stdClass();
-$_SESSION['USER']->id = 0;
-$_SESSION['USER']->mnethostid = 1;
-
+\core\session\manager::init_empty_session();
 global $SESSION;
 global $USER;
-$SESSION = &$_SESSION['SESSION'];
-$USER    = &$_SESSION['USER'];
 
 global $COURSE;
 $COURSE = new stdClass();

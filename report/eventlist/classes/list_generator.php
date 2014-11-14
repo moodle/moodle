@@ -274,6 +274,9 @@ class report_eventlist_list_generator {
             }
         }
 
+        // Raw event data to be used to sort the "Event name" column.
+        $eventdata[$eventfullpath]['raweventname'] = $eventfullpath::get_name() . ' ' . $eventdata[$eventfullpath]['eventname'];
+
         // Unset information that is not currently required.
         unset($eventdata[$eventfullpath]['action']);
         unset($eventdata[$eventfullpath]['target']);

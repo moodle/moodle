@@ -70,7 +70,7 @@ class course_restored extends base {
      * @return string
      */
     public function get_description() {
-        return "The course with the id '$this->objectid' was restored by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' restored the course with id '$this->courseid'.";
     }
 
     /**
@@ -106,5 +106,35 @@ class course_restored extends base {
             'operation' => $this->other['operation'],
             'samesite' => $this->other['samesite'],
         );
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['type'])) {
+            throw new \coding_exception('The \'type\' value must be set in other.');
+        }
+
+        if (!isset($this->other['target'])) {
+            throw new \coding_exception('The \'target\' value must be set in other.');
+        }
+
+        if (!isset($this->other['mode'])) {
+            throw new \coding_exception('The \'mode\' value must be set in other.');
+        }
+
+        if (!isset($this->other['operation'])) {
+            throw new \coding_exception('The \'operation\' value must be set in other.');
+        }
+
+        if (!isset($this->other['samesite'])) {
+            throw new \coding_exception('The \'samesite\' value must be set in other.');
+        }
     }
 }

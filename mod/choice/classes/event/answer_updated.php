@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int choiceid: id of choice.
- *      - int optionid: id of option.
+ *      - int optionid: (optional) id of option.
  * }
  *
  * @package    mod_choice
@@ -49,8 +49,8 @@ class answer_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated their choice with the id '$this->objectid' in the choice activity
-            with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' updated their choice with id '$this->objectid' in the choice activity
+            with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -95,7 +95,7 @@ class answer_updated extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'choice_answers';
+        $this->data['objecttable'] = 'choice';
     }
 
     /**

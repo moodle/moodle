@@ -43,5 +43,11 @@ function xmldb_tool_log_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014040600, 'tool', 'log');
     }
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

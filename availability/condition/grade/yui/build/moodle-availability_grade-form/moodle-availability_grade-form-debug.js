@@ -60,7 +60,7 @@ M.availability_grade.form.getNode = function(json) {
     // Set initial values.
     if (json.id !== undefined &&
             node.one('select[name=id] > option[value=' + json.id + ']')) {
-        node.one('select[name=id]').set('value', json.id);
+        node.one('select[name=id]').set('value', '' + json.id);
     }
     if (json.min !== undefined) {
         node.one('input[name=min]').set('checked', true);

@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access equella repositories.
  *
- * @since 2.3
+ * @since Moodle 2.3
  * @package    repository_equella
  * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 /**
  * repository_equella class implements equella_client
  *
- * @since 2.3
+ * @since Moodle 2.3
  * @package    repository_equella
  * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -125,7 +125,11 @@ class repository_equella extends repository {
      * @return string file referece
      */
     public function get_file_reference($source) {
-        return $source;
+        // Internally we store serialized value but user input is json-encoded for security reasons.
+        $ref = json_decode(base64_decode($source));
+        $filename  = clean_param($ref->filename, PARAM_FILE);
+        $url = clean_param($ref->url, PARAM_URL);
+        return base64_encode(serialize((object)array('url' => $url, 'filename' => $filename)));
     }
 
     /**
@@ -191,7 +195,7 @@ class repository_equella extends repository {
     }
 
     public function sync_reference(stored_file $file) {
-        global $USER;
+        global $USER, $CFG;
         if ($file->get_referencelastsync() + DAYSECS > time() || !$this->connection_result()) {
             // Synchronise not more often than once a day.
             // if we had several unsuccessfull attempts to connect to server - do not try any more.
@@ -400,12 +404,13 @@ class repository_equella extends repository {
     /**
      * Return the source information
      *
-     * @param stdClass $url
+     * @param string $source
      * @return string|null
      */
-    public function get_file_source_info($url) {
-        $ref = unserialize(base64_decode($url));
-        return 'EQUELLA: ' . $ref->filename;
+    public function get_file_source_info($source) {
+        $ref = json_decode(base64_decode($source));
+        $filename  = clean_param($ref->filename, PARAM_FILE);
+        return 'EQUELLA: ' . $filename;
     }
 
     /**

@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 require_once($CFG->dirroot . '/mod/workshop/allocation/random/lib.php');
 
 
-class workshopallocation_random_testcase extends basic_testcase {
+class workshopallocation_random_testcase extends advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;
@@ -41,13 +41,13 @@ class workshopallocation_random_testcase extends basic_testcase {
 
     protected function setUp() {
         parent::setUp();
-
-        $cm                 = new stdclass();
-        $course             = new stdclass();
-        $context            = new stdclass();
-        $workshop           = (object)array('id' => 42);
-        $this->workshop     = new workshop($workshop, $cm, $course, $context);
-        $this->allocator    = new testable_workshop_random_allocator($this->workshop);
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course));
+        $cm = get_fast_modinfo($course)->instances['workshop'][$workshop->id];
+        $this->workshop = new workshop($workshop, $cm, $course);
+        $this->allocator = new testable_workshop_random_allocator($this->workshop);
     }
 
     protected function tearDown() {

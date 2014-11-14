@@ -75,7 +75,8 @@ switch ($action) {
             $a->id = $roleid;
             $a->name = $roles[$roleid]->name;
             $a->shortname = $roles[$roleid]->shortname;
-            $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
+            $a->count = $DB->count_records_select('role_assignments',
+                'roleid = ?', array($roleid), 'COUNT(DISTINCT userid)');
 
             $formcontinue = new single_button(new moodle_url($baseurl, $optionsyes), get_string('yes'));
             $formcancel = new single_button(new moodle_url($baseurl), get_string('no'), 'get');

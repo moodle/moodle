@@ -32,12 +32,13 @@ div.editor_atto_toolbar {
 }
 
 div.editor_atto_toolbar button {
-    padding: 3px 9px;
+    padding: 4px 9px;
     background: none;
     border: 0;
     margin: 0;
     border-radius: 0;
     cursor: pointer;
+    line-height: initial;
  }
 
 div.editor_atto_toolbar button + button {
@@ -179,4 +180,36 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_menu .open ul.dropdown-menu {
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.editor_atto_notification {
+    position: relative;
+    bottom: 0px;
+    height: 1.5em;
+    margin-top: -2.5em;
+    margin-left: 1px;
+    margin-right: 1px;
+    margin-bottom: 1em;
+    cursor: pointer;
+}
+.editor_atto_notification .atto_info {
+    display: inline-block;
+    background-color: #F2F2F2;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-top-right-radius: 1em;
+}
+.editor_atto_notification .atto_warning {
+    display: inline-block;
+    background-color: #FFD700;
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-top-right-radius: 1em;
+}
+.dir-rtl .editor_atto_notification .atto_info,
+.dir-rtl .editor_atto_notification .atto_warning {
+    border-top-right-radius: 0;
+    border-top-left-radius: 1em;
 }

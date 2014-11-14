@@ -35,7 +35,6 @@ function url_supports($feature) {
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
@@ -265,9 +264,9 @@ function url_export_contents($cm, $baseurl) {
     $context = context_module::instance($cm->id);
 
     $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-    $url = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $urlrecord = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
 
-    $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));
+    $fullurl = str_replace('&amp;', '&', url_get_full_url($urlrecord, $cm, $course));
     $isurl = clean_param($fullurl, PARAM_URL);
     if (empty($isurl)) {
         return null;
@@ -275,12 +274,12 @@ function url_export_contents($cm, $baseurl) {
 
     $url = array();
     $url['type'] = 'url';
-    $url['filename']     = $url->name;
+    $url['filename']     = clean_param(format_string($urlrecord->name), PARAM_FILE);
     $url['filepath']     = null;
     $url['filesize']     = 0;
     $url['fileurl']      = $fullurl;
     $url['timecreated']  = null;
-    $url['timemodified'] = $url->timemodified;
+    $url['timemodified'] = $urlrecord->timemodified;
     $url['sortorder']    = null;
     $url['userid']       = null;
     $url['author']       = null;

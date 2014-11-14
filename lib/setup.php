@@ -352,17 +352,15 @@ if (!defined('AJAX_SCRIPT')) {
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.15.0';
+$CFG->yui3version = '3.17.2';
 
 // Patching the upstream YUI release.
 // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
 // If we need to patch a YUI modules between official YUI releases, the yuipatchlevel will need to be manually
 // incremented here. The module will also need to be listed in the yuipatchedmodules.
 // When upgrading to a subsequent version of YUI, these should be reset back to 0 and an empty array.
-$CFG->yuipatchlevel = 1;
+$CFG->yuipatchlevel = 0;
 $CFG->yuipatchedmodules = array(
-    'dd-drag',
-    'dd-gestures',
 );
 
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides.
@@ -493,7 +491,7 @@ global $OUTPUT;
  * Full script path including all params, slash arguments, scheme and host.
  *
  * Note: Do NOT use for getting of current page URL or detection of https,
- * instead use $PAGE->url or strpos($CFG->httpswwwroot, 'https:') === 0
+ * instead use $PAGE->url or is_https().
  *
  * @global string $FULLME
  * @name $FULLME
@@ -773,9 +771,23 @@ if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 7200;
 }
 \core\session\manager::start();
-if (!PHPUNIT_TEST and !defined('BEHAT_TEST')) {
-    $SESSION =& $_SESSION['SESSION'];
-    $USER    =& $_SESSION['USER'];
+
+// Set default content type and encoding, developers are still required to use
+// echo $OUTPUT->header() everywhere, anything that gets set later should override these headers.
+// This is intended to mitigate some security problems.
+if (AJAX_SCRIPT) {
+    if (!core_useragent::supports_json_contenttype()) {
+        // Some bloody old IE.
+        @header('Content-type: text/plain; charset=utf-8');
+        @header('X-Content-Type-Options: nosniff');
+    } else if (!empty($_FILES)) {
+        // Some ajax code may have problems with json and file uploads.
+        @header('Content-type: text/plain; charset=utf-8');
+    } else {
+        @header('Content-type: application/json; charset=utf-8');
+    }
+} else if (!CLI_SCRIPT) {
+    @header('Content-type: text/html; charset=utf-8');
 }
 
 // Initialise some variables that are supposed to be set in config.php only.

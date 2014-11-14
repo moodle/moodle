@@ -36,7 +36,7 @@ class mod_scorm_renderer extends plugin_renderer_base {
         $output = '';
         $output .= $this->box_start('generalbox boxaligncenter');
         $output .= html_writer::start_tag('div', array('class' => 'mdl-align'));
-        $output .= $this->user_picture($user, array('courseid'=>$course->id, 'link' => true));
+        $output .= $this->user_picture($user, array('courseid' => $course->id, 'link' => true));
         $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
         $output .= html_writer::link($url, fullname($user));
         $baseurl->param('attempt', '');
@@ -165,7 +165,7 @@ class mod_scorm_attempt_bar implements renderable {
 
         if (count($this->attemptids) > 1) {
             $lastattempt = end($this->attemptids); // Get last attempt.
-            $firstattempt =  reset($this->attemptids); // get first attempt.
+            $firstattempt = reset($this->attemptids); // get first attempt.
 
             $nextattempt = 0;
             $prevattempt = null;
@@ -176,7 +176,7 @@ class mod_scorm_attempt_bar implements renderable {
                     $prevattempt = $previous;
                 } else {
                     $attemptlink = html_writer::link(
-                        new moodle_url($this->baseurl, array($this->pagevar=>$attemptid)), $attemptid);
+                        new moodle_url($this->baseurl, array($this->pagevar => $attemptid)), $attemptid);
                     $this->attemptlinks[] = $attemptlink;
                     if (empty($nextattempt) && $prevattempt !== null) {
                         // Set the nextattempt var as we have set previous attempt earlier.
@@ -188,14 +188,14 @@ class mod_scorm_attempt_bar implements renderable {
 
             if ($this->attempt != $firstattempt) {
                 $this->previouslink = html_writer::link(
-                    new moodle_url($this->baseurl, array($this->pagevar=>$prevattempt)),
-                    get_string('previous'), array('class'=>'previous'));
+                    new moodle_url($this->baseurl, array($this->pagevar => $prevattempt)),
+                    get_string('previous'), array('class' => 'previous'));
             }
 
             if ($this->attempt != $lastattempt) {
                 $this->nextlink = html_writer::link(
-                    new moodle_url($this->baseurl, array($this->pagevar=>$nextattempt)),
-                    get_string('next'), array('class'=>'next'));
+                    new moodle_url($this->baseurl, array($this->pagevar => $nextattempt)),
+                    get_string('next'), array('class' => 'next'));
             }
         }
     }

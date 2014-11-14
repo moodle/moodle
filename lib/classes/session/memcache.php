@@ -20,6 +20,9 @@
  * This is based on the memcached code. It lacks some features, such as
  * locking options, but appears to work in practice.
  *
+ * Note: You may need to manually configure redundancy and fail-over
+ * if you specify multiple servers.
+ *
  * @package core
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,6 +40,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class memcache extends handler {
+    /** @var string $savepath save_path string  */
+    protected $savepath;
+    /** @var array $servers list of servers parsed from save_path */
+    protected $servers;
+    /** @var int $acquiretimeout how long to wait for session lock */
+    protected $acquiretimeout = 120;
+
     /**
      * Creates new instance of handler.
      */
@@ -111,36 +121,47 @@ class memcache extends handler {
     }
 
     /**
-     * Checks for existing session with given id.
+     * Check the backend contains data for this session id.
      *
-     * Note: this verifies the storage backend only, not the actual session records.
+     * Note: this is intended to be called from manager::session_exists() only.
      *
      * @param string $sid PHP session ID
      * @return bool true if session found.
      */
     public function session_exists($sid) {
-        if (!$this->servers) {
-            return false;
+        $result = false;
+
+        foreach ($this->get_memcaches() as $memcache) {
+            if ($result === false) {
+                $value = $memcache->get($sid);
+                if ($value !== false) {
+                    $result = true;
+                }
+            }
+            $memcache->close();
         }
 
-        $memcache = $this->get_memcache();
-        $value = $memcache->get($sid);
-        $memcache->close();
-
-        return ($value !== false);
+        return $result;
     }
 
     /**
-     * Gets the memcache object with all the servers added to it.
+     * Gets the Memcache objects, one for each server.
+     * The connects must be closed manually after use.
      *
-     * @return \Memcache Initialised memcache object
+     * Note: the servers are not automatically synchronised
+     *       when accessed via Memcache class, it needs to be
+     *       done manually by accessing all configured servers.
+     *
+     * @return \Memcache[] Array of initialised memcache objects
      */
-    protected function get_memcache() {
-        $memcache = new \Memcache();
+    protected function get_memcaches() {
+        $result = array();
         foreach ($this->servers as $server) {
+            $memcache = new \Memcache();
             $memcache->addServer($server[0], $server[1]);
+            $result[] = $memcache;
         }
-        return $memcache;
+        return $result;
     }
 
     /**
@@ -152,18 +173,22 @@ class memcache extends handler {
             return;
         }
 
-        $memcache = $this->get_memcache();
+        $memcaches = $this->get_memcaches();
 
         // Note: this can be significantly improved by fetching keys from memcache,
         // but we need to make sure we are not deleting somebody else's sessions.
 
         $rs = $DB->get_recordset('sessions', array(), 'id DESC', 'id, sid');
         foreach ($rs as $record) {
-            $memcache->delete($record->sid);
+            foreach ($memcaches as $memcache) {
+                $memcache->delete($record->sid);
+            }
         }
         $rs->close();
 
-        $memcache->close();
+        foreach ($memcaches as $memcache) {
+            $memcache->close();
+        }
     }
 
     /**
@@ -172,12 +197,9 @@ class memcache extends handler {
      * @param string $sid PHP session ID
      */
     public function kill_session($sid) {
-        if (!$this->servers) {
-            return;
+        foreach ($this->get_memcaches() as $memcache) {
+            $memcache->delete($sid);
+            $memcache->close();
         }
-
-        $memcache = $this->get_memcache();
-        $memcache->delete($sid);
-        $memcache->close();
     }
 }

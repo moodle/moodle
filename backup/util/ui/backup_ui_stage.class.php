@@ -63,6 +63,12 @@ abstract class backup_ui_stage extends base_ui_stage {
 class backup_ui_stage_initial extends backup_ui_stage {
 
     /**
+     * When set to true we skip all stages and jump to immediately processing the backup.
+     * @var bool
+     */
+    protected $oneclickbackup = false;
+
+    /**
      * Initial backup stage constructor
      * @param backup_ui $ui
      */
@@ -86,6 +92,9 @@ class backup_ui_stage_initial extends backup_ui_stage {
 
         $data = $form->get_data();
         if ($data && confirm_sesskey()) {
+            if (isset($data->oneclickbackup)) {
+                $this->oneclickbackup = true;
+            }
             $tasks = $this->ui->get_tasks();
             $changes = 0;
             foreach ($tasks as &$task) {
@@ -110,6 +119,42 @@ class backup_ui_stage_initial extends backup_ui_stage {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Gets the next stage for the backup.
+     *
+     * We override this function to implement the one click backup.
+     * When the user performs a one click backup we jump straight to the final stage.
+     *
+     * @return int
+     */
+    public function get_next_stage() {
+        if ($this->oneclickbackup) {
+            // Its a one click backup.
+            // The default filename is backup.mbz, this normally gets set to something useful in the confirmation stage.
+            // because we skipped that stage we must manually set this to a useful value.
+            $tasks = $this->ui->get_tasks();
+            foreach ($tasks as $task) {
+                if ($task instanceof backup_root_task) {
+                    // Find the filename setting.
+                    $setting = $task->get_setting('filename');
+                    if ($setting) {
+                        // Use the helper objects to get a useful name.
+                        $filename = backup_plan_dbops::get_default_backup_filename(
+                            $this->ui->get_format(),
+                            $this->ui->get_type(),
+                            $this->ui->get_controller_id(),
+                            $this->ui->get_setting_value('users'),
+                            $this->ui->get_setting_value('anonymize')
+                        );
+                        $setting->set_value($filename);
+                    }
+                }
+            }
+            return backup_ui::STAGE_FINAL;
+        }
+        return parent::get_next_stage();
     }
 
     /**

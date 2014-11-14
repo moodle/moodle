@@ -130,8 +130,7 @@ class logstore_database_store_testcase extends advanced_testcase {
             array('context' => context_module::instance($module2->cmid), 'other' => array('sample' => 6, 'xx' => 9)));
         $event2->trigger();
 
-        $_SESSION['SESSION'] = new \stdClass();
-        $this->setUser(0);
+        \core\session\manager::init_empty_session();
         $this->assertFalse(\core\session\manager::is_loggedinas());
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');

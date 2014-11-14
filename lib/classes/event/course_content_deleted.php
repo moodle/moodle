@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course content_deleted event class.
+ * Course content deleted event.
  *
  * @package    core
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -27,7 +27,7 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course content_deleted event class.
+ * Course content deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -66,7 +66,7 @@ class course_content_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The course with the id '$this->courseid' had content deleted by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' deleted content from course with id '$this->courseid'.";
     }
 
     /**
@@ -89,5 +89,19 @@ class course_content_deleted extends base {
         $course->options = $this->other['options'];
 
         return $course;
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['options'])) {
+            throw new \coding_exception('The \'options\' value must be set in other.');
+        }
     }
 }

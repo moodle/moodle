@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class recent_activity_viewed extends \core\event\base {
+class recent_activity_viewed extends base {
 
     /**
      * Init method.
@@ -43,7 +43,7 @@ class recent_activity_viewed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
@@ -61,7 +61,7 @@ class recent_activity_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the recent activity report in the course with the id '$this->courseid'.";
+        return "The user with id '$this->userid' viewed the recent activity report in the course with id '$this->courseid'.";
     }
 
     /**

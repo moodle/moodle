@@ -63,7 +63,7 @@ class info_module extends info {
     /**
      * Gets the course-module object. Intended for use by conditions.
      *
-     * @return cm_info Course module
+     * @return \cm_info Course module
      */
     public function get_course_module() {
         return $this->cm;
@@ -109,12 +109,35 @@ class info_module extends info {
         return parent::filter_user_list($filtered);
     }
 
+    public function get_user_list_sql($onlyactive = true) {
+        global $CFG, $DB;
+        if (!$CFG->enableavailability) {
+            return array('', array());
+        }
+
+        // Get query for section (if any) and module.
+        $section = $this->cm->get_modinfo()->get_section_info(
+                $this->cm->sectionnum, MUST_EXIST);
+        $sectioninfo = new info_section($section);
+        $sectionresult = $sectioninfo->get_user_list_sql($onlyactive);
+        $moduleresult = parent::get_user_list_sql($onlyactive);
+
+        if (!$sectionresult[0]) {
+            return $moduleresult;
+        }
+        if (!$moduleresult[0]) {
+            return $sectionresult;
+        }
+
+        return array($DB->sql_intersect(array($sectionresult[0], $moduleresult[0]), 'id'),
+                array_merge($sectionresult[1], $moduleresult[1]));
+    }
+
     /**
      * Checks if an activity is visible to the given user.
      *
      * Unlike other checks in the availability system, this check includes the
-     * $cm->visible flag and also (if enabled) the groupmembersonly feature.
-     * It is equivalent to $cm->uservisible.
+     * $cm->visible flag. It is equivalent to $cm->uservisible.
      *
      * If you have already checked (or do not care whether) the user has access
      * to the course, you can set $checkcourse to false to save it checking
@@ -130,11 +153,11 @@ class info_module extends info {
      * disabled, and you supply a $cm object with necessary fields, and you
      * don't check course access.
      *
-     * @param int|stdClass|cm_info $cmorid Object or id representing activity
+     * @param int|\stdClass|\cm_info $cmorid Object or id representing activity
      * @param int $userid User id (0 = current user)
      * @param bool $checkcourse If true, checks whether the user has course access
      * @return bool True if the activity is visible to the specified user
-     * @throws moodle_exception If the cmid doesn't exist
+     * @throws \moodle_exception If the cmid doesn't exist
      */
     public static function is_user_visible($cmorid, $userid = 0, $checkcourse = true) {
         global $USER, $DB, $CFG;
@@ -160,11 +183,6 @@ class info_module extends info {
             $cm = $DB->get_record('course_modules', array('id' => $cmorid), '*', MUST_EXIST);
         }
 
-        // Check the groupmembersonly feature.
-        if (!groups_course_module_visible($cm, $userid)) {
-            return false;
-        }
-
         // If requested, check user can access the course.
         if ($checkcourse) {
             $coursecontext = \context_course::instance($cm->course);
@@ -187,6 +205,13 @@ class info_module extends info {
         // As a result we cannot take short cuts any longer and must get
         // standard modinfo.
         $modinfo = get_fast_modinfo($cm->course, $userid);
-        return $modinfo->get_cm($cm->id)->uservisible;
+        $cms = $modinfo->get_cms();
+        if (!isset($cms[$cm->id])) {
+            // In some cases this might get called with a cmid that is no longer
+            // available, for example when a module is hidden at system level.
+            debugging('info_module::is_user_visible called with invalid cmid ' . $cm->id, DEBUG_DEVELOPER);
+            return false;
+        }
+        return $cms[$cm->id]->uservisible;
     }
 }

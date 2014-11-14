@@ -35,19 +35,16 @@ Feature: Block appearances
     And I follow "Course 1"
     And I follow "Turn editing on"
     And I add the "Comments" block
-    And I open the "Comments" blocks action menu
-    And I follow "Configure Comments block"
+    And I configure the "Comments" block
     And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
 
-  @javascript
   Scenario: Block settings can be modified so that a block apprears on any page
     When I follow "Test survey name"
     Then I should see "Comments" in the "Comments" "block"
     And I follow "Course 1"
-    And I open the "Comments" blocks action menu
-    And I follow "Configure Comments block"
+    And I configure the "Comments" block
     And I set the following fields to these values:
       | Display on page types | Any course page |
     And I press "Save changes"
@@ -55,11 +52,9 @@ Feature: Block appearances
     And I follow "Test survey name"
     And I should not see "Comments"
 
-  @javascript
   Scenario: Block settings can be modified so that a block can be hidden or moved
     When I follow "Test book name"
-    And I open the "Comments" blocks action menu
-    And I follow "Configure Comments block"
+    And I configure the "Comments" block
     And I set the following fields to these values:
       | Visible | No |
     And I press "Save changes"
@@ -68,8 +63,7 @@ Feature: Block appearances
     Then I should not see "Comments"
     And I expand "Course administration" node
     And I follow "Turn editing on"
-    And I open the "Comments" blocks action menu
-    And I follow "Configure Comments block"
+    And I configure the "Comments" block
     And I set the following fields to these values:
       | Visible | Yes |
       | Region  | Right |

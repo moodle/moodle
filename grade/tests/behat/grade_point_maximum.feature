@@ -57,10 +57,10 @@ Feature: We can change the grading type and maximum grade point values
     And I follow "Edit settings"
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
-    And I set the field "grade[modgrade_scale]" to "1"
+    And I set the field "grade[modgrade_scale]" to "Separate and Connected ways of knowing"
     And I press "Save and display"
     And I follow "Edit settings"
-    Then the field "grade[modgrade_scale]" matches value "1"
+    Then the field "grade[modgrade_scale]" matches value "Separate and Connected ways of knowing"
     And the "Maximum points" "field" should be disabled
     And I press "Save and return to course"
 

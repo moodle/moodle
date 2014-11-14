@@ -40,7 +40,6 @@
     $usesections = course_format_uses_sections($course->format);
 
     $table = new html_table();
-    $table->width = '100%';
 
     if ($usesections) {
         $strsectionname = get_string('sectionname', 'format_'.$course->format);

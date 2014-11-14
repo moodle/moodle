@@ -100,6 +100,7 @@ class moodlequickform_guideeditor extends HTML_QuickForm_input {
             $mode = gradingform_guide_controller::DISPLAY_EDIT_FULL;
             $module = array('name'=>'gradingform_guideeditor',
                 'fullpath'=>'/grade/grading/form/guide/js/guideeditor.js',
+                'requires' => array('base', 'dom', 'event', 'event-touch', 'escape'),
                 'strings' => array(
                     array('confirmdeletecriterion', 'gradingform_guide'),
                     array('clicktoedit', 'gradingform_guide'),

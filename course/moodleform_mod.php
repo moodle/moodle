@@ -92,7 +92,6 @@ abstract class moodleform_mod extends moodleform {
         $this->_features = new stdClass();
         $this->_features->groups            = plugin_supports('mod', $this->_modname, FEATURE_GROUPS, true);
         $this->_features->groupings         = plugin_supports('mod', $this->_modname, FEATURE_GROUPINGS, false);
-        $this->_features->groupmembersonly  = (!empty($CFG->enablegroupmembersonly) and plugin_supports('mod', $this->_modname, FEATURE_GROUPMEMBERSONLY, false));
         $this->_features->outcomes          = (!empty($CFG->enableoutcomes) and plugin_supports('mod', $this->_modname, FEATURE_GRADE_OUTCOMES, true));
         $this->_features->hasgrades         = plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false);
         $this->_features->idnumber          = plugin_supports('mod', $this->_modname, FEATURE_IDNUMBER, true);
@@ -192,14 +191,11 @@ abstract class moodleform_mod extends moodleform {
         // otherwise you cannot turn it off at same time as turning off other
         // option (MDL-30764)
         if (empty($this->_cm) || !$this->_cm->groupingid) {
-            if ($mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly') and empty($COURSE->groupmodeforce)) {
+            if ($mform->elementExists('groupmode') && empty($COURSE->groupmodeforce)) {
                 $mform->disabledIf('groupingid', 'groupmode', 'eq', NOGROUPS);
 
-            } else if (!$mform->elementExists('groupmode') and $mform->elementExists('groupmembersonly')) {
-                $mform->disabledIf('groupingid', 'groupmembersonly', 'notchecked');
-
-            } else if (!$mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly')) {
-                // groupings have no use without groupmode or groupmembersonly
+            } else if (!$mform->elementExists('groupmode')) {
+                // Groupings have no use without groupmode.
                 if ($mform->elementExists('groupingid')) {
                     $mform->removeElement('groupingid');
                 }
@@ -224,8 +220,10 @@ abstract class moodleform_mod extends moodleform {
                 // is changed, maybe someone has completed it now)
                 $mform->getElement('completionunlocked')->setValue(1);
             } else {
-                // Has the element been unlocked?
-                if ($mform->exportValue('unlockcompletion')) {
+                // Has the element been unlocked, either by the button being pressed
+                // in this request, or the field already being set from a previous one?
+                if ($mform->exportValue('unlockcompletion') ||
+                        $mform->exportValue('completionunlocked')) {
                     // Yes, add in warning text and set the hidden variable
                     $mform->insertElementBefore(
                         $mform->createElement('static', 'completedunlocked',
@@ -291,6 +289,14 @@ abstract class moodleform_mod extends moodleform {
             if (!grade_verify_idnumber($data['cmidnumber'], $COURSE->id, $grade_item, $cm)) {
                 $errors['cmidnumber'] = get_string('idnumbertaken');
             }
+        }
+
+        // Ratings: Don't let them select an aggregate type without selecting a scale.
+        // If the user has selected to use ratings but has not chosen a scale or set max points then the form is
+        // invalid. If ratings have been selected then the user must select either a scale or max points.
+        // This matches (horrible) logic in data_preprocessing.
+        if (isset($data['assessed']) && $data['assessed'] > 0 && empty($data['scale'])) {
+            $errors['assessed'] = get_string('scaleselectionrequired', 'rating');
         }
 
         // Completion: Don't let them choose automatic completion without turning
@@ -415,8 +421,8 @@ abstract class moodleform_mod extends moodleform {
             $mform->addHelpButton('groupmode', 'groupmode', 'group');
         }
 
-        if ($this->_features->groupings or $this->_features->groupmembersonly) {
-            //groupings selector - used for normal grouping mode or also when restricting access with groupmembersonly
+        if ($this->_features->groupings) {
+            // Groupings selector - used to select grouping for groups in activity.
             $options = array();
             if ($groupings = $DB->get_records('groupings', array('courseid'=>$COURSE->id))) {
                 foreach ($groupings as $grouping) {
@@ -427,11 +433,6 @@ abstract class moodleform_mod extends moodleform {
             $options = array(0 => get_string('none')) + $options;
             $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
             $mform->addHelpButton('groupingid', 'grouping', 'group');
-        }
-
-        if ($this->_features->groupmembersonly) {
-            $mform->addElement('checkbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
-            $mform->addHelpButton('groupmembersonly', 'groupmembersonly', 'group');
         }
 
         if (!empty($CFG->enableavailability)) {

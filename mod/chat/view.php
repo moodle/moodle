@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This page prints a particular instance of chat
+// This page prints a particular instance of chat.
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
@@ -30,23 +29,23 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
+    if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
 
     chat_update_chat_times($cm->instance);
 
-    if (! $chat = $DB->get_record('chat', array('id'=>$cm->instance))) {
+    if (! $chat = $DB->get_record('chat', array('id' => $cm->instance))) {
         print_error('invalidid', 'chat');
     }
 
 } else {
     chat_update_chat_times($c);
 
-    if (! $chat = $DB->get_record('chat', array('id'=>$c))) {
+    if (! $chat = $DB->get_record('chat', array('id' => $c))) {
         print_error('coursemisconf');
     }
-    if (! $course = $DB->get_record('course', array('id'=>$chat->course))) {
+    if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
@@ -59,7 +58,7 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
-// show some info for guests
+// Show some info for guests.
 if (isguestuser()) {
     $PAGE->set_title($chat->name);
     echo $OUTPUT->header();
@@ -88,23 +87,23 @@ $strnextsession  = get_string('nextsession', 'chat');
 $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 $title = $courseshortname . ': ' . format_string($chat->name);
 
-// Mark viewed by user (if required)
+// Mark viewed by user (if required).
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-// Initialize $PAGE
+// Initialize $PAGE.
 $PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
-/// Print the page header
+// Print the page header.
 echo $OUTPUT->header();
 
-/// Check to see if groups are being used here
+// Check to see if groups are being used here.
 $groupmode = groups_get_activity_groupmode($cm);
 $currentgroup = groups_get_activity_group($cm, true);
 
-// url parameters
+// URL parameters.
 $params = array();
 if ($currentgroup) {
     $groupselect = " AND groupid = '$currentgroup'";
@@ -124,12 +123,12 @@ if ($chat->intro) {
 groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
 
 if (has_capability('mod/chat:chat', $context)) {
-    /// Print the main part of the page
+    // Print the main part of the page.
     echo $OUTPUT->box_start('generalbox', 'enterlink');
 
     $now = time();
     $span = $chat->chattime - $now;
-    if ($chat->chattime and $chat->schedule and ($span>0)) {  // A chat is scheduled
+    if ($chat->chattime and $chat->schedule and ($span > 0)) {  // A chat is scheduled.
         echo '<p>';
         echo get_string('sessionstart', 'chat', format_time($span));
         echo '</p>';
@@ -138,24 +137,29 @@ if (has_capability('mod/chat:chat', $context)) {
     $params['id'] = $chat->id;
     $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
     echo '<p>';
-    echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat{$course->id}_{$chat->id}{$groupparam}", array('height' => 500, 'width' => 700)));
+    echo $OUTPUT->action_link($chattarget,
+                              $strenterchat,
+                              new popup_action('click', $chattarget, "chat{$course->id}_{$chat->id}{$groupparam}",
+                                               array('height' => 500, 'width' => 700)));
     echo '</p>';
 
     $params['id'] = $chat->id;
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
-    $action = new popup_action('click', $link, "chat{$course->id}_{$chat->id}{$groupparam}", array('height' => 500, 'width' => 700));
+    $action = new popup_action('click', $link, "chat{$course->id}_{$chat->id}{$groupparam}",
+                               array('height' => 500, 'width' => 700));
     echo '<p>';
-    echo $OUTPUT->action_link($link, get_string('noframesjs', 'message'), $action, array('title'=>get_string('modulename', 'chat')));
+    echo $OUTPUT->action_link($link, get_string('noframesjs', 'message'), $action,
+                              array('title' => get_string('modulename', 'chat')));
     echo '</p>';
 
     if ($chat->studentlogs or has_capability('mod/chat:readlog', $context)) {
         if ($msg = $DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
             echo '<p>';
-            echo html_writer::link(new moodle_url('/mod/chat/report.php', array('id'=>$cm->id)), get_string('viewreport', 'chat'));
+            echo html_writer::link(new moodle_url('/mod/chat/report.php', array('id' => $cm->id)),
+                                   get_string('viewreport', 'chat'));
             echo '</p>';
         }
     }
-
 
     echo $OUTPUT->box_end();
 
@@ -175,7 +179,7 @@ if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
     foreach ($chatusers as $chatuser) {
         $lastping = $timenow - $chatuser->lastmessageping;
         echo '<tr><td class="chatuserimage">';
-        $url = new moodle_url('/user/view.php', array('id'=>$chatuser->id, 'course'=>$chat->course));
+        $url = new moodle_url('/user/view.php', array('id' => $chatuser->id, 'course' => $chat->course));
         echo html_writer::link($url, $OUTPUT->user_picture($chatuser));
         echo '</td><td class="chatuserdetails">';
         echo '<p>'.fullname($chatuser).'</p>';

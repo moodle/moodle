@@ -42,11 +42,11 @@ Feature: Page contains a list of events
     And I press "clearbutton"
     And I set the field "eventname" to "viewed"
     And I set the field "eventcomponent" to "Forum"
-    And I set the field "eventedulevel" to "Other"
+    And I set the field "eventedulevel" to "Participating"
     And I set the field "eventcrud" to "read"
     And I press "filterbutton"
     Then I should see "User report viewed"
-    And I should not see "Discussion viewed"
+    And I should not see "Subscribers viewed"
 
   @javascript
   Scenario: Details of an event are viewable

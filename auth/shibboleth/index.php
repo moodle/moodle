@@ -40,9 +40,13 @@
     if (!empty($_SERVER[$pluginconfig->user_attribute])) {    // Shibboleth auto-login
         $frm = new stdClass();
         $frm->username = strtolower($_SERVER[$pluginconfig->user_attribute]);
-        $frm->password = substr(base64_encode($_SERVER[$pluginconfig->user_attribute]),0,8);
-        // The random password consists of the first 8 letters of the base 64 encoded user ID
-        // This password is never used unless the user account is converted to manual
+        // The password is never actually used, but needs to be passed to the functions 'user_login' and
+        // 'authenticate_user_login'. Shibboleth returns true for the function 'prevent_local_password', which is
+        // used when setting the password in 'update_internal_user_password'. When 'prevent_local_password'
+        // returns true, the password is set to 'not cached' (AUTH_PASSWORD_NOT_CACHED) in the Moodle DB. However,
+        // rather than setting the password to a hard-coded value, we will generate one each time, in case there are
+        // changes to the Shibboleth plugin and it is actually used.
+        $frm->password = generate_password(8);
 
     /// Check if the user has actually submitted login data to us
 

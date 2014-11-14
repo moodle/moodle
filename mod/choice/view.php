@@ -1,184 +1,193 @@
 <?php
 
-    require_once("../../config.php");
-    require_once("lib.php");
-    require_once($CFG->libdir . '/completionlib.php');
+require_once("../../config.php");
+require_once("lib.php");
+require_once($CFG->libdir . '/completionlib.php');
 
-    $id         = required_param('id', PARAM_INT);                 // Course Module ID
-    $action     = optional_param('action', '', PARAM_ALPHA);
-    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
+$id         = required_param('id', PARAM_INT);                 // Course Module ID
+$action     = optional_param('action', '', PARAM_ALPHA);
+$attemptids = optional_param_array('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
 
-    $url = new moodle_url('/mod/choice/view.php', array('id'=>$id));
-    if ($action !== '') {
-        $url->param('action', $action);
-    }
-    $PAGE->set_url($url);
+$url = new moodle_url('/mod/choice/view.php', array('id'=>$id));
+if ($action !== '') {
+    $url->param('action', $action);
+}
+$PAGE->set_url($url);
 
-    if (! $cm = get_coursemodule_from_id('choice', $id)) {
-        print_error('invalidcoursemodule');
-    }
+if (! $cm = get_coursemodule_from_id('choice', $id)) {
+    print_error('invalidcoursemodule');
+}
 
-    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error('coursemisconf');
-    }
+if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+    print_error('coursemisconf');
+}
 
-    require_course_login($course, false, $cm);
+require_course_login($course, false, $cm);
 
-    if (!$choice = choice_get_choice($cm->instance)) {
-        print_error('invalidcoursemodule');
-    }
+if (!$choice = choice_get_choice($cm->instance)) {
+    print_error('invalidcoursemodule');
+}
 
-    $strchoice = get_string('modulename', 'choice');
-    $strchoices = get_string('modulenameplural', 'choice');
+$strchoice = get_string('modulename', 'choice');
+$strchoices = get_string('modulenameplural', 'choice');
 
-    $context = context_module::instance($cm->id);
+$context = context_module::instance($cm->id);
 
-    if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL, 'mod/choice:choose') and $choice->allowupdate) {
-        if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
-            $DB->delete_records('choice_answers', array('id' => $answer->id));
+if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL, 'mod/choice:choose') and $choice->allowupdate) {
+    $answercount = $DB->count_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+    if ($answercount > 0) {
+        $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
 
-            // Update completion state
-            $completion = new completion_info($course);
-            if ($completion->is_enabled($cm) && $choice->completionsubmit) {
-                $completion->update_state($cm, COMPLETION_INCOMPLETE);
-            }
+        // Update completion state
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) && $choice->completionsubmit) {
+            $completion->update_state($cm, COMPLETION_INCOMPLETE);
         }
     }
+}
 
-    $PAGE->set_title($choice->name);
-    $PAGE->set_heading($course->fullname);
+$PAGE->set_title($choice->name);
+$PAGE->set_heading($course->fullname);
 
-    // Mark viewed by user (if required)
-    $completion = new completion_info($course);
-    $completion->set_module_viewed($cm);
+// Mark viewed by user (if required)
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 
 /// Submit any new data if there is any
-    if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
-        $timenow = time();
-        if (has_capability('mod/choice:deleteresponses', $context)) {
-            if ($action == 'delete') { //some responses need to be deleted
-                choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
-                redirect("view.php?id=$cm->id");
-            }
-        }
-        $answer = optional_param('answer', '', PARAM_INT);
-
-        if (empty($answer)) {
-            redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
-        } else {
-            choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
-        }
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($choice->name, 2, null);
-        echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
-    } else {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($choice->name, 2, null);
+if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
+    $timenow = time();
+    if (has_capability('mod/choice:deleteresponses', $context) && $action == 'delete') {
+        //some responses need to be deleted
+        choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
+        redirect("view.php?id=$cm->id");
     }
+
+    if ($choice->allowmultiple) {
+        $answer = optional_param_array('answer', array(), PARAM_INT);
+    } else {
+        $answer = optional_param('answer', '', PARAM_INT);
+    }
+
+    if (empty($answer)) {
+        redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
+    } else {
+        choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
+    }
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(format_string($choice->name), 2, null);
+    echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
+} else {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(format_string($choice->name), 2, null);
+}
 
 
 /// Display the choice and possibly results
-    $eventdata = array();
-    $eventdata['objectid'] = $choice->id;
-    $eventdata['context'] = $context;
+$eventdata = array();
+$eventdata['objectid'] = $choice->id;
+$eventdata['context'] = $context;
 
-    $event = \mod_choice\event\course_module_viewed::create($eventdata);
-    $event->add_record_snapshot('course_modules', $cm);
-    $event->add_record_snapshot('course', $course);
-    $event->trigger();
+$event = \mod_choice\event\course_module_viewed::create($eventdata);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->trigger();
 
-    /// Check to see if groups are being used in this choice
-    $groupmode = groups_get_activity_groupmode($cm);
+/// Check to see if groups are being used in this choice
+$groupmode = groups_get_activity_groupmode($cm);
 
-    if ($groupmode) {
-        groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/view.php?id='.$id);
+if ($groupmode) {
+    groups_get_activity_group($cm, true);
+    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/view.php?id='.$id);
+}
+$allresponses = choice_get_response_data($choice, $cm, $groupmode);   // Big function, approx 6 SQL calls per user
+
+
+if (has_capability('mod/choice:readresponses', $context)) {
+    choice_show_reportlink($allresponses, $cm);
+}
+
+echo '<div class="clearer"></div>';
+
+if ($choice->intro) {
+    echo $OUTPUT->box(format_module_intro('choice', $choice, $cm->id), 'generalbox', 'intro');
+}
+
+$timenow = time();
+$current = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+//if user has already made a selection, and they are not allowed to update it or if choice is not open, show their selected answer.
+if (isloggedin() && (!empty($current)) &&
+    (empty($choice->allowupdate) || ($timenow > $choice->timeclose)) ) {
+    $choicetexts = array();
+    foreach ($current as $c) {
+        $choicetexts[] = format_string(choice_get_option_text($choice, $c->optionid));
     }
-    $allresponses = choice_get_response_data($choice, $cm, $groupmode);   // Big function, approx 6 SQL calls per user
-
-
-    if (has_capability('mod/choice:readresponses', $context)) {
-        choice_show_reportlink($allresponses, $cm);
-    }
-
-    echo '<div class="clearer"></div>';
-
-    if ($choice->intro) {
-        echo $OUTPUT->box(format_module_intro('choice', $choice, $cm->id), 'generalbox', 'intro');
-    }
-
-    $timenow = time();
-    $current = false;  // Initialise for later
-    //if user has already made a selection, and they are not allowed to update it or if choice is not open, show their selected answer.
-    if (isloggedin() && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
-        (empty($choice->allowupdate) || ($timenow > $choice->timeclose)) ) {
-        echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), 'generalbox', 'yourselection');
-    }
+    echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".implode('; ', $choicetexts), 'generalbox', 'yourselection');
+}
 
 /// Print the form
-    $choiceopen = true;
-    if ($choice->timeclose !=0) {
-        if ($choice->timeopen > $timenow ) {
-            echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
-            echo $OUTPUT->footer();
-            exit;
-        } else if ($timenow > $choice->timeclose) {
-            echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
-            $choiceopen = false;
-        }
+$choiceopen = true;
+if ($choice->timeclose !=0) {
+    if ($choice->timeopen > $timenow ) {
+        echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
+        echo $OUTPUT->footer();
+        exit;
+    } else if ($timenow > $choice->timeclose) {
+        echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
+        $choiceopen = false;
     }
+}
 
-    if ( (!$current or $choice->allowupdate) and $choiceopen and is_enrolled($context, NULL, 'mod/choice:choose')) {
-    // They haven't made their choice yet or updates allowed and choice is open
+if ( (!$current or $choice->allowupdate) and $choiceopen and is_enrolled($context, NULL, 'mod/choice:choose')) {
+// They haven't made their choice yet or updates allowed and choice is open
 
-        $options = choice_prepare_options($choice, $USER, $cm, $allresponses);
-        $renderer = $PAGE->get_renderer('mod_choice');
-        echo $renderer->display_options($options, $cm->id, $choice->display);
-        $choiceformshown = true;
-    } else {
-        $choiceformshown = false;
+    $options = choice_prepare_options($choice, $USER, $cm, $allresponses);
+    $renderer = $PAGE->get_renderer('mod_choice');
+    echo $renderer->display_options($options, $cm->id, $choice->display, $choice->allowmultiple);
+    $choiceformshown = true;
+} else {
+    $choiceformshown = false;
+}
+
+if (!$choiceformshown) {
+    $sitecontext = context_system::instance();
+
+    if (isguestuser()) {
+        // Guest account
+        echo $OUTPUT->confirm(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
+                     get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));
+    } else if (!is_enrolled($context)) {
+        // Only people enrolled can make a choice
+        $SESSION->wantsurl = qualified_me();
+        $SESSION->enrolcancel = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
+
+        $coursecontext = context_course::instance($course->id);
+        $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+
+        echo $OUTPUT->box_start('generalbox', 'notice');
+        echo '<p align="center">'. get_string('notenrolledchoose', 'choice') .'</p>';
+        echo $OUTPUT->container_start('continuebutton');
+        echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', $courseshortname));
+        echo $OUTPUT->container_end();
+        echo $OUTPUT->box_end();
+
     }
+}
 
-    if (!$choiceformshown) {
-        $sitecontext = context_system::instance();
+// print the results at the bottom of the screen
+if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
+    ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current) or
+    ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen)) {
 
-        if (isguestuser()) {
-            // Guest account
-            echo $OUTPUT->confirm(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
-                         get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));
-        } else if (!is_enrolled($context)) {
-            // Only people enrolled can make a choice
-            $SESSION->wantsurl = qualified_me();
-            $SESSION->enrolcancel = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
-
-            $coursecontext = context_course::instance($course->id);
-            $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
-
-            echo $OUTPUT->box_start('generalbox', 'notice');
-            echo '<p align="center">'. get_string('notenrolledchoose', 'choice') .'</p>';
-            echo $OUTPUT->container_start('continuebutton');
-            echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', $courseshortname));
-            echo $OUTPUT->container_end();
-            echo $OUTPUT->box_end();
-
-        }
+    if (!empty($choice->showunanswered)) {
+        $choice->option[0] = get_string('notanswered', 'choice');
+        $choice->maxanswers[0] = 0;
     }
+    $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
+    $renderer = $PAGE->get_renderer('mod_choice');
+    echo $renderer->display_result($results);
 
-    // print the results at the bottom of the screen
-    if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current) or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen)) {
+} else if (!$choiceformshown) {
+    echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));
+}
 
-        if (!empty($choice->showunanswered)) {
-            $choice->option[0] = get_string('notanswered', 'choice');
-            $choice->maxanswers[0] = 0;
-        }
-        $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
-        $renderer = $PAGE->get_renderer('mod_choice');
-        echo $renderer->display_result($results);
-
-    } else if (!$choiceformshown) {
-        echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));
-    }
-
-    echo $OUTPUT->footer();
+echo $OUTPUT->footer();

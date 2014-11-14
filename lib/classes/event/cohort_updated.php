@@ -61,7 +61,7 @@ class cohort_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The cohort with the id '$this->objectid' was updated by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' updated the cohort with id '$this->objectid'.";
     }
 
     /**
@@ -85,7 +85,7 @@ class cohort_updated extends base {
     /**
      * Return legacy event data.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('cohort', $this->objectid);

@@ -69,6 +69,12 @@
     .box-shadow(2px 2px 3px .1px #999);
 }
 
+.moodle-dialogue h3 {
+    font-size: 14px;
+    margin: 0;
+    line-height: 20px;
+}
+
  .moodle-dialogue-base .filepicker .moodle-dialogue-wrap .moodle-dialogue-bd {
     padding: 0px;
 }
@@ -96,16 +102,29 @@
     float: right;
 }
 .file-picker .fp-repo-items {
+    float: none;
+    width: auto;
+    margin-left:181px;
+}
+.moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
     float: left;
-    width: 693px;
 }
 .dir-rtl .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:181px;
+}
+.dir-rtl .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
     float: right;
 }
 .file-picker .fp-navbar {
     background: #F2F2F2;
     border-bottom: 1px solid #BBBBBB;
     min-height: 40px;
+    overflow: hidden;
 }
 .file-picker .fp-navbar .fp-viewbar {
     margin: 4px;
@@ -113,7 +132,7 @@
 
 .file-picker .fp-content {
     background: #FFFFFF;
-    clear: both;
+    clear: none;
     overflow: auto;
     height: 452px;
 }

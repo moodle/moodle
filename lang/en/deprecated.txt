@@ -1,0 +1,9 @@
+hidden,core_badges
+hidden,core_calendar
+hidden,core_portfolio
+hidden,core_question
+hidden,core_repository
+hidden,core_role
+simpleview,core_grades
+fullview,core_grades
+categoriesedit,core_grades

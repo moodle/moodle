@@ -186,7 +186,7 @@ class core_user_external extends external_api {
             // End of user info validation.
 
             // Create the user data now!
-            $user['id'] = user_create_user($user);
+            $user['id'] = user_create_user($user, true, false);
 
             // Custom fields.
             if (!empty($user['customfields'])) {
@@ -197,6 +197,9 @@ class core_user_external extends external_api {
                 }
                 profile_save_data((object) $user);
             }
+
+            // Trigger event.
+            \core\event\user_created::create_from_userid($user['id'])->trigger();
 
             // Preferences.
             if (!empty($user['preferences'])) {
@@ -400,7 +403,7 @@ class core_user_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['users'] as $user) {
-            user_update_user($user);
+            user_update_user($user, true, false);
             // Update user custom fields.
             if (!empty($user['customfields'])) {
 
@@ -411,6 +414,9 @@ class core_user_external extends external_api {
                 }
                 profile_save_data((object) $user);
             }
+
+            // Trigger event.
+            \core\event\user_updated::create_from_userid($user['id'])->trigger();
 
             // Preferences.
             if (!empty($user['preferences'])) {
@@ -1109,16 +1115,6 @@ class core_user_external extends external_api {
                 'item' => $params['pushid'],
                 'warningcode' => 'existingkeyforthisuser',
                 'message' => 'This key is already stored for this user'
-            );
-            return $warnings;
-        }
-
-        // The same key can't exists for the same platform.
-        if ($DB->get_record('user_devices', array('pushid' => $params['pushid'], 'platform' => $params['platform']))) {
-            $warnings['warning'][] = array(
-                'item' => $params['pushid'],
-                'warningcode' => 'existingkeyforplatform',
-                'message' => 'This key is already stored for other device using the same platform'
             );
             return $warnings;
         }

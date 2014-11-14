@@ -1,20 +1,20 @@
 <?php
 /*
 
-@version V5.06 29 Sept 2008   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+@version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
- 
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
+
+  Released under both BSD license and Lesser GPL library license.
+  Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
-  
+
   Active Record implementation. Superset of Zend Framework's.
-  
-  This is "Active Record eXtended" to support JOIN, WORK and LAZY mode by Chris Ravenscroft  chris#voilaweb.com 
-  
+
+  This is "Active Record eXtended" to support JOIN, WORK and LAZY mode by Chris Ravenscroft  chris#voilaweb.com
+
   Version 0.9
-  
-  See http://www-128.ibm.com/developerworks/java/library/j-cb03076/?ca=dgr-lnxw01ActiveRecord 
+
+  See http://www-128.ibm.com/developerworks/java/library/j-cb03076/?ca=dgr-lnxw01ActiveRecord
   	for info on Ruby on Rails Active Record implementation
 */
 
@@ -63,29 +63,29 @@ class ADODB_Active_Table {
 function ADODB_SetDatabaseAdapter(&$db)
 {
 	global $_ADODB_ACTIVE_DBS;
-	
+
 		foreach($_ADODB_ACTIVE_DBS as $k => $d) {
 			if (PHP_VERSION >= 5) {
 				if ($d->db === $db) return $k;
 			} else {
-				if ($d->db->_connectionID === $db->_connectionID && $db->database == $d->db->database) 
+				if ($d->db->_connectionID === $db->_connectionID && $db->database == $d->db->database)
 					return $k;
 			}
 		}
-		
+
 		$obj = new ADODB_Active_DB();
 		$obj->db = $db;
 		$obj->tables = array();
-		
+
 		$_ADODB_ACTIVE_DBS[] = $obj;
-		
+
 		return sizeof($_ADODB_ACTIVE_DBS)-1;
 }
 
 
 class ADODB_Active_Record {
 	static $_changeNames = true; // dynamically pluralize table names
-	static $_foreignSuffix = '_id'; // 
+	static $_foreignSuffix = '_id'; //
 	var $_dbat; // associative index pointing to ADODB_Active_DB eg. $ADODB_Active_DBS[_dbat]
 	var $_table; // tablename, if set in class definition then use it as table name
 	var $_sTable; // singularized table name
@@ -106,18 +106,18 @@ class ADODB_Active_Record {
 	}
 
 	// should be static
-	static function SetDatabaseAdapter(&$db) 
+	static function SetDatabaseAdapter(&$db)
 	{
 		return ADODB_SetDatabaseAdapter($db);
 	}
-	
-	
+
+
 	public function __set($name, $value)
 	{
 		$name = str_replace(' ', '_', $name);
 		$this->$name = $value;
 	}
-	
+
 	// php5 constructor
 	// Note: if $table is defined, then we will use it as our table name
 	// Otherwise we will use our classname...
@@ -131,12 +131,12 @@ class ADODB_Active_Record {
 	function __construct($table = false, $pkeyarr=false, $db=false, $options=array())
 	{
 	global $ADODB_ASSOC_CASE,$_ADODB_ACTIVE_DBS;
-	
+
 		if ($db == false && is_object($pkeyarr)) {
 			$db = $pkeyarr;
 			$pkeyarr = false;
 		}
-		
+
 		if($table)
 		{
 			// table argument exists. It is expected to be
@@ -159,10 +159,10 @@ class ADODB_Active_Record {
 			$this->_dbat = ADODB_Active_Record::SetDatabaseAdapter($db);
 		} else
 			$this->_dbat = sizeof($_ADODB_ACTIVE_DBS)-1;
-		
-		
+
+
 		if ($this->_dbat < 0) $this->Error("No database connection set; use ADOdb_Active_Record::SetDatabaseAdapter(\$db)",'ADODB_Active_Record::__constructor');
-		
+
 		$this->_tableat = $this->_table; # reserved for setting the assoc value to a non-table name, eg. the sql string in future
 
 		// CFR: Just added this option because UpdateActiveTable() can refresh its information
@@ -178,13 +178,13 @@ class ADODB_Active_Record {
 			$table->_belongsTo = array();
 		}
 	}
-	
+
 	function __wakeup()
 	{
   		$class = get_class($this);
   		new $class;
 	}
-	
+
 	// CFR: Constants found in Rails
 	static $IrregularP = array(
 		'PERSON'    => 'people',
@@ -231,26 +231,26 @@ class ADODB_Active_Record {
 		$lastc2 = substr($ut,$len-2);
 		switch ($lastc) {
 		case 'S':
-			return $table.'es';	
+			return $table.'es';
 		case 'Y':
 			return substr($table,0,$len-1).'ies';
-		case 'X':	
+		case 'X':
 			return $table.'es';
-		case 'H': 
+		case 'H':
 			if ($lastc2 == 'CH' || $lastc2 == 'SH')
 				return $table.'es';
 		default:
 			return $table.'s';
 		}
 	}
-	
+
 	// CFR Lamest singular inflector ever - @todo Make it real!
 	// Note: There is an assumption here...and it is that the argument's length >= 4
 	function _singularize($table)
 	{
-	
+
 		if (!ADODB_Active_Record::$_changeNames) return $table;
-	
+
 		$ut = strtoupper($table);
 		if(isset(self::$WeIsI[$ut]))
 		{
@@ -320,7 +320,7 @@ class ADODB_Active_Record {
 		$ar->foreignName = $foreignRef;
 		$ar->UpdateActiveTable();
 		$ar->foreignKey = ($foreignKey) ? $foreignKey : $ar->foreignName . self::$_foreignSuffix;
-		
+
 		$table =& $this->TableInfo();
 		if(!isset($table->_belongsTo[$foreignRef]))
 		{
@@ -332,8 +332,8 @@ class ADODB_Active_Record {
 
 	/**
 	 * __get Access properties - used for lazy loading
-	 * 
-	 * @param mixed $name 
+	 *
+	 * @param mixed $name
 	 * @access protected
 	 * @return void
 	 */
@@ -348,12 +348,12 @@ class ADODB_Active_Record {
 		if($offset >= 0) $extras['offset'] = $offset;
 		if($limit >= 0) $extras['limit'] = $limit;
 		$table =& $this->TableInfo();
-		
-		if (strlen($whereOrderBy)) 
+
+		if (strlen($whereOrderBy))
 			if (!preg_match('/^[ \n\r]*AND/i',$whereOrderBy))
 				if (!preg_match('/^[ \n\r]*ORDER[ \n\r]/i',$whereOrderBy))
 					$whereOrderBy = 'AND '.$whereOrderBy;
-					
+
 		if(!empty($table->_belongsTo[$name]))
 		{
 			$obj = $table->_belongsTo[$name];
@@ -366,7 +366,7 @@ class ADODB_Active_Record {
 					$belongsToId = $k;
 				else
 					$belongsToId = 'id';
-				
+
 				$arrayOfOne =
 					$obj->Find(
 						$belongsToId.'='.$this->$columnName.' '.$whereOrderBy, false, false, $extras);
@@ -380,7 +380,7 @@ class ADODB_Active_Record {
 			if(($k = reset($table->keys)))
 				$hasManyId   = $k;
 			else
-				$hasManyId   = 'id';			
+				$hasManyId   = 'id';
 
 			$this->$name =
 				$obj->Find(
@@ -389,7 +389,7 @@ class ADODB_Active_Record {
 		}
 	}
 	//////////////////////////////////
-	
+
 	// update metadata
 	function UpdateActiveTable($pkeys=false,$forceUpdate=false)
 	{
@@ -405,14 +405,14 @@ class ADODB_Active_Record {
 
 			$tobj = $tables[$tableat];
 			foreach($tobj->flds as $name => $fld) {
-			if ($ADODB_ACTIVE_DEFVALS && isset($fld->default_value)) 
+			if ($ADODB_ACTIVE_DEFVALS && isset($fld->default_value))
 				$this->$name = $fld->default_value;
 			else
 				$this->$name = null;
 			}
 			return;
 		}
-		
+
 		$db = $activedb->db;
 		$fname = $ADODB_CACHE_DIR . '/adodb_' . $db->databaseType . '_active_'. $table . '.cache';
 		if (!$forceUpdate && $ADODB_ACTIVE_CACHESECS && $ADODB_CACHE_DIR && file_exists($fname)) {
@@ -420,11 +420,11 @@ class ADODB_Active_Record {
 			@flock($fp, LOCK_SH);
 			$acttab = unserialize(fread($fp,100000));
 			fclose($fp);
-			if ($acttab->_created + $ADODB_ACTIVE_CACHESECS - (abs(rand()) % 16) > time()) { 
+			if ($acttab->_created + $ADODB_ACTIVE_CACHESECS - (abs(rand()) % 16) > time()) {
 				// abs(rand()) randomizes deletion, reducing contention to delete/refresh file
 				// ideally, you should cache at least 32 secs
 				$activedb->tables[$table] = $acttab;
-				
+
 				//if ($db->debug) ADOConnection::outp("Reading cached active record file: $fname");
 			  	return;
 			} else if ($db->debug) {
@@ -433,18 +433,18 @@ class ADODB_Active_Record {
 		}
 		$activetab = new ADODB_Active_Table();
 		$activetab->name = $table;
-		
+
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 		if ($db->fetchMode !== false) $savem = $db->SetFetchMode(false);
-		
+
 		$cols = $db->MetaColumns($table);
-		
+
 		if (isset($savem)) $db->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
-		
+
 		if (!$cols) {
-			$this->Error("Invalid table name: $table",'UpdateActiveTable'); 
+			$this->Error("Invalid table name: $table",'UpdateActiveTable');
 			return false;
 		}
 		$fld = reset($cols);
@@ -454,17 +454,17 @@ class ADODB_Active_Record {
 				foreach($cols as $name => $fld) {
 					if (!empty($fld->primary_key)) $pkeys[] = $name;
 				}
-			} else	
+			} else
 				$pkeys = $this->GetPrimaryKeys($db, $table);
 		}
 		if (empty($pkeys)) {
 			$this->Error("No primary key found for table $table",'UpdateActiveTable');
 			return false;
 		}
-		
+
 		$attr = array();
 		$keys = array();
-		
+
 		switch($ADODB_ASSOC_CASE) {
 		case 0:
 			foreach($cols as $name => $fldobj) {
@@ -479,18 +479,18 @@ class ADODB_Active_Record {
 				$keys[strtolower($name)] = strtolower($name);
 			}
 			break;
-			
-		case 1: 
+
+		case 1:
 			foreach($cols as $name => $fldobj) {
 				$name = strtoupper($name);
-               
+
                 if ($ADODB_ACTIVE_DEFVALS && isset($fldobj->default_value))
                     $this->$name = $fldobj->default_value;
                 else
 					$this->$name = null;
 				$attr[$name] = $fldobj;
 			}
-			
+
 			foreach($pkeys as $k => $name) {
 				$keys[strtoupper($name)] = strtoupper($name);
 			}
@@ -498,7 +498,7 @@ class ADODB_Active_Record {
 		default:
 			foreach($cols as $name => $fldobj) {
 				$name = ($fldobj->name);
-                
+
                 if ($ADODB_ACTIVE_DEFVALS && isset($fldobj->default_value))
                     $this->$name = $fldobj->default_value;
                 else
@@ -510,7 +510,7 @@ class ADODB_Active_Record {
 			}
 			break;
 		}
-		
+
 		$activetab->keys = $keys;
 		$activetab->flds = $attr;
 		$activetab->updateColsCount();
@@ -523,58 +523,58 @@ class ADODB_Active_Record {
 		}
 		if (isset($activedb->tables[$table])) {
 			$oldtab = $activedb->tables[$table];
-		
+
 			if ($oldtab) $activetab->_belongsTo = $oldtab->_belongsTo;
 			if ($oldtab) $activetab->_hasMany = $oldtab->_hasMany;
 		}
 		$activedb->tables[$table] = $activetab;
 	}
-	
+
 	function GetPrimaryKeys(&$db, $table)
 	{
 		return $db->MetaPrimaryKeys($table);
 	}
-	
-	// error handler for both PHP4+5. 
+
+	// error handler for both PHP4+5.
 	function Error($err,$fn)
 	{
 	global $_ADODB_ACTIVE_DBS;
-	
+
 		$fn = get_class($this).'::'.$fn;
 		$this->_lasterr = $fn.': '.$err;
-		
+
 		if ($this->_dbat < 0) $db = false;
 		else {
 			$activedb = $_ADODB_ACTIVE_DBS[$this->_dbat];
 			$db = $activedb->db;
 		}
-		
-		if (function_exists('adodb_throw')) {	
+
+		if (function_exists('adodb_throw')) {
 			if (!$db) adodb_throw('ADOdb_Active_Record', $fn, -1, $err, 0, 0, false);
 			else adodb_throw($db->databaseType, $fn, -1, $err, 0, 0, $db);
 		} else
 			if (!$db || $db->debug) ADOConnection::outp($this->_lasterr);
-		
+
 	}
-	
+
 	// return last error message
 	function ErrorMsg()
 	{
 		if (!function_exists('adodb_throw')) {
 			if ($this->_dbat < 0) $db = false;
 			else $db = $this->DB();
-		
+
 			// last error could be database error too
 			if ($db && $db->ErrorMsg()) return $db->ErrorMsg();
 		}
 		return $this->_lasterr;
 	}
-	
-	function ErrorNo() 
+
+	function ErrorNo()
 	{
 		if ($this->_dbat < 0) return -9999; // no database connection...
 		$db = $this->DB();
-		
+
 		return (int) $db->ErrorNo();
 	}
 
@@ -583,7 +583,7 @@ class ADODB_Active_Record {
 	function DB()
 	{
 	global $_ADODB_ACTIVE_DBS;
-	
+
 		if ($this->_dbat < 0) {
 			$false = false;
 			$this->Error("No database connection set: use ADOdb_Active_Record::SetDatabaseAdaptor(\$db)", "DB");
@@ -593,18 +593,18 @@ class ADODB_Active_Record {
 		$db = $activedb->db;
 		return $db;
 	}
-	
+
 	// retrieve ADODB_Active_Table
 	function &TableInfo()
 	{
 	global $_ADODB_ACTIVE_DBS;
-	
+
 		$activedb = $_ADODB_ACTIVE_DBS[$this->_dbat];
 		$table = $activedb->tables[$this->_tableat];
 		return $table;
 	}
-	
-	
+
+
 	// I have an ON INSERT trigger on a table that sets other columns in the table.
 	// So, I find that for myTable, I want to reload an active record after saving it. -- Malcolm Cook
 	function Reload()
@@ -615,21 +615,21 @@ class ADODB_Active_Record {
 		return($this->Load($where));
 	}
 
-	
+
 	// set a numeric array (using natural table field ordering) as object properties
 	function Set(&$row)
 	{
 	global $ACTIVE_RECORD_SAFETY;
-	
+
 		$db = $this->DB();
-		
+
 		if (!$row) {
-			$this->_saved = false;		
+			$this->_saved = false;
 			return false;
 		}
-		
+
 		$this->_saved = true;
-		
+
 		$table = $this->TableInfo();
 		$sizeofFlds = sizeof($table->flds);
 		$sizeofRow  = sizeof($row);
@@ -687,7 +687,7 @@ class ADODB_Active_Record {
         # </AP>
 		return true;
 	}
-	
+
 	// get last inserted id for INSERT
 	function LastInsertID(&$db,$fieldname)
 	{
@@ -695,14 +695,14 @@ class ADODB_Active_Record {
 			$val = $db->Insert_ID($this->_table,$fieldname);
 		else
 			$val = false;
-			
+
 		if (is_null($val) || $val === false) {
 			// this might not work reliably in multi-user environment
 			return $db->GetOne("select max(".$fieldname.") from ".$this->_table);
 		}
 		return $val;
 	}
-	
+
 	// quote data in where clause
 	function doquote(&$db, $val,$t)
 	{
@@ -710,13 +710,13 @@ class ADODB_Active_Record {
 		case 'D':
 		case 'T':
 			if (empty($val)) return 'null';
-			
+
 		case 'C':
 		case 'X':
 			if (is_null($val)) return 'null';
-			
-			if (strlen($val)>0 && 
-				(strncmp($val,"'",1) != 0 || substr($val,strlen($val)-1,1) != "'")) { 
+
+			if (strlen($val)>0 &&
+				(strncmp($val,"'",1) != 0 || substr($val,strlen($val)-1,1) != "'")) {
 				return $db->qstr($val);
 				break;
 			}
@@ -725,13 +725,13 @@ class ADODB_Active_Record {
 			break;
 		}
 	}
-	
+
 	// generate where clause for an UPDATE/SELECT
 	function GenWhere(&$db, &$table)
 	{
 		$keys = $table->keys;
 		$parr = array();
-		
+
 		foreach($keys as $k) {
 			$f = $table->flds[$k];
 			if ($f) {
@@ -740,15 +740,15 @@ class ADODB_Active_Record {
 		}
 		return implode(' and ', $parr);
 	}
-	
-	
+
+
 	//------------------------------------------------------------ Public functions below
-	
+
 	function Load($where=null,$bindarr=false)
 	{
 		$db = $this->DB(); if (!$db) return false;
 		$this->_where = $where;
-		
+
 		$save = $db->SetFetchMode(ADODB_FETCH_NUM);
 		$qry = "select * from ".$this->_table;
 		$table =& $this->TableInfo();
@@ -757,7 +757,7 @@ class ADODB_Active_Record {
 			$hasManyId   = $k;
 		else
 			$hasManyId   = 'id';
-		
+
 		foreach($table->_belongsTo as $foreignTable)
 		{
 			if(($k = reset($foreignTable->TableInfo()->keys)))
@@ -780,7 +780,7 @@ class ADODB_Active_Record {
 		}
 		if($where)
 			$qry .= ' WHERE '.$where;
-		
+
 		// Simple case: no relations. Load row and return.
 		if((count($table->_hasMany) + count($table->_belongsTo)) < 1)
 		{
@@ -790,7 +790,7 @@ class ADODB_Active_Record {
 			$db->SetFetchMode($save);
 			return $this->Set($row);
 		}
-		
+
 		// More complex case when relations have to be collated
 		$rows = $db->GetAll($qry,$bindarr);
 		if(!$rows)
@@ -800,7 +800,7 @@ class ADODB_Active_Record {
 			return false;
 		$class = get_class($this);
 		$isFirstRow = true;
-		
+
 		if(($k = reset($this->TableInfo()->keys)))
 			$myId   = $k;
 		else
@@ -819,7 +819,7 @@ class ADODB_Active_Record {
 		}
 		if(!$found)
 			$this->outp_throw("Unable to locate key $myId for $class in Load()",'Load');
-		
+
 		foreach($rows as $row)
 		{
 			$rowId = intval($row[$index]);
@@ -873,21 +873,21 @@ class ADODB_Active_Record {
 							}
 						}
 					}
-				}				
+				}
 			}
 		}
 		return true;
 	}
-	
+
 	// false on error
 	function Save()
 	{
 		if ($this->_saved) $ok = $this->Update();
 		else $ok = $this->Insert();
-		
+
 		return $ok;
 	}
-	
+
 	// CFR: Sometimes we may wish to consider that an object is not to be replaced but inserted.
 	// Sample use case: an 'undo' command object (after a delete())
 	function Dirty()
@@ -901,7 +901,7 @@ class ADODB_Active_Record {
 		$db = $this->DB(); if (!$db) return false;
 		$cnt = 0;
 		$table = $this->TableInfo();
-		
+
 		$valarr = array();
 		$names = array();
 		$valstr = array();
@@ -915,7 +915,7 @@ class ADODB_Active_Record {
 				$cnt += 1;
 			}
 		}
-		
+
 		if (empty($names)){
 			foreach($table->flds as $name=>$fld) {
 				$valarr[] = null;
@@ -926,7 +926,7 @@ class ADODB_Active_Record {
 		}
 		$sql = 'INSERT INTO '.$this->_table."(".implode(',',$names).') VALUES ('.implode(',',$valstr).')';
 		$ok = $db->Execute($sql,$valarr);
-		
+
 		if ($ok) {
 			$this->_saved = true;
 			$autoinc = false;
@@ -941,23 +941,23 @@ class ADODB_Active_Record {
 				$this->$k = $this->LastInsertID($db,$k);
 			}
 		}
-		
+
 		$this->_original = $valarr;
 		return !empty($ok);
 	}
-	
+
 	function Delete()
 	{
 		$db = $this->DB(); if (!$db) return false;
 		$table = $this->TableInfo();
-		
+
 		$where = $this->GenWhere($db,$table);
 		$sql = 'DELETE FROM '.$this->_table.' WHERE '.$where;
 		$ok = $db->Execute($sql);
-		
+
 		return $ok ? true : false;
 	}
-	
+
 	// returns an array of active record objects
 	function Find($whereOrderBy,$bindarr=false,$pkeysArr=false,$extra=array())
 	{
@@ -967,7 +967,7 @@ class ADODB_Active_Record {
 			array('foreignName'=>$this->foreignName, 'belongsTo'=>$table->_belongsTo, 'hasMany'=>$table->_hasMany));
 		return $arr;
 	}
-	
+
 	// CFR: In introduced this method to ensure that inner workings are not disturbed by
 	// subclasses...for instance when GetActiveRecordsClass invokes Find()
 	// Why am I not invoking parent::Find?
@@ -985,12 +985,12 @@ class ADODB_Active_Record {
 	function Replace()
 	{
 	global $ADODB_ASSOC_CASE;
-		
+
 		$db = $this->DB(); if (!$db) return false;
 		$table = $this->TableInfo();
-		
+
 		$pkey = $table->keys;
-		
+
 		foreach($table->flds as $name=>$fld) {
 			$val = $this->$name;
 			/*
@@ -1010,17 +1010,17 @@ class ADODB_Active_Record {
 			$arr[$name] = $this->doquote($db,$val,$t);
 			$valarr[] = $val;
 		}
-		
+
 		if (!is_array($pkey)) $pkey = array($pkey);
-		
-		
-		if ($ADODB_ASSOC_CASE == 0) 
+
+
+		if ($ADODB_ASSOC_CASE == 0)
 			foreach($pkey as $k => $v)
 				$pkey[$k] = strtolower($v);
-		elseif ($ADODB_ASSOC_CASE == 1) 
+		elseif ($ADODB_ASSOC_CASE == 1)
 			foreach($pkey as $k => $v)
 				$pkey[$k] = strtoupper($v);
-				
+
 		$ok = $db->Replace($this->_table,$arr,$pkey);
 		if ($ok) {
 			$this->_saved = true; // 1= update 2=insert
@@ -1037,9 +1037,9 @@ class ADODB_Active_Record {
 					$this->$k = $this->LastInsertID($db,$k);
 				}
 			}
-			
+
 			$this->_original = $valarr;
-		} 
+		}
 		return $ok;
 	}
 
@@ -1048,14 +1048,14 @@ class ADODB_Active_Record {
 	{
 		$db = $this->DB(); if (!$db) return false;
 		$table = $this->TableInfo();
-		
+
 		$where = $this->GenWhere($db, $table);
-		
+
 		if (!$where) {
 			$this->error("Where missing for table $table", "Update");
 			return false;
 		}
-		$valarr = array(); 
+		$valarr = array();
 		$neworig = array();
 		$pairs = array();
 		$i = -1;
@@ -1064,11 +1064,11 @@ class ADODB_Active_Record {
 			$i += 1;
 			$val = $this->$name;
 			$neworig[] = $val;
-			
+
 			if (isset($table->keys[$name])) {
 				continue;
 			}
-			
+
 			if (is_null($val)) {
 				if (isset($fld->not_null) && $fld->not_null) {
 					if (isset($fld->default_value) && strlen($fld->default_value)) continue;
@@ -1078,16 +1078,16 @@ class ADODB_Active_Record {
 					}
 				}
 			}
-			
+
 			if (isset($this->_original[$i]) && $val == $this->_original[$i]) {
 				continue;
-			}			
+			}
 			$valarr[] = $val;
 			$pairs[] = $name.'='.$db->Param($cnt);
 			$cnt += 1;
 		}
-		
-		
+
+
 		if (!$cnt) return -1;
 		$sql = 'UPDATE '.$this->_table." SET ".implode(",",$pairs)." WHERE ".$where;
 		$ok = $db->Execute($sql,$valarr);
@@ -1097,23 +1097,23 @@ class ADODB_Active_Record {
 		}
 		return 0;
 	}
-	
+
 	function GetAttributeNames()
 	{
 		$table = $this->TableInfo();
 		if (!$table) return false;
 		return array_keys($table->flds);
 	}
-	
+
 };
 
 function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bindarr, $primkeyArr,
 			$extra, $relations)
 {
 	global $_ADODB_ACTIVE_DBS;
-	
+
 		if (empty($extra['loading'])) $extra['loading'] = ADODB_LAZY_AR;
-		
+
 		$save = $db->SetFetchMode(ADODB_FETCH_NUM);
 		$table = &$tableObj->_table;
 		$tableInfo =& $tableObj->TableInfo();
@@ -1135,7 +1135,7 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 		}
 		if(!$found)
 			$db->outp_throw("Unable to locate key $myId for $class in GetActiveRecordsClass()",'GetActiveRecordsClass');
-		
+
 		$qry = "select * from ".$table;
 		if(ADODB_JOIN_AR == $extra['loading'])
 		{
@@ -1192,19 +1192,19 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 			}
 		} else
 			$rows = $db->GetAll($qry,$bindarr);
-			
+
 		$db->SetFetchMode($save);
-		
+
 		$false = false;
-		
-		if ($rows === false) {	
+
+		if ($rows === false) {
 			return $false;
 		}
-		
-		
+
+
 		if (!isset($_ADODB_ACTIVE_DBS)) {
 			include(ADODB_DIR.'/adodb-active-record.inc.php');
-		}	
+		}
 		if (!class_exists($class)) {
 			$db->outp_throw("Unknown class $class in GetActiveRecordsClass()",'GetActiveRecordsClass');
 			return $false;
@@ -1218,7 +1218,7 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 		$arrRef = array();
 		$bTos = array(); // Will store belongTo's indices if any
 		foreach($rows as $row) {
-		
+
 			$obj = new $class($table,$primkeyArr,$db);
 			if ($obj->ErrorNo()){
 				$db->_errorMsg = $obj->ErrorMsg();
@@ -1268,7 +1268,7 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 			{
 				if(ADODB_JOIN_AR == $extra['loading'])
 				{
-					$isNewObj = !isset($uniqArr['_'.$row[0]]); 
+					$isNewObj = !isset($uniqArr['_'.$row[0]]);
 					if($isNewObj)
 						$uniqArr['_'.$row[0]] = $obj;
 
@@ -1322,7 +1322,7 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 						}
 					}
 					if(!$isNewObj)
-						unset($obj); // We do not need this object itself anymore and do not want it re-added to the main array					
+						unset($obj); // We do not need this object itself anymore and do not want it re-added to the main array
 				}
 				else if(ADODB_LAZY_AR == $extra['loading'])
 				{
@@ -1382,7 +1382,7 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 						array_push($arrRef[$obj->$dbClassRef]->$foreignName, $obj);
 					}
 				}
-				
+
 			}
 			if(!empty($relations['belongsTo']))
 			{
@@ -1398,7 +1398,7 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 					else
 					{
 						$belongsToId = 'id';
-					}						
+					}
 					$origObjsArr = $bTos[$foreignTableRef];
 					$bTosString = implode(',', array_keys($bTos[$foreignTableRef]));
 					$foreignName = $foreignTable->foreignName;
@@ -1418,4 +1418,3 @@ function adodb_GetActiveRecordsClass(&$db, $class, $tableObj,$whereOrderBy,$bind
 
 		return $arr;
 }
-?>

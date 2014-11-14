@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string newcontent: updated content.
+ *      - string newcontent: (optional) updated content.
  * }
  *
  * @package    mod_wiki
@@ -66,8 +66,8 @@ class page_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the page with the id '$this->objectid' for the wiki with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' updated the page with id '$this->objectid' for the wiki with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

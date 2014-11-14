@@ -18,7 +18,7 @@
 /**
  * This plugin is used to access s3 files
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_s3
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/repository/s3/S3.php');
 /**
  * This is a repository class used to browse Amazon S3 content.
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_s3
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

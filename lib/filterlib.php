@@ -247,7 +247,7 @@ class filter_manager {
      *
      * @param moodle_page $page the page we are going to add requirements to.
      * @param context $context the context which contents are going to be filtered.
-     * @since 2.3
+     * @since Moodle 2.3
      */
     public function setup_page_for_filters($page, $context) {
         $filters = $this->get_text_filters($context);
@@ -409,7 +409,7 @@ abstract class moodle_text_filter {
      *
      * @param moodle_page $page the page we are going to add requirements to.
      * @param context $context the context which contents are going to be filtered.
-     * @since 2.3
+     * @since Moodle 2.3
      */
     public function setup($page, $context) {
         // Override me, if needed.

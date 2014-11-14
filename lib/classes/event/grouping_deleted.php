@@ -48,13 +48,13 @@ class grouping_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted the grouping with the id '$this->objectid'.";
+        return "The user with id '$this->userid' deleted the grouping with id '$this->objectid'.";
     }
 
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('groupings', $this->objectid);
@@ -97,5 +97,4 @@ class grouping_deleted extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groupings';
     }
-
 }

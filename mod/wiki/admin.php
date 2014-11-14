@@ -64,6 +64,13 @@ require_capability('mod/wiki:managewiki', $context);
 
 //Delete page if a page ID to delete was supplied
 if (!empty($delete) && confirm_sesskey()) {
+    if ($pageid != $delete) {
+        // Validate that we are deleting from the same subwiki.
+        $deletepage = wiki_get_page($delete);
+        if (!$deletepage || $deletepage->subwikiid != $page->subwikiid) {
+            print_error('incorrectsubwikiid', 'wiki');
+        }
+    }
     wiki_delete_pages($context, $delete, $page->subwikiid);
     //when current wiki page is deleted, then redirect user to create that page, as
     //current pageid is invalid after deletion.

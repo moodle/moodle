@@ -308,4 +308,70 @@ class page_editor {
 
         return $DB->delete_records('assignfeedback_editpdf_annot', array('id'=>$annotationid));
     }
+
+    /**
+     * This function copies annotations and comments from the source user
+     * to the current group member being processed when using applytoall.
+     * @param int|\assign $assignment
+     * @param stdClass $grade
+     * @param int $sourceuserid
+     * @return bool
+     */
+    public static function copy_drafts_from_to($assignment, $grade, $sourceuserid) {
+        global $DB;
+
+        // Delete any existing annotations and comments from current user.
+        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $grade->id));
+        $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid' => $grade->id));
+        // Get gradeid, annotations and comments from sourceuserid.
+        $sourceusergrade = $assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
+        $annotations = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+        $comments = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+
+        // Add annotations and comments to current user to generate feedback file.
+        foreach ($annotations as $annotation) {
+            $annotation->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_annot', $annotation);
+        }
+        foreach ($comments as $comment) {
+            $comment->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_cmnt', $comment);
+        }
+
+        // Delete the existing stamps and copy the source ones.
+        $fs = get_file_storage();
+        $fs->delete_area_files($assignment->get_context()->id, 'assignfeedback_editpdf', 'stamps', $grade->id);
+        if ($files = $fs->get_area_files($assignment->get_context()->id,
+                                         'assignfeedback_editpdf',
+                                         'stamps',
+                                         $sourceusergrade->id,
+                                         "filename",
+                                         false)) {
+            foreach ($files as $file) {
+                $newrecord = new \stdClass();
+                $newrecord->contextid = $assignment->get_context()->id;
+                $newrecord->itemid = $grade->id;
+                $fs->create_file_from_storedfile($newrecord, $file);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete the draft annotations and comments.
+     *
+     * This is intended to be used when the version of the PDF has changed and the annotations
+     * might not be relevant any more, therefore we should delete them.
+     *
+     * @param int $gradeid The grade ID.
+     * @return bool
+     */
+    public static function delete_draft_content($gradeid) {
+        global $DB;
+        $conditions = array('gradeid' => $gradeid, 'draft' => 1);
+        $result = $DB->delete_records('assignfeedback_editpdf_annot', $conditions);
+        $result = $result && $DB->delete_records('assignfeedback_editpdf_cmnt', $conditions);
+        return $result;
+    }
 }

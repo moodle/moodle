@@ -74,8 +74,16 @@ abstract class core_role_capability_table_base {
     public function display() {
         if (count($this->capabilities) > self::NUM_CAPS_FOR_SEARCH) {
             global $PAGE;
-            $PAGE->requires->strings_for_js(array('filter', 'clear'), 'moodle');
-            $PAGE->requires->js_init_call('M.core_role.init_cap_table_filter', array($this->id, $this->context->id));
+            $jsmodule = array(
+                'name' => 'rolescapfilter',
+                'fullpath' => '/admin/roles/module.js',
+                'strings' => array(
+                    array('filter', 'moodle'),
+                    array('clear', 'moodle'),                ),
+                'requires' => array('node', 'cookie', 'escape')
+            );
+            $PAGE->requires->js_init_call('M.core_role.init_cap_table_filter', array($this->id, $this->context->id), false,
+                $jsmodule);
         }
         echo '<table class="' . implode(' ', $this->classes) . '" id="' . $this->id . '">' . "\n<thead>\n";
         echo '<tr><th class="name" align="left" scope="col">' . get_string('capability', 'core_role') . '</th>';

@@ -17,7 +17,7 @@
 /**
  * A helper class to access dropbox resources
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_dropbox
  * @copyright  2012 Marina Glancy
  * @copyright  2010 Dongsheng Cai

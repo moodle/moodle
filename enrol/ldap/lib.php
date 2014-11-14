@@ -106,7 +106,12 @@ class enrol_ldap_plugin extends enrol_plugin {
      * @param object $instance
      * @return bool
      */
-    public function instance_deleteable($instance) {
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        if (!has_capability('enrol/ldap:manage', $context)) {
+            return false;
+        }
+
         if (!enrol_is_enabled('ldap')) {
             return true;
         }
@@ -120,6 +125,17 @@ class enrol_ldap_plugin extends enrol_plugin {
     }
 
     /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/ldap:config', $context);
+    }
+
+    /**
      * Forces synchronisation of user enrolments with LDAP server.
      * It creates courses if the plugin is configured to do so.
      *
@@ -130,7 +146,11 @@ class enrol_ldap_plugin extends enrol_plugin {
         global $DB;
 
         // Do not try to print anything to the output because this method is called during interactive login.
-        $trace = new error_log_progress_trace($this->errorlogtag);
+        if (PHPUNIT_TEST) {
+            $trace = new null_progress_trace();
+        } else {
+            $trace = new error_log_progress_trace($this->errorlogtag);
+        }
 
         if (!$this->ldap_connect($trace)) {
             $trace->finished();
@@ -704,6 +724,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             $usergroups = $this->ldap_find_user_groups($extmemberuid);
             if(count($usergroups) > 0) {
                 foreach ($usergroups as $group) {
+                    $group = ldap_filter_addslashes($group);
                     $ldap_search_pattern .= '('.$this->get_config('memberattribute_role'.$role->id).'='.$group.')';
                 }
             }
@@ -1155,4 +1176,3 @@ class enrol_ldap_plugin extends enrol_plugin {
         }
     }
 }
-

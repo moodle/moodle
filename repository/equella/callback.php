@@ -17,7 +17,7 @@
 /**
  * Callback for equella repository.
  *
- * @since 2.3
+ * @since Moodle 2.3
  * @package   repository_equella
  * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -55,7 +55,7 @@ if (isset($info->license)) {
     $license = s(clean_param($info->license, PARAM_ALPHAEXT));
 }
 
-$source = base64_encode(serialize((object)array('url'=>$url,'filename'=>$filename)));
+$source = base64_encode(json_encode(array('url'=>$url,'filename'=>$filename)));
 
 $js =<<<EOD
 <html>

@@ -18,7 +18,7 @@
 /**
  * This file contains functions used by course reports
  *
- * @since 2.1
+ * @since Moodle 2.1
  * @package coursereport
  * @copyright 2011 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

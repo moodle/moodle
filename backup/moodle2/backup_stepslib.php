@@ -28,8 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * create the temp dir where backup/restore will happen,
- * delete old directories and create temp ids table
+ * Create the temp dir where backup/restore will happen and create temp ids table.
  */
 class create_and_clean_temp_stuff extends backup_execution_step {
 
@@ -38,7 +37,6 @@ class create_and_clean_temp_stuff extends backup_execution_step {
         $progress->start_progress('Deleting backup directories');
         backup_helper::check_and_create_backup_dir($this->get_backupid());// Create backup temp dir
         backup_helper::clear_backup_dir($this->get_backupid(), $progress);           // Empty temp dir, just in case
-        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60), $progress);    // Delete > 4 hours temp dirs
         backup_controller_dbops::drop_backup_ids_temp_table($this->get_backupid()); // Drop ids temp table
         backup_controller_dbops::create_backup_ids_temp_table($this->get_backupid()); // Create ids temp table
         $progress->end_progress();
@@ -46,11 +44,11 @@ class create_and_clean_temp_stuff extends backup_execution_step {
 }
 
 /**
- * delete the temp dir used by backup/restore (conditionally),
- * delete old directories and drop tem ids table. Note we delete
+ * Delete the temp dir used by backup/restore (conditionally),
+ * delete old directories and drop temp ids table. Note we delete
  * the directory but not the corresponding log file that will be
- * there for, at least, 4 hours - only delete_old_backup_dirs()
- * deletes log files (for easier access to them)
+ * there for, at least, 1 week - only delete_old_backup_dirs() or cron
+ * deletes log files (for easier access to them).
  */
 class drop_and_clean_temp_stuff extends backup_execution_step {
 
@@ -60,7 +58,7 @@ class drop_and_clean_temp_stuff extends backup_execution_step {
         global $CFG;
 
         backup_controller_dbops::drop_backup_ids_temp_table($this->get_backupid()); // Drop ids temp table
-        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));              // Delete > 4 hours temp dirs
+        backup_helper::delete_old_backup_dirs(strtotime('-1 week'));                // Delete > 1 week old temp dirs.
         // Delete temp dir conditionally:
         // 1) If $CFG->keeptempdirectoriesonbackup is not enabled
         // 2) If backup temp dir deletion has been marked to be avoided
@@ -321,7 +319,7 @@ class backup_module_structure_step extends backup_structure_step {
         $module = new backup_nested_element('module', array('id', 'version'), array(
             'modulename', 'sectionid', 'sectionnumber', 'idnumber',
             'added', 'score', 'indent', 'visible',
-            'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
+            'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
             'availability', 'showdescription'));
 
@@ -942,8 +940,8 @@ class backup_gradebook_structure_step extends backup_structure_step {
             'iteminstance', 'itemnumber', 'iteminfo', 'idnumber',
             'calculation', 'gradetype', 'grademax', 'grademin',
             'scaleid', 'outcomeid', 'gradepass', 'multfactor',
-            'plusfactor', 'aggregationcoef', 'sortorder', 'display',
-            'decimals', 'hidden', 'locked', 'locktime',
+            'plusfactor', 'aggregationcoef', 'aggregationcoef2', 'weightoverride',
+            'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
             'needsupdate', 'timecreated', 'timemodified'));
 
         $grade_grades = new backup_nested_element('grade_grades');
@@ -952,14 +950,15 @@ class backup_gradebook_structure_step extends backup_structure_step {
             'rawscaleid', 'usermodified', 'finalgrade', 'hidden',
             'locked', 'locktime', 'exported', 'overridden',
             'excluded', 'feedback', 'feedbackformat', 'information',
-            'informationformat', 'timecreated', 'timemodified'));
+            'informationformat', 'timecreated', 'timemodified',
+            'aggregationstatus', 'aggregationweight'));
 
         //grade_categories
         $grade_categories = new backup_nested_element('grade_categories');
         $grade_category   = new backup_nested_element('grade_category', array('id'), array(
                 //'courseid',
                 'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
-                'droplow', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
+                'droplow', 'aggregateonlygraded', 'aggregateoutcomes',
                 'timecreated', 'timemodified', 'hidden'));
 
         $letters = new backup_nested_element('grade_letters');
@@ -1022,6 +1021,65 @@ class backup_gradebook_structure_step extends backup_structure_step {
         // Return the root element
         return $gradebook;
     }
+}
+
+/**
+ * Step in charge of constructing the grade_history.xml file containing the grade histories.
+ */
+class backup_grade_history_structure_step extends backup_structure_step {
+
+    /**
+     * Limit the execution.
+     *
+     * This applies the same logic than the one applied to {@link backup_gradebook_structure_step},
+     * because we do not want to save the history of items which are not backed up. At least for now.
+     */
+    protected function execute_condition() {
+        return backup_plan_dbops::require_gradebook_backup($this->get_courseid(), $this->get_backupid());
+    }
+
+    protected function define_structure() {
+
+        // Settings to use.
+        $userinfo = $this->get_setting_value('users');
+        $history = $this->get_setting_value('grade_histories');
+
+        // Create the nested elements.
+        $bookhistory = new backup_nested_element('grade_history');
+        $grades = new backup_nested_element('grade_grades');
+        $grade = new backup_nested_element('grade_grade', array('id'), array(
+            'action', 'oldid', 'source', 'loggeduser', 'itemid', 'userid',
+            'rawgrade', 'rawgrademax', 'rawgrademin', 'rawscaleid',
+            'usermodified', 'finalgrade', 'hidden', 'locked', 'locktime', 'exported', 'overridden',
+            'excluded', 'feedback', 'feedbackformat', 'information',
+            'informationformat', 'timemodified'));
+
+        // Build the tree.
+        $bookhistory->add_child($grades);
+        $grades->add_child($grade);
+
+        // This only happens if we are including user info and history.
+        if ($userinfo && $history) {
+            // Only keep the history of grades related to items which have been backed up, The query is
+            // similar (but not identical) to the one used in backup_gradebook_structure_step::define_structure().
+            $gradesql = "SELECT ggh.*
+                           FROM {grade_grades_history} ggh
+                           JOIN {grade_items} gi ON ggh.itemid = gi.id
+                          WHERE gi.courseid = :courseid
+                            AND (gi.itemtype = 'manual' OR gi.itemtype = 'course' OR gi.itemtype = 'category')";
+            $grade->set_source_sql($gradesql, array('courseid' => backup::VAR_COURSEID));
+        }
+
+        // Annotations. (Final annotations as this step is part of the final task).
+        $grade->annotate_ids('scalefinal', 'rawscaleid');
+        $grade->annotate_ids('userfinal', 'loggeduser');
+        $grade->annotate_ids('userfinal', 'userid');
+        $grade->annotate_ids('userfinal', 'usermodified');
+
+        // Return the root element.
+        return $bookhistory;
+    }
+
 }
 
 /**
@@ -2106,8 +2164,8 @@ class backup_activity_grades_structure_step extends backup_structure_step {
             'iteminstance', 'itemnumber', 'iteminfo', 'idnumber',
             'calculation', 'gradetype', 'grademax', 'grademin',
             'scaleid', 'outcomeid', 'gradepass', 'multfactor',
-            'plusfactor', 'aggregationcoef', 'sortorder', 'display',
-            'decimals', 'hidden', 'locked', 'locktime',
+            'plusfactor', 'aggregationcoef', 'aggregationcoef2', 'weightoverride',
+            'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
             'needsupdate', 'timecreated', 'timemodified'));
 
         $grades = new backup_nested_element('grade_grades');
@@ -2117,7 +2175,8 @@ class backup_activity_grades_structure_step extends backup_structure_step {
             'rawscaleid', 'usermodified', 'finalgrade', 'hidden',
             'locked', 'locktime', 'exported', 'overridden',
             'excluded', 'feedback', 'feedbackformat', 'information',
-            'informationformat', 'timecreated', 'timemodified'));
+            'informationformat', 'timecreated', 'timemodified',
+            'aggregationstatus', 'aggregationweight'));
 
         $letters = new backup_nested_element('grade_letters');
 
@@ -2161,6 +2220,56 @@ class backup_activity_grades_structure_step extends backup_structure_step {
         // Return the root element (book)
 
         return $book;
+    }
+}
+
+/**
+ * Structure step in charge of constructing the grade history of an activity.
+ *
+ * This step is added to the task regardless of the setting 'grade_histories'.
+ * The reason is to allow for a more flexible step in case the logic needs to be
+ * split accross different settings to control the history of items and/or grades.
+ */
+class backup_activity_grade_history_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // Settings to use.
+        $userinfo = $this->get_setting_value('userinfo');
+        $history = $this->get_setting_value('grade_histories');
+
+        // Create the nested elements.
+        $bookhistory = new backup_nested_element('grade_history');
+        $grades = new backup_nested_element('grade_grades');
+        $grade = new backup_nested_element('grade_grade', array('id'), array(
+            'action', 'oldid', 'source', 'loggeduser', 'itemid', 'userid',
+            'rawgrade', 'rawgrademax', 'rawgrademin', 'rawscaleid',
+            'usermodified', 'finalgrade', 'hidden', 'locked', 'locktime', 'exported', 'overridden',
+            'excluded', 'feedback', 'feedbackformat', 'information',
+            'informationformat', 'timemodified'));
+
+        // Build the tree.
+        $bookhistory->add_child($grades);
+        $grades->add_child($grade);
+
+        // This only happens if we are including user info and history.
+        if ($userinfo && $history) {
+            // Define sources. Only select the history related to existing activity items.
+            $grade->set_source_sql("SELECT ggh.*
+                                     FROM {grade_grades_history} ggh
+                                     JOIN {backup_ids_temp} bi ON ggh.itemid = bi.itemid
+                                    WHERE bi.backupid = ?
+                                      AND bi.itemname = 'grade_item'", array(backup::VAR_BACKUPID));
+        }
+
+        // Annotations.
+        $grade->annotate_ids('scalefinal', 'rawscaleid'); // Straight as scalefinal because it's > 0.
+        $grade->annotate_ids('user', 'loggeduser');
+        $grade->annotate_ids('user', 'userid');
+        $grade->annotate_ids('user', 'usermodified');
+
+        // Return the root element.
+        return $bookhistory;
     }
 }
 

@@ -72,8 +72,8 @@ class response_submitted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created feedback for the user with the id '$this->relateduserid' " .
-            "for the feedback activity with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' created feedback for the user with id '$this->relateduserid' " .
+            "for the feedback activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -135,6 +135,9 @@ class response_submitted extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
         if (!isset($this->other['anonymous'])) {
             throw new \coding_exception('The \'anonymous\' value must be set in other.');
         }

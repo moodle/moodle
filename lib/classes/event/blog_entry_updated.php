@@ -86,7 +86,7 @@ class blog_entry_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The blog entry with the id '$this->objectid' was updated by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' updated the blog entry with id '$this->objectid'.";
     }
 
     /**
@@ -123,6 +123,20 @@ class blog_entry_updated extends base {
     protected function get_legacy_logdata() {
         return array(SITEID, 'blog', 'update', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
                  $this->blogentry->subject);
+    }
+
+    /**
+     * Custom validations.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }
 

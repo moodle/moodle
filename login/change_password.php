@@ -122,9 +122,6 @@ if ($mform->is_cancelled()) {
     unset_user_preference('auth_forcepasswordchange', $USER);
     unset_user_preference('create_password', $USER);
 
-    $user = $DB->get_record('user', array('id' => $USER->id), '*', MUST_EXIST);
-    \core\event\user_password_updated::create_from_user($user)->trigger();
-
     $strpasswordchanged = get_string('passwordchanged');
 
     $fullname = fullname($USER, true);

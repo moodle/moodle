@@ -52,7 +52,6 @@ function feedback_get_extra_capabilities() {
 /**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_GRADE_HAS_GRADE
@@ -64,7 +63,6 @@ function feedback_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:                  return true;
         case FEATURE_GROUPINGS:               return true;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_COMPLETION_HAS_RULES:    return true;
@@ -862,14 +860,14 @@ function feedback_check_is_switchrole() {
  *
  * @global object
  * @uses CONTEXT_MODULE
- * @param object $cm
+ * @param cm_info $cm Course-module object
  * @param int $group single groupid
  * @param string $sort
  * @param int $startpage
  * @param int $pagecount
  * @return object the userrecords
  */
-function feedback_get_incomplete_users($cm,
+function feedback_get_incomplete_users(cm_info $cm,
                                        $group = false,
                                        $sort = '',
                                        $startpage = false,
@@ -893,6 +891,10 @@ function feedback_get_incomplete_users($cm,
                                             true)) {
         return false;
     }
+    // Filter users that are not in the correct group/grouping.
+    $info = new \core_availability\info_module($cm);
+    $allusers = $info->filter_user_list($allusers);
+
     $allusers = array_keys($allusers);
 
     //now get all completeds
@@ -2230,6 +2232,22 @@ function feedback_check_values($firstitem, $lastitem) {
             $value = optional_param($formvalname, null, PARAM_RAW);
         }
         $value = $itemobj->clean_input_value($value);
+
+        // If the item is not visible due to its dependency so it shouldn't be required.
+        // Many thanks to Pau Ferrer Ocaña.
+        if ($item->dependitem > 0 AND $item->required == 1) {
+            $comparevalue = false;
+            if ($feedbackcompletedtmp = feedback_get_current_completed($item->feedback, true)) {
+                $comparevalue = feedback_compare_item_value($feedbackcompletedtmp->id,
+                                                            $item->dependitem,
+                                                            $item->dependvalue,
+                                                            true);
+            }
+
+            if (!$comparevalue) {
+                $item->required = 0; // Override the required property.
+            }
+        }
 
         //check if the value is set
         if (is_null($value) AND $item->required == 1) {

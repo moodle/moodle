@@ -290,7 +290,7 @@ class question_category_object {
         /// Interface for editing existing categories
         if ($category = $DB->get_record("question_categories", array("id" => $categoryid))) {
 
-            $category->parent = "$category->parent,$category->contextid";
+            $category->parent = "{$category->parent},{$category->contextid}";
             $category->submitbutton = get_string('savechanges');
             $category->categoryheader = $this->str->edit;
             $this->catform->set_data($category);

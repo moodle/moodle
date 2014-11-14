@@ -96,12 +96,15 @@ class lesson_page_type_matching extends lesson_page {
     }
 
     public function create_answers($properties) {
-        global $DB;
+        global $DB, $PAGE;
         // now add the answers
         $newanswer = new stdClass;
         $newanswer->lessonid = $this->lesson->id;
         $newanswer->pageid = $this->properties->id;
         $newanswer->timecreated = $this->properties->timecreated;
+
+        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
+        $context = context_module::instance($cm->id);
 
         $answers = array();
 
@@ -127,6 +130,8 @@ class lesson_page_type_matching extends lesson_page {
 
             if (isset($answer->answer) && $answer->answer != '') {
                 $answer->id = $DB->insert_record("lesson_answers", $answer);
+                $this->save_answers_files($context, $PAGE->course->maxbytes,
+                        $answer, $properties->answer_editor[$i]);
                 $answers[$answer->id] = new lesson_page_answer($answer);
             } else if ($i < 2) {
                 $answer->id = $DB->insert_record("lesson_answers", $answer);
@@ -159,6 +164,9 @@ class lesson_page_type_matching extends lesson_page {
 
         $response = $data->response;
         $getanswers = $this->get_answers();
+        foreach ($getanswers as $key => $answer) {
+            $getanswers[$key] = parent::rewrite_answers_urls($answer);
+        }
 
         $correct = array_shift($getanswers);
         $wrong   = array_shift($getanswers);
@@ -220,6 +228,7 @@ class lesson_page_type_matching extends lesson_page {
         $n = 0;
 
         foreach ($answers as $answer) {
+            $answer = parent::rewrite_answers_urls($answer);
             if ($n < 2) {
                 if ($answer->answer != null) {
                     $cells = array();
@@ -333,6 +342,9 @@ class lesson_page_type_matching extends lesson_page {
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
+                // Save files in answers and responses.
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i],
+                        $properties->answer_editor[$i], $properties->response_editor[$i]);
             } else if ($i < 2) {
                 if (!isset($this->answers[$i]->id)) {
                     $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
@@ -340,6 +352,9 @@ class lesson_page_type_matching extends lesson_page {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
 
+                // Save files in answers and responses.
+                $this->save_answers_files( $context, $maxbytes, $this->answers[$i],
+                        $properties->answer_editor[$i], $properties->response_editor[$i]);
             } else if (isset($this->answers[$i]->id)) {
                 $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
                 unset($this->answers[$i]);
@@ -460,12 +475,21 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
     public function custom_definition() {
 
         $this->_form->addElement('header', 'correctresponse', get_string('correctresponse', 'lesson'));
-        $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
+        $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'),
+                array('rows' => '4', 'columns' => '80'),
+                array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
+        $this->_form->setType('answer_editor[0]', PARAM_RAW);
+        $this->_form->setDefault('answer_editor[0]', array('text' => '', 'format' => FORMAT_HTML));
         $this->add_jumpto(0, get_string('correctanswerjump','lesson'), LESSON_NEXTPAGE);
         $this->add_score(0, get_string("correctanswerscore", "lesson"), 1);
 
         $this->_form->addElement('header', 'wrongresponse', get_string('wrongresponse', 'lesson'));
-        $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
+        $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'),
+                array('rows' => '4', 'columns' => '80'),
+                array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
+        $this->_form->setType('answer_editor[1]', PARAM_RAW);
+        $this->_form->setDefault('answer_editor[1]', array('text' => '', 'format' => FORMAT_HTML));
+
         $this->add_jumpto(1, get_string('wronganswerjump','lesson'), LESSON_THISPAGE);
         $this->add_score(1, get_string("wronganswerscore", "lesson"), 0);
 
@@ -488,7 +512,7 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
 class lesson_display_answer_form_matching extends moodleform {
 
     public function definition() {
-        global $USER, $OUTPUT;
+        global $USER, $OUTPUT, $PAGE;
         $mform = $this->_form;
         $answers = $this->_customdata['answers'];
         $useranswers = $this->_customdata['useranswers'];
@@ -529,6 +553,9 @@ class lesson_display_answer_form_matching extends moodleform {
                     // Temporary fixed until MDL-38885 gets integrated
                     $mform->setType('response', PARAM_TEXT);
                 }
+                $context = context_module::instance($PAGE->cm->id);
+                $answer->answer = file_rewrite_pluginfile_urls($answer->answer, 'pluginfile.php', $context->id,
+                        'mod_lesson', 'page_answers', $answer->id);
                 $mform->addElement('select', $responseid, format_text($answer->answer,$answer->answerformat,$options), $responseoptions, $disabled);
                 $mform->setType($responseid, PARAM_TEXT);
                 if ($hasattempt) {

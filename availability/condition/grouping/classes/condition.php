@@ -46,8 +46,8 @@ class condition extends \core_availability\condition {
     /**
      * Constructor.
      *
-     * @param stdClass $structure Data structure from JSON decode
-     * @throws coding_exception If invalid data structure.
+     * @param \stdClass $structure Data structure from JSON decode
+     * @throws \coding_exception If invalid data structure.
      */
     public function __construct($structure) {
         // Get grouping id.
@@ -209,6 +209,11 @@ class condition extends \core_availability\condition {
             \core_availability\capability_checker $checker) {
         global $CFG, $DB;
 
+        // If the array is empty already, just return it.
+        if (!$users) {
+            return $users;
+        }
+
         // List users for this course who match the condition.
         $groupingusers = $DB->get_records_sql("
                 SELECT DISTINCT gm.userid
@@ -238,5 +243,52 @@ class condition extends \core_availability\condition {
             }
         }
         return $result;
+    }
+
+    /**
+     * Returns a JSON object which corresponds to a condition of this type.
+     *
+     * Intended for unit testing, as normally the JSON values are constructed
+     * by JavaScript code.
+     *
+     * @param int $groupingid Required grouping id (0 = grouping linked to activity)
+     * @return stdClass Object representing condition
+     */
+    public static function get_json($groupingid = 0) {
+        $result = (object)array('type' => 'grouping');
+        if ($groupingid) {
+            $result->id = (int)$groupingid;
+        } else {
+            $result->activity = true;
+        }
+        return $result;
+    }
+
+    public function get_user_list_sql($not, \core_availability\info $info, $onlyactive) {
+        global $DB;
+
+        // Get enrolled users with access all groups. These always are allowed.
+        list($aagsql, $aagparams) = get_enrolled_sql(
+                $info->get_context(), 'moodle/site:accessallgroups', 0, $onlyactive);
+
+        // Get all enrolled users.
+        list ($enrolsql, $enrolparams) =
+                get_enrolled_sql($info->get_context(), '', 0, $onlyactive);
+
+        // Condition for specified or any group.
+        $matchparams = array();
+        $matchsql = "SELECT 1
+                       FROM {groups_members} gm
+                       JOIN {groupings_groups} gg ON gg.groupid = gm.groupid
+                      WHERE gm.userid = userids.id
+                            AND gg.groupingid = " .
+                self::unique_sql_parameter($matchparams, $this->get_grouping_id($info));
+
+        // Overall query combines all this.
+        $condition = $not ? 'NOT' : '';
+        $sql = "SELECT userids.id
+                  FROM ($enrolsql) userids
+                 WHERE (userids.id IN ($aagsql)) OR $condition EXISTS ($matchsql)";
+        return array($sql, array_merge($enrolparams, $aagparams, $matchparams));
     }
 }

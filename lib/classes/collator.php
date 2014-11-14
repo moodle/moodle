@@ -285,6 +285,46 @@ class core_collator {
     }
 
     /**
+     * Locale aware sort of array of arrays.
+     *
+     * Given an array like:
+     * $array = array(
+     *     array('name' => 'bravo'),
+     *     array('name' => 'charlie'),
+     *     array('name' => 'alpha')
+     * );
+     *
+     * If you call:
+     * core_collator::asort_array_of_arrays_by_key($array, 'name')
+     *
+     * You will be returned $array sorted by the name key of the subarrays. e.g.
+     * $array = array(
+     *     array('name' => 'alpha'),
+     *     array('name' => 'bravo'),
+     *     array('name' => 'charlie')
+     * );
+     *
+     * @param array $array An array of objects to sort (handled by reference)
+     * @param string $key The key to use for comparison
+     * @param int $sortflag One of
+     *          core_collator::SORT_NUMERIC,
+     *          core_collator::SORT_STRING,
+     *          core_collator::SORT_NATURAL,
+     *          core_collator::SORT_REGULAR
+     *      optionally "|" core_collator::CASE_SENSITIVE
+     * @return bool True on success
+     */
+    public static function asort_array_of_arrays_by_key(array &$array, $key, $sortflag = core_collator::SORT_STRING) {
+        $original = $array;
+        foreach ($array as $initkey => $item) {
+            $array[$initkey] = $item[$key];
+        }
+        $result = self::asort($array, $sortflag);
+        self::restore_array($array, $original);
+        return $result;
+    }
+
+    /**
      * Locale aware sorting, the key associations are kept, keys are sorted alphabetically.
      *
      * @param array $arr array to be sorted (reference)
@@ -306,11 +346,4 @@ class core_collator {
 
         return true;
     }
-}
-
-/**
- * Legacy collatorlib.
- * @deprecated since 2.6, use core_collator:: instead.
- */
-class collatorlib extends core_collator {
 }

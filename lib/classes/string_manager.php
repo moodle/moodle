@@ -62,6 +62,17 @@ interface core_string_manager {
     public function string_exists($identifier, $component);
 
     /**
+     * Has string been deprecated?
+     *
+     * Usually checked only inside get_string() to display debug warnings.
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @return bool true if deprecated
+     */
+    public function string_deprecated($identifier, $component);
+
+    /**
      * Returns a localised list of all country names, sorted by country keys.
      * @param bool $returnall return all or just enabled
      * @param string $lang moodle translation language, null means use current

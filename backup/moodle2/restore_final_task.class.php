@@ -58,6 +58,7 @@ class restore_final_task extends restore_task {
         // Gradebook. Don't restore the gradebook unless activities are being restored.
         if ($this->get_setting_value('activities')) {
             $this->add_step(new restore_gradebook_structure_step('gradebook_step','gradebook.xml'));
+            $this->add_step(new restore_grade_history_structure_step('grade_history', 'grade_history.xml'));
         }
 
         // Course completion, executed conditionally if restoring to new course

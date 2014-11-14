@@ -120,7 +120,12 @@ class core_useragent {
     protected function __construct($forceuseragent = null) {
         global $CFG;
         if (!empty($CFG->devicedetectregex)) {
-            $this->devicetypecustoms = json_decode($CFG->devicedetectregex);
+            $this->devicetypecustoms = json_decode($CFG->devicedetectregex, true);
+        }
+        if ($this->devicetypecustoms === null) {
+            // This shouldn't happen unless you're hardcoding the config value.
+            debugging('Config devicedetectregex is not valid JSON object');
+            $this->devicetypecustoms = array();
         }
         if ($forceuseragent !== null) {
             $this->useragent = $forceuseragent;

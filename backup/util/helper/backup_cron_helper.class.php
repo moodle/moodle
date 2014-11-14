@@ -381,27 +381,6 @@ abstract class backup_cron_automated_helper {
 
         try {
 
-            $settings = array(
-                'users' => 'backup_auto_users',
-                'role_assignments' => 'backup_auto_role_assignments',
-                'activities' => 'backup_auto_activities',
-                'blocks' => 'backup_auto_blocks',
-                'filters' => 'backup_auto_filters',
-                'comments' => 'backup_auto_comments',
-                'badges' => 'backup_auto_badges',
-                'completion_information' => 'backup_auto_userscompletion',
-                'logs' => 'backup_auto_logs',
-                'histories' => 'backup_auto_histories',
-                'questionbank' => 'backup_auto_questionbank'
-            );
-            foreach ($settings as $setting => $configsetting) {
-                if ($bc->get_plan()->setting_exists($setting)) {
-                    if (isset($config->{$configsetting})) {
-                        $bc->get_plan()->get_setting($setting)->set_value($config->{$configsetting});
-                    }
-                }
-            }
-
             // Set the default filename.
             $format = $bc->get_format();
             $type = $bc->get_type();

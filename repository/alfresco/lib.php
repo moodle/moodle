@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access alfresco repository
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_alfresco
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * repository_alfresco class
  * This is a class used to browse files from alfresco
  *
- * @since      2.0
+ * @since      Moodle 2.0
  * @package    repository_alfresco
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -90,31 +90,4 @@ class qbehaviour_interactivecountback extends qbehaviour_interactive {
 
         return $this->question->compute_final_grade($responses, $totaltries);
     }
-
-    /**
-     * Filter classified responses for multiple tries to remove identical responses that are not significant.
-     *
-     * For this behaviour the significant repeated response part are the first of any repeated responses, for any part of the
-     * question. These are the responses that are graded.
-     *
-     * @param array[] $classifiedresponses first index is submitted response no and second is sub-part id. Value is of type
-     *                                     question_classified_response. Return value from self::classify_response for ALL_TRIES.
-     * @return array[] return non repeated responses.
-     */
-    protected function remove_repeated_submitted_responses($classifiedresponses) {
-        $subpartids = array_keys($classifiedresponses[1]);
-        foreach ($subpartids as $subpartid) {
-            $lastdifferentresponsepart = 1;
-            $tryno = 2;
-            while (isset($classifiedresponses[$tryno])) {
-                if ($classifiedresponses[$tryno][$subpartid] != $classifiedresponses[$lastdifferentresponsepart][$subpartid]) {
-                    $lastdifferentresponsepart = $tryno;
-                } else {
-                    unset($classifiedresponses[$tryno][$subpartid]);
-                }
-                $tryno++;
-            }
-        }
-        return $classifiedresponses;
-    }
 }

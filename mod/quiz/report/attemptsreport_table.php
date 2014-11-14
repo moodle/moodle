@@ -425,7 +425,8 @@ abstract class quiz_attempts_report_table extends table_sql {
         $params = array('quizid' => $this->quiz->id);
 
         if ($this->qmsubselect && $this->options->onlygraded) {
-            $from .= " AND $this->qmsubselect";
+            $from .= " AND (quiza.state <> :finishedstate OR $this->qmsubselect)";
+            $params['finishedstate'] = quiz_attempt::FINISHED;
         }
 
         switch ($this->options->attempts) {

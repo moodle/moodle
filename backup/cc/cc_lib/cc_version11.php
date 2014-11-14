@@ -15,14 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'cc_version1.php';
-
+require_once('cc_version1.php');
 
 /**
  * Version 1.1 class of Common Cartridge
@@ -46,11 +45,11 @@ class cc_version11 extends cc_version1 {
                                    self::basiclti);
 
     /**
-    * Validate if the type are valid or not
-    *
-    * @param string $type
-    * @return bool
-    */
+     * Validate if the type are valid or not
+     *
+     * @param string $type
+     * @return bool
+     */
     public function valid($type) {
         return in_array($type, self::$checker);
     }
@@ -78,9 +77,8 @@ class cc_version11 extends cc_version1 {
             $this->update_attribute($doc, 'identifier'   , $key                , $itemnode);
             $this->update_attribute($doc, 'identifierref', $item->identifierref, $itemnode);
             if (!is_null($item->title)) {
-                $titlenode = $doc->createElementNS($this->ccnamespaces['imscc'],
-                                                       'title',
-                $item->title);
+                $titlenode = $doc->createElementNS($this->ccnamespaces['imscc'], 'title');
+                $titlenode->appendChild(new DOMText($item->title));
                 $itemnode->appendChild($titlenode);
             }
             if ($item->has_child_items()) {
@@ -90,4 +88,33 @@ class cc_version11 extends cc_version1 {
         }
     }
 
+    /**
+     * Create Education Metadata (How To)
+     *
+     * @param object $met
+     * @param DOMDocument $doc
+     * @param object $xmlnode
+     * @return DOMNode
+     */
+    public function create_metadata_educational($met, DOMDocument  &$doc, $xmlnode) {
+        $metadata = $doc->createElementNS($this->ccnamespaces['imscc'], 'metadata');
+        $xmlnode->insertBefore($metadata, $xmlnode->firstChild);
+        $lom = $doc->createElementNS($this->ccnamespaces['lom'], 'lom');
+        $metadata->appendChild($lom);
+        $educational = $doc->createElementNS($this->ccnamespaces['lom'], 'educational');
+        $lom->appendChild($educational);
+
+        foreach ($met->arrayeducational as $value) {
+            !is_array($value) ? $value = array($value) : null;
+            foreach ($value as $v) {
+                $userrole = $doc->createElementNS($this->ccnamespaces['lom'], 'intendedEndUserRole');
+                $educational->appendChild($userrole);
+                $nd4 = $doc->createElementNS($this->ccnamespaces['lom'], 'source', 'IMSGLC_CC_Rolesv1p1');
+                $nd5 = $doc->createElementNS($this->ccnamespaces['lom'], 'value', $v[0]);
+                $userrole->appendChild($nd4);
+                $userrole->appendChild($nd5);
+            }
+        }
+        return $metadata;
+    }
 }

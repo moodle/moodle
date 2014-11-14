@@ -996,7 +996,6 @@ function get_array_of_activities($courseid) {
 //  name - the name of the instance
 //  visible - is the instance visible or not
 //  groupingid - grouping id
-//  groupmembersonly - is this instance visible to group members only
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
     if(!empty($CFG->enableavailability)) {
@@ -1048,7 +1047,6 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->visibleold       = $rawmods[$seq]->visibleold;
                    $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
                    $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
-                   $mod[$seq]->groupmembersonly = $rawmods[$seq]->groupmembersonly;
                    $mod[$seq]->indent           = $rawmods[$seq]->indent;
                    $mod[$seq]->completion       = $rawmods[$seq]->completion;
                    $mod[$seq]->extra            = "";
@@ -1127,13 +1125,12 @@ function get_array_of_activities($courseid) {
                        $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id"=>$rawmods[$seq]->instance));
                    }
 
-                   // Minimise the database size by unsetting default options when they are
-                   // 'empty'. This list corresponds to code in the cm_info constructor.
-                   foreach (array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
-                           'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
-                           'icon', 'iconcomponent', 'customdata', 'availability',
-                           'completionview', 'completionexpected', 'score', 'showdescription')
-                           as $property) {
+                    // Minimise the database size by unsetting default options when they are
+                    // 'empty'. This list corresponds to code in the cm_info constructor.
+                    foreach (array('idnumber', 'groupmode', 'groupingid',
+                            'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
+                            'icon', 'iconcomponent', 'customdata', 'availability', 'completionview',
+                            'completionexpected', 'score', 'showdescription') as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});
@@ -1645,7 +1642,7 @@ function set_coursemodule_visible($id, $visible) {
  * event to the DB.
  *
  * @param int $cmid the course module id
- * @since 2.5
+ * @since Moodle 2.5
  */
 function course_delete_module($cmid) {
     global $CFG, $DB;
@@ -2517,7 +2514,8 @@ function create_course($data, $editoroptions = NULL) {
         }
     }
 
-    $data->timecreated  = time();
+    // Check if timecreated is given.
+    $data->timecreated  = !empty($data->timecreated) ? $data->timecreated : time();
     $data->timemodified = $data->timecreated;
 
     // place at beginning of any category
@@ -3418,10 +3416,12 @@ function update_module($moduleinfo) {
 }
 
 /**
- * Duplicate a module on the course.
+ * Duplicate a module on the course for ajax.
  *
+ * @see mod_duplicate_module()
  * @param object $course The course
  * @param object $cm The course module to duplicate
+ * @param int $sr The section to link back to (used for creating the links)
  * @throws moodle_exception if the plugin doesn't support duplication
  * @return Object containing:
  * - fullcontent: The HTML markup for the created CM
@@ -3429,8 +3429,42 @@ function update_module($moduleinfo) {
  * - redirect: Whether to trigger a redirect following this change
  */
 function mod_duplicate_activity($course, $cm, $sr = null) {
-    global $CFG, $USER, $PAGE, $DB;
+    global $PAGE;
 
+    $newcm = duplicate_module($course, $cm);
+
+    $resp = new stdClass();
+    if ($newcm) {
+        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $completioninfo = new completion_info($course);
+        $modulehtml = $courserenderer->course_section_cm($course, $completioninfo,
+                $newcm, null, array());
+
+        $resp->fullcontent = $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sr);
+        $resp->cmid = $newcm->id;
+    } else {
+        // Trigger a redirect.
+        $resp->redirect = true;
+    }
+    return $resp;
+}
+
+/**
+ * Api to duplicate a module.
+ *
+ * @param object $course course object.
+ * @param object $cm course module object to be duplicated.
+ * @since Moodle 2.8
+ *
+ * @throws Exception
+ * @throws coding_exception
+ * @throws moodle_exception
+ * @throws restore_controller_exception
+ *
+ * @return cm_info|null cminfo object if we sucessfully duplicated the mod and found the new cm.
+ */
+function duplicate_module($course, $cm) {
+    global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
     require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
     require_once($CFG->libdir . '/filelib.php');
@@ -3440,10 +3474,10 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
     $a->modname = format_string($cm->name);
 
     if (!plugin_supports('mod', $cm->modname, FEATURE_BACKUP_MOODLE2)) {
-        throw new moodle_exception('duplicatenosupport', 'error');
+        throw new moodle_exception('duplicatenosupport', 'error', '', $a);
     }
 
-    // backup the activity
+    // Backup the activity.
 
     $bc = new backup_controller(backup::TYPE_1ACTIVITY, $cm->id, backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
@@ -3455,7 +3489,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
 
     $bc->destroy();
 
-    // restore the backup immediately
+    // Restore the backup immediately.
 
     $rc = new restore_controller($backupid, $course->id,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_CURRENT_ADDING);
@@ -3472,31 +3506,32 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
 
     $rc->execute_plan();
 
-    // now a bit hacky part follows - we try to get the cmid of the newly
-    // restored copy of the module
+    // Now a bit hacky part follows - we try to get the cmid of the newly
+    // restored copy of the module.
     $newcmid = null;
     $tasks = $rc->get_plan()->get_tasks();
     foreach ($tasks as $task) {
-        error_log("Looking at a task");
         if (is_subclass_of($task, 'restore_activity_task')) {
-            error_log("Looking at a restore_activity_task task");
             if ($task->get_old_contextid() == $cmcontext->id) {
-                error_log("Contexts match");
                 $newcmid = $task->get_moduleid();
                 break;
             }
         }
     }
 
-    // if we know the cmid of the new course module, let us move it
+    // If we know the cmid of the new course module, let us move it
     // right below the original one. otherwise it will stay at the
-    // end of the section
+    // end of the section.
     if ($newcmid) {
         $info = get_fast_modinfo($course);
         $newcm = $info->get_cm($newcmid);
         $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
         moveto_module($newcm, $section, $cm);
         moveto_module($cm, $section, $newcm);
+
+        // Trigger course module created event. We can trigger the event only if we know the newcmid.
+        $event = \core\event\course_module_created::create_from_cm($newcm);
+        $event->trigger();
     }
     rebuild_course_cache($cm->course);
 
@@ -3506,20 +3541,7 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
         fulldelete($backupbasepath);
     }
 
-    $resp = new stdClass();
-    if ($newcm) {
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        $completioninfo = new completion_info($course);
-        $modulehtml = $courserenderer->course_section_cm($course, $completioninfo,
-                $newcm, null, array());
-
-        $resp->fullcontent = $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sr);
-        $resp->cmid = $newcm->id;
-    } else {
-        // Trigger a redirect
-        $resp->redirect = true;
-    }
-    return $resp;
+    return isset($newcm) ? $newcm : null;
 }
 
 /**

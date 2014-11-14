@@ -55,6 +55,35 @@ class course_module_created extends base {
     }
 
     /**
+     * Api to Create new event from course module.
+     *
+     * @since Moodle 2.6.4, 2.7.1
+     * @param \cm_info|\stdClass $cm course module instance, as returned by {@link get_coursemodule_from_id}
+     *                               or {@link get_coursemodule_from_instance}.
+     * @param \context_module $modcontext module context instance
+     *
+     * @return \core\event\base returns instance of new event
+     */
+    public static final function create_from_cm($cm, $modcontext = null) {
+        // If not set, get the module context.
+        if (empty($modcontext)) {
+            $modcontext = \context_module::instance($cm->id);
+        }
+
+        // Create event object for course module update action.
+        $event = static::create(array(
+            'context'  => $modcontext,
+            'objectid' => $cm->id,
+            'other'    => array(
+                'modulename' => $cm->modname,
+                'instanceid' => $cm->instance,
+                'name'       => $cm->name,
+            )
+        ));
+        return $event;
+    }
+
+    /**
      * Returns localised general event name.
      *
      * @return string
@@ -69,7 +98,7 @@ class course_module_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' created the '{$this->other['modulename']}' activity with the " .
+        return "The user with id '$this->userid' created the '{$this->other['modulename']}' activity with " .
             "course module id '$this->contextinstanceid'.";
     }
 

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - int section: section id.
+ *      - int section: (optional) section id.
  * }
  *
  * @package    mod_wiki
@@ -66,8 +66,8 @@ class page_locks_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted locks for the page with the id '$this->objectid' for the wiki with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' deleted locks for the page with id '$this->objectid' for the wiki with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

@@ -1617,7 +1617,7 @@ abstract class moodle_database {
      * This method is intended for inserting of large number of small objects,
      * do not use for huge objects with text or binary fields.
      *
-     * @since 2.7
+     * @since Moodle 2.7
      *
      * @param string $table  The database table to be inserted into
      * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
@@ -2227,9 +2227,32 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the SQL that allows to find intersection of two or more queries
+     *
+     * @since Moodle 2.8
+     *
+     * @param array $selects array of SQL select queries, each of them only returns fields with the names from $fields
+     * @param string $fields comma-separated list of fields (used only by some DB engines)
+     * @return string SQL query that will return only values that are present in each of selects
+     */
+    public function sql_intersect($selects, $fields) {
+        if (!count($selects)) {
+            throw new coding_exception('sql_intersect() requires at least one element in $selects');
+        } else if (count($selects) == 1) {
+            return $selects[0];
+        }
+        static $aliascnt = 0;
+        $rv = '('.$selects[0].')';
+        for ($i = 1; $i < count($selects); $i++) {
+            $rv .= " INTERSECT (".$selects[$i].')';
+        }
+        return $rv;
+    }
+
+    /**
      * Does this driver support tool_replace?
      *
-     * @since 2.6.1
+     * @since Moodle 2.6.1
      * @return bool
      */
     public function replace_all_text_supported() {
@@ -2239,7 +2262,7 @@ abstract class moodle_database {
     /**
      * Replace given text in all rows of column.
      *
-     * @since 2.6.1
+     * @since Moodle 2.6.1
      * @param string $table name of the table
      * @param database_column_info $column
      * @param string $search
@@ -2265,7 +2288,7 @@ abstract class moodle_database {
             if (core_text::strlen($search) < core_text::strlen($replace)) {
                 $colsize = $column->max_length;
                 $sql = "UPDATE {".$table."}
-                       SET $columnname = SUBSTRING(REPLACE($columnname, ?, ?), 1, $colsize)
+                       SET $columnname = " . $this->sql_substr("REPLACE(" . $columnname . ", ?, ?)", 1, $colsize) . "
                      WHERE $columnname IS NOT NULL";
             }
             $this->execute($sql, array($search, $replace));
@@ -2386,6 +2409,7 @@ abstract class moodle_database {
 
         if (empty($this->transactions)) {
             \core\event\manager::database_transaction_commited();
+            \core\message\manager::database_transaction_commited();
         }
     }
 
@@ -2433,6 +2457,7 @@ abstract class moodle_database {
             // finally top most level rolled back
             $this->force_rollback = false;
             \core\event\manager::database_transaction_rolledback();
+            \core\message\manager::database_transaction_rolledback();
         }
         throw $e;
     }
@@ -2465,6 +2490,9 @@ abstract class moodle_database {
         // now enable transactions again
         $this->transactions = array();
         $this->force_rollback = false;
+
+        \core\event\manager::database_transaction_rolledback();
+        \core\message\manager::database_transaction_rolledback();
     }
 
     /**

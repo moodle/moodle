@@ -304,7 +304,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $result[1]->id);
         $this->assertSame($course->shortname, $result[1]->shortname);
         $this->assertEquals($cm->id, $result[2]->id);
-        $this->assertEquals($cm->groupmembersonly, $result[2]->groupmembersonly);
 
         $result = get_context_info_array($block2context->id);
         $this->assertCount(3, $result);
@@ -312,7 +311,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $result[1]->id);
         $this->assertSame($course->shortname, $result[1]->shortname);
         $this->assertEquals($cm->id, $result[2]->id);
-        $this->assertEquals($cm->groupmembersonly, $result[2]->groupmembersonly);
     }
 
     /**
@@ -385,7 +383,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $permission = $DB->get_record('role_capabilities', array('contextid'=>$frontcontext->id, 'roleid'=>$student->id, 'capability'=>'moodle/backup:backupcourse'));
         $this->assertNotEmpty($permission);
         $this->assertEquals(CAP_ALLOW, $permission->permission);
-        $this->assertEquals(3, $permission->modifierid);
+        $this->assertEquals($user->id, $permission->modifierid);
 
         $result = assign_capability('moodle/backup:backupcourse', CAP_PROHIBIT, $student->id, $frontcontext->id, true);
         $this->assertTrue($result);
@@ -1796,7 +1794,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         // Add a resource to frontpage.
         $page = $generator->create_module('page', array('course'=>$SITE->id));
-        $testpages[] = $page->id;
+        $testpages[] = $page->cmid;
         $frontpagepagecontext = context_module::instance($page->cmid);
 
         // Add block to frontpage resource.
@@ -1839,7 +1837,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
                 // Add a resource to each course.
                 $page = $generator->create_module('page', array('course'=>$course->id));
-                $testpages[] = $page->id;
+                $testpages[] = $page->cmid;
                 $modcontext = context_module::instance($page->cmid);
 
                 // Add block to each module.
@@ -2700,8 +2698,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals($url1, $url2);
         $this->assertInstanceOf('moodle_url', $url2);
 
-        $pagecm = get_coursemodule_from_instance('page', $testpages[7]);
-        $context = context_module::instance($pagecm->id);
+        $pagecm = get_coursemodule_from_id('page', $testpages[7]);
+        $context = context_module::instance($testpages[7]);
         $coursecontext1 = get_course_context($context);
         $this->assertDebuggingCalled('get_course_context() is deprecated, please use $context->get_course_context(true) instead.', DEBUG_DEVELOPER);
         $coursecontext2 = $context->get_course_context(true);

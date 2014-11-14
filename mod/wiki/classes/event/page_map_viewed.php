@@ -66,8 +66,8 @@ class page_map_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the wiki map for the page with the id '$this->objectid' for the wiki with " .
-            "the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' viewed the wiki map for the page with id '$this->objectid' for the wiki with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

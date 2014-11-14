@@ -148,7 +148,7 @@ class data_lib_testcase extends advanced_testcase {
         $cmt->course = $course;
         $cmt->cm = $cm;
         $cmt->area = 'database_entry';
-        $cmt->itemid = $contentid;
+        $cmt->itemid = $recordid;
         $cmt->showcount = true;
         $cmt->component = 'mod_data';
         $comment = new comment($cmt);
@@ -163,7 +163,7 @@ class data_lib_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_data\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/data/view.php', array('id' => $module->cmid));
+        $url = new moodle_url('/mod/data/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -211,7 +211,7 @@ class data_lib_testcase extends advanced_testcase {
         $cmt->course = $course;
         $cmt->cm = $cm;
         $cmt->area = 'database_entry';
-        $cmt->itemid = $contentid;
+        $cmt->itemid = $recordid;
         $cmt->showcount = true;
         $cmt->component = 'mod_data';
         $comment = new comment($cmt);

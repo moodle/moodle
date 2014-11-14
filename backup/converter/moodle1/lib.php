@@ -466,6 +466,9 @@ class moodle1_converter extends base_converter {
         if (empty($record)) {
             throw new moodle1_convert_empty_storage_exception('required_not_stashed_data', array($stashname, $itemid));
         } else {
+            if (empty($record->info)) {
+                return array();
+            }
             return $record->info;
         }
     }

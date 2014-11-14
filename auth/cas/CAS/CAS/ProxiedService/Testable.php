@@ -31,8 +31,9 @@
  * This interface defines methods that allow proxy-authenticated service handlers
  * to be tested in unit tests.
  *
- * Classes implementing this interface SHOULD store the CAS_Client passed and initialize
- * themselves with that client rather than via the static phpCAS method. For example:
+ * Classes implementing this interface SHOULD store the CAS_Client passed and
+ * initialize themselves with that client rather than via the static phpCAS
+ * method. For example:
  *
  *		/ **
  *		 * Fetch our proxy ticket.
@@ -65,7 +66,8 @@ interface CAS_ProxiedService_Testable
      * @param CAS_Client $casClient Cas client object
      *
      * @return void
-     * @throws CAS_OutOfSequenceException If called after a proxy ticket has already been initialized/set.
+     * @throws CAS_OutOfSequenceException If called after a proxy ticket has
+     *         already been initialized/set.
      */
     public function setCasClient (CAS_Client $casClient);
 

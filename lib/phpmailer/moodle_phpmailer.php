@@ -133,7 +133,7 @@ class moodle_phpmailer extends PHPMailer {
         stream_filter_remove($s);
         $out = preg_replace('/^\./m', '=2E', $out); //Encode . if it is first char on a line, workaround for bug in Exchange
         fclose($fp);
-        return $out;
+        return $this->fixEOL($out);
     }
 
     /**

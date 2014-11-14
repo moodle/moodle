@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -66,7 +65,7 @@ if (empty($CFG->enableblogs)) {
 // The preference is site wide not blog specific. Hence user should have permissions in site level.
 require_capability('moodle/blog:view', $sitecontext);
 
-/// If data submitted, then process and store.
+// If data submitted, then process and store.
 
 $mform = new blog_preferences_form('preferences.php');
 $mform->set_data(array('pagesize' => get_user_preferences('blogpagesize')));
@@ -80,7 +79,7 @@ if (!$mform->is_cancelled() && $data = $mform->get_data()) {
     set_user_preference('blogpagesize', $pagesize);
 }
 
-if ($mform->is_cancelled()){
+if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot . '/blog/index.php');
 }
 

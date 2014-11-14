@@ -68,6 +68,11 @@ if ($fileuploaddisabled) {
 $context = context_user::instance($USER->id);
 require_capability('moodle/user:manageownfiles', $context);
 
+if ($filearea !== 'private' and $filearea !== 'draft') {
+    // Do not dare to allow more areas here!
+    throw new file_exception('error');
+}
+
 $fs = get_file_storage();
 
 $totalsize = 0;

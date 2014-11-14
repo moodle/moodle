@@ -74,7 +74,7 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     public function setup_from_user_preferences() {
         parent::setup_from_user_preferences();
 
-        $this->slotmarks = get_user_preferences('quiz_report_overview_detailedmarks', $this->slotmarks);
+        $this->slotmarks = get_user_preferences('quiz_overview_slotmarks', $this->slotmarks);
     }
 
     public function update_user_preferences() {
@@ -87,6 +87,10 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
 
     public function resolve_dependencies() {
         parent::resolve_dependencies();
+
+        if ($this->attempts == quiz_attempts_report::ENROLLED_WITHOUT) {
+            $this->onlyregraded = false;
+        }
 
         if (!$this->usercanseegrades) {
             $this->slotmarks = false;

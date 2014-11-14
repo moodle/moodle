@@ -53,4 +53,13 @@ class availability extends base {
 
         return $enabled;
     }
+
+    /**
+     * Defines if there should be a way to uninstall the plugin via the administration UI.
+     *
+     * @return bool
+     */
+    public function is_uninstall_allowed() {
+        return true;
+    }
 }

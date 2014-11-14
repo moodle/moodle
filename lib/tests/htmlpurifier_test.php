@@ -295,6 +295,9 @@ class core_htmlpurifier_testcase extends basic_testcase {
         $text = '<a href="rtsp://www.example.com/movie.mov">link</a>';
         $this->assertSame($text, purify_html($text));
 
+        $text = '<a href="rtmp://www.example.com/video.f4v">link</a>';
+        $this->assertSame($text, purify_html($text));
+
         $text = '<a href="teamspeak://speak.example.com/?par=val?par2=val2">link</a>';
         $this->assertSame($text, purify_html($text));
 

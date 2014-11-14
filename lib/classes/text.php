@@ -256,7 +256,7 @@ class core_text {
      * @param string $needle The string to find in haystack.
      * @param boolean $part If true, returns the portion before needle, else return the portion after (including needle).
      * @return string|false False when not found.
-     * @since 2.4.6, 2.5.2, 2.6
+     * @since Moodle 2.4.6, 2.5.2, 2.6
      */
     public static function strrchr($haystack, $needle, $part = false) {
 
@@ -376,6 +376,18 @@ class core_text {
         } else {
             return iconv_strrpos($haystack, $needle, 'UTF-8');
         }
+    }
+
+    /**
+     * Reverse UTF-8 multibytes character sets (used for RTL languages)
+     * (We only do this because there is no mb_strrev or iconv_strrev)
+     *
+     * @param string $str the multibyte string to reverse
+     * @return string the reversed multi byte string
+     */
+    public static function strrev($str) {
+        preg_match_all('/./us', $str, $ar);
+        return join('', array_reverse($ar[0]));
     }
 
     /**
@@ -694,23 +706,5 @@ class core_text {
             }
         }
         return implode(' ', $words);
-    }
-}
-
-/**
- * Legacy tectlib.
- * @deprecated since 2.6, use core_text:: instead.
- */
-class textlib extends core_text {
-    /**
-     * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
-     *
-     * @param array $arr array to be sorted (reference)
-     * @param int $sortflag One of Collator::SORT_REGULAR, Collator::SORT_NUMERIC, Collator::SORT_STRING
-     * @return void modifies parameter
-     */
-    public static function asort(array &$arr, $sortflag = null) {
-        debugging('textlib::asort has been superseeded by collatorlib::asort please upgrade your code to use that', DEBUG_DEVELOPER);
-        collatorlib::asort($arr, $sortflag);
     }
 }

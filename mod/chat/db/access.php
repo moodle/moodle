@@ -85,7 +85,7 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            // not student - nervous about allowing this by default
+            // Not student - nervous about allowing this by default.
         ),
 
     ),

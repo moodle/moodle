@@ -124,7 +124,7 @@ abstract class question_edit_form extends question_wizard_form {
         global $COURSE, $CFG, $DB, $PAGE;
 
         $qtype = $this->qtype();
-        $langfile = "qtype_$qtype";
+        $langfile = "qtype_{$qtype}";
 
         $mform = $this->_form;
 
@@ -146,6 +146,9 @@ abstract class question_edit_form extends question_wizard_form {
             // Editing question with no permission to move from category.
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
                     array('contexts' => array($this->categorycontext)));
+            $mform->addElement('hidden', 'usecurrentcat', 1);
+            $mform->setType('usecurrentcat', PARAM_BOOL);
+            $mform->setConstant('usecurrentcat', 1);
         } else {
             // Editing question with permission to move from category or save as new q.
             $currentgrp = array();
@@ -418,7 +421,7 @@ abstract class question_edit_form extends question_wizard_form {
         }
         $penaltyoptions = array();
         foreach ($penalties as $penalty) {
-            $penaltyoptions["$penalty"] = (100 * $penalty) . '%';
+            $penaltyoptions["{$penalty}"] = (100 * $penalty) . '%';
         }
         $mform->addElement('select', 'penalty',
                 get_string('penaltyforeachincorrecttry', 'question'), $penaltyoptions);
@@ -560,7 +563,7 @@ abstract class question_edit_form extends question_wizard_form {
             // are using object notation here, so we will be setting
             // ->_defaultValues['fraction'][0]. That does not work, so we have
             // to unset ->_defaultValues['fraction[0]'].
-            unset($this->_form->_defaultValues["fraction[$key]"]);
+            unset($this->_form->_defaultValues["fraction[{$key}]"]);
 
             // Prepare the feedback editor to display files in draft area.
             $draftitemid = file_get_submitted_draft_itemid('feedback['.$key.']');
@@ -613,7 +616,7 @@ abstract class question_edit_form extends question_wizard_form {
         foreach ($question->options->answers as $answer) {
             foreach ($extraanswerfields as $field) {
                 // See hack comment in {@link data_preprocessing_answers()}.
-                unset($this->_form->_defaultValues["$field[$key]"]);
+                unset($this->_form->_defaultValues["{$field}[{$key}]"]);
                 $extrafieldsdata[$field][$key] = $this->data_preprocessing_extra_answer_field($answer, $field);
             }
             $key++;

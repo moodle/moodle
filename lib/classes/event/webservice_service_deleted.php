@@ -41,7 +41,7 @@ class webservice_service_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The web service service $this->objectid has been deleted by user $this->userid.";
+        return "The user with id '$this->userid' deleted the web service with id '$this->objectid'.";
     }
 
     /**
@@ -85,5 +85,4 @@ class webservice_service_deleted extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
-
 }

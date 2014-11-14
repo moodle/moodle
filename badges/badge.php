@@ -52,7 +52,16 @@ $PAGE->set_title(get_string('issuedbadge', 'badges'));
 if (isloggedin()) {
     $PAGE->set_heading($badge->badgeclass['name']);
     $PAGE->navbar->add($badge->badgeclass['name']);
-    $url = new moodle_url('/badges/mybadges.php');
+    if ($badge->recipient->id == $USER->id) {
+        $url = new moodle_url('/badges/mybadges.php');
+    } else {
+        $url = new moodle_url($CFG->wwwroot);
+    }
+    navigation_node::override_active_url($url);
+} else {
+    $PAGE->set_heading($badge->badgeclass['name']);
+    $PAGE->navbar->add($badge->badgeclass['name']);
+    $url = new moodle_url($CFG->wwwroot);
     navigation_node::override_active_url($url);
 }
 

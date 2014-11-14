@@ -235,5 +235,4 @@ class behat_form_field {
 
         return $this->fieldlocator;
     }
-
 }

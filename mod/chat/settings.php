@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -19,7 +33,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('chat_old_ping', get_string('oldping', 'chat'),
                        get_string('configoldping', 'chat'), 35, PARAM_INT));
 
-
     $settings->add(new admin_setting_heading('chat_normal_heading', get_string('methodnormal', 'chat'),
                        get_string('explainmethodnormal', 'chat')));
 
@@ -31,7 +44,6 @@ if ($ADMIN->fulltree) {
     $options['jsupdated'] = get_string('normalstream', 'chat');
     $settings->add(new admin_setting_configselect('chat_normal_updatemode', get_string('updatemethod', 'chat'),
                        get_string('confignormalupdatemode', 'chat'), 'jsupdate', $options));
-
 
     $settings->add(new admin_setting_heading('chat_daemon_heading', get_string('methoddaemon', 'chat'),
                        get_string('explainmethoddaemon', 'chat')));

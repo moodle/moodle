@@ -227,7 +227,7 @@ class qtype_randomsamatch extends question_type {
         $extraquestionfields = $this->extra_question_fields();
         array_shift($extraquestionfields);
         foreach ($extraquestionfields as $extra) {
-            $expout .= "    <$extra>" . $question->options->$extra . "</$extra>\n";
+            $expout .= "    <{$extra}>" . $question->options->$extra . "</{$extra}>\n";
         }
         return $expout;
     }

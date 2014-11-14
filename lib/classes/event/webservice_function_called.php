@@ -105,5 +105,4 @@ class webservice_function_called extends base {
            throw new \coding_exception('The \'function\' value must be set in other.');
         }
     }
-
 }

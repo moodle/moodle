@@ -41,8 +41,8 @@ class group_member_removed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' removed the user with the id '$this->relateduserid' to the group with " .
-            "the id '$this->objectid'.";
+        return "The user with id '$this->userid' removed the user with id '$this->relateduserid' to the group with " .
+            "id '$this->objectid'.";
     }
 
     /**
@@ -93,5 +93,19 @@ class group_member_removed extends base {
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groups';
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }

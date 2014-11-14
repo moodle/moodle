@@ -159,7 +159,7 @@ class backup_xml_transformer extends xml_contenttransformer {
         // Add the module ones. Each module supporting moodle2 backups MUST have it
         $mods = core_component::get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
-            if (plugin_supports('mod', $mod, FEATURE_BACKUP_MOODLE2)) {
+            if (plugin_supports('mod', $mod, FEATURE_BACKUP_MOODLE2) && class_exists('backup_' . $mod . '_activity_task')) {
                 $encoders['backup_' . $mod . '_activity_task'] = 'encode_content_links';
             }
         }

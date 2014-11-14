@@ -30,6 +30,7 @@ $string['errincorrectgradeidnumber'] = 'Error - idnumber \'{$a}\' from the impor
 $string['errincorrectidnumber'] = 'Error - incorrect idnumber';
 $string['errincorrectuseridnumber'] = 'Error - idnumber \'{$a}\' from the import file does not match any user.';
 $string['error'] = 'Errors occur';
+$string['errorduringimport'] = 'An error occurred when trying to import: {$a}';
 $string['fileurl'] = 'Remote file URL';
 $string['pluginname'] = 'XML file';
 $string['xml:publish'] = 'Publish import grades from XML';

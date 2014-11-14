@@ -250,6 +250,26 @@ class core_text_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the strrev method.
+     */
+    public function test_strrev() {
+        $strings = array(
+            "Žluťoučký koníček" => "kečínok ýkčuoťulŽ",
+            'ŽLUŤOUČKÝ KONÍČEK' => "KEČÍNOK ÝKČUOŤULŽ",
+            '言語設定' => '定設語言',
+            '简体中文' => '文中体简',
+            "Der eine stößt den Speer zum Mann" => "nnaM muz reepS ned tßöts enie reD"
+        );
+        foreach ($strings as $before => $after) {
+            // Make sure we can reverse it both ways and that it comes out the same.
+            $this->assertSame($after, core_text::strrev($before));
+            $this->assertSame($before, core_text::strrev($after));
+            // Reverse it twice to be doubly sure.
+            $this->assertSame($after, core_text::strrev(core_text::strrev($after)));
+        }
+    }
+
+    /**
      * Tests the static strpos method.
      */
     public function test_strpos() {
@@ -350,6 +370,7 @@ class core_text_testcase extends advanced_testcase {
 
     public function test_deprecated_textlib() {
         $this->assertSame(textlib::strtolower('HUH'), core_text::strtolower('HUH'));
+        $this->assertDebuggingCalled(null, null, 'This fails if any other test uses the deprecated textlib class.');
     }
 
     /**

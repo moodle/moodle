@@ -39,7 +39,7 @@ Feature: Restrict activity availability through grade conditions
       | Name | Test page name |
       | Description | Restricted page, till grades in Grade assignment is at least 20% |
       | Page content | Test page contents |
-      | id | 2 |
+      | id | Grade assignment |
       | minval | 20 |
     And I press "Save and return to course"
     And I log out

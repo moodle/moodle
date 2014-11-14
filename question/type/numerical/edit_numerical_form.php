@@ -185,9 +185,9 @@ class qtype_numerical_edit_form extends question_edit_form {
      */
     protected function unit_group($mform) {
         $grouparray = array();
-        $grouparray[] = $mform->createElement('text', 'unit', get_string('unit', 'quiz'), array('size'=>10));
+        $grouparray[] = $mform->createElement('text', 'unit', get_string('unit', 'qtype_numerical'), array('size'=>10));
         $grouparray[] = $mform->createElement('text', 'multiplier',
-                get_string('multiplier', 'quiz'), array('size'=>10));
+                get_string('multiplier', 'qtype_numerical'), array('size'=>10));
 
         return $grouparray;
     }
@@ -210,7 +210,7 @@ class qtype_numerical_edit_form extends question_edit_form {
         $key = 0;
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
-            unset($this->_form->_defaultValues["tolerance[$key]"]);
+            unset($this->_form->_defaultValues["tolerance[{$key}]"]);
 
             $question->tolerance[$key] = $answer->tolerance;
             $key++;

@@ -79,7 +79,7 @@ class profile_field_datetime extends profile_field_base {
         // If timestamp then explode it to check if year is within field limit.
         $isstring = strpos($datetime, '-');
         if (empty($isstring)) {
-            $datetime = date('Y-m-d-H-i-s', $datetime);
+            $datetime = userdate($datetime, '%Y-%m-%d-%H-%M-%S');
         }
 
         $datetime = explode('-', $datetime);

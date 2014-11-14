@@ -19,7 +19,7 @@
 /**
  * A namespace contains license specific functions
  *
- * @since      2.0
+ * @since      Moodle 2.0
  * @package    core
  * @subpackage lib
  * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>

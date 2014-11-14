@@ -66,8 +66,8 @@ class page_version_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' deleted version '$this->objectid' for the page with the id '{$this->other['pageid']}' " .
-            "for the wiki with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' deleted version '$this->objectid' for the page with id '{$this->other['pageid']}' " .
+            "for the wiki with course module id '$this->contextinstanceid'.";
     }
 
     /**

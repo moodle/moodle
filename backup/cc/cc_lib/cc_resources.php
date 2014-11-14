@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'cc_interfaces.php';
-require_once 'xmlbase.php';
-require_once 'gral_lib/pathutils.php';
-require_once 'gral_lib/ccdependencyparser.php';
-require_once 'cc_version_base.php';
-require_once 'cc_version1.php';
-require_once 'cc_manifest.php';
+require_once('cc_interfaces.php');
+require_once('xmlbase.php');
+require_once('gral_lib/pathutils.php');
+require_once('gral_lib/ccdependencyparser.php');
+require_once('cc_version_base.php');
+require_once('cc_version1.php');
+require_once('cc_manifest.php');
 
 /**
  * Common Cartridge Version
@@ -82,18 +82,20 @@ class cc11_resource_type {
  */
 class cc_resource implements cc_i_resource {
 
-    public  $identifier     = null;
-    public  $type           = null;
-    public  $dependency     = array();
-    public  $identifierref  = null;
-    public  $href           = null;
-    public  $base           = null;
-    public  $persiststate   = null;
-    public  $filename       = null;
-    public  $files          = array();
-    public  $isempty        = null;
-    public  $manifestroot   = null;
-    public  $folder         = null;
+    public $identifier     = null;
+    public $type           = null;
+    public $dependency     = array();
+    public $identifierref  = null;
+    public $href           = null;
+    public $base           = null;
+    public $persiststate   = null;
+    public $metadata       = array();
+    public $filename       = null;
+    public $files          = array();
+    public $isempty        = null;
+    public $manifestroot   = null;
+    public $folder         = null;
+    public $instructoronly = false;
 
     private $throwonerror   = true;
 
@@ -101,10 +103,10 @@ class cc_resource implements cc_i_resource {
         $this->throwonerror = $throwonerror;
         if (is_string($manifest)) {
             $this->folder = $folder;
-            $this->process_resource($manifest, $file,$folder);
+            $this->process_resource($manifest, $file, $folder);
             $this->manifestroot = $manifest;
         } else if (is_object($manifest)) {
-            $this->import_resource($file,$manifest.$folder);
+            $this->import_resource($file, $manifest);
         }
     }
 
@@ -114,11 +116,9 @@ class cc_resource implements cc_i_resource {
      * @param string $fname
      * @param string $location
      */
-    public function add_resource ($fname, $location =''){
-        $this->process_resource($fname,$location);
-
+    public function add_resource ($fname, $location ='') {
+        $this->process_resource($fname, $location, null);
     }
-
 
     /**
      * Import a resource
@@ -130,10 +130,10 @@ class cc_resource implements cc_i_resource {
 
         $searchstr = "//imscc:manifest[@identifier='".$doc->manifestID().
                      "']/imscc:resources/imscc:resource";
-        $this->identifier   = $this->get_attr_value($node,"identifier");
-        $this->type         = $this->get_attr_value($node,"type");
-        $this->href         = $this->get_attr_value($node,"href");
-        $this->base         = $this->get_attr_value($node,"base");
+        $this->identifier   = $this->get_attr_value($node, "identifier");
+        $this->type         = $this->get_attr_value($node, "type");
+        $this->href         = $this->get_attr_value($node, "href");
+        $this->base         = $this->get_attr_value($node, "base");
         $this->persiststate = null;
         $nodo               = $doc->nodeList($searchstr."[@identifier='".
                               $this->identifier."']/metadata/@href");
@@ -154,7 +154,6 @@ class cc_resource implements cc_i_resource {
         $this->isempty      = false;
     }
 
-
     /**
      * Get a attribute value
      *
@@ -164,11 +163,11 @@ class cc_resource implements cc_i_resource {
      * @return string
      */
     public function get_attr_value(&$nod, $name, $ns=null) {
-      return is_null($ns) ?
-             ($nod->hasAttribute($name) ? $nod->getAttribute($name) : null) :
-             ($nod->hasAttributeNS($ns, $name) ? $nod->getAttributeNS($ns, $name) : null);
+        if (is_null($ns)) {
+            return ($nod->hasAttribute($name) ? $nod->getAttribute($name) : null);
+        }
+        return ($nod->hasAttributeNS($ns, $name) ? $nod->getAttributeNS($ns, $name) : null);
     }
-
 
     /**
      * Process a resource
@@ -179,12 +178,12 @@ class cc_resource implements cc_i_resource {
      */
     public function process_resource($manifestroot, &$fname, $folder) {
         $file = empty($folder) ? $manifestroot.'/'.$fname : $manifestroot.'/'.$folder.'/'.$fname;
-        if (!file_exists($file) && $this->throwonerror){
+        if (!file_exists($file) && $this->throwonerror) {
             throw new Exception('The file doesnt exist!');
         }
 
         GetDepFiles($manifestroot, $fname, $this->folder, $this->files);
-        array_unshift($this->files,$folder.$fname);
+        array_unshift($this->files, $folder.$fname);
         $this->init_empty_new();
         $this->href             = $folder.$fname;
         $this->identifierref    = $folder.$fname;
@@ -196,43 +195,41 @@ class cc_resource implements cc_i_resource {
     public function adjust_path($mroot, $fname) {
         $result = null;
         if (file_exists($fname->filename)) {
-            $result = pathDiff($fname->filename,$mroot);
+            $result = pathDiff($fname->filename, $mroot);
 
         } else if (file_exists($mroot.$fname->filename) || file_exists($mroot.DIRECTORY_SEPARATOR.$fname->filename)) {
-            $result = trim(toUrlPath($fname->filename),"/");
+            $result = $fname->filename;
+            toUrlPath($result);
+            $result = trim($result, "/");
         }
         return $result;
     }
 
-
-
     public function init_clean() {
-        $this->identifier       =   null;
-        $this->type             =   null;
-        $this->href             =   null;
-        $this->base             =   null;
-        $this->metadata         =   array();
-        $this->dependency       =   array();
-        $this->identifierref    =   null;
-        $this->persiststate     =   null;
-        $this->filename         =   '';
-        $this->files            =   array();
-        $this->isempty          =   true;
+        $this->identifier    = null;
+        $this->type          = null;
+        $this->href          = null;
+        $this->base          = null;
+        $this->metadata      = array();
+        $this->dependency    = array();
+        $this->identifierref = null;
+        $this->persiststate  = null;
+        $this->filename      = '';
+        $this->files         = array();
+        $this->isempty       = true;
     }
-
 
     public function init_empty_new() {
-        $this->identifier       =   cc_helpers::uuidgen('I_', '_R');
-        $this->type             =   null;
-        $this->href             =   null;
-        $this->persiststate     =   null;
-        $this->filename         =   null;
-        $this->isempty          =   false;
-        $this->identifierref    =   null;
+        $this->identifier    = cc_helpers::uuidgen('I_', '_R');
+        $this->type          = null;
+        $this->href          = null;
+        $this->persiststate  = null;
+        $this->filename      = null;
+        $this->isempty       = false;
+        $this->identifierref = null;
     }
 
-    public function get_manifestroot(){
+    public function get_manifestroot() {
         return $this->manifestroot;
     }
-
 }

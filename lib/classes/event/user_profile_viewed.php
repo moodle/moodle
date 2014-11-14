@@ -32,9 +32,9 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - int courseid: id of course.
- *      - string courseshortname: short name of course.
- *      - string coursefullname: fullname of course.
+ *      - int courseid: (optional) id of course.
+ *      - string courseshortname: (optional) shortname of course.
+ *      - string coursefullname: (optional) fullname of course.
  * }
  *
  * @package    core
@@ -68,8 +68,9 @@ class user_profile_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return 'The user ' . $this->userid . ' viewed the profile for user ' . $this->relateduserid . ' in the course ' .
-            $this->other['courseid'];
+        $desc = "The user with id '$this->userid' viewed the profile for the user with id '$this->relateduserid'";
+        $desc .= ($this->contextlevel == CONTEXT_COURSE) ? " in the course with id '$this->courseid'." : ".";
+        return $desc;
     }
 
     /**
@@ -78,7 +79,10 @@ class user_profile_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/user/view.php', array('id' => $this->relateduserid, 'course' => $this->other['courseid']));
+        if ($this->contextlevel == CONTEXT_COURSE) {
+            return new \moodle_url('/user/view.php', array('id' => $this->relateduserid, 'course' => $this->courseid));
+        }
+        return new \moodle_url('/user/profile.php', array('id' => $this->relateduserid));
     }
 
     /**
@@ -87,7 +91,24 @@ class user_profile_viewed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->other['courseid'], 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
-            $this->other['courseid'], $this->relateduserid);
+        if ($this->contextlevel == CONTEXT_COURSE) {
+            return array($this->courseid, 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
+                $this->courseid, $this->relateduserid);
+        }
+        return null;
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception when validation does not pass.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }

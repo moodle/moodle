@@ -36,6 +36,7 @@ class core_grade_scale_testcase extends grade_base_testcase {
         $this->sub_test_grade_scale_fetch();
         $this->sub_test_scale_load_items();
         $this->sub_test_scale_compact_items();
+        $this->sub_test_scale_one_item();
     }
 
     protected function sub_test_scale_construct() {
@@ -126,5 +127,45 @@ class core_grade_scale_testcase extends grade_base_testcase {
 
         // The original string and the new string may have differences in whitespace around the delimiter, and that's OK.
         $this->assertEquals(preg_replace('/\s*,\s*/', ',', $this->scale[0]->scale), $scale->scale);
+    }
+
+    protected function sub_test_scale_one_item() {
+        $params = new stdClass();
+        $params->name         = 'unittestscale1i';
+        $params->courseid     = $this->course->id;
+        $params->userid       = $this->userid;
+        $params->scale        = 'Like';
+        $params->description  = 'This scale is used to like something.';
+        $params->timemodified = time();
+
+        $scale = new grade_scale($params, false);
+        $scale->load_items();
+
+        $this->assertCount(1, $scale->scale_items);
+        $this->assertSame(array('Like'), $scale->scale_items);
+        $this->assertSame('Like', $scale->compact_items());
+
+        $scale->insert();
+
+        // Manual grade item with 1 item scale.
+        $grade_item = new stdClass();
+        $grade_item->courseid = $this->course->id;
+        $grade_item->categoryid = $this->grade_categories[0]->id;
+        $grade_item->itemname = 'manual grade_item scale_1';
+        $grade_item->itemtype = 'manual';
+        $grade_item->itemnumber = 0;
+        $grade_item->needsupdate = false;
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
+        $grade_item->scaleid = $scale->id;
+        $grade_item->iteminfo = 'Manual grade item used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+
+        $grade_item = new grade_item($grade_item);
+        $grade_item->insert();
+
+        $this->assertNotEmpty($grade_item->id);
+        $this->assertEquals(1, $grade_item->grademin);
+        $this->assertEquals(1, $grade_item->grademax);
     }
 }

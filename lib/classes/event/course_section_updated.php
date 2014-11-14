@@ -68,8 +68,8 @@ class course_section_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the section with the number '{$this->other['sectionnum']}' for the " .
-            "course with the id '$this->courseid'";
+        return "The user with id '$this->userid' updated section number '{$this->other['sectionnum']}' for the " .
+            "course with id '$this->courseid'";
     }
 
     /**

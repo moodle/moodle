@@ -22,8 +22,7 @@ Feature: Message history displays correctly
     And I send "Message 10 from user1 to user2" message to "User Two" user
 
   Scenario: View sent messages
-    When I expand "My profile" node
-    And I click on "Messages" "link" in the "Navigation" "block"
+    When I navigate to "Messages" node in "My profile"
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
     And I click on "Message history" "link" in the "User Two" "table_row"
@@ -38,8 +37,7 @@ Feature: Message history displays correctly
   Scenario: View received messages
     When I log out
     And I log in as "user2"
-    And I expand "My profile" node
-    And I click on "Messages" "link" in the "Navigation" "block"
+    And I navigate to "Messages" node in "My profile"
     And I follow "User One (10)"
     # Should show all of the user's unread messages.
     Then I should see "Message 1 from user1 to user2"

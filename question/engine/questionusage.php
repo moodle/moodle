@@ -310,10 +310,8 @@ class question_usage_by_activity {
     }
 
     /**
-     * Get the current mark awarded for the attempt at a question.
-     * @param int $slot the number used to identify this question within this usage.
-     * @return number|null The current mark for this question, or null if one has
-     * not been assigned yet.
+     * Get the total mark for all questions in this usage.
+     * @return number The sum of marks of all the question_attempts in this usage.
      */
     public function get_total_mark() {
         $mark = 0;
@@ -837,7 +835,7 @@ class question_usage_by_activity {
         while ($record->qubaid != $qubaid) {
             $records->next();
             if (!$records->valid()) {
-                throw new coding_exception("Question usage $qubaid not found in the database.");
+                throw new coding_exception("Question usage {$qubaid} not found in the database.");
             }
             $record = $records->current();
         }

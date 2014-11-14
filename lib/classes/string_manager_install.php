@@ -80,6 +80,19 @@ class core_string_manager_install implements core_string_manager {
     }
 
     /**
+     * Has string been deprecated?
+     *
+     * No deprecated string in installation, unused strings are simply removed.
+     *
+     * @param string $identifier The identifier of the string to search for
+     * @param string $component The module the string is associated with
+     * @return bool true if deprecated
+     */
+    public function string_deprecated($identifier, $component) {
+        return false;
+    }
+
+    /**
      * Get String returns a requested string
      *
      * @param string $identifier The identifier of the string to search for

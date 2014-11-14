@@ -136,43 +136,43 @@ echo $OUTPUT->header();
 ?>
 <div id="addmembersform">
     <h3 class="main"><?php print_string('addgroupstogroupings', 'group'); echo ": $groupingname"; ?></h3>
-
     <form id="assignform" method="post" action="">
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-
-    <table summary="" cellpadding="5" cellspacing="0">
+    <table summary="" class="generaltable generalbox groupmanagementtable boxaligncenter">
     <tr>
-      <td valign="top">
+      <td id="existingcell">
           <label for="removeselect"><?php print_string('existingmembers', 'group', $currentmemberscount); ?></label>
-          <br />
+          <div class="userselector" id="removeselect_wrapper">
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=true;
                            document.getElementById('assignform').remove.disabled=false;
                            document.getElementById('assignform').addselect.selectedIndex=-1;">
           <?php echo $currentmembersoptions ?>
-          </select></td>
-      <td valign="top">
-
+          </select></div></td>
+      <td id="buttonscell">
         <p class="arrow_button">
-            <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$OUTPUT->larrow().' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
-            <br />
-            <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp; '.$OUTPUT->rarrow().' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
+            <input name="add" id="add" type="submit"
+                   value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>"
+                   title="<?php print_string('add'); ?>" /><br>
+            <input name="remove" id="remove" type="submit"
+                   value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>"
+                   title="<?php print_string('remove'); ?>" />
         </p>
       </td>
-      <td valign="top">
+      <td id="potentialcell">
           <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); ?></label>
-          <br />
+          <div class="userselector" id="addselect_wrapper">
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=false;
                            document.getElementById('assignform').remove.disabled=true;
                            document.getElementById('assignform').removeselect.selectedIndex=-1;">
          <?php echo $potentialmembersoptions ?>
          </select>
-         <br />
+          </div>
        </td>
     </tr>
-    <tr><td>
+    <tr><td colspan="3" id="backcell">
         <input type="submit" name="cancel" value="<?php print_string('backtogroupings', 'group'); ?>" />
     </td></tr>
     </table>

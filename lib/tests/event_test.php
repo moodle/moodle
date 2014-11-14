@@ -458,6 +458,101 @@ class core_event_testcase extends advanced_testcase {
             \core_tests\event\unittest_observer::$info);
     }
 
+    public function test_rollback() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        $observers = array(
+            array(
+                'eventname'   => '\core_tests\event\unittest_executed',
+                'callback'    => '\core_tests\event\unittest_observer::external_observer',
+                'internal'    => 0,
+            ),
+        );
+
+        \core\event\manager::phpunit_replace_observers($observers);
+        \core_tests\event\unittest_observer::reset();
+
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(1, \core_tests\event\unittest_observer::$event);
+        \core_tests\event\unittest_observer::reset();
+
+        $transaction1 = $DB->start_delegated_transaction();
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        $transaction2 = $DB->start_delegated_transaction();
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        try {
+            $transaction2->rollback(new Exception('x'));
+            $this->fail('Expecting exception');
+        } catch (Exception $e) {}
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        $this->assertTrue($DB->is_transaction_started());
+
+        try {
+            $transaction1->rollback(new Exception('x'));
+            $this->fail('Expecting exception');
+        } catch (Exception $e) {}
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        $this->assertFalse($DB->is_transaction_started());
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(1, \core_tests\event\unittest_observer::$event);
+    }
+
+    public function test_forced_rollback() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        $observers = array(
+            array(
+                'eventname'   => '\core_tests\event\unittest_executed',
+                'callback'    => '\core_tests\event\unittest_observer::external_observer',
+                'internal'    => 0,
+            ),
+        );
+
+        \core\event\manager::phpunit_replace_observers($observers);
+        \core_tests\event\unittest_observer::reset();
+
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(1, \core_tests\event\unittest_observer::$event);
+        \core_tests\event\unittest_observer::reset();
+
+        $transaction1 = $DB->start_delegated_transaction();
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        $transaction2 = $DB->start_delegated_transaction();
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        $DB->force_transaction_rollback();
+        $this->assertCount(0, \core_tests\event\unittest_observer::$event);
+
+        $this->assertFalse($DB->is_transaction_started());
+
+        \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)))->trigger();
+        $this->assertCount(1, \core_tests\event\unittest_observer::$event);
+    }
+
     public function test_deprecated() {
         global $DB;
 

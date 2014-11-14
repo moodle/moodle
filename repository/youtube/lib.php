@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access youtube videos
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_youtube
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 /**
  * repository_youtube class
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_youtube
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

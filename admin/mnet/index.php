@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
     // Allows the admin to configure mnet stuff
 

@@ -203,7 +203,7 @@ can directly edit the object $result.
 Example file:
 
 --
-<?PHP
+<?php
 
     // Set the zip code and the adress
     if ($_SERVER[$this->config->field_map_address] != '')

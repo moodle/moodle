@@ -95,8 +95,9 @@ if ($data = data_submitted()) {
     foreach ($data as $k => $v) {
         if (preg_match('/^(user|teacher)(\d+)$/', $k, $m)) {
             if (!array_key_exists($m[2], $SESSION->emailto[$id])) {
-                if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,
-                        ' . $namefields . ', idnumber, email, mailformat, lastaccess, lang, maildisplay')) {
+                if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id, '.
+                        $namefields . ', idnumber, email, mailformat, lastaccess, lang, '.
+                        'maildisplay, auth, suspended, deleted, emailstop')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
                     $count++;
                 }
@@ -105,7 +106,13 @@ if ($data = data_submitted()) {
     }
 }
 
-$strtitle = get_string('coursemessage');
+if ($course->id == SITEID) {
+    $strtitle = get_string('sitemessage');
+    $PAGE->set_pagelayout('admin');
+} else {
+    $strtitle = get_string('coursemessage');
+    $PAGE->set_pagelayout('incourse');
+}
 
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) ||

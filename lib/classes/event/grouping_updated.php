@@ -41,7 +41,7 @@ class grouping_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the grouping with the id '$this->objectid'.";
+        return "The user with id '$this->userid' updated the grouping with id '$this->objectid'.";
     }
 
     /**
@@ -90,5 +90,4 @@ class grouping_updated extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groupings';
     }
-
 }

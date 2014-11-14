@@ -31,7 +31,8 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchElement as NoSuchElement,
-    WebDriver\Exception\StaleElementReference as StaleElementReference;
+    WebDriver\Exception\StaleElementReference as StaleElementReference,
+    Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
  * Cross component steps definitions.
@@ -47,6 +48,12 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_general extends behat_base {
+
+    /**
+     * @var string used by {@link switch_to_window()} and
+     * {@link switch_to_the_main_window()} to work-around a Chrome browser issue.
+     */
+    const MAIN_WINDOW_NAME = '__moodle_behat_main_window_name';
 
     /**
      * Opens Moodle homepage.
@@ -156,6 +163,15 @@ class behat_general extends behat_base {
      * @param string $windowname
      */
     public function switch_to_window($windowname) {
+        // In Behat, some browsers (e.g. Chrome) are unable to switch to a
+        // window without a name, and by default the main browser window does
+        // not have a name. To work-around this, when we switch away from an
+        // unnamed window (presumably the main window) to some other named
+        // window, then we first set the main window name to a conventional
+        // value that we can later use this name to switch back.
+        $this->getSession()->evaluateScript(
+                'if (window.name == "") window.name = "' . self::MAIN_WINDOW_NAME . '"');
+
         $this->getSession()->switchToWindow($windowname);
     }
 
@@ -165,7 +181,7 @@ class behat_general extends behat_base {
      * @Given /^I switch to the main window$/
      */
     public function switch_to_the_main_window() {
-        $this->getSession()->switchToWindow();
+        $this->getSession()->switchToWindow(self::MAIN_WINDOW_NAME);
     }
 
     /**
@@ -280,6 +296,38 @@ class behat_general extends behat_base {
         $node = $this->get_selected_node($selectortype, $element);
         $this->ensure_node_is_visible($node);
         $node->click();
+    }
+
+    /**
+     * Sets the focus and takes away the focus from an element, generating blur JS event.
+     *
+     * @When /^I take focus off "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)"$/
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     */
+    public function i_take_focus_off_field($element, $selectortype) {
+        if (!$this->running_javascript()) {
+            throw new ExpectationException('Can\'t take focus off from "' . $element . '" in non-js mode', $this->getSession());
+        }
+        // Gets the node based on the requested selector type and locator.
+        $node = $this->get_selected_node($selectortype, $element);
+        $this->ensure_node_is_visible($node);
+
+        // Ensure element is focused before taking it off.
+        $node->focus();
+        $node->blur();
+    }
+
+    /**
+     * Clicks the specified element and confirms the expected dialogue.
+     *
+     * @When /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" confirming the dialogue$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $link
+     */
+    public function i_click_on_confirming_the_dialogue($element, $selectortype) {
+        $this->i_click_on($element, $selectortype);
+        $this->accept_currently_displayed_alert_dialog();
     }
 
     /**
@@ -810,9 +858,9 @@ class behat_general extends behat_base {
                     return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
                 },
                 $params,
-                false,
+                self::REDUCED_TIMEOUT,
                 $exception,
-                self::REDUCED_TIMEOUT
+                false
             );
 
             throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
@@ -950,6 +998,227 @@ class behat_general extends behat_base {
             throw new ExpectationException('The attribute "' . $attribute .
                     '" contains "' . $text . '" (value: "' . $value . '")',
                     $this->getSession());
+        }
+    }
+
+    /**
+     * Checks the provided value exists in specific row/column of table.
+     *
+     * @Then /^"(?P<row_string>[^"]*)" row "(?P<column_string>[^"]*)" column of "(?P<table_string>[^"]*)" table should contain "(?P<value_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @param string $row row text which will be looked in.
+     * @param string $column column text to search (or numeric value for the column position)
+     * @param string $table table id/class/caption
+     * @param string $value text to check.
+     */
+    public function row_column_of_table_should_contain($row, $column, $table, $value) {
+        $tablenode = $this->get_selected_node('table', $table);
+        $tablexpath = $tablenode->getXpath();
+
+        $rowliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($row);
+        $valueliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($value);
+        $columnliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($column);
+
+        if (preg_match('/^-?(\d+)-?$/', $column, $columnasnumber)) {
+            // Column indicated as a number, just use it as position of the column.
+            $columnpositionxpath = "/child::*[position() = {$columnasnumber[1]}]";
+        } else {
+            // Header can be in thead or tbody (first row), following xpath should work.
+            $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
+                $columnliteral . "])]";
+            $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
+                $columnliteral . "])]";
+
+            // Check if column exists.
+            $columnheaderxpath = $tablexpath . "[" . $theadheaderxpath . " | " . $tbodyheaderxpath . "]";
+            $columnheader = $this->getSession()->getDriver()->find($columnheaderxpath);
+            if (empty($columnheader)) {
+                $columnexceptionmsg = $column . '" in table "' . $table . '"';
+                throw new ElementNotFoundException($this->getSession(), "\n$columnheaderxpath\n\n".'Column', null, $columnexceptionmsg);
+            }
+            // Following conditions were considered before finding column count.
+            // 1. Table header can be in thead/tr/th or tbody/tr/td[1].
+            // 2. First column can have th (Gradebook -> user report), so having lenient sibling check.
+            $columnpositionxpath = "/child::*[position() = count(" . $tablexpath . "/" . $theadheaderxpath .
+                "/preceding-sibling::*) + 1]";
+        }
+
+        // Check if value exists in specific row/column.
+        // Get row xpath.
+        $rowxpath = $tablexpath."/tbody/tr[th[normalize-space(.)=" . $rowliteral . "] | td[normalize-space(.)=" . $rowliteral . "]]";
+
+        $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
+
+        // Looks for the requested node inside the container node.
+        $coumnnode = $this->getSession()->getDriver()->find($columnvaluexpath);
+        if (empty($coumnnode)) {
+            $locatorexceptionmsg = $value . '" in "' . $row . '" row with column "' . $column;
+            throw new ElementNotFoundException($this->getSession(), "\n$columnvaluexpath\n\n".'Column value', null, $locatorexceptionmsg);
+        }
+    }
+
+    /**
+     * Checks the provided value should not exist in specific row/column of table.
+     *
+     * @Then /^"(?P<row_string>[^"]*)" row "(?P<column_string>[^"]*)" column of "(?P<table_string>[^"]*)" table should not contain "(?P<value_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @param string $row row text which will be looked in.
+     * @param string $column column text to search
+     * @param string $table table id/class/caption
+     * @param string $value text to check.
+     */
+    public function row_column_of_table_should_not_contain($row, $column, $table, $value) {
+        try {
+            $this->row_column_of_table_should_contain($row, $column, $table, $value);
+            // Throw exception if found.
+            throw new ExpectationException(
+                '"' . $column . '" with value "' . $value . '" is present in "' . $row . '"  row for table "' . $table . '"',
+                $this->getSession()
+            );
+        } catch (ElementNotFoundException $e) {
+            // Table row/column doesn't contain this value. Nothing to do.
+            return;
+        }
+    }
+
+    /**
+     * Checks that the provided value exist in table.
+     * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     *
+     * First row may contain column headers or numeric indexes of the columns
+     * (syntax -1- is also considered to be column index). Column indexes are
+     * useful in case of multirow headers and/or presence of cells with colspan.
+     *
+     * @Then /^the following should exist in the "(?P<table_string>[^"]*)" table:$/
+     * @throws ExpectationException
+     * @param string $table name of table
+     * @param TableNode $data table with first row as header and following values
+     *        | Header 1 | Header 2 | Header 3 |
+     *        | Value 1 | Value 2 | Value 3|
+     */
+    public function following_should_exist_in_the_table($table, TableNode $data) {
+        $datahash = $data->getHash();
+
+        foreach ($datahash as $row) {
+            $firstcell = null;
+            foreach ($row as $column => $value) {
+                if ($firstcell === null) {
+                    $firstcell = $value;
+                } else {
+                    $this->row_column_of_table_should_contain($firstcell, $column, $table, $value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks that the provided value exist in table.
+     * More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     *
+     * @Then /^the following should not exist in the "(?P<table_string>[^"]*)" table:$/
+     * @throws ExpectationException
+     * @param string $table name of table
+     * @param TableNode $data table with first row as header and following values
+     *        | Header 1 | Header 2 | Header 3 |
+     *        | Value 1 | Value 2 | Value 3|
+     */
+    public function following_should_not_exist_in_the_table($table, TableNode $data) {
+        $datahash = $data->getHash();
+
+        foreach ($datahash as $value) {
+            $row = array_shift($value);
+            foreach ($value as $column => $value) {
+                try {
+                    $this->row_column_of_table_should_contain($row, $column, $table, $value);
+                    // Throw exception if found.
+                    throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
+                        $row . '"  row for table "' . $table . '"', $this->getSession()
+                    );
+                } catch (ElementNotFoundException $e) {
+                    // Table row/column doesn't contain this value. Nothing to do.
+                    continue;
+                }
+            }
+        }
+    }
+
+    /**
+     * Given the text of a link, download the linked file and return the contents.
+     *
+     * This is a helper method used by {@link following_should_download_bytes()}
+     * and {@link following_should_download_between_and_bytes()}
+     *
+     * @param string $link the text of the link.
+     * @return string the content of the downloaded file.
+     */
+    protected function download_file_from_link($link) {
+        // Find the link.
+        $linknode = $this->find_link($link);
+        $this->ensure_node_is_visible($linknode);
+
+        // Get the href and check it.
+        $url = $linknode->getAttribute('href');
+        if (!$url) {
+            throw new ExpectationException('Download link does not have href attribute',
+                    $this->getSession());
+        }
+        if (!preg_match('~^https?://~', $url)) {
+            throw new ExpectationException('Download link not an absolute URL: ' . $url,
+                    $this->getSession());
+        }
+
+        // Download the URL and check the size.
+        $session = $this->getSession()->getCookie('MoodleSession');
+        return download_file_content($url, array('Cookie' => 'MoodleSession=' . $session));
+    }
+
+    /**
+     * Downloads the file from a link on the page and checks the size.
+     *
+     * Only works if the link has an href attribute. Javascript downloads are
+     * not supported. Currently, the href must be an absolute URL.
+     *
+     * @Then /^following "(?P<link_string>[^"]*)" should download "(?P<expected_bytes>\d+)" bytes$/
+     * @throws ExpectationException
+     * @param string $link the text of the link.
+     * @param number $expectedsize the expected file size in bytes.
+     */
+    public function following_should_download_bytes($link, $expectedsize) {
+        $result = $this->download_file_from_link($link);
+        $actualsize = (int)strlen($result);
+        if ($actualsize !== (int)$expectedsize) {
+            throw new ExpectationException('Downloaded data was ' . $actualsize .
+                    ' bytes, expecting ' . $expectedsize, $this->getSession());
+        }
+    }
+
+    /**
+     * Downloads the file from a link on the page and checks the size is in a given range.
+     *
+     * Only works if the link has an href attribute. Javascript downloads are
+     * not supported. Currently, the href must be an absolute URL.
+     *
+     * The range includes the endpoints. That is, a 10 byte file in considered to
+     * be between "5" and "10" bytes, and between "10" and "20" bytes.
+     *
+     * @Then /^following "(?P<link_string>[^"]*)" should download between "(?P<min_bytes>\d+)" and "(?P<max_bytes>\d+)" bytes$/
+     * @throws ExpectationException
+     * @param string $link the text of the link.
+     * @param number $minexpectedsize the minimum expected file size in bytes.
+     * @param number $maxexpectedsize the maximum expected file size in bytes.
+     */
+    public function following_should_download_between_and_bytes($link, $minexpectedsize, $maxexpectedsize) {
+        // If the minimum is greater than the maximum then swap the values.
+        if ((int)$minexpectedsize > (int)$maxexpectedsize) {
+            list($minexpectedsize, $maxexpectedsize) = array($maxexpectedsize, $minexpectedsize);
+        }
+
+        $result = $this->download_file_from_link($link);
+        $actualsize = (int)strlen($result);
+        if ($actualsize < $minexpectedsize || $actualsize > $maxexpectedsize) {
+            throw new ExpectationException('Downloaded data was ' . $actualsize .
+                    ' bytes, expecting between ' . $minexpectedsize . ' and ' .
+                    $maxexpectedsize, $this->getSession());
         }
     }
 }

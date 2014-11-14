@@ -48,7 +48,7 @@ class report_viewed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
@@ -66,8 +66,8 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the outline report for the user with the id '$this->relateduserid' " .
-            "for the course with the id '$this->courseid'.";
+        return "The user with id '$this->userid' viewed the outline report for the user with id '$this->relateduserid' " .
+            "for the course with id '$this->courseid'.";
     }
 
     /**
@@ -101,7 +101,7 @@ class report_viewed extends \core\event\base {
         if (empty($this->other['mode'])) {
             throw new \coding_exception('The \'mode\' value must be set in other.');
         }
-        if (empty($this->data['relateduserid'])) {
+        if (empty($this->relateduserid)) {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }

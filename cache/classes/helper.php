@@ -719,7 +719,8 @@ class cache_helper {
             return $stores;
         } else {
             $stores = self::get_cache_stores($definition);
-            if (count($stores) === 0) {
+            // If mappingsonly is set, having 0 stores is ok.
+            if ((count($stores) === 0) && (!$definition->is_for_mappings_only())) {
                 // No suitable stores we found for the definition. We need to come up with a sensible default.
                 // If this has happened we can be sure that the user has mapped custom stores to either the
                 // mode of the definition. The first alternative to try is the system default for the mode.
@@ -734,5 +735,29 @@ class cache_helper {
             }
         }
         return $stores;
+    }
+
+    /**
+     * Returns an array of warnings from the cache API.
+     *
+     * The warning returned here are for things like conflicting store instance configurations etc.
+     * These get shown on the admin notifications page for example.
+     *
+     * @param array|null $stores An array of stores to get warnings for, or null for all.
+     * @return string[]
+     */
+    public static function warnings(array $stores = null) {
+        global $CFG;
+        if ($stores === null) {
+            require_once($CFG->dirroot.'/cache/locallib.php');
+            $stores = cache_administration_helper::get_store_instance_summaries();
+        }
+        $warnings = array();
+        foreach ($stores as $store) {
+            if (!empty($store['warnings'])) {
+                $warnings = array_merge($warnings, $store['warnings']);
+            }
+        }
+        return $warnings;
     }
 }

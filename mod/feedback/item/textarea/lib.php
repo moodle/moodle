@@ -177,12 +177,12 @@ class feedback_item_textarea extends feedback_item_base {
         $data = $analysed_item->data;
         if (is_array($data)) {
             if (isset($data[0])) {
-                $worksheet->write_string($row_offset, 2, $data[0], $xls_formats->value_bold);
+                $worksheet->write_string($row_offset, 2, htmlspecialchars_decode($data[0], ENT_QUOTES), $xls_formats->value_bold);
             }
             $row_offset++;
             $sizeofdata = count($data);
             for ($i = 1; $i < $sizeofdata; $i++) {
-                $worksheet->write_string($row_offset, 2, $data[$i], $xls_formats->default);
+                $worksheet->write_string($row_offset, 2, htmlspecialchars_decode($data[$i], ENT_QUOTES), $xls_formats->default);
                 $row_offset++;
             }
         }

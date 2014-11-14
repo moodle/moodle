@@ -18,7 +18,7 @@
 /**
  * The Web service script that is called from the filepicker front end
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -208,7 +208,7 @@ switch ($action) {
             // note that in this case user may not have permission to access the source file directly
             // so no file_browser/file_info can be used below
             if ($repo->has_moodle_files()) {
-                $file = repository::get_moodle_file($source);
+                $file = repository::get_moodle_file($reference);
                 if ($file && $file->is_external_file()) {
                     $sourcefield = $file->get_source(); // remember the original source
                     $record->source = $repo::build_source_field($sourcefield);

@@ -39,6 +39,8 @@ class mysqli_native_moodle_database extends moodle_database {
 
     /** @var mysqli $mysqli */
     protected $mysqli = null;
+    /** @var bool is compressed row format supported cache */
+    protected $compressedrowformatsupported = null;
 
     private $transactions_supported = null;
 
@@ -281,6 +283,73 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Get the row format from the database schema.
+     *
+     * @param string $table
+     * @return string row_format name or null if not known or table does not exist.
+     */
+    public function get_row_format($table) {
+        $rowformat = null;
+        $table = $this->mysqli->real_escape_string($table);
+        $sql = "SELECT row_format
+                  FROM INFORMATION_SCHEMA.TABLES
+                 WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}$table'";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            $rowformat = $rec['row_format'];
+        }
+        $result->close();
+
+        return $rowformat;
+    }
+
+    /**
+     * Is this database compatible with compressed row format?
+     * This feature is necessary for support of large number of text
+     * columns in InnoDB/XtraDB database.
+     *
+     * @param bool $cached use cached result
+     * @return bool true if table can be created or changed to compressed row format.
+     */
+    public function is_compressed_row_format_supported($cached = true) {
+        if ($cached and isset($this->compressedrowformatsupported)) {
+            return($this->compressedrowformatsupported);
+        }
+
+        $engine = strtolower($this->get_dbengine());
+        $info = $this->get_server_info();
+
+        if (version_compare($info['version'], '5.5.0') < 0) {
+            // MySQL 5.1 is not supported here because we cannot read the file format.
+            $this->compressedrowformatsupported = false;
+
+        } else if ($engine !== 'innodb' and $engine !== 'xtradb') {
+            // Other engines are not supported, most probably not compatible.
+            $this->compressedrowformatsupported = false;
+
+        } else if (!$filepertable = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_file_per_table'")) {
+            $this->compressedrowformatsupported = false;
+
+        } else if ($filepertable->value !== 'ON') {
+            $this->compressedrowformatsupported = false;
+
+        } else if (!$fileformat = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_file_format'")) {
+            $this->compressedrowformatsupported = false;
+
+        } else  if ($fileformat->value !== 'Barracuda') {
+            $this->compressedrowformatsupported = false;
+
+        } else {
+            // All the tests passed, we can safely use ROW_FORMAT=Compressed in sql statements.
+            $this->compressedrowformatsupported = true;
+        }
+
+        return $this->compressedrowformatsupported;
+    }
+
+    /**
      * Returns localised database type name
      * Note: can be used before connect()
      * @return string
@@ -372,13 +441,10 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($dbhost and !empty($this->dboptions['dbpersist'])) {
             $dbhost = "p:$dbhost";
         }
-        ob_start();
-        $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
-        $dberr = ob_get_contents();
-        ob_end_clean();
-        $errorno = @$this->mysqli->connect_errno;
+        $this->mysqli = @new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
 
-        if ($errorno !== 0) {
+        if ($this->mysqli->connect_errno !== 0) {
+            $dberr = $this->mysqli->connect_error;
             $this->mysqli = null;
             throw new dml_connection_exception($dberr);
         }
@@ -1153,7 +1219,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * This method is intended for inserting of large number of small objects,
      * do not use for huge objects with text or binary fields.
      *
-     * @since 2.7
+     * @since Moodle 2.7
      *
      * @param string $table  The database table to be inserted into
      * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
@@ -1533,9 +1599,40 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns the SQL that allows to find intersection of two or more queries
+     *
+     * @since Moodle 2.8
+     *
+     * @param array $selects array of SQL select queries, each of them only returns fields with the names from $fields
+     * @param string $fields comma-separated list of fields
+     * @return string SQL query that will return only values that are present in each of selects
+     */
+    public function sql_intersect($selects, $fields) {
+        if (count($selects) <= 1) {
+            return parent::sql_intersect($selects, $fields);
+        }
+        $fields = preg_replace('/\s/', '', $fields);
+        static $aliascnt = 0;
+        $falias = 'intsctal'.($aliascnt++);
+        $rv = "SELECT $falias.".
+            preg_replace('/,/', ','.$falias.'.', $fields).
+            " FROM ($selects[0]) $falias";
+        for ($i = 1; $i < count($selects); $i++) {
+            $alias = 'intsctal'.($aliascnt++);
+            $rv .= " JOIN (".$selects[$i].") $alias ON ".
+                join(' AND ',
+                    array_map(
+                        create_function('$a', 'return "'.$falias.'.$a = '.$alias.'.$a";'),
+                        preg_split('/,/', $fields))
+                );
+        }
+        return $rv;
+    }
+
+    /**
      * Does this driver support tool_replace?
      *
-     * @since 2.6.1
+     * @since Moodle 2.6.1
      * @return bool
      */
     public function replace_all_text_supported() {

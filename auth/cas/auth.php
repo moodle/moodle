@@ -111,6 +111,26 @@ class auth_plugin_cas extends auth_plugin_ldap {
             return;
         }
 
+        // If the multi-authentication setting is used, check for the param before connecting to CAS.
+        if ($this->config->multiauth) {
+            $authCAS = optional_param('authCAS', '', PARAM_RAW);
+            if ($authCAS == 'NOCAS') {
+                return;
+            }
+            // Show authentication form for multi-authentication.
+            // Test pgtIou parameter for proxy mode (https connection in background from CAS server to the php server).
+            if ($authCAS != 'CAS' && !isset($_GET['pgtIou'])) {
+                $PAGE->set_url('/login/index.php');
+                $PAGE->navbar->add($CASform);
+                $PAGE->set_title("$site->fullname: $CASform");
+                $PAGE->set_heading($site->fullname);
+                echo $OUTPUT->header();
+                include($CFG->dirroot.'/auth/cas/cas_form.html');
+                echo $OUTPUT->footer();
+                exit();
+            }
+        }
+
         // Connection to CAS server
         $this->connectCAS();
 
@@ -134,27 +154,6 @@ class auth_plugin_cas extends auth_plugin_ldap {
             return;
         }
 
-        if ($this->config->multiauth) {
-            $authCAS = optional_param('authCAS', '', PARAM_RAW);
-            if ($authCAS == 'NOCAS') {
-                return;
-            }
-
-            // Show authentication form for multi-authentication
-            // test pgtIou parameter for proxy mode (https connection
-            // in background from CAS server to the php server)
-            if ($authCAS != 'CAS' && !isset($_GET['pgtIou'])) {
-                $PAGE->set_url('/login/index.php');
-                $PAGE->navbar->add($CASform);
-                $PAGE->set_title("$site->fullname: $CASform");
-                $PAGE->set_heading($site->fullname);
-                echo $OUTPUT->header();
-                include($CFG->dirroot.'/auth/cas/cas_form.html');
-                echo $OUTPUT->footer();
-                exit();
-            }
-        }
-
         // Force CAS authentication (if needed).
         if (!phpCAS::isAuthenticated()) {
             phpCAS::setLang($this->config->language);
@@ -162,19 +161,6 @@ class auth_plugin_cas extends auth_plugin_ldap {
         }
     }
 
-    /**
-     * Logout from the CAS
-     *
-     */
-    function prelogout_hook() {
-        global $CFG;
-
-        if (!empty($this->config->logoutcas)) {
-            $backurl = $CFG->wwwroot;
-            $this->connectCAS();
-            phpCAS::logoutWithURL($backurl);
-        }
-    }
 
     /**
      * Connect to the CAS (clientcas connection or proxycas connection)
@@ -508,6 +494,24 @@ class auth_plugin_cas extends auth_plugin_ldap {
                 // Set redirect to alternative return url
                 $redirect = $this->config->logout_return_url;
             }
+        }
+    }
+
+    /**
+     * Post logout hook.
+     *
+     * Note: this method replace the prelogout_hook method to avoid redirect to CAS logout
+     * before the event userlogout being triggered.
+     *
+     * @param stdClass $user clone of USER object object before the user session was terminated
+     */
+    public function postlogout_hook($user) {
+        global $CFG;
+        // Only redirect to CAS logout if the user is logged as a CAS user.
+        if (!empty($this->config->logoutcas) && $user->auth == $this->authtype) {
+            $backurl = !empty($this->config->logout_return_url) ? $this->config->logout_return_url : $CFG->wwwroot;
+            $this->connectCAS();
+            phpCAS::logoutWithRedirectService($backurl);
         }
     }
 }

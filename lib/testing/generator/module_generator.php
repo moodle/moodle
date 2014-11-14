@@ -174,7 +174,7 @@ abstract class testing_module_generator extends component_generator_base {
         // argument $options is being deprecated.
         // List excludes fields: instance (does not exist yet), course, module and idnumber (set above)
         $easymergefields = array('section', 'added', 'score', 'indent',
-            'visible', 'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
+            'visible', 'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
             'availability', 'showdescription');
         foreach ($easymergefields as $key) {
@@ -190,7 +190,6 @@ abstract class testing_module_generator extends component_generator_base {
             'cmidnumber' => '',
             'groupmode' => 0,
             'groupingid' => 0,
-            'groupmembersonly' => 0,
             'availability' => null,
             'completion' => 0,
             'completionview' => 0,

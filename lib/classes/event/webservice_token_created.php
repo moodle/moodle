@@ -47,7 +47,7 @@ class webservice_token_created extends base {
      * @return string
      */
     public function get_description() {
-        return "A web service token has been created for the user $this->relateduserid.";
+        return "The user with id '$this->userid' created a web service token for the user with id '$this->relateduserid'.";
     }
 
     /**
@@ -102,6 +102,10 @@ class webservice_token_created extends base {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['auto'])) {
+            throw new \coding_exception('The \'auto\' value must be set in other.');
         }
     }
 }

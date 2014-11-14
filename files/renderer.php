@@ -102,7 +102,6 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string HTML fragment
      */
     public function render_form_filemanager($fm) {
-        static $filemanagertemplateloaded;
         $html = $this->fm_print_generallayout($fm);
         $module = array(
             'name'=>'form_filemanager',
@@ -117,8 +116,7 @@ class core_files_renderer extends plugin_renderer_base {
                 array('confirmrenamefile', 'repository'), array('newfolder', 'repository'), array('edit', 'moodle')
             )
         );
-        if (empty($filemanagertemplateloaded)) {
-            $filemanagertemplateloaded = true;
+        if ($this->page->requires->should_create_one_time_item_now('core_file_managertemplate')) {
             $this->page->requires->js_init_call('M.form_filemanager.set_templates',
                     array($this->filemanager_js_templates()), true, $module);
         }
@@ -604,13 +602,13 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="fp-tb-message"></div>
                 </div>
                 <div class="fp-viewbar">
-                    <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
+                    <a role="button" title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
                         <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
                     </a>
-                    <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
+                    <a role="button" title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
                         <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
                     </a>
-                    <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
+                    <a role="button" title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
                         <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
                     </a>
                 </div>
@@ -798,7 +796,7 @@ class core_files_renderer extends plugin_renderer_base {
             <div class="fp-author">'.get_string('author', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-dimensions">'.get_string('dimensions', 'repository').'<span class="fp-value"></span></div>
         </div>
-    <div>
+    </div>
 </div>';
         return $rv;
     }

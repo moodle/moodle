@@ -103,16 +103,6 @@ if ($course->id == SITEID) {
 $systemcontext   = context_system::instance();
 $personalcontext = context_user::instance($user->id);
 
-$PAGE->set_pagelayout('admin');
-$PAGE->set_context($personalcontext);
-if ($USER->id != $user->id) {
-    $PAGE->navigation->extend_for_user($user);
-} else {
-    if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
-        $node->force_open();
-    }
-}
-
 // Check access control.
 if ($user->id == $USER->id) {
     // Editing own profile - require_login() MUST NOT be used here, it would result in infinite loop!
@@ -138,6 +128,16 @@ if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
+}
+
+$PAGE->set_pagelayout('admin');
+$PAGE->set_context($personalcontext);
+if ($USER->id != $user->id) {
+    $PAGE->navigation->extend_for_user($user);
+} else {
+    if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
+        $node->force_open();
+    }
 }
 
 // Process email change cancellation.
@@ -220,7 +220,7 @@ if ($usernew = $userform->get_data()) {
     }
 
     // Update user with new profile data.
-    user_update_user($usernew, false);
+    user_update_user($usernew, false, false);
 
     // Update preferences.
     useredit_update_user_preference($usernew);
@@ -243,6 +243,9 @@ if ($usernew = $userform->get_data()) {
 
     // Save custom profile fields data.
     profile_save_data($usernew);
+
+    // Trigger event.
+    \core\event\user_updated::create_from_userid($user->id)->trigger();
 
     // If email was changed and confirmation is required, send confirmation email now to the new address.
     if ($emailchanged && $CFG->emailchangeconfirmation) {

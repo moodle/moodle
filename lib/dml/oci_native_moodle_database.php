@@ -1731,6 +1731,16 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
+    /**
+     * Does this driver support tool_replace?
+     *
+     * @since Moodle 2.8
+     * @return bool
+     */
+    public function replace_all_text_supported() {
+        return true;
+    }
+
     public function session_lock_supported() {
         return true;
     }

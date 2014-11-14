@@ -104,11 +104,11 @@ if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchange
 
 } else {
     echo $OUTPUT->header();
-    $error = optional_param('error', '', PARAM_RAW);
+    $error = optional_param('error', '', PARAM_NOTAGS);
     if ($error) {
         echo $OUTPUT->notification($error, 'notifyerror');
     }
-    $success = optional_param('success', '', PARAM_RAW);
+    $success = optional_param('success', '', PARAM_NOTAGS);
     if ($success) {
         echo $OUTPUT->notification($success, 'notifysuccess');
     }

@@ -43,7 +43,7 @@ foreach (core_component::get_plugin_list('availability') as $plugin => $plugindi
 core_collator::asort($plugins);
 
 // Do plugin actions.
-$pageurl = new moodle_url('/' . $CFG->admin . '/availabilityconditions.php');
+$pageurl = new moodle_url('/' . $CFG->admin . '/tool/availabilityconditions/');
 if (($plugin = optional_param('plugin', '', PARAM_PLUGIN))) {
     require_sesskey();
     if (!array_key_exists($plugin, $plugins)) {
@@ -103,8 +103,6 @@ foreach ($plugins as $plugin => $name) {
 
     // Make enable control. This is a POST request (using a form control rather
     // than just a link) because it makes a database change.
-    $targeturl = new moodle_url('availabilityconditions.php', array(
-            'plugin' => $plugin, 'action' => $enabledaction, 'sesskey' => sesskey()));
     $enablecontrol = html_writer::tag('form', html_writer::div(
             html_writer::empty_tag('input', array('type' => 'hidden',
                     'name' => 'sesskey', 'value' => sesskey())) .
@@ -116,7 +114,7 @@ foreach ($plugins as $plugin => $name) {
                     'src' => $OUTPUT->pix_url('t/' . $enabledaction), 'alt' => $enabledstr,
                     'title' => $enabledstr))
             ), array(
-            'method' => 'post', 'action' => 'availabilityconditions.php'));
+            'method' => 'post', 'action' => './'));
 
     $table->add_data(array($namespan, $version, $enablecontrol));
 }

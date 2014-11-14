@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+echo html_writer::start_tag('script');
 ?>
 
 <!--// hopefully fool ie IE proof way of getting DOM element
@@ -70,7 +71,7 @@ function toggleLog () {
     if (getLoggingActive() == "A") {
         AppendToLog("Moodle Logging Deactivated", 0);
         setLoggingActive('N');
-        logButton.innerHTML = '--><?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
+        logButton.innerHTML = '-><?php echo addslashes_js(get_string('scormloggingoff', 'scorm')); ?>';
     } else {
         setLoggingActive('A');
         AppendToLog("Moodle Logging Activated", 0);
@@ -85,135 +86,135 @@ var logRow = 0;
 var logPopUpWindow = "N";
 var debugSCORMVersion = '<?php echo $scorm->version; ?>';
 <?php
-   $LMS_prefix = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'LMS' : '';
-   $LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
+$lmsprefix = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'LMS' : '';
+$lmsapi = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
 
-   $LMS_elements = array();
-   if (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) {
-       $LMS_elements = array(   'cmi.core._children',
-                                'cmi.core.student_id',
-                                'cmi.core.student_name',
-                                'cmi.core.lesson_location',
-                                'cmi.core.credit',
-                                'cmi.core.lesson_status',
-                                'cmi.core.entry',
-                                'cmi.core._children',
-                                'cmi.core.score.raw',
-                                'cmi.core.score.max',
-                                'cmi.core.score.min',
-                                'cmi.core.total_time',
-                                'cmi.core.lesson_mode',
-                                'cmi.core.exit',
-                                'cmi.core.session_time',
-                                'cmi.suspend_data',
-                                'cmi.launch_data',
-                                'cmi.comments',
-                                'cmi.comments_from_lms',
-                                'cmi.objectives._count',
-                                'cmi.objectives._children',
-                                'cmi.objectives.n.id',
-                                'cmi.objectives.n.score._children',
-                                'cmi.objectives.n.score.raw',
-                                'cmi.objectives.n.score.min',
-                                'cmi.objectives.n.score.max',
-                                'cmi.objectives.n.status',
-                                'cmi.student_data._children',
-                                'cmi.student_data.mastery_score',
-                                'cmi.student_data.max_time_allowed',
-                                'cmi.student_data.time_limit_action',
-                                'cmi.student_preference._children',
-                                'cmi.student_preference.audio',
-                                'cmi.student_preference.language',
-                                'cmi.student_preference.speed',
-                                'cmi.student_preference.text',
-                                'cmi.interactions._children',
-                                'cmi.interactions._count',
-                                'cmi.interactions.n.id',
-                                'cmi.interactions.n.objectives._count',
-                                'cmi.interactions.n.objectives.m.id',
-                                'cmi.interactions.n.time',
-                                'cmi.interactions.n.type',
-                                'cmi.interactions.n.correct_responses._count',
-                                'cmi.interactions.n.correct_responses.m.pattern',
-                                'cmi.interactions.n.weighting',
-                                'cmi.interactions.n.student_response',
-                                'cmi.interactions.n.result',
-                                'cmi.interactions.n.latency');
-   } else {
-       $LMS_elements = array(   'cmi._children',
-                                'cmi._version',
-                                'cmi.learner_id',
-                                'cmi.learner_name',
-                                'cmi.location',
-                                'cmi.completion_status',
-                                'cmi.completion_threshold',
-                                'cmi.scaled_passing_score',
-                                'cmi.progressive_measure',
-                                'cmi.score._children',
-                                'cmi.score.raw',
-                                'cmi.score.max',
-                                'cmi.score.min',
-                                'cmi.score.scaled',
-                                'cmi.total_time',
-                                'cmi.time_limit_action',
-                                'cmi.max_time_allowed',
-                                'cmi.session_time',
-                                'cmi.success_status',
-                                'cmi.lesson_mode',
-                                'cmi.entry',
-                                'cmi.exit',
-                                'cmi.credit',
-                                'cmi.mode',
-                                'cmi.suspend_data',
-                                'cmi.launch_data',
-                                'cmi.comments',
-                                'cmi.comments_from_lms._children',
-                                'cmi.comments_from_lms._count',
-                                'cmi.comments_from_lms.n.comment',
-                                'cmi.comments_from_lms.n.location',
-                                'cmi.comments_from_lms.n.timestamp',
-                                'cmi.comments_from_learner._children',
-                                'cmi.comments_from_learner._count',
-                                'cmi.comments_from_learner.n.comment',
-                                'cmi.comments_from_learner.n.location',
-                                'cmi.comments_from_learner.n.timestamp',
-                                'cmi.objectives._count',
-                                'cmi.objectives._children',
-                                'cmi.objectives.n.id',
-                                'cmi.objectives.n.score._children',
-                                'cmi.objectives.n.score.raw',
-                                'cmi.objectives.n.score.min',
-                                'cmi.objectives.n.score.max',
-                                'cmi.objectives.n.score.scaled',
-                                'cmi.objectives.n.success_status',
-                                'cmi.objectives.n.completion_status',
-                                'cmi.objectives.n.progress_measure',
-                                'cmi.objectives.n.description',
-                                'cmi.student_data._children',
-                                'cmi.student_data.mastery_score',
-                                'cmi.student_data.max_time_allowed',
-                                'cmi.student_data.time_limit_action',
-                                'cmi.student_preference._children',
-                                'cmi.student_preference.audio',
-                                'cmi.student_preference.language',
-                                'cmi.student_preference.speed',
-                                'cmi.student_preference.text',
-                                'cmi.interactions._children',
-                                'cmi.interactions._count',
-                                'cmi.interactions.n.id',
-                                'cmi.interactions.n.objectives._count',
-                                'cmi.interactions.n.objectives.m.id',
-                                'cmi.interactions.n.time',
-                                'cmi.interactions.n.type',
-                                'cmi.interactions.n.correct_responses._count',
-                                'cmi.interactions.n.correct_responses.m.pattern',
-                                'cmi.interactions.n.weighting',
-                                'cmi.interactions.n.learner_response',
-                                'cmi.interactions.n.result',
-                                'cmi.interactions.n.latency',
-                                'cmi.interactions.n.description',
-                                'adl.nav.request');
-   }
+$lmselements = array();
+if (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) {
+    $lmselements = array(   'cmi.core._children',
+                            'cmi.core.student_id',
+                            'cmi.core.student_name',
+                            'cmi.core.lesson_location',
+                            'cmi.core.credit',
+                            'cmi.core.lesson_status',
+                            'cmi.core.entry',
+                            'cmi.core._children',
+                            'cmi.core.score.raw',
+                            'cmi.core.score.max',
+                            'cmi.core.score.min',
+                            'cmi.core.total_time',
+                            'cmi.core.lesson_mode',
+                            'cmi.core.exit',
+                            'cmi.core.session_time',
+                            'cmi.suspend_data',
+                            'cmi.launch_data',
+                            'cmi.comments',
+                            'cmi.comments_from_lms',
+                            'cmi.objectives._count',
+                            'cmi.objectives._children',
+                            'cmi.objectives.n.id',
+                            'cmi.objectives.n.score._children',
+                            'cmi.objectives.n.score.raw',
+                            'cmi.objectives.n.score.min',
+                            'cmi.objectives.n.score.max',
+                            'cmi.objectives.n.status',
+                            'cmi.student_data._children',
+                            'cmi.student_data.mastery_score',
+                            'cmi.student_data.max_time_allowed',
+                            'cmi.student_data.time_limit_action',
+                            'cmi.student_preference._children',
+                            'cmi.student_preference.audio',
+                            'cmi.student_preference.language',
+                            'cmi.student_preference.speed',
+                            'cmi.student_preference.text',
+                            'cmi.interactions._children',
+                            'cmi.interactions._count',
+                            'cmi.interactions.n.id',
+                            'cmi.interactions.n.objectives._count',
+                            'cmi.interactions.n.objectives.m.id',
+                            'cmi.interactions.n.time',
+                            'cmi.interactions.n.type',
+                            'cmi.interactions.n.correct_responses._count',
+                            'cmi.interactions.n.correct_responses.m.pattern',
+                            'cmi.interactions.n.weighting',
+                            'cmi.interactions.n.student_response',
+                            'cmi.interactions.n.result',
+                            'cmi.interactions.n.latency');
+} else {
+    $lmselements = array(   'cmi._children',
+                            'cmi._version',
+                            'cmi.learner_id',
+                            'cmi.learner_name',
+                            'cmi.location',
+                            'cmi.completion_status',
+                            'cmi.completion_threshold',
+                            'cmi.scaled_passing_score',
+                            'cmi.progressive_measure',
+                            'cmi.score._children',
+                            'cmi.score.raw',
+                            'cmi.score.max',
+                            'cmi.score.min',
+                            'cmi.score.scaled',
+                            'cmi.total_time',
+                            'cmi.time_limit_action',
+                            'cmi.max_time_allowed',
+                            'cmi.session_time',
+                            'cmi.success_status',
+                            'cmi.lesson_mode',
+                            'cmi.entry',
+                            'cmi.exit',
+                            'cmi.credit',
+                            'cmi.mode',
+                            'cmi.suspend_data',
+                            'cmi.launch_data',
+                            'cmi.comments',
+                            'cmi.comments_from_lms._children',
+                            'cmi.comments_from_lms._count',
+                            'cmi.comments_from_lms.n.comment',
+                            'cmi.comments_from_lms.n.location',
+                            'cmi.comments_from_lms.n.timestamp',
+                            'cmi.comments_from_learner._children',
+                            'cmi.comments_from_learner._count',
+                            'cmi.comments_from_learner.n.comment',
+                            'cmi.comments_from_learner.n.location',
+                            'cmi.comments_from_learner.n.timestamp',
+                            'cmi.objectives._count',
+                            'cmi.objectives._children',
+                            'cmi.objectives.n.id',
+                            'cmi.objectives.n.score._children',
+                            'cmi.objectives.n.score.raw',
+                            'cmi.objectives.n.score.min',
+                            'cmi.objectives.n.score.max',
+                            'cmi.objectives.n.score.scaled',
+                            'cmi.objectives.n.success_status',
+                            'cmi.objectives.n.completion_status',
+                            'cmi.objectives.n.progress_measure',
+                            'cmi.objectives.n.description',
+                            'cmi.student_data._children',
+                            'cmi.student_data.mastery_score',
+                            'cmi.student_data.max_time_allowed',
+                            'cmi.student_data.time_limit_action',
+                            'cmi.student_preference._children',
+                            'cmi.student_preference.audio',
+                            'cmi.student_preference.language',
+                            'cmi.student_preference.speed',
+                            'cmi.student_preference.text',
+                            'cmi.interactions._children',
+                            'cmi.interactions._count',
+                            'cmi.interactions.n.id',
+                            'cmi.interactions.n.objectives._count',
+                            'cmi.interactions.n.objectives.m.id',
+                            'cmi.interactions.n.time',
+                            'cmi.interactions.n.type',
+                            'cmi.interactions.n.correct_responses._count',
+                            'cmi.interactions.n.correct_responses.m.pattern',
+                            'cmi.interactions.n.weighting',
+                            'cmi.interactions.n.learner_response',
+                            'cmi.interactions.n.result',
+                            'cmi.interactions.n.latency',
+                            'cmi.interactions.n.description',
+                            'adl.nav.request');
+}
 ?>
 
 // add each entry to the log, or setup the log pane first time round
@@ -278,7 +279,7 @@ function UpdateLog(s) {
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSInitialize was not successful.");  \n'
         + '      return "false";  \n'
         + '   }  \n'
-        + '   var result = api.<?php echo $LMS_prefix; ?>Initialize("");  \n'
+        + '   var result = api.<?php echo $lmsprefix; ?>Initialize("");  \n'
         + '   if (result.toString() != "true") {  \n'
         + '      var err = ErrorHandler();  \n'
         + '   }  \n'
@@ -293,7 +294,7 @@ function UpdateLog(s) {
         + '      return "false";  \n'
         + '   } else {  \n'
         + '      // call the LMSFinish function that should be implemented by the API  \n'
-        + '      var result = api.<?php echo $LMS_prefix; ?>Finish("");  \n'
+        + '      var result = api.<?php echo $lmsprefix; ?>Finish("");  \n'
         + '      if (result.toString() != "true") {  \n'
         + '         var err = ErrorHandler();  \n'
         + '      }  \n'
@@ -324,12 +325,12 @@ function UpdateLog(s) {
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSGetValue was not successful.");  \n'
         + '      return "";  \n'
         + '   } else {  \n'
-        + '      var value = api.<?php echo $LMS_prefix; ?>GetValue(name);  \n'
-        + '      var errCode = api.<?php echo $LMS_prefix; ?>GetLastError().toString();  \n'
+        + '      var value = api.<?php echo $lmsprefix; ?>GetValue(name);  \n'
+        + '      var errCode = api.<?php echo $lmsprefix; ?>GetLastError().toString();  \n'
         + '      if (errCode != _NoError) {  \n'
         + '         // an error was encountered so display the error description  \n'
-        + '         var errDescription = api.<?php echo $LMS_prefix; ?>GetErrorString(errCode);  \n'
-        + '         alert("<?php echo $LMS_prefix; ?>GetValue("+name+") failed. \\n"+ errDescription);  \n'
+        + '         var errDescription = api.<?php echo $lmsprefix; ?>GetErrorString(errCode);  \n'
+        + '         alert("<?php echo $lmsprefix; ?>GetValue("+name+") failed. \\n"+ errDescription);  \n'
         + '         return "";  \n'
         + '      } else {  \n'
         + '         return value.toString();  \n'
@@ -344,7 +345,7 @@ function UpdateLog(s) {
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSSetValue was not successful.");  \n'
         + '      return;  \n'
         + '   } else {  \n'
-        + '      var result = api.<?php echo $LMS_prefix; ?>SetValue(name, value);  \n'
+        + '      var result = api.<?php echo $lmsprefix; ?>SetValue(name, value);  \n'
         + '      if (result.toString() != "true") {  \n'
         + '         var err = ErrorHandler();  \n'
         + '      }  \n'
@@ -359,7 +360,7 @@ function UpdateLog(s) {
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSCommit was not successful.");  \n'
         + '      return "false";  \n'
         + '   } else {  \n'
-        + '      var result = api.<?php echo $LMS_prefix; ?>Commit("");  \n'
+        + '      var result = api.<?php echo $lmsprefix; ?>Commit("");  \n'
         + '      if (result != "true") {  \n'
         + '         var err = ErrorHandler();  \n'
         + '      }  \n'
@@ -374,7 +375,7 @@ function UpdateLog(s) {
         + '      //since we can\'t get the error code from the LMS, return a general error  \n'
         + '      return _GeneralError;  \n'
         + '   }  \n'
-        + '   return api.<?php echo $LMS_prefix; ?>GetLastError().toString();  \n'
+        + '   return api.<?php echo $lmsprefix; ?>GetLastError().toString();  \n'
         + '}  \n'
         + '  \n'
         + 'function doLMSGetErrorString(errorCode) {  \n'
@@ -382,7 +383,7 @@ function UpdateLog(s) {
         + '   if (api == null) {  \n'
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSGetErrorString was not successful.");  \n'
         + '   }  \n'
-        + '   return api.<?php echo $LMS_prefix; ?>GetErrorString(errorCode).toString();  \n'
+        + '   return api.<?php echo $lmsprefix; ?>GetErrorString(errorCode).toString();  \n'
         + '}  \n'
         + '  \n'
         + 'function doLMSGetDiagnostic(errorCode) {  \n'
@@ -390,7 +391,7 @@ function UpdateLog(s) {
         + '   if (api == null) {  \n'
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSGetDiagnostic was not successful.");  \n'
         + '   }  \n'
-        + '   return api.<?php echo $LMS_prefix; ?>GetDiagnostic(errorCode).toString();  \n'
+        + '   return api.<?php echo $lmsprefix; ?>GetDiagnostic(errorCode).toString();  \n'
         + '}  \n'
         + '  \n'
         + 'function LMSIsInitialized() {  \n'
@@ -402,8 +403,8 @@ function UpdateLog(s) {
         + '      alert("Unable to locate the LMS\'s API Implementation.\\nLMSIsInitialized() failed.");  \n'
         + '      return false;  \n'
         + '   } else {  \n'
-        + '      var value = api.<?php echo $LMS_prefix; ?>GetValue("cmi.core.student_name");  \n'
-        + '      var errCode = api.<?php echo $LMS_prefix; ?>GetLastError().toString();  \n'
+        + '      var value = api.<?php echo $lmsprefix; ?>GetValue("cmi.core.student_name");  \n'
+        + '      var errCode = api.<?php echo $lmsprefix; ?>GetLastError().toString();  \n'
         + '      if (errCode == _NotInitialized) {  \n'
         + '         return false;  \n'
         + '      } else {  \n'
@@ -419,13 +420,13 @@ function UpdateLog(s) {
         + '      return;  \n'
         + '   }  \n'
         + '   // check for errors caused by or from the LMS  \n'
-        + '   var errCode = api.<?php echo $LMS_prefix; ?>GetLastError().toString();  \n'
+        + '   var errCode = api.<?php echo $lmsprefix; ?>GetLastError().toString();  \n'
         + '   if (errCode != _NoError) {  \n'
         + '      // an error was encountered so display the error description  \n'
-        + '      var errDescription = api.<?php echo $LMS_prefix; ?>GetErrorString(errCode);  \n'
+        + '      var errDescription = api.<?php echo $lmsprefix; ?>GetErrorString(errCode);  \n'
         + '      if (_Debug == true) {  \n'
         + '         errDescription += "\\n";  \n'
-        + '         errDescription += api.<?php echo $LMS_prefix; ?>GetDiagnostic(null);  \n'
+        + '         errDescription += api.<?php echo $lmsprefix; ?>GetDiagnostic(null);  \n'
         + '         // by passing null to LMSGetDiagnostic, we get any available diagnostics  \n'
         + '         // on the previous error.  \n'
         + '      }  \n'
@@ -442,7 +443,7 @@ function UpdateLog(s) {
         + '}  \n'
         + '  \n'
         + 'function findAPI(win) {  \n'
-        + '   while ((win.<?php echo $LMS_api; ?> == null) && (win.parent != null) && (win.parent != win)) {  \n'
+        + '   while ((win.<?php echo $lmsapi; ?> == null) && (win.parent != null) && (win.parent != win)) {  \n'
         + '      findAPITries++;  \n'
         + '      // Note: 7 is an arbitrary number, but should be more than sufficient  \n'
         + '      if (findAPITries > 7) {  \n'
@@ -451,7 +452,7 @@ function UpdateLog(s) {
         + '      }  \n'
         + '      win = win.parent;  \n'
         + '   }  \n'
-        + '   return win.<?php echo $LMS_api; ?>;  \n'
+        + '   return win.<?php echo $lmsapi; ?>;  \n'
         + '}  \n'
         + '  \n'
         + 'function getAPI() {  \n'
@@ -469,11 +470,11 @@ function UpdateLog(s) {
         + '      var result = doLMSInitialize();  \n'
         + '      var msg;  \n'
         + '      if(result == "true") {  \n'
-        + '         msg = "<?php echo $LMS_prefix; ?>Initialize Successful!";  \n'
+        + '         msg = "<?php echo $lmsprefix; ?>Initialize Successful!";  \n'
         + '      } else {  \n'
         + '         var err = doLMSGetLastError();  \n'
         + '         var errString = doLMSGetErrorString(err);  \n'
-        + '         msg = "<?php echo $LMS_prefix; ?>Initialize Failed! Error Code: "+err;  \n'
+        + '         msg = "<?php echo $lmsprefix; ?>Initialize Failed! Error Code: "+err;  \n'
         + '         msg += " Error Description: " + errString;  \n'
         + '      }  \n'
         + '      document.initForm.msgtxt.value= msg;  \n'
@@ -483,11 +484,11 @@ function UpdateLog(s) {
         + '      var result = doLMSCommit();  \n'
         + '      var msg;  \n'
         + '      if(result == "true") {  \n'
-        + '         msg = "<?php echo $LMS_prefix; ?>Commit was Successful!";  \n'
+        + '         msg = "<?php echo $lmsprefix; ?>Commit was Successful!";  \n'
         + '      } else {  \n'
         + '         var err = doLMSGetLastError();  \n'
         + '         var errString = doLMSGetErrorString(err);  \n'
-        + '         var msg = "<?php echo $LMS_prefix; ?>Commit Failed! Error Code: "+err;  \n'
+        + '         var msg = "<?php echo $lmsprefix; ?>Commit Failed! Error Code: "+err;  \n'
         + '         msg += " Error Description: " + errString;  \n'
         + '      }  \n'
         + '      document.otherForm.msgtxt.value = msg; \n'
@@ -534,7 +535,7 @@ function UpdateLog(s) {
         + '     var result = doLMSGetValue(value);  \n'
         + '     var err = doLMSGetLastError();  \n'
         + '     var errString = doLMSGetErrorString(err);  \n'
-        + '     msg = "<?php echo $LMS_prefix; ?>GetValue Returned: " + result;  \n'
+        + '     msg = "<?php echo $lmsprefix; ?>GetValue Returned: " + result;  \n'
         + '     msg += "\\nError Code: " + err;  \n'
         + '     msg += "\\nError Description: " + errString;  \n'
         + '     document.elemForm.msgtxt.value = msg;  \n'
@@ -549,14 +550,14 @@ function UpdateLog(s) {
         + '     var api = getAPIHandle();  \n'
         + '     if (api == null) {  \n'
         + '        alert("Unable to locate the LMS\'s API Implementation.\\n"+  \n'
-        + '              "<?php echo $LMS_prefix; ?>SetValue was not successful.");  \n'
+        + '              "<?php echo $lmsprefix; ?>SetValue was not successful.");  \n'
         + '        return false;  \n'
         + '     }  \n'
         + '     // Try to set the element  \n'
-        + '     var result = api.<?php echo $LMS_prefix; ?>SetValue( item, setValue );  \n'
+        + '     var result = api.<?php echo $lmsprefix; ?>SetValue( item, setValue );  \n'
         + '     var err = doLMSGetLastError();  \n'
         + '     var errString = doLMSGetErrorString(err);  \n'
-        + '     msg = "<?php echo $LMS_prefix; ?>SetValue returned: " + result;  \n'
+        + '     msg = "<?php echo $lmsprefix; ?>SetValue returned: " + result;  \n'
         + '     msg += "\\nError Code: " + err;  \n'
         + '     msg += "\\nError Description: " + errString;  \n'
         + '     document.elemForm.msgtxt.value = msg;  \n'
@@ -565,19 +566,19 @@ function UpdateLog(s) {
         + '  \n'
         + '   function tryLMSGetLastError() {  \n'
         + '      var err = doLMSGetLastError();  \n'
-        + '      document.otherForm.msgtxt.value = "<?php echo $LMS_prefix; ?>GetLastError returned Error Code:  " + err;  \n'
+        + '      document.otherForm.msgtxt.value = "<?php echo $lmsprefix; ?>GetLastError returned Error Code:  " + err;  \n'
         + '   }  \n'
         + '  \n'
         + '   function tryLMSGetErrorString() {  \n'
         + '      var err = doLMSGetLastError();  \n'
         + '      var errString = doLMSGetErrorString(err);  \n'
-        + '      document.otherForm.msgtxt.value = "<?php echo $LMS_prefix; ?>GetErrorString returned:  " + errString;  \n'
+        + '      document.otherForm.msgtxt.value = "<?php echo $lmsprefix; ?>GetErrorString returned:  " + errString;  \n'
         + '   }  \n'
         + '  \n'
         + '   function tryLMSGetDiagnostic() {  \n'
         + '      var err = doLMSGetLastError();  \n'
         + '      var diagnostic = doLMSGetDiagnostic(err);  \n'
-        + '      document.otherForm.msgtxt.value = "<?php echo $LMS_prefix; ?>GetDiagnostic returned:  " + diagnostic;  \n'
+        + '      document.otherForm.msgtxt.value = "<?php echo $lmsprefix; ?>GetDiagnostic returned:  " + diagnostic;  \n'
         + '   } \n'
         + ' \n'
         + '</script>\n'
@@ -590,7 +591,8 @@ function UpdateLog(s) {
         + '   <table width="100%" border="0">'
         + '      <tr>'
         + '         <td>'
-        + '            <input type = "button" value = "Call <?php echo $LMS_prefix; ?>Initialize()" onclick = "tryLMSInitialize();" id="Initialize" name="Initialize" />'
+        + '            <input type = "button" value = "Call <?php echo $lmsprefix; ?>Initialize()"'
+        + '             onclick = "tryLMSInitialize();" id="Initialize" name="Initialize" />'
         + '         </td>'
         + '         <td>'
         + '            <label>Result: </label><input type="text" name="msgtxt" id="msgtxt" size="80" readonly value="NotCalled" />'
@@ -604,21 +606,25 @@ function UpdateLog(s) {
         + '      <tr>'
         + '         <td><b>Select Data Model Element to Get or Set</b> &nbsp;&nbsp;&nbsp;&nbsp;'
         + '            <select name = "ELEMENT_LIST" id="ELEMENT_LIST" onchange="setAPIValue()">'
-        + '               <option value="NONE">--None Selected--</option> <option value="">******************************************</option>'
+        + '               <option value="NONE">--None Selected--</option>'
+        + '               <option value="">******************************************</option>'
 <?php
-                          foreach ($LMS_elements as $element) {
-                              echo ' + \'               <option value="'.$element.'">'.$element.'</option>\\n\'';
-                          }
+
+foreach ($lmselements as $element) {
+    echo ' + \'               <option value="'.$element.'">'.$element.'</option>\\n\'';
+}
+
 ?>
         + '            </select>'
         + '            <input type="text" name="API_ELEMENT" id="API_ELEMENT" size="40"><br />'
         + '            <br />'
-        + '            <label><b>Select API Function to Call</b></label> &nbsp;&nbsp;&nbsp;&nbsp; <input type = "button" value = "<?php echo $LMS_prefix; ?>GetValue()"'
-        + '                         onclick = "tryLMSGetValue();" id="lmsGetButton"'
-        + '                         name="lmsGetButton">&nbsp;&nbsp;-- OR --&nbsp;&nbsp;'
-        + '            <input type="button" value="<?php echo $LMS_prefix; ?>SetValue()"'
-        + '                          onclick="tryLMSSetValue();" id="lmsSetButton"'
-        + '                          name="lmsSetButton">'
+        + '            <label><b>Select API Function to Call</b></label> &nbsp;&nbsp;&nbsp;&nbsp;'
+        + '            <input type = "button" value = "<?php echo $lmsprefix; ?>GetValue()"'
+        + '             onclick = "tryLMSGetValue();" id="lmsGetButton"'
+        + '             name="lmsGetButton">&nbsp;&nbsp;-- OR --&nbsp;&nbsp;'
+        + '            <input type="button" value="<?php echo $lmsprefix; ?>SetValue()"'
+        + '             onclick="tryLMSSetValue();" id="lmsSetButton"'
+        + '             name="lmsSetButton">'
         + '            <label><b>&nbsp; value to Set: </b></label>&nbsp; <input type="text" name="SET_VAL" id="SET_VAL" size="25">'
         + '            <br />'
         + '            <label>Result: </label><br />'
@@ -633,28 +639,29 @@ function UpdateLog(s) {
         + '   <table width="100%" border="0">'
         + '      <tr>'
         + '         <td><input type="button"'
-        + '             value="<?php echo $LMS_prefix; ?>GetLastError()  "'
+        + '             value="<?php echo $lmsprefix; ?>GetLastError()  "'
         + '             onclick="tryLMSGetLastError();"'
         + '             id="lastErrorButton"'
         + '             name="lastErrorButton">'
         + '            <input type="button"'
-        + '             value="<?php echo $LMS_prefix; ?>GetErrorString()  "'
+        + '             value="<?php echo $lmsprefix; ?>GetErrorString()  "'
         + '             onclick="tryLMSGetErrorString();"'
         + '             id="getErrorStringButton"'
         + '             name="getErrorStringButton">'
         + '            <input type="button"'
-        + '             value="<?php echo $LMS_prefix; ?>GetDiagnostic()  "'
+        + '             value="<?php echo $lmsprefix; ?>GetDiagnostic()  "'
         + '             onclick="tryLMSGetDiagnostic();"'
         + '             id="getDiagnosticButton"'
         + '             name="getDiagnosticButton">'
         + '            <input type="button"'
-        + '             value="<?php echo $LMS_prefix; ?>Commit()  "'
+        + '             value="<?php echo $lmsprefix; ?>Commit()  "'
         + '             onclick="tryLMSCommit();"'
         + '             id="commitButton"'
         + '             name="commitButton">'
         + '            <input type="button"'
         + '             value="<?php echo scorm_version_check($scorm->version, SCORM_12) ? 'LMSFinish' : 'Terminate'; ?>()  "'
-        + '             onclick="try<?php echo scorm_version_check($scorm->version, SCORM_12) ? 'LMSFinish' : 'LMSTerminate'; ?>();"'
+        + '             onclick="try'
+        + '             <?php echo scorm_version_check($scorm->version, SCORM_12) ? 'LMSFinish' : 'LMSTerminate'; ?>();"'
         + '             id="finishButton"'
         + '             name="finishButton">'
         + '         </td>'
@@ -735,7 +742,7 @@ function LogAPICall(func, nam, val, rc) {
     if (func.match(/GetValue/)) {
         s += ' - ' + val;
     }
-    s += ' => ' + String(rc);
+    s += ' => ' + String(rc) + "   scoid = " + scorm_current_node.scoid;
     AppendToLog(s, rc);
 <?php
 if (scorm_debugging($scorm) && ($sco->scormtype == 'asset')) {
@@ -762,3 +769,7 @@ if (!document.getElementById('mod-scorm-log-toggle')) {
     var content = safeGetElement(document, 'scormpage');
     content.insertBefore(logButton, content.firstChild);
 }
+-->
+
+<?php
+echo html_writer::end_tag('script');

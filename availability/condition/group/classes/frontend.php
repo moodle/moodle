@@ -79,14 +79,6 @@ class frontend extends \core_availability\frontend {
             \section_info $section = null) {
         global $CFG;
 
-        // If groupmembersonly is turned on, then you can only add group
-        // restrictions on sections (which don't use groupmembersonly) and
-        // not on modules. This is to avoid confusion - otherwise
-        // there would be two ways to add restrictions based on groups.
-        if (is_null($section) && $CFG->enablegroupmembersonly) {
-            return false;
-        }
-
         // Only show this option if there are some groups.
         return count($this->get_all_groups($course->id)) > 0;
     }

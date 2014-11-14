@@ -43,17 +43,12 @@ if ($overrideid) {
     if (! $quiz = $DB->get_record('quiz', array('id' => $override->quiz))) {
         print_error('invalidcoursemodule');
     }
-    if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
-        print_error('invalidcoursemodule');
-    }
-} else if ($cmid) {
+    list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
 
-    if (! $cm = get_coursemodule_from_id('quiz', $cmid)) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+} else if ($cmid) {
+    list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'quiz');
+    $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+
 } else {
     print_error('invalidcoursemodule');
 }

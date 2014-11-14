@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * @package    backup-convert
+ * @subpackage cc-library
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once 'cc_interfaces.php';
+require_once('cc_interfaces.php');
 
 abstract class cc_converter {
     /**
@@ -81,7 +81,7 @@ abstract class cc_converter {
      * @param  string $path
      * @throws InvalidArgumentException
      */
-    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path){
+    public function __construct(cc_i_item &$item, cc_i_manifest &$manifest, $rootpath, $path) {
         $rpath = realpath($rootpath);
         if (empty($rpath)) {
             throw new InvalidArgumentException('Invalid path!');
@@ -112,6 +112,21 @@ abstract class cc_converter {
 
     /**
      *
+     * Is the element visible in the course?
+     * @throws RuntimeException
+     * @return bool
+     */
+    protected function is_visible() {
+        $tdoc = new XMLGenericDocument();
+        if (!$tdoc->load($this->path . DIRECTORY_SEPARATOR . 'module.xml')) {
+            throw new RuntimeException('File does not exist!');
+        }
+        $visible = (int)$tdoc->nodeValue('/module/visible');
+        return ($visible > 0);
+    }
+
+    /**
+     *
      * Stores any files that need to be stored
      */
     protected function store(general_cc_file $doc, $outdir, $title, $deps = null) {
@@ -120,6 +135,7 @@ abstract class cc_converter {
         if ( $doc->saveTo($rtp) ) {
             $resource = new cc_resource($rdir->rootdir(), $this->defaultname, $rdir->dirname(true));
             $resource->dependency = empty($deps) ? array() : $deps;
+            $resource->instructoronly = !$this->is_visible();
             $res = $this->manifest->add_resource($resource, null, $this->cc_type);
             $resitem = new cc_item();
             $resitem->attach_resource($res[0]);

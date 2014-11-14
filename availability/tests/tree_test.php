@@ -23,6 +23,7 @@
  */
 
 use core_availability\capability_checker;
+use \core_availability\tree;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,89 +46,89 @@ class tree_testcase extends \advanced_testcase {
      */
     public function test_construct_errors() {
         try {
-            new \core_availability\tree('frog');
+            new tree('frog');
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('not object', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array());
+            new tree((object)array());
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('missing ->op', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '*'));
+            new tree((object)array('op' => '*'));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('unknown ->op', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|'));
+            new tree((object)array('op' => '|'));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('missing ->show', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|', 'show' => 0));
+            new tree((object)array('op' => '|', 'show' => 0));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('->show not bool', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '&'));
+            new tree((object)array('op' => '&'));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('missing ->showc', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '&', 'showc' => 0));
+            new tree((object)array('op' => '&', 'showc' => 0));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('->showc not array', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '&', 'showc' => array(0)));
+            new tree((object)array('op' => '&', 'showc' => array(0)));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('->showc value not bool', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|', 'show' => true));
+            new tree((object)array('op' => '|', 'show' => true));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('missing ->c', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|', 'show' => true,
+            new tree((object)array('op' => '|', 'show' => true,
                     'c' => 'side'));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('->c not array', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|', 'show' => true,
+            new tree((object)array('op' => '|', 'show' => true,
                     'c' => array(3)));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('child not object', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|', 'show' => true,
+            new tree((object)array('op' => '|', 'show' => true,
                     'c' => array((object)array('type' => 'doesnotexist'))));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('Unknown condition type: doesnotexist', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '|', 'show' => true,
+            new tree((object)array('op' => '|', 'show' => true,
                     'c' => array((object)array())));
             $this->fail();
         } catch (coding_exception $e) {
             $this->assertContains('missing ->op', $e->getMessage());
         }
         try {
-            new \core_availability\tree((object)array('op' => '&',
+            new tree((object)array('op' => '&',
                     'c' => array((object)array('op' => '&', 'c' => array())),
                     'showc' => array(true, true)
                     ));
@@ -142,8 +143,8 @@ class tree_testcase extends \advanced_testcase {
      */
     public function test_construct_ignore_missing_plugin() {
         // Construct a tree with & combination of one condition that doesn't exist.
-        $tree = new \core_availability\tree(self::tree(array(
-                (object)array('type' => 'doesnotexist'))), true);
+        $tree = new tree(tree::get_root_json(array(
+                (object)array('type' => 'doesnotexist')), tree::OP_OR), true);
         // Expected result is an empty tree with | condition, shown.
         $this->assertEquals('+|()', (string)$tree);
     }
@@ -152,12 +153,12 @@ class tree_testcase extends \advanced_testcase {
      * Tests constructing a tree with subtrees using all available operators.
      */
     public function test_construct_just_trees() {
-        $structure = self::tree(array(
-                self::tree(array()),
-                self::tree(array(
-                    self::tree(array(), '!|')), '!&')),
-                '&', null, array(true, true));
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(
+                tree::get_nested_json(array(), tree::OP_OR),
+                tree::get_nested_json(array(
+                    tree::get_nested_json(array(), tree::OP_NOT_OR)), tree::OP_NOT_AND)),
+                tree::OP_AND, array(true, true));
+        $tree = new tree($structure);
         $this->assertEquals('&(+|(),+!&(!|()))', (string)$tree);
     }
 
@@ -165,9 +166,9 @@ class tree_testcase extends \advanced_testcase {
      * Tests constructing tree using the mock plugin.
      */
     public function test_construct_with_mock_plugin() {
-        $structure = self::tree(array(
-                self::mock(array('a' => true, 'm' => ''))));
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(
+                self::mock(array('a' => true, 'm' => ''))), tree::OP_OR);
+        $tree = new tree($structure);
         $this->assertEquals('+|({mock:y,})', (string)$tree);
     }
 
@@ -184,7 +185,7 @@ class tree_testcase extends \advanced_testcase {
         $information = '';
 
         // No conditions.
-        $structure = self::tree(array());
+        $structure = tree::get_root_json(array(), tree::OP_OR);
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertTrue($available);
@@ -305,8 +306,8 @@ class tree_testcase extends \advanced_testcase {
 
         // Nested NOT conditions; true.
         $structure->c = array(
-                self::tree(array(
-                    self::mock(array('a' => true, 'm' => 'no'))), '!&'));
+                tree::get_nested_json(array(
+                    self::mock(array('a' => true, 'm' => 'no'))), tree::OP_NOT_AND));
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertTrue($available);
@@ -321,10 +322,10 @@ class tree_testcase extends \advanced_testcase {
         // Nested condition groups, message test.
         $structure->op = '|';
         $structure->c = array(
-                self::tree(array(
+                tree::get_nested_json(array(
                     self::mock(array('a' => false, 'm' => '1')),
                     self::mock(array('a' => false, 'm' => '2'))
-                    ), '&', null, array(true, true)),
+                    ), tree::OP_AND),
                 self::mock(array('a' => false, 'm' => 3)));
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
@@ -340,7 +341,7 @@ class tree_testcase extends \advanced_testcase {
      * @param int $userid User id
      */
     protected function get_available_results($structure, \core_availability\info $info, $userid) {
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $result = $tree->check_available(false, $info, true, $userid);
         return array($result->is_available(), $tree->get_result_information($info, $result));
     }
@@ -350,37 +351,37 @@ class tree_testcase extends \advanced_testcase {
      */
     public function test_is_available_for_all() {
         // Empty tree is always available.
-        $structure = self::tree(array());
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(), tree::OP_OR);
+        $tree = new tree($structure);
         $this->assertTrue($tree->is_available_for_all());
 
         // Tree with normal item in it, not always available.
         $structure->c[0] = (object)array('type' => 'mock');
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertFalse($tree->is_available_for_all());
 
         // OR tree with one always-available item.
         $structure->c[1] = self::mock(array('all' => true));
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertTrue($tree->is_available_for_all());
 
         // AND tree with one always-available and one not.
         $structure->op = '&';
         $structure->showc = array(true, true);
         unset($structure->show);
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertFalse($tree->is_available_for_all());
 
         // Test NOT conditions (items not always-available).
         $structure->op = '!&';
         $structure->show = true;
         unset($structure->showc);
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertFalse($tree->is_available_for_all());
 
         // Test again with one item always-available for NOT mode.
         $structure->c[1]->allnot = true;
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertTrue($tree->is_available_for_all());
     }
 
@@ -392,29 +393,29 @@ class tree_testcase extends \advanced_testcase {
         $info = new \core_availability\mock_info();
 
         // No conditions.
-        $structure = self::tree(array());
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(), tree::OP_OR);
+        $tree = new tree($structure);
         $this->assertEquals('', $tree->get_full_information($info));
 
         // Condition (normal and NOT).
         $structure->c = array(
                 self::mock(array('m' => 'thing')));
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertEquals('SA: [FULL]thing',
                 $tree->get_full_information($info));
         $structure->op = '!&';
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertEquals('SA: ![FULL]thing',
                 $tree->get_full_information($info));
 
         // Complex structure.
         $structure->op = '|';
         $structure->c = array(
-                self::tree(array(
+                tree::get_nested_json(array(
                     self::mock(array('m' => '1')),
-                    self::mock(array('m' => '2'))), '&'),
+                    self::mock(array('m' => '2'))), tree::OP_AND),
                 self::mock(array('m' => 3)));
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~',
                 $tree->get_full_information($info));
 
@@ -423,13 +424,13 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '1')),
                 self::mock(array('m' => '2'))
         );
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~Not available unless any of:.*<ul>~',
                 $tree->get_full_information($info));
 
         // Now, OR message when not shown.
         $structure->show = false;
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~hidden.*<ul>~',
                 $tree->get_full_information($info));
 
@@ -437,7 +438,7 @@ class tree_testcase extends \advanced_testcase {
         $structure->op = '&';
         unset($structure->show);
         $structure->showc = array(false, false);
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~Not available unless:.*<ul>~',
                 $tree->get_full_information($info));
 
@@ -446,14 +447,14 @@ class tree_testcase extends \advanced_testcase {
                 $tree->get_full_information($info));
 
         // Hidden markers on child tree and items.
-        $structure->c[1] = self::tree(array(
+        $structure->c[1] = tree::get_nested_json(array(
                 self::mock(array('m' => '2')),
-                self::mock(array('m' => '3'))), '&');
-        $tree = new \core_availability\tree($structure);
+                self::mock(array('m' => '3'))), tree::OP_AND);
+        $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden.*All of \(hidden.*2.*3~',
                 $tree->get_full_information($info));
         $structure->c[1]->op = '|';
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden.*Any of \(hidden.*2.*3~',
                 $tree->get_full_information($info));
 
@@ -462,30 +463,45 @@ class tree_testcase extends \advanced_testcase {
         $structure->c = array(
                 self::mock(array('m' => '1'))
         );
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden~',
                 $tree->get_full_information($info));
 
         unset($structure->showc);
         $structure->show = false;
         $structure->op = '|';
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden~',
                 $tree->get_full_information($info));
 
         // Hidden marker if single item is tree.
-        $structure->c[0] = self::tree(array(
+        $structure->c[0] = tree::get_nested_json(array(
                 self::mock(array('m' => '1')),
-                self::mock(array('m' => '2'))), '&', null);
-        $tree = new \core_availability\tree($structure);
+                self::mock(array('m' => '2'))), tree::OP_AND);
+        $tree = new tree($structure);
         $this->assertRegExp('~Not available \(hidden.*1.*2~',
                 $tree->get_full_information($info));
 
         // Single item tree containing single item.
         unset($structure->c[0]->c[1]);
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $this->assertRegExp('~SA.*1.*hidden~',
                 $tree->get_full_information($info));
+    }
+
+    /**
+     * Tests the is_empty() function.
+     */
+    public function test_is_empty() {
+        // Tree with nothing in should be empty.
+        $structure = tree::get_root_json(array(), tree::OP_OR);
+        $tree = new tree($structure);
+        $this->assertTrue($tree->is_empty());
+
+        // Tree with something in is not empty.
+        $structure = tree::get_root_json(array(self::mock(array('m' => '1'))), tree::OP_OR);
+        $tree = new tree($structure);
+        $this->assertFalse($tree->is_empty());
     }
 
     /**
@@ -493,17 +509,17 @@ class tree_testcase extends \advanced_testcase {
      */
     public function test_get_all_children() {
         // Create a tree with nothing in.
-        $structure = self::tree(array());
-        $tree1 = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(), tree::OP_OR);
+        $tree1 = new tree($structure);
 
         // Create second tree with complex structure.
         $structure->c = array(
-                self::tree(array(
+                tree::get_nested_json(array(
                     self::mock(array('m' => '1')),
                     self::mock(array('m' => '2'))
-                )),
+                ), tree::OP_OR),
                 self::mock(array('m' => 3)));
-        $tree2 = new \core_availability\tree($structure);
+        $tree2 = new tree($structure);
 
         // Check list of conditions from both trees.
         $this->assertEquals(array(), $tree1->get_all_children('core_availability\condition'));
@@ -523,15 +539,15 @@ class tree_testcase extends \advanced_testcase {
      */
     public function test_update_dependency_id() {
         // Create tree with structure of 3 mocks.
-        $structure = self::tree(array(
-                self::tree(array(
+        $structure = tree::get_root_json(array(
+                tree::get_nested_json(array(
                     self::mock(array('table' => 'frogs', 'id' => 9)),
                     self::mock(array('table' => 'zombies', 'id' => 9))
                 )),
                 self::mock(array('table' => 'frogs', 'id' => 9))));
 
         // Get 'before' value.
-        $tree = new \core_availability\tree($structure);
+        $tree = new tree($structure);
         $before = $tree->save();
 
         // Try replacing a table or id that isn't used.
@@ -562,71 +578,146 @@ class tree_testcase extends \advanced_testcase {
         $users = array(1 => null, 2 => null, 3 => null);
 
         // Test basic tree with one condition that doesn't filter.
-        $structure = self::tree(array(self::mock(array())));
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(self::mock(array())));
+        $tree = new tree($structure);
         $result = $tree->filter_user_list($users, false, $info, $checker);
         ksort($result);
         $this->assertEquals(array(1, 2, 3), array_keys($result));
 
         // Now a tree with one condition that filters.
-        $structure = self::tree(array(self::mock(array('filter' => array(2, 3)))));
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(self::mock(array('filter' => array(2, 3)))));
+        $tree = new tree($structure);
         $result = $tree->filter_user_list($users, false, $info, $checker);
         ksort($result);
         $this->assertEquals(array(2, 3), array_keys($result));
 
         // Tree with two conditions that both filter (|).
-        $structure = self::tree(array(
+        $structure = tree::get_root_json(array(
                 self::mock(array('filter' => array(3))),
-                self::mock(array('filter' => array(1)))));
-        $tree = new \core_availability\tree($structure);
+                self::mock(array('filter' => array(1)))), tree::OP_OR);
+        $tree = new tree($structure);
         $result = $tree->filter_user_list($users, false, $info, $checker);
         ksort($result);
         $this->assertEquals(array(1, 3), array_keys($result));
 
         // Tree with two condition that both filter (&).
-        $structure = self::tree(array(
+        $structure = tree::get_root_json(array(
                 self::mock(array('filter' => array(2, 3))),
-                self::mock(array('filter' => array(1, 2)))), '&', false,
-                array(true, true));
-        $tree = new \core_availability\tree($structure);
+                self::mock(array('filter' => array(1, 2)))));
+        $tree = new tree($structure);
         $result = $tree->filter_user_list($users, false, $info, $checker);
         ksort($result);
         $this->assertEquals(array(2), array_keys($result));
 
         // Tree with child tree with NOT condition.
-        $structure = self::tree(array(
-                self::tree(
-                    self::mock(array('filter' => array(1))), '!&', null)));
-        $tree = new \core_availability\tree($structure);
+        $structure = tree::get_root_json(array(
+                tree::get_nested_json(array(
+                    self::mock(array('filter' => array(1)))), tree::OP_NOT_AND)));
+        $tree = new tree($structure);
         $result = $tree->filter_user_list($users, false, $info, $checker);
         ksort($result);
         $this->assertEquals(array(2, 3), array_keys($result));
     }
 
     /**
-     * Utility function to build the PHP structure representing a tree.
-     *
-     * @param array|tree_node $children Children or single child
-     * @param string $op Operator
-     * @param bool|null $show True/false show param or null if none
-     * @param array|null $showc showc param or null if none
-     * @return \stdClass Structure object
+     * Tests the get_json methods in tree (which are mainly for use in testing
+     * but might be used elsewhere).
      */
-    protected static function tree($children, $op = '|', $show = true, $showc = null) {
-        $structure = new stdClass();
-        $structure->op = $op;
-        if (!is_array($children)) {
-            $children = array($children);
+    public function test_get_json() {
+        // Create a simple child object (fake).
+        $child = (object)array('type' => 'fake');
+        $childstr = json_encode($child);
+
+        // Minimal case.
+        $this->assertEquals(
+                (object)array('op' => '&', 'c' => array()),
+                tree::get_nested_json(array()));
+        // Children and different operator.
+        $this->assertEquals(
+                (object)array('op' => '|', 'c' => array($child, $child)),
+                tree::get_nested_json(array($child, $child), tree::OP_OR));
+
+        // Root empty.
+        $this->assertEquals('{"op":"&","c":[],"showc":[]}',
+                json_encode(tree::get_root_json(array(), tree::OP_AND)));
+        // Root with children (multi-show operator).
+        $this->assertEquals('{"op":"&","c":[' . $childstr . ',' . $childstr .
+                    '],"showc":[true,true]}',
+                json_encode(tree::get_root_json(array($child, $child), tree::OP_AND)));
+        // Root with children (single-show operator).
+        $this->assertEquals('{"op":"|","c":[' . $childstr . ',' . $childstr .
+                    '],"show":true}',
+                json_encode(tree::get_root_json(array($child, $child), tree::OP_OR)));
+        // Root with children (specified show boolean).
+        $this->assertEquals('{"op":"&","c":[' . $childstr . ',' . $childstr .
+                    '],"showc":[false,false]}',
+                json_encode(tree::get_root_json(array($child, $child), tree::OP_AND, false)));
+        // Root with children (specified show array).
+        $this->assertEquals('{"op":"&","c":[' . $childstr . ',' . $childstr .
+                    '],"showc":[true,false]}',
+                json_encode(tree::get_root_json(array($child, $child), tree::OP_AND, array(true, false))));
+    }
+
+    /**
+     * Tests get_user_list_sql.
+     */
+    public function test_get_user_list_sql() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a test course with 2 groups and users in each combination of them.
+        $course = $generator->create_course();
+        $group1 = $generator->create_group(array('courseid' => $course->id));
+        $group2 = $generator->create_group(array('courseid' => $course->id));
+        $userin1 = $generator->create_user();
+        $userin2 = $generator->create_user();
+        $userinboth = $generator->create_user();
+        $userinneither = $generator->create_user();
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        foreach (array($userin1, $userin2, $userinboth, $userinneither) as $user) {
+            $generator->enrol_user($user->id, $course->id, $studentroleid);
         }
-        $structure->c = $children;
-        if ($showc !== null) {
-            $structure->showc = $showc;
-        }
-        if ($show !== null) {
-            $structure->show = $show;
-        }
-        return $structure;
+        groups_add_member($group1, $userin1);
+        groups_add_member($group2, $userin2);
+        groups_add_member($group1, $userinboth);
+        groups_add_member($group2, $userinboth);
+        $info = new \core_availability\mock_info($course);
+
+        // Tree with single group condition.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id)
+            )));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userin1->id, $userinboth->id), $result);
+
+        // Tree with 'AND' of both group conditions.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id),
+            \availability_group\condition::get_json($group2->id)
+        )));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userinboth->id), $result);
+
+        // Tree with 'AND' of both group conditions.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id),
+            \availability_group\condition::get_json($group2->id)
+        ), tree::OP_OR));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userin1->id, $userin2->id, $userinboth->id), $result);
+
+        // Check with flipped logic (NOT above level of tree).
+        list($sql, $params) = $tree->get_user_list_sql(true, $info, false);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals(array($userinneither->id), $result);
     }
 
     /**

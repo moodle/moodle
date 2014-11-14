@@ -30,6 +30,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Mnet access control created event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string username: the username of the user.
+ *      - string hostname: the name of the host the user came from.
+ *      - string accessctrl: the access control value.
+ * }
+ *
  * @package    core
  * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -70,8 +78,8 @@ class mnet_access_control_created extends base {
      * @return string
      */
     public function get_description() {
-        return "Access control created for the user with the username '{$this->other['username']}' belonging to the mnet " .
-            "host '{$this->other['hostname']}'.";
+        return "The user with id '$this->userid' created access control for the user with username '{$this->other['username']}' " .
+            "belonging to mnet host '{$this->other['hostname']}'.";
     }
 
     /**

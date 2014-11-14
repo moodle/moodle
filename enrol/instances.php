@@ -96,60 +96,89 @@ if ($canconfig and $action and confirm_sesskey()) {
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
 
-            if ($confirm) {
-                if (enrol_accessing_via_instance($instance)) {
-                    if (!$confirm2) {
-                        $yesurl = new moodle_url('/enrol/instances.php', array('id'=>$course->id, 'action'=>'delete', 'instance'=>$instance->id, 'confirm'=>1, 'confirm2'=>1, 'sesskey'=>sesskey()));
-                        $displayname = $plugin->get_instance_name($instance);
-                        $message = markdown_to_html(get_string('deleteinstanceconfirmself', 'enrol', array('name'=>$displayname)));
-                        echo $OUTPUT->header();
-                        echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
-                        echo $OUTPUT->footer();
-                        die();
+            if ($plugin->can_delete_instance($instance)) {
+                if ($confirm) {
+                    if (enrol_accessing_via_instance($instance)) {
+                        if (!$confirm2) {
+                            $yesurl = new moodle_url('/enrol/instances.php',
+                                                     array('id' => $course->id,
+                                                           'action' => 'delete',
+                                                           'instance' => $instance->id,
+                                                           'confirm' => 1,
+                                                           'confirm2' => 1,
+                                                           'sesskey' => sesskey()));
+                            $displayname = $plugin->get_instance_name($instance);
+                            $message = markdown_to_html(get_string('deleteinstanceconfirmself',
+                                                                   'enrol',
+                                                                   array('name' => $displayname)));
+                            echo $OUTPUT->header();
+                            echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
+                            echo $OUTPUT->footer();
+                            die();
+                        }
                     }
+                    $plugin->delete_instance($instance);
+                    redirect($PAGE->url);
                 }
-                $plugin->delete_instance($instance);
-                redirect($PAGE->url);
-            }
 
-            echo $OUTPUT->header();
-            $yesurl = new moodle_url('/enrol/instances.php', array('id'=>$course->id, 'action'=>'delete', 'instance'=>$instance->id, 'confirm'=>1,'sesskey'=>sesskey()));
-            $displayname = $plugin->get_instance_name($instance);
-            $users = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
-            if ($users) {
-                $message = markdown_to_html(get_string('deleteinstanceconfirm', 'enrol', array('name'=>$displayname, 'users'=>$users)));
-            } else {
-                $message = markdown_to_html(get_string('deleteinstancenousersconfirm', 'enrol', array('name'=>$displayname)));
+                echo $OUTPUT->header();
+                $yesurl = new moodle_url('/enrol/instances.php',
+                                         array('id' => $course->id,
+                                               'action' => 'delete',
+                                               'instance' => $instance->id,
+                                               'confirm' => 1,
+                                               'sesskey' => sesskey()));
+                $displayname = $plugin->get_instance_name($instance);
+                $users = $DB->count_records('user_enrolments', array('enrolid' => $instance->id));
+                if ($users) {
+                    $message = markdown_to_html(get_string('deleteinstanceconfirm', 'enrol',
+                                                           array('name' => $displayname,
+                                                                 'users' => $users)));
+                } else {
+                    $message = markdown_to_html(get_string('deleteinstancenousersconfirm', 'enrol',
+                                                           array('name' => $displayname)));
+                }
+                echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
+                echo $OUTPUT->footer();
+                die();
             }
-            echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
-            echo $OUTPUT->footer();
-            die();
 
         } else if ($action === 'disable') {
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
-            if ($instance->status != ENROL_INSTANCE_DISABLED) {
-                if (enrol_accessing_via_instance($instance)) {
-                    if (!$confirm2) {
-                        $yesurl = new moodle_url('/enrol/instances.php', array('id'=>$course->id, 'action'=>'disable', 'instance'=>$instance->id, 'confirm2'=>1, 'sesskey'=>sesskey()));
-                        $displayname = $plugin->get_instance_name($instance);
-                        $message = markdown_to_html(get_string('disableinstanceconfirmself', 'enrol', array('name'=>$displayname)));
-                        echo $OUTPUT->header();
-                        echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
-                        echo $OUTPUT->footer();
-                        die();
+            if ($plugin->can_hide_show_instance($instance)) {
+                if ($instance->status != ENROL_INSTANCE_DISABLED) {
+                    if (enrol_accessing_via_instance($instance)) {
+                        if (!$confirm2) {
+                            $yesurl = new moodle_url('/enrol/instances.php',
+                                                     array('id' => $course->id,
+                                                           'action' => 'disable',
+                                                           'instance' => $instance->id,
+                                                           'confirm2' => 1,
+                                                           'sesskey' => sesskey()));
+                            $displayname = $plugin->get_instance_name($instance);
+                            $message = markdown_to_html(get_string('disableinstanceconfirmself',
+                                                        'enrol',
+                                                        array('name' => $displayname)));
+                            echo $OUTPUT->header();
+                            echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
+                            echo $OUTPUT->footer();
+                            die();
+                        }
                     }
+                    $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+                    redirect($PAGE->url);
                 }
-                $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
-                redirect($PAGE->url);
             }
 
         } else if ($action === 'enable') {
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
-            if ($instance->status != ENROL_INSTANCE_ENABLED) {
-                $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
-                redirect($PAGE->url);
+            if ($plugin->can_hide_show_instance($instance)) {
+                if ($instance->status != ENROL_INSTANCE_ENABLED) {
+                    $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+                    redirect($PAGE->url);
+                }
             }
         }
     }
@@ -212,13 +241,12 @@ foreach ($instances as $instance) {
         }
         ++$updowncount;
 
-        // edit links
-        if ($plugin->instance_deleteable($instance)) {
+        if ($plugin->can_delete_instance($instance)) {
             $aurl = new moodle_url($url, array('action'=>'delete', 'instance'=>$instance->id));
             $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/delete', $strdelete, 'core', array('class' => 'iconsmall')));
         }
 
-        if (enrol_is_enabled($instance->enrol)) {
+        if (enrol_is_enabled($instance->enrol) && $plugin->can_hide_show_instance($instance)) {
             if ($instance->status == ENROL_INSTANCE_ENABLED) {
                 $aurl = new moodle_url($url, array('action'=>'disable', 'instance'=>$instance->id));
                 $edit[] = $OUTPUT->action_icon($aurl, new pix_icon('t/hide', $strdisable, 'core', array('class' => 'iconsmall')));
@@ -234,7 +262,7 @@ foreach ($instances as $instance) {
     }
 
     // link to instance management
-    if (enrol_is_enabled($instance->enrol)) {
+    if (enrol_is_enabled($instance->enrol) && $canconfig) {
         if ($icons = $plugin->get_action_icons($instance)) {
             $edit = array_merge($edit, $icons);
         }

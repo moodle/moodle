@@ -54,6 +54,19 @@
                 updateToolMatches();
 
                 self.toggleEditButtons();
+
+                if (self.getSelectedToolTypeOption().getAttribute('toolproxy')){
+                    var allowname = Y.one('#id_instructorchoicesendname');
+                    allowname.set('checked', !self.getSelectedToolTypeOption().getAttribute('noname'));
+
+                    var allowemail = Y.one('#id_instructorchoicesendemailaddr');
+                    allowemail.set('checked', !self.getSelectedToolTypeOption().getAttribute('noemail'));
+
+                    var allowgrades = Y.one('#id_instructorchoiceacceptgrades');
+                    allowgrades.set('checked', !self.getSelectedToolTypeOption().getAttribute('nogrades'));
+                    self.toggleGradeSection();
+                }
+
             });
 
             this.createTypeEditorButtons();
@@ -77,7 +90,23 @@
                 }, 2000);
             });
 
+            var allowgrades = Y.one('#id_instructorchoiceacceptgrades');
+            allowgrades.on('change', this.toggleGradeSection, this);
+
             updateToolMatches();
+        },
+
+        toggleGradeSection: function(e) {
+            if (e) {
+                e.preventDefault();
+            }
+            var allowgrades = Y.one('#id_instructorchoiceacceptgrades');
+            var gradefieldset = Y.one('#id_modstandardgrade');
+            if (!allowgrades.get('checked')) {
+                gradefieldset.hide();
+            } else {
+                gradefieldset.show();
+            }
         },
 
         clearToolCache: function(){
@@ -138,9 +167,10 @@
                 automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.custom_config);
             }
 
-            var continuation = function(toolInfo){
-                self.updatePrivacySettings(toolInfo);
-
+            var continuation = function(toolInfo, inputfield){
+                if (inputfield === undefined || (inputfield.get('id') != 'id_securetoolurl' || inputfield.get('value'))) {
+                    self.updatePrivacySettings(toolInfo);
+                }
                 if(toolInfo.toolname){
                     automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.using_tool_configuration + toolInfo.toolname);
                 } else if(!selectedToolType) {
@@ -159,7 +189,7 @@
                 return continuation(self.urlCache[url]);
             } else if(!selectedToolType && !url) {
                 // No tool type or url set
-                return continuation({});
+                return continuation({}, field);
             } else {
                 self.findToolByUrl(url, selectedToolType, function(toolInfo){
                     if(toolInfo){
@@ -237,6 +267,8 @@
                     }
                 }
             }
+
+            this.toggleGradeSection();
         },
 
         getSelectedToolTypeOption: function(){

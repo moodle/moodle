@@ -1178,6 +1178,9 @@ class question_attempt {
             if ($pendingstep->response_summary_changed()) {
                 $this->responsesummary = $pendingstep->get_new_response_summary();
             }
+            if ($pendingstep->variant_number_changed()) {
+                $this->variant = $pendingstep->get_new_variant_number();
+            }
         }
     }
 
@@ -1351,7 +1354,7 @@ class question_attempt {
         while ($record->questionattemptid != $questionattemptid) {
             $record = $records->next();
             if (!$records->valid()) {
-                throw new coding_exception("Question attempt $questionattemptid not found in the database.");
+                throw new coding_exception("Question attempt {$questionattemptid} not found in the database.");
             }
             $record = $records->current();
         }

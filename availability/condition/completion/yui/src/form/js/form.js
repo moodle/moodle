@@ -45,10 +45,10 @@ M.availability_completion.form.getNode = function(json) {
     // Set initial values.
     if (json.cm !== undefined &&
             node.one('select[name=cm] > option[value=' + json.cm + ']')) {
-        node.one('select[name=cm]').set('value', json.cm);
+        node.one('select[name=cm]').set('value', '' + json.cm);
     }
     if (json.e !== undefined) {
-        node.one('select[name=e]').set('value', json.e);
+        node.one('select[name=e]').set('value', '' + json.e);
     }
 
     // Add event handlers (first time only).

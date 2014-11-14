@@ -89,6 +89,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
             $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
             $grade->usermodified   = $grade_grades[$userid]->usermodified;
             $grade->dategraded     = $grade_grades[$userid]->get_dategraded();
+            $grade->datesubmitted  = $grade_grades[$userid]->get_datesubmitted();
 
             // create text representation of grade
             if ($grade_item->needsupdate) {
@@ -251,9 +252,9 @@ function grade_get_grade_items_for_activity($cm, $only_main_item=false) {
 
     if (!isset($cm->modname)) {
         $params = array($cm->id);
-        $cm = $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
+        $cm = $DB->get_record_sql("SELECT cm.*, md.name as modname
                                     FROM {course_modules} cm,
-                                         {modules} md,
+                                         {modules} md
                                    WHERE cm.id = ? AND md.id = cm.module", $params);
     }
 

@@ -159,6 +159,24 @@ $capabilities = array(
         )
     ),
 
+    'mod/assign:viewblinddetails' => array(
+        'riskbitmask' => RISK_PERSONAL,
 
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'mod/assign:receivegradernotifications' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
 );
 

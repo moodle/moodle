@@ -43,7 +43,8 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         $mform    = $this->_form;
 
-//-------------------------------------------------------------------------------
+        $config = get_config('lesson');
+
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         /** Legacy slideshow width element to maintain backwards compatibility */
@@ -89,6 +90,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $this->add_intro_editor($config->requiremodintro);
 
         // Appearance.
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));

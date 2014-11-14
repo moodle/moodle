@@ -78,7 +78,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_lesson\event\essay_attempt_viewed', $event);
         $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
         $expected = array($this->course->id, 'lesson', 'view grade', 'essay.php?id=' . $this->lesson->properties()->cmid .
-            '&mode=grade&attemptid=1', get_string('manualgrading', 'lesson'), $this->lesson->properties()->cmid);
+            '&mode=grade&attemptid='.$this->lesson->id, get_string('manualgrading', 'lesson'), $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }

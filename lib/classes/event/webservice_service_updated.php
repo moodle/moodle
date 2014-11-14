@@ -41,7 +41,7 @@ class webservice_service_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The web service service $this->objectid has been updated by user $this->userid.";
+        return "The user with id '$this->userid' updated the web service with id '$this->objectid'.";
     }
 
     /**
@@ -85,14 +85,4 @@ class webservice_service_updated extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
-
-    /**
-     * Set the legacy event log data.
-     *
-     * @return void
-     */
-    public function set_legacy_logdata($legacylogdata) {
-        $this->legacylogdata = $legacylogdata;
-    }
-
 }

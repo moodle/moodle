@@ -80,6 +80,24 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     }
 
     /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param string $event Name of event
+     * @param mixed $arg event arguments
+     * @param object $caller calling object
+     * @return bool
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        switch ($event) {
+            case 'createElement':
+                $caller->setType($arg[0], PARAM_INT);
+                break;
+        }
+        return parent::onQuickFormEvent($event, $arg, $caller);
+    }
+
+    /**
      * Sets name of filemanager
      *
      * @param string $name name of the filemanager
@@ -263,9 +281,9 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $output = $PAGE->get_renderer('core', 'files');
         $html .= $output->render($fm);
 
-        $html .= '<input value="'.$draftitemid.'" name="'.$elname.'" type="hidden" />';
+        $html .= html_writer::empty_tag('input', array('value' => $draftitemid, 'name' => $elname, 'type' => 'hidden'));
         // label element needs 'for' attribute work
-        $html .= '<input value="" id="id_'.$elname.'" type="hidden" />';
+        $html .= html_writer::empty_tag('input', array('value' => '', 'id' => 'id_'.$elname, 'type' => 'hidden'));
 
         return $html;
     }

@@ -196,4 +196,14 @@
         return ($recs && !empty($recs));
     }
 
+    /**
+      * Given a glossary object, deletes all cached RSS files associated with it.
+      *
+      * @param stdClass $glossary
+      */
+    function glossary_rss_delete_file($glossary) {
+        global $CFG;
+        require_once("$CFG->libdir/rsslib.php");
 
+        rss_delete_file('mod_glossary', $glossary);
+    }

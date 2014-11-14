@@ -206,7 +206,8 @@ class availability_grouping_condition_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests the filter_users (bulk checking) function.
+     * Tests the filter_users (bulk checking) function. Also tests the SQL
+     * variant get_user_list_sql.
      */
     public function test_filter_users() {
         global $DB, $CFG;
@@ -258,16 +259,39 @@ class availability_grouping_condition_testcase extends advanced_testcase {
         $cond = new condition((object)array('id' => (int)$grouping1->id));
         $result = array_keys($cond->filter_user_list($allusers, false, $info, $checker));
         ksort($result);
-        $this->assertEquals(array($teacher->id, $students[1]->id), $result);
+        $expected = array($teacher->id, $students[1]->id);
+        $this->assertEquals($expected, $result);
+
+        // Test it with get_user_list_sql.
+        list ($sql, $params) = $cond->get_user_list_sql(false, $info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
+
+        // NOT test.
         $result = array_keys($cond->filter_user_list($allusers, true, $info, $checker));
         ksort($result);
-        $this->assertEquals(array($teacher->id, $students[0]->id, $students[2]->id), $result);
+        $expected = array($teacher->id, $students[0]->id, $students[2]->id);
+        $this->assertEquals($expected, $result);
+
+        // NOT with get_user_list_sql.
+        list ($sql, $params) = $cond->get_user_list_sql(true, $info, true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
 
         // Test course-module grouping.
         $modinfo = get_fast_modinfo($course);
         $cm = $modinfo->get_cm($page->cmid);
         $info = new \core_availability\info_module($cm);
         $result = array_keys($info->filter_user_list($allusers, $course));
-        $this->assertEquals(array($teacher->id, $students[2]->id), $result);
+        $expected = array($teacher->id, $students[2]->id);
+        $this->assertEquals($expected, $result);
+
+        // With get_user_list_sql.
+        list ($sql, $params) = $info->get_user_list_sql(true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
     }
 }

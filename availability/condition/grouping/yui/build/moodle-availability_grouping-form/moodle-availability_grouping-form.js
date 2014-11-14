@@ -48,7 +48,7 @@ M.availability_grouping.form.getNode = function(json) {
     // Set initial value if specified.
     if (json.id !== undefined &&
             node.one('select[name=id] > option[value=' + json.id + ']')) {
-        node.one('select[name=id]').set('value', json.id);
+        node.one('select[name=id]').set('value', '' + json.id);
     }
 
     // Add event handlers (first time only).

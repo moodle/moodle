@@ -4,3 +4,4 @@ modifications:
 1/ removed ereg functions deprecated as of php 5.3 (18 Nov 2009)
 2/ replaced mbstring functions with moodle core_text (28 Nov 2011)
 3/ replaced explode in iCalendar_component::unserialize() with preg_split to support various line breaks (20 Nov 2012)
+4/ updated rfc2445_is_valid_value() to accept single part rrule as a valid value (16 Jun 2014)

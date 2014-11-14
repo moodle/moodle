@@ -28,8 +28,9 @@ require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
-$id        = optional_param('id', 0, PARAM_INT); // User id.
-$courseid  = optional_param('course', SITEID, PARAM_INT); // course id (defaults to Site).
+$id             = optional_param('id', 0, PARAM_INT); // User id.
+$courseid       = optional_param('course', SITEID, PARAM_INT); // course id (defaults to Site).
+$showallcourses = optional_param('showallcourses', 0, PARAM_INT);
 
 // See your own profile by default.
 if (empty($id)) {
@@ -190,9 +191,10 @@ if ($user->deleted) {
 // OK, security out the way, now we are showing the user.
 // Trigger a user profile viewed event.
 $event = \core\event\user_profile_viewed::create(array(
-    'objectid' => $USER->id,
+    'objectid' => $user->id,
     'relateduserid' => $user->id,
-    'context' => $usercontext,
+    'courseid' => $course->id,
+    'context' => $coursecontext,
     'other' => array(
         'courseid' => $course->id,
         'courseshortname' => $course->shortname,
@@ -271,7 +273,7 @@ if (!isset($hiddenfields['lastaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    echo html_writer::tag('dt', get_string('lastaccess'));
+    echo html_writer::tag('dt', get_string('lastcourseaccess'));
     echo html_writer::tag('dd', $datestring);
 }
 
@@ -317,23 +319,29 @@ if (!isset($hiddenfields['mycourses'])) {
                 $ccontext = context_course::instance($mycourse->id);
                 $cfullname = $ccontext->get_context_name(false);
                 if ($mycourse->id != $course->id) {
-                    $class = '';
+                    $linkattributes = null;
                     if ($mycourse->visible == 0) {
                         if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                             continue;
                         }
-                        $class = 'class="dimmed"';
+                        $linkattributes['class'] = 'dimmed';
                     }
-                    $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
-                        . $cfullname . "</a>, ";
+                    $params = array('id' => $user->id, 'course' => $mycourse->id);
+                    if ($showallcourses) {
+                        $params['showallcourses'] = 1;
+                    }
+                    $url = new moodle_url('/user/view.php', $params);
+                    $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), $linkattributes);
+                    $courselisting .= ', ';
                 } else {
                     $courselisting .= $cfullname . ", ";
                     $PAGE->navbar->add($cfullname);
                 }
             }
             $shown++;
-            if ($shown >= 20) {
-                $courselisting .= "...";
+            if (!$showallcourses && $shown >= 20) {
+                $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid, 'showallcourses' => 1));
+                $courselisting .= html_writer::link($url, '...', array('title' => get_string('viewmore')));
                 break;
             }
         }

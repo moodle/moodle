@@ -331,8 +331,9 @@
 
     echo $OUTPUT->header();
 
-/// Check to see if groups are being used here
-    $currentgroup = groups_get_activity_group($cm);
+    // Check to see if groups are being used here.
+    // We need the most up to date current group value. Make sure it is updated at this point.
+    $currentgroup = groups_get_activity_group($cm, true);
     $groupmode = groups_get_activity_groupmode($cm);
     $canmanageentries = has_capability('mod/data:manageentries', $context);
     // If a student is not part of a group and seperate groups is enabled, we don't
@@ -774,7 +775,7 @@ if ($showactivity) {
                     $records = $rm->get_ratings($ratingoptions);
                 }
 
-                data_print_template('singletemplate', $records, $data, $search, $page);
+                data_print_template('singletemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
@@ -795,7 +796,7 @@ if ($showactivity) {
                     data_generate_default_template($data, 'listtemplate', 0, false, false);
                 }
                 echo $data->listtemplateheader;
-                data_print_template('listtemplate', $records, $data, $search, $page);
+                data_print_template('listtemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
                 echo $data->listtemplatefooter;
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);

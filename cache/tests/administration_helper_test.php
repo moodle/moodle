@@ -165,9 +165,9 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
      */
     public function test_get_edit_store_form() {
         $config = cache_config_writer::instance();
-        $this->assertTrue($config->add_store_instance('summariesstore', 'file'));
+        $this->assertTrue($config->add_store_instance('test_get_edit_store_form', 'file'));
 
-        $form = cache_administration_helper::get_edit_store_form('file', 'summariesstore');
+        $form = cache_administration_helper::get_edit_store_form('file', 'test_get_edit_store_form');
         $this->assertInstanceOf('moodleform', $form);
 
         try {

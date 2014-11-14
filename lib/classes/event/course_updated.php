@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string shortname: shortname of course.
- *      - string fullname: fullname of course.
+ *      - string shortname: (optional) shortname of course.
+ *      - string fullname: (optional) fullname of course.
  * }
  *
  * @package    core
@@ -70,7 +70,7 @@ class course_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The course with the id '$this->courseid' was updated by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' updated the course with id '$this->courseid'.";
     }
 
     /**

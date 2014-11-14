@@ -892,7 +892,7 @@ class cache implements cache_loader {
     /**
      * Returns the loader associated with this instance.
      *
-     * @since 2.4.4
+     * @since Moodle 2.4.4
      * @return cache|false
      */
     protected function get_loader() {
@@ -902,7 +902,7 @@ class cache implements cache_loader {
     /**
      * Returns the data source associated with this cache.
      *
-     * @since 2.4.4
+     * @since Moodle 2.4.4
      * @return cache_data_source|false
      */
     protected function get_datasource() {

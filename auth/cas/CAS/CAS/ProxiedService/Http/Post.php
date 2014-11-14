@@ -32,32 +32,33 @@
  *
  * Usage Example:
  *
- *			try {
- * 				$service = phpCAS::getProxiedService(PHPCAS_PROXIED_SERVICE_HTTP_POST);
- * 				$service->setUrl('http://www.example.com/path/');
- *				$service->setContentType('text/xml');
- *				$service->setBody(''<?xml version="1.0"?'.'><methodCall><methodName>example.search</methodName></methodCall>');
- * 				$service->send();
- *				if ($service->getResponseStatusCode() == 200)
- *					return $service->getResponseBody();
- *				else
- *					// The service responded with an error code 404, 500, etc.
- *					throw new Exception('The service responded with an error.');
+ *	try {
+ * 		$service = phpCAS::getProxiedService(PHPCAS_PROXIED_SERVICE_HTTP_POST);
+ * 		$service->setUrl('http://www.example.com/path/');
+ *		$service->setContentType('text/xml');
+ *		$service->setBody('<?xml version="1.0"?'.'><methodCall><methodName>example.search</methodName></methodCall>');
+ * 		$service->send();
+ *		if ($service->getResponseStatusCode() == 200)
+ *			return $service->getResponseBody();
+ *		else
+ *			// The service responded with an error code 404, 500, etc.
+ *			throw new Exception('The service responded with an error.');
  *
- *			} catch (CAS_ProxyTicketException $e) {
- *				if ($e->getCode() == PHPCAS_SERVICE_PT_FAILURE)
- *					return "Your login has timed out. You need to log in again.";
- *				else
- *					// Other proxy ticket errors are from bad request format (shouldn't happen)
- *					// or CAS server failure (unlikely) so lets just stop if we hit those.
- *					throw $e;
- *			} catch (CAS_ProxiedService_Exception $e) {
- *				// Something prevented the service request from being sent or received.
- *				// We didn't even get a valid error response (404, 500, etc), so this
- *				// might be caused by a network error or a DNS resolution failure.
- *				// We could handle it in some way, but for now we will just stop.
- *				throw $e;
- *			}
+ *	} catch (CAS_ProxyTicketException $e) {
+ *		if ($e->getCode() == PHPCAS_SERVICE_PT_FAILURE)
+ *			return "Your login has timed out. You need to log in again.";
+ *		else
+ *			// Other proxy ticket errors are from bad request format
+ *          // (shouldn't happen) or CAS server failure (unlikely) so lets just
+ *          // stop if we hit those.
+ *			throw $e;
+ *	} catch (CAS_ProxiedService_Exception $e) {
+ *		// Something prevented the service request from being sent or received.
+ *		// We didn't even get a valid error response (404, 500, etc), so this
+ *		// might be caused by a network error or a DNS resolution failure.
+ *		// We could handle it in some way, but for now we will just stop.
+ *		throw $e;
+ *	}
  *
  * @class    CAS_ProxiedService_Http_Post
  * @category Authentication
@@ -95,7 +96,9 @@ extends CAS_ProxiedService_Http_Abstract
     public function setContentType ($contentType)
     {
         if ($this->hasBeenSent()) {
-            throw new CAS_OutOfSequenceException('Cannot set the content type, request already sent.');
+            throw new CAS_OutOfSequenceException(
+                'Cannot set the content type, request already sent.'
+            );
         }
 
         $this->_contentType = $contentType;
@@ -112,7 +115,9 @@ extends CAS_ProxiedService_Http_Abstract
     public function setBody ($body)
     {
         if ($this->hasBeenSent()) {
-            throw new CAS_OutOfSequenceException('Cannot set the body, request already sent.');
+            throw new CAS_OutOfSequenceException(
+                'Cannot set the body, request already sent.'
+            );
         }
 
         $this->_body = $body;
@@ -128,7 +133,10 @@ extends CAS_ProxiedService_Http_Abstract
     protected function populateRequest (CAS_Request_RequestInterface $request)
     {
         if (empty($this->_contentType) && !empty($this->_body)) {
-            throw new CAS_ProxiedService_Exception("If you pass a POST body, you must specify a content type via ".get_class($this).'->setContentType($contentType).');
+            throw new CAS_ProxiedService_Exception(
+                "If you pass a POST body, you must specify a content type via "
+                .get_class($this).'->setContentType($contentType).'
+            );
         }
 
         $request->makePost();

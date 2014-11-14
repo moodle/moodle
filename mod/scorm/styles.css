@@ -159,6 +159,10 @@
     white-space: nowrap;
 }
 
+#page-mod-scorm-view .exceededmaxattempts {
+    color: #cc0000;
+}
+
 #page-mod-scorm-player #altfinishlink {
     font-size: 140%;
     border: 0px;
@@ -219,6 +223,13 @@
 #page-mod-scorm-report-userreporttracks table .c1 {
     word-wrap: break-word;
     word-break: break-all;
+}
+
+#page-mod-scorm-report .scormattemptcounts {
+    clear: left;
+    text-align: center;
+    display:inline;
+    margin-left:20%;
 }
 
 #page-mod-scorm-player #scormpage span.yui3-treeview-icon {

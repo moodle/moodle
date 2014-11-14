@@ -647,6 +647,13 @@ class core_moodle_page_testcase extends advanced_testcase {
         $PAGE = $oldpage;
         $OUTPUT = $oldoutput;
     }
+
+    public function test_render_to_cli() {
+        global $OUTPUT;
+
+        $footer = $OUTPUT->footer();
+        $this->assertEmpty($footer, 'cli output does not have a footer.');
+    }
 }
 
 /**

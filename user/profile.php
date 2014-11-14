@@ -38,9 +38,10 @@ require_once($CFG->dirroot . '/tag/lib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
-$userid = optional_param('id', 0, PARAM_INT);
-$edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
-$reset  = optional_param('reset', null, PARAM_BOOL);
+$userid         = optional_param('id', 0, PARAM_INT);
+$edit           = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
+$reset          = optional_param('reset', null, PARAM_BOOL);
+$showallcourses = optional_param('showallcourses', 0, PARAM_INT);
 
 $PAGE->set_url('/user/profile.php', array('id' => $userid));
 
@@ -48,7 +49,14 @@ if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
         $SESSION->wantsurl = $PAGE->url->out(false);
-        redirect(get_login_url());
+
+        $PAGE->set_context(context_system::instance());
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
+                              get_login_url(),
+                              $CFG->wwwroot);
+        echo $OUTPUT->footer();
+        die;
     }
 } else if (!empty($CFG->forcelogin)) {
     require_login();
@@ -153,7 +161,7 @@ if ($PAGE->user_allowed_editing()) {
             if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
                 print_error('reseterror', 'my');
             }
-            redirect(new moodle_url('/user/profile.php'));
+            redirect(new moodle_url('/user/profile.php', array('id' => $userid)));
         }
     } else if ($edit !== null) {             // Editing state was specified.
         $USER->editing = $edit;       // Change editing state.
@@ -161,7 +169,7 @@ if ($PAGE->user_allowed_editing()) {
             // If we are viewing a system page as ordinary user, and the user turns
             // editing on, copy the system pages as new user pages, and get the
             // new page record.
-            if (!$currentpage = my_copy_page($USER->id, MY_PAGE_PUBLIC, 'user-profile')) {
+            if (!$currentpage = my_copy_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
                 print_error('mymoodlesetup');
             }
             $PAGE->set_context($usercontext);
@@ -180,11 +188,11 @@ if ($PAGE->user_allowed_editing()) {
     }
 
     // Add button for editing page.
-    $params = array('edit' => !$edit);
+    $params = array('edit' => !$edit, 'id' => $userid);
 
     $resetbutton = '';
     $resetstring = get_string('resetpage', 'my');
-    $reseturl = new moodle_url("$CFG->wwwroot/user/profile.php", array('edit' => 1, 'reset' => 1));
+    $reseturl = new moodle_url("$CFG->wwwroot/user/profile.php", array('edit' => 1, 'reset' => 1, 'id' => $userid));
 
     if (!$currentpage->userid) {
         // Viewing a system page -- let the user customise it.
@@ -210,6 +218,15 @@ if ($PAGE->user_allowed_editing()) {
 if ($currentpage->userid == 0) {
     $CFG->blockmanagerclass = 'my_syspage_block_manager';
 }
+
+// Trigger a user profile viewed event.
+$event = \core\event\user_profile_viewed::create(array(
+    'objectid' => $user->id,
+    'relateduserid' => $user->id,
+    'context' => $usercontext
+));
+$event->add_record_snapshot('user', $user);
+$event->trigger();
 
 // TODO WORK OUT WHERE THE NAV BAR IS!
 echo $OUTPUT->header();
@@ -324,8 +341,8 @@ if ($user->icq && !isset($hiddenfields['icqnumber'])) {
 
 if ($user->skype && !isset($hiddenfields['skypeid'])) {
     $imurl = 'skype:'.urlencode($user->skype).'?call';
-    $iconurl = new moodle_url('http://mystatus.skype.com/smallicon/'.$user->skype);
-    if (strpos($CFG->httpswwwroot, 'https:') === 0) {
+    $iconurl = new moodle_url('http://mystatus.skype.com/smallicon/'.urlencode($user->skype));
+    if (is_https()) {
         // Bad luck, skype devs are lazy to set up SSL on their servers - see MDL-37233.
         $statusicon = '';
     } else {
@@ -365,19 +382,25 @@ if (!isset($hiddenfields['mycourses'])) {
             if ($mycourse->category) {
                 context_helper::preload_from_record($mycourse);
                 $ccontext = context_course::instance($mycourse->id);
-                $class = '';
+                $linkattributes = null;
                 if ($mycourse->visible == 0) {
                     if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                         continue;
                     }
-                    $class = 'class="dimmed"';
+                    $linkattributes['class'] = 'dimmed';
                 }
-                $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >" .
-                    $ccontext->get_context_name(false) . "</a>, ";
+                $params = array('id' => $user->id, 'course' => $mycourse->id);
+                if ($showallcourses) {
+                    $params['showallcourses'] = 1;
+                }
+                $url = new moodle_url('/user/view.php', $params);
+                $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), $linkattributes);
+                $courselisting .= ', ';
             }
             $shown++;
-            if ($shown == 20) {
-                $courselisting .= "...";
+            if (!$showallcourses && $shown == $CFG->navcourselimit) {
+                $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
+                $courselisting .= html_writer::link($url, '...', array('title' => get_string('viewmore')));
                 break;
             }
         }
@@ -391,7 +414,7 @@ if (!isset($hiddenfields['firstaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    echo html_writer::tag('dt', get_string('firstaccess'));
+    echo html_writer::tag('dt', get_string('firstsiteaccess'));
     echo html_writer::tag('dd', $datestring);
 }
 if (!isset($hiddenfields['lastaccess'])) {
@@ -400,13 +423,13 @@ if (!isset($hiddenfields['lastaccess'])) {
     } else {
         $datestring = get_string("never");
     }
-    echo html_writer::tag('dt', get_string('lastaccess'));
+    echo html_writer::tag('dt', get_string('lastsiteaccess'));
     echo html_writer::tag('dd', $datestring);
 }
 
 if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
     if ($user->lastip) {
-        $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $USER->id));
+        $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $user->id));
         $ipstring = html_writer::link($iplookupurl, $user->lastip);
     } else {
         $ipstring = get_string("none");

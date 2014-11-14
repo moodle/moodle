@@ -57,8 +57,8 @@ class tracks_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the tracks for the user with the id '$this->relateduserid' " .
-            "for the scorm activity with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' viewed the tracks for the user with id '$this->relateduserid' " .
+            "for the scorm activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -105,6 +105,9 @@ class tracks_viewed extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
         if (empty($this->other['attemptid'])) {
             throw new \coding_exception('The \'attemptid\' value must be set in other.');
         }

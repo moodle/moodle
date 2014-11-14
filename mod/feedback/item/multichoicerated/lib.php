@@ -650,6 +650,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
     }
 
     public function prepare_presentation_values_print($valuestring, $valuesep1, $valuesep2) {
+        $valuestring = str_replace(array("\n","\r"), "", $valuestring);
         return $this->prepare_presentation_values(FEEDBACK_MULTICHOICERATED_LINE_SEP,
                                                   "\n",
                                                   $valuestring,
@@ -658,6 +659,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
     }
 
     public function prepare_presentation_values_save($valuestring, $valuesep1, $valuesep2) {
+        $valuestring = str_replace("\r", "\n", $valuestring);
+        $valuestring = str_replace("\n\n", "\n", $valuestring);
         return $this->prepare_presentation_values("\n",
                         FEEDBACK_MULTICHOICERATED_LINE_SEP,
                         $valuestring,

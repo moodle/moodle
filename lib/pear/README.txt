@@ -60,13 +60,6 @@ In detail, the libraries added here are:
     - by Michael Bretterklieber
     - License: BSD
     - http://pear.php.net/package/Crypt_CHAP
-- PEAR XML_Parser:
-    - Current Version: 1.3.2 (2009-01-21)
-    - by Stephan Schmidt, Stig Bakken, Tomas V.V.Cox
-    - License: BSD
-    - http://pear.php.net/package/XML_Parser
-
-
 
 ----------------------------------------------------------------
 A NOTE TO DEVELOPERS

@@ -85,7 +85,7 @@ class course_completed extends base {
      * @return string
      */
     public function get_description() {
-        return "The course with the id '$this->courseid' was completed for the user with the id '$this->relateduserid'.";
+        return "The user with id '$this->relateduserid' completed the course with id '$this->courseid'.";
     }
 
     /**
@@ -124,6 +124,14 @@ class course_completed extends base {
     protected function validate_data() {
         parent::validate_data();
 
-        // TODO: MDL-45319 add validation of relateduserid and other['relateduserid'].
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        // Check that the 'relateduserid' value is set in other as well. This is because we introduced this in 2.6
+        // and some observers may be relying on this value to be present.
+        if (!isset($this->other['relateduserid'])) {
+            throw new \coding_exception('The \'relateduserid\' value must be set in other.');
+        }
     }
 }

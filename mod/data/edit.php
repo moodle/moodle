@@ -168,7 +168,6 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
             $record->approved = 0;
         }
 
-        $record->groupid = $currentgroup;
         $record->timemodified = time();
         $DB->update_record('data_records', $record);
 
@@ -298,9 +297,13 @@ if ($data->addtemplate){
     ///then we generate strings to replace
     foreach ($possiblefields as $eachfield){
         $field = data_get_field($eachfield, $data);
-        $patterns[]="[[".$field->field->name."]]";
-        $replacements[] = $field->display_add_field($rid);
-        $patterns[]="[[".$field->field->name."#id]]";
+
+        // To skip unnecessary calls to display_add_field().
+        if (strpos($data->addtemplate, "[[".$field->field->name."]]") !== false) {
+            $patterns[] = "[[".$field->field->name."]]";
+            $replacements[] = $field->display_add_field($rid);
+        }
+        $patterns[] = "[[".$field->field->name."#id]]";
         $replacements[] = 'field_'.$field->field->id;
     }
     $newtext = str_ireplace($patterns, $replacements, $data->{$mode});

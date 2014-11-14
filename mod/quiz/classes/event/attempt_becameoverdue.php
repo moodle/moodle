@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int submitterid: id of submitter (null when trigged by CLI script).
- *      - int quizid: the id of the quiz.
+ *      - int quizid: (optional) the id of the quiz.
  * }
  *
  * @package    mod_quiz
@@ -59,7 +59,8 @@ class attempt_becameoverdue extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Attempt with the id '$this->objectid' for the user with the id '$this->relateduserid' became overdue.";
+        return "The quiz attempt with id '$this->objectid' belonging to the quiz with course module id '$this->contextinstanceid' " .
+            "for the user with id '$this->relateduserid' became overdue.";
     }
 
     /**

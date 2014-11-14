@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string courseshortname: the short name of course.
- *      - string coursefullname: the full name of course.
+ *      - string courseshortname: (optional) the short name of course.
+ *      - string coursefullname: (optional) the full name of course.
  * }
  *
  * @package    core
@@ -68,7 +68,7 @@ class user_list_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the list of users in the course with the id '$this->courseid'.";
+        return "The user with id '$this->userid' viewed the list of users in the course with id '$this->courseid'.";
     }
 
     /**

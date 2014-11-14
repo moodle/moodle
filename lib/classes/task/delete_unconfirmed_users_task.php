@@ -52,7 +52,7 @@ class delete_unconfirmed_users_task extends scheduled_task {
             $rs = $DB->get_recordset_sql ("SELECT *
                                              FROM {user}
                                             WHERE confirmed = 0 AND firstaccess > 0
-                                                  AND firstaccess < ?", array($cuttime));
+                                                  AND firstaccess < ? AND deleted = 0", array($cuttime));
             foreach ($rs as $user) {
                 delete_user($user); // We MUST delete user properly first.
                 $DB->delete_records('user', array('id' => $user->id)); // This is a bloody hack, but it might work.

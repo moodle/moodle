@@ -23,7 +23,7 @@
  * The reason that we created this file was so that user didn't get redirected back
  * to the course view page only to be redirected again.
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package course
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

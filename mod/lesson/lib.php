@@ -409,36 +409,6 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Update all grades in gradebook.
- *
- * @global object
- */
-function lesson_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {lesson} l, {course_modules} cm, {modules} m
-             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT l.*, cm.idnumber AS cmidnumber, l.course AS courseid
-              FROM {lesson} l, {course_modules} cm, {modules} m
-             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('lessonupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $lesson) {
-            $i++;
-            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
-            lesson_update_grades($lesson, 0, false);
-            $pbar->update($i, $count, "Updating Lesson grades ($i/$count).");
-        }
-    }
-    $rs->close();
-}
-
-/**
  * Create grade item for given lesson
  *
  * @category grade
@@ -759,7 +729,6 @@ function lesson_get_extra_capabilities() {
 /**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_GRADE_HAS_GRADE
@@ -769,15 +738,26 @@ function lesson_get_extra_capabilities() {
  */
 function lesson_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return false;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        default: return null;
+        case FEATURE_GROUPS:
+            return false;
+        case FEATURE_GROUPINGS:
+            return false;
+        case FEATURE_GROUPMEMBERSONLY:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        default:
+            return null;
     }
 }
 
@@ -793,12 +773,10 @@ function lesson_supports($feature) {
 function lesson_extend_settings_navigation($settings, $lessonnode) {
     global $PAGE, $DB;
 
-    $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
-
     $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
     $lessonnode->add(get_string('preview', 'lesson'), $url);
 
-    if ($canedit) {
+    if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('edit', 'lesson'), $url);
     }
@@ -811,7 +789,7 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
         $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
     }
 
-    if ($canedit) {
+    if (has_capability('mod/lesson:grade', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
     }
@@ -897,6 +875,13 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
 
+    } else if ($filearea === 'page_answers' || $filearea === 'page_responses') {
+        $itemid = (int)array_shift($args);
+        if (!$pageanswers = $DB->get_record('lesson_answers', array('id' => $itemid))) {
+            return false;
+        }
+        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
+
     } else if ($filearea === 'mediafile') {
         if (count($args) > 1) {
             // Remove the itemid when it appears to be part of the arguments. If there is only one argument
@@ -929,6 +914,8 @@ function lesson_get_file_areas() {
     $areas = array();
     $areas['page_contents'] = get_string('pagecontents', 'mod_lesson');
     $areas['mediafile'] = get_string('mediafile', 'mod_lesson');
+    $areas['page_answers'] = get_string('pageanswers', 'mod_lesson');
+    $areas['page_responses'] = get_string('pageresponses', 'mod_lesson');
     return $areas;
 }
 

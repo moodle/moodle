@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string format: content format.
+ *      - string format: (optional) content format.
  * }
  *
  * @package    assignsubmission_onlinetext
@@ -48,8 +48,8 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has saved an online text submission with the id '$this->objectid' " .
-            "in the assignment activity with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has saved an online text submission with id '$this->objectid' " .
+            "in the assignment activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

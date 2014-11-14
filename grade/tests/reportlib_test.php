@@ -39,10 +39,10 @@ class grade_report_test extends grade_report {
     }
 
     /**
-     * A wrapper around blank_hidden_total() to allow test code to call it directly
+     * A wrapper around blank_hidden_total_and_adjust_bounds() to allow test code to call it directly
      */
-    public function blank_hidden_total($courseid, $courseitem, $finalgrade) {
-        return parent::blank_hidden_total($courseid, $courseitem, $finalgrade);
+    public function blank_hidden_total_and_adjust_bounds($courseid, $courseitem, $finalgrade) {
+        return parent::blank_hidden_total_and_adjust_bounds($courseid, $courseitem, $finalgrade);
     }
 
     /**
@@ -64,9 +64,9 @@ class grade_report_test extends grade_report {
 class core_grade_reportlib_testcase extends advanced_testcase {
 
     /**
-     * Tests grade_report::blank_hidden_total()
+     * Tests grade_report::blank_hidden_total_and_adjust_bounds()
      */
-    public function test_blank_hidden_total() {
+    public function test_blank_hidden_total_and_adjust_bounds() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -121,15 +121,29 @@ class core_grade_reportlib_testcase extends advanced_testcase {
 
         // Should return the supplied student total grade regardless of hiding.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN);
-        $this->assertEquals($datagrade + $forumgrade, $report->blank_hidden_total($course->id, $coursegradeitem, $datagrade + $forumgrade));
-
+        $result = $report->blank_hidden_total_and_adjust_bounds($course->id, $coursegradeitem, $datagrade + $forumgrade);
+        $this->assertEquals(array('grade' => $datagrade + $forumgrade,
+                                  'grademax' => $coursegradeitem->grademax,
+                                  'grademin' => $coursegradeitem->grademin,
+                                  'aggregationstatus' => 'unknown',
+                                  'aggregationweight' => null), $result);
         // Should blank the student total as course grade depends on a hidden item.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN);
-        $this->assertEquals(null, $report->blank_hidden_total($course->id, $coursegradeitem, $datagrade + $forumgrade));
+        $result = $report->blank_hidden_total_and_adjust_bounds($course->id, $coursegradeitem, $datagrade + $forumgrade);
+        $this->assertEquals(array('grade' => null,
+                                  'grademax' => $coursegradeitem->grademax,
+                                  'grademin' => $coursegradeitem->grademin,
+                                  'aggregationstatus' => 'unknown',
+                                  'aggregationweight' => null), $result);
 
         // Should return the course total minus the hidden database activity grade.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN);
-        $this->assertEquals($forumgrade, $report->blank_hidden_total($course->id, $coursegradeitem, $datagrade + $forumgrade));
+        $result = $report->blank_hidden_total_and_adjust_bounds($course->id, $coursegradeitem, $datagrade + $forumgrade);
+        $this->assertEquals(array('grade' => floatval($forumgrade),
+                                  'grademax' => $coursegradeitem->grademax,
+                                  'grademin' => $coursegradeitem->grademin,
+                                  'aggregationstatus' => 'unknown',
+                                  'aggregationweight' => null), $result);
 
         // Note: we cannot simply hide modules and call $report->blank_hidden_total() again.
         // It stores grades in a static variable so $report->blank_hidden_total() will return incorrect totals
@@ -183,15 +197,30 @@ class core_grade_reportlib_testcase extends advanced_testcase {
 
         // Should return the supplied student total grade regardless of hiding.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN);
-        $this->assertEquals($datagrade + $forumgrade, $report->blank_hidden_total($course->id, $coursegradeitem, $datagrade + $forumgrade));
+        $result = $report->blank_hidden_total_and_adjust_bounds($course->id, $coursegradeitem, $datagrade + $forumgrade);
+        $this->assertEquals(array('grade' => $datagrade + $forumgrade,
+                                  'grademax' => $coursegradeitem->grademax,
+                                  'grademin' => $coursegradeitem->grademin,
+                                  'aggregationstatus' => 'unknown',
+                                  'aggregationweight' => null), $result);
 
         // Should blank the student total as course grade depends on a hidden item.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN);
-        $this->assertEquals(null, $report->blank_hidden_total($course->id, $coursegradeitem, $datagrade + $forumgrade));
+        $result = $report->blank_hidden_total_and_adjust_bounds($course->id, $coursegradeitem, $datagrade + $forumgrade);
+        $this->assertEquals(array('grade' => null,
+                                  'grademax' => $coursegradeitem->grademax,
+                                  'grademin' => $coursegradeitem->grademin,
+                                  'aggregationstatus' => 'unknown',
+                                  'aggregationweight' => null), $result);
 
         // Should return the course total minus the hidden activity grades.
         // They are both hidden so should return null.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN);
-        $this->assertEquals(null, $report->blank_hidden_total($course->id, $coursegradeitem, $datagrade + $forumgrade));
+        $result = $report->blank_hidden_total_and_adjust_bounds($course->id, $coursegradeitem, $datagrade + $forumgrade);
+        $this->assertEquals(array('grade' => null,
+                                  'grademax' => $coursegradeitem->grademax,
+                                  'grademin' => $coursegradeitem->grademin,
+                                  'aggregationstatus' => 'unknown',
+                                  'aggregationweight' => null), $result);
     }
 }

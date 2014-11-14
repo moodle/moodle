@@ -1266,7 +1266,7 @@ s only returning name of SQL substring function, it now requires all parameters.
     /**
      * Does this driver support tool_replace?
      *
-     * @since 2.6.1
+     * @since Moodle 2.6.1
      * @return bool
      */
     public function replace_all_text_supported() {

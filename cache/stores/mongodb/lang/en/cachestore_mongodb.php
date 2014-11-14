@@ -28,6 +28,7 @@ $string['extendedmode'] = 'Use extended keys';
 $string['extendedmode_help'] = 'If enabled full key sets will be used when working with the plugin. This isn\'t used internally yet but would allow you to easily search and investigate the MongoDB plugin manually if you so choose. Turning this on will add an small overhead so should only be done if you require it.';
 $string['password'] = 'Password';
 $string['password_help'] = 'The password of the user being used for the connection.';
+$string['pleaseupgrademongo'] = 'You are using an old version of the PHP Mongo extension (< 1.3). Support for old versions of the Mongo extension will be dropped in the future. Please consider upgrading.';
 $string['pluginname'] = 'MongoDB';
 $string['replicaset'] = 'Replica set';
 $string['replicaset_help'] = 'The name of the replica set to connect to. If this is given the master will be determined by using the ismaster database command on the seeds, so the driver may end up connecting to a server that was not even listed.';

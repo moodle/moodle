@@ -459,6 +459,90 @@ function grade_get_graded_users_select($report, $course, $userid, $groupid, $inc
 }
 
 /**
+ * Hide warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_natural_aggregation_upgrade_notice($courseid) {
+    unset_config('show_sumofgrades_upgrade_' . $courseid);
+}
+
+/**
+ * Hide warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_aggregatesubcats_upgrade_notice($courseid) {
+    unset_config('show_aggregatesubcats_upgrade_' . $courseid);
+}
+
+/**
+ * Print warning about changed grades during upgrade to 2.8.
+ *
+ * @param int $courseid The current course id.
+ * @param context $context The course context.
+ * @param string $thispage The relative path for the current page. E.g. /grade/report/user/index.php
+ * @param boolean $return return as string
+ *
+ * @return nothing or string if $return true
+ */
+function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage, $return=false) {
+    global $OUTPUT;
+    $html = '';
+
+    $hidesubcatswarning = optional_param('seenaggregatesubcatsupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
+    $showsubcatswarning = get_config('core', 'show_aggregatesubcats_upgrade_' . $courseid);
+    $hidenaturalwarning = optional_param('seensumofgradesupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
+    $shownaturalwarning = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
+
+    // Do not do anything if they are not a teacher.
+    if ($hidesubcatswarning || $showsubcatswarning || $hidenaturalwarning || $shownaturalwarning) {
+        if (!has_capability('moodle/grade:manage', $context)) {
+            return '';
+        }
+    }
+
+    // Hide the warning if the user told it to go away.
+    if ($hidenaturalwarning) {
+        hide_natural_aggregation_upgrade_notice($courseid);
+    }
+    // Hide the warning if the user told it to go away.
+    if ($hidesubcatswarning) {
+        hide_aggregatesubcats_upgrade_notice($courseid);
+    }
+
+    if (!$hidenaturalwarning && $shownaturalwarning) {
+        $message = get_string('sumofgradesupgradedgrades', 'grades');
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
+        $urlparams = array( 'id' => $courseid,
+                            'seensumofgradesupgradedgrades' => true,
+                            'sesskey' => sesskey());
+        $goawayurl = new moodle_url($thispage, $urlparams);
+        $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $html .= $OUTPUT->notification($message, 'notifysuccess');
+        $html .= $goawaybutton;
+    }
+
+    if (!$hidesubcatswarning && $showsubcatswarning) {
+        $message = get_string('aggregatesubcatsupgradedgrades', 'grades');
+        $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
+        $urlparams = array( 'id' => $courseid,
+                            'seenaggregatesubcatsupgradedgrades' => true,
+                            'sesskey' => sesskey());
+        $goawayurl = new moodle_url($thispage, $urlparams);
+        $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $html .= $OUTPUT->notification($message, 'notifysuccess');
+        $html .= $goawaybutton;
+    }
+
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
+    }
+}
+
+/**
  * Print grading plugin selection popup form.
  *
  * @param array   $plugin_info An array of plugins containing information for the selector
@@ -609,11 +693,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         $plugin_info['report'] = $reports;
     }
 
-    //showing grade categories and items make no sense if we're not within a course
-    if ($courseid!=$SITE->id) {
-        if ($edittree = grade_helper::get_info_edit_structure($courseid)) {
-            $plugin_info['edittree'] = $edittree;
-        }
+    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
+        $plugin_info['settings'] = $settings;
     }
 
     if ($scale = grade_helper::get_info_scales($courseid)) {
@@ -648,18 +729,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
                 }
             }
         }
-    }
-
-    //hide course settings if we're not in a course
-    if ($courseid!=$SITE->id) {
-        if ($setting = grade_helper::get_info_manage_settings($courseid)) {
-            $plugin_info['settings'] = array('course'=>$setting);
-        }
-    }
-
-    // Put preferences last
-    if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
-        $plugin_info['preferences'] = $preferences;
     }
 
     foreach ($plugin_info as $plugin_type => $plugins) {
@@ -747,13 +816,20 @@ class grade_plugin_info {
  * @param string  $bodytags Additional attributes that will be added to the <body> tag
  * @param string  $buttons Additional buttons to display on the page
  * @param boolean $shownavigation should the gradebook navigation drop down (or tabs) be shown?
+ * @param string  $headerhelpidentifier The help string identifier if required.
+ * @param string  $headerhelpcomponent The component for the help string.
  *
  * @return string HTML code or nothing if $return == false
  */
 function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
-                               $buttons=false, $shownavigation=true) {
+                               $buttons=false, $shownavigation=true, $headerhelpidentifier = null, $headerhelpcomponent = null) {
     global $CFG, $OUTPUT, $PAGE;
+
+    if ($active_type === 'preferences') {
+        // In Moodle 2.8 report preferences were moved under 'settings'. Allow backward compatibility for 3rd party grade reports.
+        $active_type = 'settings';
+    }
 
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
 
@@ -778,9 +854,12 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         $buttons = $OUTPUT->render($buttons);
     }
     $PAGE->set_button($buttons);
-    grade_extend_settings($plugin_info, $courseid);
+    if ($courseid != SITEID) {
+        grade_extend_settings($plugin_info, $courseid);
+    }
 
     $returnval = $OUTPUT->header();
+
     if (!$return) {
         echo $returnval;
     }
@@ -791,20 +870,35 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     }
 
     if ($shownavigation) {
-        if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN) {
+        if ($courseid != SITEID &&
+                ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN)) {
             $returnval .= print_grade_plugin_selector($plugin_info, $active_type, $active_plugin, $return);
         }
 
-        if ($return) {
-            $returnval .= $OUTPUT->heading($heading);
+        $output = '';
+        // Add a help dialogue box if provided.
+        if (isset($headerhelpidentifier)) {
+            $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
         } else {
-            echo $OUTPUT->heading($heading);
+            $output = $OUTPUT->heading($heading);
         }
 
-        if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
+        if ($return) {
+            $returnval .= $output;
+        } else {
+            echo $output;
+        }
+
+        if ($courseid != SITEID &&
+                ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS)) {
             $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return);
         }
     }
+
+    $returnval .= print_natural_aggregation_upgrade_notice($courseid,
+                                                           context_course::instance($courseid),
+                                                           $PAGE->url,
+                                                           $return);
 
     if ($return) {
         return $returnval;
@@ -1171,18 +1265,21 @@ class grade_structure {
 
                 } else if (($is_course or $is_category) and ($is_scale or $is_value)) {
                     if ($category = $element['object']->get_item_category()) {
+                        $aggrstrings = grade_helper::get_aggregation_strings();
+                        $stragg = $aggrstrings[$category->aggregation];
                         switch ($category->aggregation) {
                             case GRADE_AGGREGATE_MEAN:
                             case GRADE_AGGREGATE_MEDIAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
-                                $stragg = get_string('aggregation', 'grades');
                                 return '<img src="'.$OUTPUT->pix_url('i/agg_mean') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                             case GRADE_AGGREGATE_SUM:
-                                $stragg = get_string('aggregation', 'grades');
                                 return '<img src="'.$OUTPUT->pix_url('i/agg_sum') . '" ' .
+                                        'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
+                            default:
+                                return '<img src="'.$OUTPUT->pix_url('i/calc') . '" ' .
                                         'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
                         }
                     }
@@ -1236,31 +1333,41 @@ class grade_structure {
      * @param bool  $withlink Whether or not this header has a link
      * @param bool  $icon Whether or not to display an icon with this header
      * @param bool  $spacerifnone return spacer if no icon found
+     * @param bool  $withdescription Show description if defined by this item.
+     * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
+     *                         instead of "Category total" or "Course total"
      *
      * @return string header
      */
-    public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false) {
+    public function get_element_header(&$element, $withlink = false, $icon = true, $spacerifnone = false,
+        $withdescription = false, $fulltotal = false) {
         $header = '';
 
         if ($icon) {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name();
+        $header .= $element['object']->get_name($fulltotal);
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and
             $element['type'] != 'courseitem') {
             return $header;
         }
 
-        if ($withlink) {
-            $url = $this->get_activity_link($element);
-            if ($url) {
-                $a = new stdClass();
-                $a->name = get_string('modulename', $element['object']->itemmodule);
-                $title = get_string('linktoactivity', 'grades', $a);
+        if ($withlink && $url = $this->get_activity_link($element)) {
+            $a = new stdClass();
+            $a->name = get_string('modulename', $element['object']->itemmodule);
+            $title = get_string('linktoactivity', 'grades', $a);
 
-                $header = html_writer::link($url, $header, array('title' => $title));
+            $header = html_writer::link($url, $header, array('title' => $title));
+        } else {
+            $header = html_writer::span($header);
+        }
+
+        if ($withdescription) {
+            $desc = $element['object']->get_description();
+            if (!empty($desc)) {
+                $header .= '<div class="gradeitemdescription">' . s($desc) . '</div><div class="gradeitemdescriptionfiller"></div>';
             }
         }
 
@@ -1416,7 +1523,7 @@ class grade_structure {
      * @return string eid
      */
     public function get_item_eid($grade_item) {
-        return 'i'.$grade_item->id;
+        return 'ig'.$grade_item->id;
     }
 
     /**
@@ -1455,21 +1562,55 @@ class grade_structure {
     }
 
     /**
+     * Return a reset icon for the given element.
+     *
+     * @param array  $element An array representing an element in the grade_tree
+     * @param object $gpr A grade_plugin_return object
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
+     */
+    public function get_reset_icon($element, $gpr, $returnactionmenulink = false) {
+        global $CFG, $OUTPUT;
+
+        // Limit to category items set to use the natural weights aggregation method, and users
+        // with the capability to manage grades.
+        if ($element['type'] != 'category' || $element['object']->aggregation != GRADE_AGGREGATE_SUM ||
+                !has_capability('moodle/grade:manage', $this->context)) {
+            return $returnactionmenulink ? null : '';
+        }
+
+        $str = get_string('resetweights', 'grades', $this->get_params_for_iconstr($element));
+        $url = new moodle_url('/grade/edit/tree/action.php', array(
+            'id' => $this->courseid,
+            'action' => 'resetweights',
+            'eid' => $element['eid'],
+            'sesskey' => sesskey(),
+        ));
+
+        if ($returnactionmenulink) {
+            return new action_menu_link_secondary($gpr->add_url_params($url), new pix_icon('t/reset', $str),
+                get_string('resetweightsshort', 'grades'));
+        } else {
+            return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/reset', $str));
+        }
+    }
+
+    /**
      * Return edit icon for give element
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     *
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_edit_icon($element, $gpr) {
+    public function get_edit_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
 
         if (!has_capability('moodle/grade:manage', $this->context)) {
             if ($element['type'] == 'grade' and has_capability('moodle/grade:edit', $this->context)) {
                 // oki - let them override grade
             } else {
-                return '';
+                return $returnactionmenulink ? null : '';
             }
         }
 
@@ -1523,10 +1664,16 @@ class grade_structure {
         }
 
         if ($url) {
-            return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/edit', $stredit));
+            if ($returnactionmenulink) {
+                return new action_menu_link_secondary($gpr->add_url_params($url),
+                    new pix_icon('t/edit', $stredit),
+                    get_string('editsettings'));
+            } else {
+                return $OUTPUT->action_icon($gpr->add_url_params($url), new pix_icon('t/edit', $stredit));
+            }
 
         } else {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
     }
 
@@ -1535,19 +1682,19 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     *
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_hiding_icon($element, $gpr) {
+    public function get_hiding_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
 
         if (!$element['object']->can_control_visibility()) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         if (!has_capability('moodle/grade:manage', $this->context) and
             !has_capability('moodle/grade:hide', $this->context)) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         $strparams = $this->get_params_for_iconstr($element);
@@ -1570,11 +1717,19 @@ class grade_structure {
 
             $url->param('action', 'show');
 
-            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'smallicon')));
+            if ($returnactionmenulink) {
+                $hideicon = new action_menu_link_secondary($url, new pix_icon('t/'.$type, $tooltip), get_string('show'));
+            } else {
+                $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/'.$type, $tooltip, 'moodle', array('alt'=>$strshow, 'class'=>'smallicon')));
+            }
 
         } else {
             $url->param('action', 'hide');
-            $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/hide', $strhide));
+            if ($returnactionmenulink) {
+                $hideicon = new action_menu_link_secondary($url, new pix_icon('t/hide', $strhide), get_string('hide'));
+            } else {
+                $hideicon = $OUTPUT->action_icon($url, new pix_icon('t/hide', $strhide));
+            }
         }
 
         return $hideicon;
@@ -1642,13 +1797,13 @@ class grade_structure {
      *
      * @param array  $element An array representing an element in the grade_tree
      * @param object $gpr A grade_plugin_return object
-     *
-     * @return string
+     * @param bool $returnactionmenulink return the instance of action_menu_link instead of string
+     * @return string|action_menu_link
      */
-    public function get_calculation_icon($element, $gpr) {
+    public function get_calculation_icon($element, $gpr, $returnactionmenulink = false) {
         global $CFG, $OUTPUT;
         if (!has_capability('moodle/grade:manage', $this->context)) {
-            return '';
+            return $returnactionmenulink ? null : '';
         }
 
         $type   = $element['type'];
@@ -1671,11 +1826,17 @@ class grade_structure {
 
                 $url = new moodle_url('/grade/edit/tree/calculation.php', array('courseid' => $this->courseid, 'id' => $object->id));
                 $url = $gpr->add_url_params($url);
-                return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation));
+                if ($returnactionmenulink) {
+                    return new action_menu_link_secondary($url,
+                        new pix_icon($icon, $streditcalculation),
+                        get_string('editcalculation', 'grades'));
+                } else {
+                    return $OUTPUT->action_icon($url, new pix_icon($icon, $streditcalculation));
+                }
             }
         }
 
-        return '';
+        return $returnactionmenulink ? null : '';
     }
 }
 
@@ -1779,7 +1940,7 @@ class grade_seq extends grade_structure {
             $userid = $matches[2];
 
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$itemid)) {
                 return null;
             }
 
@@ -1795,7 +1956,7 @@ class grade_seq extends grade_structure {
                 return null;
             }
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$grade->itemid)) {
                 return null;
             }
             $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
@@ -1993,9 +2154,9 @@ class grade_tree extends grade_structure {
 
         // prepare unique identifier
         if ($element['type'] == 'category') {
-            $element['eid'] = 'c'.$element['object']->id;
+            $element['eid'] = 'cg'.$element['object']->id;
         } else if (in_array($element['type'], array('item', 'courseitem', 'categoryitem'))) {
-            $element['eid'] = 'i'.$element['object']->id;
+            $element['eid'] = 'ig'.$element['object']->id;
             $this->items[$element['object']->id] =& $element['object'];
         }
 
@@ -2099,7 +2260,7 @@ class grade_tree extends grade_structure {
             $userid = $matches[2];
 
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$itemid)) {
                 return null;
             }
 
@@ -2115,7 +2276,7 @@ class grade_tree extends grade_structure {
                 return null;
             }
             //extra security check - the grade item must be in this tree
-            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+            if (!$item_el = $this->locate_element('ig'.$grade->itemid)) {
                 return null;
             }
             $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
@@ -2329,6 +2490,13 @@ function grade_extend_settings($plugininfo, $courseid) {
         }
     }
 
+    if ($settings = grade_helper::get_info_manage_settings($courseid)) {
+        $settingsnode = $gradenode->add($strings['settings'], null, navigation_node::TYPE_CONTAINER);
+        foreach ($settings as $setting) {
+            $settingsnode->add($setting->string, $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
+        }
+    }
+
     if ($imports = grade_helper::get_plugins_import($courseid)) {
         $importnode = $gradenode->add($strings['import'], null, navigation_node::TYPE_CONTAINER);
         foreach ($imports as $import) {
@@ -2340,17 +2508,6 @@ function grade_extend_settings($plugininfo, $courseid) {
         $exportnode = $gradenode->add($strings['export'], null, navigation_node::TYPE_CONTAINER);
         foreach ($exports as $export) {
             $exportnode->add($export->string, $export->link, navigation_node::TYPE_SETTING, null, $export->id, new pix_icon('i/export', ''));
-        }
-    }
-
-    if ($setting = grade_helper::get_info_manage_settings($courseid)) {
-        $gradenode->add(get_string('coursegradesettings', 'grades'), $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
-    }
-
-    if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
-        $preferencesnode = $gradenode->add(get_string('myreportpreferences', 'grades'), null, navigation_node::TYPE_CONTAINER);
-        foreach ($preferences as $preference) {
-            $preferencesnode->add($preference->string, $preference->link, navigation_node::TYPE_SETTING, null, $preference->id, new pix_icon('i/settings', ''));
         }
     }
 
@@ -2366,13 +2523,6 @@ function grade_extend_settings($plugininfo, $courseid) {
 
     if ($scales = grade_helper::get_info_scales($courseid)) {
         $gradenode->add($strings['scale'], $scales->link, navigation_node::TYPE_SETTING, null, $scales->id, new pix_icon('i/scales', ''));
-    }
-
-    if ($categories = grade_helper::get_info_edit_structure($courseid)) {
-        $categoriesnode = $gradenode->add(get_string('categoriesanditems','grades'), null, navigation_node::TYPE_CONTAINER);
-        foreach ($categories as $category) {
-            $categoriesnode->add($category->string, $category->link, navigation_node::TYPE_SETTING, null, $category->id, new pix_icon('i/report', ''));
-        }
     }
 
     if ($gradenode->contains_active_node()) {
@@ -2425,11 +2575,6 @@ abstract class grade_helper {
      */
     protected static $outcomeinfo = null;
     /**
-     * Cached info on edit structure {@see get_info_edit_structure}
-     * @var array|false
-     */
-    protected static $edittree = null;
-    /**
      * Cached leftter info {@see get_info_letters}
      * @var grade_plugin_info|false
      */
@@ -2449,12 +2594,16 @@ abstract class grade_helper {
      * @var array
      */
     protected static $pluginstrings = null;
+    /**
+     * Cached grade aggregation strings
+     * @var array
+     */
+    protected static $aggregationstrings = null;
 
     /**
      * Gets strings commonly used by the describe plugins
      *
      * report => get_string('view'),
-     * edittree => get_string('edittree', 'grades'),
      * scale => get_string('scales'),
      * outcome => get_string('outcomes', 'grades'),
      * letter => get_string('letters', 'grades'),
@@ -2469,33 +2618,64 @@ abstract class grade_helper {
         if (self::$pluginstrings === null) {
             self::$pluginstrings = array(
                 'report' => get_string('view'),
-                'edittree' => get_string('edittree', 'grades'),
                 'scale' => get_string('scales'),
                 'outcome' => get_string('outcomes', 'grades'),
                 'letter' => get_string('letters', 'grades'),
                 'export' => get_string('export', 'grades'),
                 'import' => get_string('import'),
-                'preferences' => get_string('mypreferences', 'grades'),
-                'settings' => get_string('settings')
+                'settings' => get_string('edittree', 'grades')
             );
         }
         return self::$pluginstrings;
     }
+
+    /**
+     * Gets strings describing the available aggregation methods.
+     *
+     * @return array
+     */
+    public static function get_aggregation_strings() {
+        if (self::$aggregationstrings === null) {
+            self::$aggregationstrings = array(
+                GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
+                GRADE_AGGREGATE_WEIGHTED_MEAN    => get_string('aggregateweightedmean', 'grades'),
+                GRADE_AGGREGATE_WEIGHTED_MEAN2   => get_string('aggregateweightedmean2', 'grades'),
+                GRADE_AGGREGATE_EXTRACREDIT_MEAN => get_string('aggregateextracreditmean', 'grades'),
+                GRADE_AGGREGATE_MEDIAN           => get_string('aggregatemedian', 'grades'),
+                GRADE_AGGREGATE_MIN              => get_string('aggregatemin', 'grades'),
+                GRADE_AGGREGATE_MAX              => get_string('aggregatemax', 'grades'),
+                GRADE_AGGREGATE_MODE             => get_string('aggregatemode', 'grades'),
+                GRADE_AGGREGATE_SUM              => get_string('aggregatesum', 'grades')
+            );
+        }
+        return self::$aggregationstrings;
+    }
+
     /**
      * Get grade_plugin_info object for managing settings if the user can
      *
      * @param int $courseid
-     * @return grade_plugin_info
+     * @return grade_plugin_info[]
      */
     public static function get_info_manage_settings($courseid) {
         if (self::$managesetting !== null) {
             return self::$managesetting;
         }
         $context = context_course::instance($courseid);
-        if (has_capability('moodle/grade:manage', $context)) {
-            self::$managesetting = new grade_plugin_info('coursesettings', new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)), get_string('course'));
-        } else {
-            self::$managesetting = false;
+        self::$managesetting = array();
+        if ($courseid != SITEID && has_capability('moodle/grade:manage', $context)) {
+            self::$managesetting['categoriesanditems'] = new grade_plugin_info('setup',
+                new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)),
+                get_string('categoriesanditems', 'grades'));
+            self::$managesetting['coursesettings'] = new grade_plugin_info('coursesettings',
+                new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)),
+                get_string('coursegradesettings', 'grades'));
+        }
+        if (self::$gradereportpreferences === null) {
+            self::get_plugins_reports($courseid);
+        }
+        if (self::$gradereportpreferences) {
+            self::$managesetting = array_merge(self::$managesetting, self::$gradereportpreferences);
         }
         return self::$managesetting;
     }
@@ -2532,7 +2712,8 @@ abstract class grade_helper {
             // Add link to preferences tab if such a page exists
             if (file_exists($plugindir.'/preferences.php')) {
                 $url = new moodle_url('/grade/report/'.$plugin.'/preferences.php', array('id'=>$courseid));
-                $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
+                $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url,
+                    get_string('mypreferences', 'grades') . ': ' . $pluginstr);
             }
         }
         if (count($gradereports) == 0) {
@@ -2549,19 +2730,7 @@ abstract class grade_helper {
         self::$gradereportpreferences = $gradepreferences;
         return self::$gradereports;
     }
-    /**
-     * Returns an array of grade plugin report preferences for plugin reports that
-     * support preferences
-     * @param int $courseid
-     * @return array
-     */
-    public static function get_plugins_report_preferences($courseid) {
-        if (self::$gradereportpreferences !== null) {
-            return self::$gradereportpreferences;
-        }
-        self::get_plugins_reports($courseid);
-        return self::$gradereportpreferences;
-    }
+
     /**
      * Get information on scales
      * @param int $courseid
@@ -2615,26 +2784,6 @@ abstract class grade_helper {
             self::$outcomeinfo = false;
         }
         return self::$outcomeinfo;
-    }
-    /**
-     * Get information on editing structures
-     * @param int $courseid
-     * @return array
-     */
-    public static function get_info_edit_structure($courseid) {
-        if (self::$edittree !== null) {
-            return self::$edittree;
-        }
-        if (has_capability('moodle/grade:manage', context_course::instance($courseid))) {
-            $url = new moodle_url('/grade/edit/tree/index.php', array('sesskey'=>sesskey(), 'showadvanced'=>'0', 'id'=>$courseid));
-            self::$edittree = array(
-                'simpleview' => new grade_plugin_info('simpleview', $url, get_string('simpleview', 'grades')),
-                'fullview' => new grade_plugin_info('fullview', new moodle_url($url, array('showadvanced'=>'1')), get_string('fullview', 'grades'))
-            );
-        } else {
-            self::$edittree = false;
-        }
-        return self::$edittree;
     }
     /**
      * Get information on letters
@@ -2835,6 +2984,23 @@ abstract class grade_helper {
         }
 
         return $fields;
+    }
+
+    /**
+     * This helper method gets a snapshot of all the weights for a course.
+     * It is used as a quick method to see if any wieghts have been automatically adjusted.
+     * @param int $courseid
+     * @return array of itemid -> aggregationcoef2
+     */
+    public static function fetch_all_natural_weights_for_course($courseid) {
+        global $DB;
+        $result = array();
+
+        $records = $DB->get_records('grade_items', array('courseid'=>$courseid), 'id', 'id, aggregationcoef2');
+        foreach ($records as $record) {
+            $result[$record->id] = $record->aggregationcoef2;
+        }
+        return $result;
     }
 }
 

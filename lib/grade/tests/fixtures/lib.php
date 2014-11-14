@@ -60,7 +60,6 @@ abstract class grade_base_testcase extends advanced_testcase {
         $CFG->grade_aggregation = -1;
         $CFG->grade_aggregateonlygraded = -1;
         $CFG->grade_aggregateoutcomes = -1;
-        $CFG->grade_aggregatesubcats = -1;
 
         $this->course = $this->getDataGenerator()->create_course();
         $this->courseid = $this->course->id;
@@ -169,7 +168,7 @@ abstract class grade_base_testcase extends advanced_testcase {
                                     |
                            +--------+-------------+-----------------------+
                            |                      |                       |
-             unittestcategory1               level1category       aggregatesubcatscategory
+             unittestcategory1               level1category       unittestcategory7
                   |                                                          |
          +--------+-------------+                               +------------+---------------+
          |                      |                               |                            |
@@ -256,11 +255,10 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_category = new stdClass();
 
-        $grade_category->fullname    = 'aggregatesubcatscategory';
+        $grade_category->fullname    = 'unittestcategory7';
         $grade_category->courseid    = $this->course->id;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->aggregateonlygraded = 1;
-        $grade_category->aggregatesubcats = 1;
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $course_category->id;
@@ -578,7 +576,7 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_item->courseid = $this->course->id;
         $grade_item->iteminstance = $this->grade_categories[4]->id;
-        $grade_item->itemname = 'unittestgradeitemaggregatesubcats';
+        $grade_item->itemname = 'unittestgradeitemcategory7';
         $grade_item->itemtype = 'category';
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->needsupdate = true;
@@ -973,3 +971,13 @@ abstract class grade_base_testcase extends advanced_testcase {
         $this->grade_items[17] = $grade_item;
     }
 }
+
+/**
+ * Allow calling protected method.
+ */
+class test_grade_grade_flatten_dependencies_array extends grade_grade {
+    public static function test_flatten_dependencies_array(&$a,&$b) {
+        return self::flatten_dependencies_array($a, $b);
+    }
+}
+

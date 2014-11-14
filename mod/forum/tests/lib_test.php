@@ -24,7 +24,22 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/forum/lib.php');
+
 class mod_forum_lib_testcase extends advanced_testcase {
+
+    public function setUp() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+    }
+
+    public function tearDown() {
+        // We must clear the subscription caches. This has to be done both before each test, and after in case of other
+        // tests using these functions.
+        \mod_forum\subscriptions::reset_forum_cache();
+    }
 
     public function test_forum_trigger_content_uploaded_event() {
         $this->resetAfterTest();
@@ -597,10 +612,10 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_INITIALSUBSCRIBE); // Automatic Subscription.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         $this->assertEquals($usercount, count($result));
         foreach ($users as $user) {
-            $this->assertTrue(forum_is_subscribed($user->id, $forum));
+            $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
     }
 
@@ -625,10 +640,10 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE); // Forced subscription.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         $this->assertEquals($usercount, count($result));
         foreach ($users as $user) {
-            $this->assertTrue(forum_is_subscribed($user->id, $forum));
+            $this->assertTrue(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
     }
 
@@ -653,11 +668,11 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE); // Subscription optional.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         // No subscriptions by default.
         $this->assertEquals(0, count($result));
         foreach ($users as $user) {
-            $this->assertFalse(forum_is_subscribed($user->id, $forum));
+            $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
     }
 
@@ -682,11 +697,480 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE); // Subscription prevented.
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
-        $result = forum_subscribed_users($course, $forum);
+        $result = \mod_forum\subscriptions::fetch_subscribed_users($forum);
         // No subscriptions by default.
         $this->assertEquals(0, count($result));
         foreach ($users as $user) {
-            $this->assertFalse(forum_is_subscribed($user->id, $forum));
+            $this->assertFalse(\mod_forum\subscriptions::is_subscribed($user->id, $forum));
         }
+    }
+
+    /**
+     * Test that context fetching returns the appropriate context.
+     */
+    public function test_forum_get_context() {
+        global $DB, $PAGE;
+
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_CHOOSESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+        $forumcm = get_coursemodule_from_instance('forum', $forum->id);
+        $forumcontext = \context_module::instance($forumcm->id);
+
+        // First check that specifying the context results in the correct context being returned.
+        // Do this before we set up the page object and we should return from the coursemodule record.
+        // There should be no DB queries here because the context type was correct.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $forumcontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(0, $aftercount - $startcount);
+
+        // And a context which is not the correct type.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $coursecontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+
+        // Now do not specify a context at all.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+
+        // Set up the default page event to use the forum.
+        $PAGE = new moodle_page();
+        $PAGE->set_context($forumcontext);
+        $PAGE->set_cm($forumcm, $course, $forum);
+
+        // Now specify a context which is not a context_module.
+        // There should be no DB queries here because we use the PAGE.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $coursecontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(0, $aftercount - $startcount);
+
+        // Now do not specify a context at all.
+        // There should be no DB queries here because we use the PAGE.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(0, $aftercount - $startcount);
+
+        // Now specify the page context of the course instead..
+        $PAGE = new moodle_page();
+        $PAGE->set_context($coursecontext);
+
+        // Now specify a context which is not a context_module.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id, $coursecontext);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+
+        // Now do not specify a context at all.
+        // This tests will result in a DB query to fetch the course_module.
+        $startcount = $DB->perf_get_reads();
+        $result = forum_get_context($forum->id);
+        $aftercount = $DB->perf_get_reads();
+        $this->assertEquals($forumcontext, $result);
+        $this->assertEquals(1, $aftercount - $startcount);
+    }
+
+    /**
+     * Test getting the neighbour threads of a discussion.
+     */
+    public function test_forum_get_neighbours() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $context = context_module::instance($cm->id);
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $disc1 = $forumgen->create_discussion($record);
+        sleep(1);
+        $disc2 = $forumgen->create_discussion($record);
+        sleep(1);
+        $disc3 = $forumgen->create_discussion($record);
+        sleep(1);
+        $disc4 = $forumgen->create_discussion($record);
+        sleep(1);
+        $disc5 = $forumgen->create_discussion($record);
+
+        // Getting the neighbours.
+        $neighbours = forum_get_discussion_neighbours($cm, $disc1);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc2->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc2);
+        $this->assertEquals($disc1->id, $neighbours['prev']->id);
+        $this->assertEquals($disc3->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc3);
+        $this->assertEquals($disc2->id, $neighbours['prev']->id);
+        $this->assertEquals($disc4->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc4);
+        $this->assertEquals($disc3->id, $neighbours['prev']->id);
+        $this->assertEquals($disc5->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc5);
+        $this->assertEquals($disc4->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Post in some discussions. We manually update the discussion record because
+        // the data generator plays with timemodified in a way that would break this test.
+        sleep(1);
+        $disc1->timemodified = time();
+        $DB->update_record('forum_discussions', $disc1);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc5);
+        $this->assertEquals($disc4->id, $neighbours['prev']->id);
+        $this->assertEquals($disc1->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc2);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc3->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc1);
+        $this->assertEquals($disc5->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // After some discussions were created.
+        sleep(1);
+        $disc6 = $forumgen->create_discussion($record);
+        $neighbours = forum_get_discussion_neighbours($cm, $disc6);
+        $this->assertEquals($disc1->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        sleep(1);
+        $disc7 = $forumgen->create_discussion($record);
+        $neighbours = forum_get_discussion_neighbours($cm, $disc7);
+        $this->assertEquals($disc6->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Adding timed discussions.
+        $CFG->forum_enabletimedposts = true;
+        $now = time();
+        $past = $now - 60;
+        $future = $now + 60;
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $record->timestart = $past;
+        $record->timeend = $future;
+        sleep(1);
+        $disc8 = $forumgen->create_discussion($record);
+        sleep(1);
+        $record->timestart = $future;
+        $record->timeend = 0;
+        $disc9 = $forumgen->create_discussion($record);
+        sleep(1);
+        $record->timestart = 0;
+        $record->timeend = 0;
+        $disc10 = $forumgen->create_discussion($record);
+        sleep(1);
+        $record->timestart = 0;
+        $record->timeend = $past;
+        $disc11 = $forumgen->create_discussion($record);
+        sleep(1);
+        $record->timestart = $past;
+        $record->timeend = $future;
+        $disc12 = $forumgen->create_discussion($record);
+
+        // Admin user ignores the timed settings of discussions.
+        $this->setAdminUser();
+        $neighbours = forum_get_discussion_neighbours($cm, $disc8);
+        $this->assertEquals($disc7->id, $neighbours['prev']->id);
+        $this->assertEquals($disc9->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc9);
+        $this->assertEquals($disc8->id, $neighbours['prev']->id);
+        $this->assertEquals($disc10->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc10);
+        $this->assertEquals($disc9->id, $neighbours['prev']->id);
+        $this->assertEquals($disc11->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc11);
+        $this->assertEquals($disc10->id, $neighbours['prev']->id);
+        $this->assertEquals($disc12->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc12);
+        $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Normal user can see their own timed discussions.
+        $this->setUser($user);
+        $neighbours = forum_get_discussion_neighbours($cm, $disc8);
+        $this->assertEquals($disc7->id, $neighbours['prev']->id);
+        $this->assertEquals($disc9->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc9);
+        $this->assertEquals($disc8->id, $neighbours['prev']->id);
+        $this->assertEquals($disc10->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc10);
+        $this->assertEquals($disc9->id, $neighbours['prev']->id);
+        $this->assertEquals($disc11->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc11);
+        $this->assertEquals($disc10->id, $neighbours['prev']->id);
+        $this->assertEquals($disc12->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc12);
+        $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Normal user does not ignore timed settings.
+        $this->setUser($user2);
+        $neighbours = forum_get_discussion_neighbours($cm, $disc8);
+        $this->assertEquals($disc7->id, $neighbours['prev']->id);
+        $this->assertEquals($disc10->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc10);
+        $this->assertEquals($disc8->id, $neighbours['prev']->id);
+        $this->assertEquals($disc12->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc12);
+        $this->assertEquals($disc10->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Reset to normal mode.
+        $CFG->forum_enabletimedposts = false;
+        $this->setAdminUser();
+
+        // Two discussions with identical timemodified ignore each other.
+        sleep(1);
+        $now = time();
+        $DB->update_record('forum_discussions', (object) array('id' => $disc3->id, 'timemodified' => $now));
+        $DB->update_record('forum_discussions', (object) array('id' => $disc2->id, 'timemodified' => $now));
+        $disc2 = $DB->get_record('forum_discussions', array('id' => $disc2->id));
+        $disc3 = $DB->get_record('forum_discussions', array('id' => $disc3->id));
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc2);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc3);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+    }
+
+    /**
+     * Test getting the neighbour threads of a discussion.
+     */
+    public function test_forum_get_neighbours_with_groups() {
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+        $course = $this->getDataGenerator()->create_course();
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $group1->id));
+
+        $forum1 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'groupmode' => VISIBLEGROUPS));
+        $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id, 'groupmode' => SEPARATEGROUPS));
+        $cm1 = get_coursemodule_from_instance('forum', $forum1->id);
+        $cm2 = get_coursemodule_from_instance('forum', $forum2->id);
+        $context1 = context_module::instance($cm1->id);
+        $context2 = context_module::instance($cm2->id);
+
+        // Creating discussions in both forums.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $record->groupid = $group1->id;
+        $disc11 = $forumgen->create_discussion($record);
+        $record->forum = $forum2->id;
+        $disc21 = $forumgen->create_discussion($record);
+
+        sleep(1);
+        $record->userid = $user2->id;
+        $record->forum = $forum1->id;
+        $record->groupid = $group2->id;
+        $disc12 = $forumgen->create_discussion($record);
+        $record->forum = $forum2->id;
+        $disc22 = $forumgen->create_discussion($record);
+
+        sleep(1);
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $record->groupid = null;
+        $disc13 = $forumgen->create_discussion($record);
+        $record->forum = $forum2->id;
+        $disc23 = $forumgen->create_discussion($record);
+
+        sleep(1);
+        $record->userid = $user2->id;
+        $record->forum = $forum1->id;
+        $record->groupid = $group2->id;
+        $disc14 = $forumgen->create_discussion($record);
+        $record->forum = $forum2->id;
+        $disc24 = $forumgen->create_discussion($record);
+
+        sleep(1);
+        $record->userid = $user1->id;
+        $record->forum = $forum1->id;
+        $record->groupid = $group1->id;
+        $disc15 = $forumgen->create_discussion($record);
+        $record->forum = $forum2->id;
+        $disc25 = $forumgen->create_discussion($record);
+
+        // Admin user can see all groups.
+        $this->setAdminUser();
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc11);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc12->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc21);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc22->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc12);
+        $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEquals($disc13->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc22);
+        $this->assertEquals($disc21->id, $neighbours['prev']->id);
+        $this->assertEquals($disc23->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc13);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc14->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc23);
+        $this->assertEquals($disc22->id, $neighbours['prev']->id);
+        $this->assertEquals($disc24->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc14);
+        $this->assertEquals($disc13->id, $neighbours['prev']->id);
+        $this->assertEquals($disc15->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc24);
+        $this->assertEquals($disc23->id, $neighbours['prev']->id);
+        $this->assertEquals($disc25->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc15);
+        $this->assertEquals($disc14->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc25);
+        $this->assertEquals($disc24->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Admin user is only viewing group 1.
+        $_POST['group'] = $group1->id;
+        $this->assertEquals($group1->id, groups_get_activity_group($cm1, true));
+        $this->assertEquals($group1->id, groups_get_activity_group($cm2, true));
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc11);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc13->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc21);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc23->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc13);
+        $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEquals($disc15->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc23);
+        $this->assertEquals($disc21->id, $neighbours['prev']->id);
+        $this->assertEquals($disc25->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc15);
+        $this->assertEquals($disc13->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc25);
+        $this->assertEquals($disc23->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Normal user viewing non-grouped posts (this is only possible in visible groups).
+        $this->setUser($user1);
+        $_POST['group'] = 0;
+        $this->assertEquals(0, groups_get_activity_group($cm1, true));
+
+        // They can see anything in visible groups.
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc12);
+        $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEquals($disc13->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc13);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc14->id, $neighbours['next']->id);
+
+        // Normal user, orphan of groups, can only see non-grouped posts in separate groups.
+        $this->setUser($user2);
+        $_POST['group'] = 0;
+        $this->assertEquals(0, groups_get_activity_group($cm2, true));
+
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc23);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEmpty($neighbours['next']);
+
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc22);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc23->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc24);
+        $this->assertEquals($disc23->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Switching to viewing group 1.
+        $this->setUser($user1);
+        $_POST['group'] = $group1->id;
+        $this->assertEquals($group1->id, groups_get_activity_group($cm1, true));
+        $this->assertEquals($group1->id, groups_get_activity_group($cm2, true));
+
+        // They can see non-grouped or same group.
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc11);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc13->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc21);
+        $this->assertEmpty($neighbours['prev']);
+        $this->assertEquals($disc23->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc13);
+        $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEquals($disc15->id, $neighbours['next']->id);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc23);
+        $this->assertEquals($disc21->id, $neighbours['prev']->id);
+        $this->assertEquals($disc25->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm1, $disc15);
+        $this->assertEquals($disc13->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+        $neighbours = forum_get_discussion_neighbours($cm2, $disc25);
+        $this->assertEquals($disc23->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
+        // Querying the neighbours of a discussion passing the wrong CM.
+        $this->setExpectedException('coding_exception');
+        forum_get_discussion_neighbours($cm2, $disc11);
     }
 }

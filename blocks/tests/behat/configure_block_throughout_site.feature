@@ -4,7 +4,6 @@ Feature: Add and configure blocks throughout the site
   As a manager
   I need to set and configure blocks throughout the site
 
-  @javascript
   Scenario: Add and configure a block throughtout the site
     Given the following "courses" exist:
       | fullname | shortname | category |
@@ -18,8 +17,7 @@ Feature: Add and configure blocks throughout the site
     And I log in as "manager1"
     And I follow "Turn editing on"
     And I add the "Comments" block
-    And I open the "Comments" blocks action menu
-    And I follow "Configure Comments block"
+    And I configure the "Comments" block
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
@@ -27,8 +25,7 @@ Feature: Add and configure blocks throughout the site
     Then I should see "Comments" in the "Comments" "block"
     And I should see "Save comment" in the "Comments" "block"
     And I am on homepage
-    And I open the "Comments" blocks action menu
-    And I follow "Configure Comments block"
+    And I configure the "Comments" block
     And I set the following fields to these values:
       | Default weight | -10 (first) |
     And I press "Save changes"

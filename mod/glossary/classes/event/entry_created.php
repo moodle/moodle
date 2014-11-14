@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string concept: the concept of created entry.
+ *      - string concept: (optional) the concept of created entry.
  * }
  *
  * @package    mod_glossary
@@ -64,8 +64,8 @@ class entry_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' has created the glossary entry with the id '$this->objectid' for " .
-            "the glossary activity with the course module id '$this->contextinstanceid'.";
+        return "The user with id '$this->userid' has created the glossary entry with id '$this->objectid' for " .
+            "the glossary activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

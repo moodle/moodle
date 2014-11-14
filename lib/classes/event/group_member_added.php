@@ -48,8 +48,8 @@ class group_member_added extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added the user with the id '$this->relateduserid' to the group with " .
-            "the id '$this->objectid'.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to the group with " .
+            "id '$this->objectid'.";
     }
 
     /**
@@ -112,6 +112,10 @@ class group_member_added extends base {
      */
     protected function validate_data() {
         parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
 
         if (!isset($this->other['component'])) {
             throw new \coding_exception('The \'component\' value must be set in other, even if empty.');

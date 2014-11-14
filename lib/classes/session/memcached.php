@@ -125,9 +125,9 @@ class memcached extends handler {
     }
 
     /**
-     * Check for existing session with id $sid.
+     * Check the backend contains data for this session id.
      *
-     * Note: this verifies the storage backend only, not the actual session records.
+     * Note: this is intended to be called from manager::session_exists() only.
      *
      * @param string $sid
      * @return bool true if session found.
@@ -137,12 +137,22 @@ class memcached extends handler {
             return false;
         }
 
-        $memcached = new \Memcached();
-        $memcached->addServers($this->servers);
-        $value = $memcached->get($this->prefix.$sid);
-        $memcached->quit();
+        // Go through the list of all servers because
+        // we do not know where the session handler put the
+        // data.
 
-        return ($value !== false);
+        foreach ($this->servers as $server) {
+            list($host, $port) = $server;
+            $memcached = new \Memcached();
+            $memcached->addServer($host, $port);
+            $value = $memcached->get($this->prefix . $sid);
+            $memcached->quit();
+            if ($value !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -155,19 +165,32 @@ class memcached extends handler {
             return;
         }
 
-        $memcached = new \Memcached();
-        $memcached->addServers($this->servers);
+        // Go through the list of all servers because
+        // we do not know where the session handler put the
+        // data.
+
+        $memcacheds = array();
+        foreach ($this->servers as $server) {
+            list($host, $port) = $server;
+            $memcached = new \Memcached();
+            $memcached->addServer($host, $port);
+            $memcacheds[] = $memcached;
+        }
 
         // Note: this can be significantly improved by fetching keys from memcached,
         //       but we need to make sure we are not deleting somebody else's sessions.
 
         $rs = $DB->get_recordset('sessions', array(), 'id DESC', 'id, sid');
         foreach ($rs as $record) {
-            $memcached->delete($this->prefix.$record->sid);
+            foreach ($memcacheds as $memcached) {
+                $memcached->delete($this->prefix . $record->sid);
+            }
         }
         $rs->close();
 
-        $memcached->quit();
+        foreach ($memcacheds as $memcached) {
+            $memcached->quit();
+        }
     }
 
     /**
@@ -179,11 +202,17 @@ class memcached extends handler {
             return;
         }
 
-        $memcached = new \Memcached();
-        $memcached->addServers($this->servers);
-        $memcached->delete($this->prefix.$sid);
+        // Go through the list of all servers because
+        // we do not know where the session handler put the
+        // data.
 
-        $memcached->quit();
+        foreach ($this->servers as $server) {
+            list($host, $port) = $server;
+            $memcached = new \Memcached();
+            $memcached->addServer($host, $port);
+            $memcached->delete($this->prefix . $sid);
+            $memcached->quit();
+        }
     }
 
 }

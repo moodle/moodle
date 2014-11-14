@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - string: sessionid session id.
+ *      - string sessionid: (optional) session id.
  * }
  *
  * @package    core
@@ -47,7 +47,7 @@ class webservice_service_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The web service service $this->objectid has been created by user $this->userid.";
+        return "The user with id '$this->userid' created the web service with id '$this->objectid'.";
     }
 
     /**
@@ -91,5 +91,4 @@ class webservice_service_created extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'external_services';
     }
-
 }

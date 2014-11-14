@@ -71,7 +71,7 @@ class course_category_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The category with the id '$this->objectid' was deleted by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' deleted the course category with id '$this->objectid'.";
     }
 
     /**
@@ -86,7 +86,7 @@ class course_category_deleted extends base {
     /**
      * Returns the legacy event data.
      *
-     * @return coursecat the category that was deleted
+     * @return \coursecat the category that was deleted
      */
     protected function get_legacy_eventdata() {
         return $this->coursecat;
@@ -121,5 +121,19 @@ class course_category_deleted extends base {
      */
     protected function get_legacy_logdata() {
         return array(SITEID, 'category', 'delete', 'index.php', $this->other['name'] . '(ID ' . $this->objectid . ')');
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->other['name'])) {
+            throw new \coding_exception('The \'name\' value must be set in other.');
+        }
     }
 }

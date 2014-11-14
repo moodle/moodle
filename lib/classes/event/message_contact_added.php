@@ -69,7 +69,7 @@ class message_contact_added extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' added the user with the id '$this->relateduserid' to their contact list.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to their contact list.";
     }
 
     /**

@@ -159,6 +159,7 @@ Feature: Verify that all form fields values can be get and set
     And I add a "Lesson" to section "1"
     And I set the following fields to these values:
       | Name | Test lesson |
+      | Description | Test lesson description |
       | available[enabled] | 1 |
     And I set the field "deadline[enabled]" to "1"
     # Checkbox (AJAX) - Checking "the field matches value" before saving.

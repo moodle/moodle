@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @copyright 2008 Jamie Pratt me@jamiep.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class mod_quiz_reportlib_testcase extends basic_testcase {
+class mod_quiz_reportlib_testcase extends advanced_testcase {
     public function test_quiz_report_index_by_keys() {
         $datum = array();
         $object = new stdClass();
@@ -72,5 +72,97 @@ class mod_quiz_reportlib_testcase extends basic_testcase {
             quiz_report_scale_summarks_as_percentage(1.234567, $quiz, true));
         $this->assertEquals('-',
             quiz_report_scale_summarks_as_percentage('-', $quiz, true));
+    }
+
+    public function test_quiz_report_qm_filter_select_only_one_attempt_allowed() {
+        $quiz = new stdClass();
+        $quiz->attempts = 1;
+        $this->assertSame('', quiz_report_qm_filter_select($quiz));
+    }
+
+    public function test_quiz_report_qm_filter_select_average() {
+        $quiz = new stdClass();
+        $quiz->attempts = 10;
+        $quiz->grademethod = QUIZ_GRADEAVERAGE;
+        $this->assertSame('', quiz_report_qm_filter_select($quiz));
+    }
+
+    public function test_quiz_report_qm_filter_select_first_last_best() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $fakeattempt = new stdClass();
+        $fakeattempt->userid = 123;
+        $fakeattempt->quiz = 456;
+        $fakeattempt->layout = '1,2,0,3,4,0,5';
+        $fakeattempt->state = quiz_attempt::FINISHED;
+
+        // We intentionally insert these in a funny order, to test the SQL better.
+        // The test data is:
+        // id | quizid | user | attempt | sumgrades | state
+        // ---------------------------------------------------
+        // 4  | 456    | 123  | 1       | 30        | finished
+        // 2  | 456    | 123  | 2       | 50        | finished
+        // 1  | 456    | 123  | 3       | 50        | finished
+        // 3  | 456    | 123  | 4       | null      | inprogress
+        // 5  | 456    | 1    | 1       | 100       | finished
+        // layout is only given because it has a not-null constraint.
+        // uniqueid values are meaningless, but that column has a unique constraint.
+
+        $fakeattempt->attempt = 3;
+        $fakeattempt->sumgrades = 50;
+        $fakeattempt->uniqueid = 13;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $fakeattempt->attempt = 2;
+        $fakeattempt->sumgrades = 50;
+        $fakeattempt->uniqueid = 26;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $fakeattempt->attempt = 4;
+        $fakeattempt->sumgrades = null;
+        $fakeattempt->uniqueid = 39;
+        $fakeattempt->state = quiz_attempt::IN_PROGRESS;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $fakeattempt->attempt = 1;
+        $fakeattempt->sumgrades = 30;
+        $fakeattempt->uniqueid = 52;
+        $fakeattempt->state = quiz_attempt::FINISHED;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $fakeattempt->attempt = 1;
+        $fakeattempt->userid = 1;
+        $fakeattempt->sumgrades = 100;
+        $fakeattempt->uniqueid = 65;
+        $DB->insert_record('quiz_attempts', $fakeattempt);
+
+        $quiz = new stdClass();
+        $quiz->attempts = 10;
+
+        $quiz->grademethod = QUIZ_ATTEMPTFIRST;
+        $firstattempt = $DB->get_records_sql("
+                SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
+                        . quiz_report_qm_filter_select($quiz), array(123, 456));
+        $this->assertEquals(1, count($firstattempt));
+        $firstattempt = reset($firstattempt);
+        $this->assertEquals(1, $firstattempt->attempt);
+
+        $quiz->grademethod = QUIZ_ATTEMPTLAST;
+        $lastattempt = $DB->get_records_sql("
+                SELECT * FROM {quiz_attempts} quiza WHERE userid = ? AND quiz = ? AND "
+                . quiz_report_qm_filter_select($quiz), array(123, 456));
+        $this->assertEquals(1, count($lastattempt));
+        $lastattempt = reset($lastattempt);
+        $this->assertEquals(3, $lastattempt->attempt);
+
+        $quiz->attempts = 0;
+        $quiz->grademethod = QUIZ_GRADEHIGHEST;
+        $bestattempt = $DB->get_records_sql("
+                SELECT * FROM {quiz_attempts} qa_alias WHERE userid = ? AND quiz = ? AND "
+                . quiz_report_qm_filter_select($quiz, 'qa_alias'), array(123, 456));
+        $this->assertEquals(1, count($bestattempt));
+        $bestattempt = reset($bestattempt);
+        $this->assertEquals(2, $bestattempt->attempt);
     }
 }

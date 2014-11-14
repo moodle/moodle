@@ -168,4 +168,51 @@ class core_html_writer_testcase extends basic_testcase {
     public function test_end_span() {
         $this->assertSame('</span>', html_writer::end_span());
     }
+
+    public function test_table() {
+        $row = new html_table_row();
+
+        // The attribute will get overwritten by the ID.
+        $row->id = 'Bob';
+        $row->attributes['id'] = 'will get overwritten';
+
+        // The data-name will be present in the output.
+        $row->attributes['data-name'] = 'Fred';
+        $row->class = 'this is a table row';
+
+        $cell = new html_table_cell();
+
+        // The attribute will get overwritten by the ID.
+        $cell->id = 'Jeremy';
+        $cell->attributes['id'] = 'will get overwritten';
+
+        // The data-name will be present in the output.
+        $cell->attributes['data-name'] = 'John';
+        $cell->class = 'this is a table cell';
+
+        $row->cells[] = $cell;
+
+        $table = new html_table();
+        // The attribute will get overwritten by the ID.
+        $table->id = 'Jeffrey';
+        $table->attributes['id'] = 'will get overwritten';
+
+        // The data-name will be present in the output.
+        $table->attributes['data-name'] = 'Colin';
+        // The attribute will get overwritten by the ID above.
+        $table->data[] = $row;
+
+        $output = html_writer::table($table);
+
+        $expected = <<<EOF
+<table class="generaltable" id="Jeffrey" data-name="Colin">
+<tbody><tr class="r0 lastrow" id="Bob" data-name="Fred">
+<td class="cell c0 lastcol" id="Jeremy" data-name="John" style=""></td>
+</tr>
+</tbody>
+</table>
+
+EOF;
+        $this->assertSame($expected, $output);
+    }
 }

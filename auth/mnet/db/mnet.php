@@ -17,7 +17,7 @@
 /**
  * This file contains the mnet services for the mnet authentication plugin
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package auth_mnet
  * @copyright 2010 Penny Leach
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -84,11 +84,11 @@ class user_password_updated extends base {
     public function get_description() {
         if ($this->userid == $this->relateduserid) {
             if ($this->other['forgottenreset']) {
-                return "User $this->userid reset their password";
+                return "The user with id '$this->userid' reset their password.";
             }
-            return "User $this->userid changed their password";
+            return "The user with id '$this->userid' changed their password.";
         } else {
-            return "User $this->userid changed password of user $this->relateduserid";
+            return "The user with id '$this->userid' changed the password of the user with id '$this->relateduserid'.";
         }
     }
 
@@ -123,11 +123,11 @@ class user_password_updated extends base {
         parent::validate_data();
 
         if (!$this->relateduserid) {
-            throw new \coding_exception('relateduserid needs to be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
 
         if (!isset($this->other['forgottenreset'])) {
-            throw new \coding_exception('forgottenreset needs to be set in $other.');
+            throw new \coding_exception('The \'forgottenreset\' value must be set in other.');
         }
     }
 }

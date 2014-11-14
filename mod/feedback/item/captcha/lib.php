@@ -237,7 +237,7 @@ class feedback_item_captcha extends feedback_item_base {
         </div>';
 
         // Check if we are using SSL.
-        if (strpos($CFG->wwwroot, 'https://') === 0) {
+        if (is_https()) {
             $ssl = true;
         } else {
             $ssl = false;

@@ -174,11 +174,25 @@ if ($action) {
 
 
 $renderer = $PAGE->get_renderer('core_enrol');
-$userdetails = array (
-    'picture' => false,
-    'firstname' => get_string('firstname'),
-    'lastname' => get_string('lastname'),
-);
+$userdetails = array('picture' => false);
+// Get all the user names in a reasonable default order.
+$allusernames = get_all_user_name_fields(false, null, null, null, true);
+// Initialise the variable for the user's names in the table header.
+$usernameheader = null;
+// Get the alternative full name format for users with the viewfullnames capability.
+$fullusernames = $CFG->alternativefullnameformat;
+// If fullusernames is empty or accidentally set to language then fall back on the $allusernames set up.
+if ($fullusernames == 'language' || empty($fullusernames)) {
+    $usernameheader = $allusernames;
+} else {
+    // If everything is as expected then put them in the order specified by the alternative full name format setting.
+    $usernameheader = order_in_string($allusernames, $fullusernames);
+}
+
+// Loop through each name and return the language string.
+foreach ($usernameheader as $key => $username) {
+    $userdetails[$username] = get_string($username);
+}
 $extrafields = get_extra_user_fields($context);
 foreach ($extrafields as $field) {
     $userdetails[$field] = get_user_field_name($field);
@@ -186,7 +200,7 @@ foreach ($extrafields as $field) {
 
 $fields = array(
     'userdetails' => $userdetails,
-    'lastseen' => get_string('lastaccess'),
+    'lastcourseaccess' => get_string('lastcourseaccess'),
     'role' => get_string('roles', 'role'),
     'group' => get_string('groups', 'group'),
     'enrol' => get_string('enrolmentinstances', 'enrol')
@@ -196,7 +210,7 @@ $fields = array(
 if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
     $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     if (isset($hiddenfields['lastaccess'])) {
-        unset($fields['lastseen']);
+        unset($fields['lastcourseaccess']);
     }
     if (isset($hiddenfields['groups'])) {
         unset($fields['group']);

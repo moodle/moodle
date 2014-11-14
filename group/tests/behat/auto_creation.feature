@@ -84,3 +84,58 @@ Feature: Automatic creation of groups
     And I should see "Group B" in the ".generaltable" "css_element"
     And I should see "5" in the "Group A" "table_row"
     And I should see "5" in the "Group B" "table_row"
+
+  @javascript
+  Scenario: Split automatically the course users in groups that are not in groups
+    Given I press "Cancel"
+    And I press "Create group"
+    And I set the following fields to these values:
+      | Group name | Group 1 |
+    And I press "Save changes"
+    And I press "Create group"
+    And I set the following fields to these values:
+      | Group name | Group 2 |
+    And I press "Save changes"
+    When I add "Student 0" user to "Group 1" group members
+    And I add "Student 1" user to "Group 1" group members
+    And I add "Student 2" user to "Group 2" group members
+    And I add "Student 3" user to "Group 2" group members
+    And I press "Auto-create groups"
+    And I expand all fieldsets
+    And I set the field "Auto create based on" to "Number of groups"
+    And I set the field "Group/member count" to "2"
+    And I set the field "Grouping of auto-created groups" to "No grouping"
+    And I set the field "Ignore users in groups" to "1"
+    And I press "Submit"
+    And the "groups" select box should contain "Group A (3)"
+    And the "groups" select box should contain "Group B (3)"
+
+  @javascript
+  Scenario: Split users into groups based on existing groups or groupings
+    Given I set the following fields to these values:
+      | Naming scheme | Group @ |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | Grouping of auto-created groups | No grouping |
+    And I press "Submit"
+    And I press "Auto-create groups"
+    And I set the following fields to these values:
+      | Naming scheme | Test @ |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | groupid | Group A |
+      | Grouping of auto-created groups | New grouping |
+      | Grouping name | Sub Grouping |
+    And I press "Submit"
+    And the "groups" select box should contain "Test A (3)"
+    And the "groups" select box should contain "Test B (2)"
+    And I press "Auto-create groups"
+    And I set the following fields to these values:
+      | Naming scheme | Test # |
+      | Auto create based on | Number of groups |
+      | Group/member count | 2 |
+      | Select members from grouping | Sub Grouping |
+      | Grouping of auto-created groups | No grouping |
+    And I press "Submit"
+    And the "groups" select box should contain "Test 1 (3)"
+    And the "groups" select box should contain "Test 2 (2)"

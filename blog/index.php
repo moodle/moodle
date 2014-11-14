@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * file index.php
@@ -34,11 +48,7 @@ foreach ($url_params as $var => $val) {
 }
 $PAGE->set_url('/blog/index.php', $url_params);
 
-if (empty($CFG->enableblogs)) {
-    print_error('blogdisable', 'blog');
-}
-
-//correct tagid if a text tag is provided as a param
+// Correct tagid if a text tag is provided as a param.
 if (!empty($tag)) {
     if ($tagrec = $DB->get_record('tag', array('name' => $tag))) {
         $tagid = $tagrec->id;
@@ -47,41 +57,45 @@ if (!empty($tag)) {
     }
 }
 
-// add courseid if modid or groupid is specified: This is used for navigation and title
-if (!empty($modid) && empty($courseid)) {
-    $courseid = $DB->get_field('course_modules', 'course', array('id'=>$modid));
-}
-
-if (!empty($groupid) && empty($courseid)) {
-    $courseid = $DB->get_field('groups', 'courseid', array('id'=>$groupid));
-}
-
 $sitecontext = context_system::instance();
 // Blogs are always in system context.
 $PAGE->set_context($sitecontext);
 
-// check basic permissions
+// Check basic permissions.
 if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
-    // everybody can see anything - no login required unless site is locked down using forcelogin
+    // Everybody can see anything - no login required unless site is locked down using forcelogin.
     if ($CFG->forcelogin) {
         require_login();
     }
 
 } else if ($CFG->bloglevel == BLOG_SITE_LEVEL) {
-    // users must log in and can not be guests
+    // Users must log in and can not be guests.
     require_login();
     if (isguestuser()) {
-        // they must have entered the url manually...
+        // They must have entered the url manually.
         print_error('blogdisable', 'blog');
     }
 
 } else if ($CFG->bloglevel == BLOG_USER_LEVEL) {
-    // users can see own blogs only! with the exception of ppl with special cap
+    // Users can see own blogs only! with the exception of people with special cap.
     require_login();
 
 } else {
-    // weird!
+    // Weird!
     print_error('blogdisable', 'blog');
+}
+
+if (empty($CFG->enableblogs)) {
+    print_error('blogdisable', 'blog');
+}
+
+// Add courseid if modid or groupid is specified: This is used for navigation and title.
+if (!empty($modid) && empty($courseid)) {
+    $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid));
+}
+
+if (!empty($groupid) && empty($courseid)) {
+    $courseid = $DB->get_field('groups', 'courseid', array('id' => $groupid));
 }
 
 
@@ -206,13 +220,10 @@ if ($CFG->enablerssfeeds) {
     }
     $rsstitle = $blogheaders['heading'];
 
-    //check we haven't started output by outputting an error message
+    // Check we haven't started output by outputting an error message.
     if ($PAGE->state == moodle_page::STATE_BEFORE_HEADER) {
         blog_rss_add_http_header($rsscontext, $rsstitle, $filtertype, $thingid, $tagid);
     }
-
-    //this works but there isn't a great place to put the link
-    //blog_rss_print_link($rsscontext, $filtertype, $thingid, $tagid);
 }
 
 echo $OUTPUT->header();

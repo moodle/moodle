@@ -48,11 +48,16 @@
 .dir-rtl .forumpost .row .content-mask,
 .dir-rtl .forumpost .row .options {margin-right:43px;margin-left:0;}
 .dir-rtl .forumpost .row .left {float:right;}
-.dir-rtl.path-mod-forum .indent {margin-right:30px;margin-left:0;}
+.dir-rtl.path-mod-forum .indent {
+    margin-right: 3%;
+    margin-left: 0;
+}
 
 .path-mod-forum .forumolddiscuss,
 #page-mod-forum-search .c0 {text-align:right;}
-.path-mod-forum .indent {margin-left: 30px;}
+.path-mod-forum .indent {
+    margin-left: 3%;
+}
 .path-mod-forum .forumheaderlist {width: 100%;border-width:1px;border-style:solid;border-collapse:separate;margin-top: 10px;}
 .path-mod-forum .forumheaderlist td {border-width:1px 0px 0px 1px;border-style:solid;}
 .path-mod-forum .forumheaderlist th.header.replies .iconsmall { margin: 0 .3em;}
@@ -61,6 +66,9 @@
 .path-mod-forum .forumheaderlist .discussion .lastpost {white-space: nowrap;text-align: right;}
 .path-mod-forum .forumheaderlist .replies,
 .path-mod-forum .forumheaderlist .discussion .author {white-space: nowrap;}
+.path-mod-forum .forumheaderlist thead .discussionsubscription {
+    text-align: center;
+}
 
 /** Styles for subscribers.php */
 #page-mod-forum-subscribers .subscriberdiv,
@@ -108,4 +116,52 @@ span.unread {
 }
 .forumpost.unread .row.header {
     border-bottom: 1px solid #DDD;
+}
+
+/* Discussion navigation */
+.path-mod-forum .discussion-nav {
+    margin: .5em 0;
+}
+.path-mod-forum .discussion-nav ul {
+    margin: 0;
+    list-style: none;
+}
+.dir-rtl.path-mod-forum .discussion-nav .next-discussion:after,
+.path-mod-forum .discussion-nav .prev-discussion:before {
+    content: ' ◄ ';
+}
+.dir-rtl.path-mod-forum .discussion-nav .prev-discussion:before,
+.path-mod-forum .discussion-nav .next-discussion:after {
+    content: ' ► ';
+}
+.dir-rtl.path-mod-forum .discussion-nav .prev-discussion,
+.path-mod-forum .discussion-nav .next-discussion {
+    float: right;
+}
+.dir-rtl.path-mod-forum .discussion-nav .next-discussion,
+.path-mod-forum .discussion-nav .prev-discussion {
+    float: left;
+}
+
+.path-mod-forum .preload-subscribe {
+    background: url([[pix:mod_forum|t/subscribed]]) no-repeat -9999px -9999px;
+}
+
+.path-mod-forum .preload-unsubscribe {
+    background: url([[pix:mod_forum|t/unsubscribed]]) no-repeat -9999px -9999px;
+}
+
+.path-mod-forum .discussionsubscription {
+    margin-top: -10px;
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.path-mod-forum .discussionsubscription > a > img {
+    width: 12px;
+    padding: 0 4px;
+}
+
+.dir-rtl .path-mod-forum .discussionsubscription {
+    text-align: left;
 }

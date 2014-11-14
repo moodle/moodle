@@ -1,61 +1,62 @@
-.path-grade-report-user .user-grade .datesubmitted {font-size: 0.7em;}
-.path-grade-report-user .user-grade .courseitem,
-.path-grade-report-user .user-grade .categoryitem {font-weight: bold;}
-.path-grade-report-user .user-grade td.cell {padding-left: 5px;padding-right: 5px;}
-#graded_users_selector {float: right;text-align: right;}
+.path-grade-report-user #graded_users_selector {
+    float: right;
+}
+.path-grade-report-user #graded_users_selector .singleselect label {
+    display: inline-block;
+}
 
-/* this must be last if we want to override other category and course item colors */
-.path-grade-report-user .user-grade .hidden,
-.path-grade-report-user .user-grade .hidden a {color:#aaaaaa;}
-.user-grade {border: 1px solid black;margin: auto;padding: 0.25em;font-size: 0.8em;}
-.user-grade td {margin: 1px;padding: 0.25em;min-width: 2em;vertical-align: top;}
-.user-grade thead {border-bottom: 3px double black;}
-.user-grade thead th {padding: 0.25em 0.75em;}
-.user-grade tbody th {text-align:left;}
-.user-grade td.oddd1,
-.user-grade th.oddd1 {background-color: #f3dfd0;}
-.user-grade td.oddd2,
-.user-grade th.oddd2 {background-color: #d0dbf3;}
-.user-grade td.oddd3,
-.user-grade th.oddd3 {background-color: #d0f3d6;}
-.user-grade td.oddd4,
-.user-grade th.oddd4 {background-color: #f0f0aa;}
-.user-grade td.evend2,
-.user-grade th.evend2 {background-color: #b0bbd3;}
-.user-grade td.evend3,
-.user-grade th.evend3 {background-color: #b0dfb6;}
-.user-grade td.evend4,
-.user-grade th.evend4 {background-color: #cac8be;}
-.user-grade td.b1t,
-.user-grade td.b2t,
-.user-grade th.b1t,
-.user-grade th.b2t {border-top: 2px solid black;}
-.user-grade td.b1r,
-.user-grade td.b2r,
-.user-grade th.b1r,
-.user-grade th.b2r {border-right: 2px solid black;}
-.user-grade td.b1b,
-.user-grade td.b2b,
-.user-grade th.b1b,
-.user-grade th.b2b {border-bottom: 2px solid black;}
-.user-grade td.b1l,
-.user-grade td.b2l,
-.user-grade th.b1l,
-.user-grade th.b2l {border-left: 2px solid black;}
-.user-grade td.baggt,
-.user-grade td.baggb,
-.user-grade th.baggt,
-.user-grade th.baggb {font-style: italic;font-weight: bold;}
-.user-grade td.baggt,
-.user-grade th.baggt {border-top: 3px double black;}
-.user-grade td.baggb,
-.user-grade th.baggb {border-bottom: 3px double black;}
-.user-grade td.item,
-.user-grade th.item {border-left: 1px solid gray;border-right: 1px solid gray}
-.user-grade td.excluded {background-color: #666;}
-.user-grade td.hidden {color: #aaa;}
-.user-grade td.feedbacktext {max-width:600px;padding:2px 2px;}
-.pagelayout-report .user-grade .feedbacktext .no-overflow {overflow:auto;padding:0.25em;}
+.path-grade-report-user .user-grade {
+    width: 100%;
+    border: 1px solid;
+}
+.path-grade-report-user .user-grade thead th {
+    vertical-align: bottom;
+}
+.path-grade-report-user .user-grade th {
+    text-align:left;
+}
+.path-grade-report-user .user-grade td {
+    min-width: 4.5em;
+    vertical-align: top;
+}
+.path-grade-report-user .user-grade .b1l {
+    padding: 0;
+    width:24px;
+    min-width: 24px;
+}
+.path-grade-report-user .user-grade tbody .column-itemname {
+    padding-left: 0;
+    padding-right: 8px
+}
+.path-grade-report-user .user-grade .column-itemname.item,
+.path-grade-report-user .user-grade .gradeitemdescription {
+    font-weight: normal;
+    padding-left: 24px;
+}
+.path-grade-report-user .user-grade .column-itemname.baggt,
+.path-grade-report-user .user-grade .column-itemname.baggb {
+    padding-left: 24px;
+}
+.path-grade-report-user .user-grade .baggt,
+.path-grade-report-user .user-grade .baggb {
+    font-weight: bold;
+}
 
-table.user-grade td.feedbacktext {text-align:left;width: 40%;font-size: 0.8em;white-space:normal;}
-table.user-grade td.itemcenter {text-align:center;}
+.dir-rtl.path-grade-report-user #graded_users_selector {
+    float: left;
+}
+.dir-rtl.path-grade-report-user .user-grade th {
+    text-align:right;
+}
+.dir-rtl.path-grade-report-user .user-grade tbody .column-itemname {
+    padding-right: 0;
+    padding-left: 8px;
+}
+.dir-rtl.path-grade-report-user .user-grade .column-itemname.item,
+.dir-rtl.path-grade-report-user .user-grade .gradeitemdescription {
+    padding-right: 24px;
+}
+.dir-rtl.path-grade-report-user .user-grade .column-itemname.baggt,
+.dir-rtl.path-grade-report-user .user-grade .column-itemname.baggb {
+    padding-right: 24px;
+}

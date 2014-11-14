@@ -90,6 +90,28 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $testclass->set_disabled(true);
         $nexttime = $testclass->get_next_scheduled_time();
         $this->assertEquals($nexttenminutes, $nexttime, 'Next scheduled time is in 10 minutes.');
+
+        // Test hourly job executed on Sundays only.
+        $testclass = new \core\task\scheduled_test_task();
+        $testclass->set_minute('0');
+        $testclass->set_day_of_week('7');
+
+        $nexttime = $testclass->get_next_scheduled_time();
+
+        $this->assertEquals(7, date('N', $nexttime));
+        $this->assertEquals(0, date('i', $nexttime));
+
+        // Test monthly job
+        $testclass = new \core\task\scheduled_test_task();
+        $testclass->set_minute('32');
+        $testclass->set_hour('0');
+        $testclass->set_day('1');
+
+        $nexttime = $testclass->get_next_scheduled_time();
+
+        $this->assertEquals(32, date('i', $nexttime));
+        $this->assertEquals(0, date('G', $nexttime));
+        $this->assertEquals(1, date('j', $nexttime));
     }
 
     public function test_timezones() {
@@ -133,6 +155,45 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $CFG->timezone = $currenttimezonecfg;
         date_default_timezone_set($currenttimezonephp);
+    }
+
+    public function test_reset_scheduled_tasks_for_component() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        // Remember the defaults.
+        $defaulttasks = \core\task\manager::load_scheduled_tasks_for_component('moodle');
+        $initcount = count($defaulttasks);
+        // Customise a task.
+        $firsttask = reset($defaulttasks);
+        $firsttask->set_minute('1');
+        $firsttask->set_hour('2');
+        $firsttask->set_month('3');
+        $firsttask->set_day_of_week('4');
+        $firsttask->set_day('5');
+        $firsttask->set_customised('1');
+        \core\task\manager::configure_scheduled_task($firsttask);
+        $firsttaskrecord = \core\task\manager::record_from_scheduled_task($firsttask);
+        // We reset this field, because we do not want to compare it.
+        $firsttaskrecord->nextruntime = '0';
+
+        // Now call reset on all the tasks.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        // Load the tasks again.
+        $defaulttasks = \core\task\manager::load_scheduled_tasks_for_component('moodle');
+        $finalcount = count($defaulttasks);
+        // Compare the first task.
+        $newfirsttask = reset($defaulttasks);
+        $newfirsttaskrecord = \core\task\manager::record_from_scheduled_task($newfirsttask);
+        // We reset this field, because we do not want to compare it.
+        $newfirsttaskrecord->nextruntime = '0';
+
+        // Assert a customised task was not altered by reset.
+        $this->assertEquals($firsttaskrecord, $newfirsttaskrecord);
+
+        // Assert we have the same number of tasks.
+        $this->assertEquals($initcount, $finalcount);
     }
 
     public function test_get_next_scheduled_task() {
@@ -191,5 +252,64 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Should not get any task.
         $task = \core\task\manager::get_next_scheduled_task($now);
         $this->assertNull($task);
+    }
+
+    public function test_get_broken_scheduled_task() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        // Delete all existing scheduled tasks.
+        $DB->delete_records('task_scheduled');
+        // Add a scheduled task.
+
+        // A broken task that runs all the time.
+        $record = new stdClass();
+        $record->blocking = true;
+        $record->minute = '*';
+        $record->hour = '*';
+        $record->dayofweek = '*';
+        $record->day = '*';
+        $record->month = '*';
+        $record->component = 'test_scheduled_task';
+        $record->classname = '\core\task\scheduled_test_task_broken';
+
+        $DB->insert_record('task_scheduled', $record);
+
+        $now = time();
+        // Should not get any task.
+        $task = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertDebuggingCalled();
+        $this->assertNull($task);
+    }
+
+    /**
+     * Tests the use of 'R' syntax in time fields of tasks to get
+     * tasks be configured with a non-uniform time.
+     */
+    public function test_random_time_specification() {
+
+        // Testing non-deterministic things in a unit test is not really
+        // wise, so we just test the values have changed within allowed bounds.
+        $testclass = new \core\task\scheduled_test_task();
+
+        // The test task defaults to '*'.
+        $this->assertInternalType('string', $testclass->get_minute());
+        $this->assertInternalType('string', $testclass->get_hour());
+
+        // Set a random value.
+        $testclass->set_minute('R');
+        $testclass->set_hour('R');
+
+        // Verify the minute has changed within allowed bounds.
+        $minute = $testclass->get_minute();
+        $this->assertInternalType('int', $minute);
+        $this->assertGreaterThanOrEqual(0, $minute);
+        $this->assertLessThanOrEqual(59, $minute);
+
+        // Verify the hour has changed within allowed bounds.
+        $hour = $testclass->get_hour();
+        $this->assertInternalType('int', $hour);
+        $this->assertGreaterThanOrEqual(0, $hour);
+        $this->assertLessThanOrEqual(23, $hour);
     }
 }

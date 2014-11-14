@@ -65,8 +65,8 @@ class user_enrolment_created extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' was enrolled in the course with the id '$this->courseid' by the " .
-            "user with the id '$this->userid'.";
+        return "The user with id '$this->userid' enrolled the user with id '$this->relateduserid' using the enrolment method " .
+            "'{$this->other['enrol']}' in the course with id '$this->courseid'.";
     }
 
     /**
@@ -122,7 +122,7 @@ class user_enrolment_created extends base {
         }
 
         if (!isset($this->other['enrol'])) {
-            throw new \coding_exception('The \'enrol\' value must be set in $other.');
+            throw new \coding_exception('The \'enrol\' value must be set in other.');
         }
     }
 }

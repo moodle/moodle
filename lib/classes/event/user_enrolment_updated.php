@@ -65,8 +65,8 @@ class user_enrolment_updated extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' updated the enrolment for the user with the id '$this->relateduserid' in " .
-            "the course with the id '$this->courseid'.";
+        return "The user with id '$this->userid' updated the enrolment for the user with id '$this->relateduserid' using the " .
+            "enrolment method '{$this->other['enrol']}' in the course with id '$this->courseid'.";
     }
 
     /**
@@ -108,10 +108,10 @@ class user_enrolment_updated extends base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['enrol'])) {
-            throw new \coding_exception('Enrolment plugin name must be set in $other.');
+            throw new \coding_exception('The \'enrol\' value must be set in other.');
         }
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('Related user id must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

@@ -58,7 +58,7 @@ class workshop {
     const EXAMPLES_BEFORE_SUBMISSION    = 1;
     const EXAMPLES_BEFORE_ASSESSMENT    = 2;
 
-    /** @var stdclass course module record */
+    /** @var cm_info course module record */
     public $cm;
 
     /** @var stdclass course record */
@@ -178,22 +178,33 @@ class workshop {
     /**
      * Initializes the workshop API instance using the data from DB
      *
-     * Makes deep copy of all passed records properties. Replaces integer $course attribute
-     * with a full database record (course should not be stored in instances table anyway).
+     * Makes deep copy of all passed records properties.
+     *
+     * For unit testing only, $cm and $course may be set to null. This is so that
+     * you can test without having any real database objects if you like. Not all
+     * functions will work in this situation.
      *
      * @param stdClass $dbrecord Workshop instance data from {workshop} table
-     * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
-     * @param stdClass $course   Course record from {course} table
-     * @param stdClass $context  The context of the workshop instance
+     * @param stdClass|cm_info $cm Course module record
+     * @param stdClass $course Course record from {course} table
+     * @param stdClass $context The context of the workshop instance
      */
-    public function __construct(stdclass $dbrecord, stdclass $cm, stdclass $course, stdclass $context=null) {
+    public function __construct(stdclass $dbrecord, $cm, $course, stdclass $context=null) {
         foreach ($dbrecord as $field => $value) {
             if (property_exists('workshop', $field)) {
                 $this->{$field} = $value;
             }
         }
-        $this->cm           = $cm;
-        $this->course       = $course;
+        if (is_null($cm) || is_null($course)) {
+            throw new coding_exception('Must specify $cm and $course');
+        }
+        $this->course = $course;
+        if ($cm instanceof cm_info) {
+            $this->cm = $cm;
+        } else {
+            $modinfo = get_fast_modinfo($course);
+            $this->cm = $modinfo->get_cm($cm->id);
+        }
         if (is_null($context)) {
             $this->context = context_module::instance($this->cm->id);
         } else {
@@ -595,9 +606,9 @@ class workshop {
     /**
      * Groups the given users by the group membership
      *
-     * This takes the module grouping settings into account. If "Available for group members only"
-     * is set, returns only groups withing the course module grouping. Always returns group [0] with
-     * all the given users.
+     * This takes the module grouping settings into account. If a grouping is
+     * set, returns only groups withing the course module grouping. Always
+     * returns group [0] with all the given users.
      *
      * @param array $users array[userid] => stdclass{->id ->lastname ->firstname}
      * @return array array[groupid][userid] => stdclass{->id ->lastname ->firstname}
@@ -610,10 +621,10 @@ class workshop {
         if (empty($users)) {
             return $grouped;
         }
-        if (!empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
-            // Available for group members only - the workshop is available only
-            // to users assigned to groups within the selected grouping, or to
-            // any group if no grouping is selected.
+        if ($this->cm->groupingid) {
+            // Group workshop set to specified grouping - only consider groups
+            // within this grouping, and leave out users who aren't members of
+            // this grouping.
             $groupingid = $this->cm->groupingid;
             // All users that are members of at least one group will be
             // added into a virtual group id 0
@@ -1046,8 +1057,14 @@ class workshop {
      */
     public function delete_submission(stdclass $submission) {
         global $DB;
+
         $assessments = $DB->get_records('workshop_assessments', array('submissionid' => $submission->id), '', 'id');
         $this->delete_assessment(array_keys($assessments));
+
+        $fs = get_file_storage();
+        $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_content', $submission->id);
+        $fs->delete_area_files($this->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
+
         $DB->delete_records('workshop_submissions', array('id' => $submission->id));
     }
 
@@ -1251,21 +1268,39 @@ class workshop {
     }
 
     /**
-     * Delete assessment record or records
+     * Delete assessment record or records.
      *
-     * @param mixed $id int|array assessment id or array of assessments ids
-     * @return bool false if $id not a valid parameter, true otherwise
+     * Removes associated records from the workshop_grades table, too.
+     *
+     * @param int|array $id assessment id or array of assessments ids
+     * @todo Give grading strategy plugins a chance to clean up their data, too.
+     * @return bool true
      */
     public function delete_assessment($id) {
         global $DB;
 
-        // todo remove all given grades from workshop_grades;
+        if (empty($id)) {
+            return true;
+        }
+
+        $fs = get_file_storage();
 
         if (is_array($id)) {
-            return $DB->delete_records_list('workshop_assessments', 'id', $id);
+            $DB->delete_records_list('workshop_grades', 'assessmentid', $id);
+            foreach ($id as $itemid) {
+                $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_content', $itemid);
+                $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment', $itemid);
+            }
+            $DB->delete_records_list('workshop_assessments', 'id', $id);
+
         } else {
-            return $DB->delete_records('workshop_assessments', array('id' => $id));
+            $DB->delete_records('workshop_grades', array('assessmentid' => $id));
+            $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_content', $id);
+            $fs->delete_area_files($this->context->id, 'mod_workshop', 'overallfeedback_attachment', $id);
+            $DB->delete_records('workshop_assessments', array('id' => $id));
         }
+
+        return true;
     }
 
     /**
@@ -2354,6 +2389,69 @@ class workshop {
         );
     }
 
+    /**
+     * Performs the reset of this workshop instance.
+     *
+     * @param stdClass $data The actual course reset settings.
+     * @return array List of results, each being array[(string)component, (string)item, (string)error]
+     */
+    public function reset_userdata(stdClass $data) {
+
+        $componentstr = get_string('pluginname', 'workshop').': '.format_string($this->name);
+        $status = array();
+
+        if (!empty($data->reset_workshop_assessments) or !empty($data->reset_workshop_submissions)) {
+            // Reset all data related to assessments, including assessments of
+            // example submissions.
+            $result = $this->reset_userdata_assessments($data);
+            if ($result === true) {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetassessments', 'mod_workshop'),
+                    'error' => false,
+                );
+            } else {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetassessments', 'mod_workshop'),
+                    'error' => $result,
+                );
+            }
+        }
+
+        if (!empty($data->reset_workshop_submissions)) {
+            // Reset all remaining data related to submissions.
+            $result = $this->reset_userdata_submissions($data);
+            if ($result === true) {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetsubmissions', 'mod_workshop'),
+                    'error' => false,
+                );
+            } else {
+                $status[] = array(
+                    'component' => $componentstr,
+                    'item' => get_string('resetsubmissions', 'mod_workshop'),
+                    'error' => $result,
+                );
+            }
+        }
+
+        if (!empty($data->reset_workshop_phase)) {
+            // Do not use the {@link workshop::switch_phase()} here, we do not
+            // want to trigger events.
+            $this->reset_phase();
+            $status[] = array(
+                'component' => $componentstr,
+                'item' => get_string('resetsubmissions', 'mod_workshop'),
+                'error' => false,
+            );
+        }
+
+        return $status;
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
     ////////////////////////////////////////////////////////////////////////////////
@@ -2505,7 +2603,10 @@ class workshop {
      * Returns SQL to fetch all enrolled users with the given capability in the current workshop
      *
      * The returned array consists of string $sql and the $params array. Note that the $sql can be
-     * empty if groupmembersonly is enabled and the associated grouping is empty.
+     * empty if a grouping is selected and it has no groups.
+     *
+     * The list is automatically restricted according to any availability restrictions
+     * that apply to user lists (e.g. group, grouping restrictions).
      *
      * @param string $capability the name of the capability
      * @param bool $musthavesubmission ff true, return only users who have already submitted
@@ -2518,9 +2619,10 @@ class workshop {
         static $inc = 0;
         $inc++;
 
-        // if the caller requests all groups and we are in groupmembersonly mode, use the
-        // recursive call of itself to get users from all groups in the grouping
-        if (empty($groupid) and !empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
+        // If the caller requests all groups and we are using a selected grouping,
+        // recursively call this function for each group in the grouping (this is
+        // needed because get_enrolled_sql only supports a single group).
+        if (empty($groupid) and $this->cm->groupingid) {
             $groupingid = $this->cm->groupingid;
             $groupinggroupids = array_keys(groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid, 'g.id'));
             $sql = array();
@@ -2547,6 +2649,15 @@ class workshop {
         if ($musthavesubmission) {
             $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid{$inc}) ";
             $params['workshopid'.$inc] = $this->id;
+        }
+
+        // If the activity is restricted so that only certain users should appear
+        // in user lists, integrate this into the same SQL.
+        $info = new \core_availability\info_module($this->cm);
+        list ($listsql, $listparams) = $info->get_user_list_sql(false);
+        if ($listsql) {
+            $sql .= " JOIN ($listsql) restricted ON restricted.id = u.id ";
+            $params = array_merge($params, $listparams);
         }
 
         return array($sql, $params);
@@ -2610,6 +2721,59 @@ class workshop {
         }
 
         return substr($fullurl->out(), strlen($baseurl));
+    }
+
+    /**
+     * Removes all user data related to assessments (including allocations).
+     *
+     * This includes assessments of example submissions as long as they are not
+     * referential assessments.
+     *
+     * @param stdClass $data The actual course reset settings.
+     * @return bool|string True on success, error message otherwise.
+     */
+    protected function reset_userdata_assessments(stdClass $data) {
+        global $DB;
+
+        $sql = "SELECT a.id
+                  FROM {workshop_assessments} a
+                  JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                 WHERE s.workshopid = :workshopid
+                       AND (s.example = 0 OR (s.example = 1 AND a.weight = 0))";
+
+        $assessments = $DB->get_records_sql($sql, array('workshopid' => $this->id));
+        $this->delete_assessment(array_keys($assessments));
+
+        $DB->delete_records('workshop_aggregations', array('workshopid' => $this->id));
+
+        return true;
+    }
+
+    /**
+     * Removes all user data related to participants' submissions.
+     *
+     * @param stdClass $data The actual course reset settings.
+     * @return bool|string True on success, error message otherwise.
+     */
+    protected function reset_userdata_submissions(stdClass $data) {
+        global $DB;
+
+        $submissions = $this->get_submissions();
+        foreach ($submissions as $submission) {
+            $this->delete_submission($submission);
+        }
+
+        return true;
+    }
+
+    /**
+     * Hard set the workshop phase to the setup one.
+     */
+    protected function reset_phase() {
+        global $DB;
+
+        $DB->set_field('workshop', 'phase', self::PHASE_SETUP, array('id' => $this->id));
+        $this->phase = self::PHASE_SETUP;
     }
 }
 
@@ -3428,10 +3592,10 @@ class workshop_assessment extends workshop_assessment_base implements renderable
             return null;
         }
 
-        $content = format_text($this->feedbackauthor, $this->feedbackauthorformat,
-            array('overflowdiv' => true, 'context' => $this->workshop->context));
-        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->workshop->context->id,
+        $content = file_rewrite_pluginfile_urls($this->feedbackauthor, 'pluginfile.php', $this->workshop->context->id,
             'mod_workshop', 'overallfeedback_content', $this->id);
+        $content = format_text($content, $this->feedbackauthorformat,
+            array('overflowdiv' => true, 'context' => $this->workshop->context));
 
         return $content;
     }

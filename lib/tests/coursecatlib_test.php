@@ -395,25 +395,29 @@ class core_coursecatlib_testcase extends advanced_testcase {
             'category' => $category->id,
             'idnumber' => '006-01',
             'shortname' => 'Biome Study',
-            'fullname' => '<span lang="ar" class="multilang">'.'دراسة منطقة إحيائية'.'</span><span lang="en" class="multilang">Biome Study</span>'
+            'fullname' => '<span lang="ar" class="multilang">'.'دراسة منطقة إحيائية'.'</span><span lang="en" class="multilang">Biome Study</span>',
+            'timecreated' => '1000000001'
         ));
         $course2 = $generator->create_course(array(
             'category' => $category->id,
             'idnumber' => '007-02',
             'shortname' => 'Chemistry Revision',
-            'fullname' => 'Chemistry Revision'
+            'fullname' => 'Chemistry Revision',
+            'timecreated' => '1000000002'
         ));
         $course3 = $generator->create_course(array(
             'category' => $category->id,
             'idnumber' => '007-03',
             'shortname' => 'Swiss Rolls and Sunflowers',
-            'fullname' => 'Aarkvarks guide to Swiss Rolls and Sunflowers'
+            'fullname' => 'Aarkvarks guide to Swiss Rolls and Sunflowers',
+            'timecreated' => '1000000003'
         ));
         $course4 = $generator->create_course(array(
             'category' => $category->id,
             'idnumber' => '006-04',
             'shortname' => 'Scratch',
-            'fullname' => '<a href="test.php">Basic Scratch</a>'
+            'fullname' => '<a href="test.php">Basic Scratch</a>',
+            'timecreated' => '1000000004'
         ));
         $c1 = (int)$course1->id;
         $c2 = (int)$course2->id;
@@ -427,6 +431,8 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $this->assertTrue($coursecat->resort_courses('shortname'));
         $this->assertSame(array($c1, $c2, $c4, $c3), array_keys($coursecat->get_courses()));
 
+        $this->assertTrue($coursecat->resort_courses('timecreated'));
+        $this->assertSame(array($c1, $c2, $c3, $c4), array_keys($coursecat->get_courses()));
 
         try {
             // Enable the multilang filter and set it to apply to headings and content.

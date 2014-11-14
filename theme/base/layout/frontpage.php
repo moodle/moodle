@@ -66,7 +66,7 @@ echo $OUTPUT->doctype() ?>
     <div id="page-header" class="clearfix">
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
         <div class="headermenu"><?php
-            echo $OUTPUT->login_info();
+            echo $OUTPUT->user_menu();
             echo $OUTPUT->lang_menu();
             echo $PAGE->headingmenu;
         ?></div>

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about the event.
  *
- *      -string requestedqtype: Requested question type.
+ *      - string requestedqtype: Requested question type.
  * }
  *
  * @package    report_questioninstances
@@ -67,7 +67,7 @@ class report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->userid' viewed the question instances report.";
+        return "The user with id '$this->userid' viewed the question instances report.";
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /*
-  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+  (c) 2000-2014 John Lim (jlim#natsoft.com.my). All rights reserved.
   Portions Copyright (c) 2007-2009, iAnywhere Solutions, Inc.
   All rights reserved. All unpublished rights reserved.
 
@@ -749,18 +749,8 @@ class ADORecordSet_ads extends ADORecordSet {
   {
     if ($this->_numOfRows != 0 && !$this->EOF) {
       $this->_currentRow++;
-
-      if ($this->_has_stupid_odbc_fetch_api_change)
-        $rez = @ads_fetch_into($this->_queryID,$this->fields);
-      else {
-        $row = 0;
-        $rez = @ads_fetch_into($this->_queryID,$row,$this->fields);
-      }
-      if ($rez) {
-        if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-          $this->fields =& $this->GetRowAssoc(ADODB_ASSOC_CASE);
-        }
-        return true;
+      if( $this->_fetch() ) {
+          return true;
       }
     }
     $this->fields = false;
@@ -770,7 +760,7 @@ class ADORecordSet_ads extends ADORecordSet {
 
   function _fetch()
   {
-
+    $this->fields = false;
     if ($this->_has_stupid_odbc_fetch_api_change)
       $rez = @ads_fetch_into($this->_queryID,$this->fields);
     else {
@@ -783,7 +773,6 @@ class ADORecordSet_ads extends ADORecordSet {
       }
       return true;
     }
-    $this->fields = false;
     return false;
   }
 
@@ -793,4 +782,3 @@ class ADORecordSet_ads extends ADORecordSet {
   }
 
 }
-?>

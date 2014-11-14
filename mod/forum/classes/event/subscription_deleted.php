@@ -48,7 +48,8 @@ class subscription_deleted extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'd';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['objecttable'] = 'forum_subscriptions';
     }
 
     /**
@@ -57,8 +58,8 @@ class subscription_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' was unsubscribed to the forum with the course module id " .
-            "'$this->contextinstanceid' by the user with the id '$this->userid'.";
+        return "The user with id '$this->userid' unsubscribed the user with id '$this->relateduserid' to the forum with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -76,7 +77,7 @@ class subscription_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/forum/view.php', array('f' => $this->other['forumid']));
+        return new \moodle_url('/mod/forum/subscribers.php', array('id' => $this->other['forumid']));
     }
 
     /**
