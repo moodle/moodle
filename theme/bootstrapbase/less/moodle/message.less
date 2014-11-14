@@ -10,6 +10,7 @@
 .message .heading {
     font-size: 1em;
     font-weight: bold;
+    clear: both;
 }
 .message .author {
     font-weight: bold;
@@ -46,16 +47,52 @@ table.message .searchresults td {
     width: 24%;
     float: left;
 }
-.message .contactselector .contact {
-    text-align: left;
+
+.message .message-contacts {
+    list-style-type: none;
+    margin: 0;
+
+    li {
+        clear: both;
+        position: relative;
+        min-height: 23px;
+
+        .pix {
+            left: 0;
+            position: absolute;
+        }
+        .contact {
+            font-weight: bold;
+            margin: 0 24% 0 25px;
+            text-align: left;
+        }
+        .contact.nolinks {
+            margin-right: 5px;
+        }
+        .link {
+            float: right;
+            max-width: 30%;
+        }
+    }
 }
-.message .contactselector .messageselecteduser {
-    font-weight: bold;
+
+.dir-rtl .message .message-contacts li {
+    .pix {
+        right: 0;
+        left: auto;
+    }
+    .contact {
+        margin: 0 25px 0 24%;
+    }
+    .contact.nolinks {
+        margin-right: 25px;
+        margin-left: 5px;
+    }
+    .link {
+        float: left;
+    }
 }
-.message .contactselector .paging {
-    z-index: 1;
-    position: relative;
-}
+
 .message .messagearea  {
     padding-left: 1%;
     border-left: 1px solid @tableBorder;
