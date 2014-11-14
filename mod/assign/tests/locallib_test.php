@@ -322,6 +322,13 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Simulate a submission.
         $this->setUser($this->students[0]);
         $submission = $assign->get_user_submission($this->students[0]->id, true);
+
+        // The submission is still new.
+        $this->assertEquals(false, $assign->has_submissions_or_grades());
+
+        // Submit the submission.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
                                          'text'=>'Submission text',
@@ -742,9 +749,93 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $assign->testable_apply_grade_to_user($data, $this->extrastudents[3]->id, 0);
         $assign->testable_apply_grade_to_user($data, $this->extrasuspendedstudents[0]->id, 0);
 
+        // Create a new submission with status NEW.
+        $this->setUser($this->extrastudents[4]);
+        $submission = $assign->get_user_submission($this->extrastudents[4]->id, true);
+
         $this->assertEquals(2, $assign->count_grades());
         $this->assertEquals(4, $assign->count_submissions());
+        $this->assertEquals(5, $assign->count_submissions(true));
         $this->assertEquals(2, $assign->count_submissions_need_grading());
+        $this->assertEquals(3, $assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+        $this->assertEquals(1, $assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_DRAFT));
+    }
+
+    public function test_count_submissions_for_groups() {
+        $this->create_extra_users();
+        $groupid = null;
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1, 'teamsubmission' => 1));
+
+        // Simulate a submission.
+        $this->setUser($this->extrastudents[0]);
+        $submission = $assign->get_group_submission($this->extrastudents[0]->id, $groupid, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, false);
+        // Leave this one as DRAFT.
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                                         'text' => 'Submission text',
+                                         'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Simulate adding a grade.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->extrastudents[0]->id, 0);
+
+        // Simulate a submission.
+        $this->setUser($this->extrastudents[1]);
+        $submission = $assign->get_group_submission($this->extrastudents[1]->id, $groupid, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->extrastudents[1]->id, true, false);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                                         'text' => 'Submission text',
+                                         'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Simulate a submission.
+        $this->setUser($this->extrastudents[2]);
+        $submission = $assign->get_group_submission($this->extrastudents[2]->id, $groupid, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->extrastudents[2]->id, true, false);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                                         'text' => 'Submission text',
+                                         'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Simulate a submission.
+        $this->setUser($this->extrastudents[3]);
+        $submission = $assign->get_group_submission($this->extrastudents[3]->id, $groupid, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->extrastudents[3]->id, true, false);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                                         'text' => 'Submission text',
+                                         'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // Simulate adding a grade.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->extrastudents[3]->id, 0);
+        $assign->testable_apply_grade_to_user($data, $this->extrasuspendedstudents[0]->id, 0);
+
+        // Create a new submission with status NEW.
+        $this->setUser($this->extrastudents[4]);
+        $submission = $assign->get_group_submission($this->extrastudents[4]->id, $groupid, true);
+
+        $this->assertEquals(2, $assign->count_grades());
+        $this->assertEquals(4, $assign->count_submissions());
+        $this->assertEquals(5, $assign->count_submissions(true));
         $this->assertEquals(3, $assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
         $this->assertEquals(1, $assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_DRAFT));
     }
