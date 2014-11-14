@@ -79,7 +79,6 @@ class legacy_plugin_cron_task extends scheduled_task {
 
         // Run all cron jobs for each module.
         mtrace("Starting activity modules");
-        get_mailer('buffer');
         if ($mods = $DB->get_records_select("modules", "cron > 0 AND ((? - lastcron) > cron) AND visible = 1", array($timenow))) {
             foreach ($mods as $mod) {
                 $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
@@ -105,7 +104,6 @@ class legacy_plugin_cron_task extends scheduled_task {
                 }
             }
         }
-        get_mailer('close');
         mtrace("Finished activity modules");
 
         mtrace("Starting blocks");
