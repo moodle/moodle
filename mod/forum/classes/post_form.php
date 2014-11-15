@@ -117,24 +117,19 @@ class mod_forum_post_form extends moodleform {
         $manageactivities = has_capability('moodle/course:manageactivities', $coursecontext);
 
         if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
-
-            $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
-            $mform->addElement('hidden', 'subscribe');
-            $mform->setType('subscribe', PARAM_INT);
-            $mform->addHelpButton('subscribemessage', 'forcesubscribed', 'forum');
+            $mform->addElement('checkbox', 'discussionsubscribe', get_string('discussionsubscription', 'forum'));
+            $mform->freeze('discussionsubscribe');
+            $mform->setDefaults('discussionsubscribe', 0);
+            $mform->addHelpButton('discussionsubscribe', 'forcesubscribed', 'forum');
 
         } else if (\mod_forum\subscriptions::subscription_disabled($forum) && !$manageactivities) {
-            $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
-            $mform->addElement('hidden', 'discussionsubscribe');
-            $mform->setType('discussionsubscribe', PARAM_INT);
-            $mform->addHelpButton('subscribemessage', 'disallowsubscription', 'forum');
+            $mform->addElement('checkbox', 'discussionsubscribe', get_string('discussionsubscription', 'forum'));
+            $mform->freeze('discussionsubscribe');
+            $mform->setDefaults('discussionsubscribe', 0);
+            $mform->addHelpButton('discussionsubscribe', 'disallowsubscription', 'forum');
 
         } else {
-            $options = array();
-            $options[0] = get_string('discussionsubscribestop', 'forum');
-            $options[1] = get_string('discussionsubscribestart', 'forum');
-
-            $mform->addElement('select', 'discussionsubscribe', get_string('discussionsubscription', 'forum'), $options);
+            $mform->addElement('checkbox', 'discussionsubscribe', get_string('discussionsubscription', 'forum'));
             $mform->addHelpButton('discussionsubscribe', 'discussionsubscription', 'forum');
         }
 
