@@ -218,11 +218,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject one" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | Send me notifications of new posts in this discussion |
+      | Discussion subscription | 1 |
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | I don't want to be notified of new posts in this discussion |
+      | Discussion subscription | 0 |
     And I follow "Test forum name"
     Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -254,11 +254,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject one" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | Send me notifications of new posts in this discussion |
+      | Discussion subscription | 1 |
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | I don't want to be notified of new posts in this discussion |
+      | Discussion subscription | 0 |
     And I follow "Test forum name"
     Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
