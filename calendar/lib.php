@@ -1891,6 +1891,51 @@ function calendar_add_event_allowed($event) {
 }
 
 /**
+ * Convert region timezone to php supported timezone
+ *
+ * @param string $tz value from ical file
+ * @return string $tz php supported timezone
+ */
+function calendar_normalize_tz($tz) {
+    switch ($tz) {
+        case('CST'):
+        case('Central Time'):
+        case('Central Standard Time'):
+            $tz = 'America/Chicago';
+            break;
+        case('CET'):
+        case('Central European Time'):
+            $tz = 'Europe/Berlin';
+            break;
+        case('EST'):
+        case('Eastern Time'):
+        case('Eastern Standard Time'):
+            $tz = 'America/New_York';
+            break;
+        case('PST'):
+        case('Pacific Time'):
+        case('Pacific Standard Time'):
+            $tz = 'America/Los_Angeles';
+            break;
+        case('China Time'):
+        case('China Standard Time'):
+            $tz = 'Asia/Beijing';
+            break;
+        case('IST'):
+        case('India Time'):
+        case('India Standard Time'):
+            $tz = 'Asia/New_Delhi';
+            break;
+        case('JST');
+        case('Japan Time'):
+        case('Japan Standard Time'):
+            $tz = 'Asia/Tokyo';
+            break;
+    }
+    return $tz;
+}
+
+/**
  * Manage calendar events
  *
  * This class provides the required functionality in order to manage calendar events.
@@ -2919,6 +2964,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
     $defaulttz = date_default_timezone_get();
     $tz = isset($event->properties['DTSTART'][0]->parameters['TZID']) ? $event->properties['DTSTART'][0]->parameters['TZID'] :
             $timezone;
+    $tz = calendar_normalize_tz($tz);
     $eventrecord->timestart = strtotime($event->properties['DTSTART'][0]->value . ' ' . $tz);
     if (empty($event->properties['DTEND'])) {
         $eventrecord->timeduration = 0; // no duration if no end time specified
@@ -3065,7 +3111,9 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid = nu
     $updatecount = 0;
 
     // Large calendars take a while...
-    core_php_time_limit::raise(300);
+    if (!CLI_SCRIPT) {
+        core_php_time_limit::raise(300);
+    }
 
     // Mark all events in a subscription with a zero timestamp.
     if (!empty($subscriptionid)) {
