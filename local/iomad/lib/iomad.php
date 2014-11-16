@@ -57,6 +57,11 @@ class iomad {
     public static function is_company_user () {
         global $USER, $DB, $SESSION;
 
+        if (empty($USER->id)) {
+            // We are installing.  Go no further.
+            return false;
+        }
+
         if (!empty($SESSION->currenteditingcompany)) {
             return $SESSION->currenteditingcompany;
         } else if ($usercompanies = $DB->get_records('company_users', array('userid' => $USER->id))) {

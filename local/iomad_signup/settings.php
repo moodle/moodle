@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($hassiteconfig) {
+if ($hassiteconfig && !empty($USER->id)) {
     $settings = new admin_settingpage('local_iomad_signup', get_string('pluginname', 'local_iomad_signup'));
     $ADMIN->add('localplugins', $settings);
 
