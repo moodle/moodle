@@ -1742,8 +1742,22 @@ class backup_zip_contents extends backup_execution_step implements file_progress
         // Get the zip packer
         $zippacker = get_file_packer('application/vnd.moodle.backup');
 
+        // Track overall progress for the 2 long-running steps (archive to
+        // pathname, get backup information).
+        $reporter = $this->task->get_progress();
+        $reporter->start_progress('backup_zip_contents', 2);
+
         // Zip files
         $result = $zippacker->archive_to_pathname($files, $zipfile, true, $this);
+
+        // If any sub-progress happened, end it.
+        if ($this->startedprogress) {
+            $this->task->get_progress()->end_progress();
+            $this->startedprogress = false;
+        } else {
+            // No progress was reported, manually move it on to the next overall task.
+            $reporter->progress(1);
+        }
 
         // Something went wrong.
         if ($result === false) {
@@ -1752,16 +1766,20 @@ class backup_zip_contents extends backup_execution_step implements file_progress
         }
         // Read to make sure it is a valid backup. Refer MDL-37877 . Delete it, if found not to be valid.
         try {
-            backup_general_helper::get_backup_information_from_mbz($zipfile);
+            backup_general_helper::get_backup_information_from_mbz($zipfile, $this);
         } catch (backup_helper_exception $e) {
             @unlink($zipfile);
             throw new backup_step_exception('error_zip_packing', '', $e->debuginfo);
         }
 
-            // If any progress happened, end it.
+        // If any sub-progress happened, end it.
         if ($this->startedprogress) {
             $this->task->get_progress()->end_progress();
+            $this->startedprogress = false;
+        } else {
+            $reporter->progress(2);
         }
+        $reporter->end_progress();
     }
 
     /**
