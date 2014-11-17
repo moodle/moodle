@@ -394,7 +394,7 @@ FloatingHeaders.prototype = {
         // Grab references to commonly used Nodes.
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
         this.container = Y.one(SELECTORS.GRADEPARENT);
-        this.firstNonUserCell = Y.one(SELECTORS.USERMAIL).next();
+        this.firstNonUserCell = Y.one(SELECTORS.GRADECELL);
 
         if (!this.firstUserCell) {
             // No need for floating elements, there are no users.
