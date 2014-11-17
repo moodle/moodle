@@ -262,6 +262,7 @@ $string['collapseall'] = 'Collapse all';
 $string['collapsecategory'] = 'Collapse {$a}';
 $string['commentincontext'] = 'Find this comment in context';
 $string['comments'] = 'Comments';
+$string['commentscount'] = 'Comments ({$a})';
 $string['commentsnotenabled'] = 'Comments feature is not enabled';
 $string['commentsrequirelogin'] = 'You need to login to view the comments';
 $string['comparelanguage'] = 'Compare and edit current language';
