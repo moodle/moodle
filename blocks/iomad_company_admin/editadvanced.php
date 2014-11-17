@@ -135,8 +135,10 @@ $userform = new user_editadvanced_form(null, array('editoroptions' => $editoropt
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
-    $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
-    $event->trigger();
+    if ($usernew->id == -1) {
+        $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
+        $event->trigger();
+    }
 
     if (empty($usernew->auth)) {
         // User editing self.
@@ -158,6 +160,8 @@ if ($usernew = $userform->get_data()) {
         $usernew->timecreated = time();
         $usernew->password = hash_internal_user_password($usernew->newpassword);
         $usernew->id = $DB->insert_record('user', $usernew);
+        $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
+        $event->trigger();
         $usercreated = true;
 
     } else {
