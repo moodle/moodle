@@ -79,7 +79,7 @@ M.mod_assign.init_grading_table = function(Y) {
                 usersinput = Y.one('input.selectedusers');
                 usersinput.set('value', selectedusers.join(','));
                 if (selectedusers.length == 0) {
-                    alert(M.str.assign.nousersselected);
+                    alert(M.util.get_string('nousersselected', 'assign'));
                     e.preventDefault();
                 } else {
                     action = operation.get('value');
@@ -88,9 +88,9 @@ M.mod_assign.init_grading_table = function(Y) {
                         pluginaction = action.substr(prefix.length);
                         plugin = pluginaction.split('_')[0];
                         action = pluginaction.substr(plugin.length + 1);
-                        confirmmessage = eval('M.str.assignfeedback_' + plugin + '.batchoperationconfirm' + action);
+                        confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
                     } else {
-                        confirmmessage = eval('M.str.assign.batchoperationconfirm' + operation.get('value'));
+                        confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
                     }
                     if (!confirm(confirmmessage)) {
                         e.preventDefault();
@@ -153,7 +153,7 @@ M.mod_assign.init_grade_change = function(Y) {
         var originalvalue = gradenode.get('value');
         gradenode.on('change', function() {
             if (gradenode.get('value') != originalvalue) {
-                alert(M.str.mod_assign.changegradewarning);
+                alert(M.util.get_string('changegradewarning', 'mod_assign'));
             }
         });
     }
