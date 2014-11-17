@@ -115,19 +115,6 @@ function question_save_qtype_order($neworder, $config = null) {
 /// FUNCTIONS //////////////////////////////////////////////////////
 
 /**
- * Returns an array of names of activity modules that use this question
- *
- * @deprecated since Moodle 2.1. Use {@link questions_in_use} instead.
- *
- * @param object $questionid
- * @return array of strings
- */
-function question_list_instances($questionid) {
-    throw new coding_exception('question_list_instances has been deprectated. ' .
-            'Please use questions_in_use instead.');
-}
-
-/**
  * @param array $questionids of question ids.
  * @return boolean whether any of these questions are being used by any part of Moodle.
  */
@@ -192,23 +179,6 @@ function question_context_has_any_questions($context) {
 }
 
 /**
- * Returns list of 'allowed' grades for grade selection
- * formatted suitably for dropdown box function
- *
- * @deprecated since 2.1. Use {@link question_bank::fraction_options()} or
- * {@link question_bank::fraction_options_full()} instead.
- *
- * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
- */
-function get_grade_options() {
-    $grades = new stdClass();
-    $grades->gradeoptions = question_bank::fraction_options();
-    $grades->gradeoptionsfull = question_bank::fraction_options_full();
-
-    return $grades;
-}
-
-/**
  * Check whether a given grade is one of a list of allowed options. If not,
  * depending on $matchgrades, either return the nearest match, or return false
  * to signal an error.
@@ -248,17 +218,6 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
         throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
                 ' passed to match_grade_options');
     }
-}
-
-/**
- * @deprecated Since Moodle 2.1. Use {@link question_category_in_use} instead.
- * @param integer $categoryid a question category id.
- * @param boolean $recursive whether to check child categories too.
- * @return boolean whether any question in this category is in use.
- */
-function question_category_isused($categoryid, $recursive = false) {
-    throw new coding_exception('question_category_isused has been deprectated. ' .
-            'Please use question_category_in_use instead.');
 }
 
 /**
@@ -892,19 +851,6 @@ function question_hash($question) {
     return make_unique_id_code();
 }
 
-/// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
-/**
- * Saves question options
- *
- * Simply calls the question type specific save_question_options() method.
- * @deprecated all code should now call the question type method directly.
- */
-function save_question_options($question) {
-    debugging('Please do not call save_question_options any more. Call the question type method directly.',
-            DEBUG_DEVELOPER);
-    question_bank::get_qtype($question->qtype)->save_question_options($question);
-}
-
 /// CATEGORY FUNCTIONS /////////////////////////////////////////////////////////////////
 
 /**
@@ -1427,17 +1373,6 @@ function question_require_capability_on($question, $cap) {
         print_error('nopermissions', '', '', $cap);
     }
     return true;
-}
-
-/**
- * Get the real state - the correct question id and answer - for a random
- * question.
- * @param object $state with property answer.
- * @deprecated this function has not been relevant since Moodle 2.1!
- */
-function question_get_real_state($state) {
-    throw new coding_exception('question_get_real_state has not been relevant since Moodle 2.1. ' .
-            'I am not sure what you are trying to do, but stop it at once!');
 }
 
 /**
