@@ -265,7 +265,7 @@ flush();
 
 if (!$companies) {
     $match = array();
-    echo $OUTPUT->heading(get_string('nocompaniesfound', 'block_iomad_company_admin'));
+    echo $OUTPUT->heading(get_string('nocompanies', 'block_iomad_company_admin'));
 
     $table = null;
 
