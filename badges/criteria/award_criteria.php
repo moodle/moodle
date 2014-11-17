@@ -223,7 +223,7 @@ abstract class award_criteria {
         if (!empty($this->params)) {
             if (count($this->params) > 1) {
                 echo $OUTPUT->box(get_string('criteria_descr_' . $this->criteriatype, 'badges',
-                        strtoupper($agg[$data->get_aggregation_method($this->criteriatype)])), array('clearfix'));
+                        core_text::strtoupper($agg[$data->get_aggregation_method($this->criteriatype)])), array('clearfix'));
             } else {
                 echo $OUTPUT->box(get_string('criteria_descr_single_' . $this->criteriatype , 'badges'), array('clearfix'));
             }
