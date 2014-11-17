@@ -374,7 +374,7 @@ class core_badges_renderer extends plugin_renderer_base {
                     $items[] = get_string('criteria_descr_single_' . $type , 'badges') . $c->get_details();
                 } else {
                     $items[] = get_string('criteria_descr_' . $type , 'badges',
-                            strtoupper($agg[$badge->get_aggregation_method($type)])) . $c->get_details();
+                            core_text::strtoupper($agg[$badge->get_aggregation_method($type)])) . $c->get_details();
                 }
             }
         }
@@ -732,7 +732,7 @@ class core_badges_renderer extends plugin_renderer_base {
             }
         } else {
             $output .= get_string('criteria_descr_' . $short . BADGE_CRITERIA_TYPE_OVERALL, 'badges',
-                                    strtoupper($agg[$badge->get_aggregation_method()]));
+                                    core_text::strtoupper($agg[$badge->get_aggregation_method()]));
         }
         $items = array();
         unset($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
@@ -741,7 +741,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 $items[] = get_string('criteria_descr_single_' . $short . $type , 'badges') . $c->get_details($short);
             } else {
                 $items[] = get_string('criteria_descr_' . $short . $type , 'badges',
-                        strtoupper($agg[$badge->get_aggregation_method($type)])) . $c->get_details($short);
+                        core_text::strtoupper($agg[$badge->get_aggregation_method($type)])) . $c->get_details($short);
             }
         }
         $output .= html_writer::alist($items, array(), 'ul');
