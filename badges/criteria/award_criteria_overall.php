@@ -60,7 +60,7 @@ class award_criteria_overall extends award_criteria {
                 echo html_writer::table($table);
             } else {
                 echo $OUTPUT->box(get_string('criteria_descr_' . $this->criteriatype, 'badges',
-                        strtoupper($agg[$data->get_aggregation_method()])), 'clearfix');
+                        core_text::strtoupper($agg[$data->get_aggregation_method()])), 'clearfix');
             }
             echo $OUTPUT->box_end();
         }
