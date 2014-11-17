@@ -2300,6 +2300,58 @@ body.lockscroll {
     border: inherit;
 }
 
+/* Core content colours - these are defined in Atto but can be overwritten
+ * by themes. This is an alternative to using fixed colours applied using
+ * the style attribute */
+
+.fontcolor.white {
+    color: #fff;
+}
+
+.fontcolor.red {
+    color: #ef4540;
+}
+
+.fontcolor.yellow {
+    color: #ffcf35;
+}
+
+.fontcolor.green {
+    color: #98ca3e;
+}
+
+.fontcolor.blue {
+    color: #7d9fd3;
+}
+
+.fontcolor.black {
+    color: #000;
+}
+
+.backcolor.white {
+    background-color: #fff;
+}
+
+.backcolor.red {
+    background-color: #ef4540;
+}
+
+.backcolor.yellow {
+    background-color: #ffcf35;
+}
+
+.backcolor.green {
+    background-color: #98ca3e;
+}
+
+.backcolor.blue {
+    background-color: #7d9fd3;
+}
+
+.backcolor.black {
+    background-color: #000;
+}
+
 .well {
   min-height: 20px;
   padding: 19px;

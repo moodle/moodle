@@ -1,5 +1,68 @@
 /* core.less */
 
+/* Core content colours - these are defined in Atto but can be overwritten
+ * by themes. This is an alternative to using fixed colours applied using
+ * the style attribute */
+
+@contentColorWhite: #fff;
+@contentColorRed: #ef4540;
+@contentColorYellow: #ffcf35;
+@contentColorGreen: #98ca3e;
+@contentColorBlue: #7d9fd3;
+@contentColorBlack: #000;
+
+.fontcolor {
+    &.white {
+        color: @contentColorWhite;
+    }
+
+    &.red {
+        color: @contentColorRed
+    }
+
+    &.yellow {
+        color: @contentColorYellow;
+    }
+
+    &.green {
+        color: @contentColorGreen;
+    }
+
+    &.blue {
+        color: @contentColorBlue;
+    }
+
+    &.black {
+        color: @contentColorBlack;
+    }
+}
+
+.backcolor {
+    &.white {
+        background-color: @contentColorWhite;
+    }
+
+    &.red {
+        background-color: @contentColorRed
+    }
+
+    &.yellow {
+        background-color: @contentColorYellow;
+    }
+
+    &.green {
+        background-color: @contentColorGreen;
+    }
+
+    &.blue {
+        background-color: @contentColorBlue;
+    }
+
+    &.black {
+        background-color: @contentColorBlack;
+    }
+}
+
 /** Page layout CSS starts **/
 .layout-option-noheader #page-header,
 .layout-option-nonavbar #page-navbar,
