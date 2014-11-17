@@ -2288,12 +2288,13 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
     }
 
     if ($lifetime > 0) {
-        $private = '';
+        $cacheability = ' public,';
         if (isloggedin() and !isguestuser()) {
-            $private = ' private,';
+            // By default, under the conditions above, this file must be cache-able only by browsers.
+            $cacheability = ' private,';
         }
         $nobyteserving = false;
-        header('Cache-Control:'.$private.' max-age='.$lifetime.', no-transform');
+        header('Cache-Control:'.$cacheability.' max-age='.$lifetime.', no-transform');
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
@@ -2366,7 +2367,10 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
  *  (bool) dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
  *      if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *      you must detect this case when control is returned using connection_aborted. Please not that session is closed
- *      and should not be reopened.
+ *      and should not be reopened
+ *  (string|null) cacheability - force the cacheability setting of the HTTP response, "private" or "public",
+ *      when $lifetime is greater than 0. Cacheability defaults to "private" when logged in as other than guest; otherwise,
+ *      defaults to "public".
  *
  * @category files
  * @param stored_file $stored_file local file object
@@ -2463,11 +2467,17 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
     }
 
     if ($lifetime > 0) {
-        $private = '';
-        if (isloggedin() and !isguestuser()) {
-            $private = ' private,';
+        $cacheability = ' public,';
+        if (!empty($options['cacheability']) && ($options['cacheability'] === 'public')) {
+            // This file must be cache-able by both browsers and proxies.
+            $cacheability = ' public,';
+        } else if (!empty($options['cacheability']) && ($options['cacheability'] === 'private')) {
+            // This file must be cache-able only by browsers.
+            $cacheability = ' private,';
+        } else if (isloggedin() and !isguestuser()) {
+            $cacheability = ' private,';
         }
-        header('Cache-Control:'.$private.' max-age='.$lifetime.', no-transform');
+        header('Cache-Control:'.$cacheability.' max-age='.$lifetime.', no-transform');
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
@@ -4177,7 +4187,13 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 send_file($imagefile, basename($imagefile), 60*60*24*14);
             }
 
-            send_stored_file($file, 60*60*24*365, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
+            $options = array('preview' => $preview);
+            if (empty($CFG->forcelogin) && empty($CFG->forceloginforprofileimage)) {
+                // Profile images should be cache-able by both browsers and proxies according
+                // to $CFG->forcelogin and $CFG->forceloginforprofileimage.
+                $options['cacheability'] = 'public';
+            }
+            send_stored_file($file, 60*60*24*365, 0, false, $options); // enable long caching, there are many images on each page
 
         } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
             require_login();
