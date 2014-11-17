@@ -93,6 +93,10 @@ foreach($authsequence as $authname) {
 /// Define variables used in page
 $site = get_site();
 
+// Ignore any active pages in the navigation/settings.
+// We do this because there won't be an active page there, and by ignoring the active pages the
+// navigation and settings won't be initialised unless something else needs them.
+$PAGE->navbar->ignore_active();
 $loginsite = get_string("loginsite");
 $PAGE->navbar->add($loginsite);
 
