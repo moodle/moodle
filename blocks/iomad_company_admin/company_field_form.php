@@ -47,6 +47,7 @@ class field_form extends moodleform {
         // Add some extra hidden fields.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+        $mform->setType('categoryid', PARAM_INT);
         $mform->addElement('hidden', 'action', 'editfield');
         $mform->setType('action', PARAM_ACTION);
         $mform->addElement('hidden', 'datatype', $datatype);

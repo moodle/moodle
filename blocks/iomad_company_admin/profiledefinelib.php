@@ -82,7 +82,7 @@ class profile_define_base {
      * editing a profile field specific to the current data type
      * @param   object   instance of the moodleform class
      */
-    public function define_form_specific(&$form) {
+    public function define_form_specific($form) {
         // Do nothing - overwrite if necessary.
     }
 
