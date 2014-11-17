@@ -29,7 +29,6 @@ require_once($CFG->libdir.'/eventslib.php');
 defined('MOODLE_INTERNAL') || die();
 
 // File areas for file submission assignment.
-define('ASSIGNSUBMISSION_FILE_MAXFILES', 20);
 define('ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES', 5);
 define('ASSIGNSUBMISSION_FILE_FILEAREA', 'submission_files');
 
@@ -75,7 +74,7 @@ class assign_submission_file extends assign_submission_plugin {
 
         $settings = array();
         $options = array();
-        for ($i = 1; $i <= ASSIGNSUBMISSION_FILE_MAXFILES; $i++) {
+        for ($i = 1; $i <= get_config('assignsubmission_file', 'maxfiles'); $i++) {
             $options[$i] = $i;
         }
 
