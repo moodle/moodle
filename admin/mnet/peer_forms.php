@@ -94,6 +94,15 @@ class mnet_review_host_form extends moodleform {
         $mform->setType('wwwroot', PARAM_URL);
         $mform->addRule('wwwroot', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
+        $options = array(
+            mnet_peer::SSL_NONE => get_string('none'),
+            mnet_peer::SSL_HOST => get_string('verifyhostonly', 'core_mnet'),
+            mnet_peer::SSL_HOST_AND_PEER => get_string('verifyhostandpeer', 'core_mnet')
+        );
+        $mform->addElement('select', 'sslverification', get_string('sslverification', 'core_mnet'), $options);
+        $mform->setDefault('sslverification', mnet_peer::SSL_HOST_AND_PEER);
+        $mform->addHelpButton('sslverification', 'sslverification', 'core_mnet');
+
         $themes = array('' => get_string('forceno'));
         foreach (array_keys(core_component::get_plugin_list('theme')) as $themename) {
             $themes[$themename] = get_string('pluginname', 'theme_'.$themename);

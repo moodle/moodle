@@ -368,8 +368,17 @@ class mnet_xmlrpc_client {
         curl_setopt($httprequest, CURLOPT_POST, true);
         curl_setopt($httprequest, CURLOPT_USERAGENT, 'Moodle');
         curl_setopt($httprequest, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
-        curl_setopt($httprequest, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($httprequest, CURLOPT_SSL_VERIFYHOST, 0);
+
+        $verifyhost = 0;
+        $verifypeer = false;
+        if ($mnet_peer->sslverification == mnet_peer::SSL_HOST_AND_PEER) {
+            $verifyhost = 2;
+            $verifypeer = true;
+        } else if ($mnet_peer->sslverification == mnet_peer::SSL_HOST) {
+            $verifyhost = 2;
+        }
+        curl_setopt($httprequest, CURLOPT_SSL_VERIFYHOST, $verifyhost);
+        curl_setopt($httprequest, CURLOPT_SSL_VERIFYPEER, $verifypeer);
         return $httprequest;
     }
 }
