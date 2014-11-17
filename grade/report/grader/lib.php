@@ -832,7 +832,8 @@ class grade_report_grader extends grade_report {
                             'id' => $this->course->id,
                             'item' => 'grade',
                             'itemid' => $element['object']->id));
-                        $singleview = $OUTPUT->action_icon($url, new pix_icon('t/editstring', get_string('singleview', 'grades', $element['object']->itemname)));
+                        $singleview = $OUTPUT->action_icon($url, new pix_icon('t/editstring', get_string('singleview', 'grades',
+                                $element['object']->get_name())));
                     }
 
                     $itemcell->colspan = $colspan;
