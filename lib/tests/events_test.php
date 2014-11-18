@@ -252,7 +252,7 @@ class core_events_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\course_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $expected = array($course->id, 'course', 'view section', 'view.php?id=' . $course->id . '&amp;sectionid='
+        $expected = array($course->id, 'course', 'view section', 'view.php?id=' . $course->id . '&amp;section='
                 . $sectionid, $sectionid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
