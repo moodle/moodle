@@ -51,6 +51,14 @@ $string['eventchapterdeleted'] = 'Chapter deleted';
 $string['eventchapterupdated'] = 'Chapter updated';
 $string['eventchapterviewed'] = 'Chapter viewed';
 $string['subchapter'] = 'Subchapter';
+$string['navimages'] = 'Images';
+$string['navoptions'] = 'Available options for navigational links';
+$string['navoptions_desc'] = 'Options for displaying navigation on the book pages';
+$string['navstyle'] = 'Style of navigation';
+$string['navstyle_help'] = '* Images - Icons are used for navigation
+* Text - Chapter titles are used for navigation';
+$string['navtext'] = 'Text';
+$string['navtoc'] = 'TOC Only';
 $string['nocontent'] = 'No content has been added to this book yet.';
 $string['numbering'] = 'Chapter formatting';
 $string['numbering_help'] = '* None - Chapter and subchapter titles have no formatting

@@ -3197,6 +3197,19 @@ EOD;
     }
 
     /**
+     * Accessibility: Up arrow-like character is used in
+     * the book heirarchical navigation.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically. Please DO NOT
+     * use ^ - this is confusing for blind users.
+     *
+     * @return string
+     */
+    public function uarrow() {
+        return $this->page->theme->uarrow;
+    }
+
+    /**
      * Returns the custom menu if one has been set
      *
      * A custom menu can be configured by browsing to
