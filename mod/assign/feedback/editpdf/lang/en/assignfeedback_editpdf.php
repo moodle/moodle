@@ -51,6 +51,7 @@ $string['filter'] = 'Filter comments...';
 $string['generatefeedback'] = 'Generate feedback PDF';
 $string['gotopage'] = 'Go to page';
 $string['green'] = 'Green';
+$string['gsimage'] = 'Ghostscript test image';
 $string['pathtogspathdesc'] = 'Please note that annotate PDF requires the path to ghostscript to be set in {$a}.';
 $string['highlight'] = 'Highlight';
 $string['jsrequired'] = 'JavaScript is required to annotate a PDF. Please enable JavaScript in your browser to use this feature.';
