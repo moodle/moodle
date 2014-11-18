@@ -202,7 +202,7 @@ class admin_setting_ldap_rolemapping extends admin_setting {
  */
 class enrol_ldap_admin_setting_category extends admin_setting_configselect {
     public function __construct($name, $visiblename, $description) {
-        parent::__construct($name, $visiblename, $description, null, null);
+        parent::__construct($name, $visiblename, $description, 1, null);
     }
 
     public function load_choices() {
@@ -211,7 +211,6 @@ class enrol_ldap_admin_setting_category extends admin_setting_configselect {
         }
 
         $this->choices = make_categories_options();
-        $this->defaultsetting = key($this->choices);
         return true;
     }
 }
