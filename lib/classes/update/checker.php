@@ -116,9 +116,14 @@ class checker {
      * @throws checker_exception
      */
     public function fetch() {
+
         $response = $this->get_response();
         $this->validate_response($response);
         $this->store_response($response);
+
+        // We need to reset plugin manager's caches - the currently existing
+        // singleton is not aware of eventually available updates we just fetched.
+        \core_plugin_manager::reset_caches();
     }
 
     /**
