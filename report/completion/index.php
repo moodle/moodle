@@ -62,8 +62,8 @@ if ($csv) {
 
 // Paging
 $start   = optional_param('start', 0, PARAM_INT);
-$sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
-$silast  = optional_param('silast', 'all', PARAM_ALPHA);
+$sifirst = optional_param('sifirst', 'all', PARAM_NOTAGS);
+$silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 
 // Whether to show extra user identity information
 $extrafields = get_extra_user_fields($context);
