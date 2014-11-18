@@ -396,18 +396,36 @@ abstract class backup_cron_automated_helper {
             $results = $bc->get_results();
             $outcome = self::outcome_from_results($results);
             $file = $results['backup_destination']; // May be empty if file already moved to target location.
-            if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
+
+            if (empty($dir) && $storage !== 0) {
+                // This is intentionally left as a warning instead of an error because of the current behaviour of backup settings.
+                // See MDL-48266 for details.
+                $bc->log('No directory specified for automated backups',
+                        backup::LOG_WARNING);
+                $outcome = self::BACKUP_STATUS_WARNING;
+            } else if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir) && $storage !== 0) {
+                // If we need to copy the backup file to an external dir and it is not writable, change status to error.
+                $bc->log('Specified backup directory is not writable - ',
+                        backup::LOG_ERROR, $dir);
                 $dir = null;
+                $outcome = self::BACKUP_STATUS_ERROR;
             }
+
             // Copy file only if there was no error.
             if ($file && !empty($dir) && $storage !== 0 && $outcome != self::BACKUP_STATUS_ERROR) {
                 $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised,
                         !$config->backup_shortname);
                 if (!$file->copy_content_to($dir.'/'.$filename)) {
+                    $bc->log('Attempt to copy backup file to the specified directory failed - ',
+                            backup::LOG_ERROR, $dir);
                     $outcome = self::BACKUP_STATUS_ERROR;
                 }
                 if ($outcome != self::BACKUP_STATUS_ERROR && $storage === 1) {
-                    $file->delete();
+                    if (!$file->delete()) {
+                        $outcome = self::BACKUP_STATUS_WARNING;
+                        $bc->log('Attempt to delete the backup file from course automated backup area failed - ',
+                                backup::LOG_WARNING, $file->get_filename());
+                    }
                 }
             }
 
