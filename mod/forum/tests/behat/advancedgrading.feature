@@ -85,13 +85,3 @@ Scenario:Overall; Rubric, Individual; Marking guide
  When I follow "Test 2 forum"
  Then I expand "Advanced grading" node
  And "Overall forum participation" "link" should be visible
-
-
-
-
-
-
-
-
-
-
