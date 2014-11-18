@@ -344,7 +344,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Change the time modified on modules.xml.
         touch($file02, time() - (8 * 24 * 3600));
         // Change the time modified on the courses directory.
-        touch($CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR . 
+        touch($CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR .
                 'courses', time() - (8 * 24 * 3600));
         // Run the scheduled task to remove the file and directory.
         $task->execute();
