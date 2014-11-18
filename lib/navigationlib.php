@@ -4415,7 +4415,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Assign local roles
-        if (has_capability('moodle/role:assign', $catcontext)) {
+        if (!empty(get_assignable_roles($catcontext))) {
             $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $catcontext->id));
             $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null, 'roles', new pix_icon('i/assignroles', ''));
         }
