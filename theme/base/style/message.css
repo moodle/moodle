@@ -34,10 +34,41 @@ table.message .searchresults td {padding:5px;}
 .message .messagearea  {padding-left:1%;border-left:1px solid LightGrey;width:74%;float:right;min-height:200px;}
 .message .messagearea .messagehistorytype {clear:both;padding-bottom:20px;}
 
-.message .messagearea .messagehistory .message_user_pictures {margin-left: auto;margin-right: auto;}
-.message .messagearea .messagehistory .message_user_pictures #user1 {vertical-align:top;width:200px;}
-.message .messagearea .messagehistory .message_user_pictures #user2 {vertical-align:top;width:200px;}
-.message .messagearea .messagehistory .message_user_pictures .useractionlinks {font-size:0.9em;}
+
+.message .messagearea .messagehistory .user {
+    vertical-align: top;
+    width: 32%;
+    min-width: 100px;
+    float: left;
+}
+.message .messagearea .messagehistory .user:first-child {
+    margin-left: 13%;
+}
+.message .messagearea .messagehistory .user:last-child {
+    margin-right: 13%;
+}
+.dir-rtl .message .messagearea .messagehistory .user:first-child {
+    margin-right: 13%;
+    margin-left: 0;
+}
+.dir-rtl .message .messagearea .messagehistory .user:last-child {
+    margin-left: 13%;
+    margin-right: 0;
+}
+.message .messagearea .messagehistory .user > div {
+    text-align: center;
+    border: none;
+}
+.message .messagearea .messagehistory .between {
+    float: left;
+    width: 16px;
+    margin: 0 3%;
+    padding-top: 40px;
+}
+.dir-rtl .message .messagearea .messagehistory .between,
+.dir-rtl .message .messagearea .messagehistory .user {
+    float: right;
+}
 
 .message .messagearea .messagehistory .heading {width:100%;clear:both;}
 .message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;}
