@@ -401,7 +401,8 @@ abstract class wiki_markup_parser extends generic_parser {
             $text .= "\n\n";
         }
 
-        preg_match("/(.*?)(=\ *\Q$header\E\ *=*\n.*?)((?:\n=[^=]+.*)|$)/is", $text, $match);
+        $regex = "/(.*?)(=\ *".preg_quote($header, '/')."\ *=*\n.*?)((?:\n=[^=]+.*)|$)/is";
+        preg_match($regex, $text, $match);
 
         if (!empty($match)) {
             return array($match[1], $match[2], $match[3]);
