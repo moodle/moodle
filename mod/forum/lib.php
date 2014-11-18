@@ -7803,54 +7803,6 @@ function forum_get_context($forumid, $context = null) {
 }
 
 /**
- * Method returning an instance of the forum grading manager - we use a forum class to help override various settings.
- *
- * There are basically ways how to use this factory method. If the area record
- * id is known to the caller, get the manager for that area by providing just
- * the id. If the area record id is not know, the context, component and area name
- * can be provided. Note that null values are allowed in the second case as the context,
- * component and the area name can be set explicitly later.
- *
- * @category grading
- * @example $manager = get_grading_manager($areaid);
- * @example $manager = get_grading_manager(context_system::instance());
- * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
- * @param stdClass|int|null $contextorareaid if $areaid is passed, no other parameter is needed
- * @param string|null $component the frankenstyle name of the component
- * @param string|null $area the name of the gradable area
- * @return mod_forum_grading_manager
- */
-function get_forum_grading_manager($contextorareaid = null, $component = null, $area = null) {
-
-    $manager = new mod_forum_grading_manager();
-
-    if (is_object($contextorareaid)) {
-        $context = $contextorareaid;
-    } else {
-        $context = null;
-
-        if (is_numeric($contextorareaid)) {
-            $manager->load($contextorareaid);
-            return $manager;
-        }
-    }
-
-    if (!is_null($context)) {
-        $manager->set_context($context);
-    }
-
-    if (!is_null($component)) {
-        $manager->set_component($component);
-    }
-
-    if (!is_null($area)) {
-        $manager->set_area($area);
-    }
-
-    return $manager;
-}
-
-/**
  * Get an instance of a grading form if advanced grading is enabled.
  * This is specific to the forum, marker and student.
  *
