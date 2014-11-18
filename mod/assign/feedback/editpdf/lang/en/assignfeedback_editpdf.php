@@ -51,6 +51,7 @@ $string['filter'] = 'Filter comments...';
 $string['generatefeedback'] = 'Generate feedback PDF';
 $string['gotopage'] = 'Go to page';
 $string['green'] = 'Green';
+$string['gsimage'] = 'Ghostscript test image';
 $string['gspath'] = 'Ghostscript path';
 $string['gspath_help'] = 'On most Linux installs, this can be left as \'/usr/bin/gs\'. On Windows it will be something like \'c:\\gs\\bin\\gswin32c.exe\' (make sure there are no spaces in the path - if necessary copy the files \'gswin32c.exe\' and \'gsdll32.dll\' to a new folder without a space in the path)';
 $string['highlight'] = 'Highlight';
