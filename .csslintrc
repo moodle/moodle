@@ -1,0 +1,2 @@
+--errors=errors
+--exclude-list=vendor/,lib/editor/tinymce/,lib/yuilib/,theme/bootstrapbase/style/
