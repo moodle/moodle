@@ -1,2 +1,2 @@
---errors=errors
+--errors=errors,duplicate-properties
 --exclude-list=vendor/,lib/editor/tinymce/,lib/yuilib/,theme/bootstrapbase/style/
