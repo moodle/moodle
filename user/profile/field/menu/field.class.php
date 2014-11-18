@@ -59,12 +59,16 @@ class profile_field_menu extends profile_field_base {
             $this->options[''] = get_string('choose').'...';
         }
         foreach ($options as $key => $option) {
-            $this->options[$key] = format_string($option); // Multilang formatting.
+            $this->options[$option] = format_string($option); // Multilang formatting with filters.
         }
 
         // Set the data key.
         if ($this->data !== null) {
-            $this->datakey = (int)array_search($this->data, $this->options);
+            $key = $this->data;
+            if (isset($this->options[$key]) || ($key = array_search($key, $this->options)) !== false) {
+                $this->data = $key;
+                $this->datakey = $key;
+            }
         }
     }
 
@@ -83,8 +87,9 @@ class profile_field_menu extends profile_field_base {
      * @param moodleform $mform Moodle form instance
      */
     public function edit_field_set_default($mform) {
-        if (false !== array_search($this->field->defaultdata, $this->options)) {
-            $defaultkey = (int)array_search($this->field->defaultdata, $this->options);
+        $key = $this->field->defaultdata;
+        if (isset($this->options[$key]) || ($key = array_search($key, $this->options)) !== false){
+            $defaultkey = $key;
         } else {
             $defaultkey = '';
         }
@@ -102,7 +107,7 @@ class profile_field_menu extends profile_field_base {
      * @return mixed Data or null
      */
     public function edit_save_data_preprocess($data, $datarecord) {
-        return isset($this->options[$data]) ? $this->options[$data] : null;
+        return isset($this->options[$data]) ? $data : null;
     }
 
     /**
@@ -127,7 +132,7 @@ class profile_field_menu extends profile_field_base {
         }
         if ($this->is_locked() and !has_capability('moodle/user:update', context_system::instance())) {
             $mform->hardFreeze($this->inputname);
-            $mform->setConstant($this->inputname, $this->datakey);
+            $mform->setConstant($this->inputname, format_string($this->datakey));
         }
     }
     /**
@@ -137,7 +142,11 @@ class profile_field_menu extends profile_field_base {
      * @return int options key for the menu
      */
     public function convert_external_data($value) {
-        $retval = array_search($value, $this->options);
+        if (isset($this->options[$value])) {
+            $retval = $value;
+        } else {
+            $retval = array_search($value, $this->options);
+        }
 
         // If value is not found in options then return null, so that it can be handled
         // later by edit_save_data_preprocess.
