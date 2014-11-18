@@ -312,4 +312,61 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertGreaterThanOrEqual(0, $hour);
         $this->assertLessThanOrEqual(23, $hour);
     }
+
+    /**
+     * Test that the file_temp_cleanup_task removes directories and
+     * files as expected.
+     */
+    public function test_file_temp_cleanup_task() {
+        global $CFG;
+
+        // Create directories.
+        $dir = $CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR . 'courses';
+        mkdir($dir, 0777, true);
+
+        // Create files to be checked and then deleted.
+        $file01 = $dir . DIRECTORY_SEPARATOR . 'sections.xml';
+        file_put_contents($file01, 'test data 001');
+        $file02 = $dir . DIRECTORY_SEPARATOR . 'modules.xml';
+        file_put_contents($file02, 'test data 002');
+        // Change the time modified for the first file, to a time that will be deleted by the task (greater than seven days).
+        touch($file01, time() - (8 * 24 * 3600));
+
+        $task = \core\task\manager::get_scheduled_task('\\core\\task\\file_temp_cleanup_task');
+        $this->assertInstanceOf('\core\task\file_temp_cleanup_task', $task);
+        $task->execute();
+
+        // Scan the directory. Only modules.xml should be left.
+        $filesarray = scandir($dir);
+        $this->assertEquals('modules.xml', $filesarray[2]);
+        $this->assertEquals(3, count($filesarray));
+
+        // Change the time modified on modules.xml.
+        touch($file02, time() - (8 * 24 * 3600));
+        // Change the time modified on the courses directory.
+        touch($CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01' . DIRECTORY_SEPARATOR .
+                'courses', time() - (8 * 24 * 3600));
+        // Run the scheduled task to remove the file and directory.
+        $task->execute();
+        $filesarray = scandir($CFG->tempdir . DIRECTORY_SEPARATOR . 'backup' . DIRECTORY_SEPARATOR . 'backup01');
+        // There should only be two items in the array, '.' and '..'.
+        $this->assertEquals(2, count($filesarray));
+
+        // Change the time modified on all of the files and directories.
+        $dir = new \RecursiveDirectoryIterator($CFG->tempdir);
+        // Show all child nodes prior to their parent.
+        $iter = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::CHILD_FIRST);
+
+        for ($iter->rewind(); $iter->valid(); $iter->next()) {
+            $node = $iter->getRealPath();
+            touch($node, time() - (8 * 24 * 3600));
+        }
+
+        // Run the scheduled task again to remove all of the files and directories.
+        $task->execute();
+        $filesarray = scandir($CFG->tempdir);
+        // All of the files and directories should be deleted.
+        // There should only be two items in the array, '.' and '..'.
+        $this->assertEquals(2, count($filesarray));
+    }
 }
