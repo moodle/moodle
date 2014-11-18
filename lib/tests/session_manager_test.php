@@ -304,7 +304,26 @@ class core_session_manager_testcase extends advanced_testcase {
         \core\session\manager::kill_user_sessions($userid);
 
         $this->assertEquals(1, $DB->count_records('sessions'));
-        $this->assertFalse($DB->record_exists('sessions', array('userid'=>$userid)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $userid)));
+
+        $record->userid       = $userid;
+        $record->sid          = md5('pokus3');
+        $DB->insert_record('sessions', $record);
+
+        $record->userid       = $userid;
+        $record->sid          = md5('pokus4');
+        $DB->insert_record('sessions', $record);
+
+        $record->userid       = $userid;
+        $record->sid          = md5('pokus5');
+        $DB->insert_record('sessions', $record);
+
+        $this->assertEquals(3, $DB->count_records('sessions', array('userid' => $userid)));
+
+        \core\session\manager::kill_user_sessions($userid, md5('pokus5'));
+
+        $this->assertEquals(1, $DB->count_records('sessions', array('userid' => $userid)));
+        $this->assertEquals(1, $DB->count_records('sessions', array('userid' => $userid, 'sid' => md5('pokus5'))));
     }
 
     public function test_kill_all_sessions() {
