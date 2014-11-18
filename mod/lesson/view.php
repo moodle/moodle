@@ -429,6 +429,8 @@ if ($pageid != LESSON_EOL) {
         $ntries--;  // need to look at the old attempts :)
     }
     if (!$canmanage) {
+        // Store this now before any modifications to pages viewed.
+        $progressbar = $lessonoutput->progress_bar($lesson);
         // Update the clock / get time information for this user.
         $lesson->stop_timer();
         $gradeinfo = lesson_grade($lesson, $ntries);
@@ -489,15 +491,16 @@ if ($pageid != LESSON_EOL) {
                     if (!$lesson->practice) {
                         $newgradeid = $DB->insert_record("lesson_grades", $grade);
                     }
-                    $lessoncontent .= get_string("eolstudentoutoftimenoanswers", "lesson");
+                    $lessoncontent .= $lessonoutput->paragraph(get_string("eolstudentoutoftimenoanswers", "lesson"));
                 }
             } else {
-                $lessoncontent .= get_string("welldone", "lesson");
+                $lessoncontent .= $lessonoutput->paragraph(get_string("welldone", "lesson"));
             }
         }
 
         // update central gradebook
         lesson_update_grades($lesson, $USER->id);
+        $lessoncontent .= $progressbar;
 
     } else {
         // display for teacher
