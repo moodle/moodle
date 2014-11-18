@@ -3472,16 +3472,13 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
 
     $rc->execute_plan();
 
-    // now a bit hacky part follows - we try to get the cmid of the newly
-    // restored copy of the module
+    // Now a bit hacky part follows - we try to get the cmid of the newly
+    // restored copy of the module.
     $newcmid = null;
     $tasks = $rc->get_plan()->get_tasks();
     foreach ($tasks as $task) {
-        error_log("Looking at a task");
         if (is_subclass_of($task, 'restore_activity_task')) {
-            error_log("Looking at a restore_activity_task task");
             if ($task->get_old_contextid() == $cmcontext->id) {
-                error_log("Contexts match");
                 $newcmid = $task->get_moduleid();
                 break;
             }
