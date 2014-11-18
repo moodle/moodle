@@ -3152,6 +3152,9 @@ class navbar extends navigation_node {
 
         // Check if navigation contains the active node
         if (!$this->ignoreactive) {
+            // We will need to ensure the navigation has been initialised.
+            $this->page->navigation->initialise($this->page);
+            // Now find the active nodes on both the navigation and settings.
             $navigationactivenode = $this->page->navigation->find_active_node();
             $settingsactivenode = $this->page->settingsnav->find_active_node();
 
