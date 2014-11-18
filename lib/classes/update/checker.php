@@ -634,9 +634,13 @@ class checker {
     protected function cron_notifications(array $changes) {
         global $CFG;
 
+        if (empty($changes)) {
+            return;
+        }
+
         $notifications = array();
         $pluginman = \core_plugin_manager::instance();
-        $plugins = $pluginman->get_plugins(true);
+        $plugins = $pluginman->get_plugins();
 
         foreach ($changes as $component => $componentchanges) {
             if (empty($componentchanges)) {
@@ -696,6 +700,7 @@ class checker {
         global $CFG;
 
         if (empty($notifications)) {
+            $this->cron_mtrace('nothing to notify about. ', '');
             return;
         }
 
