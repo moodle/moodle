@@ -181,7 +181,9 @@ abstract class wiki_markup_parser extends generic_parser {
         $text = trim($text);
 
         if (!$this->pretty_print && $level == 1) {
-            $text .= parser_utils::h('a', '['.get_string('editsection', 'wiki').']', array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text), 'class' => 'wiki_edit_section'));
+            $text .= ' ' . parser_utils::h('a', '['.get_string('editsection', 'wiki').']',
+                array('href' => "edit.php?pageid={$this->wiki_page_id}&section=" . urlencode($text),
+                    'class' => 'wiki_edit_section'));
         }
 
         if ($level <= $this->maxheaderdepth) {
