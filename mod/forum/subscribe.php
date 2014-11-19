@@ -77,7 +77,7 @@ if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
 $issubscribed = \mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $cm);
 
 // For a user to subscribe when a groupmode is set, they must have access to at least one group.
-if ($groupmode && !$issubscribed && !has_capability('moodle/site:accessallgroups')) {
+if ($groupmode && !$issubscribed && !has_capability('moodle/site:accessallgroups', $context)) {
     if (!groups_get_all_groups($course->id, $USER->id)) {
         print_error('cannotsubscribe', 'forum');
     }
