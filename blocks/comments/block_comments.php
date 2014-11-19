@@ -78,6 +78,7 @@ class block_comments extends block_base {
         $args->displaycancel = false;
         $comment = new comment($args);
         $comment->set_view_permission(true);
+        $comment->set_fullwidth();
 
         $this->content = new stdClass();
         $this->content->text = $comment->output(true);
