@@ -301,3 +301,10 @@
 .path-mod-assign .gradingtable .menu-action img {
     display: none;
 }
+
+.path-mod-assign .editsubmissionform input[name="submissionstatement"] {
+    vertical-align: top;
+}
+.path-mod-assign .editsubmissionform label[for="id_submissionstatement"] {
+    display: inline-block;
+}
