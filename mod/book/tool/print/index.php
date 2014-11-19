@@ -74,6 +74,7 @@ $strtop   = get_string('top', 'mod_book');
 $strtitle = format_string($book->name, true, array('context'=>$context));
 $PAGE->set_title($strtitle);
 $PAGE->set_heading($strtitle);
+$PAGE->requires->css('/mod/book/tool/print/print.css');
 
 // Begin page output.
 echo $OUTPUT->header();
