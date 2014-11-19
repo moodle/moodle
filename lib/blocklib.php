@@ -1082,7 +1082,7 @@ class block_manager {
         }
 
         // Assign roles icon.
-        if (has_capability('moodle/role:assign', $block->context)) {
+        if ($this->page->pagetype != 'my-index' && has_capability('moodle/role:assign', $block->context)) {
             //TODO: please note it is sloppy to pass urls through page parameters!!
             //      it is shortened because some web servers (e.g. IIS by default) give
             //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
