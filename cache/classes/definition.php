@@ -242,7 +242,8 @@ class cache_definition {
     protected $datasourcefile = null;
 
     /**
-     * The data source class aggregate to use. This is a super advanced setting.
+     * Deprecated - this is completely unused.
+     * @deprecated since 2.9
      * @var string
      */
     protected $datasourceaggregate = null;
@@ -324,11 +325,11 @@ class cache_definition {
      *
      * @param string $id
      * @param array $definition
-     * @param string $datasourceaggregate
+     * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
      * @return cache_definition
      * @throws coding_exception
      */
-    public static function load($id, array $definition, $datasourceaggregate = null) {
+    public static function load($id, array $definition, $unused = null) {
         global $CFG;
 
         if (!array_key_exists('mode', $definition)) {
@@ -520,7 +521,6 @@ class cache_definition {
         $cachedefinition->overrideclassfile = $overrideclassfile;
         $cachedefinition->datasource = $datasource;
         $cachedefinition->datasourcefile = $datasourcefile;
-        $cachedefinition->datasourceaggregate = $datasourceaggregate;
         $cachedefinition->staticacceleration = $staticacceleration;
         $cachedefinition->staticaccelerationsize = $staticaccelerationsize;
         $cachedefinition->ttl = $ttl;
