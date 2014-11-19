@@ -680,6 +680,7 @@ table.mod_index {width:100%;}
 .comment-ctrl h5 {margin:0;padding: 5px;}
 .comment-area {max-width: 400px;padding: 5px;}
 .comment-area textarea {width:100%;overflow:auto;}
+.comment-area textarea.fullwidth {-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;}
 .comment-area .fd {text-align:right;}
 .comment-meta span {color:gray;}
 .comment-link img { vertical-align: text-bottom; }
