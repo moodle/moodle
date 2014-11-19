@@ -3668,7 +3668,13 @@ class assign {
 
         $submissionstatement = '';
         if (!empty($adminconfig->submissionstatement)) {
-            $submissionstatement = $adminconfig->submissionstatement;
+            // Format the submissino statement before its sent. We turn off para because this is going within
+            // a form element.
+            $options = array(
+                'context' => $this->get_context(),
+                'para' => false
+            );
+            $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
         }
 
         if ($mform == null) {
@@ -4864,7 +4870,13 @@ class assign {
 
         $submissionstatement = '';
         if (!empty($adminconfig->submissionstatement)) {
-            $submissionstatement = $adminconfig->submissionstatement;
+            // Format the submissino statement before its sent. We turn off para because this is going within
+            // a form element.
+            $options = array(
+                'context' => $this->get_context(),
+                'para' => false
+            );
+            $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
         }
 
         if ($mform == null) {
@@ -6064,9 +6076,15 @@ class assign {
 
             $submissionstatement = '';
             if (!empty($adminconfig->submissionstatement)) {
-                $submissionstatement = $adminconfig->submissionstatement;
+                // Format the submissino statement before its sent. We turn off para because this is going within
+                // a form element.
+                $options = array(
+                    'context' => $this->get_context(),
+                    'para' => false
+                );
+                $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
             }
-            $mform->addElement('checkbox', 'submissionstatement', '', '&nbsp;' . $submissionstatement);
+            $mform->addElement('checkbox', 'submissionstatement', '', $submissionstatement);
             $mform->addRule('submissionstatement', get_string('required'), 'required', null, 'client');
         }
 
