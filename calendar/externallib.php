@@ -142,8 +142,8 @@ class core_calendar_external extends external_api {
                                              "Time from which events should be returned",
                                              VALUE_DEFAULT, 0, NULL_ALLOWED),
                                     'timeend' => new external_value(PARAM_INT,
-                                             "Time to which the events should be returned",
-                                             VALUE_DEFAULT, time(), NULL_ALLOWED),
+                                             "Time to which the events should be returned. We treat 0 and null as no end",
+                                             VALUE_DEFAULT, 0, NULL_ALLOWED),
                                     'ignorehidden' => new external_value(PARAM_BOOL,
                                              "Ignore hidden events or not",
                                              VALUE_DEFAULT, true, NULL_ALLOWED),
@@ -213,6 +213,11 @@ class core_calendar_external extends external_api {
         // Do we need site events?
         if (!empty($params['options']['siteevents'])) {
             $funcparam['courses'][] = $SITE->id;
+        }
+
+        // We treat 0 and null as no end.
+        if (empty($params['options']['timeend'])) {
+            $params['options']['timeend'] = PHP_INT_MAX;
         }
 
         $eventlist = calendar_get_events($params['options']['timestart'], $params['options']['timeend'], $funcparam['users'], $funcparam['groups'],
