@@ -1,149 +1,182 @@
 
-h1, h2, h3, h4, h5, h6 {
-    margin-left: 0px;
+#page-mod-book-print {
+    color: #000;
+    background-color: #fff;
     font-family: "Times New Roman", Times, serif;
+    font-size: 1em;
+    font-weight: normal;
+    text-decoration: none;
+}
+#page-mod-book-print.dir-ltr {
+    margin-left: 50px;
+    margin-right: 10px;
+
+}
+#page-mod-book-print.dir-rtl {
+    margin-left: 10px;
+    margin-right: 50px;
+}
+
+#page-mod-book-print h1,
+#page-mod-book-print h2,
+#page-mod-book-print h3,
+#page-mod-book-print h4,
+#page-mod-book-print h5,
+#page-mod-book-print h6 {
     page-break-after: avoid;
     page-break-inside: avoid;
 }
+#page-mod-book-print.dir-ltr h1,
+#page-mod-book-print.dir-ltr h2,
+#page-mod-book-print.dir-ltr h3,
+#page-mod-book-print.dir-ltr h4,
+#page-mod-book-print.dir-ltr h5,
+#page-mod-book-print.dir-ltr h6 {
+    margin-left: 0px;
+}
+#page-mod-book-print.dir-rtl h1,
+#page-mod-book-print.dir-rtl h2,
+#page-mod-book-print.dir-rtl h3,
+#page-mod-book-print.dir-rtl h4,
+#page-mod-book-print.dir-rtl h5,
+#page-mod-book-print.dir-rtl h6 {
+    margin-left: 0px;
+}
 
-.book_summary {
-    margin-left: -40px;
+/* just some hack - ignore user defined <font> */
+#page-mod-book-print font {
+    color: #000;
+    background-color: #eee;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1em;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+#page-mod-book-print .book_summary {
     text-align: center;
     margin-bottom: 120px;
 }
+#page-mod-book-print.dir-ltr .book_summary {
+    margin-left: -40px;
+}
+#page-mod-book-print.dir-rtl .book_summary {
+    margin-right: -40px;
+}
 
-.book_chapter {
+#page-mod-book-print .book_chapter {
     page-break-before: always;
-}
-
-body {
-    margin-left: 50px;
-    margin-right: 10px;
-    color: #000000;
-    background-color: #FFFFFF;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 1em;
-    font-weight: normal;
-    text-decoration: none;
-}
-
-/* link rewriting for mozilla - collides with filters :-( */
-/*
-a[href^="http://"]:after, a[href^="ftp://"]:after {
-    content: " ["attr(href)"]";
-}
-*/
-
-/* just some hack - ignore user defined <font> */
-font {
-    color: #000000;
-    background-color: #EEEEEE;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 1em;
-    font-weight: normal;
-    text-decoration: none;
 }
 
 /* ===== TOC numbering styles ===== */
 
 /* numbering == NONE */
-.book_toc_none {
+#page-mod-book-print .book_toc_none {
     page-break-before: always;
 }
-.book_toc_none ul {
+#page-mod-book-print.dir-ltr .book_toc_none ul,
+#page-mod-book-print.dir-ltr .book_toc_none ul ul {
     margin-left: 0px;
     padding-left: 0px;
 }
-.book_toc_none ul ul {
-    margin-left: 0px;
-    padding-left: 0px;
+#page-mod-book-print.dir-rtl .book_toc_none ul,
+#page-mod-book-print.dir-rtl .book_toc_none ul ul {
+    margin-right: 0px;
+    padding-right: 0px;
 }
-.book_toc_none li {
+#page-mod-book-print .book_toc_none li {
     margin-top: 10px;
     list-style: none;
 }
-.book_toc_none li li {
+#page-mod-book-print .book_toc_none li li {
     margin-top: 0px;
     list-style: none;
 }
-
 /* numbering == NUMBERED */
-.book_toc_numbered {
+#page-mod-book-print .book_toc_numbered {
     page-break-before: always;
 }
-.book_toc_numbered ul {
-    margin-left: 0px;
-    padding-left: 0px;
-}
-.book_toc_numbered ul ul {
-    margin-left: 0px;
-    padding-left: 0px;
-}
-.book_toc_numbered li {
+#page-mod-book-print .book_toc_numbered li {
     margin-top: 10px;
     list-style: none;
 }
-.book_toc_numbered li li {
+#page-mod-book-print .book_toc_numbered li li {
     margin-top: 0px;
     list-style: none;
+}
+#page-mod-book-print.dir-ltr .book_toc_numbered ul,
+#page-mod-book-print.dir-ltr .book_toc_numbered ul ul {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+#page-mod-book-print.dir-rtl .book_toc_numbered ul,
+#page-mod-book-print.dir-rtl .book_toc_numbered ul ul {
+    margin-right: 0px;
+    padding-right: 0px;
 }
 
 /* numbering == BULLETS */
-.book_toc_bullets {
+#page-mod-book-print .book_toc_bullets {
     page-break-before: always;
 }
-.book_toc_bullets ul {
-    margin-left: 0px;
-    padding-left: 0px;
-}
-.book_toc_bullets ul ul {
-    margin-left: 20px;
-    padding-left: 0px;
-}
-.book_toc_bullets li {
+#page-mod-book-print .book_toc_bullets li {
     margin-top: 10px;
     list-style: none;
 }
-.book_toc_bullets li li {
+#page-mod-book-print .book_toc_bullets li li {
     margin-top: 0px;
     list-style: circle;
 }
-
-/* numbering == INDENTED */
-.book_toc_indented {
-    page-break-before: always;
-}
-.book_toc_indented ul {
+#page-mod-book-print.dir-ltr .book_toc_bullets ul {
     margin-left: 0px;
     padding-left: 0px;
 }
-.book_toc_indented ul ul {
+#page-mod-book-print.dir-ltr .book_toc_bullets ul ul {
     margin-left: 20px;
     padding-left: 0px;
 }
-.book_toc_indented li {
+#page-mod-book-print.dir-rtl .book_toc_bullets ul {
+    margin-right: 0px;
+    padding-right: 0px;
+}
+#page-mod-book-print.dir-rtl .book_toc_bullets ul ul {
+    margin-right: 20px;
+    padding-right: 0px;
+}
+
+/* numbering == INDENTED */
+#page-mod-book-print .book_toc_indented {
+    page-break-before: always;
+}
+#page-mod-book-print .book_toc_indented li {
     margin-top: 10px;
     list-style: none;
 }
-.book_toc_indented li li {
+#page-mod-book-print .book_toc_indented li li {
     margin-top: 0px;
     list-style: none;
 }
-
-/* Print dialog link icon */
-.book_print_icon {
-    padding-left: 0;
-    padding-right: 3px;
-    height: 16px;
-    vertical-align: text-bottom;
-    width: 16px;
-    border-width: 0;
+#page-mod-book-print.dir-ltr .book_toc_indented ul {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+#page-mod-book-print.dir-ltr .book_toc_indented ul ul {
+    margin-left: 20px;
+    padding-left: 0px;
+}
+#page-mod-book-print.dir-rtl .book_toc_indented ul {
+    margin-right: 0px;
+    padding-right: 0px;
+}
+#page-mod-book-print.dir-rtl .book_toc_indented ul ul {
+    margin-right: 20px;
+    padding-right: 0px;
 }
 
-/* Exclude elements from printing */
+/* Exclude elements from printing. */
 @media print
 {
-    .book_no_print {
-        display: none;
+    .hidden-print {
+        display: none !important;
     }
 }
