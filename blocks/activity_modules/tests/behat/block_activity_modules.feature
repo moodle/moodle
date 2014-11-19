@@ -92,8 +92,8 @@ Feature: Block activity modules
       | activity   | name                   | intro                         | course | idnumber    |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
       | book       | Test book name         | Test book description         | C1     | book1       |
-      | chat       | Test chat name         | Test chat description         | C1     | chat1       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     |
+      | chat       | Test chat name         | Test chat description         | C1     | chat1       |
       | data       | Test database name     | Test database description     | C1     | data1       |
       | feedback   | Test feedback name     | Test feedback description     | C1     | feedback1   |
       | folder     | Test folder name       | Test folder description       | C1     | folder1     |
