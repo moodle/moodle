@@ -688,6 +688,9 @@ abstract class testing_util {
         // Do not delete automatically installed files.
         self::skip_original_data_files($childclassname);
 
+        // Clear file status cache, before checking file_exists.
+        clearstatcache();
+
         // Clean up the dataroot folder.
         $handle = opendir(self::get_dataroot());
         while (false !== ($item = readdir($handle))) {
