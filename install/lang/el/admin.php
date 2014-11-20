@@ -30,5 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clitypevalue'] = 'δώσε μία τιμή';
 $string['environmentrequireinstall'] = 'απαιτείται να εγκατασταθεί/ ενεργοποιηθεί';
 $string['environmentrequireversion'] = 'απαιτείται η έκδοση {$a->needed} ενώ εσείς έχετε την {$a->current}';
