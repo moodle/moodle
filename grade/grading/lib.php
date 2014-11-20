@@ -254,7 +254,7 @@ class grading_manager {
             $list['nograde'] = get_string('gradingmethodnograde', 'core_grading');
         }
         if ($includesimple) {
-            $list[''] = get_string('gradingmethodnone', 'core_grading');
+            $list[''] = get_string('gradingsimpledirect', 'core_grading');
         }
 
         foreach (core_component::get_plugin_list('gradingform') as $name => $location) {
