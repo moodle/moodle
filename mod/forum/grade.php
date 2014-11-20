@@ -47,15 +47,22 @@ $forum = $DB->get_record("forum", array("id" => $cm->instance), '*', MUST_EXIST)
 
 $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
-require_course_login($course, true, $cm);
+require_login($course, true, $cm);
+
+$gradingenabled = mod_forum_is_grading_enabled($forum);
+if (!$gradingenabled) {
+    print_error('gradingdisabled', 'mod_forum');
+}
 
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
-$cangrade = has_capability('mod/forum:grade', $context);
-
-if ($userid !== $USER->id) {
+if ($userid != $USER->id) {
+    // If the user is accessing a different user from themselves they must have overall grading capabilities.
     require_capability('mod/forum:grade', $context);
+    $cangrade = true;
+} else {
+    $cangrade = has_capability('mod/forum:grade', $context);
 }
 
 // Check advanced grading is enabled for this forum.
@@ -76,7 +83,7 @@ if (!empty($postid) && !empty($advancedgrading['posts'])) {
     $postid = 0; // Grading posts is not enabled but fall back to grading forum.
 
     $allnames = get_all_user_name_fields(true, 'u');
-    $posts = $DB->get_records_sql("SELECT p.*, $allnames, u.email, u.picture, u.imagealt, g.grade
+    $posts = $DB->get_recordset_sql("SELECT p.*, $allnames, u.email, u.picture, u.imagealt, g.grade
                                      FROM {forum_posts} p
                                           LEFT JOIN {user} u ON p.userid = u.id
                                           LEFT JOIN {forum_discussions} d ON d.id = p.discussion
@@ -110,7 +117,7 @@ if ($cangrade) {
     if ($action === 'submitgrade') {
         $formdata = $mform->get_data();
         if ($formdata) {
-            forum_apply_grade_to_user($formdata, $userid, $area);
+            mod_forum_apply_grade_to_user($formdata, $userid, $area);
             if (!empty($postid)) {
                 $url = new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id, '#p' => $postid));
             } else {
@@ -135,7 +142,7 @@ if (!empty($post) && !empty($advancedgrading['forum'])) {
 if ($cangrade) {
     echo $renderer->render(new forum_form('gradingform', $mform));
 } else {
-    $grade = forum_get_user_grade($userid, true, $forum->id, $postid);
+    $grade = mod_forum_get_user_grade($userid, true, $forum->id, $postid);
     $gradinginstance = mod_forum_get_grading_instance($forum, $userid, $grade, true, $context, $area);
     $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
     $gradefordisplay = $gradinginstance->get_controller()->render_grade($PAGE,
@@ -160,6 +167,7 @@ if (!empty($post)) {
                          false, "", "", null, true, null, false, true);
 
     }
+    $posts->close();
 } else {
     echo $OUTPUT->notification(get_string('nopoststograde', 'forum'));
 }

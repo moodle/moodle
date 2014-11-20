@@ -7857,13 +7857,13 @@ function mod_forum_get_grading_instance($forum, $userid, $grade, $gradingdisable
  * @param string $area - the grading area to apply the grade to.
  * @return void
  */
-function forum_apply_grade_to_user($formdata, $userid, $area) {
+function mod_forum_apply_grade_to_user($formdata, $userid, $area) {
     global $DB;
 
     $context = context_module::instance($formdata->cmid);
     $forum = $DB->get_record('forum', array('id' => $formdata->forumid), '*', MUST_EXIST);
     $forum->cmidnumber = $formdata->cmid;
-    $grade = forum_get_user_grade($userid, true, $formdata->forumid, $formdata->postid);
+    $grade = mod_forum_get_user_grade($userid, true, $formdata->forumid, $formdata->postid);
     $gradinginstance = mod_forum_get_grading_instance($forum, $userid, $grade, false, $context, $area);
     if ($gradinginstance) {
         $grade->grade = $gradinginstance->submit_and_get_grade($formdata->advancedgrading, $grade->id);
@@ -7908,7 +7908,7 @@ function forum_apply_grade_to_user($formdata, $userid, $area) {
  * @param int $postid The post to retrieve the grade for. 0 means the overall forum grade.
  * @return stdClass The grade record
  */
-function forum_get_user_grade($userid, $create, $forumid, $postid=0) {
+function mod_forum_get_user_grade($userid, $create, $forumid, $postid=0) {
     global $DB, $USER;
 
     // If the userid is not null then use userid.
@@ -7938,4 +7938,18 @@ function forum_get_user_grade($userid, $create, $forumid, $postid=0) {
         return $grade;
     }
     return false;
+}
+
+/**
+ * Check to make sure this forum has grading enabled.
+ *
+ * @param stdClass $forum - The forum record.
+ * @return bool is grading enabled in this forum.
+ */
+function mod_forum_is_grading_enabled($forum) {
+   if ($forum->grade > 0) {
+       return true;
+   }
+
+   return false;
 }

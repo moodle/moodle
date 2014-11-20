@@ -262,6 +262,7 @@ $string['gradepost'] = 'Grade Post';
 $string['gradeforum'] = 'Overall forum participation';
 $string['gradeposts'] = 'Individual posts';
 $string['gradesaved'] = 'Grade saved';
+$string['gradingdisabled'] = 'Grading is not enabled in this forum';
 $string['hiddenforumpost'] = 'Hidden forum post';
 $string['inforum'] = 'in {$a}';
 $string['introblog'] = 'The posts in this forum were copied here automatically from blogs of users in this course because those blog entries are no longer available';

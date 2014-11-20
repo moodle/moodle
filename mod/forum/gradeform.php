@@ -54,7 +54,7 @@ class mod_forum_grade_form extends moodleform {
 
         // Visible elements.
         $gradingdisabled = false;
-        $grade = forum_get_user_grade($userid, true, $forum->id, $postid);
+        $grade = mod_forum_get_user_grade($userid, true, $forum->id, $postid);
         if (empty($postid)) {
             $area = "forum";
         } else {
