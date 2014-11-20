@@ -192,13 +192,7 @@ class behat_hooks extends behat_base {
         // Reset $SESSION.
         \core\session\manager::init_empty_session();
 
-        behat_util::reset_database();
-        behat_util::reset_dataroot();
-
-        accesslib_clear_all_caches(true);
-
-        // Reset the nasty strings list used during the last test.
-        nasty_strings::reset_used_strings();
+        behat_util::reset_all_data();
 
         // Assign valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
