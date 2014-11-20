@@ -242,21 +242,19 @@ class grading_manager {
      * Returns the list of installed grading plugins together, optionally extended
      * with a simple direct grading.
      *
-     * @param bool $includenone should the 'Simple direct grading' be included
+     * @param bool $includesimple should the 'Simple direct grading' be included
+     * @param bool $includenograde should 'No grade' be included
      * @return array of the (string)name => (string)localized title of the method
      */
-    public function available_methods($includenone = true) {
+    public static function available_methods($includesimple = true, $includenograde = false) {
 
-        if ($includenone) {
-            // Check to see if there are multiple grading areas and use a different string for none.
-            $areas = $this->available_areas($this->component);
-            if (count($areas) > 1) {
-                $list = array('' => get_string('gradingmethodnograde', 'core_grading'));
-            } else {
-                $list = array('' => get_string('gradingmethodnone', 'core_grading'));
-            }
-        } else {
-            $list = array();
+        $list = array();
+
+        if ($includenograde) {
+            $list['nograde'] = get_string('gradingmethodnograde', 'core_grading');
+        }
+        if ($includesimple) {
+            $list[''] = get_string('gradingmethodnone', 'core_grading');
         }
 
         foreach (core_component::get_plugin_list('gradingform') as $name => $location) {
@@ -274,12 +272,13 @@ class grading_manager {
      *
      * Requires the context property to be set in advance.
      *
-     * @param bool $includenone should the 'Simple direct grading' be included
+     * @param bool $includesimple should the 'Simple direct grading' be included
+     * @param bool $includenograde should 'No grade' be included
      * @return array of the (string)name => (string)localized title of the method
      */
-    public function get_available_methods($includenone = true) {
+    public function get_available_methods($includesimple = true, $includenograde = false) {
         $this->ensure_isset(array('context'));
-        return $this->available_methods($includenone);
+        return self::available_methods($includesimple, $includenograde);
     }
 
     /**

@@ -43,9 +43,15 @@ class core_grading_renderer extends plugin_renderer_base {
      */
     public function management_method_selector(grading_manager $manager, moodle_url $targeturl) {
 
+        $areas = $manager->get_available_areas();
+        $shownogradeoption = false;
+        if (count($areas) > 1) {
+            // There are multiple grading areas so make sure the option to select no grade is available.
+            $shownogradeoption = true;
+        }
         $method = $manager->get_active_method();
-        $methods = $manager->get_available_methods();
-        $methods['none'] = $methods[''];
+        $methods = $manager->get_available_methods(false, $shownogradeoption);
+        $methods['none'] = get_string('gradingmethodnone', 'core_grading');
         unset($methods['']);
         $selector = new single_select(new moodle_url($targeturl, array('sesskey' => sesskey())),
             'setmethod', $methods, empty($method) ? 'none' : $method, null, 'activemethodselector');
