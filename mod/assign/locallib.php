@@ -3739,7 +3739,7 @@ class assign {
 
         $submissionstatement = '';
         if (!empty($adminconfig->submissionstatement)) {
-            // Format the submissino statement before its sent. We turn off para because this is going within
+            // Format the submission statement before its sent. We turn off para because this is going within
             // a form element.
             $options = array(
                 'context' => $this->get_context(),
@@ -5002,7 +5002,7 @@ class assign {
 
         $submissionstatement = '';
         if (!empty($adminconfig->submissionstatement)) {
-            // Format the submissino statement before its sent. We turn off para because this is going within
+            // Format the submission statement before its sent. We turn off para because this is going within
             // a form element.
             $options = array(
                 'context' => $this->get_context(),
@@ -6208,7 +6208,7 @@ class assign {
 
             $submissionstatement = '';
             if (!empty($adminconfig->submissionstatement)) {
-                // Format the submissino statement before its sent. We turn off para because this is going within
+                // Format the submission statement before its sent. We turn off para because this is going within
                 // a form element.
                 $options = array(
                     'context' => $this->get_context(),
