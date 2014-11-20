@@ -395,6 +395,7 @@ abstract class format_base {
      * @return null|moodle_url
      */
     public function get_view_url($section, $options = array()) {
+        global $CFG;
         $course = $this->get_course();
         $url = new moodle_url('/course/view.php', array('id' => $course->id));
 
@@ -405,7 +406,7 @@ abstract class format_base {
         } else {
             $sectionno = $section;
         }
-        if (!empty($options['navigation']) && $sectionno !== null) {
+        if (empty($CFG->linkcoursesections) && !empty($options['navigation']) && $sectionno !== null) {
             // by default assume that sections are never displayed on separate pages
             return null;
         }
