@@ -123,6 +123,10 @@ class behat_hooks extends behat_base {
             throw new Exception('Behat only can run if test mode is enabled. More info in ' . behat_command::DOCS_URL . '#Running_tests');
         }
 
+        // Reset all data, before checking for is_server_running.
+        // If not done, then it can return apache error, while running tests.
+        behat_util::reset_all_data();
+
         if (!behat_util::is_server_running()) {
             throw new Exception($CFG->behat_wwwroot .
                 ' is not available, ensure you specified correct url and that the server is set up and started.' .
