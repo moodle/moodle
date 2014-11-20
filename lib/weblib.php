@@ -646,6 +646,10 @@ class moodle_url {
             }
         }
 
+        if ($url->anchor !== $this->anchor) {
+            return false;
+        }
+
         return true;
     }
 
