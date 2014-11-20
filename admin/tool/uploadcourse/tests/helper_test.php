@@ -101,7 +101,9 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
                 'test1' => 'test1',
             )
         );
-        $this->assertSame(tool_uploadcourse_helper::get_enrolment_data($data), $expected);
+        $errors = array();
+        $this->assertSame(tool_uploadcourse_helper::get_enrolment_data($data, $errors), $expected);
+        $this->assertArrayHasKey('unknownenrolmentmethods', $errors);
     }
 
     public function test_get_enrolment_plugins() {
