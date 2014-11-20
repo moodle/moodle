@@ -9051,11 +9051,25 @@ function get_performance_info() {
         $hits = 0;
         $misses = 0;
         $sets = 0;
-        foreach ($stats as $definition => $stores) {
-            $html .= '<span class="cache-definition-stats">';
-            $html .= '<span class="cache-definition-stats-heading">'.$definition.'</span>';
+        foreach ($stats as $definition => $details) {
+            switch ($details['mode']) {
+                case cache_store::MODE_APPLICATION:
+                    $modeclass = 'application';
+                    $mode = ' <span title="application cache">[a]</span>';
+                    break;
+                case cache_store::MODE_SESSION:
+                    $modeclass = 'session';
+                    $mode = ' <span title="session cache">[s]</span>';
+                    break;
+                case cache_store::MODE_REQUEST:
+                    $modeclass = 'request';
+                    $mode = ' <span title="request cache">[r]</span>';
+                    break;
+            }
+            $html .= '<span class="cache-definition-stats cache-mode-'.$modeclass.'">';
+            $html .= '<span class="cache-definition-stats-heading">'.$definition.$mode.'</span>';
             $text .= "$definition {";
-            foreach ($stores as $store => $data) {
+            foreach ($details['stores'] as $store => $data) {
                 $hits += $data['hits'];
                 $misses += $data['misses'];
                 $sets += $data['sets'];

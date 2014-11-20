@@ -45,33 +45,45 @@
     margin-right: 10px;
     margin-left: 10px;
 }
-.performanceinfo .cachesused {
+
+/** Cache stats styles **/
+#page-footer .performanceinfo .cachesused {
     margin-top: 1em;
+
+    .cache-stats-heading,
+    .cache-total-stats {
+        font-weight: bold;
+        font-size: 110%;
+        margin-top: 0.3em;
+    }
+    .cache-definition-stats {
+        margin: .3em;
+        display: inline-block;
+        vertical-align: top;
+        background-color: @wellBackground;
+
+        .cache-definition-stats-heading span {
+            display: inline-block;
+            cursor: default;
+        }
+
+        .cache-store-stats {
+            padding: 0 1.3em;
+
+            &.nohits {
+                background-color: @errorBackground;
+            }
+            &.lowhits {
+                background-color: @warningBackground;
+            }
+            &.hihits {
+                background-color: @successBackground;
+            }
+        }
+    }
 }
-.performanceinfo .cachesused .cache-stats-heading,
-.performanceinfo .cachesused .cache-total-stats {
-    font-weight: bold;
-    font-size: 110%;
-    margin-top: 0.3em;
-}
-#page-footer .performanceinfo .cachesused .cache-definition-stats {
-    margin: .3em;
-    display: inline-block;
-    vertical-align: top;
-    background-color: @wellBackground;
-}
-.cache-store-stats {
-    padding: 0 1.3em;
-}
-.cache-store-stats.nohits {
-    background-color: @errorBackground;
-}
-.cache-store-stats.lowhits {
-    background-color: @warningBackground;
-}
-.cache-store-stats.hihits {
-    background-color: @successBackground;
-}
+
+
 #page-footer,
 #page-footer .validators,
 #page-footer .purgecaches,
