@@ -900,8 +900,11 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
     }
 
     public function test_enrolment_data() {
+        global $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
+        // Adding an enrolment method to a new course.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
         $data = array('shortname' => 'c1', 'summary' => 'S', 'fullname' => 'FN', 'category' => '1');
@@ -921,11 +924,135 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             $enroldata[$instance->enrol] = $instance;
         }
 
+        $this->assertFalse($co->has_errors());
         $this->assertNotEmpty($enroldata['manual']);
         $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['manual']->status);
         $this->assertEquals(strtotime($data['enrolment_1_startdate']), $enroldata['manual']->enrolstartdate);
         $this->assertEquals(strtotime('1970-01-01 GMT + ' . $data['enrolment_1_enrolperiod']), $enroldata['manual']->enrolperiod);
         $this->assertEquals(strtotime('12th July 2013'), $enroldata['manual']->enrolenddate);
+
+        // Updating a course's enrolment method.
+        $c2 = $this->getDataGenerator()->create_course(array('shortname' => 'c2'));
+        $enroldata = array();
+        $instances = enrol_get_instances($c2->id, false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+        $manual = $enroldata['manual'];
+        $manual->enrolstartdate = strtotime('1st January 2000');
+        $manual->enrolenddate = strtotime('2nd January 2001');
+        $manual->status = ENROL_INSTANCE_DISABLED;
+        $DB->update_record('enrol', $manual);
+
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2');
+        $data['enrolment_1'] = 'manual';
+        $data['enrolment_1_role'] = 'teacher';
+        $data['enrolment_1_enddate'] = '2nd August 2013';
+        $data['enrolment_1_enrolperiod'] = '10 days';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        // Get the enrolment methods data.
+        $enroldata = array();
+        $instances = enrol_get_instances($co->get_id(), false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+
+        $this->assertFalse($co->has_errors());
+        $this->assertNotEmpty($enroldata['manual']);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['manual']->status);
+        $this->assertEquals($manual->enrolstartdate, $enroldata['manual']->enrolstartdate);
+        $this->assertEquals(strtotime('1970-01-01 GMT + ' . $data['enrolment_1_enrolperiod']),
+            $enroldata['manual']->enrolperiod);
+        $this->assertEquals(strtotime('11th January 2000'), $enroldata['manual']->enrolenddate);
+
+        // Disabling an enrolment method.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2');
+        $data['enrolment_1'] = 'manual';
+        $data['enrolment_1_disable'] = '1';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        $enroldata = array();
+        $instances = enrol_get_instances($co->get_id(), false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+        $this->assertFalse($co->has_errors());
+        $this->assertNotEmpty($enroldata['manual']);
+        $this->assertEquals(ENROL_INSTANCE_DISABLED, $enroldata['manual']->status);
+
+        // Deleting an enrolment method.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2');
+        $data['enrolment_1'] = 'manual';
+        $data['enrolment_1_delete'] = '1';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        $enroldata = array();
+        $instances = enrol_get_instances($co->get_id(), false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+        $this->assertFalse($co->has_errors());
+        $this->assertArrayNotHasKey('manual', $enroldata);
+
+        // Trying to add a non-existing enrolment method.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2');
+        $data['enrolment_1'] = 'notexisting';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('unknownenrolmentmethods', $co->get_errors());
+
+        // Trying to add a non-compatible enrolment method.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2');
+        $data['enrolment_1'] = 'database';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        $enroldata = array();
+        $instances = enrol_get_instances($co->get_id(), false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+        $this->assertTrue($co->has_errors());
+        $this->assertArrayNotHasKey('database', $enroldata);
+        $this->assertArrayHasKey('cannotaddenrolmentmethods', $co->get_errors());
+
+        // Testing cohort enrolment method.
+        $cohort = $this->getDataGenerator()->create_cohort();
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c2');
+        $data['enrolment_1'] = 'cohort';
+        $data['enrolment_1_customint1'] = $cohort->id;
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        $enroldata = array();
+        $instances = enrol_get_instances($co->get_id(), false);
+        foreach ($instances as $instance) {
+            $enroldata[$instance->enrol] = $instance;
+        }
+        $this->assertFalse($co->has_errors());
+        $this->assertArrayHasKey('cohort', $enroldata);
+        $this->assertEquals($cohort->id, $enroldata['cohort']->customint1);
     }
 
     public function test_idnumber_problems() {
