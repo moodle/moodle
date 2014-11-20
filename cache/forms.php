@@ -65,13 +65,13 @@ class cachestore_addinstance_form extends moodleform {
         }
 
         if (is_array($locks)) {
-            $form->addElement('select', 'lock', get_string('lockmethod', 'cache'), $locks);
-            $form->addHelpButton('lock', 'lockmethod', 'cache');
+            $form->addElement('select', 'lock', get_string('locking', 'cache'), $locks);
+            $form->addHelpButton('lock', 'locking', 'cache');
             $form->setType('lock', PARAM_ALPHANUMEXT);
         } else {
             $form->addElement('hidden', 'lock', '');
             $form->setType('lock', PARAM_ALPHANUMEXT);
-            $form->addElement('static', 'lock-value', get_string('lockmethod', 'cache'),
+            $form->addElement('static', 'lock-value', get_string('locking', 'cache'),
                     '<em>'.get_string('nativelocking', 'cache').'</em>');
         }
 
