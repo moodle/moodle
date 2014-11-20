@@ -105,10 +105,10 @@ M.gradingform_guideeditor.editmode = function(el, editmode) {
         if (value.length) {
             taplain.removeClass('empty')
         } else if (ta.get('name').indexOf('[shortname]') > 1){
-            value = M.str.gradingform_guide.clicktoeditname
+            value = M.util.get_string('clicktoeditname', 'gradingform_guide')
             taplain.addClass('editname')
         } else {
-            value = M.str.gradingform_guide.clicktoedit
+            value = M.util.get_string('clicktoedit', 'gradingform_guide')
             taplain.addClass('empty')
         }
         taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value))
@@ -219,7 +219,7 @@ M.gradingform_guideeditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-'+section+'-'+chunks[2]).remove()
             M.gradingform_guideeditor.assignclasses(elements_str)
         } else {
-            dialog_options['message'] = M.str.gradingform_guide.confirmdeletecriterion
+            dialog_options['message'] = M.util.get_string('confirmdeletecriterion', 'gradingform_guide')
             M.util.show_confirm_dialog(e, dialog_options);
         }
     } else {

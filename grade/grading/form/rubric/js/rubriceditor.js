@@ -90,7 +90,7 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
         var value = ta.get('value')
         if (value.length) taplain.removeClass('empty')
         else {
-            value = (el.hasClass('level')) ? M.str.gradingform_rubric.levelempty : M.str.gradingform_rubric.criterionempty
+            value = (el.hasClass('level')) ? M.util.get_string('levelempty', 'gradingform_rubric') : M.util.get_string('criterionempty', 'gradingform_rubric')
             taplain.addClass('empty')
         }
         taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value));
@@ -201,7 +201,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]).remove()
             M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
-            dialog_options['message'] = M.str.gradingform_rubric.confirmdeletecriterion
+            dialog_options['message'] = M.util.get_string('confirmdeletecriterion', 'gradingform_rubric')
             M.util.show_confirm_dialog(e, dialog_options);
         }
     } else if (chunks.length == 6 && action == 'delete') {
@@ -210,7 +210,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]+'-'+chunks[3]+'-'+chunks[4]).remove()
             M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
-            dialog_options['message'] = M.str.gradingform_rubric.confirmdeletelevel
+            dialog_options['message'] = M.util.get_string('confirmdeletelevel', 'gradingform_rubric')
             M.util.show_confirm_dialog(e, dialog_options);
         }
     } else {

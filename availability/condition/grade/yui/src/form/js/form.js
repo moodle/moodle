@@ -35,24 +35,23 @@ M.availability_grade.form.getNode = function(json) {
     this.nodesSoFar++;
 
     // Create HTML structure.
-    var strings = M.str.availability_grade;
-    var html = '<label>' + strings.title + ' <span class="availability-group">' +
-            '<select name="id"><option value="0">' + M.str.moodle.choosedots + '</option>';
+    var html = '<label>' + M.util.get_string('title', 'availability_grade') + ' <span class="availability-group">' +
+            '<select name="id"><option value="0">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     for (var i = 0; i < this.grades.length; i++) {
         var grade = this.grades[i];
         // String has already been escaped using format_string.
         html += '<option value="' + grade.id + '">' + grade.name + '</option>';
     }
     html += '</select></span></label> <span class="availability-group">' +
-            '<label><input type="checkbox" name="min"/>' + strings.option_min +
-            '</label> <label><span class="accesshide">' + strings.label_min +
+            '<label><input type="checkbox" name="min"/>' + M.util.get_string('option_min', 'availability_grade') +
+            '</label> <label><span class="accesshide">' + M.util.get_string('label_min', 'availability_grade') +
             '</span><input type="text" name="minval" title="' +
-            strings.label_min + '"/></label>%</span>' +
+            M.util.get_string('label_min', 'availability_grade') + '"/></label>%</span>' +
             '<span class="availability-group">' +
-            '<label><input type="checkbox" name="max"/>' + strings.option_max +
-            '</label> <label><span class="accesshide">' + strings.label_max +
+            '<label><input type="checkbox" name="max"/>' + M.util.get_string('option_max', 'availability_grade') +
+            '</label> <label><span class="accesshide">' + M.util.get_string('label_max', 'availability_grade') +
             '</span><input type="text" name="maxval" title="' +
-            strings.label_max + '"/></label>%</span>';
+            M.util.get_string('label_max', 'availability_grade') + '"/></label>%</span>';
     var node = Y.Node.create('<span>' + html + '</span>');
 
     // Set initial values.

@@ -446,7 +446,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
     try {
         outcome = this.report.Y.JSON.parse(outcome.responseText);
     } catch(e) {
-        var message = M.str.gradereport_grader.ajaxfailedupdate;
+        var message = M.util.get_string('ajaxfailedupdate', 'gradereport_grader');
         message = message.replace(/\[1\]/, args.type);
         message = message.replace(/\[2\]/, this.report.users[args.properties.userid]);
 
@@ -506,7 +506,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
                         // If we are here the grade value of the cell currently being edited has changed !!!!!!!!!
                         // If the user has not actually changed the old value yet we will automatically correct it
                         // otherwise we will prompt the user to choose to use their value or the new value!
-                        if (!this.current.has_changed() || confirm(M.str.gradereport_grader.ajaxfieldchanged)) {
+                        if (!this.current.has_changed() || confirm(M.util.get_string('ajaxfieldchanged', 'gradereport_grader'))) {
                             this.current.set_grade(finalgrade);
                             this.current.grade.set('value', finalgrade);
                         }
@@ -554,7 +554,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
  */
 M.gradereport_grader.classes.ajax.prototype.display_submission_error = function(message, cell) {
     var erroroverlay = new this.report.Y.Overlay({
-        headerContent : '<div><strong class="error">'+M.str.gradereport_grader.ajaxerror+'</strong>  <em>'+M.str.gradereport_grader.ajaxclicktoclose+'</em></div>',
+        headerContent : '<div><strong class="error">'+M.util.get_string('ajaxerror', 'gradereport_grader')+'</strong>  <em>'+M.util.get_string('ajaxclicktoclose', 'gradereport_grader')+'</em></div>',
         bodyContent : message,
         visible : false,
         zIndex : 3
@@ -1009,7 +1009,7 @@ M.gradereport_grader.classes.scalefield = function(report, node) {
     this.gradespan = node.one('.gradevalue');
     this.inputdiv = this.report.Y.Node.create('<div></div>');
     this.editfeedback = this.report.ajax.showquickfeedback;
-    this.grade = this.report.Y.Node.create('<select type="text" class="text" /><option value="-1">'+M.str.gradereport_grader.ajaxchoosescale+'</option></select>');
+    this.grade = this.report.Y.Node.create('<select type="text" class="text" /><option value="-1">'+M.util.get_string('ajaxchoosescale', 'gradereport_grader')+'</option></select>');
     this.gradetype = 'scale';
     this.inputdiv.append(this.grade);
     if (this.editfeedback) {

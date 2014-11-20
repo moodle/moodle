@@ -162,7 +162,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             if (window_name) {
                 var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
                 if(! mine) {
-                    alert(M.str.scorm.popupsblocked);
+                    alert(M.util.get_string('popupsblocked', 'scorm'));
                 }
                 mine.close();
             }

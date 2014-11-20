@@ -188,14 +188,14 @@ M.mod_imscp.init = function(Y) {
 
 
         // layout
-        Y.YUI2.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
-        Y.YUI2.widget.LayoutUnit.prototype.STR_EXPAND = M.str.moodle.show;
+        Y.YUI2.widget.LayoutUnit.prototype.STR_COLLAPSE = M.util.get_string('hide', 'moodle');
+        Y.YUI2.widget.LayoutUnit.prototype.STR_EXPAND = M.util.get_string('show', 'moodle');
 
         imscp_layout_widget = new Y.YUI2.widget.Layout('imscp_layout', {
             minWidth: 600,
             minHeight: 400,
             units: [
-                { position: 'left', body: 'imscp_toc', header: M.str.imscp.toc, width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
+                { position: 'left', body: 'imscp_toc', header: M.util.get_string('toc', 'imscp'), width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
                 { position: 'center', body: '<div id="imscp_content"></div>', gutter: '2px 5px 5px 2px', scroll: true}
             ]
         });
