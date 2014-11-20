@@ -25,6 +25,7 @@
  */
 
 require('../config.php');
+require_once($CFG->dirroot.'/user/lib.php');
 require_once('change_password_form.php');
 require_once($CFG->libdir.'/authlib.php');
 
@@ -114,6 +115,8 @@ if ($mform->is_cancelled()) {
     if (!$userauth->user_update_password($USER, $data->newpassword1)) {
         print_error('errorpasswordupdate', 'auth');
     }
+
+    user_add_password_history($USER->id, $data->newpassword1);
 
     if (!empty($CFG->passwordchangelogout)) {
         \core\session\manager::kill_user_sessions($USER->id, session_id());

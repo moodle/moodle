@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * Do not update user->firstaccess from any auth plugin, the complete_user_login() does it automatically.
 
+* Add user_add_password_history() to user_signup() method.
+
 === 2.8 ===
 
 * \core\session\manager::session_exists() now verifies the session is active

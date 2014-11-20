@@ -879,3 +879,81 @@ function user_get_user_navigation_info($user, $page) {
 
     return $returnobject;
 }
+
+/**
+ * Add password to the list of used hashes for this user.
+ *
+ * This is supposed to be used from:
+ *  1/ change own password form
+ *  2/ password reset process
+ *  3/ user signup in auth plugins if password changing supported
+ *
+ * @param int $userid user id
+ * @param string $password plaintext password
+ * @return void
+ */
+function user_add_password_history($userid, $password) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
+
+    if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
+        return;
+    }
+
+    // Note: this is using separate code form normal password hashing because
+    //       we need to have this under control in the future. Also the auth
+    //       plugin might not store the passwords locally at all.
+
+    $record = new stdClass();
+    $record->userid = $userid;
+    $record->hash = password_hash($password, PASSWORD_DEFAULT);
+    $record->timecreated = time();
+    $DB->insert_record('user_password_history', $record);
+
+    $i = 0;
+    $records = $DB->get_records('user_password_history', array('userid' => $userid), 'timecreated DESC, id DESC');
+    foreach ($records as $record) {
+        $i++;
+        if ($i > $CFG->passwordreuselimit) {
+            $DB->delete_records('user_password_history', array('id' => $record->id));
+        }
+    }
+}
+
+/**
+ * Was this password used before on change or reset password page?
+ *
+ * The $CFG->passwordreuselimit setting determines
+ * how many times different password needs to be used
+ * before allowing previously used password again.
+ *
+ * @param int $userid user id
+ * @param string $password plaintext password
+ * @return bool true if password reused
+ */
+function user_is_previously_used_password($userid, $password) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
+
+    if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
+        return false;
+    }
+
+    $reused = false;
+
+    $i = 0;
+    $records = $DB->get_records('user_password_history', array('userid' => $userid), 'timecreated DESC, id DESC');
+    foreach ($records as $record) {
+        $i++;
+        if ($i > $CFG->passwordreuselimit) {
+            $DB->delete_records('user_password_history', array('id' => $record->id));
+            continue;
+        }
+        // NOTE: this is slow but we cannot compare the hashes directly any more.
+        if (password_verify($password, $record->hash)) {
+            $reused = true;
+        }
+    }
+
+    return $reused;
+}
