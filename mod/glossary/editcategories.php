@@ -95,6 +95,7 @@ if ( $hook >0 ) {
 
     if ( $action == "edit" ) {
         if ( $confirm ) {
+            require_sesskey();
             $action = "";
             $cat = new stdClass();
             $cat->id = $hook;
@@ -118,6 +119,7 @@ if ( $hook >0 ) {
 
     } elseif ( $action == "delete" ) {
         if ( $confirm ) {
+            require_sesskey();
             $DB->delete_records("glossary_entries_categories", array("categoryid"=>$hook));
             $DB->delete_records("glossary_categories", array("id"=>$hook));
 
@@ -146,6 +148,7 @@ if ( $hook >0 ) {
                         <td align="$rightalignment" style="width:50%">
                         <form id="form" method="post" action="editcategories.php">
                         <div>
+                        <input type="hidden" name="sesskey"     value="<?php echo sesskey(); ?>" />
                         <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
                         <input type="hidden" name="action"      value="delete" />
                         <input type="hidden" name="confirm"     value="1" />
@@ -169,6 +172,7 @@ if ( $hook >0 ) {
 
 } elseif ( $action == "add" ) {
     if ( $confirm ) {
+        require_sesskey();
         $dupcategory = $DB->get_records_sql("SELECT * FROM {glossary_categories} WHERE ".$DB->sql_like('name','?', false)." AND glossaryid=?", array($name, $glossary->id));
         if ( $dupcategory ) {
             redirect("editcategories.php?id=$cm->id&amp;action=add&amp;name=$name", get_string("duplicatecategory", "glossary"), 2);
