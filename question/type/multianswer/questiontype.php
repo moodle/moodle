@@ -316,7 +316,7 @@ function qtype_multianswer_extract_question($text) {
         $wrapped->generalfeedback['text'] = '';
         $wrapped->generalfeedback['format'] = FORMAT_HTML;
         $wrapped->generalfeedback['itemid'] = '';
-        if (isset($answerregs[ANSWER_REGEX_NORM])&& $answerregs[ANSWER_REGEX_NORM]!== '') {
+        if (isset($answerregs[ANSWER_REGEX_NORM]) && $answerregs[ANSWER_REGEX_NORM] !== '') {
             $wrapped->defaultmark = $answerregs[ANSWER_REGEX_NORM];
         } else {
             $wrapped->defaultmark = '1';
