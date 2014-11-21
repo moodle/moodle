@@ -20,7 +20,7 @@
  * This file is part of Moodle's cache API, affectionately called MUC.
  * It contains the components that are requried in order to use caching.
  *
- * @package    core
+ * @package    core_cache
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
