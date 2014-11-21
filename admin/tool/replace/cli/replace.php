@@ -72,12 +72,12 @@ try {
     $search = validate_param($options['search'], PARAM_RAW);
     $replace = validate_param($options['replace'], PARAM_RAW);
 } catch (invalid_parameter_exception $e) {
-    cli_error(get_string('clibadparametertext', 'tool_replace'));
+    cli_error(get_string('invalidcharacter', 'tool_replace'));
 }
 
 if (!$options['non-interactive']) {
     echo get_string('excludedtables', 'tool_replace') . "\n\n";
-    echo get_string('cliconfirmation', 'tool_replace') . "\n\n";
+    echo get_string('notsupported', 'tool_replace') . "\n\n";
     $prompt = get_string('cliyesnoprompt', 'admin');
     $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
     if ($input == get_string('clianswerno', 'admin')) {
@@ -85,7 +85,10 @@ if (!$options['non-interactive']) {
     }
 }
 
-db_replace($search, $replace);
+if (!db_replace($search, $replace)) {
+    cli_heading(get_string('error'));
+    exit(1);
+}
 
 cli_heading(get_string('success'));
 exit(0);
