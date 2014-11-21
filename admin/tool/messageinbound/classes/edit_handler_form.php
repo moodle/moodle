@@ -33,6 +33,10 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_messageinbound_edit_handler_form extends moodleform {
+
+    /**
+     * The form definition
+     */
     public function definition() {
         $mform = $this->_form;
 
