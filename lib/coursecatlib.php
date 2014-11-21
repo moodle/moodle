@@ -2146,7 +2146,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // Check if we cached the complete list of user-accessible category names ($baselist) or list of ids
         // with requried cap ($thislist).
-        $basecachekey = 'catlist';
+        $currentlang = current_language();
+        $basecachekey = $currentlang . '_catlist';
         $baselist = $coursecatcache->get($basecachekey);
         $thislist = false;
         $thiscachekey = null;
