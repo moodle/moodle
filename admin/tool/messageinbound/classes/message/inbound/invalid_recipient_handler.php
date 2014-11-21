@@ -18,7 +18,8 @@
  * A Handler to re-process messages which previously failed sender
  * verification.
  *
- * @package    task_messageinbound
+ * @package    tool_messageinbound
+ * @category   message
  * @copyright  2014 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +38,6 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * the verification hash used had expired, or if some erroneous content was
  * introduced into the content hash.
  *
- * @package    task
  * @copyright  2014 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

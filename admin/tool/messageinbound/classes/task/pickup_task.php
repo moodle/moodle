@@ -18,6 +18,7 @@
  * A scheduled task to handle Inbound Message e-mail pickup.
  *
  * @package    tool_messageinbound
+ * @category   task
  * @copyright  2014 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
