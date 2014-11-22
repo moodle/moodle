@@ -1,0 +1,8 @@
+This files describes API changes in the lesson code.
+
+=== 2.9 ===
+A third optional boolean parameter $endreached was added to lesson::update_timer to indicate that end of lesson was reached. This is used by 'completionendreached' custom completion rule.
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.

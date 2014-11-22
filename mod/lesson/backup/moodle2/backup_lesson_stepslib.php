@@ -69,13 +69,14 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // alot goes into it but nothing relational other than course when will
         // need to be corrected upon restore
         $lesson = new backup_nested_element('lesson', array('id'), array(
-            'course','name','practice','modattempts','usepassword','password',
-            'dependency','conditions','grade','custom','ongoing','usemaxgrade',
-            'maxanswers','maxattempts','review','nextpagedefault','feedback',
-            'minquestions','maxpages','timed','maxtime','retake','activitylink',
-            'mediafile','mediaheight','mediawidth','mediaclose','slideshow',
-            'width','height','bgcolor','displayleft','displayleftif','progressbar',
-            'showhighscores','maxhighscores','available','deadline','timemodified'
+            'course', 'name', 'practice', 'modattempts', 'usepassword', 'password',
+            'dependency', 'conditions', 'grade', 'custom', 'ongoing', 'usemaxgrade',
+            'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback',
+            'minquestions', 'maxpages', 'timed', 'maxtime', 'retake', 'activitylink',
+            'mediafile', 'mediaheight', 'mediawidth', 'mediaclose', 'slideshow',
+            'width', 'height', 'bgcolor', 'displayleft', 'displayleftif', 'progressbar',
+            'showhighscores', 'maxhighscores', 'available', 'deadline', 'timemodified',
+            'completionendreached'
         ));
         // Tell the lesson element about the showhighscores elements mapping to the highscores
         // database field.
@@ -140,7 +141,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // Grouped by a `timers` element this is relational to the lesson and user.
         $timers = new backup_nested_element('timers');
         $timer = new backup_nested_element('timer', array('id'), array(
-            'userid','starttime','lessontime'
+            'userid', 'starttime', 'lessontime', 'completed'
         ));
 
         // Now that we have all of the elements created we've got to put them
