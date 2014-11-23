@@ -301,6 +301,11 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
+        // If we are restoring an activity, then include the current course.
+        if (!$wholecourse) {
+            $courses->invalidate_results(); // Clean list of courses.
+            $courses->set_include_currentcourse();
+        }
         if (!empty($courses) && ($courses->get_count() > 0 || $courses->get_search())) {
             // Existing course
             $hasrestoreoption = true;
@@ -311,10 +316,7 @@ class core_backup_renderer extends plugin_renderer_base {
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
             } else {
-                // We only allow restore adding to existing for now. Enforce it here.
                 $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'target', 'value'=>backup::TARGET_EXISTING_ADDING));
-                $courses->invalidate_results(); // Clean list of courses
-                $courses->set_include_currentcourse(); // Show current course in the list
             }
             $selectacoursehtml = $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
             // Display the course selection as required if the form was submitted but this data was not supplied.
