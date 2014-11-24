@@ -1501,9 +1501,10 @@ class assign {
     /**
      * Load a count of submissions.
      *
+     * @param bool $includenew When true, also counts the submissions with status 'new'.
      * @return int number of submissions
      */
-    public function count_submissions() {
+    public function count_submissions($includenew = false) {
         global $DB;
 
         if (!$this->has_instance()) {
@@ -1511,6 +1512,12 @@ class assign {
         }
 
         $params = array();
+        $sqlnew = '';
+
+        if (!$includenew) {
+            $sqlnew = ' AND s.status <> :status ';
+            $params['status'] = ASSIGN_SUBMISSION_STATUS_NEW;
+        }
 
         if ($this->get_instance()->teamsubmission) {
             // We cannot join on the enrolment tables for group submissions (no userid).
@@ -1519,14 +1526,16 @@ class assign {
                         WHERE
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
-                            s.userid = :groupuserid';
+                            s.userid = :groupuserid' .
+                            $sqlnew;
 
             $params['assignid'] = $this->get_instance()->id;
             $params['groupuserid'] = 0;
         } else {
             $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-            list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
+            list($esql, $enrolparams) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
+            $params = array_merge($params, $enrolparams);
             $params['assignid'] = $this->get_instance()->id;
 
             $sql = 'SELECT COUNT(DISTINCT s.userid)
@@ -1534,7 +1543,8 @@ class assign {
                        JOIN(' . $esql . ') e ON e.id = s.userid
                        WHERE
                             s.assignment = :assignid AND
-                            s.timemodified IS NOT NULL';
+                            s.timemodified IS NOT NULL ' .
+                            $sqlnew;
 
         }
 
