@@ -30,7 +30,7 @@ body.has_dock {margin-left:30px;}
 #dockeditempanel .dockeditempanel_hd .commands > span { margin:0 3px; }
 #dockeditempanel .dockeditempanel_hd .commands img,
 #dockeditempanel .dockeditempanel_hd .commands input {vertical-align:middle; width: 12px; height: 12px;}
-#dockeditempanel .dockeditempanel_hd .commands .hidepanemicon img { cursor:pointer; }
+#dockeditempanel .dockeditempanel_hd .commands .hidepanelicon img { cursor:pointer; }
 
 /** IE 6 doesn't support fixed pos elements **/
 .ie6 #dockeditempanel {position:absolute;}
