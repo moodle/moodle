@@ -95,7 +95,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         $records = array();
 
         try {
-            $records = $DB->get_records_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+            $records = $DB->get_recordset_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
         } catch (\moodle_exception $ex) {
             debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
         }
@@ -103,6 +103,8 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         foreach ($records as $data) {
             $events[$data->id] = \logstore_legacy\event\legacy_logged::restore_legacy($data);
         }
+
+        $records->close();
 
         return $events;
     }
