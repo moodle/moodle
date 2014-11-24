@@ -39,9 +39,6 @@ class message_output_email extends message_output {
     function send_message($eventdata) {
         global $CFG;
 
-        // Ignore $CFG->noemailever here because we want to test this code,
-        // the message sending fails later in email_to_user().
-
         // skip any messaging suspended and deleted users
         if ($eventdata->userto->auth === 'nologin' or $eventdata->userto->suspended or $eventdata->userto->deleted) {
             return true;

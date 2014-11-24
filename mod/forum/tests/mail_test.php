@@ -60,9 +60,6 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // ensure that messages are sent out.
         $CFG->maxeditingtime = -1;
 
-        // Ensure that we don't prevent e-mail as this will cause unit test failures.
-        $CFG->noemailever = false;
-
         $this->helper = $helper;
     }
 

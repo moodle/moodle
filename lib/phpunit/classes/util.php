@@ -107,10 +107,13 @@ class phpunit_util extends testing_util {
         phpunit_util::stop_message_redirection();
 
         // Stop any message redirection.
-        phpunit_util::stop_phpmailer_redirection();
-
-        // Stop any message redirection.
         phpunit_util::stop_event_redirection();
+
+        // Start a new email redirection.
+        // This will clear any existing phpmailer redirection.
+        // We redirect all phpmailer output to this message sink which is
+        // called instead of phpmailer actually sending the message.
+        phpunit_util::start_phpmailer_redirection();
 
         // We used to call gc_collect_cycles here to ensure desctructors were called between tests.
         // This accounted for 25% of the total time running phpunit - so we removed it.
@@ -678,9 +681,11 @@ class phpunit_util extends testing_util {
      */
     public static function start_phpmailer_redirection() {
         if (self::$phpmailersink) {
-            self::stop_phpmailer_redirection();
+            // If an existing mailer sink is active, just clear it.
+            self::$phpmailersink->clear();
+        } else {
+            self::$phpmailersink = new phpunit_phpmailer_sink();
         }
-        self::$phpmailersink = new phpunit_phpmailer_sink();
         return self::$phpmailersink;
     }
 

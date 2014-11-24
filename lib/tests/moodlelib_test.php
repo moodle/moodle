@@ -2607,6 +2607,11 @@ class core_moodlelib_testcase extends advanced_testcase {
         $subject2 = 'subject 2';
         $messagetext2 = 'message text 2';
 
+        // Close the default email sink.
+        $sink = $this->redirectEmails();
+        $sink->close();
+
+        $CFG->noemailever = true;
         $this->assertNotEmpty($CFG->noemailever);
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
@@ -2659,9 +2664,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-
-        // Set config to allow email_to_user() to be called.
-        $CFG->noemailever = false;
 
         // Update user password.
         $sink = $this->redirectEvents();
