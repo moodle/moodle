@@ -4045,6 +4045,18 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
 /**
  * Gets all the users assigned this role in this context or higher
  *
+ * Note that moodle is based on capabilities and it is usually better
+ * to check permissions than to check role ids as the capabilities
+ * system is more flexible. If you really need, you can to use this
+ * function but consider has_capability() as a possible substitute.
+ *
+ * The caller function is responsible for including all the
+ * $sort fields in $fields param.
+ *
+ * If $roleid is an array or is empty (all roles) you need to set $fields
+ * (and $sort by extension) params according to it, as the first field
+ * returned by the database should be unique (ra.id is the best candidate).
+ *
  * @param int $roleid (can also be an array of ints!)
  * @param context $context
  * @param bool $parent if true, get list of users assigned in higher context too
@@ -4071,6 +4083,23 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
                   'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder, '.
                   'r.shortname AS roleshortname, rn.name AS rolecoursealias';
+    }
+
+    // Prevent wrong function uses.
+    if ((empty($roleid) || is_array($roleid)) && strpos($fields, 'ra.id') !== 0) {
+        debugging('get_role_users() without specifying one single roleid needs to be called prefixing ' .
+            'role assignments id (ra.id) as unique field, you can use $fields param for it.');
+
+        if (!empty($roleid)) {
+            // Solving partially the issue when specifying multiple roles.
+            $users = array();
+            foreach ($roleid as $id) {
+                // Ignoring duplicated keys keeping the first user appearance.
+                $users = $users + get_role_users($id, $context, $parent, $fields, $sort, $all, $group,
+                    $limitfrom, $limitnum, $extrawheretest, $whereorsortparams);
+            }
+            return $users;
+        }
     }
 
     $parentcontexts = '';
