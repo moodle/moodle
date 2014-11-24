@@ -55,7 +55,7 @@ switch ($result->status) {
         $msg = get_string('test_ok', 'assignfeedback_editpdf');
         $msg .= html_writer::empty_tag('br');
         $imgurl = new moodle_url($PAGE->url, array('sendimage' => 1));
-        $msg .= html_writer::empty_tag('img', array('src' => $imgurl));
+        $msg .= html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => get_string('gsimage', 'assignfeedback_editpdf')));
         break;
 
     case assignfeedback_editpdf\pdf::GSPATH_ERROR:
