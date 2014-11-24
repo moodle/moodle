@@ -80,8 +80,8 @@ ipaddress:port
 </pre>';
 $string['sessionhandlerconflict'] = 'Warning: A memcached instance ({$a}) has being configured to use the same memcached server as sessions. Purging all caches will lead to sessions also being purged.';
 $string['testservers'] = 'Test servers';
-$string['testservers_desc'] = 'The test servers get used for unit tests and for performance tests. It is entirely optional to set up test servers. Servers should be defined one per line and consist of a server address and optionally a port and weight.
-If no port is provided then the default port (11211) is used.';
+$string['testservers_desc'] = 'One or more connection strings for memcached servers to test against. If a test server has been specified then memcached performance can be tested using the cache performance page in the administration block.
+As an example: 127.0.0.1:11211';
 $string['usecompression'] = 'Use compression';
 $string['usecompression_help'] = 'Enables or disables payload compression. When enabled, item values longer than a certain threshold (currently 100 bytes) will be compressed during storage and decompressed during retrieval transparently.';
 $string['useserialiser'] = 'Use serialiser';
