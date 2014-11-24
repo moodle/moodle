@@ -556,9 +556,6 @@ abstract class backup_cron_automated_helper {
             return true;
         }
 
-        $backupword = str_replace(' ', '_', core_text::strtolower(get_string('backupfilename')));
-        $backupword = trim(clean_filename($backupword), '_');
-
         if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
             $dir = null;
         }
@@ -573,9 +570,6 @@ abstract class backup_cron_automated_helper {
             $files = array();
             // Store all the matching files into timemodified => stored_file array.
             foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
-                if (strpos($file->get_filename(), $backupword) !== 0) {
-                    continue;
-                }
                 $files[$file->get_timemodified()] = $file;
             }
             if (count($files) <= $keep) {
@@ -595,8 +589,8 @@ abstract class backup_cron_automated_helper {
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
             // Calculate backup filename regex, ignoring the date/time/info parts that can be
             // variable, depending of languages, formats and automated backup settings.
-            $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
-            $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
+            $filename = backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
+            $regex = '#' . preg_quote($filename, '#') . '.*\.mbz$#';
 
             // Store all the matching files into filename => timemodified array.
             $files = array();
