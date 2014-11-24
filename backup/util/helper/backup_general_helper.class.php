@@ -155,6 +155,11 @@ abstract class backup_general_helper extends backup_helper {
         } else {
             $info->include_file_references_to_external_content = 0;
         }
+        // Introduced in Moodle 2.9.
+        $info->original_course_format = '';
+        if (!empty($infoarr['original_course_format'])) {
+            $info->original_course_format = $infoarr['original_course_format'];
+        }
         // include_files is a new setting in 2.6.
         if (isset($infoarr['include_files'])) {
             $info->include_files = $infoarr['include_files'];

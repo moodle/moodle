@@ -392,6 +392,81 @@ class core_backup_moodle2_testcase extends advanced_testcase {
     }
 
     /**
+     * Test front page backup/restore and duplicate activities
+     * @return void
+     */
+    public function test_restore_frontpage() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+
+        $frontpage = $DB->get_record('course', array('id' => SITEID));
+        $forum = $generator->create_module('forum', array('course' => $frontpage->id));
+
+        // Activities can be duplicated.
+        $this->duplicate($frontpage, $forum->cmid);
+
+        $modinfo = get_fast_modinfo($frontpage);
+        $this->assertEquals(2, count($modinfo->get_instances_of('forum')));
+
+        // Front page backup.
+        $frontpagebc = new backup_controller(backup::TYPE_1COURSE, $frontpage->id,
+                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+                $USER->id);
+        $frontpagebackupid = $frontpagebc->get_backupid();
+        $frontpagebc->execute_plan();
+        $frontpagebc->destroy();
+
+        $course = $generator->create_course();
+        $newcourseid = restore_dbops::create_new_course(
+                $course->fullname . ' 2', $course->shortname . '_2', $course->category);
+
+        // Other course backup.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
+                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+                $USER->id);
+        $otherbackupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // We can only restore a front page over the front page.
+        $rc = new restore_controller($frontpagebackupid, $course->id,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_CURRENT_ADDING);
+        $this->assertFalse($rc->execute_precheck());
+        $rc->destroy();
+
+        $rc = new restore_controller($frontpagebackupid, $newcourseid,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_NEW_COURSE);
+        $this->assertFalse($rc->execute_precheck());
+        $rc->destroy();
+
+        $rc = new restore_controller($frontpagebackupid, $frontpage->id,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_CURRENT_ADDING);
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // We can't restore a non-front page course on the front page course.
+        $rc = new restore_controller($otherbackupid, $frontpage->id,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_CURRENT_ADDING);
+        $this->assertFalse($rc->execute_precheck());
+        $rc->destroy();
+
+        $rc = new restore_controller($otherbackupid, $newcourseid,
+                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
+                backup::TARGET_NEW_COURSE);
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+    }
+
+    /**
      * Backs a course up and restores it.
      *
      * @param stdClass $course Course object to backup

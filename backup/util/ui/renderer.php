@@ -265,7 +265,9 @@ class core_backup_renderer extends plugin_renderer_base {
         $hasrestoreoption = false;
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-course-selector backup-restore'));
-        if ($wholecourse && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
+        if ($wholecourse && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search()) &&
+                $currentcourse != SITEID) {
+
             // New course
             $hasrestoreoption = true;
             $html .= $form;
@@ -306,7 +308,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $courses->invalidate_results(); // Clean list of courses.
             $courses->set_include_currentcourse();
         }
-        if (!empty($courses) && ($courses->get_count() > 0 || $courses->get_search())) {
+        if (!empty($courses) && ($courses->get_count() > 0 || $courses->get_search()) && $currentcourse != SITEID) {
             // Existing course
             $hasrestoreoption = true;
             $html .= $form;

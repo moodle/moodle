@@ -280,13 +280,13 @@ class restore_course_search extends restore_search_base {
         $params = array(
             'contextlevel' => CONTEXT_COURSE,
             'fullnamesearch' => '%'.$this->get_search().'%',
-            'shortnamesearch' => '%'.$this->get_search().'%',
-            'siteid' => SITEID
+            'shortnamesearch' => '%'.$this->get_search().'%'
         );
 
         $select     = " SELECT c.id,c.fullname,c.shortname,c.visible,c.sortorder ";
         $from       = " FROM {course} c ";
-        $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false).") AND c.id <> :siteid";
+        $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".
+            $DB->sql_like('c.shortname', ':shortnamesearch', false).")";
         $orderby    = " ORDER BY c.sortorder";
 
         if ($this->currentcourseid !== null && !$this->includecurrentcourse) {
