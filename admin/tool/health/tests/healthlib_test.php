@@ -15,74 +15,63 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for ../adminlib.php
+ * Unit tests for tool_health.
  *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @package    tool_health
+ * @copyright  2013 Marko Vidberg
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/health/locallib.php');
 
-class healthindex_testcase extends advanced_testcase {
+/**
+ * Health lib testcase.
+ *
+ * @package    tool_health
+ * @copyright  2013 Marko Vidberg
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class healthlib_testcase extends advanced_testcase {
 
     /**
-     * Data provider for test_health_category_find_loops
+     * Data provider for test_tool_health_category_find_loops.
      */
     public static function provider_loop_categories() {
         return array(
-           // One item loop including root
+           // One item loop including root.
            0 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 1)
                         ),
                         array(
-                            '1' => array(
-                                '1' => (object) array('id' => 1, 'parent' => 1)
-                            ),
-                        ),
-                ),
-           // One item loop including root
-           0 => array(
-                        array(
                             '1' => (object) array('id' => 1, 'parent' => 1)
                         ),
-                        array(
-                            '1' => array(
-                                '1' => (object) array('id' => 1, 'parent' => 1)
-                            ),
-                        ),
                 ),
-           // One item loop not including root
+           // One item loop not including root.
            1 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 0),
                             '2' => (object) array('id' => 2, 'parent' => 2)
                         ),
                         array(
-                            '2' => array(
-                                '2' => (object) array('id' => 2, 'parent' => 2)
-                            ),
+                            '2' => (object) array('id' => 2, 'parent' => 2)
                         ),
                 ),
-           // Two item loop including root
+           // Two item loop including root.
            2 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 2),
                             '2' => (object) array('id' => 2, 'parent' => 1)
                         ),
                         array(
-                            '1' => array(
-                                 '2' => (object) array('id' => 2, 'parent' => 1),
-                                 '1' => (object) array('id' => 1, 'parent' => 2),
-                            ),
+                            '2' => (object) array('id' => 2, 'parent' => 1),
+                            '1' => (object) array('id' => 1, 'parent' => 2),
                         )
                 ),
-           // Two item loop not including root
+           // Two item loop not including root.
            3 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 0),
@@ -90,13 +79,11 @@ class healthindex_testcase extends advanced_testcase {
                             '3' => (object) array('id' => 3, 'parent' => 2),
                         ),
                         array(
-                            '2' => array(
-                                '3' => (object) array('id' => 3, 'parent' => 2),
-                                '2' => (object) array('id' => 2, 'parent' => 3),
-                            ),
+                            '3' => (object) array('id' => 3, 'parent' => 2),
+                            '2' => (object) array('id' => 2, 'parent' => 3),
                         )
                 ),
-           // Three item loop including root
+           // Three item loop including root.
            4 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 2),
@@ -104,14 +91,12 @@ class healthindex_testcase extends advanced_testcase {
                             '3' => (object) array('id' => 3, 'parent' => 1),
                         ),
                         array(
-                            '2' => array(
-                                '3' => (object) array('id' => 3, 'parent' => 1),
-                                '1' => (object) array('id' => 1, 'parent' => 2),
-                                '2' => (object) array('id' => 2, 'parent' => 3),
-                            ),
+                            '3' => (object) array('id' => 3, 'parent' => 1),
+                            '1' => (object) array('id' => 1, 'parent' => 2),
+                            '2' => (object) array('id' => 2, 'parent' => 3),
                         )
                 ),
-           // Three item loop not including root
+           // Three item loop not including root.
            5 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 0),
@@ -120,14 +105,12 @@ class healthindex_testcase extends advanced_testcase {
                             '4' => (object) array('id' => 4, 'parent' => 2)
                         ),
                         array(
-                            '3' => array(
-                                '4' => (object) array('id' => 4, 'parent' => 2),
-                                '2' => (object) array('id' => 2, 'parent' => 3),
-                                '3' => (object) array('id' => 3, 'parent' => 4),
-                            ),
+                            '4' => (object) array('id' => 4, 'parent' => 2),
+                            '2' => (object) array('id' => 2, 'parent' => 3),
+                            '3' => (object) array('id' => 3, 'parent' => 4),
                         )
                 ),
-           // Multi-loop
+           // Multi-loop.
            6 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 2),
@@ -140,41 +123,40 @@ class healthindex_testcase extends advanced_testcase {
                             '8' => (object) array('id' => 8, 'parent' => 7),
                         ),
                         array(
-                            '2' => array(
-                                '1' => (object) array('id' => 1, 'parent' => 2),
-                                '2' => (object) array('id' => 2, 'parent' => 1),
-                                '8' => (object) array('id' => 8, 'parent' => 7),
-                                '7' => (object) array('id' => 7, 'parent' => 1),
-                            ),
-                            '6' => array(
-                                '6' => (object) array('id' => 6, 'parent' => 6),
-                            ),
-                            '4' => array(
-                                '5' => (object) array('id' => 5, 'parent' => 3),
-                                '3' => (object) array('id' => 3, 'parent' => 4),
-                                '4' => (object) array('id' => 4, 'parent' => 5),
-                            ),
+                            '1' => (object) array('id' => 1, 'parent' => 2),
+                            '2' => (object) array('id' => 2, 'parent' => 1),
+                            '8' => (object) array('id' => 8, 'parent' => 7),
+                            '7' => (object) array('id' => 7, 'parent' => 1),
+                            '6' => (object) array('id' => 6, 'parent' => 6),
+                            '5' => (object) array('id' => 5, 'parent' => 3),
+                            '3' => (object) array('id' => 3, 'parent' => 4),
+                            '4' => (object) array('id' => 4, 'parent' => 5),
+                        )
+                ),
+           // Double-loop
+           7 => array(
+                        array(
+                            '1' => (object) array('id' => 1, 'parent' => 2),
+                            '2' => (object) array('id' => 2, 'parent' => 1),
+                            '3' => (object) array('id' => 3, 'parent' => 2),
+                            '4' => (object) array('id' => 4, 'parent' => 2),
+                        ),
+                        array(
+                            '4' => (object) array('id' => 4, 'parent' => 2),
+                            '3' => (object) array('id' => 3, 'parent' => 2),
+                            '2' => (object) array('id' => 2, 'parent' => 1),
+                            '1' => (object) array('id' => 1, 'parent' => 2),
                         )
                 )
         );
     }
 
     /**
-     * Test finding loops between two items referring to each other.
-     *
-     * @dataProvider provider_loop_categories
-     */
-    public function test_health_category_find_loops($categories, $expected) {
-        $loops = health_category_find_loops($categories);
-        $this->assertEquals($expected, $loops);
-    }
-
-    /**
-     * Data provider for test_health_category_find_missing_parents
+     * Data provider for test_tool_health_category_find_missing_parents.
      */
     public static function provider_missing_parent_categories() {
         return array(
-           // Test for two items, both with direct ancestor (parent) missing
+           // Test for two items, both with direct ancestor (parent) missing.
            0 => array(
                         array(
                             '1' => (object) array('id' => 1, 'parent' => 0),
@@ -191,31 +173,46 @@ class healthindex_testcase extends advanced_testcase {
     }
 
     /**
-     * Test finding missing parent categories
+     * Test finding loops between two items referring to each other.
+     *
+     * @param array $categories
+     * @param array $expected
+     * @dataProvider provider_loop_categories
+     */
+    public function test_tool_health_category_find_loops($categories, $expected) {
+        $loops = tool_health_category_find_loops($categories);
+        $this->assertEquals($expected, $loops);
+    }
+
+    /**
+     * Test finding missing parent categories.
+     *
+     * @param array $categories
+     * @param array $expected
      * @dataProvider provider_missing_parent_categories
      */
-    public function test_health_category_find_missing_parents($categories, $expected) {
-        $missingparent = health_category_find_missing_parents($categories);
+    public function test_tool_health_category_find_missing_parents($categories, $expected) {
+        $missingparent = tool_health_category_find_missing_parents($categories);
         $this->assertEquals($expected, $missingparent);
     }
 
     /**
-     * Test listing missing parent categories
+     * Test listing missing parent categories.
      */
-    public function test_health_category_list_missing_parents() {
-        $missingparent = array('1' => (object) array('id' => 2, 'parent' => 3, 'name' => 'test'),
-                               '2' => (object) array('id' => 4, 'parent' => 5, 'name' => 'test2'));
-        $result = health_category_list_missing_parents($missingparent);
+    public function test_tool_health_category_list_missing_parents() {
+        $missingparent = array((object) array('id' => 2, 'parent' => 3, 'name' => 'test'),
+                               (object) array('id' => 4, 'parent' => 5, 'name' => 'test2'));
+        $result = tool_health_category_list_missing_parents($missingparent);
         $this->assertRegExp('/Category 2: test/', $result);
         $this->assertRegExp('/Category 4: test2/', $result);
     }
 
     /**
-     * Test listing loop categories
+     * Test listing loop categories.
      */
-    public function test_health_category_list_loops() {
-        $loops = array('1' => array('1' => (object) array('id' => 2, 'parent' => 3, 'name' => 'test')));
-        $result = health_category_list_loops($loops);
+    public function test_tool_health_category_list_loops() {
+        $loops = array((object) array('id' => 2, 'parent' => 3, 'name' => 'test'));
+        $result = tool_health_category_list_loops($loops);
         $this->assertRegExp('/Category 2: test/', $result);
     }
 }

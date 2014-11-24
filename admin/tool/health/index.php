@@ -28,6 +28,7 @@
     $extraws = ob_get_clean();
 
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/health/locallib.php');
 
     admin_externalpage_setup('toolhealth');
 
@@ -603,10 +604,10 @@ class problem_000017 extends problem_base {
             $categories = $DB->get_records('question_categories', array(), 'id');
 
             // Look for missing parents.
-            $missingparent = health_category_find_missing_parents($categories);
+            $missingparent = tool_health_category_find_missing_parents($categories);
 
             // Look for loops.
-            $loops = health_category_find_loops($categories);
+            $loops = tool_health_category_find_loops($categories);
 
             $answer = array($missingparent, $loops);
         }
@@ -627,8 +628,8 @@ class problem_000017 extends problem_base {
                 ' structures by the question_categories.parent field. Sometimes ' .
                 ' this tree structure gets messed up.</p>';
 
-        $description .= health_category_list_missing_parents($missingparent);
-        $description .= health_category_list_loops($loops);
+        $description .= tool_health_category_list_missing_parents($missingparent);
+        $description .= tool_health_category_list_loops($loops);
 
         return $description;
     }
@@ -639,7 +640,7 @@ class problem_000017 extends problem_base {
      * @link https://tracker.moodle.org/browse/MDL-34684
      * @return string Formatted html to be output to the browser with instructions and sql statements to run
      */
-    function solution() {
+    public function solution() {
         global $CFG;
         list($missingparent, $loops) = $this->find_problems();
 
@@ -664,6 +665,9 @@ class problem_000017 extends problem_base {
 
 /**
  * Check course categories tree structure for problems.
+ *
+ * @copyright  2013 Marko Vidberg
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class problem_000018 extends problem_base {
     /**
@@ -671,7 +675,7 @@ class problem_000018 extends problem_base {
      *
      * @return string Title of problem.
      */
-    function title() {
+    public function title() {
         return 'Course categories tree structure';
     }
 
@@ -681,7 +685,7 @@ class problem_000018 extends problem_base {
      * @uses $DB
      * @return array List of categories that contain missing parents or loops.
      */
-    function find_problems() {
+    public function find_problems() {
         global $DB;
         static $answer = null;
 
@@ -689,10 +693,10 @@ class problem_000018 extends problem_base {
             $categories = $DB->get_records('course_categories', array(), 'id');
 
             // Look for missing parents.
-            $missingparent = health_category_find_missing_parents($categories);
+            $missingparent = tool_health_category_find_missing_parents($categories);
 
             // Look for loops.
-            $loops = health_category_find_loops($categories);
+            $loops = tool_health_category_find_loops($categories);
 
             $answer = array($missingparent, $loops);
         }
@@ -705,7 +709,7 @@ class problem_000018 extends problem_base {
      *
      * @return boolean True if either missing parents or loops found
      */
-    function exists() {
+    public function exists() {
         list($missingparent, $loops) = $this->find_problems();
         return !empty($missingparent) || !empty($loops);
     }
@@ -715,8 +719,8 @@ class problem_000018 extends problem_base {
      *
      * @return constant Problem severity.
      */
-    function severity() {
-        return SEVERITY_ANNOYANCE;
+    public function severity() {
+        return SEVERITY_SIGNIFICANT;
     }
 
     /**
@@ -724,15 +728,15 @@ class problem_000018 extends problem_base {
      *
      * @return string HTML containing details of the problem.
      */
-    function description() {
+    public function description() {
         list($missingparent, $loops) = $this->find_problems();
 
         $description = '<p>The course categories should be arranged into tree ' .
                 ' structures by the course_categories.parent field. Sometimes ' .
                 ' this tree structure gets messed up.</p>';
 
-        $description .= health_category_list_missing_parents($missingparent);
-        $description .= health_category_list_loops($loops);
+        $description .= tool_health_category_list_missing_parents($missingparent);
+        $description .= tool_health_category_list_loops($loops);
 
         return $description;
     }
