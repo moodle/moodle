@@ -246,10 +246,15 @@ class comment {
         self::$comment_page    = optional_param('comment_page',    '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_AREA);
 
-        $page->requires->string_for_js('addcomment', 'moodle');
-        $page->requires->string_for_js('deletecomment', 'moodle');
-        $page->requires->string_for_js('comments', 'moodle');
-        $page->requires->string_for_js('commentsrequirelogin', 'moodle');
+        $page->requires->strings_for_js(array(
+                'addcomment',
+                'comments',
+                'commentscount',
+                'commentsrequirelogin',
+                'deletecomment',
+            ),
+            'moodle'
+        );
     }
 
     /**
