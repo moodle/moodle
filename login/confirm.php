@@ -80,6 +80,8 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
 
         complete_user_login($user);
 
+        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+
         if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
             $goto = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
