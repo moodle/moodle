@@ -105,29 +105,33 @@ class auth_plugin_db extends auth_plugin_base {
 
             $authdb = $this->db_init();
 
-            if ($this->config->passtype === 'md5') {   // Re-format password accordingly.
-                $extpassword = md5($extpassword);
-            } else if ($this->config->passtype === 'sha1') {
-                $extpassword = sha1($extpassword);
-            }
-
-            $rs = $authdb->Execute("SELECT *
-                                      FROM {$this->config->table}
-                                     WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'
-                                           AND {$this->config->fieldpass} = '".$this->ext_addslashes($extpassword)."'");
+            $rs = $authdb->Execute("SELECT {$this->config->fieldpass} FROM {$this->config->table}
+                                     WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'");
             if (!$rs) {
                 $authdb->Close();
                 debugging(get_string('auth_dbcantconnect','auth_db'));
                 return false;
             }
 
-            if (!$rs->EOF) {
-                $rs->Close();
+            if ($rs->EOF) {
                 $authdb->Close();
-                return true;
+                return false;
+            }
+
+            $fromdb = $rs->fields[$this->config->fieldpass];
+            $rs->Close();
+            $authdb->Close();
+
+            if ($this->config->passtype === 'plaintext') {
+                return ($fromdb == $extpassword);
+            } else if ($this->config->passtype === 'md5') {
+                return ($fromdb == md5($extpassword));
+            } else if ($this->config->passtype === 'sha1') {
+                return ($fromdb == sha1($extpassword));
+            } else if ($this->config->passtype === 'saltedcrypt') {
+                require_once($CFG->libdir.'/password_compat/lib/password.php');
+                return password_verify($extpassword, $fromdb);
             } else {
-                $rs->Close();
-                $authdb->Close();
                 return false;
             }
 
