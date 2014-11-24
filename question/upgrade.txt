@@ -1,5 +1,25 @@
 This files describes API changes for code that uses the question API.
 
+=== 2.9 ===
+
+1) Some functions in questionlib.php which were deprecated in the past have now
+   been deleted:
+
+   Deprecated since 2.1
+    * question_list_instances
+    * get_grade_options
+    * question_category_isused
+    * save_question_options
+    * question_get_real_state
+
+   Deprecated since 2.6
+    * question_rewrite_questiontext_preview_urls
+    * question_send_questiontext_file
+    * question_pluginfile no longer falls back to using the old
+      {$previewcomponent}_questiontext_preview_pluginfile callback if the new
+      {$previewcomponent}_question_preview_pluginfile callback is missing.
+
+
 === 2.8 ===
 
 1) This is jsut a warning that some methods of the question_engine_data_mapper
