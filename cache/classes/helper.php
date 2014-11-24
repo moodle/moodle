@@ -280,13 +280,6 @@ class cache_helper {
     /**
      * Purges the cache for a specific definition.
      *
-     * If you need to purge a definition that requires identifiers or an aggregate and you don't
-     * know the details of those please use cache_helper::purge_stores_used_by_definition instead.
-     * It is a more aggressive purge and will purge all data within the store, not just the data
-     * belonging to the given definition.
-     *
-     * @todo MDL-36660: Change the signature: $aggregate must be added.
-     *
      * @param string $component
      * @param string $area
      * @param array $identifiers
@@ -298,7 +291,6 @@ class cache_helper {
         // Initialise, in case of a store.
         if ($cache instanceof cache_store) {
             $factory = cache_factory::instance();
-            // TODO MDL-36660: Providing $aggregate is required for purging purposes: $definition->get_id()
             $definition = $factory->create_definition($component, $area, null);
             $definition->set_identifiers($identifiers);
             $cache->initialise($definition);

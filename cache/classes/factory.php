@@ -178,17 +178,17 @@ class cache_factory {
      * @param string $component
      * @param string $area
      * @param array $identifiers
-     * @param string $aggregate
+     * @param string $unused Used to be data source aggregate however that was removed and this is now unused.
      * @return cache_application|cache_session|cache_request
      */
-    public function create_cache_from_definition($component, $area, array $identifiers = array(), $aggregate = null) {
+    public function create_cache_from_definition($component, $area, array $identifiers = array(), $unused = null) {
         $definitionname = $component.'/'.$area;
         if (isset($this->cachesfromdefinitions[$definitionname])) {
             $cache = $this->cachesfromdefinitions[$definitionname];
             $cache->set_identifiers($identifiers);
             return $cache;
         }
-        $definition = $this->create_definition($component, $area, $aggregate);
+        $definition = $this->create_definition($component, $area);
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
         // Loaders are always held onto to speed up subsequent requests.
@@ -379,14 +379,13 @@ class cache_factory {
      * Creates a definition instance or returns the existing one if it has already been created.
      * @param string $component
      * @param string $area
-     * @param string $aggregate
+     * @param string $unused This used to be data source aggregate - however that functionality has been removed and
+     *        this argument is now unused.
      * @return cache_definition
+     * @throws coding_exception If the definition cannot be found.
      */
-    public function create_definition($component, $area, $aggregate = null) {
+    public function create_definition($component, $area, $unused = null) {
         $id = $component.'/'.$area;
-        if ($aggregate) {
-            $id .= '::'.$aggregate;
-        }
         if (!isset($this->definitions[$id])) {
             // This is the first time this definition has been requested.
             if ($this->is_initialising()) {
@@ -408,13 +407,6 @@ class cache_factory {
                         // To serve this purpose and avoid errors we are going to make use of an ad-hoc cache rather than
                         // search for the definition which would possibly cause an infitite loop trying to initialise the cache.
                         $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, $component, $area);
-                        if ($aggregate !== null) {
-                            // If you get here you deserve a warning. We have to use an ad-hoc cache here, so we can't find the definition and therefor
-                            // can't find any information about the datasource or any of its aggregated.
-                            // Best of luck.
-                            debugging('An unknown cache was requested during development with an aggregate that could not be loaded. Ad-hoc cache used instead.', DEBUG_DEVELOPER);
-                            $aggregate = null;
-                        }
                     } else {
                         // Either a typo of the developer has just created the definition and is using it for the first time.
                         $this->reset();
@@ -427,10 +419,10 @@ class cache_factory {
                             debugging('Cache definitions reparsed causing cache reset in order to locate definition.
                                 You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
                         }
-                        $definition = cache_definition::load($id, $definition, $aggregate);
+                        $definition = cache_definition::load($id, $definition);
                     }
                 } else {
-                    $definition = cache_definition::load($id, $definition, $aggregate);
+                    $definition = cache_definition::load($id, $definition);
                 }
             }
             $this->definitions[$id] = $definition;
