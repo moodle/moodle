@@ -153,6 +153,19 @@ $temp->add(new admin_setting_configselect('gradehistorylifetime', new lang_strin
                                                                                                      60 => new lang_string('numdays', '', 60),
                                                                                                      30 => new lang_string('numdays', '', 30))));
 
+$temp->add(new admin_setting_configselect('tempdatafoldercleanup', new lang_string('tempdatafoldercleanup', 'admin'),
+        new lang_string('configtempdatafoldercleanup', 'admin'), 168, array(
+            1 => new lang_string('numhours', '', 1),
+            3 => new lang_string('numhours', '', 3),
+            6 => new lang_string('numhours', '', 6),
+            9 => new lang_string('numhours', '', 9),
+            12 => new lang_string('numhours', '', 12),
+            18 => new lang_string('numhours', '', 18),
+            24 => new lang_string('numhours', '', 24),
+            48 => new lang_string('numdays', '', 2),
+            168 => new lang_string('numdays', '', 7),
+)));
+
 $ADMIN->add('server', $temp);
 
 
