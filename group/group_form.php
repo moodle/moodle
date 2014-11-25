@@ -66,6 +66,11 @@ class group_form extends moodleform {
         $mform->addHelpButton('enrolmentkey', 'enrolmentkey', 'group');
         $mform->setType('enrolmentkey', PARAM_RAW);
 
+        $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
+
+        $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
+        $mform->setDefault('deletepicture', 0);
+
         $options = array(get_string('no'), get_string('yes'));
         $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
 
@@ -79,6 +84,37 @@ class group_form extends moodleform {
         $mform->setType('courseid', PARAM_INT);
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Extend the form definition after the data has been parsed.
+     */
+    public function definition_after_data() {
+        global $COURSE, $DB;
+
+        $mform = $this->_form;
+        $groupid = $mform->getElementValue('id');
+
+        if ($group = $DB->get_record('groups', array('id' => $groupid))) {
+
+            // Print picture.
+            if (!($pic = print_group_picture($group, $COURSE->id, true, true, false))) {
+                $pic = get_string('none');
+                if ($mform->elementExists('deletepicture')) {
+                    $mform->removeElement('deletepicture');
+                }
+            }
+            $imageelement = $mform->getElement('currentpicture');
+            $imageelement->setValue($pic);
+        } else {
+            if ($mform->elementExists('currentpicture')) {
+                $mform->removeElement('currentpicture');
+            }
+            if ($mform->elementExists('deletepicture')) {
+                $mform->removeElement('deletepicture');
+            }
+        }
+
     }
 
     /**
