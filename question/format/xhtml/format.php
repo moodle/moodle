@@ -172,7 +172,9 @@ class qformat_xhtml extends qformat_default {
         $xp .= "<head>\n";
         $xp .= "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />\n";
         $xp .= "<title>Moodle Quiz XHTML Export</title>\n";
+        $xp .= "<style type=\"text/css\">\n";
         $xp .= $css;
+        $xp .= "</style>\n";
         $xp .= "</head>\n";
         $xp .= "<body>\n";
         $xp .= "<form action=\"...REPLACE ME...\" method=\"post\">\n\n";
