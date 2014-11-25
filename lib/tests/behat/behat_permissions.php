@@ -176,4 +176,61 @@ class behat_permissions extends behat_base {
         }
     }
 
+    /**
+     * Set the allowed role assignments for the specified role.
+     *
+     * @Given /^I define the allowed role assignments for the "(?P<rolefullname_string>(?:[^"]|\\")*)" role as:$/
+     * @param string $rolename
+     * @param TableNode $table
+     * @return void Executes other steps
+     */
+    public function i_define_the_allowed_role_assignments_for_a_role_as($rolename, $table) {
+        $parentnodes = get_string('administrationsite') . ' > ' .
+            get_string('users', 'admin') . ' > ' .
+            get_string('permissions', 'role');
+        return array(
+            new Given('I am on homepage'),
+            new Given('I navigate to "' . get_string('defineroles', 'role') . '" node in "' . $parentnodes . '"'),
+            new Given('I follow "Allow role assignments"'),
+            new Given('I fill in the allowed role assignments form for the "' . $rolename . '" role with:', $table),
+            new Given('I press "' . get_string('savechanges') . '"')
+        );
+    }
+
+    /**
+     * Fill in the allowed role assignments form for the specied role.
+     *
+     * Takes a table with two columns. Each row should contain the target
+     * role, and either "Assignable" or "Not assignable".
+     *
+     * @Given /^I fill in the allowed role assignments form for the "(?P<rolefullname_string>(?:[^"]|\\")*)" role with:$/
+     * @param String $sourcerole
+     * @param TableNode $table
+     * @return void
+     */
+    public function i_fill_in_the_allowed_role_assignments_form_for_a_role_with($sourcerole, $table) {
+        foreach ($table->getRows() as $key => $row) {
+            list($targetrole, $allowed) = $row;
+
+            $node = $this->find('xpath', '//input[@title="Allow users with role ' .
+                $sourcerole .
+                ' to assign the role ' .
+                $targetrole . '"]');
+
+            if ($allowed == 'Assignable') {
+                if (!$node->isChecked()) {
+                    $node->click();
+                }
+            } else if ($allowed == 'Not assignable') {
+                if ($node->isChecked()) {
+                    $node->click();
+                }
+            } else {
+                throw new ExpectationException(
+                    'The provided permission value "' . $allowed . '" is not valid. Use Assignable, or Not assignable',
+                    $this->getSession()
+                );
+            }
+        }
+    }
 }
