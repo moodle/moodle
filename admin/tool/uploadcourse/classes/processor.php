@@ -207,6 +207,7 @@ class tool_uploadcourse_processor {
             $course = $this->get_course($data);
             if ($course->prepare()) {
                 $course->proceed();
+                $outcome = 1;
 
                 $status = $course->get_statuses();
                 if (array_key_exists('coursecreated', $status)) {
@@ -217,11 +218,19 @@ class tool_uploadcourse_processor {
                     $deleted++;
                 }
 
+                // Errors can occur even though the course preparation returned true, often because
+                // some checks could not be done in course::prepare() because it requires the course to exist.
+                if ($course->has_errors()) {
+                    $status += $course->get_errors();
+                    $errors++;
+                    $outcome = 2;
+                }
+
                 $data = array_merge($data, $course->get_data(), array('id' => $course->get_id()));
-                $tracker->output($this->linenb, true, $status, $data);
+                $tracker->output($this->linenb, $outcome, $status, $data);
             } else {
                 $errors++;
-                $tracker->output($this->linenb, false, $course->get_errors(), $data);
+                $tracker->output($this->linenb, 0, $course->get_errors(), $data);
             }
         }
 
