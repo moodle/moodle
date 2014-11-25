@@ -1868,8 +1868,8 @@ body.jsenabled .formlisting {
 #page-badges-view .collection { width: 90%; margin: 1em auto; }
 #page-badges-index .collection { width: 85%; margin: 1em auto; }
 
-table.collection th { font-size: inherit !important; border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; text-align: center !important; }
-table.collection td { border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+table.collection th { font-size: inherit !important; border-width: 1px; border-style: solid; border-color: #CCCCCC; padding-left: 5px; padding-right: 5px; vertical-align: top; text-align: center !important; }
+table.collection td { border-width: 1px; border-style: solid; border-color: #CCCCCC; padding-left: 5px; padding-right: 5px; vertical-align: top; }
 table.collection > tbody > tr:nth-of-type(even) { background-color: #FFFFFF; }
 table.collection > tbody > tr:nth-of-type(odd) { background-color: #F6F6F6; }
 table.collection ul { margin: 0.5em 0.5em 0.5em 2em; }
@@ -2119,15 +2119,6 @@ a:hover .caret {
 }
 
 @-moz-keyframes progress-bar-stripes {
-    from {
-        background-position: 40px 0;
-    }
-    to {
-        background-position: 0 0;
-    }
-}
-
-@-ms-keyframes progress-bar-stripes {
     from {
         background-position: 40px 0;
     }
