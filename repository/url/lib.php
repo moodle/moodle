@@ -46,7 +46,9 @@ class repository_url extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $this->file_url = optional_param('file', '', PARAM_URL);
+        $this->file_url = optional_param('file', '', PARAM_TEXT);
+        $this->file_url = $this->escape_url($this->file_url);
+        $this->file_url = clean_param($this->file_url, PARAM_URL);
     }
 
     public function check_login() {
@@ -215,6 +217,20 @@ EOD;
         } else {
             return $matches[1];
         }
+    }
+
+    /**
+     * Escapes a url by replacing spaces with %20.
+     *
+     * Note: In general moodle does not automatically escape urls, but for the purposes of
+     * making this plugin more user friendly urls will automatically be escaped.
+     *
+     * @param string $url An unescaped url.
+     * @return string The escaped url
+     */
+    protected function escape_url($url) {
+        $url = str_replace(' ', '%20', $url);
+        return $url;
     }
 
     public function supported_returntypes() {
