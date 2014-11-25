@@ -7055,6 +7055,11 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
     }
 
+    $params = $PAGE->url->params();
+    if (!empty($params['d'])) {
+        $discussionid = $params['d'];
+    }
+
     // for some actions you need to be enrolled, beiing admin is not enough sometimes here
     $enrolled = is_enrolled($PAGE->cm->context, $USER, '', false);
     $activeenrolled = is_enrolled($PAGE->cm->context, $USER, '', true);
@@ -7110,13 +7115,28 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     }
 
     if ($cansubscribe) {
-        if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject)) {
+        if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, null, $PAGE->cm)) {
             $linktext = get_string('unsubscribe', 'forum');
         } else {
             $linktext = get_string('subscribe', 'forum');
         }
         $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'sesskey'=>sesskey()));
         $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
+
+        if (isset($discussionid)) {
+            if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, $discussionid, $PAGE->cm)) {
+                $linktext = get_string('unsubscribediscussion', 'forum');
+            } else {
+                $linktext = get_string('subscribediscussion', 'forum');
+            }
+            $url = new moodle_url('/mod/forum/subscribe.php', array(
+                    'id' => $forumobject->id,
+                    'sesskey' => sesskey(),
+                    'd' => $discussionid,
+                    'returnurl' => $PAGE->url->out(),
+                ));
+            $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
+        }
     }
 
     if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
