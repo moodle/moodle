@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A Handler to re-process messages which previously failed sender
- * verification.
+ * A Handler to re-process messages which previously failed sender verification.
  *
- * @package    task_messageinbound
+ * @package    tool_messageinbound
+ * @category   message
  * @copyright  2014 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,14 +30,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');
 
 /**
- * A Handler to re-process messages which previously failed sender
- * verification.
+ * A Handler to re-process messages which previously failed sender verification.
  *
  * This may happen if the user did not use their registerd e-mail address,
  * the verification hash used had expired, or if some erroneous content was
  * introduced into the content hash.
  *
- * @package    task
  * @copyright  2014 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -72,9 +70,10 @@ class invalid_recipient_handler extends \core\message\inbound\handler {
     /**
      * Process a message received and validated by the Inbound Message processor.
      *
-     * @param $messagedata The Inbound Message record
-     * @param $messagedata The message data packet.
+     * @param \stdClass $record The Inbound Message record
+     * @param \stdClass $data The message data packet.
      * @return bool Whether the message was successfully processed.
+     * @throws \core\message\inbound\processing_failed_exception when the message can not be found.
      */
     public function process_message(\stdClass $record, \stdClass $data) {
         global $DB;
