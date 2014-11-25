@@ -238,6 +238,7 @@ $string['rootsettinglogs'] = 'Include course logs';
 $string['rootsettinggradehistories'] = 'Include grade history';
 $string['rootsettingimscc1'] = 'Convert to IMS Common Cartridge 1.0';
 $string['rootsettingimscc11'] = 'Convert to IMS Common Cartridge 1.1';
+$string['sitecourseformatwarning'] = 'This is a front page backup, note that they can only be restored on the front page';
 $string['storagecourseonly'] = 'Course backup filearea';
 $string['storagecourseandexternal'] = 'Course backup filearea and the specified directory';
 $string['storageexternalonly'] = 'Specified directory for automated backups';

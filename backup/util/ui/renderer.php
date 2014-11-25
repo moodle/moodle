@@ -138,6 +138,10 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= $this->backup_detail_pair(get_string('coursetitle', 'backup'), $details->course->title);
             $html .= $this->backup_detail_pair(get_string('courseid', 'backup'), $details->course->courseid);
 
+            // Warning users about front page backups.
+            if ($details->original_course_format === 'site') {
+                $html .= $this->backup_detail_pair(get_string('type_format', 'plugin'), get_string('sitecourseformatwarning', 'backup'));
+            }
             $html .= html_writer::start_tag('div', array('class'=>'backup-sub-section'));
             $html .= $this->output->heading(get_string('backupcoursesections', 'backup'), 3, array('class'=>'subheader'));
             foreach ($details->sections as $key=>$section) {
