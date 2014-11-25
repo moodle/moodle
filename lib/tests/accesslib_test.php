@@ -1381,6 +1381,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $systemcontext = context_system::instance();
         $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
+        $noeditteacherrole = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
         $otherid = create_role('Other role', 'other', 'Some other role', '');
@@ -1397,6 +1398,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user3->id, $course->id, $teacherrole->id);
         $user4 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user4->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, $noeditteacherrole->id);
 
         $group = $this->getDataGenerator()->create_group(array('courseid'=>$course->id));
         groups_add_member($group, $user3);
@@ -1434,6 +1436,19 @@ class core_accesslib_testcase extends advanced_testcase {
         $users = get_role_users($teacherrole->id, $coursecontext, true, 'u.id, u.email, u.idnumber, u.firstname', 'u.idnumber', null, '', '', '', 'u.firstname = :xfirstname', array('xfirstname'=>'John'));
         $this->assertCount(1, $users);
         $this->assertArrayHasKey($user1->id, $users);
+
+        $users = get_role_users(array($noeditteacherrole->id, $studentrole->id), $coursecontext, false, 'ra.id', 'ra.id');
+        $this->assertDebuggingNotCalled();
+        $users = get_role_users(array($noeditteacherrole->id, $studentrole->id), $coursecontext, false, 'ra.userid', 'ra.userid');
+        $this->assertDebuggingCalled('get_role_users() without specifying one single roleid needs to be called prefixing ' .
+            'role assignments id (ra.id) as unique field, you can use $fields param for it.');
+        $users = get_role_users(array($noeditteacherrole->id, $studentrole->id), $coursecontext, false);
+        $this->assertDebuggingCalled('get_role_users() without specifying one single roleid needs to be called prefixing ' .
+            'role assignments id (ra.id) as unique field, you can use $fields param for it.');
+        $users = get_role_users(array($noeditteacherrole->id, $studentrole->id), $coursecontext,
+            false, 'u.id, u.firstname', 'u.id, u.firstname');
+        $this->assertDebuggingCalled('get_role_users() without specifying one single roleid needs to be called prefixing ' .
+            'role assignments id (ra.id) as unique field, you can use $fields param for it.');
     }
 
     /**
