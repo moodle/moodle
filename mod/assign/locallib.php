@@ -4131,6 +4131,11 @@ class assign {
         if ($this->can_view_grades()) {
             $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;
             $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+
+            // Group selector will only be displayed if necessary.
+            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+            $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
+
             if ($instance->teamsubmission) {
                 $summary = new assign_grading_summary($this->count_teams(),
                                                       $instance->submissiondrafts,
@@ -4144,7 +4149,9 @@ class assign {
                                                       $instance->teamsubmission);
                 $o .= $this->get_renderer()->render($summary);
             } else {
-                $summary = new assign_grading_summary($this->count_participants(0),
+                // The active group has already been updated in groups_print_activity_menu().
+                $countparticipants = $this->count_participants(groups_get_activity_group($this->get_course_module()));
+                $summary = new assign_grading_summary($countparticipants,
                                                       $instance->submissiondrafts,
                                                       $this->count_submissions_with_status($draft),
                                                       $this->is_any_submission_plugin_enabled(),
