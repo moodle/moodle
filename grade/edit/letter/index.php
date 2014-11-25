@@ -98,6 +98,7 @@ if (!$edit) {
     echo $editlink;
 
     $table = new html_table();
+    $table->id = 'grade-letters-view';
     $table->head  = array(get_string('max', 'grades'), get_string('min', 'grades'), get_string('letter', 'grades'));
     $table->size  = array('30%', '30%', '40%');
     $table->align = array('left', 'left', 'left');
