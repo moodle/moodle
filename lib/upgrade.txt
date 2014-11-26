@@ -11,6 +11,9 @@ information provided here is intended especially for developers.
 * The file pluginlib.php was deprecated since 2.6 and has now been removed, do not include or require it.
 * \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
 * Deprecated JS global methods have been removed (show_item, destroy_item, hide_item, addonload, getElementsByTagName, findChildNodes).
+* For 3rd party plugin specific environment.xml files, it's now possible to specify version independent checks by using the
+  <PLUGIN name="component_name"> tag instead of the version dependent <MOODLE version="x.y"> one. If the PLUGIN tag is used any
+  Moodle specific tags will be ignored.
 
 === 2.8 ===
 
