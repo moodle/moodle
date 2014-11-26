@@ -147,7 +147,7 @@ class reply_handler extends \core\message\inbound\handler {
             $newsubject = $post->subject;
             if (!strpos($restring, $post->subject)) {
                 // The previous post did not contain a re string, add it.
-                $newsubject = $restring . ' ' . $subject;
+                $newsubject = $restring . ' ' . $newsubject;
             }
             mtrace("--> Note: Post subject matched original post subject. Optimising from {$subject} to {$newsubject}");
             $subject = $newsubject;
