@@ -122,14 +122,15 @@ class mod_forum_mail_testcase extends advanced_testcase {
      *
      * @param stdClass $forum The forum to post in
      * @param stdClass $author The author to post as
+     * @param array $fields any other fields in discussion (name, message, messageformat, ...)
      * @param array An array containing the discussion object, and the post object
      */
-    protected function helper_post_to_forum($forum, $author) {
+    protected function helper_post_to_forum($forum, $author, $fields = array()) {
         global $DB;
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
 
         // Create a discussion in the forum, and then add a post to that discussion.
-        $record = new stdClass();
+        $record = (object)$fields;
         $record->course = $forum->course;
         $record->userid = $author->id;
         $record->forum = $forum->id;
@@ -809,5 +810,30 @@ class mod_forum_mail_testcase extends advanced_testcase {
         foreach ($messages as $message) {
             $this->assertRegExp('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
         }
+    }
+
+    public function test_long_subject() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create a user enrolled in the course as student.
+        list($author) = $this->helper_create_users($course, 1);
+
+        // Post a discussion to the forum.
+        $subject = 'This is the very long forum post subject that somebody was very kind of leaving, it is intended to check if long subject comes in mail correctly. Thank you.';
+        $a = (object)array('courseshortname' => $course->shortname, 'forumname' => $forum->name, 'subject' => $subject);
+        $expectedsubject = get_string('postmailsubject', 'forum', $a);
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author, array('name' => $subject));
+
+        // Run cron and check that the expected number of users received the notification.
+        $messages = $this->helper_run_cron_check_count($post, 1);
+        $message = reset($messages);
+        $this->assertEquals($author->id, $message->useridfrom);
+        $this->assertEquals($expectedsubject, $message->subject);
     }
 }

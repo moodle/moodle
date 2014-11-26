@@ -762,7 +762,7 @@ function forum_cron() {
                 $a->courseshortname = $shortname;
                 $a->forumname = $cleanforumname;
                 $a->subject = format_string($post->subject, true);
-                $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a));
+                $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a), 0);
                 $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false,
                         $replyaddress);
                 $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
