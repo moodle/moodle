@@ -105,7 +105,7 @@ class auth_plugin_db extends auth_plugin_base {
 
             $authdb = $this->db_init();
 
-            $rs = $authdb->Execute("SELECT {$this->config->fieldpass}
+            $rs = $authdb->Execute("SELECT {$this->config->fieldpass} AS userpass
                                       FROM {$this->config->table}
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'");
             if (!$rs) {
@@ -119,7 +119,8 @@ class auth_plugin_db extends auth_plugin_base {
                 return false;
             }
 
-            $fromdb = $rs->fields[$this->config->fieldpass];
+            $fields = array_change_key_case($rs->fields, CASE_LOWER);
+            $fromdb = $fields['userpass'];
             $rs->Close();
             $authdb->Close();
 
