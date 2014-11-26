@@ -45,11 +45,17 @@ If the custom titles checkbox is ticked, the chapter title is NOT displayed as a
 $string['chapters'] = 'Chapters';
 $string['chaptertitle'] = 'Chapter title';
 $string['content'] = 'Content';
+$string['deletechapter'] = 'Delete chapter "{$a}"';
 $string['editingchapter'] = 'Editing chapter';
 $string['eventchaptercreated'] = 'Chapter created';
 $string['eventchapterdeleted'] = 'Chapter deleted';
 $string['eventchapterupdated'] = 'Chapter updated';
 $string['eventchapterviewed'] = 'Chapter viewed';
+$string['editchapter'] = 'Edit chapter "{$a}"';
+$string['hidechapter'] = 'Hide chapter "{$a}"';
+$string['movechapterup'] = 'Move chapter up "{$a}"';
+$string['movechapterdown'] = 'Move chapter down "{$a}"';
+$string['showchapter'] = 'Show chapter "{$a}"';
 $string['subchapter'] = 'Subchapter';
 $string['navimages'] = 'Images';
 $string['navoptions'] = 'Available options for navigational links';
