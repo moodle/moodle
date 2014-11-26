@@ -635,7 +635,7 @@ class checker {
         global $CFG;
 
         if (empty($changes)) {
-            return;
+            return array();
         }
 
         $notifications = array();
