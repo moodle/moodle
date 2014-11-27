@@ -101,7 +101,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         if (!has_capability('moodle/course:enrolconfig', $coursecontext) or !has_capability('enrol/cohort:config', $coursecontext)) {
             return false;
         }
-        return cohort_get_available_cohorts($coursecontext) ? true : false;
+        return cohort_get_available_cohorts($coursecontext, 0, 0, 1) ? true : false;
     }
 
     /**

@@ -65,7 +65,7 @@ class enrol_cohort_edit_form extends moodleform {
 
         } else {
             $cohorts = array('' => get_string('choosedots'));
-            $allcohorts = cohort_get_available_cohorts($coursecontext);
+            $allcohorts = cohort_get_available_cohorts($coursecontext, 0, 0, 0);
             foreach ($allcohorts as $c) {
                 $cohorts[$c->id] = format_string($c->name);
             }

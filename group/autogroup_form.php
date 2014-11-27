@@ -82,7 +82,7 @@ class autogroup_form extends moodleform {
             $mform->setDefault('roleid', $student->id);
         }
 
-        if ($cohorts = cohort_get_available_cohorts(context_course::instance($COURSE->id), COHORT_WITH_ENROLLED_MEMBERS_ONLY)) {
+        if ($cohorts = cohort_get_available_cohorts(context_course::instance($COURSE->id), COHORT_WITH_ENROLLED_MEMBERS_ONLY, 0, 0)) {
             $options = array(0 => get_string('anycohort', 'cohort'));
             foreach ($cohorts as $c) {
                 $options[$c->id] = format_string($c->name, true, context::instance_by_id($c->contextid));
