@@ -3,5 +3,8 @@ information provided here is intended especially for developers.
 
 === 2.9 ===
 
-* Plain text password matching is now always case sensitive, it does not
-  depend on the database sensitiveness anymore.
+Some alterations have been made to the handling of case sensitity handling of passwords
+and password hashes which previously varied depending on database configuration:
+
+* Plain text password matching is now always case sensitive
+* Password hash comparisons are now case insensitive
