@@ -93,7 +93,6 @@ Feature: In a lesson activity, students can navigate through a series of pages i
   Scenario: Student reattempts a question until out of attempts
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
-      | Description | Test lesson description |
       | id_review | Yes |
       | id_maxattempts | 3 |
     And I follow "Test lesson name"
