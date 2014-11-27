@@ -44,19 +44,45 @@ class repository_url_lib_testcase extends advanced_testcase {
 
         $repoid = $this->getDataGenerator()->create_repository('url')->id;
 
-        $testdata = array(
+        $conversions = array(
                 'http://example.com/test_file.png' => 'http://example.com/test_file.png',
                 'http://example.com/test%20file.png' => 'http://example.com/test%20file.png',
                 'http://example.com/test file.png' => 'http://example.com/test%20file.png',
                 'http://example.com/test file.png?query=string+test&more=string+tests' =>
-                    'http://example.com/test%20file.png?query=string+test&more=string+tests'
+                    'http://example.com/test%20file.png?query=string+test&more=string+tests',
+                'http://example.com/?tag=<p>' => 'http://example.com/?tag=%3Cp%3E',
+                'http://example.com/"quoted".txt' => 'http://example.com/%22quoted%22.txt',
+                'http://example.com/\'quoted\'.txt' => 'http://example.com/%27quoted%27.txt',
+                '' => ''
             );
 
-        foreach ($testdata as $input => $expected) {
+        foreach ($conversions as $input => $expected) {
             // The constructor uses a optional_param, so we need to hack $_GET.
             $_GET['file'] = $input;
             $repository = new repository_url($repoid);
             $this->assertSame($expected, $repository->file_url);
+        }
+
+        $exceptions = array(
+                '%' => true,
+                '!' => true,
+                '!https://download.moodle.org/unittest/test.jpg' => true,
+                'https://download.moodle.org/unittest/test.jpg' => false
+            );
+
+        foreach ($exceptions as $input => $expected) {
+            $caughtexception = false;
+            try {
+                // The constructor uses a optional_param, so we need to hack $_GET.
+                $_GET['file'] = $input;
+                $repository = new repository_url($repoid);
+                $repository->get_listing();
+            } catch (repository_exception $e) {
+                if ($e->errorcode == 'validfiletype') {
+                    $caughtexception = true;
+                }
+            }
+            $this->assertSame($expected, $caughtexception);
         }
 
         unset($_GET['file']);
