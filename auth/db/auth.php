@@ -127,9 +127,9 @@ class auth_plugin_db extends auth_plugin_base {
             if ($this->config->passtype === 'plaintext') {
                 return ($fromdb == $extpassword);
             } else if ($this->config->passtype === 'md5') {
-                return ($fromdb == md5($extpassword));
+                return (strtolower($fromdb) == md5($extpassword));
             } else if ($this->config->passtype === 'sha1') {
-                return ($fromdb == sha1($extpassword));
+                return (strtolower($fromdb) == sha1($extpassword));
             } else if ($this->config->passtype === 'saltedcrypt') {
                 require_once($CFG->libdir.'/password_compat/lib/password.php');
                 return password_verify($extpassword, $fromdb);
