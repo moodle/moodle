@@ -79,7 +79,6 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
             'enrolment_5_test2' => 'test2',
             'enrolment_5_test1' => 'test1',
             'enrolment_5' => 'flatfile',
-            'enrolment_6' => '',
         );
         $expected = array(
             'self' => array(

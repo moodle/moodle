@@ -164,10 +164,7 @@ class tool_uploadcourse_helper {
         if (!empty($enrolmethods)) {
             $enrolmentplugins = self::get_enrolment_plugins();
             foreach ($enrolmethods as $key => $method) {
-                if (empty($method)) {
-                    // The enrolment method is not specified, we skip it.
-                    continue;
-                } else if (!array_key_exists($method, $enrolmentplugins)) {
+                if (!array_key_exists($method, $enrolmentplugins)) {
                     // Unknown enrolment method.
                     $unknownmethods[] = $method;
                     continue;
