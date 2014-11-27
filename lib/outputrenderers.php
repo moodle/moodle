@@ -2372,7 +2372,6 @@ class core_renderer extends renderer_base {
 
         $attributes = array('href'=>$url);
         if (!$userpicture->visibletoscreenreaders) {
-            $attributes['role'] = 'presentation';
             $attributes['tabindex'] = '-1';
             $attributes['aria-hidden'] = 'true';
         }
