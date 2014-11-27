@@ -1364,6 +1364,10 @@ class assign {
      */
     public function count_teams() {
 
+        if ($currentgroup = groups_get_activity_group($this->get_course_module())) {
+            return 1;
+        }
+
         $groups = groups_get_all_groups($this->get_course()->id,
                                         0,
                                         $this->get_instance()->teamsubmissiongroupingid,
@@ -1527,6 +1531,11 @@ class assign {
                               FROM {assign_submission} mxs
                               WHERE mxs.assignment = :assignid2 GROUP BY mxs.groupid';
 
+            $groupstr = '';
+            if ($currentgroup != NOGROUPS) {
+                $groupstr = 's.groupid = :groupid AND';
+                $params['groupid'] = $currentgroup;
+            }
             $sql = 'SELECT COUNT(s.groupid)
                         FROM {assign_submission} s
                         JOIN(' . $maxattemptsql . ') smx ON s.groupid = smx.groupid
@@ -1535,6 +1544,7 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.userid = :groupuserid AND
+                            ' . $groupstr . '
                             s.status = :submissionstatus';
             $params['groupuserid'] = 0;
         } else {
