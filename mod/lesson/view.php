@@ -503,12 +503,6 @@ if ($pageid != LESSON_EOL) {
     }
     $lessoncontent .= $OUTPUT->box_end(); //End of Lesson button to Continue.
 
-    // after all the grade processing, check to see if "Show Grades" is off for the course
-    // if yes, redirect to the course page
-    if (!$course->showgrades) {
-        redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
-    }
-
     // high scores code
     if ($lesson->highscores && !$canmanage && !$lesson->practice) {
         $lessoncontent .= $OUTPUT->box_start('center');
@@ -574,7 +568,8 @@ if ($pageid != LESSON_EOL) {
     $url = new moodle_url('/course/view.php', array('id'=>$course->id));
     $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class'=>'centerpadded lessonbutton standardbutton'));
 
-    if (!$lesson->practice) {
+    if (has_capability('gradereport/user:view', context_course::instance($course->id))
+            && $lesson->grade != 0 && !$lesson->practice) {
         $url = new moodle_url('/grade/index.php', array('id' => $course->id));
         $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'),
             array('class' => 'centerpadded lessonbutton standardbutton'));
