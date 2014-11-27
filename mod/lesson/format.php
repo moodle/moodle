@@ -555,7 +555,8 @@ class qformat_default {
     /// this format, this function converts it into a question
     /// object suitable for processing and insertion into Moodle.
 
-        echo "<p>This flash question format has not yet been completed!</p>";
+        // We should never get there unless the qformat plugin is broken.
+        throw new coding_exception('Question format plugin is missing important code: readquestion.');
 
         return null;
     }
