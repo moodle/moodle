@@ -1410,6 +1410,10 @@ class assign {
      */
     public function count_teams() {
 
+        if ($currentgroup = groups_get_activity_group($this->get_course_module())) {
+            return 1;
+        }
+
         $groups = groups_get_all_groups($this->get_course()->id,
                                         0,
                                         $this->get_instance()->teamsubmissiongroupingid,
@@ -1568,6 +1572,12 @@ class assign {
         $params['submissionstatus'] = $status;
 
         if ($this->get_instance()->teamsubmission) {
+
+            $groupstr = '';
+            if ($currentgroup != NOGROUPS) {
+                $groupstr = 's.groupid = :groupid AND';
+                $params['groupid'] = $currentgroup;
+            }
             $sql = 'SELECT COUNT(s.groupid)
                         FROM {assign_submission} s
                         WHERE
@@ -1575,6 +1585,7 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.userid = :groupuserid AND
+                            ' . $groupstr . '
                             s.status = :submissionstatus';
             $params['groupuserid'] = 0;
         } else {
