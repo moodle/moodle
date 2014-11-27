@@ -136,8 +136,7 @@ class tool_uploadcourse_tracker {
      * Output one more line.
      *
      * @param int $line line number.
-     * @param int $outcome 0 for failure, 1 for success, 2 for success with errors. Use 2 when
-     *                     most of the process succeeded but there might have been outstanding errors.
+     * @param bool $outcome success or not?
      * @param array $status array of statuses.
      * @param array $data extra data to display.
      * @return void
@@ -149,16 +148,9 @@ class tool_uploadcourse_tracker {
         }
 
         if ($this->outputmode == self::OUTPUT_PLAIN) {
-            if ($outcome == 1) {
-                $ok = 'OK';
-            } else if (!$outcome) {
-                $ok = 'NOK';        // Not OK.
-            } else {
-                $ok = 'EOK';        // Errors, but OK.
-            }
             $message = array(
                 $line,
-                $ok,
+                $outcome ? 'OK' : 'NOK',
                 isset($data['id']) ? $data['id'] : '',
                 isset($data['shortname']) ? $data['shortname'] : '',
                 isset($data['fullname']) ? $data['fullname'] : '',
@@ -176,12 +168,10 @@ class tool_uploadcourse_tracker {
             if (is_array($status)) {
                 $status = implode(html_writer::empty_tag('br'), $status);
             }
-            if ($outcome == 1) {
+            if ($outcome) {
                 $outcome = $OUTPUT->pix_icon('i/valid', '');
-            } else if (!$outcome) {
-                $outcome = $OUTPUT->pix_icon('i/invalid', '');
             } else {
-                $outcome = $OUTPUT->pix_icon('i/caution', '');
+                $outcome = $OUTPUT->pix_icon('i/invalid', '');
             }
             echo html_writer::start_tag('tr', array('class' => 'r' . $this->rownb % 2));
             echo html_writer::tag('td', $line, array('class' => 'c' . $ci++));

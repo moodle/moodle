@@ -134,10 +134,9 @@ class tool_uploadcourse_helper {
      * )
      *
      * @param array $data data to extract the enrolment data from.
-     * @param array $errors will be populated with errors found.
      * @return array
      */
-    public static function get_enrolment_data($data, &$errors = array()) {
+    public static function get_enrolment_data($data) {
         $enrolmethods = array();
         $enroloptions = array();
         foreach ($data as $field => $value) {
@@ -159,26 +158,16 @@ class tool_uploadcourse_helper {
 
         // Combining enrolment methods and their options in a single array.
         $enrolmentdata = array();
-        $unknownmethods = array();
-        $methodsnotsupported = array();
         if (!empty($enrolmethods)) {
             $enrolmentplugins = self::get_enrolment_plugins();
             foreach ($enrolmethods as $key => $method) {
                 if (!array_key_exists($method, $enrolmentplugins)) {
-                    // Unknown enrolment method.
-                    $unknownmethods[] = $method;
+                    // Error!
                     continue;
                 }
                 $enrolmentdata[$enrolmethods[$key]] = $enroloptions[$key];
             }
         }
-
-        // Logging errors related to enrolment methods.
-        if (!empty($unknownmethods)) {
-            $errors['unknownenrolmentmethods'] = new lang_string('unknownenrolmentmethods', 'tool_uploadcourse',
-                implode(', ', $unknownmethods));
-        }
-
         return $enrolmentdata;
     }
 
