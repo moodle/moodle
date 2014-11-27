@@ -108,9 +108,6 @@ class tool_uploadcourse_course {
     static protected $importoptionsdefaults = array('canrename' => false, 'candelete' => false, 'canreset' => false,
         'reset' => false, 'restoredir' => null, 'shortnametemplate' => null);
 
-    /** @var array special fields used when processing the enrolment methods. */
-    static protected $enrolmentspecialfields = array('delete', 'disable', 'startdate', 'enddate', 'enrolperiod', 'role');
-
     /**
      * Constructor
      *
@@ -658,18 +655,9 @@ class tool_uploadcourse_course {
             return false;
         }
 
-        // Getting the enrolment data.
-        $errors = array();
-        $this->enrolmentdata = tool_uploadcourse_helper::get_enrolment_data($this->rawdata, $errors);
-        if (!empty($errors)) {
-            foreach ($errors as $key => $message) {
-                $this->error($key, $message);
-            }
-            return false;
-        }
-
         // Saving data.
         $this->data = $coursedata;
+        $this->enrolmentdata = tool_uploadcourse_helper::get_enrolment_data($this->rawdata);
 
         // Restore data.
         // TODO Speed up things by not really extracting the backup just yet, but checking that
@@ -781,20 +769,10 @@ class tool_uploadcourse_course {
             return;
         }
 
-        $cannotaddmethods = array();
         $enrolmentplugins = tool_uploadcourse_helper::get_enrolment_plugins();
         $instances = enrol_get_instances($course->id, false);
         foreach ($enrolmentdata as $enrolmethod => $method) {
 
-            $plugin = $enrolmentplugins[$enrolmethod];
-
-            // TODO MDL-48362 Abstract the logic to prevent it to be tied to the
-            // user interface. Ideally a plugin should have a method that returns
-            // whether or not a new instance can be added to the course rather than
-            // using enrol_plugin::get_newinstance_link() to figure that out.
-            $canadd = $plugin->get_newinstance_link($course->id);
-
-            // TODO MDL-43820 Handle multiple instances of the same type.
             $instance = null;
             foreach ($instances as $i) {
                 if ($i->enrol == $enrolmethod) {
@@ -828,57 +806,30 @@ class tool_uploadcourse_course {
                     }
                 }
             } else {
+                $plugin = null;
                 if (empty($instance)) {
-
-                    // Check if we can create a new instance of this enrolment method.
-                    if (!$canadd) {
-                        $cannotaddmethods[] = $enrolmethod;
-                        continue;
-                    }
-
-                    // Some plugins do not implement enrol_plugin::add_default_instance(),
-                    // but we will try anyway and call enrol_plugin::add_instance() if needed.
-                    $id = $plugin->add_default_instance($course);
-                    if (empty($id)) {
-                        $id = $plugin->add_instance($course);
-                    }
-
+                    $plugin = $enrolmentplugins[$enrolmethod];
                     $instance = new stdClass();
-                    $instance->id = $id;
+                    $instance->id = $plugin->add_default_instance($course);
                     $instance->roleid = $plugin->get_config('roleid');
                     $instance->status = ENROL_INSTANCE_ENABLED;
                 } else {
+                    $plugin = $enrolmentplugins[$instance->enrol];
                     $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
                 }
 
                 // Now update values.
                 foreach ($method as $k => $v) {
-                    if (in_array($k, self::$enrolmentspecialfields)) {
-                        // Skip the special import keys.
-                        continue;
-                    }
                     $instance->{$k} = $v;
                 }
 
                 // Sort out the start, end and date.
-                if (isset($method['startdate'])) {
-                    $instance->enrolstartdate = strtotime($method['startdate']);
-                } else if (!isset($instance->enrolstartdate)) {
-                    $instance->enrolstartdate = 0;
-                }
-                if (isset($method['enddate'])) {
-                    $instance->enrolenddate = strtotime($method['enddate']);
-                } else if (!isset($instance->enrolenddate)) {
-                    $instance->enrolenddate = 0;
-                }
+                $instance->enrolstartdate = (isset($method['startdate']) ? strtotime($method['startdate']) : 0);
+                $instance->enrolenddate = (isset($method['enddate']) ? strtotime($method['enddate']) : 0);
 
                 // Is the enrolment period set?
-                if (isset($method['enrolperiod'])) {
-                    if (empty($method['enrolperiod'])) {
-                        // Let's just make sure that it's 0.
-                        $method['enrolperiod'] = 0;
-                    } else if (preg_match('/^\d+$/', $method['enrolperiod'])) {
-                        // Cast integers to integers.
+                if (isset($method['enrolperiod']) && ! empty($method['enrolperiod'])) {
+                    if (preg_match('/^\d+$/', $method['enrolperiod'])) {
                         $method['enrolperiod'] = (int) $method['enrolperiod'];
                     } else {
                         // Try and convert period to seconds.
@@ -907,11 +858,6 @@ class tool_uploadcourse_course {
                 $instance->timemodified = time();
                 $DB->update_record('enrol', $instance);
             }
-        }
-
-        if (!empty($cannotaddmethods)) {
-            $this->error('cannotaddenrolmentmethods', new lang_string('cannotaddenrolmentmethods', 'tool_uploadcourse',
-                implode(', ', $cannotaddmethods)));
         }
     }
 
