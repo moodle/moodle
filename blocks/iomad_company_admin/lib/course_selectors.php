@@ -114,14 +114,14 @@ class current_company_course_selector extends company_course_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
         $params['departmentid'] = $this->departmentid;
-        /*if (!empty($this->departmentid)) {
-            $departmentlist = company::get_all_subdepartments($this->departmentid);
+        if (!empty($this->departmentid)) {
+            $departmentlist = array($this->departmentid => $this->departmentid) + 
+                              company::get_department_parentnodes($this->departmentid);
         } else {
-            $departmentlist = null;
+            $departmentlist = array($this->departmentid => $this->departmentid);
         }
-        $parentnode = company::get_company_parentnode($this->companyid);*/
         $departmentsql = "";
-        $departmentsql = "AND cc.departmentid = ".$this->departmentid;
+        $departmentsql = "AND cc.departmentid in (".implode(',', array_keys($departmentlist)).") ";
         $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('c');
         $countfields = 'SELECT COUNT(1)';
 
@@ -187,7 +187,6 @@ class current_company_course_selector extends company_course_selector_base {
         $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params) +
                             $DB->get_records_sql($fields . $sharedsql . $order, $params) +
                             $DB->get_records_sql($fields . $partialsharedsql . $order, $params);
-
         if (empty($availablecourses)) {
             return array();
         }

@@ -682,8 +682,28 @@ class company {
             $parent = $DB->get_record('department', array('id' => $department->parent));
             return $parent;
         } else {
-            print_error(get_string('errorgettingparentnode', 'block_iomad_company_admin'));
+            return false;
         }
+    }
+
+    /**
+     * All parent departments given a departmentid
+     *
+     * Parameters -
+     *              $departmentid = int;
+     *
+     * Returns stdclass() || false;
+     *
+     **/
+    public static function get_department_parentnodes($departmentid) {
+        global $DB;
+
+        $parents = array();
+        while ($myparent = self::get_department_parentnode($departmentid)) {
+            $parents[$myparent->id] = $myparent;
+            $departmentid = $myparent->id;
+        }
+        return $parents;
     }
 
     /**
