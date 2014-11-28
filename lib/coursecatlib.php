@@ -918,17 +918,21 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         // IOMAD - Remove courses which don't belong to your company
         // and add in shared courses.
         if (!is_siteadmin()) {
-            $whereclause .= " AND (
-                               c.id IN (
-                                SELECT courseid FROM {company_course}
-                                WHERE companyid = :companyid
-                               ) OR c.id IN (
-                                SELECT courseid FROM {iomad_courses}
-                                WHERE shared = 2
-                               )
-                              )";
-            $companyid = iomad::get_my_companyid(context_system::instance());
-            $params['companyid'] = $companyid;
+            if (!isloggedin()) {
+                $whereclause .= " AND c.id NOT IN (SELECT courseid FROM {company_course})";
+            } else {
+                $whereclause .= " AND (
+                                   c.id IN (
+                                    SELECT courseid FROM {company_course}
+                                    WHERE companyid = :companyid
+                                   ) OR c.id IN (
+                                    SELECT courseid FROM {iomad_courses}
+                                    WHERE shared = 1
+                                   )
+                                  )";
+                $companyid = iomad::get_my_companyid(context_system::instance());
+                $params['companyid'] = $companyid;
+            }
         }
 
         $sql = "SELECT ". join(',', $fields). ", $ctxselect

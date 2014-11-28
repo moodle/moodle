@@ -1433,7 +1433,7 @@ class core_course_renderer extends plugin_renderer_base {
         // IOMAD:  Filter out unwanted categories
         if (!is_siteadmin()) {
             $subcategories = iomad::iomad_filter_categories($subcategories);
-        }        
+        }
 
         $totalcount = $coursecat->get_children_count();
         if (!$totalcount) {
