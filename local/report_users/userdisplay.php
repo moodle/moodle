@@ -54,12 +54,12 @@ $usercourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sorto
 // Get the Users details.
 $userinfo = $DB->get_record('user', array('id' => $userid));
 
-// Check if there is a certificate module.
-if ($certmodule = $DB->get_record('modules', array('name' => 'certificate'))) {
-    $hascertificate = true;
-    require_once($CFG->dirroot.'/mod/certificate/lib.php');
+// Check if there is a iomadcertificate module.
+if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
+    $hasiomadcertificate = true;
+    require_once($CFG->dirroot.'/mod/iomadcertificate/lib.php');
 } else {
-    $hascertificate = false;
+    $hasiomadcertificate = false;
 }
 
 if (!empty($dodownload)) {
@@ -98,7 +98,7 @@ $compusertable->head = array(get_string('course', 'local_report_completion'),
                              get_string('finalscore', 'local_report_completion'));
 $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center');
 $compusertable->width = '95%';
-if ($hascertificate) {
+if ($hasiomadcertificate) {
     $compusertable->head[] = get_string('certificate', 'local_report_users');
     $compusertable->align[] = 'center';
 }
@@ -152,19 +152,19 @@ foreach ($usercourses as $usercourse) {
             $completetime = "";
         }
 
-        // Deal with the certificate info.
-        if ($hascertificate) {
-            if ($certificateinfo = $DB->get_record('certificate',
+        // Deal with the iomadcertificate info.
+        if ($hasiomadcertificate) {
+            if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
                                                     array('course' => $usercourseid))) {
-                // Check if user has completed the course - if so, show the certificate.
+                // Check if user has completed the course - if so, show the iomadcertificate.
                 $compstat = $usercompletion[$usercourseid]->data[$usercourseid]->completion->status;
                 if ($compstat == 'completed' ) {
                     // Get the course module.
                     $certcminfo = $DB->get_record('course_modules',
                                                    array('course' => $usercourseid,
-                                                         'instance' => $certificateinfo->id,
+                                                         'instance' => $iomadcertificateinfo->id,
                                                          'module' => $certmodule->id));
-                    $certstring = "<a href='".$CFG->wwwroot."/mod/certificate/view.php?id=".
+                    $certstring = "<a href='".$CFG->wwwroot."/mod/iomadcertificate/view.php?id=".
                                   $certcminfo->id."&action=get&userid=".$userid."&sesskey=".
                                   sesskey()."'>".get_string('downloadcert', 'local_report_users').
                                   "</a>";
