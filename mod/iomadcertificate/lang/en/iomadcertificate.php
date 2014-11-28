@@ -122,6 +122,7 @@ $string['gradepoints'] = 'Points Grade';
 $string['imagetype'] = 'Image Type';
 $string['incompletemessage'] = 'In order to download your certificate, you must first complete all required '.'activities. Please return to the course to complete your coursework.';
 $string['intro'] = 'Introduction';
+$string['iomadcertificate:viewother'] = 'View another users certificate';
 $string['issueoptions'] = 'Issue Options';
 $string['issued'] = 'Issued';
 $string['issueddate'] = 'Date Issued';
