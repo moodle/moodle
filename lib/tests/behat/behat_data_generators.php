@@ -91,7 +91,6 @@ class behat_data_generators extends behat_base {
             'datagenerator' => 'enrol_user',
             'required' => array('user', 'course', 'role'),
             'switchids' => array('user' => 'userid', 'course' => 'courseid', 'role' => 'roleid')
-
         ),
         'permission overrides' => array(
             'datagenerator' => 'permission_override',
@@ -156,7 +155,17 @@ class behat_data_generators extends behat_base {
             'datagenerator' => 'scale',
             'required' => array('name', 'scale'),
             'switchids' => array('course' => 'courseid')
-        )
+        ),
+        'question categories' => array(
+            'datagenerator' => 'question_category',
+            'required' => array('name', 'contextlevel', 'reference'),
+            'switchids' => array('questioncategory' => 'category')
+        ),
+        'questions' => array(
+            'datagenerator' => 'question',
+            'required' => array('qtype', 'questioncategory', 'name'),
+            'switchids' => array('questioncategory' => 'category', 'user' => 'createdby')
+        ),
     );
 
     /**
@@ -474,6 +483,49 @@ class behat_data_generators extends behat_base {
     }
 
     /**
+     * Create a question category.
+     *
+     * @param array $data the row of data from the behat script.
+     */
+    protected function process_question_category($data) {
+        $context = $this->get_context($data['contextlevel'], $data['reference']);
+        $data['contextid'] = $context->id;
+        $this->datagenerator->get_plugin_generator('core_question')->create_question_category($data);
+    }
+
+    /**
+     * Create a question.
+     *
+     * Creating questions relies on the question/type/.../tests/helper.php mechanism.
+     * We start with test_question_maker::get_question_form_data($data['qtype'], $data['template'])
+     * and then overlay the values from any other fields of $data that are set.
+     *
+     * @param array $data the row of data from the behat script.
+     */
+    protected function process_question($data) {
+        if (array_key_exists('questiontext', $data)) {
+            $data['questiontext'] = array(
+                    'text'   => $data['questiontext'],
+                    'format' => FORMAT_HTML,
+                );
+        }
+
+        if (array_key_exists('generalfeedback', $data)) {
+            $data['generalfeedback'] = array(
+                    'text'   => $data['generalfeedback'],
+                    'format' => FORMAT_HTML,
+                );
+        }
+
+        $which = null;
+        if (!empty($data['template'])) {
+            $which = $data['template'];
+        }
+
+        $this->datagenerator->get_plugin_generator('core_question')->create_question($data['qtype'], $which, $data);
+    }
+
+    /**
      * Gets the grade category id from the grade category fullname
      * @throws Exception
      * @param string $username
@@ -616,16 +668,36 @@ class behat_data_generators extends behat_base {
     }
 
     /**
-     * Gets the course id from its name.
-     * @throws Exception
-     * @param string $name
-     * @return int
+     * Get the id of a named scale.
+     * @param string $name the name of the scale.
+     * @return int the scale id.
      */
     protected function get_scale_id($name) {
         global $DB;
 
         if (!$id = $DB->get_field('scale', 'id', array('name' => $name))) {
             throw new Exception('The specified scale with name "' . $name . '" does not exist');
+        }
+        return $id;
+    }
+
+    /**
+     * Get the id of a named question category (must be globally unique).
+     * Note that 'Top' is a special value, used when setting the parent of another
+     * category, meaning top-level.
+     *
+     * @param string $name the question category name.
+     * @return int the question category id.
+     */
+    protected function get_questioncategory_id($name) {
+        global $DB;
+
+        if ($name == 'Top') {
+            return 0;
+        }
+
+        if (!$id = $DB->get_field('question_categories', 'id', array('name' => $name))) {
+            throw new Exception('The specified question category with name "' . $name . '" does not exist');
         }
         return $id;
     }
