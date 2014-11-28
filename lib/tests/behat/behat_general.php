@@ -880,15 +880,6 @@ class behat_general extends behat_base {
     }
 
     /**
-     * This step triggers cron like a user would do going to admin/cron.php (alias for "I trigger cron")
-     *
-     * @Given /^I run the cron$/
-     */
-    public function i_run_the_cron() {
-        $this->i_trigger_cron();
-    }
-
-    /**
      * Checks that an element and selector type exists in another element and selector type on the current page.
      *
      * This step is for advanced users, use it if you don't find anything else suitable for what you need.
