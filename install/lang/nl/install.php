@@ -67,14 +67,14 @@ $string['pathshead'] = 'Bevestig paden';
 $string['pathsrodataroot'] = 'De dataroot map is niet beschrijfbaar.';
 $string['pathsroparentdataroot'] = 'De bovenliggende map ({$a->parent}) is niet beschrijfbaar. De datamap ({$a->dataroot}) kan niet aangemaakt worden door het installatiescript';
 $string['pathssubadmindir'] = 'Sommige webhosts gebruiken /admin als een speciale url om toegang tot bijvoorbeeld een controlepaneel te krijgen. Dit kan conflicten veroorzaken met de standaardlocatie van de Moodle admin scripts. Je kunt dit oplossen door de admin map van Moodle te hernoemen en de nieuwe naam hier te zetten. Bijvoorbeeld <em>moodleadmin</em>. Dat zal de admin links in Moodle herstellen.';
-$string['pathssubdataroot'] = '<p>Een map waar Moodle de door gebruikers geüploade bestanden kan bewaren.</p>
-<p>Deze map moet leesbaar en BESCHRIJFBAAR zijn door de webserver gebruiker (gewoonlijk \'nobody\', \'apache\' of www-data\')</p>
-<p>Deze mapn mag niet rechtstreeks toegankelijk zijn vanaf het internet.</p>
-<p>Als de map nog niet bestaat, dan zal het installatieproces ze proberen te maken.</p>';
-$string['pathssubdirroot'] = '<p>Volledig pad naar de map met de Moodle code.</p>';
-$string['pathssubwwwroot'] = '<p>Het volledige webadres waarlangs de toegang naar Moodle zal gebeuren. Dit is het adres dat gebruikers in de adresbalk van hun browser zullen ingeven om Moodle te bereiken</p>
-<p>Het is niet mogelijk om toegang tot Moodle te krijgen via meerdere adressen. Als je site meerdere publieke adressen heeft, kies dan het gemakkelijkste adres en maak een permanente verwijzing voor alle andere adressen</p>
-<p>Als je site zowel vanaf het internet als vanaf een intranet toegankelijk is, zet dat het internetadres hier</p>
+$string['pathssubdataroot'] = '<p>Een map waar Moodle geüploade bestanden kan bewaren.</p>
+<p>Deze map moet leesbaar en BESCHRIJFBAAR zijn door de webserver gebruiker (gewoonlijk \'nobody\', \'apache\' of www-data\').</p>
+<p>Ze mag niet rechtstreeks toegankelijk zijn vanaf het internet.</p>
+<p>Als de map niet bestaat, zal het installatieproces ze proberen te maken.</p>';
+$string['pathssubdirroot'] = '<p>Het volledig pad naar de Moodle-code.</p>';
+$string['pathssubwwwroot'] = '<p>Het volledige webadres waarlangs de toegang naar Moodle zal gebeuren - het adres dat gebruikers zullen ingeven om Moodle te bereiken.</p>
+<p>Het is niet mogelijk toegang tot Moodle te krijgen via meerdere adressen. Als je site meerdere publieke adressen heeft, dan zul je permanente verwijzingen moeten opzetten voor al die andere adressen.</p>
+<p>Als je site zowel vanaf het internet als vanaf een intranet toegankelijk is, zet dat het internetadres hier.</p>
 <p>Als het adres niet juist is, wijzig dan de URL in je browser en herstart de installatie.</p>';
 $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
