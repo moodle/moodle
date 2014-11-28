@@ -221,6 +221,7 @@ $string['missingshortnamedepartment'] = 'Missing department shortname';
 $string['newcourse'] = 'New course';
 $string['newuser'] = 'New user';
 $string['nocompanies'] = 'There are no companies - please add a company first';
+$string['nocompaniesfound'] = 'There are no companies which match your criteria';
 $string['nocompany'] = 'Unallocated courses';
 $string['nocourses'] = 'There are no courses.';
 $string['nolicenses'] = '<p>You do not have licenses which you can allocate.</p>';
