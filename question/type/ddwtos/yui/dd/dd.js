@@ -51,46 +51,46 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     return topnode;
                 },
                 drag_container : function() {
-                    return topnode+' div.drags';
+                    return topnode + ' div.drags';
                 },
                 drags : function() {
-                    return this.drag_container()+' span.drag';
+                    return this.drag_container() + ' span.drag';
                 },
                 drag : function(no) {
-                    return this.drags()+'.no'+no;
+                    return this.drags() + '.no' + no;
                 },
                 drags_in_group : function(groupno) {
-                    return this.drags()+'.group'+groupno;
+                    return this.drags() + '.group' + groupno;
                 },
                 unplaced_drags_in_group : function(groupno) {
-                    return this.drags_in_group(groupno)+'.unplaced';
+                    return this.drags_in_group(groupno) + '.unplaced';
                 },
                 drags_for_choice_in_group : function(choiceno, groupno) {
-                    return this.drags_in_group(groupno)+'.choice'+choiceno;
+                    return this.drags_in_group(groupno) + '.choice' + choiceno;
                 },
                 unplaced_drags_for_choice_in_group : function(choiceno, groupno) {
-                    return this.unplaced_drags_in_group(groupno)+'.choice'+choiceno;
+                    return this.unplaced_drags_in_group(groupno) + '.choice' + choiceno;
                 },
                 drops : function() {
-                    return topnode+' span.drop';
+                    return topnode + ' span.drop';
                 },
                 drop_for_place : function(placeno) {
-                    return this.drops()+'.place'+placeno;
+                    return this.drops() + '.place' + placeno;
                 },
                 drops_in_group : function(groupno) {
-                    return this.drops()+'.group'+groupno;
+                    return this.drops() + '.group' + groupno;
                 },
                 drag_homes : function() {
-                    return topnode+' span.draghome';
+                    return topnode + ' span.draghome';
                 },
                 drag_homes_group : function(groupno) {
-                    return topnode+' .draggrouphomes'+groupno+' span.draghome';
+                    return topnode + ' .draggrouphomes' + groupno + ' span.draghome';
                 },
                 drag_home : function(groupno, choiceno) {
-                    return topnode+' .draggrouphomes'+groupno+' span.draghome.choice'+choiceno;
+                    return topnode + ' .draggrouphomes' + groupno + ' span.draghome.choice' + choiceno;
                 },
                 drops_group : function(groupno) {
-                    return topnode+' span.drop.group'+groupno;
+                    return topnode + ' span.drop.group' + groupno;
                 }
             };
         },
@@ -120,8 +120,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             }
         },
         pad_to_width_height : function (node, width, height) {
-            node.setStyle('width', width+'px').setStyle('height', height+'px')
-                    .setStyle('lineHeight', height+'px');
+            node.setStyle('width', width + 'px').setStyle('height', height + 'px')
+                    .setStyle('lineHeight', height + 'px');
         },
 
         /**
@@ -136,7 +136,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             if (draghome.hasClass('infinite')) {
                 var groupno = this.get_group(draghome);
                 var noofdrags = Y.all(this.selectors.drops_in_group(groupno)).size();
-                for (var i=0; i < noofdrags; i++) {
+                for (var i = 0; i < noofdrags; i++) {
                     this.clone_drag_item(draghome);
                 }
             } else {
@@ -148,7 +148,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             var drag = draghome.cloneNode(true);
             drag.removeClass('draghome');
             drag.addClass('drag');
-            drag.addClass('no'+this.nextdragitemno);
+            drag.addClass('no' + this.nextdragitemno);
             this.nextdragitemno++;
             drag.setStyles({'visibility': 'visible', 'position' : 'absolute'});
             Y.one(this.selectors.drag_container()).appendChild(drag);
@@ -161,15 +161,15 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             if (classes !== '') {
                 var classesarr = classes.split(' ');
                 for (var index = 0; index < classesarr.length; index++) {
-                    var patt1 = new RegExp('^'+prefix+'([0-9])+$');
+                    var patt1 = new RegExp('^' + prefix + '([0-9])+$');
                     if (patt1.test(classesarr[index])) {
                         var patt2 = new RegExp('([0-9])+$');
                         var match = patt2.exec(classesarr[index]);
-                        return + match[0];
+                        return Number(match[0]);
                     }
                 }
             }
-            throw 'Prefix "'+prefix+'" not found in class names.';
+            throw 'Prefix "' + prefix + '" not found in class names.';
         },
         get_choice : function(node) {
             return this.get_classname_numeric_suffix(node, 'choice');
@@ -189,8 +189,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             this.placed = [];
             for (var placeno in this.get('inputids')) {
                 var inputid = this.get('inputids')[placeno];
-                var inputnode = Y.one('input#'+inputid);
-                var choiceno = +inputnode.get('value');
+                var inputnode = Y.one('input#' + inputid);
+                var choiceno = Number(inputnode.get('value'));
                 if (choiceno !== 0) {
                     var drop = Y.one(this.selectors.drop_for_place(placeno));
                     var groupno = this.get_group(drop);
@@ -229,7 +229,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
         place_drag_in_drop : function (drag, drop) {
             var placeno = this.get_place(drop);
             var inputid = this.get('inputids')[placeno];
-            var inputnode = Y.one('input#'+inputid);
+            var inputnode = Y.one('input#' + inputid);
             if (drag !== null) {
                 inputnode.set('value', this.get_choice(drag));
             } else {
@@ -272,7 +272,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 } else {
                     var placeno = this.placed[this.get_no(drag)];
                     var drop = Y.one(this.selectors.drop_for_place(placeno));
-                    drag.setXY([drop.getX()+2, drop.getY()+2]);
+                    drag.setXY([drop.getX() + 2, drop.getY() + 2]);
                     drag.removeClass('unplaced');
                 }
             }
@@ -326,8 +326,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
         },
         current_choice_in_drop : function(drop) {
             var inputid = this.get('inputids')[this.get_place(drop)];
-            var inputnode = Y.one('input#'+inputid);
-            return +inputnode.get('value');
+            var inputnode = Y.one('input#' + inputid);
+            return Number(inputnode.get('value'));
         }
     }, {
         NAME : DDWTOSDDNAME,

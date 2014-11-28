@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddwtos
  */
 class qtype_ddwtos_test extends question_testcase {
     /** @var qtype_ddwtos instance of the question type class to test. */
@@ -137,15 +136,15 @@ class qtype_ddwtos_test extends question_testcase {
 
         $this->assertEquals(array(
             1 => array(
-                1 => new question_possible_response('quick', 1/3),
+                1 => new question_possible_response('quick', 1 / 3),
                 2 => new question_possible_response('slow', 0),
                 null => question_possible_response::no_response()),
             2 => array(
-                1 => new question_possible_response('fox', 1/3),
+                1 => new question_possible_response('fox', 1 / 3),
                 2 => new question_possible_response('dog', 0),
                 null => question_possible_response::no_response()),
             3 => array(
-                1 => new question_possible_response('lazy', 1/3),
+                1 => new question_possible_response('lazy', 1 / 3),
                 2 => new question_possible_response('assiduous', 0),
                 null => question_possible_response::no_response()),
         ), $this->qtype->get_possible_responses($q));

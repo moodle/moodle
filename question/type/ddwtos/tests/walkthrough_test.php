@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddwtos
  */
 class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
 

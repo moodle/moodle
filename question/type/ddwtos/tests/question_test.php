@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddwtos
  */
 class qtype_ddwtos_question_test extends basic_testcase {
 
@@ -213,7 +212,7 @@ class qtype_ddwtos_question_test extends basic_testcase {
 
         $this->assertEquals(array(1, question_state::$gradedright),
                 $dd->grade_response(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
-        $this->assertEquals(array(1/3, question_state::$gradedpartial),
+        $this->assertEquals(array(1 / 3, question_state::$gradedpartial),
                 $dd->grade_response(array('p1' => '1')));
         $this->assertEquals(array(0, question_state::$gradedwrong),
                 $dd->grade_response(array('p1' => '2', 'p2' => '2', 'p3' => '2')));
@@ -238,13 +237,13 @@ class qtype_ddwtos_question_test extends basic_testcase {
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(
-                    1 => new question_classified_response(1, 'quick', 1/3),
+                    1 => new question_classified_response(1, 'quick', 1 / 3),
                     2 => new question_classified_response(2, 'dog', 0),
-                    3 => new question_classified_response(1, 'lazy', 1/3),
+                    3 => new question_classified_response(1, 'lazy', 1 / 3),
                 ), $dd->classify_response(array('p1' => '1', 'p2' => '2', 'p3' => '1')));
         $this->assertEquals(array(
                     1 => question_classified_response::no_response(),
-                    2 => new question_classified_response(1, 'fox', 1/3),
+                    2 => new question_classified_response(1, 'fox', 1 / 3),
                     3 => new question_classified_response(2, 'assiduous', 0),
                 ), $dd->classify_response(array('p1' => '0', 'p2' => '1', 'p3' => '2')));
     }
