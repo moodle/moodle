@@ -232,6 +232,9 @@ echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iom
 
 // Need a name search in here too.
 
+// Set default courses.
+$courses = array();
+
 if (!empty($company)) {
     if ($company == 'none') {
         // Get all courses which are not assigned to any company.
