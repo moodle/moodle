@@ -32,7 +32,8 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchElement as NoSuchElement,
     WebDriver\Exception\StaleElementReference as StaleElementReference,
-    Behat\Gherkin\Node\TableNode as TableNode;
+    Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Behat\Context\Step\Given as Given;
 
 /**
  * Cross component steps definitions.
@@ -54,6 +55,13 @@ class behat_general extends behat_base {
      * {@link switch_to_the_main_window()} to work-around a Chrome browser issue.
      */
     const MAIN_WINDOW_NAME = '__moodle_behat_main_window_name';
+
+    /**
+     * @var string when we want to check whether or not a new page has loaded,
+     * we first write this unique string into the page. Then later, by checking
+     * whether it is still there, we can tell if a new page has been loaded.
+     */
+    const PAGE_LOAD_DETECTION_STRING = 'new_page_not_loaded_since_behat_started_watching';
 
     /**
      * Opens Moodle homepage.
@@ -1220,5 +1228,48 @@ class behat_general extends behat_base {
                     ' bytes, expecting between ' . $minexpectedsize . ' and ' .
                     $maxexpectedsize, $this->getSession());
         }
+    }
+
+    /**
+     * Prepare to detect whether or not a new page has loaded (or the same page reloaded) some time in the future.
+     * @Given /^I start watching to see if a new page loads$/
+     */
+    public function i_start_watching_to_see_if_a_new_page_loads() {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Page load detection requires JavaScript.');
+        }
+
+        $this->getSession()->evaluateScript(
+                'var span = document.createElement("span");
+                span.innerHTML = "' . self::PAGE_LOAD_DETECTION_STRING . '";
+                span.setAttribute("style", "display: none;");
+                document.body.appendChild(span);');
+    }
+
+    /**
+     * Verify that a new page has loaded (or the same page has reloaded) since the last "I start watching to see if a new page loads" step.
+     * @Given /^a new page should have loaded since I started watching$/
+     */
+    public function a_new_page_should_have_loaded_since_i_started_watching() {
+        return array(new Given("\"{$this->get_page_load_xpath()}\" " .
+                "\"xpath_element\" should not exist"));
+    }
+
+    /**
+     * Verify that a new page has not loaded (or the same page has reloaded) since the last "I start watching to see if a new page loads" step.
+     * @Given /^a new page should not have loaded since I started watching$/
+     */
+    public function a_new_page_should_not_have_loaded_since_i_started_watching() {
+        return array(new Given("\"{$this->get_page_load_xpath()}\" " .
+                "\"xpath_element\" should exist"));
+    }
+
+    /**
+     * Helper used by {@link a_new_page_should_have_loaded_since_i_started_watching}
+     * and {@link a_new_page_should_not_have_loaded_since_i_started_watching}
+     * @return string xpath expression.
+     */
+    protected function get_page_load_xpath() {
+        return "//span[@style = 'display: none;'][. = '" . self::PAGE_LOAD_DETECTION_STRING . "']";
     }
 }
