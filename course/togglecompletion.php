@@ -34,7 +34,7 @@ $cmid = optional_param('id', 0, PARAM_INT);
 $courseid = optional_param('course', 0, PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-// Check if we are marking a user complete via the completion report
+// Check if we are marking a user complete via the completion report.
 $user = optional_param('user', 0, PARAM_INT);
 $rolec = optional_param('rolec', 0, PARAM_INT);
 
@@ -56,7 +56,7 @@ if ($courseid) {
 
     if (!$completion->is_enabled()) {
         throw new moodle_exception('completionnotenabled', 'completion');
-    } elseif (!$completion->is_tracked_user($trackeduser)) {
+    } else if (!$completion->is_tracked_user($trackeduser)) {
         throw new moodle_exception('nottracked', 'completion');
     }
 
