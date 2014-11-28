@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
  *
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddimageortext
  */
 class qtype_ddimageortext_question_test extends basic_testcase {
 

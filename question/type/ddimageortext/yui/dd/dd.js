@@ -70,7 +70,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                     return topnode.all('div.dropzones div.group' + groupno);
                 },
                 drag_items_cloned_from : function(dragitemno) {
-                    return dragitemsarea.all('.dragitems'+dragitemno);
+                    return dragitemsarea.all('.dragitems' + dragitemno);
                 },
                 drag_item : function(draginstanceno) {
                     return dragitemsarea.one('.draginstance' + draginstanceno);
@@ -85,14 +85,14 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                     return topnode.one('.dropbackground');
                 },
                 load_bg_img : function (url) {
-                    dropbgarea.setContent('<img class="dropbackground" src="'+ url +'"/>');
+                    dropbgarea.setContent('<img class="dropbackground" src="' + url + '"/>');
                     this.bg_img().on('load', this.on_image_load, this, 'bg_image');
                 },
                 add_or_update_drag_item_home : function (dragitemno, url, alt, group) {
                     var oldhome = this.drag_item_home(dragitemno);
-                    var classes = 'draghome dragitemhomes'+dragitemno+' group'+group;
-                    var imghtml = '<img class="'+classes+'" src="'+url+'" alt="'+alt+'" />';
-                    var divhtml = '<div class="'+classes+'">'+alt+'</div>';
+                    var classes = 'draghome dragitemhomes' + dragitemno + ' group' + group;
+                    var imghtml = '<img class="' + classes + '" src="' + url + '" alt="' + alt + '" />';
+                    var divhtml = '<div class="' + classes + '">' + alt + '</div>';
                     if (oldhome === null) {
                         if (url) {
                             dragitemsarea.append(imghtml);
@@ -107,7 +107,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                         }
                         oldhome.remove(true);
                     }
-                    var newlycreated = dragitemsarea.one('.dragitemhomes'+dragitemno);
+                    var newlycreated = dragitemsarea.one('.dragitemhomes' + dragitemno);
                     if (newlycreated !== null) {
                         newlycreated.setData('groupno', group);
                         newlycreated.setData('dragitemno', dragitemno);
@@ -125,11 +125,11 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                             if (patt1.test(classesarr[index])) {
                                 var patt2 = new RegExp('([0-9])+$');
                                 var match = patt2.exec(classesarr[index]);
-                                return +match[0];
+                                return + match[0];
                             }
                         }
                     }
-                    throw 'Prefix "'+prefix+'" not found in class names.';
+                    throw 'Prefix "' + prefix + '" not found in class names.';
                 },
                 clone_new_drag_item : function (draginstanceno, dragitemno) {
                     var draghome = this.drag_item_home(dragitemno);
@@ -191,7 +191,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
             }
         },
         update_padding_size_for_group : function (groupno) {
-            var groupitems = this.doc.top_node().all('.draghome.group'+groupno);
+            var groupitems = this.doc.top_node().all('.draghome.group' + groupno);
             if (groupitems.size() !== 0) {
                 var maxwidth = 0;
                 var maxheight = 0;
@@ -202,16 +202,16 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 groupitems.each(function(item) {
                     var margintopbottom = Math.round((10 + maxheight - item.get('clientHeight')) / 2);
                     var marginleftright = Math.round((10 + maxwidth - item.get('clientWidth')) / 2);
-                    item.setStyle('padding', margintopbottom+'px '+marginleftright+'px '
-                                            +margintopbottom+'px '+marginleftright+'px');
+                    item.setStyle('padding', margintopbottom + 'px ' + marginleftright + 'px ' +
+                                             margintopbottom + 'px ' + marginleftright + 'px');
                 }, this);
                 this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
                                                                 'height': maxheight + 10});
             }
         },
         convert_to_window_xy : function (bgimgxy) {
-            return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
-                    +bgimgxy[1] + this.doc.bg_img().getY() + 1];
+            return [Number(bgimgxy[0]) + this.doc.bg_img().getX() + 1,
+                    Number(bgimgxy[1]) + this.doc.bg_img().getY() + 1];
         }
     }, {
         NAME : DDIMAGEORTEXTDDNAME,
@@ -246,10 +246,9 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
             this.update_padding_sizes_all();
             var i = 0;
             this.doc.drag_item_homes().each(function(dragitemhome){
-                var dragitemno =
-                    +this.doc.get_classname_numeric_suffix(dragitemhome, 'dragitemhomes');
-                var choice = +this.doc.get_classname_numeric_suffix(dragitemhome, 'choice');
-                var group = +this.doc.get_classname_numeric_suffix(dragitemhome, 'group');
+                var dragitemno = Number(this.doc.get_classname_numeric_suffix(dragitemhome, 'dragitemhomes'));
+                var choice = + this.doc.get_classname_numeric_suffix(dragitemhome, 'choice');
+                var group = + this.doc.get_classname_numeric_suffix(dragitemhome, 'group');
                 var groupsize = this.doc.drop_zone_group(group).size();
                 var dragnode = this.doc.clone_new_drag_item(i, dragitemno);
                 i++;
@@ -328,7 +327,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
         },
         current_drag_in_drop : function (drop) {
             var inputid = drop.getData('inputid');
-            var inputnode = Y.one('input#'+inputid);
+            var inputnode = Y.one('input#' + inputid);
             return inputnode.get('value');
         },
         remove_drag_from_drop : function (drop) {
@@ -336,7 +335,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
         },
         place_drag_in_drop : function (drag, drop) {
             var inputid = drop.getData('inputid');
-            var inputnode = Y.one('input#'+inputid);
+            var inputnode = Y.one('input#' + inputid);
             if (drag !== null) {
                 inputnode.set('value', drag.getData('choice'));
             } else {
@@ -398,23 +397,23 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
         init_drops : function () {
             var dropareas = this.doc.top_node().one('div.dropzones');
             var groupnodes = {};
-            for (var groupno =1; groupno <= 8; groupno++) {
-                var groupnode = Y.Node.create('<div class = "dropzonegroup'+groupno+'"></div>');
+            for (var groupno = 1; groupno <= 8; groupno++) {
+                var groupnode = Y.Node.create('<div class = "dropzonegroup' + groupno + '"></div>');
                 dropareas.append(groupnode);
                 groupnodes[groupno] = groupnode;
             }
             var drop_hit_handler = function(e) {
                 var drag = e.drag.get('node');
                 var drop = e.drop.get('node');
-                if (+drop.getData('group') === drag.getData('group')){
+                if (Number(drop.getData('group')) === drag.getData('group')){
                     this.place_drag_in_drop(drag, drop);
                 }
             };
             for (var dropno in this.get('drops')) {
                 var drop = this.get('drops')[dropno];
-                var nodeclass = 'dropzone group'+drop.group+' place'+dropno;
+                var nodeclass = 'dropzone group' + drop.group + ' place' + dropno;
                 var title = drop.text.replace('"', '\"');
-                var dropnodehtml = '<div title="'+ title +'" class="'+nodeclass+'">&nbsp;</div>';
+                var dropnodehtml = '<div title="' + title + '" class="' + nodeclass + '">&nbsp;</div>';
                 var dropnode = Y.Node.create(dropnodehtml);
                 groupnodes[drop.group].append(dropnode);
                 dropnode.setStyles({'opacity': 0.5});

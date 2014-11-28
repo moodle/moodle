@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Backup code for qtype_ddimageortext.
+ *
  * @package   qtype_ddimageortext
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,6 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class backup_qtype_ddimageortext_plugin extends backup_qtype_plugin {
 
+    /**
+     * Returns the question type this is.
+     * @return string question type name, like 'ddimageortext'.
+     */
     protected static function qtype_name() {
         return 'ddimageortext';
     }

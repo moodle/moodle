@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Restore code for qtype_ddimageortext.
  * @package   qtype_ddimageortext
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +24,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * restore plugin class that provides the necessary information
- * needed to restore one ddimageortext qtype plugin.
+ * Restore plugin class for the ddimageortext question type.
  *
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

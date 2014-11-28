@@ -35,10 +35,16 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
  *
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddimageortext
  */
 class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
+    /**
+     * Get an expectation that the output contains an item ready to drag.
+     * @param int $dragitemno the item number.
+     * @param int $choice which choice this is.
+     * @param int $group which drag group it belongs to.
+     * @return question_contains_tag_with_attributes the required expectation.
+     */
     protected function get_contains_drag_image_home_expectation($dragitemno, $choice, $group) {
         $class = 'group' . $group;
         $class .= ' draghome dragitemhomes' . $dragitemno. ' choice'.$choice.' yui3-cssfonts';

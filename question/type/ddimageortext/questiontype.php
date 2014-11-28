@@ -95,19 +95,19 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
-            if ($info['filecount'] > 0 || (trim($formdata->draglabel[$dragno])!='')) {
+            if ($info['filecount'] > 0 || (trim($formdata->draglabel[$dragno]) != '')) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();
                 $drag->questionid = $formdata->id;
                 $drag->no = $dragno + 1;
                 $drag->draggroup = $formdata->drags[$dragno]['draggroup'];
-                $drag->infinite = empty($formdata->drags[$dragno]['infinite'])? 0 : 1;
+                $drag->infinite = empty($formdata->drags[$dragno]['infinite']) ? 0 : 1;
                 $drag->label = $formdata->draglabel[$dragno];
 
-                if (isset($olddragids[$dragno +1])) {
-                    $drag->id = $olddragids[$dragno +1];
-                    unset($olddragids[$dragno +1]);
+                if (isset($olddragids[$dragno + 1])) {
+                    $drag->id = $olddragids[$dragno + 1];
+                    unset($olddragids[$dragno + 1]);
                     $DB->update_record('qtype_ddimageortext_drags', $drag);
                 } else {
                     $drag->id = $DB->insert_record('qtype_ddimageortext_drags', $drag);
@@ -242,7 +242,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
 
         foreach ($drags as $dragxml) {
             $dragno = $format->getpath($dragxml, array('#', 'no', 0, '#'), 0);
-            $dragindex = $dragno -1;
+            $dragindex = $dragno - 1;
             $question->drags[$dragindex] = array();
             $question->draglabel[$dragindex] =
                         $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
@@ -262,7 +262,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         $question->drops = array();
         foreach ($drops as $dropxml) {
             $dropno = $format->getpath($dropxml, array('#', 'no', 0, '#'), 0);
-            $dropindex = $dropno -1;
+            $dropindex = $dropno - 1;
             $question->drops[$dropindex] = array();
             $question->drops[$dropindex]['choice'] =
                         $format->getpath($dropxml, array('#', 'choice', 0, '#'), 0);

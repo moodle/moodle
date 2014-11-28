@@ -63,12 +63,11 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
         $bgimage = self::get_url_for_image($qa, 'bgimage');
 
-        $img = html_writer::empty_tag('img',
-                                array('src'=>$bgimage,
-                                    'class'=>'dropbackground',
-                                    'alt' => get_string('dropbackground', 'qtype_ddimageortext')));
+        $img = html_writer::empty_tag('img', array(
+                'src' => $bgimage, 'class' => 'dropbackground',
+                'alt' => get_string('dropbackground', 'qtype_ddimageortext')));
 
-        $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
+        $droparea = html_writer::tag('div', $img, array('class' => 'droparea'));
 
         $dragimagehomes = '';
         foreach ($question->choices as $groupno => $group) {
@@ -85,27 +84,24 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                 }
                 if ($dragimageurl === null) {
                     $classes[] = 'yui3-cssfonts';
-                    $dragimagehomesgroup .= html_writer::tag('div',
-                                                $dragimage->text,
-                                                array('src'=>$dragimageurl,
-                                                    'class'=>join(' ', $classes)));
+                    $dragimagehomesgroup .= html_writer::tag('div', $dragimage->text,
+                            array('src' => $dragimageurl, 'class' => join(' ', $classes)));
                 } else {
                     $dragimagehomesgroup .= html_writer::empty_tag('img',
-                                                array('src'=>$dragimageurl,
-                                                    'alt' => $dragimage->text,
-                                                    'class'=>join(' ', $classes)));
+                            array('src' => $dragimageurl, 'alt' => $dragimage->text,
+                                    'class' => join(' ', $classes)));
                 }
             }
             $dragimagehomes .= html_writer::tag('div', $dragimagehomesgroup,
-                                            array('class'=>'dragitemgroup'.$groupno));
+                    array('class' => 'dragitemgroup' . $groupno));
         }
 
         $dragitemsclass = 'dragitems';
         if ($options->readonly) {
             $dragitemsclass .= ' readonly';
         }
-        $dragitems = html_writer::tag('div', $dragimagehomes, array('class'=> $dragitemsclass));
-        $dropzones = html_writer::tag('div', '', array('class'=>'dropzones'));
+        $dragitems = html_writer::tag('div', $dragimagehomes, array('class' => $dragitemsclass));
+        $dropzones = html_writer::tag('div', '', array('class' => 'dropzones'));
 
         $hiddens = '';
         foreach ($question->places as $placeno => $place) {
@@ -115,7 +111,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
             $question->places[$placeno]->fieldname = $fieldname;
         }
         $output .= html_writer::tag('div',
-                $droparea . $dragitems . $dropzones . $hiddens, array('class'=>'ddarea'));
+                $droparea . $dragitems . $dropzones . $hiddens, array('class' => 'ddarea'));
         $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
         $params = array('drops' => $question->places,
                         'topnode' => $topnode,
