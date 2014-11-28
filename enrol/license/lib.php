@@ -231,13 +231,6 @@ class enrol_license_plugin extends enrol_plugin {
 
                 $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
 
-                // There should be userid somewhere!
-                add_to_log($instance->courseid,
-                           'course',
-                           'enrol',
-                           '../enrol/users.php?id='.$instance->courseid,
-                           $instance->courseid);
-
                 // Update the userlicense record to mark it as in use.
                 $userlicense = (array) $DB->get_record('companylicense_users', array('id' => $license->id));
                 $userlicense['isusing'] = 1;
