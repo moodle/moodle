@@ -1410,10 +1410,6 @@ class assign {
      */
     public function count_teams() {
 
-        if ($currentgroup = groups_get_activity_group($this->get_course_module())) {
-            return 1;
-        }
-
         $groups = groups_get_all_groups($this->get_course()->id,
                                         0,
                                         $this->get_instance()->teamsubmissiongroupingid,
@@ -1572,12 +1568,6 @@ class assign {
         $params['submissionstatus'] = $status;
 
         if ($this->get_instance()->teamsubmission) {
-
-            $groupstr = '';
-            if ($currentgroup != NOGROUPS) {
-                $groupstr = 's.groupid = :groupid AND';
-                $params['groupid'] = $currentgroup;
-            }
             $sql = 'SELECT COUNT(s.groupid)
                         FROM {assign_submission} s
                         WHERE
@@ -1585,7 +1575,6 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.userid = :groupuserid AND
-                            ' . $groupstr . '
                             s.status = :submissionstatus';
             $params['groupuserid'] = 0;
         } else {
@@ -4142,11 +4131,6 @@ class assign {
         if ($this->can_view_grades()) {
             $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;
             $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-
-            // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
-            $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
-
             if ($instance->teamsubmission) {
                 $summary = new assign_grading_summary($this->count_teams(),
                                                       $instance->submissiondrafts,
@@ -4160,9 +4144,7 @@ class assign {
                                                       $instance->teamsubmission);
                 $o .= $this->get_renderer()->render($summary);
             } else {
-                // The active group has already been updated in groups_print_activity_menu().
-                $countparticipants = $this->count_participants(groups_get_activity_group($this->get_course_module()));
-                $summary = new assign_grading_summary($countparticipants,
+                $summary = new assign_grading_summary($this->count_participants(0),
                                                       $instance->submissiondrafts,
                                                       $this->count_submissions_with_status($draft),
                                                       $this->is_any_submission_plugin_enabled(),
