@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
@@ -132,7 +131,7 @@ abstract class qtype_gapselect_base extends question_type {
         $this->initialise_combined_feedback($question, $questiondata, true);
 
         $question->choices = array();
-        $choiceindexmap= array();
+        $choiceindexmap = array();
 
         // Store the choices in arrays by group.
         $i = 1;
@@ -204,7 +203,7 @@ abstract class qtype_gapselect_base extends question_type {
             $answers[$count]['answer'] = $subquestion->answer;
             $answers[$count]['fraction'] = $subquestion->fraction;
             $answers[$count] += $this->feedback_to_choice_options($subquestion->feedback);
-            $answers[$count]['choice'] = $count+1;
+            $answers[$count]['choice'] = $count + 1;
             ++$count;
         }
         return $answers;
@@ -220,10 +219,10 @@ abstract class qtype_gapselect_base extends question_type {
     protected function get_array_of_groups($question, $state) {
         $answers = $this->get_array_of_choices($question);
         $arr = array();
-        for ($group=1; $group < count($answers); $group++) {
+        for ($group = 1; $group < count($answers); $group++) {
             $players = $this->get_group_of_players($question, $state, $answers, $group);
             if ($players) {
-                $arr[$group]= $players;
+                $arr[$group] = $players;
             }
         }
         return $arr;
@@ -243,13 +242,18 @@ abstract class qtype_gapselect_base extends question_type {
         foreach ($arrayofplaceholdeers as $ph) {
             foreach ($arrayofchoices as $key => $choice) {
                 if ($key + 1 == $ph) {
-                    $correctplayers[]= $choice;
+                    $correctplayers[] = $choice;
                 }
             }
         }
         return $correctplayers;
     }
 
+    /**
+     * Return the list of groups used in a question.
+     * @param stdClass $question the question data.
+     * @return array the groups used, or false if an error occurs.
+     */
     protected function get_array_of_placeholders($question) {
         $qtext = $question->questiontext;
         $error = '<b> ERROR</b>: Please check the form for this question. ';
@@ -298,8 +302,7 @@ abstract class qtype_gapselect_base extends question_type {
             foreach ($question->choices[$group] as $i => $choice) {
                 $choices[$i] = new question_possible_response(
                         html_to_text($choice->text, 0, false),
-                        ($question->rightchoices[$place] == $i)
-                                / count($question->places));
+                        ($question->rightchoices[$place] == $i) / count($question->places));
             }
             $choices[null] = question_possible_response::no_response();
 

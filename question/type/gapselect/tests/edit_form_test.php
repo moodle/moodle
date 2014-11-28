@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_gapselect
  */
 class qtype_gapselect_edit_form_base_testable extends qtype_gapselect_edit_form_base {
     public function __construct() {
@@ -56,7 +55,6 @@ class qtype_gapselect_edit_form_base_testable extends qtype_gapselect_edit_form_
                 new question_edit_contexts($syscontext));
     }
 
-    // Make this public so we can test it.
     public function get_illegal_tag_error($text) {
         return parent::get_illegal_tag_error($text);
     }
@@ -79,6 +77,10 @@ class qtype_gapselect_edit_form_base_testable extends qtype_gapselect_edit_form_
  */
 class qtype_gapselect_edit_form_test extends advanced_testcase {
 
+    /**
+     * Helper method.
+     * @return qtype_gapselect_edit_form_base_testable a new form instance that can be tested.
+     */
     protected function get_form() {
         $this->setAdminUser();
         $this->resetAfterTest();

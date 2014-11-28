@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Restore code for the gapselect question type.
+ *
  * @package    qtype_gapselect
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Restore plugin class that provides the necessary information
- * needed to restore one gapselect qtype plugin.
+ * Restore plugin class for the gapselect question type plugin.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

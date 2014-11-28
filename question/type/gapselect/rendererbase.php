@@ -27,8 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Generates the output for question types where the question includes embedded
- * interactive elements in the question text.
+ * Renders question types where the question includes embedded interactive elements.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

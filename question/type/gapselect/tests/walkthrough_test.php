@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains tests that walks a question through the interactive
- * behaviour.
+ * This file contains tests that simulate a user attempt a gapselect question.
  *
  * @package   qtype_gapselect
  * @copyright 2012 The Open University
@@ -36,7 +35,6 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_gapselect
  */
 class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_behaviour() {

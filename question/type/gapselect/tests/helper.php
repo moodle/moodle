@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_gapselect_test_helper {
     /**
+     * Get an example gapselect question to use for testing. This examples has one of each item.
      * @return qtype_gapselect_question
      */
     public static function make_a_gapselect_question() {
@@ -71,6 +72,7 @@ class qtype_gapselect_test_helper {
     }
 
     /**
+     * Get an example gapselect question to use for testing. This exmples had unlimited items.
      * @return qtype_gapselect_question
      */
     public static function make_a_maths_gapselect_question() {

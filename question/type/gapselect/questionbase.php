@@ -15,8 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition class for embedded element in question text question. Parent of
- * gap-select, drag and drop and possibly others.
+ * Definition class for embedded element in question text question.
+ *
+ * Used by gap-select, drag and drop and possibly others.
  *
  * @package    qtype_gapselect
  * @copyright  2011 The Open University
@@ -28,8 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Represents embedded element in question text question. Parent of drag and drop and select from
- * drop down list and others.
+ * Represents embedded element in question text question.
+ *
+ * Parent of drag and drop and select from drop down list and others.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,10 +40,19 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     /** @var boolean Whether the question stems should be shuffled. */
     public $shufflechoices;
 
+    /** @var string Feedback for any correct response. */
     public $correctfeedback;
+    /** @var int format of $correctfeedback. */
+    public $correctfeedbackformat;
+    /** @var string Feedback for any partially correct response. */
     public $partiallycorrectfeedback;
+    /** @var int format of $partiallycorrectfeedback. */
+    public $partiallycorrectfeedbackformat;
+    /** @var string Feedback for any incorrect response. */
     public $incorrectfeedback;
-
+    /** @var int format of $incorrectfeedback. */
+    public $incorrectfeedbackformat;
+    
     /** @var array of arrays. The keys are the choice group numbers. The values
      * are arrays of qtype_gapselect_choice objects. */
     public $choices;
@@ -174,7 +185,8 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     }
 
     /**
-     * @param int $key stem number
+     * Get the field name corresponding to a given place.
+     * @param int $place stem number
      * @return string the question-type variable name.
      */
     public function field($place) {
@@ -294,8 +306,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
             $choice = $this->choices[$group][$choiceno];
             $parts[$place] = new question_classified_response(
                     $choiceno, html_to_text($choice->text, 0, false),
-                    ($this->get_right_choice_for($place) == $response[$fieldname])
-                            / count($this->places));
+                    ($this->get_right_choice_for($place) == $response[$fieldname]) / count($this->places));
         }
         return $parts;
     }

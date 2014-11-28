@@ -17,12 +17,10 @@
 /**
  * Base class for editing question types like this one.
  *
- * @package    qtype
- * @subpackage gapselect
+ * @package    qtype_gapselect
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_edit_form_base extends question_edit_form {
+    /** @var int maximum number of different groups of drag items there can be in a question. */
     const MAX_GROUPS = 8;
 
     /** @var array of HTML tags allowed in choices / drag boxes. */
@@ -155,7 +154,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         }
         $grouparray = array();
         $grouparray[] = $mform->createElement('text', 'answer',
-                get_string('answer', 'qtype_gapselect'), array('size'=>30, 'class'=>'tweakcss'));
+                get_string('answer', 'qtype_gapselect'), array('size' => 30, 'class' => 'tweakcss'));
         $grouparray[] = $mform->createElement('select', 'choicegroup',
                 get_string('group', 'qtype_gapselect'), $options);
         return $grouparray;
@@ -210,7 +209,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         foreach ($choices as $key => $choice) {
             $answer = $choice['answer'];
 
-            // Check whether the html-tags are allowed tags.
+            // Check whether the HTML tags are allowed tags.
             $tagerror = $this->get_illegal_tag_error($answer);
             if ($tagerror) {
                 $errors['choices['.$key.']'] = $tagerror;
@@ -236,7 +235,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $cleanedslots = array();
         foreach ($slots as $slot) {
             // The 2 is for'[[' and 4 is for '[[]]'.
-            $cleanedslots[] = substr($slot, 2, (strlen($slot)-4));
+            $cleanedslots[] = substr($slot, 2, (strlen($slot) - 4));
         }
         $slots = $cleanedslots;
 

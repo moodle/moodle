@@ -73,7 +73,7 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         $answerel = array($mform->createElement('text',
                                                 $this->form_field_name('answer'),
                                                 get_string('choicex', 'qtype_gapselect'),
-                                                array('size'=>57, 'class'=>'tweakcss')));
+                                                array('size' => 57, 'class' => 'tweakcss')));
 
         if ($this->questionrec !== null) {
             $countanswers = count($this->questionrec->options->answers);
@@ -136,7 +136,7 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         }
 
         foreach ($this->correctchoices as $correctchoice) {
-            $answerindex = $correctchoice-1;
+            $answerindex = $correctchoice - 1;
             if (!isset($this->formdata->answer[$answerindex])) {
                 $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);
             } else if ('' === trim($this->formdata->answer[$answerindex])) {

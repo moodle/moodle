@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_edit_form extends qtype_gapselect_edit_form_base {
-    // HTML tags allowed in answers (choices).
+    /** @var array HTML tags allowed in answers (choices). */
     protected $allowedhtmltags = array();
 
     public function qtype() {
