@@ -156,7 +156,7 @@ if (!count($questions)) {
             break;
         case 'confirm' :
             echo $renderer->render_qtype_ddmarker_list($top);
-            $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid', 'questionid') + array('confirm'=>1));
+            $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid', 'questionid') + array('confirm' => 1));
             $cancelurl = new moodle_url($PAGE->url);
             echo $renderer->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
             break;

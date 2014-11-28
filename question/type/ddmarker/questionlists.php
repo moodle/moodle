@@ -14,15 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * These classes handle transforming arrays of records into a linked tree of contexts, categories and questions.
+ *
+ * @package   qtype_ddmarker
+ * @copyright 2012 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * These classes handle transforming arrays of records into a linked tree of contexts, categories and questions.
  *
- * @package    qtype
- * @subpackage ddmarker
- * @copyright  2012 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2012 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_ddmarker_list_item implements renderable {
 
@@ -162,7 +168,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
     public function parent_node() {
         $pathids = explode('/', $this->record->path);
         if (count($pathids) >= 3) {
-            return $this->list->get_instance($pathids[count($pathids)-2]);
+            return $this->list->get_instance($pathids[count($pathids) - 2]);
         } else {
             return null;
         }

@@ -13,11 +13,11 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             this.fp = this.file_pickers();
             var tn = Y.one(this.get('topnode'));
             tn.one('div.fcontainer').append(
-                    '<div class="ddarea">'+
-                        '<div class="markertexts"></div>'+
-                        '<div class="droparea"></div>'+
-                        '<div class="dropzones"></div>'+
-                        '<div class="grid"></div>'+
+                    '<div class="ddarea">' +
+                        '<div class="markertexts"></div>' +
+                        '<div class="droparea"></div>' +
+                        '<div class="dropzones"></div>' +
+                        '<div class="grid"></div>' +
                     '</div>');
             this.doc = this.doc_structure(this);
             this.stop_selector_events();
@@ -67,16 +67,16 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             this.restart_colours();
             this.graphics = new Y.Graphic({render:"div.ddarea div.dropzones"});
             var noofdropzones = this.form.get_form_value('nodropzone', []);
-            for (var dropzoneno=0; dropzoneno < noofdropzones; dropzoneno++) {
+            for (var dropzoneno = 0; dropzoneno < noofdropzones; dropzoneno++) {
                 var dragitemno = this.form.get_form_value('drops', [dropzoneno, 'choice']);
                 var markertext = this.get_marker_text(dragitemno);
                 var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
                 var coords = this.get_coords(dropzoneno);
                 var colourfordropzone = this.get_next_colour();
-                Y.one('input#id_drops_'+dropzoneno+'_coords')
-                                                .setStyle('background-color', colourfordropzone);
+                Y.one('input#id_drops_' + dropzoneno + '_coords')
+                        .setStyle('background-color', colourfordropzone);
                 this.draw_drop_zone(dropzoneno, markertext,
-                                    shape, coords, colourfordropzone, false);
+                        shape, coords, colourfordropzone, false);
             }
             Y.one('div.ddarea .grid')
                 .setXY(this.doc.bg_img().getXY())
@@ -89,8 +89,8 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             return coords.replace(new RegExp("\\s*", 'g'), '');
         },
         get_marker_text : function (markerno) {
-            if (+markerno !== 0) {
-                var label = this.form.get_form_value('drags', [markerno-1, 'label']);
+            if (Number(markerno) !== 0) {
+                var label = this.form.get_form_value('drags', [markerno - 1, 'label']);
                 return label.replace(new RegExp("^\\s*(.*)\\s*$"), "$1");
             } else {
                 return '';
@@ -98,7 +98,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         },
         set_options_for_drag_item_selectors : function () {
             var dragitemsoptions = {0: ''};
-            for (var i=1; i <= this.form.get_form_value('noitems', []); i++) {
+            for (var i = 1; i <= this.form.get_form_value('noitems', []); i++) {
                 var label = this.get_marker_text(i);
                 if (label !== "") {
                     dragitemsoptions[i] = Y.Escape.html(label);
@@ -108,19 +108,17 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             var selectedvalues = [];
             var selector;
             for (i = 0; i < this.form.get_form_value('nodropzone', []); i++) {
-                selector = Y.one('#id_drops_'+i+'_choice');
-                selectedvalues[i] = +selector.get('value');
+                selector = Y.one('#id_drops_' + i + '_choice');
+                selectedvalues[i] = Number(selector.get('value'));
             }
             for (i = 0; i < this.form.get_form_value('nodropzone', []); i++) {
-                selector = Y.one('#id_drops_'+i+'_choice');
+                selector = Y.one('#id_drops_' + i + '_choice');
                 // Remove all options for drag choice.
                 selector.all('option').remove(true);
                 // And recreate the options.
                 for (var value in dragitemsoptions) {
-                    value = +value;
-                    var option = '<option value="'+ value +'">'
-                                    + dragitemsoptions[value] +
-                                    '</option>';
+                    value = Number(value);
+                    var option = '<option value="' + value + '">' + dragitemsoptions[value] + '</option>';
                     selector.append(option);
                     var optionnode = selector.one('option[value="' + value + '"]');
                     // Is this the currently selected value?
@@ -130,13 +128,13 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                         // It is not the currently selected value, is it selectable?
                         if (value !== 0) { // The 'no item' option is always selectable.
                             // Variables to hold form values about this drag item.
-                            var noofdrags = this.form.get_form_value('drags', [value-1, 'noofdrags']);
-                            if (noofdrags != 0) { // 'noofdrags == 0' means infinite.
+                            var noofdrags = this.form.get_form_value('drags', [value - 1, 'noofdrags']);
+                            if (Number(noofdrags) !== 0) { // 'noofdrags == 0' means infinite.
                                 // Go through all selected values in drop downs.
                                 for (var k in selectedvalues) {
                                     // Count down 'noofdrags' and if reach zero then set disabled option for this drag item.
-                                    if (+selectedvalues[k] === value) {
-                                        if (noofdrags == 1) {
+                                    if (Number(selectedvalues[k]) === value) {
+                                        if (Number(noofdrags) === 1) {
                                             optionnode.set('disabled', true);
                                             break;
                                         } else {
@@ -180,7 +178,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         form : {
             to_name_with_index : function(name, indexes) {
                 var indexstring = name;
-                for (var i=0; i < indexes.length; i++) {
+                for (var i = 0; i < indexes.length; i++) {
                     indexstring = indexstring + '[' + indexes[i] + ']';
                 }
                 return indexstring;

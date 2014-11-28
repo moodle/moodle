@@ -15,12 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
- * @package    qtype
- * @subpackage ddmarker
- * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Language strings for qtype_ddmarker.
+ * @package   qtype_ddmarker
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addmoreitems'] = 'Blanks for {no} more markers';
@@ -42,9 +40,9 @@ $string['dropzoneheader'] = 'Drop zones';
 $string['dropzones'] = 'Drop zones';
 $string['dropzones_help'] = 'The drop zones are defined by typing co-ordinates. As you type, the preview above is immediately updated, so you can position things by trial and error.
 
-* Circle: centre_x, centre_y; radius<br>for example: `80, 100; 50`
-* Polygon: x1, y1; x2, y2; ...; xn, yn<br>for example: `20, 60; 100, 60; 20, 100`
-* Rectangle: left, top, width, height<br>for example: `20, 60; 80, 40`';
+* Circle: centre_x, centre_y; radius<br>for example: <code>80, 100; 50</code>
+* Polygon: x1, y1; x2, y2; ...; xn, yn<br>for example: <code>20, 60; 100, 60; 20, 100</code>
+* Rectangle: left, top, width, height<br>for example: <code>20, 60; 80, 40</code>';
 $string['followingarewrong'] = 'The following markers have been placed in the wrong area : {$a}.';
 $string['followingarewrongandhighlighted'] = 'The following markers were incorrectly placed :  {$a}. Highlighted marker(s) are now shown with the correct placement(s).<br /> Click on the marker to highlight the allowed area.';
 $string['formerror_nobgimage'] = 'You need to select an image to use as the background for the drag and drop area.';

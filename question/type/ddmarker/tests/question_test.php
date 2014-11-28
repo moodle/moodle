@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddmarker
  */
 class qtype_ddmarker_question_test extends basic_testcase {
 
@@ -261,7 +260,7 @@ class qtype_ddmarker_question_test extends basic_testcase {
 
         $this->assertEquals(array(1, question_state::$gradedright),
                 $dd->grade_response(array('c1' => '50,50', 'c2' => '150,50', 'c3' => '100,150')));
-        $this->assertEquals(array(2/3, question_state::$gradedpartial),
+        $this->assertEquals(array(2 / 3, question_state::$gradedpartial),
                 $dd->grade_response(array('c1' => '50,50', 'c2' => '50,50', 'c3' => '100,150')));
         $this->assertEquals(array(0, question_state::$gradedwrong),
                 $dd->grade_response(array('c1' => '150,50', 'c2' => '50,50', 'c3' => '100,50')));
@@ -291,13 +290,13 @@ class qtype_ddmarker_question_test extends basic_testcase {
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(
-                                    1 => new question_classified_response(1, 'quick', 1/3),
-                                    2 => new question_classified_response(2, 'fox', 1/3),
-                                    3 => new question_classified_response(3, 'lazy', 1/3)),
+                                    1 => new question_classified_response(1, 'quick', 1 / 3),
+                                    2 => new question_classified_response(2, 'fox', 1 / 3),
+                                    3 => new question_classified_response(3, 'lazy', 1 / 3)),
             $dd->classify_response(array('c1' => '50,50', 'c2' => '150,50', 'c3' => '100,150')));
 
         $this->assertEquals(array(
-                                    1 => new question_classified_response(1, 'quick', 1/3),
+                                    1 => new question_classified_response(1, 'quick', 1 / 3),
                                     2 => question_classified_response::no_response(),
                                     3 => question_classified_response::no_response()),
             $dd->classify_response(array('c1' => '50,50', 'c2' => '100,150', 'c3' => '150,50')));

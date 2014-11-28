@@ -51,12 +51,11 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
 
         $bgimage = self::get_url_for_image($qa, 'bgimage');
 
-        $img = html_writer::empty_tag('img',
-                                        array('src'=>$bgimage,
-                                        'class'=>'dropbackground',
-                                        'alt' => get_string('dropbackground', 'qtype_ddmarker')));
+        $img = html_writer::empty_tag('img', array(
+                'src' => $bgimage, 'class' => 'dropbackground',
+                'alt' => get_string('dropbackground', 'qtype_ddmarker')));
 
-        $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
+        $droparea = html_writer::tag('div', $img, array('class' => 'droparea'));
 
         $draghomes = '';
         $orderedgroup = $question->get_ordered_choices(1);
@@ -71,12 +70,12 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                 $classes[] = 'dragno'.$drag->noofdrags;
             }
             $targeticonhtml =
-                $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class'=> 'target'));
+                $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class' => 'target'));
 
-            $markertextattrs = array('class'=> 'markertext');
+            $markertextattrs = array('class' => 'markertext');
             $markertext = html_writer::tag('span', $drag->text, $markertextattrs);
-            $draghomesattrs = array('class'=>join(' ', $classes));
-            $draghomes .= html_writer::tag('span', $targeticonhtml.$markertext, $draghomesattrs);
+            $draghomesattrs = array('class' => join(' ', $classes));
+            $draghomes .= html_writer::tag('span', $targeticonhtml . $markertext, $draghomesattrs);
             $hiddenfields .= $this->hidden_field_choice($qa, $choiceno, $drag->infinite, $drag->noofdrags);
         }
 
@@ -85,12 +84,12 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $dragitemsclass .= ' readonly';
         }
 
-        $dragitems = html_writer::tag('div', $draghomes, array('class'=> $dragitemsclass));
-        $dropzones = html_writer::tag('div', '', array('class'=> 'dropzones'));
-        $texts = html_writer::tag('div', '', array('class'=> 'markertexts'));
+        $dragitems = html_writer::tag('div', $draghomes, array('class' => $dragitemsclass));
+        $dropzones = html_writer::tag('div', '', array('class' => 'dropzones'));
+        $texts = html_writer::tag('div', '', array('class' => 'markertexts'));
         $output .= html_writer::tag('div',
-                                    $droparea.$dragitems.$dropzones.$texts,
-                                    array('class'=>'ddarea'));
+                                    $droparea.$dragitems.$dropzones . $texts,
+                                    array('class' => 'ddarea'));
 
         if ($question->showmisplaced && $qa->get_state()->is_finished()) {
             $visibledropzones = $question->get_drop_zones_without_hit($response);
@@ -130,7 +129,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             }
         }
 
-        $output .= html_writer::tag('div', $hiddenfields, array('class'=>'ddform'));
+        $output .= html_writer::tag('div', $hiddenfields, array('class' => 'ddform'));
         return $output;
     }
     protected function hidden_field_choice(question_attempt $qa, $choiceno, $infinite, $noofdrags, $value = null) {

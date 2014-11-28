@@ -54,7 +54,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
     public function js_call() {
         global $PAGE;
-        $maxsizes =new stdClass();
+        $maxsizes = new stdClass();
         $maxsizes->bgimage = new stdClass();
         $maxsizes->bgimage->width = QTYPE_DDMARKER_BGIMAGE_MAXWIDTH;
         $maxsizes->bgimage->height = QTYPE_DDMARKER_BGIMAGE_MAXHEIGHT;
@@ -82,10 +82,9 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
     protected function draggable_item($mform) {
         $draggableimageitem = array();
 
-        $grouparray= array();
-        $grouparray[] = $mform->createElement('text', 'label',
-                                                '',
-                                                array('size'=>30, 'class'=>'tweakcss'));
+        $grouparray = array();
+        $grouparray[] = $mform->createElement('text', 'label', '',
+                array('size' => 30, 'class' => 'tweakcss'));
         $mform->setType('text', PARAM_RAW_TRIMMED);
 
         $noofdragoptions = array(0 => get_string('infinite', 'qtype_ddmarker'));
@@ -113,8 +112,8 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $grouparray[] = $mform->createElement('select', 'shape',
                                     get_string('shape', 'qtype_ddmarker'), $shapearray);
         $grouparray[] = $mform->createElement('text', 'coords',
-                                                get_string('coords', 'qtype_ddmarker'),
-                                                array('size'=>50, 'class'=>'tweakcss'));
+                                    get_string('coords', 'qtype_ddmarker'),
+                                    array('size' => 50, 'class' => 'tweakcss'));
         $mform->setType('coords', PARAM_RAW); // These are validated manually.
         $markernos = array();
         $markernos[0] = '';
@@ -167,7 +166,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             $question->showmisplaced = $question->options->showmisplaced;
             $question->drags = array();
             foreach ($question->options->drags as $drag) {
-                $dragindex = $drag->no -1;
+                $dragindex = $drag->no - 1;
                 $question->drags[$dragindex] = array();
                 $question->drags[$dragindex]['label'] = $drag->label;
                 if ($drag->infinite == 1) {
@@ -183,7 +182,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 unset($droparray['id']);
                 unset($droparray['no']);
                 unset($droparray['questionid']);
-                $question->drops[$drop->no -1] = $droparray;
+                $question->drops[$drop->no - 1] = $droparray;
             }
         }
         // Initialise file picker for bgimage.
@@ -226,7 +225,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         }
 
         $allchoices = array();
-        for ($i=0; $i < $data['nodropzone']; $i++) {
+        for ($i = 0; $i < $data['nodropzone']; $i++) {
             $choice = $data['drops'][$i]['choice'];
             $choicepresent = ($choice !== '0');
 
@@ -253,7 +252,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             }
 
         }
-        for ($dragindex=0; $dragindex < $data['noitems']; $dragindex++) {
+        for ($dragindex = 0; $dragindex < $data['noitems']; $dragindex++) {
             $label = $data['drags'][$dragindex]['label'];
             if ($label != strip_tags($label, QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER)) {
                 $errors["drags[{$dragindex}]"]

@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ddmarker question type upgrade code.
+ * Ddmarker question type upgrade code.
  *
  * @package    qtype_ddmarker
  * @copyright  2013 The Open University
- * @author     Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 

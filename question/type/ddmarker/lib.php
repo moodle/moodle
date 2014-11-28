@@ -15,15 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Serve question type files
+ * Serve question type files.
  *
- * @package    qtype
- * @subpackage ddmarker
- * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddmarker
+ * @copyright 2012 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -115,6 +113,7 @@ function qtype_ddmarker_convert_image_target_question($question, $imgfilename, $
     $DB->update_record('question', $newrec);
 
     $fs = get_file_storage();
+
     // We need to look in the course legacy files area for file.
     $bgimagefile = $fs->get_file(qtype_ddmarker_course_context_id($question->contextid),
                                     'course',

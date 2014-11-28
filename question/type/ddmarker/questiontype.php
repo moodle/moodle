@@ -136,9 +136,9 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                 }
                 $drag->label = $formdata->drags[$dragno]['label'];
 
-                if (isset($olddragids[$dragno +1])) {
-                    $drag->id = $olddragids[$dragno +1];
-                    unset($olddragids[$dragno +1]);
+                if (isset($olddragids[$dragno + 1])) {
+                    $drag->id = $olddragids[$dragno + 1];
+                    unset($olddragids[$dragno + 1]);
                     $DB->update_record('qtype_ddmarker_drags', $drag);
                 } else {
                     $drag->id = $DB->insert_record('qtype_ddmarker_drags', $drag);
@@ -337,7 +337,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
 
         foreach ($drags as $dragxml) {
             $dragno = $format->getpath($dragxml, array('#', 'no', 0, '#'), 0);
-            $dragindex = $dragno -1;
+            $dragindex = $dragno - 1;
             $question->drags[$dragindex] = array();
             $question->drags[$dragindex]['label'] =
                         $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
@@ -353,7 +353,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         $question->drops = array();
         foreach ($drops as $dropxml) {
             $dropno = $format->getpath($dropxml, array('#', 'no', 0, '#'), 0);
-            $dropindex = $dropno -1;
+            $dropindex = $dropno - 1;
             $question->drops[$dropindex] = array();
             $question->drops[$dropindex]['choice'] =
                         $format->getpath($dropxml, array('#', 'choice', 0, '#'), 0);

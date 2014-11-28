@@ -15,9 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Backup code for qtype_ddmarker.
+ *
  * @package   qtype_ddmarker
  * @copyright 2012 The Open University
- * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -31,6 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class backup_qtype_ddmarker_plugin extends backup_qtype_plugin {
 
+    /**
+     * Get the name of this question type.
+     * @return string the question type, like 'ddmarker'.
+     */
     protected static function qtype_name() {
         return 'ddmarker';
     }

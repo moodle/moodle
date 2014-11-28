@@ -15,17 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Restore code for qtype_ddmarker.
+ *
  * @package   qtype_ddmarker
  * @copyright 2012 The Open University
- * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
- * restore plugin class that provides the necessary information
- * needed to restore one ddmarker qtype plugin.
+ * Restore plugin class for the ddmarker question type plugin.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

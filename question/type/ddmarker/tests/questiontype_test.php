@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  *
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      qtype_ddmarker
  */
 class qtype_ddmarker_test extends basic_testcase {
     /** @var qtype_ddmarker instance of the question type class to test. */

@@ -236,8 +236,7 @@ class qtype_ddmarker_shape_circle extends qtype_ddmarker_shape {
     }
 
     public function is_point_in_shape($xy) {
-        $distancefromcentre = sqrt(pow(($xy[0] - $this->xcentre), 2)
-                                        + pow(($xy[1] - $this->ycentre), 2));
+        $distancefromcentre = sqrt(pow(($xy[0] - $this->xcentre), 2) + pow(($xy[1] - $this->ycentre), 2));
         return $distancefromcentre < $this->radius;
     }
 
@@ -301,9 +300,9 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
                 }
             }
             // Make sure polygon is not closed.
-            if ($this->coords[count($this->coords)-1][0] == $this->coords[0][0] &&
-                                $this->coords[count($this->coords)-1][1] == $this->coords[0][1]) {
-                unset($this->coords[count($this->coords)-1]);
+            if ($this->coords[count($this->coords) - 1][0] == $this->coords[0][0] &&
+                                $this->coords[count($this->coords) - 1][1] == $this->coords[0][1]) {
+                unset($this->coords[count($this->coords) - 1]);
             }
         }
     }
@@ -313,17 +312,17 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
     }
 
     public function is_point_in_shape($xy) {
-        $pointatinfinity = new qtype_ddmarker_point(-1000000, $xy[1]+1);
+        $pointatinfinity = new qtype_ddmarker_point(-1000000, $xy[1] + 1);
         $pointtotest = new qtype_ddmarker_point($xy[0], $xy[1]);
         $testsegment = new qtype_ddmarker_segment($pointatinfinity, $pointtotest);
         $windingnumber = 0;
         foreach ($this->coords as $index => $coord) {
             if ($index != 0) {
-                $a = new qtype_ddmarker_point($this->coords[$index -1][0],
-                                                $this->coords[$index -1][1]);
+                $a = new qtype_ddmarker_point($this->coords[$index - 1][0],
+                                                $this->coords[$index - 1][1]);
             } else {
-                $a = new qtype_ddmarker_point($this->coords[count($this->coords)-1][0],
-                                                $this->coords[count($this->coords)-1][1]);
+                $a = new qtype_ddmarker_point($this->coords[count($this->coords) - 1][0],
+                                                $this->coords[count($this->coords) - 1][1]);
             }
             $b = new qtype_ddmarker_point($this->coords[$index][0],
                                             $this->coords[$index][1]);
@@ -332,11 +331,11 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
             if ($intersects === null) {
                 list($perturbedsegment, $testsegment) = $this->perturb($segment, $testsegment);
                 if ($index !== 0) {
-                    $this->coords[$index-1][0] = $perturbedsegment->a->x;
-                    $this->coords[$index-1][1] = $perturbedsegment->a->y;
+                    $this->coords[$index - 1][0] = $perturbedsegment->a->x;
+                    $this->coords[$index - 1][1] = $perturbedsegment->a->y;
                 } else {
-                    $this->coords[count($this->coords)-1][0] = $perturbedsegment->a->x;
-                    $this->coords[count($this->coords)-1][1] = $perturbedsegment->a->y;
+                    $this->coords[count($this->coords) - 1][0] = $perturbedsegment->a->x;
+                    $this->coords[count($this->coords) - 1][1] = $perturbedsegment->a->y;
                 }
                 $this->coords[$index][0] = $perturbedsegment->b->x;
                 $this->coords[$index][1] = $perturbedsegment->b->y;
@@ -351,7 +350,7 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
                 $windingnumber++;
             }
         }
-        return ($windingnumber%2)?true:false;
+        return ($windingnumber % 2) ? true : false;
     }
 
     /**
@@ -366,34 +365,34 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
         $h = $p->a->dist($p->b);
         if ($ua == 0) {
             // ... q1, q2 intersects p1 exactly, move vertex p1 closer to p2.
-            $a = ($pt * $p->a->dist(new qtype_ddmarker_point($p->b->x, $p->a->y)))/$h;
-            $b = ($pt * $p->b->dist(new qtype_ddmarker_point($p->b->x, $p->a->y)))/$h;
+            $a = ($pt * $p->a->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
+            $b = ($pt * $p->b->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
             $p->a->x = $p->a->x + $a;
             $p->a->y = $p->a->y + $b;
         } else if ($ua == 1) {
             // ... q1, q2 intersects p2 exactly, move vertex p2 closer to p1.
-            $a = ($pt * $p->a->dist(new qtype_ddmarker_point($p->b->x, $p->a->y)))/$h;
-            $b = ($pt * $p->b->dist(new qtype_ddmarker_point($p->b->x, $p->a->y)))/$h;
+            $a = ($pt * $p->a->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
+            $b = ($pt * $p->b->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
             $p->b->x = $p->b->x - $a;
             $p->b->y = $p->b->y - $b;
         } else if ($ub == 0) {
             // ... p1, p2 intersects q1 exactly, move vertex q1 closer to q2.
-            $a = ($pt * $q->a->dist(new qtype_ddmarker_point($q->b->x, $q->a->y)))/$h;
-            $b = ($pt * $q->b->dist(new qtype_ddmarker_point($q->b->x, $q->a->y)))/$h;
+            $a = ($pt * $q->a->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
+            $b = ($pt * $q->b->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
             $q->a->x = $q->a->x + $a;
             $q->a->y = $q->a->y + $b;
         } else if ($ub == 1) {
             // ... p1, p2 intersects q2 exactly, move vertex q2 closer to q1.
-            $a = ($pt * $q->a->dist(new qtype_ddmarker_point($q->b->x, $q->a->y)))/$h;
-            $b = ($pt * $q->b->dist(new qtype_ddmarker_point($q->b->x, $q->a->y)))/$h;
+            $a = ($pt * $q->a->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
+            $b = ($pt * $q->b->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
             $q->b->x = $q->b->x - $a;
             $q->b->y = $q->b->y - $b;
         }
         return array($p, $q);
     }
     public function center_point() {
-        $center = array(round(($this->minxy[0] + $this->maxxy[0])/2),
-                        round(($this->minxy[1] + $this->maxxy[1])/2));
+        $center = array(round(($this->minxy[0] + $this->maxxy[0]) / 2),
+                        round(($this->minxy[1] + $this->maxxy[1]) / 2));
         if ($this->is_point_in_shape($center)) {
             return $center;
         } else {
@@ -474,18 +473,17 @@ class qtype_ddmarker_segment {
     }
 
     public function intersection_point(qtype_ddmarker_segment $v) {
-        $d = (($v->b->y - $v->a->y) * ($this->b->x - $this->a->x))
-                -(($v->b->x - $v->a->x) * ($this->b->y - $this->a->y));
+        $d = (($v->b->y - $v->a->y) * ($this->b->x - $this->a->x)) -
+                (($v->b->x - $v->a->x) * ($this->b->y - $this->a->y));
         if ($d != 0) { // The lines intersect at a point somewhere.
-            $ua = (($v->b->x-$v->a->x)*($this->a->y-$v->a->y)
-                                        -($v->b->y-$v->a->y)*($this->a->x-$v->a->x))/$d;
-            $ub = (($this->b->x-$this->a->x)*($this->a->y-$v->a->y)
-                                        -($this->b->y-$this->a->y)*($this->a->x-$v->a->x))/$d;
+            $ua = (($v->b->x - $v->a->x) * ($this->a->y - $v->a->y) -
+                    ($v->b->y - $v->a->y) * ($this->a->x - $v->a->x)) / $d;
+            $ub = (($this->b->x - $this->a->x) * ($this->a->y - $v->a->y) -
+                    ($this->b->y - $this->a->y) * ($this->a->x - $v->a->x)) / $d;
         } else {
             $ua = null;
             $ub = null;
         }
         return array($d, $ua, $ub);
     }
-
 }

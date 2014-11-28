@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ddmarker question type installation code.
+ * Ddmarker question type installation code.
  *
- * @package    qtype
- * @subpackage ddmarker
+ * @package    qtype_ddmarker
  * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Installation code for the ddmarker question type. It converts all existing imagetarget questions to ddmarker
+ * Installation code for the ddmarker question type.
+ *
+ * It converts all existing imagetarget questions to ddmarker
  */
 function xmldb_qtype_ddmarker_install() {
     global $DB, $OUTPUT;
@@ -44,13 +43,13 @@ function xmldb_qtype_ddmarker_install() {
     if (!empty($questions)) {
         require_once(dirname(__FILE__).'/../lib.php');
         $dragssql = 'SELECT drag.* '.$from.', {qtype_ddmarker_drags} drag'.$where.' AND drag.questionid = q.id';
-        $drags = xmldb_qtype_ddmarker_index_array_of_records_by_key('questionid', $DB->get_records_sql($dragssql));
+        $drags = qtype_ddmarker_index_array_of_records_by_key('questionid', $DB->get_records_sql($dragssql));
 
         $dropssql = 'SELECT drp.* '.$from.', {qtype_ddmarker_drops} drp'.$where.' AND drp.questionid = q.id';
-        $drops = xmldb_qtype_ddmarker_index_array_of_records_by_key('questionid', $DB->get_records_sql($dropssql));
+        $drops = qtype_ddmarker_index_array_of_records_by_key('questionid', $DB->get_records_sql($dropssql));
 
         $answerssql = 'SELECT answer.* '.$from.', {question_answers} answer'.$where.' AND answer.question = q.id';
-        $answers = xmldb_qtype_ddmarker_index_array_of_records_by_key('question', $DB->get_records_sql($answerssql));
+        $answers = qtype_ddmarker_index_array_of_records_by_key('question', $DB->get_records_sql($answerssql));
 
         $imgfiles = $DB->get_records_sql_menu('SELECT question, qimage FROM {question_imagetarget}');
         $progressbar = new progress_bar('qtype_ddmarker_convert_from_imagetarget');
@@ -69,7 +68,18 @@ function xmldb_qtype_ddmarker_install() {
     }
 }
 
-function xmldb_qtype_ddmarker_index_array_of_records_by_key($key, $recs) {
+
+/**
+ * Helper used by {@link xmldb_qtype_ddmarker_install}.
+ *
+ * Convert a one-dimensional array of records into a two-dimensional array
+ * grouped by field $key.
+ *
+ * @param string $key the key to group by.
+ * @param array $recs The records to group.
+ * @return array the re-grouped array.
+ */
+function qtype_ddmarker_index_array_of_records_by_key($key, $recs) {
     $out = array();
     foreach ($recs as $id => $rec) {
         if (!isset($out[$rec->{$key}])) {

@@ -36,10 +36,15 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_ddmarker
  */
 class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
+    /**
+     * Get an expectation that the output contains a marker.
+     * @param unknown $choice which choice.
+     * @param unknown $infinite whether there are infinitely many of that choice.
+     * @return question_contains_tag_with_attributes the expectation.
+     */
     protected function get_contains_draggable_marker_home_expectation($choice, $infinite) {
         $class = 'draghome choice'.$choice;
         if ($infinite) {
@@ -52,6 +57,10 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
         return new question_contains_tag_with_attributes('span', $expectedattrs);
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see qbehaviour_walkthrough_test_base::get_contains_hidden_expectation()
+     */
     protected function get_contains_hidden_expectation($choiceno, $value = null) {
         $name = $this->quba->get_field_prefix($this->slot) .'c'. $choiceno;
         $expectedattributes = array('type' => 'hidden', 'name' => s($name));
@@ -694,8 +703,8 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Verify.
         $this->check_current_state(question_state::$complete);
         $this->check_current_mark(null);
-        $rightanswer = array($dd->get_right_choice_for(1)=>'50,50',
-                                $dd->get_right_choice_for(2) =>'150,50',
+        $rightanswer = array($dd->get_right_choice_for(1) => '50,50',
+                                $dd->get_right_choice_for(2) => '150,50',
                                 $dd->get_right_choice_for(3) => '100,150');
         $this->check_current_output(
             $this->get_contains_hidden_expectation(1, $rightanswer[1]),
