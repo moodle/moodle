@@ -43,7 +43,7 @@
 .ie6 .block_navigation .block_tree .tree_item {width:100%;}
 
 /** Overide for RTL layout **/
-.dir-rtl .block_navigation .block_tree li.depth_2 ul {padding-left:0;padding-right: 16px; padding-left: 0;}
+.dir-rtl .block_navigation .block_tree li.depth_2 ul {padding-left: 0; padding-right: 16px;}
 .dir-rtl .block_navigation .block_tree .type_activity > p.tree_item.branch.hasicon.active_tree_node,
 .dir-rtl .block_navigation .block_tree .tree_item {padding-right: 21px;text-align:right;}
 

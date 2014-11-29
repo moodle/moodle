@@ -646,6 +646,10 @@ class moodle_url {
             }
         }
 
+        if ($url->anchor !== $this->anchor) {
+            return false;
+        }
+
         return true;
     }
 
@@ -2263,6 +2267,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
 
     $grouppictureurl = moodle_url::make_pluginfile_url($context->id, 'group', 'icon', $group->id, '/', $file);
+    $grouppictureurl->param('rev', $group->picture);
     $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
         ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
 

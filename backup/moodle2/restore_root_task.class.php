@@ -195,7 +195,7 @@ class restore_root_task extends restore_task {
         $activities->add_dependency($badges);
         $users->add_dependency($badges);
 
-        // Define Calendar events (dependent of users)
+        // Define Calendar events.
         $defaultvalue = false;                      // Safer default
         $changeable = false;
         if (isset($rootsettings['calendarevents']) && $rootsettings['calendarevents']) { // Only enabled when available
@@ -206,7 +206,6 @@ class restore_root_task extends restore_task {
         $events->set_ui(new backup_setting_ui_checkbox($events, get_string('rootsettingcalendarevents', 'backup')));
         $events->get_ui()->set_changeable($changeable);
         $this->add_setting($events);
-        $users->add_dependency($events);
 
         // Define completion (dependent of users)
         $defaultvalue = false;                      // Safer default

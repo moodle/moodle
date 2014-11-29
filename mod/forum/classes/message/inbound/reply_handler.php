@@ -133,12 +133,32 @@ class reply_handler extends \core\message\inbound\handler {
             throw new \core\message\inbound\processing_failed_exception('messageinboundthresholdhit', 'mod_forum', $data);
         }
 
+        $subject = clean_param($messagedata->envelope->subject, PARAM_TEXT);
+        $restring = get_string('re', 'forum');
+        if (strpos($subject, $discussion->name)) {
+            // The discussion name is mentioned in the e-mail subject. This is probably just the standard reply. Use the
+            // standard reply subject instead.
+            $newsubject = $restring . ' ' . $discussion->name;
+            mtrace("--> Note: Post subject matched discussion name. Optimising from {$subject} to {$newsubject}");
+            $subject = $newsubject;
+        } else if (strpos($subject, $post->subject)) {
+            // The replied-to post's subject is mentioned in the e-mail subject.
+            // Use the previous post's subject instead of the e-mail subject.
+            $newsubject = $post->subject;
+            if (!strpos($restring, $post->subject)) {
+                // The previous post did not contain a re string, add it.
+                $newsubject = $restring . ' ' . $newsubject;
+            }
+            mtrace("--> Note: Post subject matched original post subject. Optimising from {$subject} to {$newsubject}");
+            $subject = $newsubject;
+        }
+
         $addpost = new \stdClass();
         $addpost->course       = $course->id;
         $addpost->forum        = $forum->id;
         $addpost->discussion   = $discussion->id;
         $addpost->modified     = $messagedata->timestamp;
-        $addpost->subject      = clean_param($messagedata->envelope->subject, PARAM_TEXT);
+        $addpost->subject      = $subject;
         $addpost->parent       = $post->id;
         $addpost->itemid       = file_get_unused_draft_itemid();
 

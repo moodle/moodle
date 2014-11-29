@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,7 +18,7 @@
  * This file contains the setting user interface classes that all backup/restore
  * settings use to represent the UI they have.
  *
- * @package   moodlecore
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,6 +27,7 @@
  * Abstract class used to represent the user interface that a setting has.
  *
  * @todo extend as required for restore
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -66,6 +66,7 @@ class base_setting_ui {
      * @var base_setting|backup_setting
      */
     protected $setting;
+
     /**
      * Constructors are sooooo cool
      * @param base_setting $setting
@@ -78,7 +79,7 @@ class base_setting_ui {
      * Destroy all circular references. It helps PHP 5.2 a lot!
      */
     public function destroy() {
-        // No need to destroy anything recursively here, direct reset
+        // No need to destroy anything recursively here, direct reset.
         $this->setting = null;
     }
 
@@ -89,6 +90,7 @@ class base_setting_ui {
     public function get_name() {
         return self::NAME_PREFIX.$this->name;
     }
+
     /**
      * Gets the name of this item including its prefix
      * @return string
@@ -96,6 +98,7 @@ class base_setting_ui {
     public function get_label() {
         return $this->label;
     }
+
     /**
      * Gets the type of this element
      * @return int
@@ -103,6 +106,7 @@ class base_setting_ui {
     public function get_type() {
         return $this->type;
     }
+
     /**
      * Gets the HTML attributes for this item
      * @return array
@@ -110,6 +114,7 @@ class base_setting_ui {
     public function get_attributes() {
         return $this->attributes;
     }
+
     /**
      * Gets the value of this setting
      * @return mixed
@@ -117,6 +122,7 @@ class base_setting_ui {
     public function get_value() {
         return $this->setting->get_value();
     }
+
     /**
      * Gets the value to display in a static quickforms element
      * @return mixed
@@ -135,7 +141,9 @@ class base_setting_ui {
     }
 
     /**
-     * Sets the label
+     * Sets the label.
+     *
+     * @throws base_setting_ui_exception when the label is not valid.
      * @param string $label
      */
     public function set_label($label) {
@@ -145,11 +153,12 @@ class base_setting_ui {
         }
         $this->label = $label;
     }
+
     /**
      * Disables the UI for this element
      */
     public function disable() {
-       $this->attributes['disabled'] = 'disabled';
+        $this->attributes['disabled'] = 'disabled';
     }
 
     /**
@@ -177,6 +186,7 @@ class base_setting_ui {
 /**
  * Abstract class to represent the user interface backup settings have
  *
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -191,13 +201,13 @@ abstract class backup_setting_ui extends base_setting_ui {
      * JAC... Just Another Constructor
      *
      * @param backup_setting $setting
-     * @param string|null $label The label to display with the setting ui
-     * @param array|null $attributes Array of HTML attributes to apply to the element
-     * @param array|null $options Array of options to apply to the setting ui object
+     * @param string $label The label to display with the setting ui
+     * @param array $attributes Array of HTML attributes to apply to the element
+     * @param array $options Array of options to apply to the setting ui object
      */
     public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
         parent::__construct($setting);
-        // Improve the inputs name by appending the level to the name
+        // Improve the inputs name by appending the level to the name.
         switch ($setting->get_level()) {
             case backup_setting::ROOT_LEVEL :
                 $this->name = 'root_'.$setting->get_name();
@@ -220,21 +230,20 @@ abstract class backup_setting_ui extends base_setting_ui {
             $this->options = $options;
         }
     }
+
     /**
      * Creates a new backup setting ui based on the setting it is given
      *
-     * Throws an exception if an invalid type is provided.
-     *
+     * @throws backup_setting_ui_exception if the setting type is not supported,
      * @param backup_setting $setting
      * @param int $type The backup_setting UI type. One of backup_setting::UI_*;
      * @param string $label The label to display with the setting ui
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
-     *
      * @return backup_setting_ui_text|backup_setting_ui_checkbox|backup_setting_ui_select|backup_setting_ui_radio
      */
-    final public static function make(backup_setting $setting, $type, $label, array $attributes = null, array $options=null) {
-        // Base the decision we make on the type that was sent
+    final public static function make(backup_setting $setting, $type, $label, array $attributes = null, array $options = null) {
+        // Base the decision we make on the type that was sent.
         switch ($type) {
             case backup_setting::UI_HTML_CHECKBOX :
                 return new backup_setting_ui_checkbox($setting, $label, null, (array)$attributes, (array)$options);
@@ -248,11 +257,16 @@ abstract class backup_setting_ui extends base_setting_ui {
                 throw new backup_setting_ui_exception('setting_invalid_ui_type');
         }
     }
+
     /**
      * Get element properties that can be used to make a quickform element
+     *
+     * @param base_task $task
+     * @param renderer_base $output
      * @return array
      */
-    abstract public function get_element_properties(base_task $task=null, renderer_base $output=null);
+    abstract public function get_element_properties(base_task $task = null, renderer_base $output = null);
+
     /**
      * Applies config options to a given properties array and then returns it
      * @param array $properties
@@ -264,16 +278,17 @@ abstract class backup_setting_ui extends base_setting_ui {
         }
         return $properties;
     }
+
     /**
      * Gets the label for this item
-     * @param backup_task|null $task Optional, if provided and the setting is an include
+     * @param base_task $task Optional, if provided and the setting is an include
      *          $task is used to set the setting label
      * @return string
      */
-    public function get_label(base_task $task=null) {
-        // If a task has been provided and the label is not already set meaniningfully
+    public function get_label(base_task $task = null) {
+        // If a task has been provided and the label is not already set meaningfully
         // we will attempt to improve it.
-        if (!is_null($task) && $this->label == $this->setting->get_name() && strpos($this->setting->get_name(), '_include')!==false) {
+        if (!is_null($task) && $this->label == $this->setting->get_name() && strpos($this->setting->get_name(), '_include') !== false) {
             if ($this->setting->get_level() == backup_setting::SECTION_LEVEL) {
                 $this->label = get_string('includesection', 'backup', $task->get_name());
             } else if ($this->setting->get_level() == backup_setting::ACTIVITY_LEVEL) {
@@ -282,6 +297,7 @@ abstract class backup_setting_ui extends base_setting_ui {
         }
         return $this->label;
     }
+
     /**
      * Returns true if the setting is changeable.
      *
@@ -296,24 +312,23 @@ abstract class backup_setting_ui extends base_setting_ui {
      */
     public function is_changeable() {
         if ($this->setting->get_status() === backup_setting::NOT_LOCKED) {
-            // Its not locked so its chanegable
+            // Its not locked so its chanegable.
             return true;
         } else if ($this->setting->get_status() !== backup_setting::LOCKED_BY_HIERARCHY) {
-            // Its not changeable because its locked by permission or config
+            // Its not changeable because its locked by permission or config.
             return false;
         } else if ($this->setting->has_dependencies_on_settings()) {
             foreach ($this->setting->get_settings_depended_on() as $dependency) {
                 if ($dependency->is_locked() && $dependency->get_setting()->get_level() !== $this->setting->get_level()) {
-                    // Its not changeable because one or more dependancies arn't
-                    // changeable.
-                   return false;
+                    // Its not changeable because one or more dependancies arn't changeable.
+                    return false;
                 }
             }
             // Its changeable because all dependencies are changeable.
             return true;
         }
         // We should never get here but if we do return false to be safe.
-        // The setting would need to be locked by hierarchy and not have any deps
+        // The setting would need to be locked by hierarchy and not have any deps.
         return false;
     }
 
@@ -322,6 +337,7 @@ abstract class backup_setting_ui extends base_setting_ui {
 /**
  * A text input user interface element for backup settings
  *
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -330,20 +346,26 @@ class backup_setting_ui_text extends backup_setting_ui {
      * @var int
      */
     protected $type = backup_setting::UI_HTML_TEXTFIELD;
+
     /**
      * Returns an array of properties suitable for generating a quickforms element
-     * @param backup_task|null $task
+     * @param base_task $task
+     * @param renderer_base $output
      * @return array (element, name, label, attributes)
      */
-    public function get_element_properties(base_task $task=null, renderer_base $output=null) {
-        // name, label, text, attributes
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
-        // name, label, attributes
-        return $this->apply_options(array('element'=>'text','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'attributes'=>$this->attributes));
+        // Name, label, attributes.
+        return $this->apply_options(array(
+            'element' => 'text',
+            'name' => self::NAME_PREFIX.$this->name,
+            'label' => $label,
+            'attributes' => $this->attributes)
+        );
     }
 
 }
@@ -351,50 +373,64 @@ class backup_setting_ui_text extends backup_setting_ui {
 /**
  * A checkbox user interface element for backup settings (default)
  *
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_setting_ui_checkbox extends backup_setting_ui {
+
     /**
      * @var int
      */
     protected $type = backup_setting::UI_HTML_CHECKBOX;
+
     /**
      * @var bool
      */
     protected $changeable = true;
+
     /**
      * The text to show next to the checkbox
      * @var string
      */
     protected $text;
+
     /**
      * Overridden constructor so we can take text argument
+     *
      * @param backup_setting $setting
      * @param string $label
      * @param string $text
      * @param array $attributes
      * @param array $options
      */
-    public function __construct(backup_setting $setting, $label = null, $text=null, array $attributes = array(), array $options = array()) {
+    public function __construct(backup_setting $setting, $label = null, $text = null, array $attributes = array(), array $options = array()) {
         parent::__construct($setting, $label, $attributes, $options);
         $this->text = $text;
     }
+
     /**
      * Returns an array of properties suitable for generating a quickforms element
-     * @param backup_task|null $task
+     * @param base_task $task
+     * @param renderer_base $output
      * @return array (element, name, label, text, attributes);
      */
-    public function get_element_properties(base_task $task=null, renderer_base $output=null) {
-        // name, label, text, attributes
-
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
+        // Name, label, text, attributes.
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
-        return $this->apply_options(array('element'=>'checkbox','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'text'=>$this->text, 'attributes'=>$this->attributes));
+        return $this->apply_options(array(
+            'element' => 'checkbox',
+            'name' => self::NAME_PREFIX.$this->name,
+            'label' => $label,
+            'text' => $this->text,
+            'attributes' => $this->attributes
+        ));
     }
+
     /**
      * Sets the text for the element
      * @param string $text
@@ -402,6 +438,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
     public function set_text($text) {
         $this->text = $text;
     }
+
     /**
      * Gets the static value for the element
      * @global core_renderer $OUTPUT
@@ -409,7 +446,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      */
     public function get_static_value() {
         global $OUTPUT;
-        // Checkboxes are always yes or no
+        // Checkboxes are always yes or no.
         if ($this->get_value()) {
             return $OUTPUT->pix_icon('i/valid', get_string('yes'));
         } else {
@@ -422,7 +459,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      * @return bool
      */
     public function is_changeable() {
-        if ($this->changeable===false) {
+        if ($this->changeable === false) {
             return false;
         } else {
             return parent::is_changeable();
@@ -442,6 +479,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
 /**
  * Radio button user interface element for backup settings
  *
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -450,17 +488,21 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @var int
      */
     protected $type = backup_setting::UI_HTML_RADIOBUTTON;
+
     /**
      * The string shown next to the input
      * @var string
      */
     protected $text;
+
     /**
      * The value for the radio input
      * @var string
      */
     protected $value;
+
     /**
+     * Constructor
      *
      * @param backup_setting $setting
      * @param string $label
@@ -469,25 +511,33 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @param array $attributes
      * @param array $options
      */
-    public function __construct(backup_setting $setting, $label = null, $text=null, $value=null, array $attributes = array(), array $options = array()) {
+    public function __construct(backup_setting $setting, $label = null, $text = null, $value = null, array $attributes = array(), array $options = array()) {
         parent::__construct($setting, $label, $attributes, $options);
         $this->text = $text;
         $this->value = (string)$value;
     }
+
     /**
      * Returns an array of properties suitable for generating a quickforms element
-     * @param backup_task|null $task
+     * @param base_task $task
+     * @param renderer_base $output
      * @return array (element, name, label, text, value, attributes)
      */
-    public function get_element_properties(base_task $task=null, renderer_base $output=null) {
-        // name, label, text, attributes
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
-        // name, label, text, value, attributes
-        return $this->apply_options(array('element'=>'radio','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'text'=>$this->text, 'value'=>$this->value, 'attributes'=>$this->attributes));
+        // Name, label, text, value, attributes.
+        return $this->apply_options(array(
+            'element' => 'radio',
+            'name' => self::NAME_PREFIX.$this->name,
+            'label' => $label,
+            'text' => $this->text,
+            'value' => $this->value,
+            'attributes' => $this->attributes
+        ));
     }
     /**
      * Sets the text next to this input
@@ -514,6 +564,7 @@ class backup_setting_ui_radio extends backup_setting_ui {
 /**
  * A select box, drop down user interface for backup settings
  *
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -522,12 +573,15 @@ class backup_setting_ui_select extends backup_setting_ui {
      * @var int
      */
     protected $type = backup_setting::UI_HTML_DROPDOWN;
+
     /**
      * An array of options to display in the select
      * @var array
      */
     protected $values;
+
     /**
+     * Constructor
      *
      * @param backup_setting $setting
      * @param string $label
@@ -535,32 +589,41 @@ class backup_setting_ui_select extends backup_setting_ui {
      * @param array $attributes
      * @param array $options
      */
-    public function __construct(backup_setting $setting, $label = null, $values=null, array $attributes = array(), array $options = array()) {
+    public function __construct(backup_setting $setting, $label = null, $values = null, array $attributes = array(), array $options = array()) {
         parent::__construct($setting, $label, $attributes, $options);
         $this->values = $values;
     }
+
     /**
      * Returns an array of properties suitable for generating a quickforms element
-     * @param backup_task|null $task
+     * @param base_task $task
+     * @param renderer_base $output
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null, renderer_base $output=null) {
-        // name, label, text, attributes
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
             $label .= $output->render($icon);
         }
-        // name, label, options, attributes
-        return $this->apply_options(array('element'=>'select','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'options'=>$this->values, 'attributes'=>$this->attributes));
+        // Name, label, options, attributes.
+        return $this->apply_options(array(
+            'element' => 'select',
+            'name' => self::NAME_PREFIX.$this->name,
+            'label' => $label,
+            'options' => $this->values,
+            'attributes' => $this->attributes
+        ));
     }
+
     /**
      * Sets the options for the select box
-     * @param array $values Associative array of value=>text options
+     * @param array $values Associative array of value => text options
      */
     public function set_values(array $values) {
         $this->values = $values;
     }
+
     /**
      * Gets the static value for this select element
      * @return string
@@ -568,6 +631,7 @@ class backup_setting_ui_select extends backup_setting_ui {
     public function get_static_value() {
         return $this->values[$this->get_value()];
     }
+
     /**
      * Returns true if the setting is changeable, false otherwise
      *
@@ -582,8 +646,22 @@ class backup_setting_ui_select extends backup_setting_ui {
     }
 }
 
+/**
+ * A date selector user interface widget for backup settings.
+ *
+ * @package core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class backup_setting_ui_dateselector extends backup_setting_ui_text {
-    public function get_element_properties(base_task $task = null, renderer_base $output=null) {
+
+    /**
+     * Returns an array of properties suitable for generating a quickforms element
+     * @param base_task $task
+     * @param renderer_base $output
+     * @return array (element, name, label, options, attributes)
+     */
+    public function get_element_properties(base_task $task = null, renderer_base $output = null) {
         if (!array_key_exists('optional', $this->attributes)) {
             $this->attributes['optional'] = false;
         }
@@ -591,6 +669,11 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
         $properties['element'] = 'date_selector';
         return $properties;
     }
+
+    /**
+     * Gets the static value for this select element
+     * @return string
+     */
     public function get_static_value() {
         $value = $this->get_value();
         if (!empty($value)) {
@@ -600,5 +683,20 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
     }
 }
 
+/**
+ * Base setting UI exception class.
+ *
+ * @package core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class base_setting_ui_exception extends base_setting_exception {}
+
+/**
+ * Backup setting UI exception class.
+ *
+ * @package core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class backup_setting_ui_exception extends base_setting_ui_exception {};

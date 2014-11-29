@@ -309,32 +309,22 @@ class report_log_renderable implements renderable {
         $sitecontext = context_system::instance();
         // First check to see if we can override showcourses and showusers.
         $numcourses = $DB->count_records("course");
+        if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$this->showcourses) {
+            $this->showcourses = 1;
+        }
+
         // Check if course filter should be shown.
-        if ((has_capability('report/log:view', $sitecontext)) && ($this->showcourses ||
-                (empty($this->showcourses) && ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN)))) {
-            $courses[0] = get_string('sitelogs');
-            $this->showcourses = true;
+        if (has_capability('report/log:view', $sitecontext) && $this->showcourses) {
             if ($courserecords = $DB->get_records("course", null, "fullname", "id,shortname,fullname,category")) {
                 foreach ($courserecords as $course) {
-                    if ($course->category) {
-                        $courses[$course->id] = format_string(get_course_display_name_for_list($course));
+                    if ($course->id == SITEID) {
+                        $courses[$course->id] = format_string($course->fullname) . ' (' . get_string('site') . ')';
                     } else {
-                        $courses[$course->id] = $SITE->shortname;
+                        $courses[$course->id] = format_string(get_course_display_name_for_list($course));
                     }
                 }
             }
             core_collator::asort($courses);
-        } else {
-            if (!empty($this->course->id)) {
-                $coursecontext = context_course::instance($this->course->id);
-                if (has_capability('report/log:view', $coursecontext)) {
-                    $courses[$this->course->id] = format_string(get_course_display_name_for_list($this->course));
-                } else {
-                    $this->showcourses = false;
-                }
-            } else {
-                $this->showcourses = false;
-            }
         }
         return $courses;
     }
@@ -384,9 +374,12 @@ class report_log_renderable implements renderable {
         $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' . get_all_user_name_fields(true, 'u'),
                 null, $limitfrom, $limitnum);
 
+        if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$this->showusers) {
+            $this->showusers = 1;
+        }
+
         $users = array();
-        if (($this->showusers) || (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && empty($this->showusers))) {
-            $this->showusers = true;
+        if ($this->showusers) {
             if ($courseusers) {
                 foreach ($courseusers as $courseuser) {
                      $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));

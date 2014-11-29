@@ -680,6 +680,7 @@ table.mod_index {width:100%;}
 .comment-ctrl h5 {margin:0;padding: 5px;}
 .comment-area {max-width: 400px;padding: 5px;}
 .comment-area textarea {width:100%;overflow:auto;}
+.comment-area textarea.fullwidth {-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;}
 .comment-area .fd {text-align:right;}
 .comment-meta span {color:gray;}
 .comment-link img { vertical-align: text-bottom; }
@@ -1211,7 +1212,7 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
 audio.mediaplugin_html5audio {width: 300px}
 
 /* TinyMCE moodle media preview frame should not have padding */
-.core_media_preview.pagelayout-embedded #content {padding:0;}
+.core_media_preview.pagelayout-embedded #page-content {padding:0;}
 .core_media_preview.pagelayout-embedded #maincontent {height:0;}
 .core_media_preview.pagelayout-embedded .mediaplugin {margin:0;}
 
@@ -1867,8 +1868,8 @@ body.jsenabled .formlisting {
 #page-badges-view .collection { width: 90%; margin: 1em auto; }
 #page-badges-index .collection { width: 85%; margin: 1em auto; }
 
-table.collection th { font-size: inherit !important; border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; text-align: center !important; }
-table.collection td { border-width: 1px; border-style: solid; border-color: #CCCCCC; vertical-align: middle; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+table.collection th { font-size: inherit !important; border-width: 1px; border-style: solid; border-color: #CCCCCC; padding-left: 5px; padding-right: 5px; vertical-align: top; text-align: center !important; }
+table.collection td { border-width: 1px; border-style: solid; border-color: #CCCCCC; padding-left: 5px; padding-right: 5px; vertical-align: top; }
 table.collection > tbody > tr:nth-of-type(even) { background-color: #FFFFFF; }
 table.collection > tbody > tr:nth-of-type(odd) { background-color: #F6F6F6; }
 table.collection ul { margin: 0.5em 0.5em 0.5em 2em; }
@@ -2118,15 +2119,6 @@ a:hover .caret {
 }
 
 @-moz-keyframes progress-bar-stripes {
-    from {
-        background-position: 40px 0;
-    }
-    to {
-        background-position: 0 0;
-    }
-}
-
-@-ms-keyframes progress-bar-stripes {
     from {
         background-position: 40px 0;
     }

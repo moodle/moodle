@@ -2,7 +2,8 @@ This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
 === 2.8 ===
-
+* Themes Base and Canvas layout/embedded.php has changed.
+  The div id="content" has been changed to id="page-content" - see MDL-47915.
 * All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
   rules for mod_assign in a theme may need to be updated.
 * The following render methods were renamed, if you have overridden any of these you will need to update your renderer:

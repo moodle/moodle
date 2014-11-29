@@ -123,9 +123,13 @@ class grade extends tablelike implements selectable_items, filterable_items {
     public function init($selfitemisempty = false) {
         $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
-        $this->items = get_role_users(
-            $roleids, $this->context, false, '',
-            'u.lastname, u.firstname', null, $this->groupid);
+        $this->items = array();
+        foreach ($roleids as $roleid) {
+            // Keeping the first user appearance.
+            $this->items = $this->items + get_role_users(
+                $roleid, $this->context, false, '',
+                'u.lastname, u.firstname', null, $this->groupid);
+        }
 
         $this->totalitemcount = count_role_users($roleids, $this->context);
 

@@ -285,6 +285,16 @@ class core_weblib_testcase extends advanced_testcase {
         $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
         $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
         $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url1->set_anchor('test');
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url2->set_anchor('test');
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
     }
 
     public function test_out_as_local_url() {

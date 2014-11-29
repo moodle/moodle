@@ -288,7 +288,7 @@
     // anything after that point.
     $eventdata = array('context' => context_course::instance($course->id));
     if (!empty($section) && (int)$section == $section) {
-        $eventdata['other'] = array('coursesectionid' => $section);
+        $eventdata['other'] = array('coursesectionnumber' => $section);
     }
     $event = \core\event\course_viewed::create($eventdata);
     $event->trigger();

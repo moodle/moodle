@@ -123,6 +123,10 @@ class behat_hooks extends behat_base {
             throw new Exception('Behat only can run if test mode is enabled. More info in ' . behat_command::DOCS_URL . '#Running_tests');
         }
 
+        // Reset all data, before checking for is_server_running.
+        // If not done, then it can return apache error, while running tests.
+        behat_util::reset_all_data();
+
         if (!behat_util::is_server_running()) {
             throw new Exception($CFG->behat_wwwroot .
                 ' is not available, ensure you specified correct url and that the server is set up and started.' .
@@ -192,13 +196,7 @@ class behat_hooks extends behat_base {
         // Reset $SESSION.
         \core\session\manager::init_empty_session();
 
-        behat_util::reset_database();
-        behat_util::reset_dataroot();
-
-        accesslib_clear_all_caches(true);
-
-        // Reset the nasty strings list used during the last test.
-        nasty_strings::reset_used_strings();
+        behat_util::reset_all_data();
 
         // Assign valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
@@ -406,7 +404,18 @@ class behat_hooks extends behat_base {
         for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
             $pending = '';
             try {
-                $jscode = 'return ' . self::PAGE_READY_JS . ' ? "" : M.util.pending_js.join(":");';
+                $jscode =
+                    'if (typeof M === "undefined") {
+                        if (document.readyState === "complete") {
+                            return "";
+                        } else {
+                            return "incomplete";
+                        }
+                    } else if (' . self::PAGE_READY_JS . ') {
+                        return "";
+                    } else {
+                        return M.util.pending_js.join(":");
+                    }';
                 $pending = $this->getSession()->evaluateScript($jscode);
             } catch (NoSuchWindow $nsw) {
                 // We catch an exception here, in case we just closed the window we were interacting with.

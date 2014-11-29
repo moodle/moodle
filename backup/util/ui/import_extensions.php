@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,20 +19,25 @@
  * and functionality in order to customise the backup UI for the purposes of
  * import.
  *
- * @package   moodlecore
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Import UI class
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_ui extends backup_ui {
+
     /**
      * Customises the backup progress bar
      *
      * @global moodle_page $PAGE
-     * @return array
+     * @return array[] An array of arrays
      */
     public function get_progress_bar() {
         global $PAGE;
@@ -42,19 +46,25 @@ class import_ui extends backup_ui {
         $items = array();
         while ($stage > 0) {
             $classes = array('backup_stage');
-            if (floor($stage/2) == $currentstage) {
+            if (floor($stage / 2) == $currentstage) {
                 $classes[] = 'backup_stage_next';
             } else if ($stage == $currentstage) {
                 $classes[] = 'backup_stage_current';
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            $item = array('text' => strlen(decbin($stage*2)).'. '.get_string('importcurrentstage'.$stage, 'backup'),'class' => join(' ', $classes));
-            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && (!self::$skipcurrentstage || $stage*2 != $currentstage)) {
-                $item['link'] = new moodle_url($PAGE->url, $this->stage->get_params() + array('backup'=>$this->get_backupid(), 'stage'=>$stage));
+            $item = array(
+                'text' => strlen(decbin($stage * 2)).'. '.get_string('importcurrentstage'.$stage, 'backup'),
+                'class' => join(' ', $classes)
+            );
+            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && (!self::$skipcurrentstage || $stage * 2 != $currentstage)) {
+                $item['link'] = new moodle_url(
+                    $PAGE->url,
+                    $this->stage->get_params() + array('backup' => $this->get_backupid(), 'stage' => $stage)
+                );
             }
             array_unshift($items, $item);
-            $stage = floor($stage/2);
+            $stage = floor($stage / 2);
         }
         $selectorlink = new moodle_url($PAGE->url, $this->stage->get_params());
         $selectorlink->remove_params('importid');
@@ -70,9 +80,10 @@ class import_ui extends backup_ui {
      * params for 'stage' and default to initial
      *
      * @param int|null $stage The desired stage to intialise or null for the default
+     * @param array $params
      * @return backup_ui_stage_initial|backup_ui_stage_schema|backup_ui_stage_confirmation|backup_ui_stage_final
      */
-    protected function initialise_stage($stage = null, array $params=null) {
+    protected function initialise_stage($stage = null, array $params = null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_INITIAL, PARAM_INT);
         }
@@ -102,11 +113,19 @@ class import_ui extends backup_ui {
 
 /**
  * Extends the initial stage
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_ui_stage_inital extends backup_ui_stage_initial {}
 
 /**
  * Extends the schema stage
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_ui_stage_schema extends backup_ui_stage_schema {}
 
@@ -115,6 +134,10 @@ class import_ui_stage_schema extends backup_ui_stage_schema {}
  *
  * This overides the initialise stage form to remove the filenamesetting heading
  * as it is always hidden.
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
 
@@ -145,14 +168,16 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
         } else {
             $elements = $form->get_element('buttonar')->getElements();
             foreach ($elements as &$element) {
-                if ($element->getName()=='submitbutton') {
-                    $element->setValue(get_string('import'.$this->get_ui()->get_name().'stage'.$this->get_stage().'action', 'backup'));
+                if ($element->getName() == 'submitbutton') {
+                    $element->setValue(
+                        get_string('import'.$this->get_ui()->get_name().'stage'.$this->get_stage().'action', 'backup')
+                    );
                 }
             }
         }
 
-        // a nasty hack follows to work around the sad fact that moodle quickforms
-        // do not allow to actually return the HTML content, just to echo it
+        // A nasty hack follows to work around the sad fact that moodle quickforms
+        // do not allow to actually return the HTML content, just to echo it.
         flush();
         ob_start();
         $form->display();
@@ -164,11 +189,19 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
 }
 /**
  * Overrides the final stage.
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_ui_stage_final extends backup_ui_stage_final {}
 
 /**
  * Extends the restore course search to search for import courses.
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_course_search extends restore_course_search {
     /**

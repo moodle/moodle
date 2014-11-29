@@ -71,6 +71,12 @@ class comment {
     /** @var int The number of comments associated with this comments params */
     protected $totalcommentcount = null;
 
+    /**
+     * Set to true to remove the col attribute from the textarea making it full width.
+     * @var bool
+     */
+    protected $fullwidth = false;
+
     /** @var bool Use non-javascript UI */
     private static $nonjs = false;
     /** @var int comment itemid used in non-javascript UI */
@@ -240,10 +246,15 @@ class comment {
         self::$comment_page    = optional_param('comment_page',    '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_AREA);
 
-        $page->requires->string_for_js('addcomment', 'moodle');
-        $page->requires->string_for_js('deletecomment', 'moodle');
-        $page->requires->string_for_js('comments', 'moodle');
-        $page->requires->string_for_js('commentsrequirelogin', 'moodle');
+        $page->requires->strings_for_js(array(
+                'addcomment',
+                'comments',
+                'commentscount',
+                'commentsrequirelogin',
+                'deletecomment',
+            ),
+            'moodle'
+        );
     }
 
     /**
@@ -459,9 +470,20 @@ class comment {
 
             if ($this->can_post()) {
                 // print posting textarea
+                $textareaattrs = array(
+                    'name' => 'content',
+                    'rows' => 2,
+                    'id' => 'dlg-content-'.$this->cid
+                );
+                if (!$this->fullwidth) {
+                    $textareaattrs['cols'] = '20';
+                } else {
+                    $textareaattrs['class'] = 'fullwidth';
+                }
+
                 $html .= html_writer::start_tag('div', array('class' => 'comment-area'));
                 $html .= html_writer::start_tag('div', array('class' => 'db'));
-                $html .= html_writer::tag('textarea', '', array('name' => 'content', 'rows' => 2, 'cols' => 20, 'id' => 'dlg-content-'.$this->cid));
+                $html .= html_writer::tag('textarea', '', $textareaattrs);
                 $html .= html_writer::end_tag('div'); // .db
 
                 $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
@@ -944,6 +966,16 @@ class comment {
      */
     public function get_commentarea() {
         return $this->commentarea;
+    }
+
+    /**
+     * Make the comments textarea fullwidth.
+     *
+     * @since 2.8.1 + 2.7.4
+     * @param bool $fullwidth
+     */
+    public function set_fullwidth($fullwidth = true) {
+        $this->fullwidth = (bool)$fullwidth;
     }
 }
 

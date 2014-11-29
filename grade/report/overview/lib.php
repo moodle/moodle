@@ -135,7 +135,7 @@ class grade_report_overview extends grade_report {
     }
 
     public function fill_table() {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT, $USER;
 
         // Only show user's courses instead of all courses.
         if ($this->courses) {
@@ -150,6 +150,11 @@ class grade_report_overview extends grade_report {
 
                 if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                     // The course is hidden and the user isn't allowed to see it
+                    continue;
+                }
+
+                if ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
+                        !has_capability('moodle/grade:viewall', $coursecontext)) {
                     continue;
                 }
 
@@ -256,7 +261,7 @@ function grade_report_overview_settings_definition(&$mform) {
                       0 => get_string('hide'),
                       1 => get_string('show'));
 
-    if (empty($CFG->grade_overviewreport_showrank)) {
+    if (empty($CFG->grade_report_overview_showrank)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[1]);

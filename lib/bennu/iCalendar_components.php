@@ -287,8 +287,10 @@ class iCalendar_component {
                 if($parent_component == null) {
                     $parent_component = $this; // If there's no components on the stack, use the iCalendar object
                 }
-                if ($parent_component->add_component($component) === false) {
-                    $this->parser_error("Failed to add component on line $key");
+                if ($component !== null) {
+                    if ($parent_component->add_component($component) === false) {
+                        $this->parser_error("Failed to add component on line $key");
+                    }
                 }
                 if ($parent_component != $this) { // If we're not using the iCalendar
                         array_push($components, $parent_component); // Put the component back on the stack

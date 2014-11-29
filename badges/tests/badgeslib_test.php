@@ -41,8 +41,6 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 
-        unset_config('noemailever');
-
         $CFG->enablecompletion = true;
 
         $user = $this->getDataGenerator()->create_user();

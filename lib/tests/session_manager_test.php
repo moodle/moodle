@@ -304,7 +304,149 @@ class core_session_manager_testcase extends advanced_testcase {
         \core\session\manager::kill_user_sessions($userid);
 
         $this->assertEquals(1, $DB->count_records('sessions'));
-        $this->assertFalse($DB->record_exists('sessions', array('userid'=>$userid)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $userid)));
+
+        $record->userid       = $userid;
+        $record->sid          = md5('pokus3');
+        $DB->insert_record('sessions', $record);
+
+        $record->userid       = $userid;
+        $record->sid          = md5('pokus4');
+        $DB->insert_record('sessions', $record);
+
+        $record->userid       = $userid;
+        $record->sid          = md5('pokus5');
+        $DB->insert_record('sessions', $record);
+
+        $this->assertEquals(3, $DB->count_records('sessions', array('userid' => $userid)));
+
+        \core\session\manager::kill_user_sessions($userid, md5('pokus5'));
+
+        $this->assertEquals(1, $DB->count_records('sessions', array('userid' => $userid)));
+        $this->assertEquals(1, $DB->count_records('sessions', array('userid' => $userid, 'sid' => md5('pokus5'))));
+    }
+
+    public function test_apply_concurrent_login_limit() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $guest = guest_user();
+
+        $record = new \stdClass();
+        $record->state        = 0;
+        $record->sessdata     = null;
+        $record->userid       = $user1->id;
+        $record->timemodified = time();
+        $record->firstip      = $record->lastip = '10.0.0.1';
+
+        $record->sid = md5('hokus1');
+        $record->timecreated = 20;
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('hokus2');
+        $record->timecreated = 10;
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('hokus3');
+        $record->timecreated = 30;
+        $DB->insert_record('sessions', $record);
+
+        $record->userid = $user2->id;
+        $record->sid = md5('pokus1');
+        $record->timecreated = 20;
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('pokus2');
+        $record->timecreated = 10;
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('pokus3');
+        $record->timecreated = 30;
+        $DB->insert_record('sessions', $record);
+
+        $record->timecreated = 10;
+        $record->userid = $guest->id;
+        $record->sid = md5('g1');
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('g2');
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('g3');
+        $DB->insert_record('sessions', $record);
+
+        $record->userid = 0;
+        $record->sid = md5('nl1');
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('nl2');
+        $DB->insert_record('sessions', $record);
+        $record->sid = md5('nl3');
+        $DB->insert_record('sessions', $record);
+
+        set_config('limitconcurrentlogins', 0);
+        $this->assertCount(12, $DB->get_records('sessions'));
+
+        \core\session\manager::apply_concurrent_login_limit($user1->id);
+        \core\session\manager::apply_concurrent_login_limit($user2->id);
+        \core\session\manager::apply_concurrent_login_limit($guest->id);
+        \core\session\manager::apply_concurrent_login_limit(0);
+        $this->assertCount(12, $DB->get_records('sessions'));
+
+        set_config('limitconcurrentlogins', -1);
+
+        \core\session\manager::apply_concurrent_login_limit($user1->id);
+        \core\session\manager::apply_concurrent_login_limit($user2->id);
+        \core\session\manager::apply_concurrent_login_limit($guest->id);
+        \core\session\manager::apply_concurrent_login_limit(0);
+        $this->assertCount(12, $DB->get_records('sessions'));
+
+        set_config('limitconcurrentlogins', 2);
+
+        \core\session\manager::apply_concurrent_login_limit($user1->id);
+        $this->assertCount(11, $DB->get_records('sessions'));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 20)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 30)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 10)));
+
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 20)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 30)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 10)));
+        set_config('limitconcurrentlogins', 2);
+        \core\session\manager::apply_concurrent_login_limit($user2->id, md5('pokus2'));
+        $this->assertCount(10, $DB->get_records('sessions'));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 20)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 30)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 10)));
+
+        \core\session\manager::apply_concurrent_login_limit($guest->id);
+        \core\session\manager::apply_concurrent_login_limit(0);
+        $this->assertCount(10, $DB->get_records('sessions'));
+
+        set_config('limitconcurrentlogins', 1);
+
+        \core\session\manager::apply_concurrent_login_limit($user1->id, md5('grrr'));
+        $this->assertCount(9, $DB->get_records('sessions'));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 20)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 30)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 10)));
+
+        \core\session\manager::apply_concurrent_login_limit($user1->id);
+        $this->assertCount(9, $DB->get_records('sessions'));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 20)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 30)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user1->id, 'timecreated' => 10)));
+
+        \core\session\manager::apply_concurrent_login_limit($user2->id, md5('pokus2'));
+        $this->assertCount(8, $DB->get_records('sessions'));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 20)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 30)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 10)));
+
+        \core\session\manager::apply_concurrent_login_limit($user2->id);
+        $this->assertCount(8, $DB->get_records('sessions'));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 20)));
+        $this->assertFalse($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 30)));
+        $this->assertTrue($DB->record_exists('sessions', array('userid' => $user2->id, 'timecreated' => 10)));
+
+        \core\session\manager::apply_concurrent_login_limit($guest->id);
+        \core\session\manager::apply_concurrent_login_limit(0);
+        $this->assertCount(8, $DB->get_records('sessions'));
     }
 
     public function test_kill_all_sessions() {

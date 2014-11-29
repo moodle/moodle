@@ -53,6 +53,11 @@ if ($chapterid) {
 
 $PAGE->set_url('/mod/book/print.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
+// Use "embedded" instead of "print" because Bootstrapbase shows top
+// header bar and navbar even on print style - which is inconsistent
+// with extant behaviour.
+$PAGE->set_pagelayout("embedded");
+
 unset($id);
 unset($chapterid);
 
@@ -65,11 +70,14 @@ $strbooks = get_string('modulenameplural', 'mod_book');
 $strbook  = get_string('modulename', 'mod_book');
 $strtop   = get_string('top', 'mod_book');
 
-@header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
-@header('Pragma: no-cache');
-@header('Expires: ');
-@header('Accept-Ranges: none');
-@header('Content-type: text/html; charset=utf-8');
+// Page header.
+$strtitle = format_string($book->name, true, array('context'=>$context));
+$PAGE->set_title($strtitle);
+$PAGE->set_heading($strtitle);
+$PAGE->requires->css('/mod/book/tool/print/print.css');
+
+// Begin page output.
+echo $OUTPUT->header();
 
 if ($chapter) {
 
@@ -78,22 +86,10 @@ if ($chapter) {
     }
     \booktool_print\event\chapter_printed::create_from_chapter($book, $context, $chapter)->trigger();
 
-    // page header
-    ?>
-    <!DOCTYPE HTML>
-    <html>
-    <head>
-      <title><?php echo format_string($book->name, true, array('context'=>$context)) ?></title>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="description" content="<?php echo s(format_string($book->name, true, array('context'=>$context))) ?>" />
-      <link rel="stylesheet" type="text/css" href="print.css" />
-    </head>
-    <body>
-    <?php
     // Print dialog link.
     $printtext = get_string('printchapter', 'booktool_print');
-    $printicon = $OUTPUT->pix_icon('chapter', $printtext, 'booktool_print', array('class' => 'book_print_icon'));
-    $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'book_no_print');
+    $printicon = $OUTPUT->pix_icon('chapter', $printtext, 'booktool_print', array('class' => 'icon'));
+    $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'hidden-print');
     echo html_writer::link('#', $printicon.$printtext, $printlinkatt);
     ?>
     <a name="top"></a>
@@ -102,8 +98,6 @@ if ($chapter) {
     ?>
     <div class="chapter">
     <?php
-
-
     if (!$book->customtitles) {
         if (!$chapter->subchapter) {
             $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
@@ -119,7 +113,6 @@ if ($chapter) {
     $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
     echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
     echo '</div>';
-    echo '</body> </html>';
 
 } else {
     \booktool_print\event\book_printed::create_from_book($book, $context)->trigger();
@@ -127,22 +120,10 @@ if ($chapter) {
     $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
     $book->intro = file_rewrite_pluginfile_urls($book->intro, 'pluginfile.php', $context->id, 'mod_book', 'intro', null);
 
-    // page header
-    ?>
-    <!DOCTYPE HTML>
-    <html>
-    <head>
-      <title><?php echo format_string($book->name, true, array('context'=>$context)) ?></title>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="description" content="<?php echo s(format_string($book->name, true, array('noclean'=>true, 'context'=>$context))) ?>" />
-      <link rel="stylesheet" type="text/css" href="print.css" />
-    </head>
-    <body>
-    <?php
     // Print dialog link.
     $printtext = get_string('printbook', 'booktool_print');
-    $printicon = $OUTPUT->pix_icon('book', $printtext, 'booktool_print', array('class' => 'book_print_icon'));
-    $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'book_no_print');
+    $printicon = $OUTPUT->pix_icon('book', $printtext, 'booktool_print', array('class' => 'icon'));
+    $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'hidden-print');
     echo html_writer::link('#', $printicon.$printtext, $printlinkatt);
     ?>
     <a name="top"></a>
@@ -195,6 +176,7 @@ if ($chapter) {
         echo '</div>';
         // echo '<a href="#toc">'.$strtop.'</a>';
     }
-    echo '</body> </html>';
 }
 
+// Finish page output.
+echo $OUTPUT->footer();

@@ -289,7 +289,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             } See MDL-21327   for why this is commented out
             */
             $remoteuser->mnethostid = $remotehost->id;
-            $remoteuser->firstaccess = time(); // First time user in this server, grab it here
+            $remoteuser->firstaccess = 0;
             $remoteuser->confirmed = 1;
 
             $remoteuser->id = $DB->insert_record('user', $remoteuser);
@@ -359,9 +359,6 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         $localuser->mnethostid = $remotepeer->id;
-        if (empty($localuser->firstaccess)) { // Now firstaccess, grab it here
-            $localuser->firstaccess = time();
-        }
         user_update_user($localuser, false);
 
         if (!$firsttime) {

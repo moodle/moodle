@@ -30,7 +30,8 @@
 var HEIGHT = 'height',
     WIDTH = 'width',
     OFFSETWIDTH = 'offsetWidth',
-    OFFSETHEIGHT = 'offsetHeight';
+    OFFSETHEIGHT = 'offsetHeight',
+    LOGNS = 'moodle-core-grade-report-grader';
 
 CSS.FLOATING = 'floating';
 
@@ -251,7 +252,7 @@ FloatingHeaders.prototype = {
         // Grab references to commonly used Nodes.
         this.firstUserCell = Y.one(SELECTORS.USERCELL);
         this.container = Y.one(SELECTORS.GRADEPARENT);
-        this.firstNonUserCell = Y.one(SELECTORS.USERMAIL).next();
+        this.firstNonUserCell = Y.one(SELECTORS.GRADECELL);
 
         if (!this.firstUserCell) {
             // No need for floating elements, there are no users.
@@ -837,43 +838,55 @@ FloatingHeaders.prototype = {
             floatingHeaderStyles[SELECTORS.FOOTERTITLE] = floatingFooterTitleStyles;
         }
 
-        // Apply the styles.
-        this.gradeItemHeadingContainer.setStyles(gradeItemHeadingContainerStyles);
-        this.userColumnHeader.setStyles(userColumnHeaderStyles);
-        this.userColumn.setStyles(userColumnStyles);
-        this.footerRow.setStyles(footerStyles);
+        // Apply the styles and mark elements as floating, or not.
+        if (this.gradeItemHeadingContainer) {
+            this.gradeItemHeadingContainer.setStyles(gradeItemHeadingContainerStyles);
+            if (headerFloats) {
+                this.gradeItemHeadingContainer.addClass(CSS.FLOATING);
+            } else {
+                this.gradeItemHeadingContainer.removeClass(CSS.FLOATING);
+            }
+        }
+        if (this.userColumnHeader) {
+            this.userColumnHeader.setStyles(userColumnHeaderStyles);
+            if (userFloats) {
+                this.userColumnHeader.addClass(CSS.FLOATING);
+            } else {
+                this.userColumnHeader.removeClass(CSS.FLOATING);
+            }
+        }
+        if (this.userColumn) {
+            this.userColumn.setStyles(userColumnStyles);
+            if (userFloats) {
+                this.userColumn.addClass(CSS.FLOATING);
+            } else {
+                this.userColumn.removeClass(CSS.FLOATING);
+            }
+        }
+        if (this.footerRow) {
+            this.footerRow.setStyles(footerStyles);
+            if (footerFloats) {
+                this.footerRow.addClass(CSS.FLOATING);
+            } else {
+                this.footerRow.removeClass(CSS.FLOATING);
+            }
+        }
 
         // And apply the styles to the generic left headers.
         Y.Object.each(floatingHeaderStyles, function(styles, key) {
-            this.floatingHeaderRow[key].setStyles(styles);
+            if (this.floatingHeaderRow[key]) {
+                this.floatingHeaderRow[key].setStyles(styles);
+            }
         }, this);
 
-        // Mark the elements as floating, or not.
-        if (headerFloats) {
-            this.gradeItemHeadingContainer.addClass(CSS.FLOATING);
-        } else {
-            this.gradeItemHeadingContainer.removeClass(CSS.FLOATING);
-        }
-
-        if (userFloats) {
-            this.userColumnHeader.addClass(CSS.FLOATING);
-            this.userColumn.addClass(CSS.FLOATING);
-        } else {
-            this.userColumnHeader.removeClass(CSS.FLOATING);
-            this.userColumn.removeClass(CSS.FLOATING);
-        }
-
-        if (footerFloats) {
-            this.footerRow.addClass(CSS.FLOATING);
-        } else {
-            this.footerRow.removeClass(CSS.FLOATING);
-        }
 
         Y.Object.each(this.floatingHeaderRow, function(value, key) {
-            if (leftTitleFloats) {
-                this.floatingHeaderRow[key].addClass(CSS.FLOATING);
-            } else {
-                this.floatingHeaderRow[key].removeClass(CSS.FLOATING);
+            if (this.floatingHeaderRow[key]) {
+                if (leftTitleFloats) {
+                    this.floatingHeaderRow[key].addClass(CSS.FLOATING);
+                } else {
+                    this.floatingHeaderRow[key].removeClass(CSS.FLOATING);
+                }
             }
         }, this);
 
