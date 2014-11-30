@@ -304,3 +304,49 @@ Feature: A user can control their own subscription preferences for a discussion
    And I follow "Test post subject one"
    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
+
+  Scenario: A user can toggle their subscription preferences when viewing a discussion
+    Given I add a "Forum" to section "1" and I fill the form with:
+      | Forum name        | Test forum name |
+      | Forum type        | Standard forum for general use |
+      | Description       | Test forum description |
+      | Subscription mode | Optional subscription |
+    And I add a new discussion to "Test forum name" forum with:
+      | Subject | Test post subject one |
+      | Message | Test post message one |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Test forum name"
+    When I follow "Test post subject one"
+    Then I should see "Subscribe to this forum"
+    And I should see "Subscribe to this discussion"
+    And I follow "Subscribe to this forum"
+    And I follow "Continue"
+    And I follow "Test post subject one"
+    And I should see "Unsubscribe from this forum"
+    And I should see "Unsubscribe from this discussion"
+    And I follow "Unsubscribe from this discussion"
+    And I follow "Continue"
+    And I follow "Test post subject one"
+    And I should see "Unsubscribe from this forum"
+    And I should see "Subscribe to this discussion"
+    And I follow "Unsubscribe from this forum"
+    And I follow "Continue"
+    And I follow "Test post subject one"
+    And I should see "Subscribe to this forum"
+    And I should see "Subscribe to this discussion"
+    And I follow "Subscribe to this discussion"
+    And I follow "Continue"
+    And I should see "Subscribe to this forum"
+    And I should see "Unsubscribe from this discussion"
+    And I follow "Subscribe to this forum"
+    And I follow "Continue"
+    And I follow "Test post subject one"
+    And I should see "Unsubscribe from this forum"
+    And I should see "Unsubscribe from this discussion"
+    And I follow "Unsubscribe from this forum"
+    And I follow "Continue"
+    And I follow "Test post subject one"
+    And I should see "Subscribe to this forum"
+    And I should see "Subscribe to this discussion"
