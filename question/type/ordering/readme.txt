@@ -29,3 +29,7 @@ Further information
 
     For more information, tutorials and online discussion forums, please visit:
     http://moodlereader.org/
+
+    This plugin uses JQuery framework and plugins:
+    http://jqueryui.com/sortable/
+    http://touchpunch.furf.com/

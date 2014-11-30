@@ -94,6 +94,7 @@ class qtype_ordering_renderer extends qtype_renderer {
         if ($readonly==false) {
             $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.js'));
             $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery-ui.js'));
+            $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.ui.touch-punch.js'));
         }
 
         $style = "\n";
@@ -153,7 +154,7 @@ class qtype_ordering_renderer extends qtype_renderer {
         if (count($answerids)) {
             $result .= html_writer::start_tag('div', array('class' => 'ablock'));
             $result .= html_writer::start_tag('div', array('class' => 'answer'));
-            $result .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => $sortable_id));
+            $result .= html_writer::start_tag('ul',  array('class' => 'boxy', 'id' => $sortable_id));
 
             // generate ordering items
             foreach ($answerids as $position => $answerid) {
@@ -187,49 +188,6 @@ class qtype_ordering_renderer extends qtype_renderer {
             $params = array('type' => 'hidden', 'name' => $response_name, 'id' => $response_id, 'value' => '');
             $result .= html_writer::empty_tag('input', $params);
             $result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
-        }
-
-        if ($readonly==false) {
-            $script = "\n";
-            $script .= "//<![CDATA[\n";
-            if ($addScript) {
-                $addScript = false; // only add these functions once
-                $script .= "function orderingTouchHandler(evt) {\n";
-                $script .= "    var touchEvt = evt.changedTouches[0];\n";
-                $script .= "    switch (evt.type) {\n";
-                $script .= "        case 'touchstart': var type = 'mousedown'; break;\n";
-                $script .= "        case 'touchmove': var type = 'mousemove'; break;\n";
-                $script .= "        case 'touchend': var type = 'mouseup'; break;\n";
-                $script .= "        default: return;\n";
-                $script .= "    }\n";
-                $script .= "    var mouseEvt = document.createEvent('MouseEvent');\n";
-                $script .= "    // initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget)\n";
-                $script .= "    mouseEvt.initMouseEvent(type, true, true, window, 1, touchEvt.screenX, touchEvt.screenY, touchEvt.clientX, touchEvt.clientY, false, false, false, false, 0, null);\n";
-                $script .= "    touchEvt.target.dispatchEvent(mouseEvt);\n";
-                $script .= "    evt.preventDefault();\n";
-                $script .= "}\n";
-                $script .= "function orderingTouchHandlers(sortableid) {\n";
-                $script .= "    var obj = document.getElementById(sortableid);\n";
-                $script .= "    if (obj) {\n";
-                $script .= "        for (var i=0; i<obj.childNodes.length; i++) {\n";
-                $script .= "            obj.childNodes.item(i).addEventListener('touchstart',  orderingTouchHandler, false);\n";
-                $script .= "            obj.childNodes.item(i).addEventListener('touchmove',   orderingTouchHandler, false);\n";
-                $script .= "            obj.childNodes.item(i).addEventListener('touchend',    orderingTouchHandler, false);\n";
-                $script .= "            obj.childNodes.item(i).addEventListener('touchcancel', orderingTouchHandler, false);\n";
-                $script .= "        }\n";
-                $script .= "        obj = null;\n";
-                $script .= "    } else {\n";
-                $script .= "        // try again in 1/2 a second - shouldn't be necessary !!\n";
-                $script .= "        setTimeout(new Function('orderingTouchHandlers(".'"'."'+sortableid+'".'"'.")'), 500);\n";
-                $script .= "    }\n";
-                $script .= "}\n";
-            }
-            $script .= "if (document.body.ontouchstart) {\n";
-            $script .= "    orderingTouchHandlers('$sortable_id');\n";
-            $script .= "}\n";
-
-            $script .= "//]]>\n";
-            $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
         }
 
         return $result;
