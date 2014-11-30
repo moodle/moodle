@@ -169,7 +169,7 @@
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
-    <location>yui</location>
+    <location>yuilib</location>
     <name>YUI</name>
     <license>BSD</license>
     <version>3.17.2</version>
