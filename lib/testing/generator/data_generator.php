@@ -167,7 +167,7 @@ EOD;
             $record['firstnamephonetic'] = $this->firstnames[$firstnamephonetic];
         }
 
-        if (!isset($record['lasttnamephonetic'])) {
+        if (!isset($record['lastnamephonetic'])) {
             $lastnamephonetic = rand(0, 59);
             $record['lastnamephonetic'] = $this->lastnames[$lastnamephonetic];
         }
