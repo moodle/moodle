@@ -1039,9 +1039,9 @@ class behat_general extends behat_base {
         } else {
             // Header can be in thead or tbody (first row), following xpath should work.
             $theadheaderxpath = "thead/tr[1]/th[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
-                $columnliteral . "])]";
+                    $columnliteral . "] or div[normalize-space(text())=" . $columnliteral . "])]";
             $tbodyheaderxpath = "tbody/tr[1]/td[(normalize-space(.)=" . $columnliteral . " or a[normalize-space(text())=" .
-                $columnliteral . "])]";
+                    $columnliteral . "] or div[normalize-space(text())=" . $columnliteral . "])]";
 
             // Check if column exists.
             $columnheaderxpath = $tablexpath . "[" . $theadheaderxpath . " | " . $tbodyheaderxpath . "]";
