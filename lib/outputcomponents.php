@@ -2824,7 +2824,13 @@ class custom_menu extends custom_menu_item {
                 $bits[1] = null;
             } else {
                 // Make sure the url is a moodle url
-                $bits[1] = new moodle_url(trim($bits[1]));
+                try {
+                    $bits[1] = new moodle_url(trim($bits[1]));
+                } catch (moodle_exception $exception) {
+                    // We're not actually worried about this, we don't want to mess up the display
+                    // just for a wrongly entered URL.
+                    $bits[1] = null;
+                }
             }
             if (!array_key_exists(2, $bits) or empty($bits[2])) {
                 // Set the title to null seeing as there isn't one
