@@ -53,20 +53,84 @@ class core_test_generator_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
     }
 
-    public function test_create() {
-        global $DB;
+    public function test_create_user() {
+        global $DB, $CFG;
 
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();
 
         $count = $DB->count_records('user');
+        $this->setCurrentTimeStart();
         $user = $generator->create_user();
-        $this->assertEquals($count+1, $DB->count_records('user'));
+        $this->assertEquals($count + 1, $DB->count_records('user'));
         $this->assertSame($user->username, clean_param($user->username, PARAM_USERNAME));
         $this->assertSame($user->email, clean_param($user->email, PARAM_EMAIL));
-        $user = $generator->create_user(array('firstname'=>'Žluťoučký', 'lastname'=>'Koníček'));
-        $this->assertSame($user->username, clean_param($user->username, PARAM_USERNAME));
-        $this->assertSame($user->email, clean_param($user->email, PARAM_EMAIL));
+        $this->assertSame(AUTH_PASSWORD_NOT_CACHED, $user->password);
+        $this->assertNotEmpty($user->firstnamephonetic);
+        $this->assertNotEmpty($user->lastnamephonetic);
+        $this->assertNotEmpty($user->alternatename);
+        $this->assertNotEmpty($user->middlename);
+        $this->assertSame('manual', $user->auth);
+        $this->assertSame('en', $user->lang);
+        $this->assertSame('1', $user->confirmed);
+        $this->assertSame('0', $user->deleted);
+        $this->assertTimeCurrent($user->timecreated);
+        $this->assertSame($user->timecreated, $user->timemodified);
+        $this->assertSame('0.0.0.0', $user->lastip);
+
+        $record = array(
+            'auth' => 'email',
+            'firstname' => 'Žluťoučký',
+            'lastname' => 'Koníček',
+            'firstnamephonetic' => 'Zhlutyoucky',
+            'lastnamephonetic' => 'Koniiczek',
+            'middlename' => 'Hopper',
+            'alternatename' => 'horse',
+            'idnumber' => 'abc1',
+            'mnethostid' => (string)$CFG->mnet_localhost_id,
+            'username' => 'konic666',
+            'password' => 'password1',
+            'email' => 'email@example.com',
+            'confirmed' => '1',
+            'lang' => 'cs',
+            'maildisplay' => '1',
+            'mailformat' => '0',
+            'maildigest' => '1',
+            'autosubscribe' => '0',
+            'trackforums' => '0',
+            'deleted' => '0',
+            'timecreated' => '666',
+        );
+        $user = $generator->create_user($record);
+        $this->assertEquals($count + 2, $DB->count_records('user'));
+        foreach ($record as $k => $v) {
+            if ($k === 'password') {
+                $this->assertTrue(password_verify($v, $user->password));
+            } else {
+                $this->assertSame($v, $user->{$k});
+            }
+        }
+
+        $record = array(
+            'firstname' => 'Some',
+            'lastname' => 'User',
+            'idnumber' => 'def',
+            'username' => 'user666',
+            'email' => 'email666@example.com',
+            'deleted' => '1',
+        );
+        $user = $generator->create_user($record);
+        $this->assertEquals($count + 3, $DB->count_records('user'));
+        $this->assertSame('', $user->idnumber);
+        $this->assertSame(md5($record['username']), $user->email);
+        $this->assertFalse(context_user::instance($user->id, IGNORE_MISSING));
+    }
+
+    public function test_create() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
 
         $count = $DB->count_records('course_categories');
         $category = $generator->create_category();
