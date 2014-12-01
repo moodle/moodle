@@ -4283,6 +4283,9 @@ function delete_user(stdClass $user) {
     // Purge user extra profile info.
     $DB->delete_records('user_info_data', array('userid' => $user->id));
 
+    // Purge log of previous password hashes.
+    $DB->delete_records('user_password_history', array('userid' => $user->id));
+
     // Last course access not necessary either.
     $DB->delete_records('user_lastaccess', array('userid' => $user->id));
     // Remove all user tokens.

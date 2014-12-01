@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 /**
  * Set forgotten password form definition.
@@ -64,8 +65,15 @@ class login_set_password_form extends moodleform {
         // Visible elements.
         $mform->addElement('static', 'username2', get_string('username'));
 
+        $policies = array();
         if (!empty($CFG->passwordpolicy)) {
-            $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
+            $policies[] = print_password_policy();
+        }
+        if (!empty($CFG->passwordreuselimit) and $CFG->passwordreuselimit > 0) {
+            $policies[] = get_string('informminpasswordreuselimit', 'auth', $CFG->passwordreuselimit);
+        }
+        if ($policies) {
+            $mform->addElement('static', 'passwordpolicyinfo', '', implode('<br />', $policies));
         }
         $mform->addElement('password', 'password', get_string('newpassword'), $autocomplete);
         $mform->addRule('password', get_string('required'), 'required', null, 'client');
@@ -101,6 +109,11 @@ class login_set_password_form extends moodleform {
             $errors['password'] = $errmsg;
             $errors['password2'] = $errmsg;
             return $errors;
+        }
+
+        if (user_is_previously_used_password($USER->id, $data['password'])) {
+            $errors['password'] = get_string('errorpasswordreused', 'core_auth');
+            $errors['password2'] = get_string('passwordreused', 'core_auth');
         }
 
         return $errors;
