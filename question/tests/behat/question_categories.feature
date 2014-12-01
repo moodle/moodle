@@ -1,8 +1,8 @@
 @core @core_question
 Feature: A teacher can put questions in categories in the question bank
-  In order to organize their questions
+  In order to organize my questions
   As a teacher
-  I need to put questions in categories
+  I create and edit categories and move questions between them
 
   Background:
     Given the following "users" exist:
@@ -14,50 +14,75 @@ Feature: A teacher can put questions in categories in the question bank
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "question categories" exist:
+      | contextlevel | reference | questioncategory | name           |
+      | Course       | C1        | Top              | Default for C1 |
+      | Course       | C1        | Default for C1   | Subcategory    |
+      | Course       | C1        | Top              | Used category  |
+    And the following "questions" exist:
+      | questioncategory | qtype | name                      | questiontext                  |
+      | Used category    | essay | Test question to be moved | Write about whatever you want |
     And I log in as "teacher1"
     And I follow "Course 1"
-    # Add 2 test categories.
-    And I follow "Question bank"
-    And I follow "Categories"
+
+  @javascript
+  Scenario: A new question category can be created
+    When I navigate to "Categories" node in "Course administration > Question bank"
     And I set the following fields to these values:
-      | Name | New Category 1 |
-      | Parent category | Top |
-    And I press "id_submitbutton"
+      | Name            | New Category 1    |
+      | Parent category | Top               |
+      | Category info   | Created as a test |
+    And I press "submitbutton"
+    Then I should see "New Category 1 (0)"
+    And I should see "Created as a test" in the "New Category 1" "list_item"
+
+  @javascript
+  Scenario: A question category can be edited
+    When I navigate to "Categories" node in "Course administration > Question bank"
+    And I click on "Edit" "link" in the "Subcategory" "list_item"
     And I set the following fields to these values:
-      | Name | New Category 2 |
-      | Parent category | Top |
-    And I press "id_submitbutton"
-    # Add test question.
-    And I add a "Essay" question filling the form with:
-      | Question name | my test question |
-      | Question text | my test question |
-      | Category      | New Category 1  |
+      | Name            | New name     |
+      | Category info   | I was edited |
+    And I press "Save changes"
+    Then I should see "New name"
+    And I should see "I was edited" in the "New name" "list_item"
+
+  @javascript
+  Scenario: An empty question category can be deleted
+    When I navigate to "Categories" node in "Course administration > Question bank"
+    And I click on "Delete" "link" in the "Subcategory" "list_item"
+    Then I should not see "Subcategory"
+
+  @javascript
+  Scenario: An non-empty question category can be deleted if you move the contents elsewhere
+    When I navigate to "Categories" node in "Course administration > Question bank"
+    And I click on "Delete" "link" in the "Used category" "list_item"
+    And I should see "The category 'Used category' contains 1 questions"
+    And I press "Save in category"
+    Then I should not see "Used category"
+    And I should see "Default for C1 (1)"
 
   @javascript
   Scenario: Move a question between categories via the question page
-    When I set the field "Select a category" to "New Category 1 (1)"
-    And I click on "my test question" "checkbox" in the "my test question" "table_row"
-    And I set the field "Question category" to "New Category 2"
+    When I navigate to "Questions" node in "Course administration > Question bank"
+    And I set the field "Select a category" to "Used category"
+    And I click on "Test question to be moved" "checkbox" in the "Test question to be moved" "table_row"
+    And I set the field "Question category" to "Subcategory"
     And I press "Move to >>"
-    Then I should see "my test question"
-    And the "Select a category" select box should contain "New Category 2 (1)"
-    And the "Select a category" select box should contain "New Category 1"
-    And the "Select a category" select box should not contain "New Category 1 (1)"
+    Then I should see "Test question to be moved"
+    And the field "Select a category" matches value "Subcategory (1)"
+    And the "Select a category" select box should contain "Used category"
+    And the "Select a category" select box should not contain "Used category (1)"
 
   @javascript
   Scenario: Move a question between categories via the question settings page
-    When I click on "Edit" "link" in the "my test question" "table_row"
+    When I navigate to "Questions" node in "Course administration > Question bank"
+    And I set the field "Select a category" to "Used category"
+    And I click on "Edit" "link" in the "Test question to be moved" "table_row"
     And I click on "Use this category" "checkbox"
-    And I set the field "Save in category" to "New Category 2"
+    And I set the field "Save in category" to "Subcategory"
     And I press "id_submitbutton"
-    Then I should see "my test question"
-    And the "Select a category" select box should contain "New Category 2 (1)"
-    And the "Select a category" select box should not contain "New Category 1 (1)"
-
-  @javascript
-  Scenario: Delete a question category
-    When I follow "Categories"
-    And I click on "Delete" "link" in the "//a[text()='New Category 1']/parent::b/parent::li" "xpath_element"
-    Then I should see "The category 'New Category 1' contains 1 questions"
-    And I press "Save in category"
-    And I should not see "New Category 1"
+    Then I should see "Test question to be moved"
+    And the field "Select a category" matches value "Subcategory (1)"
+    And the "Select a category" select box should contain "Used category"
+    And the "Select a category" select box should not contain "Used category (1)"
