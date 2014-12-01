@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['coursesort'] = 'Sort course list';
+$string['coursesort_help'] = 'This determines whether the list of courses that can be linked are sorted by sort order (i.e. the order set in Site administration > Courses > Manage courses and categories) or alphabetically by course setting.';
 $string['linkedcourse'] = 'Link course';
 $string['meta:config'] = 'Configure meta enrol instances';
 $string['meta:selectaslinked'] = 'Select course as meta linked';
