@@ -696,9 +696,8 @@ class qformat_default {
      * @return object question object
      */
     protected function readquestion($lines) {
-
-        $formatnotimplemented = get_string('formatnotimplemented', 'question');
-        echo "<p>$formatnotimplemented</p>";
+        // We should never get there unless the qformat plugin is broken.
+        throw new coding_exception('Question format plugin is missing important code: readquestion.');
 
         return null;
     }
@@ -930,8 +929,7 @@ class qformat_default {
      */
     protected function writequestion($question) {
         // if not overidden, then this is an error.
-        $formatnotimplemented = get_string('formatnotimplemented', 'question');
-        echo "<p>$formatnotimplemented</p>";
+        throw new coding_exception('Question format plugin is missing important code: writequestion.');
         return null;
     }
 
