@@ -1232,6 +1232,7 @@ class behat_general extends behat_base {
 
     /**
      * Prepare to detect whether or not a new page has loaded (or the same page reloaded) some time in the future.
+     *
      * @Given /^I start watching to see if a new page loads$/
      */
     public function i_start_watching_to_see_if_a_new_page_loads() {
@@ -1239,29 +1240,53 @@ class behat_general extends behat_base {
             throw new DriverException('Page load detection requires JavaScript.');
         }
 
+        if ($this->getSession()->getPage()->find('xpath', $this->get_page_load_xpath())) {
+            // If we find this node at this point we are already watching for a reload and the behat steps
+            // are out of order. We will treat this as an error - really it needs to be fixed as it indicates a problem.
+            throw new ExpectationException('Page load expectation error: page reloads are already been watched for.');
+        }
+
         $this->getSession()->evaluateScript(
                 'var span = document.createElement("span");
-                span.innerHTML = "' . self::PAGE_LOAD_DETECTION_STRING . '";
+                span.setAttribute("data-rel", "' . self::PAGE_LOAD_DETECTION_STRING . '");
                 span.setAttribute("style", "display: none;");
                 document.body.appendChild(span);');
     }
 
     /**
-     * Verify that a new page has loaded (or the same page has reloaded) since the last "I start watching to see if a new page loads" step.
+     * Verify that a new page has loaded (or the same page has reloaded) since the
+     * last "I start watching to see if a new page loads" step.
+     *
      * @Given /^a new page should have loaded since I started watching$/
      */
     public function a_new_page_should_have_loaded_since_i_started_watching() {
-        return array(new Given("\"{$this->get_page_load_xpath()}\" " .
-                "\"xpath_element\" should not exist"));
+        // As the node is inserted by code above it is either there or not, and we do not need spin and it is safe
+        // to use the native API here which is great as exception handling (the alternative is slow).
+        if ($this->getSession()->getPage()->find('xpath', $this->get_page_load_xpath())) {
+            // We don't want to find this node, if we do we have an error.
+            throw new ExpectationException(
+                'Page load expectation error: a new page has not been loaded when it should have been.',
+                $this->getSession()
+            );
+        }
     }
 
     /**
-     * Verify that a new page has not loaded (or the same page has reloaded) since the last "I start watching to see if a new page loads" step.
+     * Verify that a new page has not loaded (or the same page has reloaded) since the
+     * last "I start watching to see if a new page loads" step.
+     *
      * @Given /^a new page should not have loaded since I started watching$/
      */
     public function a_new_page_should_not_have_loaded_since_i_started_watching() {
-        return array(new Given("\"{$this->get_page_load_xpath()}\" " .
-                "\"xpath_element\" should exist"));
+        // We use our API here as we can use the exception handling provided by it.
+        $this->find(
+            'xpath',
+            $this->get_page_load_xpath(),
+            new ExpectationException(
+                'Page load expectation error: A new page has been loaded when it should not have been.',
+                $this->getSession()
+            )
+        );
     }
 
     /**
@@ -1270,6 +1295,6 @@ class behat_general extends behat_base {
      * @return string xpath expression.
      */
     protected function get_page_load_xpath() {
-        return "//span[@style = 'display: none;'][. = '" . self::PAGE_LOAD_DETECTION_STRING . "']";
+        return "//span[@data-rel = '" . self::PAGE_LOAD_DETECTION_STRING . "']";
     }
 }
