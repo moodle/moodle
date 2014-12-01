@@ -46,7 +46,7 @@ class file_temp_cleanup_task extends scheduled_task {
 
         $tmpdir = $CFG->tempdir;
         // Default to last weeks time.
-        $time = strtotime('-1 week');
+        $time = time() - ($CFG->tempdatafoldercleanup * 3600);
 
         $dir = new \RecursiveDirectoryIterator($tmpdir);
         // Show all child nodes prior to their parent.
