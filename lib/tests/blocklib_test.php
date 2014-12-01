@@ -408,6 +408,56 @@ class core_blocklib_testcase extends advanced_testcase {
         $blocks = $blockmanager->get_blocks_for_region($regionname);
         $this->assertContainsBlocksOfType(array($blockname), $blocks);
     }
+
+    public function test_matching_page_type_patterns_from_pattern() {
+        $pattern = '*';
+        $expected = array('*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'admin-*';
+        $expected = array('admin-*', 'admin', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'blog-index';
+        $expected = array('blog-index', 'blog-index-*', 'blog-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'course-index-*';
+        $expected = array('course-index-*', 'course-index', 'course-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'course-index-category';
+        $expected = array('course-index-category', 'course-index-category-*', 'course-index-*', 'course-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-assign-view';
+        $expected = array('mod-assign-view', 'mod-*-view', 'mod-assign-view-*', 'mod-assign-*', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-assign-index';
+        $expected = array('mod-assign-index', 'mod-*-index', 'mod-assign-index-*', 'mod-assign-*', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-forum-*';
+        $expected = array('mod-forum-*', 'mod-forum', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-*-view';
+        $expected = array('mod-*-view', 'mod', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-*-index';
+        $expected = array('mod-*-index', 'mod', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'my-index';
+        $expected = array('my-index', 'my-index-*', 'my-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'user-profile';
+        $expected = array('user-profile', 'user-profile-*', 'user-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+    }
 }
 
 /**

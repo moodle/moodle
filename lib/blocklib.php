@@ -1722,6 +1722,30 @@ function matching_page_type_patterns($pagetype) {
 }
 
 /**
+ * Give an specific pattern, return all the page type patterns that would also match it.
+ *
+ * @param  string $pattern the pattern, e.g. 'mod-forum-*' or 'mod-quiz-view'.
+ * @return array of all the page type patterns matching.
+ */
+function matching_page_type_patterns_from_pattern($pattern) {
+    $patterns = array($pattern);
+    if ($pattern === '*') {
+        return $patterns;
+    }
+
+    // Only keep the part before the star because we will append -* to all the bits.
+    $star = strpos($pattern, '-*');
+    if ($star !== false) {
+        $pattern = substr($pattern, 0, $star);
+    }
+
+    $patterns = array_merge($patterns, matching_page_type_patterns($pattern));
+    $patterns = array_unique($patterns);
+
+    return $patterns;
+}
+
+/**
  * Given a specific page type, parent context and currect context, return all the page type patterns
  * that might be used by this block.
  *
