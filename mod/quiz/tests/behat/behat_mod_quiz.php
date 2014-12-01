@@ -53,10 +53,11 @@ class behat_mod_quiz extends behat_question_base {
     public function i_add_question_to_the_quiz_with($questiontype, $quizname, TableNode $questiondata) {
         $quizname = $this->escape($quizname);
         $editquiz = $this->escape(get_string('editquiz', 'quiz'));
+        $quizadmin = $this->escape(get_string('pluginadministration', 'quiz'));
         $addaquestion = $this->escape(get_string('addaquestion', 'quiz'));
         return array_merge(array(
             new Given("I follow \"$quizname\""),
-            new Given("I follow \"$editquiz\""),
+            new Given("I navigate to \"$editquiz\" node in \"$quizadmin\""),
             new Given("I press \"$addaquestion\""),
                 ), $this->finish_adding_question($questiontype, $questiondata));
     }
