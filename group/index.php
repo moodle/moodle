@@ -163,11 +163,9 @@ echo '<form id="groupeditform" action="index.php" method="post">'."\n";
 echo '<div>'."\n";
 echo '<input type="hidden" name="id" value="' . $courseid . '" />'."\n";
 
-echo '<table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">'."\n";
-echo '<tr>'."\n";
+echo html_writer::start_tag('div', array('class' => 'groupmanagementtable boxaligncenter'));
+echo html_writer::start_tag('div', array('class' => 'groups'));
 
-
-echo "<td>\n";
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
 $onchange = 'M.core_group.membersCombo.refreshMembers();';
@@ -220,8 +218,8 @@ echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocr
 echo '<p><input type="submit" name="act_showimportgroups" id="showimportgroups" value="'
         . get_string('importgroups', 'core_group') . '" /></p>'."\n";
 
-echo '</td>'."\n";
-echo '<td>'."\n";
+echo html_writer::end_tag('div');
+echo html_writer::start_tag('div', array('class' => 'members'));
 
 echo '<p><label for="members"><span id="memberslabel">'.
     get_string('membersofselectedgroup', 'group').
@@ -255,9 +253,8 @@ echo '</select>'."\n";
 
 echo '<p><input type="submit" ' . $showaddmembersform_disabled . ' name="act_showaddmembersform" '
         . 'id="showaddmembersform" value="' . get_string('adduserstogroup', 'group'). '" /></p>'."\n";
-echo '</td>'."\n";
-echo '</tr>'."\n";
-echo '</table>'."\n";
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('div');
 
 //<input type="hidden" name="rand" value="om" />
 echo '</div>'."\n";
