@@ -62,7 +62,7 @@ class comment_manager {
         $comments = array();
 
         $usernamefields = get_all_user_name_fields(true, 'u');
-        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, $usernamefields, c.timecreated
+        $sql = "SELECT c.id, c.contextid, c.itemid, c.component, c.commentarea, c.userid, c.content, $usernamefields, c.timecreated
                   FROM {comments} c
                   JOIN {user} u
                        ON u.id=c.userid
