@@ -40,6 +40,7 @@ Feature: Users can comment on wiki pages
     And I set the following fields to these values:
       | Comment | student 1 original comment |
     And I press "Save"
+    And I wait to be redirected
 
   @javascript
   Scenario: Student can edit and delete their own comment
