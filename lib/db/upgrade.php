@@ -4058,5 +4058,21 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014120100.00) {
+
+        // Define field sslverification to be added to mnet_host.
+        $table = new xmldb_table('mnet_host');
+        $field = new xmldb_field('sslverification', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'applicationid');
+
+        // Conditionally launch add field sslverification.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014120100.00);
+    }
+
+
     return true;
 }
