@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IMS CP configuration form
+ * This file contains the forms to create and edit an instance of this module
  *
  * @package mod_imscp
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
@@ -25,19 +24,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once ($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->libdir.'/filelib.php');
 
+/**
+ * IMS CP configuration form
+ *
+ * @package mod_imscp
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_imscp_mod_form extends moodleform_mod {
-    function definition() {
+    /**
+     * Define the form - called by parent constructor
+     */
+    public function definition() {
         global $CFG, $DB;
         $mform = $this->_form;
 
         $config = get_config('imscp');
 
-        //-------------------------------------------------------
+        // Title and description.
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
+        $mform->addElement('text', 'name', get_string('name'), array('size' => '48'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -47,24 +56,28 @@ class mod_imscp_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $this->add_intro_editor($config->requiremodintro);
 
-        //-------------------------------------------------------
+        // IMS-CP file upload.
         $mform->addElement('header', 'content', get_string('contentheader', 'imscp'));
         $mform->setExpanded('content', true);
         $mform->addElement('filepicker', 'package', get_string('packagefile', 'imscp'));
 
-        $options = array('-1'=>get_string('all'), '0'=>get_string('no'), '1'=>'1', '2'=>'2', '5'=>'5', '10'=>'10', '20'=>'20');
+        $options = array('-1' => get_string('all'), '0' => get_string('no'),
+                         '1' => '1', '2' => '2', '5' => '5', '10' => '10', '20' => '20');
         $mform->addElement('select', 'keepold', get_string('keepold', 'imscp'), $options);
         $mform->setDefault('keepold', $config->keepold);
         $mform->setAdvanced('keepold', $config->keepold_adv);
 
-        //-------------------------------------------------------
         $this->standard_coursemodule_elements();
 
-        //-------------------------------------------------------
         $this->add_action_buttons();
     }
 
-    function validation($data, $files) {
+    /**
+     * Perform minimal validation on the settings form
+     * @param array $data
+     * @param array $files
+     */
+    public function validation($data, $files) {
         global $USER;
 
         if ($errors = parent::validation($data, $files)) {
@@ -83,7 +96,7 @@ class mod_imscp_mod_form extends moodleform_mod {
             $file = reset($files);
             if ($file->get_mimetype() != 'application/zip') {
                 $errors['package'] = get_string('invalidfiletype', 'error', '', $file);
-                // better delete current file, it is not usable anyway
+                // Better delete current file, it is not usable anyway.
                 $fs->delete_area_files($usercontext->id, 'user', 'draft', $data['package']);
             }
         }
