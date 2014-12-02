@@ -64,6 +64,12 @@ class behat_general extends behat_base {
     const PAGE_LOAD_DETECTION_STRING = 'new_page_not_loaded_since_behat_started_watching';
 
     /**
+     * @var $pageloaddetectionrunning boolean Used to ensure that page load detection was started before a page reload
+     * was checked for.
+     */
+    private $pageloaddetectionrunning = null;
+
+    /**
      * Opens Moodle homepage.
      *
      * @Given /^I am on homepage$/
@@ -1246,6 +1252,8 @@ class behat_general extends behat_base {
             throw new ExpectationException('Page load expectation error: page reloads are already been watched for.');
         }
 
+        $this->pageloaddetectionrunning = true;
+
         $this->getSession()->evaluateScript(
                 'var span = document.createElement("span");
                 span.setAttribute("data-rel", "' . self::PAGE_LOAD_DETECTION_STRING . '");
@@ -1269,6 +1277,15 @@ class behat_general extends behat_base {
                 $this->getSession()
             );
         }
+
+        if (!$this->pageloaddetectionrunning) {
+            throw new ExpectationException(
+                'Page load expectation error: page load tracking was not started.',
+                $this->getSession());
+        }
+
+        // Cancel the trakcing of pageloaddetectionrunning.
+        $this->pageloaddetectionrunning = false;
     }
 
     /**
