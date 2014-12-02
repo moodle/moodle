@@ -1847,19 +1847,13 @@ class assign {
             // Set it to the default.
             $grade->attemptnumber = 0;
         }
-        $result = $DB->update_record('assign_grades', $grade);
+        $DB->update_record('assign_grades', $grade);
 
-        // If the conditions are met, allow another attempt.
         $submission = null;
         if ($this->get_instance()->teamsubmission) {
             $submission = $this->get_group_submission($grade->userid, 0, false);
         } else {
             $submission = $this->get_user_submission($grade->userid, false);
-        }
-        if ($submission && $submission->attemptnumber == $grade->attemptnumber) {
-            $this->reopen_submission_if_required($grade->userid,
-                                                 $submission,
-                                                 $reopenattempt);
         }
 
         // Only push to gradebook if the update is for the latest attempt.
@@ -1868,11 +1862,16 @@ class assign {
             return true;
         }
 
-        if ($result) {
-            $this->gradebook_item_update(null, $grade);
-            \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
+        $this->gradebook_item_update(null, $grade);
+
+        // If the conditions are met, allow another attempt.
+        if ($submission) {
+            $this->reopen_submission_if_required($grade->userid,
+                    $submission,
+                    $reopenattempt);
         }
-        return $result;
+        \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
+        return true;
     }
 
     /**
