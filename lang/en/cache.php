@@ -100,7 +100,7 @@ $string['invalidplugin'] = 'Invalid plugin';
 $string['invalidstore'] = 'Invalid cache store provided';
 $string['lockdefault'] = 'Default';
 $string['locking'] = 'Locking';
-$string['locking_help'] = 'Locking is an essential part of caching, its a process in which exclusive access to cached data is requested by code so that no other code can read the data or overwrite it at the same time. The locking method determines how that lock is acquired and checked.';
+$string['locking_help'] = 'Locking is a mechanism that restricts access to cached data to one process at a time to prevent the data from being overwritten. The locking method determines how the lock is acquired and checked.';
 $string['lockname'] = 'Name';
 $string['locknamedesc'] = 'The name must be unique and can only consist of the characters: a-zA-Z_';
 $string['locknamenotunique'] = 'The name you have selected is not unique. Please select a unique name.';
@@ -170,7 +170,7 @@ $string['untestable'] = 'Untestable';
 $string['userinputsharingkey'] = 'Custom key for sharing';
 $string['userinputsharingkey_help'] = 'Enter your own private key here. When you set up other stores on other sites you wish to share data with make sure you set the exact same key there.';
 
-// Deprecated since 2.9
+// Deprecated since 2.9.
 $string['lockingmeans'] = 'Locking mechanism';
 $string['lockmethod'] = 'Lock method';
 $string['lockmethod_help'] = 'This is the method used for locking when required of this store.';
