@@ -847,4 +847,41 @@ class manager {
         \core\session\manager::set_user($user);
         $event->trigger();
     }
+
+    /**
+     * Add a JS session keepalive to the page.
+     *
+     * A JS session keepalive script will be called to update the session modification time every $frequency seconds.
+     *
+     * Upon failure, the specified error message will be shown to the user.
+     *
+     * @param string $identifier The string identifier for the message to show on failure.
+     * @param string $component The string component for the message to show on failure.
+     * @param int $frequency The update frequency in seconds.
+     * @throws coding_exception IF the frequency is longer than the session lifetime.
+     */
+    public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null) {
+        global $CFG, $PAGE;
+
+        if ($frequency) {
+            if ($frequency > $CFG->sessiontimeout) {
+                // Sanity check the frequency.
+                throw new \coding_exception('Keepalive frequency is longer than the session lifespan.');
+            }
+        } else {
+            // A frequency of sessiontimeout / 3 allows for one missed request whilst still preserving the session.
+            $frequency = $CFG->sessiontimeout / 3;
+        }
+
+        // Add the session keepalive script to the list of page output requirements.
+        $sessionkeepaliveurl = new \moodle_url('/lib/sessionkeepalive_ajax.php');
+        $PAGE->requires->string_for_js($identifier, $component);
+        $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array(array(
+            // The JS config takes this is milliseconds rather than seconds.
+            'frequency' => $frequency * 1000,
+            'message' => array($identifier, $component),
+            'uri' => $sessionkeepaliveurl->out(),
+        )));
+    }
+
 }
