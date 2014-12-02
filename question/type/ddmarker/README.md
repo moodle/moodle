@@ -17,7 +17,7 @@ other versions available for Moodle 2.3+.
 
 ###Installation
 
-####Installation Using Git 
+####Installation Using Git
 
 To install using git for a 2.3+ Moodle installation, type this command in the
 root of your Moodle install:
@@ -34,7 +34,7 @@ unzip it into the question/type folder, and then rename the new folder to ddmark
 
 The imagetarget question type question type will not be upgraded to use with Moodle beyond version 1.9 it seems.
 
-But you can convert your existing image target questions and question attempt data to be drag and drop marker questions and they 
+But you can convert your existing image target questions and question attempt data to be drag and drop marker questions and they
 will work as the image target previously worked.
 
 There are two ways to convert your imagetarget questions to ddmarker question types.
