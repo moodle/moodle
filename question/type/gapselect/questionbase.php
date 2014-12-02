@@ -52,7 +52,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     public $incorrectfeedback;
     /** @var int format of $incorrectfeedback. */
     public $incorrectfeedbackformat;
-    
+
     /** @var array of arrays. The keys are the choice group numbers. The values
      * are arrays of qtype_gapselect_choice objects. */
     public $choices;
