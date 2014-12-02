@@ -67,11 +67,10 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
                                                                null, self::file_picker_options());
         $mform->closeHeaderBefore('dropzoneheader');
 
+        // Add the draggable image fields & drop zones to the form.
         list($itemrepeatsatstart, $imagerepeats) = $this->get_drag_item_repeats();
-        $this->definition_drop_zones($mform, $imagerepeats);
-
-        // Add the draggable image fields to the form.
         $this->definition_draggable_items($mform, $itemrepeatsatstart);
+        $this->definition_drop_zones($mform, $imagerepeats);
 
         $this->add_combined_feedback_fields(true);
         $this->add_interactive_settings(true, true);
