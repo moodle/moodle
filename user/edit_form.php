@@ -133,17 +133,23 @@ class user_edit_form extends moodleform {
             $fields = get_user_fieldnames();
             $authplugin = get_auth_plugin($user->auth);
             foreach ($fields as $field) {
-                if (!$mform->elementExists($field)) {
+                if ($field === 'description') {
+                    // Hard coded hack for description field. See MDL-37704 for details.
+                    $formfield = 'description_editor';
+                } else {
+                    $formfield = $field;
+                }
+                if (!$mform->elementExists($formfield)) {
                     continue;
                 }
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable})) {
                     if ($authplugin->config->{$configvariable} === 'locked') {
-                        $mform->hardFreeze($field);
-                        $mform->setConstant($field, $user->$field);
+                        $mform->hardFreeze($formfield);
+                        $mform->setConstant($formfield, $user->$field);
                     } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $user->$field != '') {
-                        $mform->hardFreeze($field);
-                        $mform->setConstant($field, $user->$field);
+                        $mform->hardFreeze($formfield);
+                        $mform->setConstant($formfield, $user->$field);
                     }
                 }
             }
