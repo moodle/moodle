@@ -33,10 +33,6 @@ M.mod_imscp.init = function(Y) {
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
-        var imscp_activate_item_by_index = function(index) {
-            imscp_activate_item(Y.YUI2.widget.TreeView.getNode('imscp_tree', index));
-        }
-
         var imscp_activate_item = function(node) {
             if (!node) {
                 return;
@@ -45,13 +41,14 @@ M.mod_imscp.init = function(Y) {
             imscp_current_node.highlight();
 
             var content = new Y.YUI2.util.Element('imscp_content');
+            var obj;
             if (node.href) {
                 try {
                     // First try IE way - it can not set name attribute later
                     // and also it has some restrictions on DOM access from object tag.
-                    var obj = document.createElement('<iframe id="imscp_object" src="' + node.href + '">');
+                    obj = document.createElement('<iframe id="imscp_object" src="' + node.href + '">');
                 } catch (e) {
-                    var obj = document.createElement('object');
+                    obj = document.createElement('object');
                     obj.setAttribute('id', 'imscp_object');
                     obj.setAttribute('type', 'text/html');
                     obj.setAttribute('data', node.href);
@@ -157,7 +154,7 @@ M.mod_imscp.init = function(Y) {
             } else if (node.children) {
                 return imscp_firstlinked(node.children[0]);
             } else {
-                return null
+                return null;
             }
         };
 
