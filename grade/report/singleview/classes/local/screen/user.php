@@ -101,7 +101,11 @@ class user extends tablelike implements selectable_items {
         global $DB;
 
         if (!$selfitemisempty) {
-            $this->item = $DB->get_record('user', array('id' => $this->itemid));
+            $validusers = $this->load_users();
+            if (!isset($validusers[$this->itemid])) {
+                print_error('invaliduserid');
+            }
+            $this->item = $validusers[$this->itemid];
         }
 
         $params = array('courseid' => $this->courseid);
@@ -307,7 +311,7 @@ class user extends tablelike implements selectable_items {
             new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
-                'groupid' => $this->groupid,
+                'group' => $this->groupid,
                 'itemid' => $this->itemid,
                 'item' => 'user'
             ))
