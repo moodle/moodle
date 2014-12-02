@@ -74,17 +74,10 @@ class gradereport_singleview extends grade_report {
      * @param context_course $context
      * @param string $itemtype Should be user, select or grade
      * @param int $itemid The id of the user or grade item
-     * @param int $groupid (optional) The current groupid.
+     * @param string $unused Used to be group id but that was removed and this is now unused.
      */
-    public function __construct($courseid, $gpr, $context, $itemtype, $itemid, $groupid=null) {
+    public function __construct($courseid, $gpr, $context, $itemtype, $itemid, $unused = null) {
         parent::__construct($courseid, $gpr, $context);
-
-        $screenclass = "\\gradereport_singleview\\local\\screen\\${itemtype}";
-
-        $this->screen = new $screenclass($courseid, $itemid, $groupid);
-
-        // Load custom or predifined js.
-        $this->screen->js();
 
         $base = '/grade/report/singleview/index.php';
 
@@ -93,11 +86,19 @@ class gradereport_singleview extends grade_report {
         $this->baseurl = new moodle_url($base, $idparams);
 
         $this->pbarurl = new moodle_url($base, $idparams + array(
-            'item' => $itemtype,
-            'itemid' => $itemid
-        ));
+                'item' => $itemtype,
+                'itemid' => $itemid
+            ));
 
+        //  The setup_group method is used to validate group mode and permissions and define the currentgroup value.
         $this->setup_groups();
+
+        $screenclass = "\\gradereport_singleview\\local\\screen\\${itemtype}";
+
+        $this->screen = new $screenclass($courseid, $itemid, $this->currentgroup);
+
+        // Load custom or predifined js.
+        $this->screen->js();
     }
 
     /**

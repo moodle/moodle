@@ -76,10 +76,7 @@ $USER->grade_last_report[$course->id] = 'singleview';
 // this must be done before constructing of the grade tree.
 grade_regrade_final_grades($courseid);
 
-$report = new gradereport_singleview(
-    $courseid, $gpr, $context,
-    $itemtype, $itemid, $groupid
-);
+$report = new gradereport_singleview($courseid, $gpr, $context, $itemtype, $itemid);
 
 $reportname = $report->screen->heading();
 
@@ -130,7 +127,7 @@ if (!empty($options)) {
 
     $relreport = new gradereport_singleview(
                 $courseid, $gpr, $context,
-                $report->screen->item_type(), $optionitemid, $groupid
+                $report->screen->item_type(), $optionitemid
     );
     $reloptions = $relreport->screen->options();
     $reloptionssorting = array_keys($relreport->screen->options());

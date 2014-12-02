@@ -375,4 +375,29 @@ abstract class screen {
     public function supports_next_prev() {
         return true;
     }
+
+    /**
+     * Load a valid list of users for this gradebook as the screen "items".
+     * @return array $users A list of enroled users.
+     */
+    protected function load_users() {
+        global $CFG;
+
+        // Create a graded_users_iterator because it will properly check the groups etc.
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $this->context);
+
+        require_once($CFG->dirroot.'/grade/lib.php');
+        $gui = new \graded_users_iterator($this->course, null, $this->groupid);
+        $gui->require_active_enrolment($showonlyactiveenrol);
+        $gui->init();
+
+        // Flatten the users.
+        $users = array();
+        while ($user = $gui->next_user()) {
+            $users[$user->user->id] = $user->user;
+        }
+        return $users;
+    }
 }
