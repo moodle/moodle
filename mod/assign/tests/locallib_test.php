@@ -887,6 +887,13 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(2, count($messages));
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
+
+        // Regrading a grade causes a notification to the user.
+        $data->sendstudentnotifications = true;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+        assign::cron();
+        $messages = $sink->get_messages();
+        $this->assertEquals(3, count($messages));
     }
 
     public function test_is_graded() {
