@@ -881,6 +881,16 @@ ORDER BY
     }
 
     /**
+     * Delete a question_attempts row to reflect any changes in a question_attempt
+     * (but not any of its steps).
+     * @param question_attempt $qa the question attempt that has been deleted.
+     */
+    public function delete_question_attempt(question_attempt $qa) {
+        $conditions = array('questionusageid'  => $qa->get_usage_id(), 'slot' => $qa->get_slot());
+        $this->db->delete_records('question_attempts', $conditions);
+    }
+
+    /**
      * Delete a question_usage_by_activity and all its associated
      *
      * You should not call this method directly. You should use
@@ -1252,6 +1262,12 @@ class question_engine_unit_of_work implements question_usage_observer {
 
     /**
      * @var array list of slot => {@link question_attempt}s that
+     * were already in the usage, and which have been deleted.
+     */
+    protected $attemptsdeleted = array();
+
+    /**
+     * @var array list of slot => {@link question_attempt}s that
      * have been added to the usage.
      */
     protected $attemptsadded = array();
@@ -1293,8 +1309,28 @@ class question_engine_unit_of_work implements question_usage_observer {
         }
     }
 
+    /**
+     * Notify when attempt deleted
+     *
+     * @see question_usage_observer::notify_attempt_deleted()
+     */
+    public function notify_attempt_deleted(question_attempt $qa) {
+        $slot = $qa->get_slot();
+        if (!array_key_exists($slot, $this->attemptsadded)) {
+            $this->attemptsdeleted[$slot] = $qa;
+        }
+    }
+
+    /**
+     * Notify when attempt added
+     *
+     * @see question_usage_observer::notify_attempt_added()
+     */
     public function notify_attempt_added(question_attempt $qa) {
-        $this->attemptsadded[$qa->get_slot()] = $qa;
+        $slot = $qa->get_slot();
+        if (!array_key_exists($slot, $this->attemptsadded)) {
+            $this->attemptsadded[$slot] = $qa;
+        }
     }
 
     public function notify_step_added(question_attempt_step $step, question_attempt $qa, $seq) {
@@ -1435,6 +1471,10 @@ class question_engine_unit_of_work implements question_usage_observer {
             list($step, $questionattemptid, $seq) = $stepinfo;
             $stepdata[] = $dm->insert_question_attempt_step(
                     $step, $questionattemptid, $seq, $this->quba->get_owning_context());
+        }
+
+        foreach ($this->attemptsdeleted as $qa) {
+            $dm->delete_question_attempt($qa);
         }
 
         foreach ($this->attemptsadded as $qa) {
@@ -1598,9 +1638,9 @@ class question_file_loader implements question_response_files {
     protected $name;
 
     /**
-    * @var string the value to stored in the question_attempt_step_data to
+     * @var string the value to stored in the question_attempt_step_data to
      * represent these files.
-    */
+     */
     protected $value;
 
     /** @var int the context id that the files belong to. */

@@ -40,4 +40,13 @@ class qbehaviour_interactive_type extends question_behaviour_type {
     public function allows_multiple_submitted_responses() {
         return true;
     }
+
+    /**
+     * Allow user to re-attempt graded questions during a quiz attempt
+     */
+    public function user_can_reattempt_graded_question() {
+        return true;
+    }
+
+
 }

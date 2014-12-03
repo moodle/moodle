@@ -102,6 +102,14 @@ abstract class question_behaviour_type {
     public function allows_multiple_submitted_responses() {
         return false;
     }
+
+    /**
+     * Allow user to reattmpt graded question during a quiz attempt
+     * @return boolean
+     */
+    public function user_can_reattempt_graded_question() {
+        return false;
+    }
 }
 
 

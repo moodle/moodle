@@ -39,4 +39,11 @@ class qbehaviour_immediatecbm_type extends qbehaviour_deferredcbm_type {
     public function get_unused_display_options() {
         return array();
     }
+
+    /**
+     * Allow user to re-attempt graded questions during a quiz attempt
+     */
+    public function user_can_reattempt_graded_question() {
+        return true;
+    }
 }

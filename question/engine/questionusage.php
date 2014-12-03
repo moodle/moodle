@@ -823,6 +823,22 @@ class question_usage_by_activity {
     }
 
     /**
+     * Replace a question in this usage.
+     * @param int $slot the number used to identify this question within this usage.*
+     */
+    public function replace_question($slot) {
+        global $OUTPUT;
+        $oldqa = $this->get_question_attempt($slot);
+        $newqa = new question_attempt($oldqa->get_question(), $oldqa->get_usage_id(), $this->observer);
+        $newqa->set_database_id($oldqa->get_database_id());
+        $newqa->set_slot($oldqa->get_slot());
+        $this->questionattempts[$slot] = $newqa;
+        $this->observer->notify_attempt_deleted($oldqa);
+        $this->observer->notify_attempt_added($newqa);
+        $this->start_question($slot);
+    }
+
+    /**
      * Regrade all the questions in this usage (without changing their max mark).
      * @param bool $finished whether each question should be forced to be finished
      *      after the regrade, or whether it may still be in progress (default false).
@@ -980,6 +996,12 @@ interface question_usage_observer {
     public function notify_attempt_added(question_attempt $qa);
 
     /**
+     * Called when the fields of a question attempt in this usage are deleted.
+     * @param question_attempt $qa
+     */
+    public function notify_attempt_deleted(question_attempt $qa);
+
+    /**
      * Called when a new step is added to a question attempt in this usage.
      * @param question_attempt_step $step the new step.
      * @param question_attempt $qa the usage it is being added to.
@@ -1016,6 +1038,8 @@ class question_usage_null_observer implements question_usage_observer {
     public function notify_modified() {
     }
     public function notify_attempt_modified(question_attempt $qa) {
+    }
+    public function notify_attempt_deleted(question_attempt $qa) {
     }
     public function notify_attempt_added(question_attempt $qa) {
     }

@@ -821,5 +821,19 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015030500, 'quiz');
     }
 
+    if ($oldversion < 2015030900) {
+        // Define field reattemptgradedquestions to be added to quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('reattemptgradedquestions', XMLDB_TYPE_INTEGER, '4', null, null, null, 0, 'completionpass');
+
+        // Conditionally launch add field completionpass.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015030900, 'quiz');
+    }
+
     return true;
 }

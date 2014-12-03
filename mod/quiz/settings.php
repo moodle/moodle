@@ -128,6 +128,11 @@ if ($ADMIN->fulltree) {
             get_string('howquestionsbehave', 'question'), get_string('howquestionsbehave_desc', 'quiz'),
             'deferredfeedback'));
 
+    // Restart completed questions (reattemptgradedquestions).
+    $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/reattemptgradedquestions',
+            get_string('restartgradedquestions', 'quiz'), get_string('configrestartgradedquestions', 'quiz'),
+            array('value' => 0, 'adv' => true)));
+
     // Each attempt builds on last.
     $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attemptonlast',
             get_string('eachattemptbuildsonthelast', 'quiz'),

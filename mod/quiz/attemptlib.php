@@ -1528,6 +1528,44 @@ class quiz_attempt {
     }
 
     /**
+     * Process replace question action
+     * @param int $slot
+     * @param int $timestamp
+     */
+    public function process_replace_question_actions($slot, $timestamp) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $this->quba->replace_question($slot);
+        question_engine::save_questions_usage_by_activity($this->quba);
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Return a button which allows students reattempting the current question
+     *
+     * @param int $slot, the number of the current slot
+     */
+    public function restart_question_button($slot) {
+        //  If 'reattemptgradedquestions' field is not set, do not display the 'Restart question' button.
+        if (!$this->get_quiz()->reattemptgradedquestions) {
+            return;
+        }
+        $qa = $this->get_question_attempt($slot);
+
+        // If question is not graded, do not display the 'Restart question' button.
+        if (!$qa->get_state()->is_graded()) {
+            return;
+        }
+        $buttonvalue = get_string('restartquestion', 'question');
+        return html_writer::tag('div',
+                "<input class='submit btn resatrt-question-btn' type='submit' value='$buttonvalue' name='restartquestioninslot'>
+                    <input type='hidden' value='$slot' name='restartquestionincurrentslot'>");
+    }
+
+    /**
      * Process all the autosaved data that was part of the current request.
      *
      * @param int $timestamp the timestamp that should be stored as the modifed
