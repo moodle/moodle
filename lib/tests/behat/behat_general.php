@@ -1298,6 +1298,8 @@ class behat_general extends behat_base {
      * @Given /^a new page should not have loaded since I started watching$/
      */
     public function a_new_page_should_not_have_loaded_since_i_started_watching() {
+        $session = $this->getSession();
+
         // Make sure page load tracking was started.
         if (!$this->pageloaddetectionrunning) {
             throw new ExpectationException(
