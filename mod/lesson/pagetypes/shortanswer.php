@@ -350,21 +350,31 @@ class lesson_display_answer_form_shortanswer extends moodleform {
             }
         }
 
+        $placeholder = false;
+        if (preg_match('/_____+/', $contents, $matches)) {
+            $placeholder = $matches[0];
+            $contentsparts = explode( $placeholder, $contents, 2);
+            $attrs['size'] = round(strlen($placeholder) * 1.1);
+        }
+
         $mform->addElement('header', 'pageheader');
-
-        $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
-
-        $options = new stdClass;
-        $options->para = false;
-        $options->noclean = true;
-
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'pageid');
         $mform->setType('pageid', PARAM_INT);
 
-        $mform->addElement('text', 'answer', get_string('youranswer', 'lesson'), $attrs);
+        if ($placeholder) {
+            $contentsgroup = array();
+            $contentsgroup[] = $mform->createElement('static', '', '', $contentsparts[0]);
+            $contentsgroup[] = $mform->createElement('text', 'answer', '', $attrs);
+            $contentsgroup[] = $mform->createElement('static', '', '', $contentsparts[1]);
+            $mform->addGroup($contentsgroup, '', '', '', false);
+        } else {
+            $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
+            $mform->addElement('text', 'answer', get_string('youranswer', 'lesson'), $attrs);
+
+        }
         $mform->setType('answer', PARAM_TEXT);
 
         if ($hasattempt) {
