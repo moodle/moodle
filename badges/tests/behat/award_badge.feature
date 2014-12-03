@@ -132,7 +132,7 @@ Feature: Award badges
     And I follow "Edit settings"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -185,7 +185,7 @@ Feature: Award badges
     And I follow "Edit settings"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |

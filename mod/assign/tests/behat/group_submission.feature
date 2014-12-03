@@ -47,7 +47,7 @@ Feature: Group assignment submissions
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Group mode | Separate groups |
-    And I press "Save changes"
+    And I press "Save and display"
     And I expand "Users" node
     And I follow "Groups"
     And I add "Student 0 (student0@asd.com)" user to "Group 1" group members

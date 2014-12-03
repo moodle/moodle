@@ -32,7 +32,7 @@ Feature: Set a quiz to be marked complete when the student passes
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name        | Test quiz name        |
       | Description | Test quiz description |

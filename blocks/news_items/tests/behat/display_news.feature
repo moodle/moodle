@@ -34,12 +34,12 @@ Feature: Latest news block displays the course latest news
     And I follow "Edit settings"
     And I set the following fields to these values:
       | News items to show | 2 |
-    And I press "Save changes"
+    And I press "Save and display"
     And I should not see "Discussion One" in the "Latest news" "block"
     And I should see "Discussion Two" in the "Latest news" "block"
     And I should see "Discussion Three" in the "Latest news" "block"
     And I follow "Edit settings"
     And I set the following fields to these values:
       | News items to show | 0 |
-    And I press "Save changes"
+    And I press "Save and display"
     And "Latest news" "block" should not exist
