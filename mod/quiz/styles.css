@@ -919,3 +919,7 @@ table#categoryquestions {
 #page-mod-quiz-edit ul.slots li.section ul.section {
     list-style: none;
 }
+
+#page-mod-quiz-attempt .resatrt-question-btn {
+    font-size: 0.75em;
+}

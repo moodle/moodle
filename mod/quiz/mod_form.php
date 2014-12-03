@@ -205,6 +205,19 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('preferredbehaviour', 'howquestionsbehave', 'question');
         $mform->setDefault('preferredbehaviour', $quizconfig->preferredbehaviour);
 
+        // TODO: Store the 'reattemptgradedquestions' field when new DB structure in place.
+        $mform->addElement('selectyesno', 'reattemptgradedquestions', get_string('restartgradedquestions', 'quiz'));
+        $mform->addHelpButton('reattemptgradedquestions', 'restartgradedquestions', 'quiz');
+        $mform->setAdvanced('reattemptgradedquestions', $quizconfig->reattemptgradedquestions_adv);
+        $mform->setDefault('reattemptgradedquestions', $quizconfig->reattemptgradedquestions);
+        foreach ($behaviours as $behaviour => $notused) {
+            $qbt = question_engine::get_behaviour_type($behaviour);
+            if (!$qbt->user_can_reattempt_graded_question()) {
+                $mform->disabledIf('reattemptgradedquestions', 'preferredbehaviour', 'eq', $behaviour);
+            }
+
+        }
+
         // Each attempt builds on last.
         $mform->addElement('selectyesno', 'attemptonlast',
                 get_string('eachattemptbuildsonthelast', 'quiz'));
