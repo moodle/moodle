@@ -292,7 +292,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
 
         // Check to see if we got all events.
-        $this->assertEquals(4, count($events['events']));
+        $this->assertEquals(5, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
         $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + 7*WEEKSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
@@ -314,7 +314,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(4, count($events['events'])); // site, user, both course events.
         $this->assertEquals(1, count($events['warnings'])); // group.
 
-        $options = array ('siteevents' => true, 'userevents' => true);
+        $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + HOURSECS);
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(3, count($events['events'])); // site, user, one course event.
