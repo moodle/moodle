@@ -704,7 +704,6 @@ class question_type extends default_questiontype {
     *                         be retrieved. Question type specific information is
     *                         available.
     */
-    // ULPGC ecastro
     function get_all_responses(&$question, &$state) {
         if (isset($question->options->answers) && is_array($question->options->answers)) {
             $answers = array();
@@ -759,7 +758,6 @@ class question_type extends default_questiontype {
     *                         for which a correct answer is needed. Question
     *                         type specific information is included.
     */
-    // ULPGC ecastro
     function get_actual_response($question, $state) {
        if (!empty($state->responses)) {
            $responses[] = $state->responses[''];
@@ -796,7 +794,6 @@ class question_type extends default_questiontype {
         return array($responsedetail);
     }
 
-    // ULPGC ecastro
     function get_fractional_grade(&$question, &$state) {
         $grade = $state->grade;
         if ($question->maxgrade > 0) {
@@ -819,7 +816,6 @@ class question_type extends default_questiontype {
     *                         for which a correct answer is needed. Question
     *                         type specific information is included.
     */
-    // ULPGC ecastro
     function check_response(&$question, &$state){
         return false;
     }
@@ -1249,19 +1245,19 @@ class question_type extends default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG, $DB;
 
-        static $addStyle = true;
-        static $addScript = true;
-
-        if (empty($question->options)) {
-            return; // shouldn't happen !!
+        if (empty($options->correctness)) {
+            $options->correctness = 0;
         }
 
-        if (empty($question->options->answers)) {
+        // shortcut to answers
+        $answers = $question->options->answers;
+
+        if (empty($question->options) || empty($answers)) {
             return; // shouldn't happen !!
         }
 
         if ($question->options->studentsee==0) { // all items
-            $question->options->studentsee = count($question->options->answers);
+            $question->options->studentsee = count($answers);
         } else {
             // a nasty hack so that "studentsee" is the same
             // as what is displayed by edit_ordering_form.php
@@ -1271,139 +1267,81 @@ class question_type extends default_questiontype {
         switch ($question->options->logical) {
 
             case 0: // all
-                $answerids = array_keys($question->options->answers);
+                $answerids = array_keys($answers);
                 break;
 
             case 1: // random subset
-                $answerids = array_rand($question->options->answers, $question->options->studentsee);
+                $answerids = array_rand($answers, $question->options->studentsee);
                 break;
 
             case 2: // contiguous subset
-                if (count($question->options->answers) > $question->options->studentsee) {
-                    $offset = mt_rand(0, count($question->options->answers) - $question->options->studentsee);
-                    $question->options->answers = array_slice($question->options->answers, $offset, $question->options->studentsee, true);
+                if (count($answers) > $question->options->studentsee) {
+                    $offset = mt_rand(0, count($answers) - $question->options->studentsee);
+                    $answers = array_slice($answers, $offset, $question->options->studentsee, true);
                 }
-                $answerids = array_keys($question->options->answers);
+                $answerids = array_keys($answers);
                 break;
         }
         shuffle($answerids);
 
-        $formatoptions = (object)array('noclean' => true, 'para' => true);
-        $questiontext = format_text($question->questiontext, $question->questiontextformat, $formatoptions, $cmoptions->course);
+        $response_name = 'q'.$question->id;
+        $response_id   = 'id_q'.$question->id;
+        $sortable_id   = 'id_sortable'.$question->id;
 
         $output = '';
-        $output .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.js'));
-        $output .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery-ui.js'));
 
-        $style = "\n";
-        $style .= "ul.sortable".$question->id." li {\n";
-        $style .= "    position: relative;\n";
-        $style .= "}\n";
-        if ($addStyle) {
-            $addStyle = false; // only add style once
-            $style .= "ul.boxy {\n";
-            $style .= "    border: 1px solid #ccc;\n";
-            $style .= "    float: left;\n";
-            $style .= "    font-family: Arial, sans-serif;\n";
-            $style .= "    font-size: 13px;\n";
-            $style .= "    list-style-type: none;\n";
-            $style .= "    margin: 0px;\n";
-            $style .= "    margin-left: 5px;\n";
-            $style .= "    padding: 4px 4px 0 4px;\n";
-            $style .= "    width: 360px;\n";
-            $style .= "}\n";
-            $style .= "ul.boxy li {\n";
-            $style .= "    background-color: #eeeeee;\n";
-            $style .= "    border: 1px solid #cccccc;\n";
-            $style .= "    border-image: initial;\n";
-            $style .= "    cursor: move;\n";
-            $style .= "    list-style-type: none;\n";
-            $style .= "    margin-bottom: 1px;\n";
-            $style .= "    min-height: 20px;\n";
-            $style .= "    padding: 8px 2px;\n";
-            $style .= "}\n";
+        if (count($answerids)) {
+
+            if ($options->readonly || $options->correctness) {
+                // don't allow items to be dragged and dropped
+            } else {
+                $script = "\n";
+                $script .= "//<![CDATA[\n";
+                $script .= "$(function() {\n";
+                $script .= "    $('#$sortable_id').sortable({\n";
+                $script .= "        update: function(event, ui) {\n";
+                $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
+                $script .= "            $('#$response_id').attr('value', ItemsOrder);\n";
+                $script .= "        }\n";
+                $script .= "    });\n";
+                $script .= "    $('#$sortable_id').disableSelection();\n";
+                $script .= "});\n";
+                $script .= "$(document).ready(function() {\n";
+                $script .= "    var ItemsOrder = $('#$sortable_id').sortable('toArray').toString();\n";
+                $script .= "    $('#$response_id').attr('value', ItemsOrder);\n";
+                $script .= "});\n";
+                $script .= "//]]>\n";
+                $output .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+            }
+
+            $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
+            $output .= html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+
+            $output .= html_writer::start_tag('div', array('class' => 'ablock'));
+            $output .= html_writer::start_tag('div', array('class' => 'answer'));
+            $output .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
+
+            // generate ordering items
+            foreach ($answerids as $i => $answerid) {
+                // the original "id" revealed the correct order of the answers
+                // because $answer->fraction holds the correct order number
+                // $id = 'ordering_item_'.$answerid.'_'.intval($answers[$answerid]->fraction);
+                $id = 'ordering_item_'.md5($CFG->passwordsaltmain.$answers[$answerid]->answer);
+                $class = 'sortableitem';
+                $params = array('class' => $class, 'id' => $id);
+                $output .= html_writer::tag('li', $answers[$answerid]->answer, $params);
+            }
+
+            $output .= html_writer::end_tag('ul');
+            $output .= html_writer::end_tag('div'); // answer
+            $output .= html_writer::end_tag('div'); // ablock
+
+            $output .= html_writer::empty_tag('input', array('type'  => 'hidden',
+                                                             'name'  => $response_name,
+                                                             'id'    => $response_id,
+                                                             'value' => ''));
+            $output .= html_writer::tag('div', '', array('style' => 'clear:both;'));
         }
-        $output .= html_writer::tag('style', $style, array('type' => 'text/css'));
-
-        $script = "\n";
-        $script .= "//<![CDATA[\n";
-        $script .= "$(function() {\n";
-        $script .= "    $('#sortable".$question->id."').sortable({\n";
-        $script .= "        update: function(event, ui) {\n";
-        $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
-        $script .= "            $('#q".$question->id."').attr('value', ItemsOrder);\n";
-        $script .= "        }\n";
-        $script .= "    });\n";
-        $script .= "    $('#sortable".$question->id."').disableSelection();\n";
-        $script .= "});\n";
-        $script .= "$(document).ready(function() {\n";
-        $script .= "    var ItemsOrder = $('#sortable".$question->id."').sortable('toArray').toString();\n";
-        $script .= "    $('#q".$question->id."').attr('value', ItemsOrder);\n";
-        $script .= "});\n";
-        $script .= "//]]>\n";
-        $output .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
-
-        $output .= html_writer::tag('div', stripslashes($questiontext), array('class' => 'qtext'));
-        $output .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $output .= html_writer::start_tag('div', array('class' => 'answer'));
-        $output .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => 'sortable'.$question->id));
-
-        // generate ordering items
-        foreach ($answerids as $i => $answerid) {
-            // the original "id" revealed the correct order of the answers
-            // because $answer->fraction holds the correct order number
-            // $id = 'ordering_item_'.$answerid.'_'.intval($question->options->answers[$answerid]->fraction);
-            $id = 'ordering_item_'.md5($CFG->passwordsaltmain.$question->options->answers[$answerid]->answer);
-            $params = array('class' => 'ui-state-default', 'id' => $id);
-            $output .= html_writer::tag('li', $question->options->answers[$answerid]->answer, $params);
-        }
-
-        $output .= html_writer::end_tag('ul');
-        $output .= html_writer::end_tag('div'); // answer
-        $output .= html_writer::end_tag('div'); // ablock
-
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'q'.$question->id, 'id' => 'q'.$question->id, 'value' => '9'));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'answer', 'value' => ''));
-
-        $output .= html_writer::tag('div', '', array('style' => 'clear:both;'));
-
-        $script = "\n";
-        $script .= "//<![CDATA[\n";
-        if ($addScript) {
-            $addScript = false; // only add these functions once
-            $script .= "function orderingTouchHandler(event) {\n";
-            $script .= "    var touch = event.changedTouches[0];\n";
-            $script .= "    switch (event.type) {\n";
-            $script .= "        case 'touchstart': var type = 'mousedown'; break;\n";
-            $script .= "        case 'touchmove': var type = 'mousemove'; event.preventDefault(); break;\n";
-            $script .= "        case 'touchend': var type = 'mouseup'; break;\n";
-            $script .= "        default: return;\n";
-            $script .= "    }\n";
-            $script .= "    var simulatedEvent = document.createEvent('MouseEvent');\n";
-            $script .= "    // initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget)\n";
-            $script .= "    simulatedEvent.initMouseEvent(type, true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);\n";
-            $script .= "    touch.target.dispatchEvent(simulatedEvent);\n";
-            $script .= "    event.preventDefault();\n";
-            $script .= "}\n";
-            $script .= "function orderingInit(sortableid) {\n";
-            $script .= "    var obj = document.getElementById(sortableid);\n";
-            $script .= "    if (obj) {\n";
-            $script .= "        for (var i=0; i<obj.childNodes.length; i++) {\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchstart', orderingTouchHandler, false);\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchmove', orderingTouchHandler, false);\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchend', orderingTouchHandler, false);\n";
-            $script .= "            obj.childNodes.item(i).addEventListener('touchcancel', orderingTouchHandler, false);\n";
-            $script .= "        }\n";
-            $script .= "        obj = null;\n";
-            $script .= "    } else {\n";
-            $script .= "        // try again in 1/2 a second - shouldn't be necessary !!\n";
-            $script .= "        setTimeout(new Function('orderingInit(".'"'."'+sortableid+'".'"'.")'), 500);\n";
-            $script .= "    }\n";
-            $script .= "}\n";
-        }
-        $script .= "orderingInit('sortable".$question->id."');\n";
-        $script .= "//]]>\n";
-        $output .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
 
         echo $output;
     }

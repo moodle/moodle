@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Generates the output for true-false questions.
+ * Generates the output for ORDERING questions
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,9 +35,6 @@ class qtype_ordering_renderer extends qtype_renderer {
 
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB;
-
-        static $addStyle = true;
-        static $addScript = true;
 
         $question = $qa->get_question();
         $ordering = $question->get_ordering_options();
@@ -53,13 +50,6 @@ class qtype_ordering_renderer extends qtype_renderer {
             // a nasty hack so that "studentsee" is the same
             // as what is displayed by edit_ordering_form.php
             $ordering->studentsee += 2;
-        }
-
-        if ($options->readonly || $options->correctness) {
-            // don't allow items to be dragged and dropped
-            $readonly = true;
-        } else {
-            $readonly = false;
         }
 
         if ($options->correctness) {
@@ -91,45 +81,10 @@ class qtype_ordering_renderer extends qtype_renderer {
         $sortable_id = 'id_sortable_'.$question->id;
 
         $result = '';
-        if ($readonly==false) {
-            $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.js'));
-            $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery-ui.js'));
-            $result .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.ui.touch-punch.js'));
-        }
 
-        $style = "\n";
-        $style .= "ul#$sortable_id li {\n";
-        $style .= "    position: relative;\n";
-        $style .= "}\n";
-        if ($addStyle) {
-            $addStyle = false; // only add style once
-            $style .= "ul.boxy {\n";
-            $style .= "    border: 1px solid #ccc;\n";
-            $style .= "    float: left;\n";
-            $style .= "    font-family: Arial, sans-serif;\n";
-            $style .= "    font-size: 13px;\n";
-            $style .= "    list-style-type: none;\n";
-            $style .= "    margin: 0px;\n";
-            $style .= "    margin-left: 5px;\n";
-            $style .= "    padding: 4px 4px 0 4px;\n";
-            $style .= "    width: 360px;\n";
-            $style .= "}\n";
-            $style .= "ul.boxy li {\n";
-            $style .= "    background-color: #eeeeee;\n";
-            $style .= "    border: 1px solid #cccccc;\n";
-            $style .= "    border-image: initial;\n";
-            if ($readonly==false) {
-                $style .= "    cursor: move;\n";
-            }
-            $style .= "    list-style-type: none;\n";
-            $style .= "    margin-bottom: 1px;\n";
-            $style .= "    min-height: 20px;\n";
-            $style .= "    padding: 8px 2px;\n";
-            $style .= "}\n";
-        }
-        $result .= html_writer::tag('style', $style, array('type' => 'text/css'));
-
-        if ($readonly==false) {
+        if ($options->readonly || $options->correctness) {
+            // don't allow items to be dragged and dropped
+        } else {
             $script = "\n";
             $script .= "//<![CDATA[\n";
             $script .= "$(function() {\n";
@@ -154,7 +109,7 @@ class qtype_ordering_renderer extends qtype_renderer {
         if (count($answerids)) {
             $result .= html_writer::start_tag('div', array('class' => 'ablock'));
             $result .= html_writer::start_tag('div', array('class' => 'answer'));
-            $result .= html_writer::start_tag('ul',  array('class' => 'boxy', 'id' => $sortable_id));
+            $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
 
             // generate ordering items
             foreach ($answerids as $position => $answerid) {
@@ -169,7 +124,7 @@ class qtype_ordering_renderer extends qtype_renderer {
                         }
                         $img = "$img ";
                     } else {
-                        $class = 'ui-state-default';
+                        $class = 'sortableitem';
                         $img = '';
                     }
                     // the original "id" revealed the correct order of the answers
@@ -185,8 +140,10 @@ class qtype_ordering_renderer extends qtype_renderer {
             $result .= html_writer::end_tag('div'); // answer
             $result .= html_writer::end_tag('div'); // ablock
 
-            $params = array('type' => 'hidden', 'name' => $response_name, 'id' => $response_id, 'value' => '');
-            $result .= html_writer::empty_tag('input', $params);
+            $result .= html_writer::empty_tag('input', array('type'  => 'hidden',
+                                                             'name'  => $response_name,
+                                                             'id'    => $response_id,
+                                                             'value' => ''));
             $result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
         }
 

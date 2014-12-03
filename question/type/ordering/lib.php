@@ -31,6 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 function qtype_ordering_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;
-    require_once($CFG->libdir . '/questionlib.php');
+    require_once($CFG->dirroot.'/lib/questionlib.php');
     question_pluginfile($course, $context, 'qtype_ordering', $filearea, $args, $forcedownload);
 }

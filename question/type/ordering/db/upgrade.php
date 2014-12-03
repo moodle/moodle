@@ -30,7 +30,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
     $newversion = 2013062800;
     if ($oldversion < $newversion) {
         $select = 'qn.*, qo.id AS questionorderingid';
-        $from   = '{question} qn LEFT JOIN {question_ordering} qo ON qn.id=qo.question';
+        $from   = '{question} qn LEFT JOIN {question_ordering} qo ON qn.id = qo.question';
         $where  = 'qn.qtype = ? AND qo.id IS NULL';
         $params = array('ordering');
         if ($questions = $DB->get_records_sql("SELECT $select FROM $from WHERE $where", $params)) {
@@ -49,8 +49,12 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                 } else {
                     // this is a faulty ordering question - remove it
                     $DB->delete_records('question', array('id' => $question->id));
-                    $DB->delete_records('quiz_question_instances', array('question' => $question->id));
-                    $DB->delete_records('reader_question_instances', array('question' => $question->id));
+                    if ($dbman->table_exists('quiz_question_instances')) {
+                        $DB->delete_records('quiz_question_instances', array('question' => $question->id));
+                    }
+                    if ($dbman->table_exists('reader_question_instances')) {
+                        $DB->delete_records('reader_question_instances', array('question' => $question->id));
+                    }
                 }
             }
         }

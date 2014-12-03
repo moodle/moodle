@@ -1,11 +1,35 @@
-ul.boxy li.correctposition {
-    border: 4px solid #99ff66; /* gentle green */
+ul.sortablelist {
+    border           : 1px solid #ccc;
+    float            : left;
+    font-family      : Arial, sans-serif;
+    font-size        : 13px;
+    list-style-type  : none;
+    margin           : 0px;
+    margin-left      : 5px;
+    padding          : 4px 4px 0 4px;
+    width            : 360px;
 }
-ul.boxy li.wrongposition {
-    border: 4px solid #ff7373; /* gentle red */
+ul.sortablelist li {
+    background-color : #eeeeee;
+    border           : 1px solid #cccccc;
+    border-image     : initial;
+    list-style-type  : none;
+    margin-bottom    : 1px;
+    min-height       : 20px;
+    padding          : 8px 2px;
 }
-ul.boxy li.correctposition,
-ul.boxy li.wrongposition {
-    margin-bottom: 4px;
-    margin-top: 4px;
+ul.sortablelist li.sortableitem {
+    position         : relative;
+    cursor           : move;
+}
+ul.sortablelist li.correctposition {
+    border           : 4px solid #99ff66; /* gentle green */
+}
+ul.sortablelist li.wrongposition {
+    border           : 4px solid #ff7373; /* gentle red */
+}
+ul.sortablelist li.correctposition,
+ul.sortablelist li.wrongposition {
+    margin-bottom    : 4px;
+    margin-top       : 4px;
 }

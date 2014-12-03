@@ -1,12 +1,12 @@
-======================================
+==========================================
 The Ordering question type for Moodle 2.x
-======================================
+==========================================
 
 The ordering question type displays several short sentences in a random order which are to be dragged into the correct sequential order. It was developed for the ordering questions used in the Reader activity module for Moodle 2.x
 
-======================================
+==========================================
 To INSTALL or UPDATE this plugin
-======================================
+==========================================
 
     1. get the files for this plugin from any one of the following locations:
 
@@ -23,9 +23,9 @@ To INSTALL or UPDATE this plugin
         if install/upgrade does not begin automatically, you can initiate it manually by navigating to the following link:
         Settings -> Site administration -> Notifications
 
-======================================
+==========================================
 Further information
-======================================
+==========================================
 
     For more information, tutorials and online discussion forums, please visit:
     http://moodlereader.org/

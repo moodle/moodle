@@ -34,12 +34,39 @@ if (class_exists('question_type')) {
 }
 
 /**
- * The ordering question type.
+ * The ORDERING question type.
  *
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering extends question_type {
+
+    /**
+     * Utility method used by {@link qtype_renderer::head_code()}
+     * It looks for any of the files script.js or script.php that
+     * exist in the plugin folder and ensures they get included.
+     * It also includes the jquery files required for this plugin
+     */
+    public function find_standard_scripts() {
+        global $PAGE;
+
+        // include "script.js" and/or "script.php" in the normal way
+        parent::find_standard_scripts();
+
+        // include jquery files
+        if (method_exists($PAGE->requires, 'jquery')) {
+            // Moodle >= 2.5
+            $PAGE->requires->jquery();
+            $PAGE->requires->jquery_plugin('ui');
+            $PAGE->requires->jquery_plugin('ui.touch-punch', 'qtype_ordering');
+        } else {
+            // Moodle <= 2.4
+            $jquery = '/question/type/' . $this->name().'/jquery';
+            $PAGE->requires->js($jquery.'/jquery.js', true);
+            $PAGE->requires->js($jquery.'/jquery-ui.js', true);
+            $PAGE->requires->js($jquery.'/jquery-ui.touch-punch.js', true);
+        }
+    }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
