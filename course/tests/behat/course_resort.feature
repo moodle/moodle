@@ -60,9 +60,11 @@ Feature: Test we can resort course in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
+    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
-    # Redirect.
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see "Sort courses" in the ".course-listing-actions" "css_element"
     And I should not see "Sort by Course full name ascending" in the ".course-listing-actions" "css_element"
@@ -83,7 +85,8 @@ Feature: Test we can resort course in the management interface.
     And I should see "Sort by Course time created ascending" in the ".course-listing-actions" "css_element"
     And I should see "Sort by Course time created descending" in the ".course-listing-actions" "css_element"
     And I click on <sortby> "link" in the ".course-listing-actions" "css_element"
-    # Redirect.
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see course listing <course1> before <course2>
     And I should see course listing <course2> before <course3>
@@ -148,23 +151,26 @@ Feature: Test we can resort course in the management interface.
 
     And I log in as "admin"
     And I go to the courses management page
+    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
-    # Redirect.
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I click on "Sort courses" "link"
     And I click on "Sort by Course ID number ascending" "link" in the ".course-listing-actions" "css_element"
-    # Redirect.
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see course listing "Course 1" before "Course 2"
     And I should see course listing "Course 2" before "Course 3"
     And I click to move course "C1" down one
-    # AJAX, no redirect.
+    And a new page should not have loaded since I started watching
     And I should see course listing "Course 2" before "Course 1"
     And I should see course listing "Course 1" before "Course 3"
     And I click to move course "C3" up one
-    # AJAX, no redirect.
+    And a new page should not have loaded since I started watching
     And I should see course listing "Course 2" before "Course 3"
     And I should see course listing "Course 3" before "Course 1"
