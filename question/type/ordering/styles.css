@@ -1,4 +1,4 @@
-ul.sortablelist {
+.que.ordering ul.sortablelist {
     border           : 1px solid #ccc;
     float            : left;
     font-family      : Arial, sans-serif;
@@ -9,7 +9,7 @@ ul.sortablelist {
     padding          : 4px 4px 0 4px;
     width            : 360px;
 }
-ul.sortablelist li {
+.que.ordering ul.sortablelist li {
     background-color : #eeeeee;
     border           : 1px solid #cccccc;
     border-image     : initial;
@@ -18,18 +18,18 @@ ul.sortablelist li {
     min-height       : 20px;
     padding          : 8px 2px;
 }
-ul.sortablelist li.sortableitem {
+.que.ordering ul.sortablelist li.sortableitem {
     position         : relative;
     cursor           : move;
 }
-ul.sortablelist li.correctposition {
+.que.ordering ul.sortablelist li.correctposition {
     border           : 4px solid #99ff66; /* gentle green */
 }
-ul.sortablelist li.wrongposition {
+.que.ordering ul.sortablelist li.wrongposition {
     border           : 4px solid #ff7373; /* gentle red */
 }
-ul.sortablelist li.correctposition,
-ul.sortablelist li.wrongposition {
+.que.ordering ul.sortablelist li.correctposition,
+.que.ordering ul.sortablelist li.wrongposition {
     margin-bottom    : 4px;
     margin-top       : 4px;
 }
