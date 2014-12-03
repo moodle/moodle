@@ -1566,6 +1566,7 @@ $string['saveandnext'] = 'Save and show next';
 $string['savedat'] = 'Saved at:';
 $string['savechanges'] = 'Save changes';
 $string['savechangesanddisplay'] = 'Save and display';
+$string['savechangesandreturn'] = 'Save and return';
 $string['savechangesandreturntocourse'] = 'Save and return to course';
 $string['savecomment'] = 'Save comment';
 $string['savepreferences'] = 'Save preferences';
