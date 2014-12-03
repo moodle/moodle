@@ -36,29 +36,26 @@ if ($returnto === 'url' && confirm_sesskey() && $returnurl) {
     // Sesskey must be specified, and would be set by the form anyway.
     $returnurl = new moodle_url($returnurl);
 } else {
-    switch ($returnto) {
-        case 'category':
-            $returnurl = new moodle_url($CFG->wwwroot.'/course/index.php', array('categoryid' => $categoryid));
-            break;
-        case 'catmanage':
-            $returnurl = new moodle_url($CFG->wwwroot.'/course/management.php', array('categoryid' => $categoryid));
-            break;
-        case 'topcatmanage':
-            $returnurl = new moodle_url($CFG->wwwroot.'/course/management.php');
-            break;
-        case 'topcat':
-            $returnurl = new moodle_url($CFG->wwwroot.'/course/');
-            break;
-        case 'url':
-            // You may be wondering about this, but the url case should be dealt with above.
-            // If we get here than either sesskey was not given or returnurl was not provided.
-        default:
-            if (!empty($course->id)) {
-                $returnurl = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $course->id));
-            } else {
-                $returnurl = new moodle_url($CFG->wwwroot.'/course/');
-            }
-            break;
+    if (!empty($id)) {
+        $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $id));
+    } else {
+        $returnurl = new moodle_url($CFG->wwwroot . '/course/');
+    }
+    if ($returnto !== 0) {
+        switch ($returnto) {
+            case 'category':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/index.php', array('categoryid' => $categoryid));
+                break;
+            case 'catmanage':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/management.php', array('categoryid' => $categoryid));
+                break;
+            case 'topcatmanage':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/management.php');
+                break;
+            case 'topcat':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/');
+                break;
+        }
     }
 }
 
