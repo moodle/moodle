@@ -65,6 +65,14 @@ M.core_availability.form = {
     idCounter : 0,
 
     /**
+     * The 'Restrict by group' button if present.
+     *
+     * @property restrictByGroup
+     * @type Y.Node
+     */
+    restrictByGroup : null,
+
+    /**
      * Called to initialise the system when the page loads. This method will
      * also call the init method for each plugin.
      *
@@ -119,6 +127,22 @@ M.core_availability.form = {
         this.field.ancestor('form').on('submit', function() {
             this.mainDiv.all('input,textarea,select').set('disabled', true);
         }, this);
+
+        // If the form has group mode and/or grouping options, there is a
+        // 'add restriction' button there.
+        this.restrictByGroup = Y.one('#restrictbygroup');
+        if (this.restrictByGroup) {
+            this.restrictByGroup.on('click', this.addRestrictByGroup, this);
+            var groupmode = Y.one('#id_groupmode');
+            var groupingid = Y.one('#id_groupingid');
+            if (groupmode) {
+                groupmode.on('change', this.updateRestrictByGroup, this);
+            }
+            if (groupingid) {
+                groupingid.on('change', this.updateRestrictByGroup, this);
+            }
+            this.updateRestrictByGroup();
+        }
     },
 
     /**
@@ -141,6 +165,75 @@ M.core_availability.form = {
 
         // Set into hidden form field, JS-encoded.
         this.field.set('value', Y.JSON.stringify(jsValue));
+
+        // Also update the restrict by group button if present.
+        this.updateRestrictByGroup();
+    },
+
+    /**
+     * Updates the status of the 'restrict by group' button (enables or disables
+     * it) based on current availability restrictions and group/grouping settings.
+     */
+    updateRestrictByGroup : function() {
+        if (!this.restrictByGroup) {
+            return;
+        }
+
+        // If the root list is anything other than the default 'and' type, disable.
+        if (this.rootList.getValue().op !== '&') {
+            this.restrictByGroup.set('disabled', true);
+            return;
+        }
+
+        // If there's already a group restriction, disable it.
+        var alreadyGot = this.rootList.hasItemOfType('group') ||
+                this.rootList.hasItemOfType('grouping');
+        if (alreadyGot) {
+            this.restrictByGroup.set('disabled', true);
+            return;
+        }
+
+        // If the groupmode and grouping id aren't set, disable it.
+        var groupmode = Y.one('#id_groupmode');
+        var groupingid = Y.one('#id_groupingid');
+        if ((!groupmode || Number(groupmode.get('value')) === 0) &&
+                (!groupingid || Number(groupingid.get('value')) === 0)) {
+            this.restrictByGroup.set('disabled', true);
+            return;
+        }
+
+        this.restrictByGroup.set('disabled', false);
+    },
+
+    /**
+     * Called when the user clicks on the 'restrict by group' button. This is
+     * a special case that adds a group or grouping restriction.
+     *
+     * By default this restriction is not shown which makes it similar to the
+     *
+     * @param e Button click event
+     */
+    addRestrictByGroup : function(e) {
+        // If you don't prevent default, it submits the form for some reason.
+        e.preventDefault();
+
+        // Add the condition.
+        var groupingid = Y.one('#id_groupingid');
+        var newChild;
+        if (groupingid && Number(groupingid.get('value')) !== 0) {
+            // Add a grouping restriction if one is specified.
+            newChild = new M.core_availability.Item(
+                    {type : 'grouping', id : Number(groupingid.get('value'))}, true);
+        } else {
+            // Otherwise just add a group restriction.
+            newChild = new M.core_availability.Item({type : 'group'}, true);
+        }
+
+        // Refresh HTML.
+        this.rootList.addChild(newChild);
+        this.update();
+        this.rootList.renumber();
+        this.rootList.updateHtml();
     }
 };
 
@@ -705,6 +798,31 @@ M.core_availability.List.prototype.fillErrors = function(errors) {
     for (var i = 0; i < this.children.length; i++) {
         this.children[i].fillErrors(errors);
     }
+};
+
+/**
+ * Checks whether the list contains any items of the given type name.
+ *
+ * @method hasItemOfType
+ * @param {String} pluginType Required plugin type (name)
+ * @return {Boolean} True if there is one
+ */
+M.core_availability.List.prototype.hasItemOfType = function(pluginType) {
+    // Check each item.
+    for (var i = 0; i < this.children.length; i++) {
+        var child = this.children[i];
+        if (child instanceof M.core_availability.List) {
+            // Recursive call.
+            if (child.hasItemOfType(pluginType)) {
+                return true;
+            }
+        } else {
+            if (child.pluginType === pluginType) {
+                return true;
+            }
+        }
+    }
+    return false;
 };
 
 /**

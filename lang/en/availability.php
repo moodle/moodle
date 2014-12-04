@@ -62,5 +62,6 @@ $string['manageplugins'] = 'Manage restrictions';
 $string['missingplugin'] = 'Missing restriction plugin';
 $string['or'] = 'or';
 $string['restrictaccess'] = 'Restrict access';
+$string['restrictbygroup'] = 'Add group/grouping access restriction';
 $string['setheading'] = '{$a->number} Set of {$a->count} restriction(s)';
 $string['unknowncondition'] = 'Unknown condition (deleted condition plugin)';
