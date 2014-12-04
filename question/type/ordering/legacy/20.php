@@ -1286,9 +1286,10 @@ class question_type extends default_questiontype {
         }
         shuffle($answerids);
 
-        $response_name = 'q'.$question->id;
-        $response_id   = 'id_q'.$question->id;
-        $sortable_id   = 'id_sortable'.$question->id;
+        // $question->name_prefix is 'resp'.$question->id.'_'
+        $response_name = 'resp'.$question->id.'_answers';
+        $response_id   = 'id_resp'.$question->id.'_answers';
+        $sortable_id   = 'id_sortable_'.$question->id;
 
         $output = '';
 
@@ -1323,13 +1324,19 @@ class question_type extends default_questiontype {
             $output .= html_writer::start_tag('div', array('class' => 'answer'));
             $output .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
 
+            if (isset($CFG->passwordsaltmain)) {
+                $salt = $CFG->passwordsaltmain;
+            } else {
+                $salt = ''; // complex_random_string()
+            }
+            $class = 'sortableitem';
+
             // generate ordering items
             foreach ($answerids as $i => $answerid) {
                 // the original "id" revealed the correct order of the answers
                 // because $answer->fraction holds the correct order number
                 // $id = 'ordering_item_'.$answerid.'_'.intval($answers[$answerid]->fraction);
-                $id = 'ordering_item_'.md5($CFG->passwordsaltmain.$answers[$answerid]->answer);
-                $class = 'sortableitem';
+                $id = 'ordering_item_'.md5($salt.$answers[$answerid]->answer);
                 $params = array('class' => $class, 'id' => $id);
                 $output .= html_writer::tag('li', $answers[$answerid]->answer, $params);
             }
