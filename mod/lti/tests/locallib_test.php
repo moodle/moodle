@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains unit tests for (some of) lti/locallib.php
@@ -63,17 +63,19 @@ require_once($CFG->dirroot . '/mod/lti/servicelib.php');
 class mod_lti_locallib_testcase extends advanced_testcase {
 
     public function test_split_custom_parameters() {
-        $this->assertEquals(lti_split_custom_parameters("x=1\ny=2"),
-            array('custom_x' => '1', 'custom_y'=> '2'));
+        $tool = new stdClass();
+        $tool->enabledcapability = '';
+        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "x=1\ny=2", false),
+            array('custom_x' => '1', 'custom_y' => '2'));
 
-        $this->assertEquals(lti_split_custom_parameters('x=1;y=2'),
-            array('custom_x' => '1', 'custom_y'=> '2'));
+        // Removed repeat of previous test with a semicolon separator.
 
-        $this->assertEquals(lti_split_custom_parameters('Review:Chapter=1.2.56'),
+        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), 'Review:Chapter=1.2.56', false),
             array('custom_review_chapter' => '1.2.56'));
 
-        $this->assertEquals(lti_split_custom_parameters('Complex!@#$^*(){}[]KEY=Complex!@#$^*(){}[]Value'),
-            array('custom_complex____________key' => 'Complex!@#$^*(){}[]Value'));
+        $this->assertEquals(lti_split_custom_parameters(null, $tool, array(),
+            'Complex!@#$^*(){}[]KEY=Complex!@#$^*;(){}[]½Value', false),
+            array('custom_complex____________key' => 'Complex!@#$^*;(){}[]½Value'));
     }
 
     /**
@@ -83,9 +85,16 @@ class mod_lti_locallib_testcase extends advanced_testcase {
      * outside-checks to the conformance tests. MDL-30347
      */
     public function disabled_test_sign_parameters() {
-        $correct = array ( 'context_id' => '12345', 'context_label' => 'SI124', 'context_title' => 'Social Computing', 'ext_submit' => 'Click Me', 'lti_message_type' => 'basic-lti-launch-request', 'lti_version' => 'LTI-1p0', 'oauth_consumer_key' => 'lmsng.school.edu', 'oauth_nonce' => '47458148e33a8f9dafb888c3684cf476', 'oauth_signature' => 'qWgaBIezihCbeHgcwUy14tZcyDQ=', 'oauth_signature_method' => 'HMAC-SHA1', 'oauth_timestamp' => '1307141660', 'oauth_version' => '1.0', 'resource_link_id' => '123', 'resource_link_title' => 'Weekly Blog', 'roles' => 'Learner', 'tool_consumer_instance_guid' => 'lmsng.school.edu', 'user_id' => '789');
+        $correct = array ( 'context_id' => '12345', 'context_label' => 'SI124', 'context_title' => 'Social Computing',
+            'ext_submit' => 'Click Me', 'lti_message_type' => 'basic-lti-launch-request', 'lti_version' => 'LTI-1p0',
+            'oauth_consumer_key' => 'lmsng.school.edu', 'oauth_nonce' => '47458148e33a8f9dafb888c3684cf476',
+            'oauth_signature' => 'qWgaBIezihCbeHgcwUy14tZcyDQ=', 'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_timestamp' => '1307141660', 'oauth_version' => '1.0', 'resource_link_id' => '123',
+            'resource_link_title' => 'Weekly Blog', 'roles' => 'Learner', 'tool_consumer_instance_guid' => 'lmsng.school.edu',
+            'user_id' => '789');
 
-        $requestparams = array('resource_link_id' => '123', 'resource_link_title' => 'Weekly Blog', 'user_id' => '789', 'roles' => 'Learner', 'context_id' => '12345', 'context_label' => 'SI124', 'context_title' => 'Social Computing');
+        $requestparams = array('resource_link_id' => '123', 'resource_link_title' => 'Weekly Blog', 'user_id' => '789',
+            'roles' => 'Learner', 'context_id' => '12345', 'context_label' => 'SI124', 'context_title' => 'Social Computing');
 
         $parms = lti_sign_parameters($requestparams, 'http://www.imsglobal.org/developer/LTI/tool.php', 'POST',
             'lmsng.school.edu', 'secret', 'Click Me', 'lmsng.school.edu' /*, $org_desc*/);
@@ -93,7 +102,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertTrue(isset($parms['oauth_signature']));
         $this->assertTrue(isset($parms['oauth_timestamp']));
 
-        // Those things that are hard to mock
+        // Those things that are hard to mock.
         $correct['oauth_nonce'] = $parms['oauth_nonce'];
         $correct['oauth_signature'] = $parms['oauth_signature'];
         $correct['oauth_timestamp'] = $parms['oauth_timestamp'];
@@ -121,7 +130,10 @@ class mod_lti_locallib_testcase extends advanced_testcase {
                 <replaceResultRequest>
                   <resultRecord>
                     <sourcedGUID>
-                      <sourcedId>{&quot;data&quot;:{&quot;instanceid&quot;:&quot;2&quot;,&quot;userid&quot;:&quot;2&quot;},&quot;hash&quot;:&quot;0b5078feab59b9938c333ceaae21d8e003a7b295e43cdf55338445254421076b&quot;}</sourcedId>
+                      <sourcedId>' .
+            '{&quot;data&quot;:{&quot;instanceid&quot;:&quot;2&quot;,&quot;userid&quot;:&quot;2&quot;},&quot;hash&quot;:' .
+            '&quot;0b5078feab59b9938c333ceaae21d8e003a7b295e43cdf55338445254421076b&quot;}' .
+                      '</sourcedId>
                     </sourcedGUID>
                     <result>
                       <resultScore>

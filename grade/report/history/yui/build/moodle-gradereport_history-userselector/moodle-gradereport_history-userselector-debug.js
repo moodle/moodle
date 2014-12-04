@@ -643,6 +643,10 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         if (this._userTabFocus) {
             this._userTabFocus.setAttribute('tabindex', '-1');
         }
+        if (!user) {
+            // We were not passed a user, there is apparently none in the dialogue. Nothing to do here \\\o/.
+            return;
+        }
 
         this._userTabFocus = user.one(SELECTORS.USERSELECT);
         this._userTabFocus.setAttribute('tabindex', '0');

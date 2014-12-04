@@ -1,0 +1,10 @@
+This files describes API changes in /auth/db/*,
+information provided here is intended especially for developers.
+
+=== 2.9 ===
+
+Some alterations have been made to the handling of case sensitity handling of passwords
+and password hashes which previously varied depending on database configuration:
+
+* Plain text password matching is now always case sensitive
+* sha1/md5 hash comparisons are now enforced case insensitive (as underlying they are hexidecimal values)

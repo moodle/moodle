@@ -95,12 +95,11 @@ class filter_mathjaxloader extends moodle_text_filter {
      * @param context $context The current context.
      */
     public function setup($page, $context) {
-        global $CFG;
         // This only requires execution once per request.
         static $jsinitialised = false;
 
         if (empty($jsinitialised)) {
-            if (strpos($CFG->httpswwwroot, 'https:') === 0) {
+            if (is_https()) {
                 $url = get_config('filter_mathjaxloader', 'httpsurl');
             } else {
                 $url = get_config('filter_mathjaxloader', 'httpurl');

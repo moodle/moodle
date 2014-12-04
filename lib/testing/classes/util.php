@@ -458,7 +458,7 @@ abstract class testing_util {
         // To reduce the chance of the coding error, we start sequences at different values where possible.
         // In a attempt to avoid tables with existing id's we start at a high number.
         // Reset the value each time all database sequences are reset.
-        if (defined('PHPUNIT_SEQUENCE_START')) {
+        if (defined('PHPUNIT_SEQUENCE_START') and PHPUNIT_SEQUENCE_START) {
             self::$sequencenextstartingid = PHPUNIT_SEQUENCE_START;
         } else {
             self::$sequencenextstartingid = 100000;
@@ -527,7 +527,12 @@ abstract class testing_util {
 
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
-                    $nextid = self::get_next_sequence_starting_value($records);
+                    $lastrecord = end($records);
+                    if ($lastrecord) {
+                        $nextid = $lastrecord->id + 1;
+                    } else {
+                        $nextid = 1;
+                    }
                     if (!isset($current[$table])) {
                         $DB->get_manager()->reset_sequence($table);
                     } else if ($nextid == $current[$table]) {
@@ -709,6 +714,9 @@ abstract class testing_util {
 
         // Do not delete automatically installed files.
         self::skip_original_data_files($childclassname);
+
+        // Clear file status cache, before checking file_exists.
+        clearstatcache();
 
         // Clean up the dataroot folder.
         $handle = opendir(self::get_dataroot());

@@ -11,7 +11,7 @@ require_once($CFG->dirroot."/auth/shibboleth/auth.php");
 
 // Find out whether host supports https
 $protocol = 'http://';
-if ( isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'){
+if (is_https()) {
     $protocol = 'https://';
 }
 

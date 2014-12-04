@@ -2288,7 +2288,7 @@ abstract class moodle_database {
             if (core_text::strlen($search) < core_text::strlen($replace)) {
                 $colsize = $column->max_length;
                 $sql = "UPDATE {".$table."}
-                       SET $columnname = SUBSTRING(REPLACE($columnname, ?, ?), 1, $colsize)
+                       SET $columnname = " . $this->sql_substr("REPLACE(" . $columnname . ", ?, ?)", 1, $colsize) . "
                      WHERE $columnname IS NOT NULL";
             }
             $this->execute($sql, array($search, $replace));
@@ -2490,6 +2490,9 @@ abstract class moodle_database {
         // now enable transactions again
         $this->transactions = array();
         $this->force_rollback = false;
+
+        \core\event\manager::database_transaction_rolledback();
+        \core\message\manager::database_transaction_rolledback();
     }
 
     /**

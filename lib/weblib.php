@@ -224,6 +224,20 @@ function qualified_me() {
 }
 
 /**
+ * Determines whether or not the Moodle site is being served over HTTPS.
+ *
+ * This is done simply by checking the value of $CFG->httpswwwroot, which seems
+ * to be the only reliable method.
+ *
+ * @return boolean True if site is served over HTTPS, false otherwise.
+ */
+function is_https() {
+    global $CFG;
+
+    return (strpos($CFG->httpswwwroot, 'https://') === 0);
+}
+
+/**
  * Class for creating and manipulating urls.
  *
  * It can be used in moodle pages where config.php has been included without any further includes.
@@ -632,6 +646,10 @@ class moodle_url {
             }
         }
 
+        if ($url->anchor !== $this->anchor) {
+            return false;
+        }
+
         return true;
     }
 
@@ -723,6 +741,32 @@ class moodle_url {
                                                $forcedownload = false) {
         global $CFG;
         $urlbase = "$CFG->httpswwwroot/pluginfile.php";
+        if ($itemid === null) {
+            return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
+        } else {
+            return self::make_file_url($urlbase, "/$contextid/$component/$area/$itemid".$pathname.$filename, $forcedownload);
+        }
+    }
+
+    /**
+     * Factory method for creation of url pointing to plugin file.
+     * This method is the same that make_pluginfile_url but pointing to the webservice pluginfile.php script.
+     * It should be used only in external functions.
+     *
+     * @since  2.8
+     * @param int $contextid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
+     * @param string $pathname
+     * @param string $filename
+     * @param bool $forcedownload
+     * @return moodle_url
+     */
+    public static function make_webservice_pluginfile_url($contextid, $component, $area, $itemid, $pathname, $filename,
+                                               $forcedownload = false) {
+        global $CFG;
+        $urlbase = "$CFG->httpswwwroot/webservice/pluginfile.php";
         if ($itemid === null) {
             return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
         } else {
@@ -1030,9 +1074,11 @@ function get_file_argument() {
 
     // Then try extract file from the slasharguments.
     if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
-        // NOTE: ISS tends to convert all file paths to single byte DOS encoding,
+        // NOTE: IIS tends to convert all file paths to single byte DOS encoding,
         //       we can not use other methods because they break unicode chars,
-        //       the only way is to use URL rewriting.
+        //       the only ways are to use URL rewriting
+        //       OR
+        //       to properly set the 'FastCGIUtf8ServerVariables' registry key.
         if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
             // Check that PATH_INFO works == must not contain the script name.
             if (strpos($_SERVER['PATH_INFO'], $SCRIPT) === false) {
@@ -2221,6 +2267,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
 
     $grouppictureurl = moodle_url::make_pluginfile_url($context->id, 'group', 'icon', $group->id, '/', $file);
+    $grouppictureurl->param('rev', $group->picture);
     $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
         ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
 
@@ -3447,6 +3494,8 @@ function print_password_policy() {
  * @param boolean $ajax Whether this help is called from an AJAX script.
  *                This is used to influence text formatting and determines
  *                which format to output the doclink in.
+ * @param string|object|array $a An object, string or number that can be used
+ *      within translation strings
  * @return Object An object containing:
  * - heading: Any heading that there may be for this help string.
  * - text: The wiki-formatted help string.
@@ -3454,7 +3503,7 @@ function print_password_policy() {
  *            CSS classes to apply to that link. Only present if $ajax = false.
  * - completedoclink: A text representation of the doclink. Only present if $ajax = true.
  */
-function get_formatted_help_string($identifier, $component, $ajax = false) {
+function get_formatted_help_string($identifier, $component, $ajax = false, $a = null) {
     global $CFG, $OUTPUT;
     $sm = get_string_manager();
 
@@ -3481,7 +3530,7 @@ function get_formatted_help_string($identifier, $component, $ajax = false) {
         $options->overflowdiv = !$ajax;
 
         // Should be simple wiki only MDL-21695.
-        $data->text =  format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
+        $data->text = format_text(get_string($identifier.'_help', $component, $a), FORMAT_MARKDOWN, $options);
 
         $helplink = $identifier . '_link';
         if ($sm->string_exists($helplink, $component)) {  // Link to further info in Moodle docs.

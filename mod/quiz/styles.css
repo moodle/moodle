@@ -230,44 +230,13 @@ body.jsenabled .questionflagcheckbox {
     text-align: left;
     margin-left: 0;
 }
-
-#page-mod-quiz-edit div.question div.content .questiontext,
-#categoryquestions .questiontext {
-    text-overflow: ellipsis;
-    position: relative;
-    zoom: 1;
-    padding-left: 0.3em;
-    max-width: 40%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-#page-mod-quiz-edit div.question div.content .questionname,
-#categoryquestions .questionname {
-    white-space: nowrap;
-    overflow: hidden;
-    zoom: 1;
-    position: relative;
-    max-width: 20%;
-}
-
-#page-mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname,
-div.editq div.question div.content .singlequestion a .questiontext {
-    text-decoration: underline;
-}
-
-#page-mod-quiz-edit.ie6 div.question div.content .questiontext {
-    width: 50%;
-}
-#page-mod-quiz-edit.ie6 div.question div.content .questionname {
-    width: 20%;
-}
-
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
     float: left;
     width: 23%;
     clear: none;
+}
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitem {
+    float: right;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
@@ -276,6 +245,9 @@ div.editq div.question div.content .singlequestion a .questiontext {
     text-align: left;
     height: 2.5em;
     margin-left: 0;
+}
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitemtitle {
+    text-align: right;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup {
@@ -287,19 +259,12 @@ div.editq div.question div.content .singlequestion a .questiontext {
     clear: left;
     line-height: 1.7;
 }
-#page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup span label {
-    margin-left: 0.4em;
-}
-
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitem {
-    float: right;
-}
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr fieldset.fgroup span {
+#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr fieldset.fgroup > span {
     float: right;
     clear: right;
 }
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitemtitle {
-    text-align: right;
+#page-mod-quiz-mod #id_reviewoptionshdr fieldset.fgroup span label {
+    margin-left: 0.4em;
 }
 
 /** Mod quiz view **/
@@ -370,6 +335,7 @@ body.path-mod-quiz table tbody tr.gradedattempt > td {
     margin-left: 0;
     margin-right: 0;
 }
+
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;
@@ -534,6 +500,272 @@ table.quizreviewsummary td.cell {
     padding-right: 1em;
     clear: left;
 }
+#page-mod-quiz-edit.dir-rtl h2.main {
+    padding-left: 1em;
+    padding-right: 0;
+}
+
+#page-mod-quiz-edit .statusbar {
+    margin: 0.6em 0.4em;
+}
+#page-mod-quiz-edit .statusdisplay {
+    background-color: #ffc;
+    clear: both;
+    margin: 0.3em 1em 0.3em 0;
+    padding: 1px ;
+    /* Stop margin collapse. */
+}
+#page-mod-quiz-edit.dir-rtl .statusdisplay {
+    margin: 0.3em 0 0.3em 1em;
+}
+#page-mod-quiz-edit .statusdisplay p {
+    margin: 0.4em;
+}
+
+#page-mod-quiz-edit .maxgrade,
+#page-mod-quiz-edit .totalpoints {
+    display: block;
+    float: right;
+    margin: -2.5em 1em 0em 1em;
+    padding: .2em;
+}
+#page-mod-quiz-edit .maxgrade label {
+    display: inline;
+}
+#page-mod-quiz-edit.dir-rtl .maxgrade,
+#page-mod-quiz-edit.dir-rtl .totalpoints {
+    float: left;
+}
+
+#page-mod-quiz-edit li.activity > div,
+#page-mod-quiz-edit li.pagenumber {
+    position: relative;
+}
+
+#page-mod-quiz-edit .last-add-menu {
+    position: relative;
+    height: 1.5em;
+}
+#page-mod-quiz-edit .add-menu-outer {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+#page-mod-quiz-edit.dir-rtl .add-menu-outer {
+    right: auto;
+    left: 0;
+}
+
+#page-mod-quiz-edit .slotnumber {
+    background-color: #D3D3D3;
+    text-align: center;
+    margin: 0.1em 0.5em;
+    min-width: 2em;
+    display: inline-block;
+}
+
+#page-mod-quiz-edit ul.slots li.section {
+    border: 0;
+}
+#page-mod-quiz-edit ul.slots li.section .content {
+    background-color:#FAFAFA;
+    padding:5px 10px;
+}
+#page-mod-quiz-edit ul.slots li.section .content h3 {
+    margin: 0;
+    color: #777;
+    font-weight: normal;
+}
+#page-mod-quiz-edit ul.slots li.section .left {
+    padding: 4px 0;
+}
+#page-mod-quiz-edit ul.slots li.section .right {
+    padding: 4px 0;
+}
+#page-mod-quiz-edit ul.slots {
+    margin: 0;
+}
+#page-mod-quiz-edit ul.slots li.section {
+    list-style: none;
+    margin: 0 0 5px 0;
+    padding: 0;
+}
+#page-mod-quiz-edit ul.slots li.section .left {
+    float: left;
+}
+#page-mod-quiz-edit ul.slots li.section .right {
+    float: right;
+}
+#page-mod-quiz-edit ul.slots li.section .left,
+#page-mod-quiz-edit ul.slots li.section .right {
+    width: 40px;
+    text-align: center;
+    padding: 6px 0;
+}
+#page-mod-quiz-edit ul.slots li.section .right img.icon {
+    padding: 0 0 4px 0;
+}
+#page-mod-quiz-edit ul.slots li.section .left .section-handle img.icon {
+    padding: 0;
+    vertical-align: baseline;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity {
+    background: #E6E6E6;
+    margin: 3px 0 3px 0;
+    padding: 0.2em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity.page {
+    background: transparent;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
+    background: white;
+    padding: 0.2em;
+    margin: 0.4em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer .editicon {
+    width: 13px;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer.infoitem {
+    background: transparent;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form {
+    display: inline;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+    margin: 0;
+    padding: 0.2em;
+    height: 1em;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark {
+    display: inline-block;
+    text-align: right;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .instancemaxmark {
+    text-align: left;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .page_split_join_wrapper {
+    position: absolute;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .page_split_join {
+    position: relative;
+    left: -20px;
+    top: -7px;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .page_split_join {
+    left: auto;
+    right: -20px;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
+    min-width: 1.3em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_1 {
+    min-width: 2em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_2 {
+    min-width: 2.6em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_3 {
+    min-width: 3.2em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_4 {
+    min-width: 3.7em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_5 {
+    min-width: 4.3em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_6 {
+    min-width: 4.8em;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_7 {
+    min-width: 5.45em;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .edit_icon,
+#page-mod-quiz-edit ul.slots li.section li.activity a.preview,
+#page-mod-quiz-edit ul.slots li.section li.activity .editing_delete,
+#page-mod-quiz-edit ul.slots li.section li.activity .editing_maxmark {
+    margin: 0 2px;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
+    display: block;
+    min-height: 1.7em;
+    position: absolute;
+    top: 0;
+    left: 5em;
+    width: 100%;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .activityinstance {
+    left: auto;
+    right: 5em;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
+    padding-left: 22px;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .mod-indent-outer {
+    padding-left: 0;
+    padding-right: 22px;
+}
+
+#page-mod-quiz-edit ul.slots .activityinstance form {
+    display: inline;
+}
+#page-mod-quiz-edit span.editinstructions {
+    right: 0;
+}
+#page-mod-quiz-edit.dir-rtl span.editinstructions {
+    left: 0;
+    right: auto;
+}
+
+#page-mod-quiz-edit ul.slots .activityinstance span.instancename {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-word;
+    width: 70%;
+    display: inline-block;
+    height: 20px;
+}
+
+#page-mod-quiz-edit ul.slots .activityinstance span.instancename img {
+    margin: 0 0.2em;
+}
+#page-mod-quiz-edit #categoryquestions .questionname,
+#page-mod-quiz-edit ul.slots li.activity div.activityinstance .questionname {
+  font-weight: bold;
+    color: #555;
+}
+#page-mod-quiz-edit ul.slots li.activity div.activityinstance .questiontext {
+    color: #555;
+}
+#page-mod-quiz-edit ul.slots li.activity div.activityinstance .mod_quiz_random_qbank_link {
+    font-size: 0.8em;
+}
+
+#page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
+    float: left;
+    margin: .2em 0 0;
+    padding: 0;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots .activityinstance img.activityicon {
+    float: right;
+}
+
+#page-mod-quiz-edit .section .activity .actions {
+    white-space: nowrap;
+    background: #e6e6e6;
+    padding: 0.1em 0;
+}
+
+#page-mod-quiz-edit .mod_quiz_edit_forms {
+    display: none;
+}
 
 #categoryquestions > tbody > tr:nth-of-type(even) {
     background: #e4e4e4;
@@ -573,417 +805,53 @@ table#categoryquestions {
     width: 28px;
     padding: 0;
 }
+#categoryquestions .questiontext {
+    position: relative;
+    zoom: 1;
+    padding-left: 0.3em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.dir-rtl #categoryquestions .questiontext {
+    padding-left: 0;
+    padding-right: 0.3em;
+}
+#categoryquestions .questionname {
+    white-space: nowrap;
+    overflow: hidden;
+    zoom: 1;
+    position: relative;
+}
 #categoryquestions .questiontext p {
     margin: 0;
 }
 
-#page-mod-quiz-edit div.quizcontents {
-    float: left;
-    width: 70%;
-    display: block;
-    clear: left;
-}
-#page-mod-quiz-edit div.quizwhenbankcollapsed {
-    width: 100%;
-}
-#page-mod-quiz-edit div.quizpage {
-    display: block;
-    clear: both;
-    width: 100%;
-}
-#page-mod-quiz-edit div.quizpage span.pagetitle {
-    margin-top: 0.3em;
-    float: left;
-    display: block;
-    color: #006;
-}
-#page-mod-quiz-edit div.quizpage .pagecontent {
-    margin-top: 0.3em;
-    display: block;
-    float: left;
-    position: relative;
-    margin-left: 0.3em;
-    margin-right: 0.3em;
-    margin-bottom: 0.2em;
-    border-left: thin solid #777;
-    line-height: 1.3em;
-    border-radius: 0.6em;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    width: 88%;
-    padding: 0.15em 0 0.3em;
-    background-color: #d6d6d6;
-}
-#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
-    border-bottom-right-radius: 0.3em;
-    border-top-right-radius: 0.3em;
-    margin: 0.3em;
-    padding: 0.1em 0.1em 0.1em 0.3em;
-    background-color: #eee;
-    font-weight: bold;
-}
-#page-mod-quiz-edit div.quizpage .pagecontent form#addquestion {
-    background-color: #fff;
-}
-#page-mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div {
-    /* it is a mystery why this has to be inline-table but otherwise the layout gets screwed, even if it is "inline" */display: inline-table;
-}
-#page-mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div input {
-    display: inline;
-}
-
-#page-mod-quiz-edit .addpage {
-    clear: both;
-    padding-top: 0.3em;
-    float: right;
-    margin-right: 2em;
-}
-#page-mod-quiz-edit .statusdisplay {
-    background-color: #ffc;
-    clear: both;
-    margin: 0.3em 1em 0.3em 0;
-    padding: 1px ;
-    /* Stop margin collapse. */
-}
-#page-mod-quiz-edit .statusdisplay p {
-    margin: 0.4em;
-}
-
-#page-mod-quiz-edit div.reorder .reordercontrols {
-    clear: both;
-    padding-right: 1em;
-    margin-top: 0.5em;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em
-}
-#page-mod-quiz-edit div.reorder .reordercontrols .moveselectedonpage {
-    clear: right;
-    float: right;
-    padding: 0.5em 0.3em;
-    text-align: right;
-}
-#page-mod-quiz-edit div.reorder .reordercontrols .addnewpagesafterselected,
-#page-mod-quiz-edit .repaginatecommand {
-    float: right;
-    clear: right;
-    padding-right: 1em;
-}
-#page-mod-quiz-edit div.reorder .reordercontrols .deleteselected {
-    float: right;
-    margin-right: 1em;
-}
-#page-mod-quiz-edit div.reorder div.question {
-    padding-top: 0.2em;
-}
-#page-mod-quiz-edit div.reorder div.question div.qnum {
-    width: 2.9em;
-    padding-top: 0.1em;
-}
-#page-mod-quiz-edit .reorder div.question div.content {
-    width: 87%;
-    float: left;
-    position: relative;
-    border-radius: 0.3em;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    line-height: 1.2em;
-    padding: 0.1em;
-    background-color: #F9F9F9;
-}
-#page-mod-quiz-edit .reorder .questioncontentcontainer .quiz_randomquestion {
-    position: relative;
-}
-#page-mod-quiz-edit .reorder div.question div.content div.quiz_randomquestion {
-    line-height: 1em;
-}
-
-#page-mod-quiz-edit .reorder .questioncontentcontainer {
-    overflow: hidden;
-    white-space: nowrap;
-}
-#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory {
-    overflow: hidden;
-    white-space: nowrap;
-    display: inline;
-    float: none;
-}
-#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label {
-    max-width: 25%;
-    overflow: hidden;
-    padding-left: 0.3em;
-    white-space: nowrap;
-    display: inline-block;
-}
-#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory label {
-    overflow: hidden;
-    white-space: nowrap;
-    display: inline-block;
-}
-#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory,
-#page-mod-quiz-edit .reorder div.question div.content .questionpreview {
-    display: inline;
-    float: none;
-}
-
-#page-mod-quiz-edit .reorder fieldset {
-    display: inline;
-}
-#page-mod-quiz-edit div.reorder div.question div.qnum {
-    text-align: right;
-    font-size: 1em;
-}
-
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist {
-    padding-left: 0.2em;
-    padding-right: 0.2em;
-    clear: both;
-    margin: 0.5em;
-    margin-top: 0.8em;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory {
-    overflow: auto;
-    white-space: normal;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li {
-    clear: left;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li img {
-    padding-right: 0.3em;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li span {
-    display: inline;
-}
-#page-mod-quiz-edit .questioncontentcontainer a {
-    text-decoration: underline;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.singlequestion a {
-    text-decoration: underline;
-}
-#page-mod-quiz-edit .questioncontentcontainer .randomquestioncategory {
-    font-weight: bold;
-}
-
-#page-mod-quiz-edit div.question {
-    clear: left;
-    width: 100%;
-}
-#page-mod-quiz-edit div.question div.qnum {
-    display: block;
-    float: left;
-    width: 1.4em;
-    padding-right: 0.3em;
-    padding-left: 0;
-    text-align: right;
-    color: #333;
-}
-#page-mod-quiz-edit div.question div.questioncontainer {
-    background-color: #ffc;
-}
-#page-mod-quiz-edit div.editq div.question div.content {
-    width: 87%;
-    float: left;
-    position: relative;
-    border-radius: 0.6em;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    line-height: 1.4em;
-    padding: 0.5em;
-}
-#page-mod-quiz-edit div.question div.content div.points {
-    top: 0.5em;
-    border-left: 0.4em solid #FFF;
-    width: 8.5em;
-    padding: 0.2em;
-    line-height: 1em;
-    max-width: 30%;
-    position: absolute;
-    right: 60px;
-    border-radius: 0.2em;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    display: block;
-    margin: 0;
-    background-color: #ddf;
-}
-#page-mod-quiz-edit div.question div.content div.points input {
-    width: 2em;
-    padding: 0;
-}
-#page-mod-quiz-edit div.question div.content div.points input.pointssubmitbutton {
-    width: auto;
-}
-#page-mod-quiz-edit div.question div.content div.qorder {
-    line-height: 1em;
-    max-width: 30%;
-    position: absolute;
-    right: 60px;
-    border-radius: 0.2em;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    display: block;
-    margin: 0;
-    background-color: #ddf;
-}
-#page-mod-quiz-edit div.question div.content .editicon {
-    width: 15px;
-}
-#page-mod-quiz-edit div.question div.content .singlequestion .questionname,
-#page-mod-quiz-edit div.question div.content .singlequestion .questiontext {
-    display: inline-block;
-}
-#page-mod-quiz-edit div.question div.content .singlequestion .questionpreview {
-    background-color: #eee;
-}
-#page-mod-quiz-edit div.question div.content .questiontype {
-    display: block;
-    clear: left;
-    float: left;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.content .questiontype {
-    clear: right;
-    float: right;
-}
-#page-mod-quiz-edit div.question div.content .questionpreview {
-    display: block;
-    float: left;
-    margin-left: 0.3em;
-    padding-left: 0.2em;
-    padding-right: 0.2em;
-}
-#page-mod-quiz-edit div.question div.content .questionpreview a {
-    background-color: #eee;
-}
-#page-mod-quiz-edit div.question div.content div.quiz_randomquestion .questionpreview {
-    display: inline;
-    float: none;
-}
-#page-mod-quiz-edit div.question div.content div.questioncontrols {
-    float: right;
-    width: 55px;
-    position: absolute;
-    right: 0.3em;
-    top: 0;
-    display: block;
-    padding: 0.2em;
-    background-color: #F9F9F9;
-    text-align: right;
-}
-#page-mod-quiz-edit div.question div.content div.questioncontrols img.upwithoutdown {
-    padding-right: 12px;
-    display: inline;
-}
-#page-mod-quiz-edit div.question div.content .questiontext {
-    font-weight: bold;
-}
-#page-mod-quiz-edit div.question div.content .questiontype {
-    font-style: italic;
-}
-
-#page-mod-quiz-edit .editq div.question div.qnum {
-    padding-top: 0.2em;
-}
-#page-mod-quiz-edit .editq div.question {
-    padding-top: 0.3em;
-}
-#page-mod-quiz-edit .editq div.questioncontentcontainer  div.singlequestion img {
-    float: left;
-    padding-top: 0.3em;
-    padding-right: 0.3em;
-}
-#page-mod-quiz-edit .editq div.question div.content {
-    background-color: #F9F9F9;
-}
-#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory {
-    margin-top: 0.4em;
-    position: relative;
-    display: inline-block;
-}
-#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a {
-    display: block;
-    max-width: 15em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    float: left;
-    position: relative;
-}
-#page-mod-quiz-edit .editq div.question div.content .questionpreview {
-    float: left;
-}
-#page-mod-quiz-edit .editq div.question div.content .questionpreview a {
-    font-weight: normal;
-    margin-left: 0em;
-    display: inline;
-    float: none;
-}
-#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory .questionpreview img {
-    padding-right: 0.3em;
-}
-#page-mod-quiz-edit .editq div.question div.content .singlequestion .questioneditbutton .questionname,
-#page-mod-quiz-edit .editq div.question div.content .singlequestion .questioneditbutton .questiontext {
-    float: left;
-}
-#page-mod-quiz-edit .reorder div.question div.content .singlequestion.missingtype .questionname,
-#page-mod-quiz-edit .editq div.question div.content .singlequestion.missingtype .questionname {
-    font-style: italic;
-    max-width: 75%;
-}
-#page-mod-quiz-edit .editq div.question div.description div.content .questiontext {
-    max-width: 75%;
-}
-#page-mod-quiz-edit .editq div.question div.qnum {
-    font-size: 1.5em;
-}
-
-table#categoryquestions td,
+#page-mod-quiz-edit table#categoryquestions td,
 #page-mod-quiz-edit table#categoryquestions th {
     overflow: hidden;
     white-space: nowrap;
 }
+.mod_quiz_qbank_dialogue {
+    width: 80%;
+    min-height: 200px;
+}
+.mod_quiz_qbank_dialogue.moodle-dialogue-fullscreen {
+    width: 100%;
 
-.questionbankwindow.block {
-    float: right;
-    width: 30%;
-    right: 0.3em;
-    padding-bottom: 0.5em;
-    display: block;
-    border-width: 0;
 }
-.questionbankwindow.block .content {
-    padding: 0;
-}
-.questionbankwindow .choosecategory,
-.questionbankwindow .createnewquestion {
-    padding: 0.3em;
-}
-.questionbankwindow .createnewquestion .singlebutton {
-    display: inline;
-}
-.questionbankwindow #catmenu_jump {
-    display: block;
+.mod_quiz_qbank_dialogue .questionbankloading {
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    text-align: center;
+    opacity: 0.5;
+    padding-top: 50px;
 }
 
-.questionbank div.categoryquestionscontainer,
-.questionbank .categorysortopotionscontainer,
-.questionbank .categorypagingbarcontainer,
-.questionbank .categoryselectallcontainer {
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-}
-
-.noquestionsincategory {
-    clear: both;
-    padding-top: 1em;
-    padding-bottom: 1em;
-}
 .modulespecificbuttonscontainer {
     padding-left: 0.3em;
     padding-right: 0.3em;
@@ -1001,112 +869,6 @@ table#categoryquestions td,
     font-size: small;
 }
 
-body #quizcontentsblock #repaginatedialog {
-    display: none;
-}
-body.jsenabled #quizcontentsblock #repaginatedialog .hd {
-    display: block;
-}
-body.jsenabled #quizcontentsblock #repaginatedialog .bd {
-    padding: 1em;
-}
-body.jsenabled #quizcontentsblock .repaginatecommand #repaginatecommand {
-    display: block;
-}
-
-#page-mod-quiz-edit #randomquestiondialog {
-    display: none;
-}
-#page-mod-quiz-edit #qtypechoicecontainer {
-    display: none;
-}
-
-#page-mod-quiz-edit .questionbankwindow select#catmenu_jump {
-/* In Opera9, IE6 the width of the
-select obeys the width of its content
-by default. This prevents that. */width: 100%;
-}
-
-/*this color might need to be theme-specific,
-but in terms of usability, as testing showed,
-http: //docs.moodle.org/dev/Quiz_UI_redesign/usability_testing_of_August_2008/Issues#Question_bank_.2F_question_adding_controls_visibility
-it must be ensured that the question
-bank window's title is prominent enough*/
-#page-mod-quiz-edit .questionbankwindow.block div.header {
-    background-color: #009;
-    background-image: none;
-    padding-top: 0.2em;
-    font-weight: bold;
-    border: 0 none;
-}
-#page-mod-quiz-edit .questionbankwindow.block div.header div.title h2 {
-    color: #FFF;
-    text-align: center;
-}
-#page-mod-quiz-edit .collapsed .container {
-    display: none;
-}
-
-#page-mod-quiz-edit .questionbankwindow a#showbankcmd,
-#page-mod-quiz-edit .questionbankwindow a#hidebankcmd {
-    color: #FFF;
-    text-decoration: underline;
-}
-#page-mod-quiz-edit .questionbankwindow a#showbankcmd:hover,
-#page-mod-quiz-edit .questionbankwindow a#hidebankcmd:hover {
-    color: #009;
-    background-color: #fff;
-    text-decoration: none;
-}
-#page-mod-quiz-edit .questionbankwindow #showbankcmd {
-    display: none;
-}
-#page-mod-quiz-edit .collapsed #showbankcmd {
-    display: inline;
-}
-#page-mod-quiz-edit .questionbankwindow #hidebankcmd {
-    display: inline;
-}
-#page-mod-quiz-edit .collapsed #hidebankcmd {
-    display: none;
-}
-
-#page-mod-quiz-edit .quizquestionlistcontrols {
-    display: inline;
-}
-
-#page-mod-quiz-edit .quizpagedelete {
-    position: absolute;
-    top: 0.2em;
-    right: 0.2em;
-    display: inline;
-}
-#page-mod-quiz-edit .quizpagedelete img {
-    background-color: #d6d6d6;
-    padding: 0.6em;
-}
-#page-mod-quiz-edit .pagecontrols {
-    clear: both;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    padding-top: 0.5em;
-}
-#page-mod-quiz-edit .pagecontrols .singlebutton {
-    float: left;
-    margin-left: 1em;
-}
-#page-mod-quiz-edit .pagecontrols .helplink {
-    float: left;
-}
-
-#page-mod-quiz-edit div#randomquestiondialog_c {
-    width: 90%;
-}
-#page-mod-quiz-edit div#randomquestiondialog_c .mform,
-#randomquestiondialog_c select {
-    width: 100%;
-}
-
 #page-mod-quiz-edit div#repaginatedialog .mform {
     margin-left: auto;
     margin-right: auto;
@@ -1119,23 +881,12 @@ bank window's title is prominent enough*/
     padding: 0;
 }
 
-#page-mod-quiz-edit .questionbankwindow .createnewquestion select,
-#page-mod-quiz-edit .questionbankwindow #catmenu select,
-#page-mod-quiz-edit .questionbankwindow #menucategory {
-    width: 100%;
-}
-
 #page-mod-quiz-edit .paging {
     margin-top: 0;
     margin-bottom: 0;
+    padding: 0.1em 0.3em;
     display: block;
     background-color: #ddd;
-}
-#page-mod-quiz-edit .pagingbottom {
-    padding-bottom: 0.3em;
-}
-#page-mod-quiz-edit .paging a:hover {
-    background-color: #eef;
 }
 
 #page-mod-quiz-edit #page-footer {
@@ -1143,57 +894,16 @@ bank window's title is prominent enough*/
     padding-top: 1em;
 }
 
-.ie6#page-mod-quiz-edit div.question div.content .questiontext,
-.ie6#page-mod-quiz-edit #categoryquestions .questionname {
-    /*ie6 shows this as an arrow if this is not specified*/cursor: pointer;
-}
-.ie6#page-mod-quiz-edit div.question div.content .questionname,
-.ie6#page-mod-quiz-edit #categoryquestions .questiontext {
-    /*ie6 shows this as an arrow if this is not specified*/cursor: pointer;
-}
-.ie6#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label {
-    width: 35%;
-}
-.ie6#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a {
-    width: 40%;
-}
-
-#page-mod-quiz-edit #categoryquestions .questiontext {
-    font-weight: bold;
-}
 #page-mod-quiz-edit .categoryinfofield {
     font-style: italic;
 }
 #page-mod-quiz-edit .categorynamefield {
     font-weight: bold;
 }
-#page-mod-quiz-edit a.configurerandomquestion {
-    font-size: small;
-    text-decoration: underline;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist {
-    background-color: #eee;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul {
-    color: #555;
-}
-#page-mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory {
-    color: #000;
-}
-#page-mod-quiz-edit .categoryinfo {
-    background-color: #eee;
-    border-bottom: 1px solid #bbb;
-}
 #page-mod-quiz-edit .questionsortoptions {
     background-color: #ddd;
 }
 
-#page-mod-quiz-edit div.questionbank {
-    background-color: #e6e6ff;
-}
-#page-mod-quiz-edit div.questionbank form .invisiblefieldset {
-    clear: both;
-}
 #page-mod-quiz-edit div.questionbank .categorysortopotionscontainer {
     padding-top: 0.5em;
     margin-top: 0.3em;
@@ -1205,123 +915,7 @@ bank window's title is prominent enough*/
     background-color: #FFF;
 }
 
-#categoryquestions .questiontext {
-    width: 50%;
-}
-#categoryquestions .questionname {
-    width: 50%;
-}
-
-.ie6#page-mod-quiz-edit div.question div.content .questiontext,
-.ie6#page-mod-quiz-edit #categoryquestions .questionname {
-    /*ie6 shows this as an arrow if this is not specified*/cursor: pointer;
-}
-.ie6#page-mod-quiz-edit div.question div.content .questionname,
-.ie6#page-mod-quiz-edit #categoryquestions .questiontext {
-    /*ie6 shows this as an arrow if this is not specified*/cursor: pointer;
-}
-.ie6.path-mod-quiz div.tabtree a span img.iconsmall {
-    margin: 0;
-    vertical-align: baseline;
-    position: relative;
-    top: 1px;
-}
-.ie6#page-mod-quiz-edit div.question div.content .questiontext {
-    width: 50%;
-}
-.ie6#page-mod-quiz-edit div.question div.content .questionname {
-    width: 20%;
-}
-.ie6#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a {
-    width: 40%;
-}
-.ie6#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label {
-    width: 35%;
-}
-.qnum label {
-    padding-right: 0.25em;
-}
-
-/* RTL Mode */
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitem {
-    width: 23%;
-    float: right;
-}
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr .fitemtitle {
-    text-align: right;
-}
-#page-mod-quiz-mod.dir-rtl #id_reviewoptionshdr fieldset.fgroup span {
-    clear: right;
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl div.quizpage span.pagetitle {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl div.quizpage .pagecontent {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl div.question {
-    clear: right;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.qnum {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl div.editq div.question div.content {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.content div.points {
-    left: 60px;
-    right: auto;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.content div.questioncontrols {
-    float: left;
-    left: 0.3em;
-    right: auto;
-}
-#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion .questioneditbutton .questionname,
-#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion .questioneditbutton .questiontext {
-    float: right;
-    padding-right: 0.3em;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.content .questiontext,
-#page-mod-quiz-edit.dir-rtl #categoryquestions .questiontext {
-    padding-right: 0.3em;
-}
-#page-mod-quiz-edit.dir-rtl .editq div.questioncontentcontainer div.singlequestion img {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl .editq div.question div.content .questionpreview {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl div.question div.content div.qorder {
-    left: 60px;
-    right: auto;
-}
-#page-mod-quiz-edit.dir-rtl .reorder div.question div.content {
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl .quizpagedelete {
-    left: 0.2em;
-    right: auto;
-}
-#page-mod-quiz-edit.dir-rtl div.quizcontents {
-    clear: right;
-    float: right;
-}
-#page-mod-quiz-edit.dir-rtl .questionbankwindow.block {
-    float: left;
-}
-#page-question-edit.dir-rtl td.creatorname, #page-question-edit.dir-rtl td.modifiername {
-    text-align: center;
-}
-.path-question.dir-rtl input[name="maxmark"],
-.path-question-type.dir-rtl input[name="defaultmark"],
-#page-mod-quiz-edit.dir-rtl div.points input {
-    direction: ltr;
-    text-align: left;
-}
-#page-mod-quiz-edit.dir-rtl .pagecontrols .singlebutton {
-    float: right;
-    margin-left: 0;
-    margin-right: 1em;
+/* Base theme needs extra support. */
+#page-mod-quiz-edit ul.slots li.section ul.section {
+    list-style: none;
 }

@@ -105,10 +105,24 @@ abstract class restore_prechecks_helper {
             $warnings[] = get_string('noticenewerbackup','',$message);
         }
 
-        // Error if restoring over frontpage
-        // TODO: Review the whole restore process in order to transform this into one warning (see 1.9)
-        if ($controller->get_courseid() == SITEID) {
-            $errors[] = get_string('errorrestorefrontpage', 'backup');
+        // The original_course_format var was introduced in Moodle 2.9.
+        $originalcourseformat = null;
+        if (!empty($controller->get_info()->original_course_format)) {
+            $originalcourseformat = $controller->get_info()->original_course_format;
+        }
+
+        // We can't restore other course's backups on the front page.
+        if ($controller->get_courseid() == SITEID &&
+                $originalcourseformat != 'site' &&
+                $controller->get_type() == backup::TYPE_1COURSE) {
+            $errors[] = get_string('errorrestorefrontpagebackup', 'backup');
+        }
+
+        // We can't restore front pages over other courses.
+        if ($controller->get_courseid() != SITEID &&
+                $originalcourseformat == 'site' &&
+                $controller->get_type() == backup::TYPE_1COURSE) {
+            $errors[] = get_string('errorrestorefrontpagebackup', 'backup');
         }
 
         // If restoring to different site and restoring users and backup has mnet users warn/error

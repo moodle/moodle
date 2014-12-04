@@ -37,7 +37,7 @@ $timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look.
 $action     = optional_param('action', '', PARAM_ALPHA);
 $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
 $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-$currentgroup = optional_param('group', 0, PARAM_INT); // Get the active group.
+$currentgroup = optional_param('group', null, PARAM_INT); // Get the active group.
 
 $url = new moodle_url('/report/participation/index.php', array('id'=>$id));
 if ($roleid !== 0) $url->param('roleid');
@@ -128,8 +128,15 @@ if ($onlyuselegacyreader) {
 // Print first controls.
 report_participation_print_filter_form($course, $timefrom, $minlog, $action, $roleid, $instanceid);
 
-$baseurl =  $CFG->wwwroot.'/report/participation/index.php?id='.$course->id.'&amp;roleid='
-    .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
+$baseurl = new moodle_url('/report/participation/index.php', array(
+    'id' => $course->id,
+    'roleid' => $roleid,
+    'instanceid' => $instanceid,
+    'timefrom' => $timefrom,
+    'action' => $action,
+    'perpage' => $perpage,
+    'group' => $currentgroup
+));
 $select = groups_allgroups_course_menu($course, $baseurl, true, $currentgroup);
 
 // User cannot see any group.
@@ -265,7 +272,7 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     // Get record from sql_internal_reader and merge with records got from legacy log (if needed).
     if (!$onlyuselegacyreader) {
-        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
+        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(l.actioncount) AS count
                   FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
                   JOIN {user} u ON u.id = ra.userid
              $groupsql
@@ -278,7 +285,9 @@ if (!empty($instanceid) && !empty($roleid)) {
                        AND anonymous = 0
                        AND contextlevel = :contextlevel
                        AND (origin = 'web' OR origin = 'ws')
-                  GROUP BY userid) l ON (l.userid = ra.userid)";
+                  GROUP BY userid,timecreated) l ON (l.userid = ra.userid)";
+        // We add this after the WHERE statement that may come below.
+        $groupbysql = " GROUP BY ra.userid, $usernamefields, u.idnumber";
 
         $params['edulevel'] = core\event\base::LEVEL_PARTICIPATING;
         $params['contextlevel'] = CONTEXT_MODULE;
@@ -286,7 +295,7 @@ if (!empty($instanceid) && !empty($roleid)) {
         if ($twhere) {
             $sql .= ' WHERE '.$twhere; // Initial bar.
         }
-
+        $sql .= $groupbysql;
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();
         }
@@ -339,10 +348,15 @@ if (!empty($instanceid) && !empty($roleid)) {
     $table->print_html();
 
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>'."\n";
-    }
-    else if ($matchcount > 0 && $perpage < $matchcount) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>'."\n";
+        $perpageurl = new moodle_url($baseurl, array('perpage' => DEFAULT_PAGE_SIZE));
+        echo html_writer::start_div('', array('id' => 'showall'));
+        echo html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE));
+        echo html_writer::end_div();
+    } else if ($matchcount > 0 && $perpage < $matchcount) {
+        $perpageurl = new moodle_url($baseurl, array('perpage' => SHOW_ALL_PAGE_SIZE));
+        echo html_writer::start_div('', array('id' => 'showall'));
+        echo html_writer::link($perpageurl, get_string('showall', '', $matchcount));
+        echo html_writer::end_div();
     }
 
     echo '<div class="selectbuttons">';

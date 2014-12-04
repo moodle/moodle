@@ -61,7 +61,7 @@ class grade_export_form extends moodleform {
                 }
 
                 if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
-                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
+                    $mform->addElement('checkbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
                     $mform->hardFreeze('itemids['.$grade_item->id.']');
                 } else {
                     $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), null, array('group' => 1));

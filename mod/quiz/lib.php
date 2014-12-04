@@ -634,21 +634,32 @@ function quiz_format_grade($quiz, $grade) {
 }
 
 /**
- * Round a grade to to the correct number of decimal places, and format it for display.
+ * Determine the correct number of decimal places required to format a grade.
+ *
+ * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @return integer
+ */
+function quiz_get_grade_format($quiz) {
+    if (empty($quiz->questiondecimalpoints)) {
+        $quiz->questiondecimalpoints = -1;
+    }
+
+    if ($quiz->questiondecimalpoints == -1) {
+        return $quiz->decimalpoints;
+    }
+
+    return $quiz->questiondecimalpoints;
+}
+
+/**
+ * Round a grade to the correct number of decimal places, and format it for display.
  *
  * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
  * @return float
  */
 function quiz_format_question_grade($quiz, $grade) {
-    if (empty($quiz->questiondecimalpoints)) {
-        $quiz->questiondecimalpoints = -1;
-    }
-    if ($quiz->questiondecimalpoints == -1) {
-        return format_float($grade, $quiz->decimalpoints);
-    } else {
-        return format_float($grade, $quiz->questiondecimalpoints);
-    }
+    return format_float($grade, quiz_get_grade_format($quiz));
 }
 
 /**
@@ -1790,7 +1801,6 @@ function quiz_get_navigation_options() {
         QUIZ_NAVMETHOD_SEQ  => get_string('navmethod_seq', 'quiz')
     );
 }
-
 
 /**
  * Obtains the automatic completion state for this quiz on any conditions

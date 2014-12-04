@@ -294,12 +294,12 @@ class block_recent_activity extends block_base {
                 if (!isset($modinfo->instances[$modname][$instanceid])) {
                     continue;
                 }
-                $entry['cmid'] = $modinfo->instances[$modname][$instanceid]->id;
                 if ($log->action == 'add mod') {
                     $entry['action'] = 0;
                 } else {
                     $entry['action'] = 1;
                 }
+                $entry['cmid'] = $modinfo->instances[$modname][$instanceid]->id;
             }
             $entries[] = $entry;
         }

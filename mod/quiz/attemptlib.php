@@ -97,7 +97,7 @@ class quiz {
      * @param int $userid the the userid.
      * @return quiz the new quiz object
      */
-    public static function create($quizid, $userid) {
+    public static function create($quizid, $userid = null) {
         global $DB;
 
         $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
@@ -105,7 +105,9 @@ class quiz {
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
-        $quiz = quiz_update_effective_access($quiz, $userid);
+        if ($userid) {
+            $quiz = quiz_update_effective_access($quiz, $userid);
+        }
 
         return new quiz($quiz, $cm, $course);
     }
@@ -151,6 +153,14 @@ class quiz {
             }
         }
         get_question_options($questionstoprocess);
+    }
+
+    /**
+     * Get an instance of the {@link \mod_quiz\structure} class for this quiz.
+     * @return \mod_quiz\structure describes the questions in the quiz.
+     */
+    public function get_structure() {
+        return \mod_quiz\structure::create_for_quiz($this);
     }
 
     // Simple getters ==========================================================
@@ -749,6 +759,24 @@ class quiz_attempt {
     }
 
     /**
+     * Has the student, in this attempt, engaged with the quiz in a non-trivial way?
+     * That is, is there any question worth a non-zero number of marks, where
+     * the student has made some response that we have saved?
+     * @return bool true if we have saved a response for at least one graded question.
+     */
+    public function has_response_to_at_least_one_graded_question() {
+        foreach ($this->quba->get_attempt_iterator() as $qa) {
+            if ($qa->get_max_mark() == 0) {
+                continue;
+            }
+            if ($qa->get_num_steps() > 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get extra summary information about this attempt.
      *
      * Some behaviours may be able to provide interesting summary information
@@ -762,6 +790,7 @@ class quiz_attempt {
      * The values are arrays with two items, title and content. Each of these
      * will be either a string, or a renderable.
      *
+     * @param question_display_options $options the display options for this quiz attempt at this time.
      * @return array as described above.
      */
     public function get_additional_summary_data(question_display_options $options) {
@@ -1513,6 +1542,8 @@ class quiz_attempt {
         $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp);
 
         $transaction->allow_commit();
+
+        quiz_send_overdue_message($this);
     }
 
     /**

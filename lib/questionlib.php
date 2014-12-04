@@ -115,19 +115,6 @@ function question_save_qtype_order($neworder, $config = null) {
 /// FUNCTIONS //////////////////////////////////////////////////////
 
 /**
- * Returns an array of names of activity modules that use this question
- *
- * @deprecated since Moodle 2.1. Use {@link questions_in_use} instead.
- *
- * @param object $questionid
- * @return array of strings
- */
-function question_list_instances($questionid) {
-    throw new coding_exception('question_list_instances has been deprectated. ' .
-            'Please use questions_in_use instead.');
-}
-
-/**
  * @param array $questionids of question ids.
  * @return boolean whether any of these questions are being used by any part of Moodle.
  */
@@ -192,23 +179,6 @@ function question_context_has_any_questions($context) {
 }
 
 /**
- * Returns list of 'allowed' grades for grade selection
- * formatted suitably for dropdown box function
- *
- * @deprecated since 2.1. Use {@link question_bank::fraction_options()} or
- * {@link question_bank::fraction_options_full()} instead.
- *
- * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
- */
-function get_grade_options() {
-    $grades = new stdClass();
-    $grades->gradeoptions = question_bank::fraction_options();
-    $grades->gradeoptionsfull = question_bank::fraction_options_full();
-
-    return $grades;
-}
-
-/**
  * Check whether a given grade is one of a list of allowed options. If not,
  * depending on $matchgrades, either return the nearest match, or return false
  * to signal an error.
@@ -248,17 +218,6 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
         throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
                 ' passed to match_grade_options');
     }
-}
-
-/**
- * @deprecated Since Moodle 2.1. Use {@link question_category_in_use} instead.
- * @param integer $categoryid a question category id.
- * @param boolean $recursive whether to check child categories too.
- * @return boolean whether any question in this category is in use.
- */
-function question_category_isused($categoryid, $recursive = false) {
-    throw new coding_exception('question_category_isused has been deprectated. ' .
-            'Please use question_category_in_use instead.');
 }
 
 /**
@@ -892,19 +851,6 @@ function question_hash($question) {
     return make_unique_id_code();
 }
 
-/// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
-/**
- * Saves question options
- *
- * Simply calls the question type specific save_question_options() method.
- * @deprecated all code should now call the question type method directly.
- */
-function save_question_options($question) {
-    debugging('Please do not call save_question_options any more. Call the question type method directly.',
-            DEBUG_DEVELOPER);
-    question_bank::get_qtype($question->qtype)->save_question_options($question);
-}
-
 /// CATEGORY FUNCTIONS /////////////////////////////////////////////////////////////////
 
 /**
@@ -1430,17 +1376,6 @@ function question_require_capability_on($question, $cap) {
 }
 
 /**
- * Get the real state - the correct question id and answer - for a random
- * question.
- * @param object $state with property answer.
- * @deprecated this function has not been relevant since Moodle 2.1!
- */
-function question_get_real_state($state) {
-    throw new coding_exception('question_get_real_state has not been relevant since Moodle 2.1. ' .
-            'I am not sure what you are trying to do, but stop it at once!');
-}
-
-/**
  * @param object $context a context
  * @return string A URL for editing questions in this context.
  */
@@ -1754,36 +1689,6 @@ function question_rewrite_question_urls($text, $file, $contextid, $component,
 }
 
 /**
- * Rewrite the PLUGINFILE urls in the questiontext, when viewing the question
- * text outside an attempt (for example, in the question bank listing or in the
- * quiz statistics report).
- *
- * @param string $questiontext the question text.
- * @param int $contextid the context the text is being displayed in.
- * @param string $component component
- * @param array $questionid the question id
- * @param array $options e.g. forcedownload. Passed to file_rewrite_pluginfile_urls.
- * @return string $questiontext with URLs rewritten.
- * @deprecated since Moodle 2.6
- */
-function question_rewrite_questiontext_preview_urls($questiontext, $contextid,
-        $component, $questionid, $options=null) {
-    global $DB;
-
-    debugging('question_rewrite_questiontext_preview_urls has been deprecated. ' .
-            'Please use question_rewrite_question_preview_urls instead', DEBUG_DEVELOPER);
-    $questioncontextid = $DB->get_field_sql('
-            SELECT qc.contextid
-              FROM {question} q
-              JOIN {question_categories} qc ON qc.id = q.category
-             WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
-
-    return question_rewrite_question_preview_urls($questiontext, $questionid,
-            $questioncontextid, 'question', 'questiontext', $questionid,
-            $contextid, $component, $options);
-}
-
-/**
  * Rewrite the PLUGINFILE urls in part of the content of a question, for use when
  * viewing the question outside an attempt (for example, in the question bank
  * listing or in the quiz statistics report).
@@ -1810,38 +1715,6 @@ function question_rewrite_question_preview_urls($text, $questionid,
 
     return file_rewrite_pluginfile_urls($text, 'pluginfile.php', $filecontextid,
             $filecomponent, $filearea, $path, $options);
-}
-
-/**
- * Send a file from the question text of a question.
- * @param int $questionid the question id
- * @param array $args the remaining file arguments (file path).
- * @param bool $forcedownload whether the user must be forced to download the file.
- * @param array $options additional options affecting the file serving
- * @deprecated since Moodle 2.6.
- */
-function question_send_questiontext_file($questionid, $args, $forcedownload, $options) {
-    global $DB;
-
-    debugging('question_send_questiontext_file has been deprecated. It is no longer necessary. ' .
-            'You can now just use send_stored_file.', DEBUG_DEVELOPER);
-    $question = $DB->get_record_sql('
-            SELECT q.id, qc.contextid
-              FROM {question} q
-              JOIN {question_categories} qc ON qc.id = q.category
-             WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
-
-    $fs = get_file_storage();
-    $fullpath = "/$question->contextid/question/questiontext/$question->id/" . implode('/', $args);
-
-    // Get rid of the redundant questionid.
-    $fullpath = str_replace("/{$questionid}/{$questionid}/", "/{$questionid}/", $fullpath);
-
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        send_file_not_found();
-    }
-
-    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
@@ -1943,15 +1816,12 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         $result = component_callback($previewcomponent, 'question_preview_pluginfile', array(
                 $previewcontext, $questionid,
                 $context, $component, $filearea, $args,
-                $forcedownload, $options), 'newcallbackmissing');
+                $forcedownload, $options), 'callbackmissing');
 
-        if ($result === 'newcallbackmissing' && $filearea = 'questiontext') {
-            // Fall back to the legacy callback for backwards compatibility.
-            debugging("Component {$previewcomponent} does not define the expected " .
-                    "{$previewcomponent}_question_preview_pluginfile callback. Falling back to the deprecated " .
-                    "{$previewcomponent}_questiontext_preview_pluginfile callback.", DEBUG_DEVELOPER);
-            component_callback($previewcomponent, 'questiontext_preview_pluginfile', array(
-                    $previewcontext, $questionid, $args, $forcedownload, $options));
+        if ($result === 'callbackmissing') {
+            throw new coding_exception("Component {$previewcomponent} does not define the callback " .
+                    "{$previewcomponent}_question_preview_pluginfile callback. " .
+                    "Which is required if you are using question_rewrite_question_preview_urls.", DEBUG_DEVELOPER);
         }
 
         send_file_not_found();

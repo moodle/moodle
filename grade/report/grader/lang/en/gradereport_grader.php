@@ -35,3 +35,4 @@ $string['pluginname'] = 'Grader report';
 $string['preferences'] = 'Grader report preferences';
 $string['useractivitygrade'] = '{$a} grade';
 $string['useractivityfeedback'] = '{$a} feedback';
+$string['overriddengrade'] = 'Overridden grade';

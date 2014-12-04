@@ -116,9 +116,14 @@ class checker {
      * @throws checker_exception
      */
     public function fetch() {
+
         $response = $this->get_response();
         $this->validate_response($response);
         $this->store_response($response);
+
+        // We need to reset plugin manager's caches - the currently existing
+        // singleton is not aware of eventually available updates we just fetched.
+        \core_plugin_manager::reset_caches();
     }
 
     /**
@@ -629,9 +634,13 @@ class checker {
     protected function cron_notifications(array $changes) {
         global $CFG;
 
+        if (empty($changes)) {
+            return array();
+        }
+
         $notifications = array();
         $pluginman = \core_plugin_manager::instance();
-        $plugins = $pluginman->get_plugins(true);
+        $plugins = $pluginman->get_plugins();
 
         foreach ($changes as $component => $componentchanges) {
             if (empty($componentchanges)) {
@@ -691,6 +700,7 @@ class checker {
         global $CFG;
 
         if (empty($notifications)) {
+            $this->cron_mtrace('nothing to notify about. ', '');
             return;
         }
 

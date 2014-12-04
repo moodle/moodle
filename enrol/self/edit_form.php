@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
 
 class enrol_self_edit_form extends moodleform {
 
@@ -105,28 +106,22 @@ class enrol_self_edit_form extends moodleform {
         $mform->setType('customint3', PARAM_INT);
 
         $cohorts = array(0 => get_string('no'));
-        list($sqlparents, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(), SQL_PARAMS_NAMED);
-        $params['current'] = $instance->customint5;
-        $sql = "SELECT id, name, idnumber, contextid
-                  FROM {cohort}
-                 WHERE contextid $sqlparents OR id = :current
-              ORDER BY name ASC, idnumber ASC";
-        $rs = $DB->get_recordset_sql($sql, $params);
-        foreach ($rs as $c) {
-            $ccontext = context::instance_by_id($c->contextid);
-            if ($c->id != $instance->customint5 and !has_capability('moodle/cohort:view', $ccontext)) {
-                continue;
-            }
-            $cohorts[$c->id] = format_string($c->name, true, array('context'=>$context));
+        $allcohorts = cohort_get_available_cohorts($context);
+        if ($instance->customint5 && !isset($allcohorts[$instance->customint5]) &&
+                ($c = $DB->get_record('cohort', array('id' => $instance->customint5), 'id, name, idnumber, contextid, visible', IGNORE_MISSING))) {
+            // Current cohort was not found because current user can not see it. Still keep it.
+            $allcohorts[$instance->customint5] = $c;
+        }
+        foreach ($allcohorts as $c) {
+            $cohorts[$c->id] = format_string($c->name, true, array('context' => context::instance_by_id($c->contextid)));
             if ($c->idnumber) {
                 $cohorts[$c->id] .= ' ['.s($c->idnumber).']';
             }
         }
-        if (!isset($cohorts[$instance->customint5])) {
+        if ($instance->customint5 && !isset($allcohorts[$instance->customint5])) {
             // Somebody deleted a cohort, better keep the wrong value so that random ppl can not enrol.
             $cohorts[$instance->customint5] = get_string('unknowncohort', 'cohort', $instance->customint5);
         }
-        $rs->close();
         if (count($cohorts) > 1) {
             $mform->addElement('select', 'customint5', get_string('cohortonly', 'enrol_self'), $cohorts);
             $mform->addHelpButton('customint5', 'cohortonly', 'enrol_self');

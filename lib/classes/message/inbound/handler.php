@@ -33,6 +33,7 @@ namespace core\message\inbound;
  * @property-read string $component The component of this handler
  * @property-read int $defaultexpiration Default expiration of new addresses for this handler
  * @property-read string $description The description of this handler
+ * @property-read string $name The name of this handler
  * @property-read bool $validateaddress Whether the address validation is a requiredment
  * @property-read bool $enabled Whether this handler is currently enabled
  * @property-read string $classname The name of handler class
@@ -52,7 +53,7 @@ abstract class handler {
     /**
      * @var int $defaultexpiration The default expiration time to use when created a new key.
      */
-    private $defaultexpiration = 86400;
+    private $defaultexpiration = WEEKSECS;
 
     /**
      * @var bool $validateaddress Whether to validate the sender address when processing this handler.
@@ -192,6 +193,14 @@ abstract class handler {
      * @return string
      */
     protected abstract function get_description();
+
+    /**
+     * Return a name for the current handler.
+     * This appears in the admin pages as a human-readable name.
+     *
+     * @return string
+     */
+    protected abstract function get_name();
 
     /**
      * Process the message against the current handler.

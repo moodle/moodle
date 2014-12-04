@@ -54,6 +54,19 @@
                 updateToolMatches();
 
                 self.toggleEditButtons();
+
+                if (self.getSelectedToolTypeOption().getAttribute('toolproxy')){
+                    var allowname = Y.one('#id_instructorchoicesendname');
+                    allowname.set('checked', !self.getSelectedToolTypeOption().getAttribute('noname'));
+
+                    var allowemail = Y.one('#id_instructorchoicesendemailaddr');
+                    allowemail.set('checked', !self.getSelectedToolTypeOption().getAttribute('noemail'));
+
+                    var allowgrades = Y.one('#id_instructorchoiceacceptgrades');
+                    allowgrades.set('checked', !self.getSelectedToolTypeOption().getAttribute('nogrades'));
+                    self.toggleGradeSection();
+                }
+
             });
 
             this.createTypeEditorButtons();

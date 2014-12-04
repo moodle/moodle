@@ -1292,7 +1292,9 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
      * Closes the questions wrapper
      */
     public function on_questions_end() {
-        $this->xmlwriter->end_tag('questions');
+        if ($this->questionswrapperwritten) {
+            $this->xmlwriter->end_tag('questions');
+        }
     }
 
     /**

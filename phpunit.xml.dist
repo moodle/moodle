@@ -20,7 +20,7 @@
 
     <php>
         <!--<const name="PHPUNIT_LONGTEST" value="1"/> uncomment to execute also slow or otherwise expensive tests-->
-        <const name="PHPUNIT_SEQUENCE_START" value="<!--@PHPUNIT_SEQUENCE_START@-->"/>
+        <const name="PHPUNIT_SEQUENCE_START" value=""/>
 
         <!--Following constants instruct tests to fetch external test files from alternative location or skip tests if empty, clone https://github.com/moodlehq/moodle-exttests to local web server-->
         <!--<const name="TEST_EXTERNAL_FILES_HTTP_URL" value="http://download.moodle.org/unittest"/> uncomment and alter to fetch external test files from alternative location-->
@@ -64,6 +64,7 @@
             <directory suffix="_test.php">lib/grade/tests</directory>
             <directory suffix="_test.php">grade/tests</directory>
             <directory suffix="_test.php">grade/grading/tests</directory>
+            <directory suffix="_test.php">grade/import/csv/tests</directory>
         </testsuite>
         <testsuite name="core_availability_testsuite">
             <directory suffix="_test.php">availability/tests</directory>

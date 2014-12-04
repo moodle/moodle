@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->libdir . '/google/Google_Client.php');
-require_once($CFG->libdir . '/google/contrib/Google_DriveService.php');
+require_once($CFG->libdir . '/google/lib.php');
+require_once($CFG->libdir . '/google/Google/Service/Drive.php');
 
 /**
  * Google Docs Plugin
@@ -47,7 +47,7 @@ class repository_googledocs extends repository {
 
     /**
      * Google Drive Service.
-     * @var Google_DriveService
+     * @var Google_Drive_Service
      */
     private $service = null;
 
@@ -77,12 +77,12 @@ class repository_googledocs extends repository {
 
         $callbackurl = new moodle_url(self::CALLBACKURL);
 
-        $this->client = new Google_Client();
+        $this->client = get_google_client();
         $this->client->setClientId(get_config('googledocs', 'clientid'));
         $this->client->setClientSecret(get_config('googledocs', 'secret'));
-        $this->client->setScopes(array('https://www.googleapis.com/auth/drive.readonly'));
+        $this->client->setScopes(array(Google_Service_Drive::DRIVE_READONLY));
         $this->client->setRedirectUri($callbackurl->out(false));
-        $this->service = new Google_DriveService($this->client);
+        $this->service = new Google_Service_Drive($this->client);
 
         $this->check_login();
     }
@@ -311,7 +311,7 @@ class repository_googledocs extends repository {
         try {
             // Retrieving files and folders.
             $response = $this->service->files->listFiles($params);
-        } catch (Google_ServiceException $e) {
+        } catch (Google_Service_Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 // This is raised when the service Drive API has not been enabled on Google APIs control panel.
                 throw new repository_exception('servicenotenabled', 'repository_googledocs');
@@ -416,11 +416,11 @@ class repository_googledocs extends repository {
     public function get_file($reference, $filename = '') {
         global $CFG;
 
-        $request = new Google_HttpRequest($reference);
-        $httpRequest = Google_Client::$io->authenticatedRequest($request);
-        if ($httpRequest->getResponseHttpCode() == 200) {
+        $auth = $this->client->getAuth();
+        $request = $auth->authenticatedRequest(new Google_Http_Request($reference));
+        if ($request->getResponseHttpCode() == 200) {
             $path = $this->prepare_file($filename);
-            $content = $httpRequest->getResponseBody();
+            $content = $request->getResponseBody();
             if (file_put_contents($path, $content) !== false) {
                 @chmod($path, $CFG->filepermissions);
                 return array(

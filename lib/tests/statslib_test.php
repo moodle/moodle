@@ -35,9 +35,6 @@ require_once(__DIR__ . '/fixtures/stats_events.php');
  * Test functions that affect daily stats.
  */
 class core_statslib_testcase extends advanced_testcase {
-    /** The student role ID **/
-    const STID = 5;
-
     /** The day to use for testing **/
     const DAY = 1272672000;
 
@@ -50,43 +47,13 @@ class core_statslib_testcase extends advanced_testcase {
     /** @var array The replacements to be used when loading XML files **/
     protected $replacements = null;
 
-    /**
-     * Set up the database for tests.
-     *
-     * This function is needed so that daily_log_provider has the before-test set up from setUp()
-     */
-    protected function set_up_db() {
-        global $DB;
-
-        if ($DB->record_exists('user', array('username' => 'user1'))) {
-            return;
-        }
-
-        $datagen = self::getDataGenerator();
-
-        $user1   = $datagen->create_user(array('username'=>'user1'));
-        $user2   = $datagen->create_user(array('username'=>'user2'));
-
-        $course1 = $datagen->create_course(array('shortname'=>'course1'));
-
-        $success = enrol_try_internal_enrol($course1->id, $user1->id, 5);
-
-        if (!$success) {
-            trigger_error('User enrollment failed', E_USER_ERROR);
-        }
-
-        $context = context_system::instance();
-        role_assign(self::STID, $user2->id, $context->id);
-
-        $this->generate_replacement_list();
-    }
 
     /**
      * Setup function
      *   - Allow changes to CFG->debug for testing purposes.
      */
     protected function setUp() {
-        global $CFG;
+        global $CFG, $DB;
         parent::setUp();
 
         // Settings to force statistic to run during testing.
@@ -107,8 +74,22 @@ class core_statslib_testcase extends advanced_testcase {
         $CFG->statsruntimestarthour   = $shour;
         $CFG->statsruntimestartminute = 0;
 
-        $this->set_up_db();
+        if ($DB->record_exists('user', array('username' => 'user1'))) {
+            return;
+        }
 
+        // Set up the database.
+        $datagen = self::getDataGenerator();
+
+        $user1   = $datagen->create_user(array('username'=>'user1'));
+        $user2   = $datagen->create_user(array('username'=>'user2'));
+
+        $course1 = $datagen->create_course(array('shortname'=>'course1'));
+        $datagen->enrol_user($user1->id, $course1->id);
+
+        $this->generate_replacement_list();
+
+        // Reset between tests.
         $this->resetAfterTest();
     }
 
@@ -172,6 +153,7 @@ class core_statslib_testcase extends advanced_testcase {
         $start      = stats_get_base_daily(self::DAY + 3600);
         $startnolog = stats_get_base_daily(stats_get_start_from('daily'));
         $gr         = get_guest_role();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
         $this->replacements = array(
             // Start and end times.
@@ -195,7 +177,7 @@ class core_statslib_testcase extends advanced_testcase {
             // Role ids.
             '[frontpage_roleid]' => (int) $CFG->defaultfrontpageroleid,
             '[guest_roleid]'     => $gr->id,
-            '[student_roleid]'   => self::STID,
+            '[student_roleid]'   => $studentrole->id,
         );
     }
 
@@ -226,21 +208,18 @@ class core_statslib_testcase extends advanced_testcase {
 
     /**
      * Provides the log data for test_statslib_cron_daily.
+     *
+     * @return array of fixture XML log file names.
      */
     public function daily_log_provider() {
-        global $CFG, $DB;
+        $logfiles = array();
+        $fileno = array('00', '01', '02', '03', '04', '05', '06', '07', '08');
 
-        $this->set_up_db();
-
-        $tests = array('00', '01', '02', '03', '04', '05', '06', '07', '08');
-
-        $dataset = array();
-
-        foreach ($tests as $test) {
-            $dataset[] = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test{$test}.xml");
+        foreach ($fileno as $no) {
+            $logfiles[] = array("statslib-test{$no}.xml");
         }
 
-        return $dataset;
+        return $logfiles;
     }
 
     /**
@@ -691,9 +670,12 @@ class core_statslib_testcase extends advanced_testcase {
      * @depends test_statslib_temp_table_fill
      * @dataProvider daily_log_provider
      */
-    public function test_statslib_cron_daily($logs, $stats) {
+    public function test_statslib_cron_daily($xmlfile) {
         global $CFG, $DB;
 
+        $dataset = $this->load_xml_data_file(__DIR__."/fixtures/{$xmlfile}");
+
+        list($logs, $stats) = $dataset;
         $this->prepare_db($logs, array('log'));
 
         // Stats cron daily uses mtrace, turn on buffering to silence output.

@@ -252,7 +252,7 @@ class OAuthRequest {
      * attempt to build up a request from what was passed to the server
      */
     public static function from_request($http_method = null, $http_url = null, $parameters = null) {
-        $scheme = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on") ? 'http' : 'https';
+        $scheme = (!is_https()) ? 'http' : 'https';
         $port = "";
         if ($_SERVER['SERVER_PORT'] != "80" && $_SERVER['SERVER_PORT'] != "443" && strpos(':', $_SERVER['HTTP_HOST']) < 0) {
             $port = ':' . $_SERVER['SERVER_PORT'];

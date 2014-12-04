@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
-require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 
 /**
  * Unit tests for quiz events.
@@ -97,8 +96,8 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $this->assertCount(1, $events);
-        $event = $events[0];
+        $this->assertCount(3, $events);
+        $event = $events[2];
         $this->assertInstanceOf('\mod_quiz\event\attempt_submitted', $event);
         $this->assertEquals('quiz_attempts', $event->objecttable);
         $this->assertEquals($quizobj->get_context(), $event->get_context());

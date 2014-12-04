@@ -115,6 +115,10 @@ if ($mform->is_cancelled()) {
         print_error('errorpasswordupdate', 'auth');
     }
 
+    if (!empty($CFG->passwordchangelogout)) {
+        \core\session\manager::kill_user_sessions($USER->id, session_id());
+    }
+
     // Reset login lockout - we want to prevent any accidental confusion here.
     login_unlock_account($USER);
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/lti/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/lti"
+<XMLDB PATH="mod/lti/db" VERSION="20140612" COMMENT="XMLDB file for Moodle mod/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -40,6 +40,29 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="lti_tool_proxies" COMMENT="LTI tool proxy registrations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="Tool Provider" SEQUENCE="false" COMMENT="Tool Provider name"/>
+        <FIELD NAME="regurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Configured = 1, Pending = 2, Accepted = 3, Rejected = 4, Cancelled = 5"/>
+        <FIELD NAME="guid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="vendorcode" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="capabilityoffered" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="List of capabilities offered, one per line"/>
+        <FIELD NAME="serviceoffered" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="List of services offered, one per line"/>
+        <FIELD NAME="toolproxy" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON string representing tool proxy returned by tool provider"/>
+        <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of user which initiated the registration process"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Date/time at which the record was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Date/time at which the record was last modified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="guid" UNIQUE="true" FIELDS="guid"/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="lti_types" COMMENT="Basic LTI pre-configured activities">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -49,6 +72,11 @@
         <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="toolproxyid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Primary key of related tool proxy (null for LTI 1 tools)"/>
+        <FIELD NAME="enabledcapability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Enabled capabilities, one per line (null for LTI 1 tools)"/>
+        <FIELD NAME="parameter" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Launch parameters, one per line (null for LTI 1 tools)"/>
+        <FIELD NAME="icon" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="URL to icon file"/>
+        <FIELD NAME="secureicon" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Secure URL to icon file"/>
         <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -74,6 +102,23 @@
       <INDEXES>
         <INDEX NAME="typeid" UNIQUE="false" FIELDS="typeid"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="lti_tool_settings" COMMENT="LTI tool setting values">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="toolproxyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Primary key of related tool proxy"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Primary key of course (null for system-wide settings)"/>
+        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Primary key of course module - tool link added to course (null for system-wide and context-wide settings)"/>
+        <FIELD NAME="settings" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Setting values as JSON"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Date/time at which the record was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Date/time at which the record was last modified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="toolproxy" TYPE="foreign" FIELDS="toolproxyid" REFTABLE="lti_tool_proxies" REFFIELDS="id" COMMENT="The tool proxy to which the setting relates"/>
+        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id" COMMENT="The course to which the setting relates"/>
+        <KEY NAME="coursemodule" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="lti" REFFIELDS="id" COMMENT="The module instance to which the setting relates"/>
+      </KEYS>
     </TABLE>
     <TABLE NAME="lti_submission" COMMENT="Keeps track of individual submissions for LTI activities.">
       <FIELDS>

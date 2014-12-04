@@ -18,7 +18,7 @@ Feature: Restrict which blocks can be added to My home
 
   Scenario: The comments block can be added to My home by default
     And I log in as "student1"
-    And I follow "My home"
+    And I click on "My home" "link" in the "Navigation" "block"
     And I press "Customise this page"
     Then the "Add a block" select box should contain "Comments"
     And the "Add a block" select box should contain "Courses"
@@ -34,7 +34,7 @@ Feature: Restrict which blocks can be added to My home
       | block/html:myaddinstance | Prohibit |
     And I log out
     And I log in as "student1"
-    And I follow "My home"
+    And I click on "My home" "link" in the "Navigation" "block"
     And I press "Customise this page"
     Then the "Add a block" select box should not contain "Comments"
     And the "Add a block" select box should not contain "Courses"

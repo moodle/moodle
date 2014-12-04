@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,9 +19,9 @@
  *
  * This file contains the classes required to manage the stages that make up the
  * backup user interface.
- * These will be primarily operated a {@see backup_ui} instance.
+ * These will be primarily operated a {@link base_ui} instance.
  *
- * @package   moodlecore
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,37 +34,47 @@
  *  - process : To process the stage
  *  - initialise_stage_form : To get a backup_moodleform instance for the stage
  *
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_ui_stage {
+
     /**
      * The current stage
      * @var int
      */
     protected $stage = 1;
+
     /**
      * The backuck UI object
      * @var base_ui
      */
     protected $ui;
+
     /**
      * The moodleform for this stage
      * @var base_moodleform
      */
     protected $stageform = null;
+
     /**
      * Custom form params that will be added as hidden inputs
+     * @var array
      */
     protected $params = null;
+
     /**
+     * Constructor
      *
      * @param base_ui $ui
+     * @param array $params
      */
-    public function __construct(base_ui $ui, array $params=null) {
+    public function __construct(base_ui $ui, array $params = null) {
         $this->ui = $ui;
         $this->params = $params;
     }
+
     /**
      * Returns the custom params for this stage
      * @return array|null
@@ -73,6 +82,7 @@ abstract class base_ui_stage {
     final public function get_params() {
         return $this->params;
     }
+
     /**
      * The current stage
      * @return int
@@ -80,27 +90,31 @@ abstract class base_ui_stage {
     final public function get_stage() {
         return $this->stage;
     }
+
     /**
      * The next stage
      * @return int
      */
-    final public function get_next_stage() {
-        return floor($this->stage*2);
+    public function get_next_stage() {
+        return floor($this->stage * 2);
     }
+
     /**
      * The previous stage
      * @return int
      */
     final public function get_prev_stage() {
-        return floor($this->stage/2);
+        return floor($this->stage / 2);
     }
+
     /**
      * The name of this stage
      * @return string
      */
     public function get_name() {
-        return get_string('currentstage'.$this->stage,'backup');
+        return get_string('currentstage' . $this->stage, 'backup');
     }
+
     /**
      * The backup id from the backup controller
      * @return string
@@ -121,8 +135,8 @@ abstract class base_ui_stage {
     public function display(core_backup_renderer $renderer) {
 
         $form = $this->initialise_stage_form();
-        // a nasty hack follows to work around the sad fact that moodle quickforms
-        // do not allow to actually return the HTML content, just to echo it
+        // A nasty hack follows to work around the sad fact that moodle quickforms
+        // do not allow to actually return the HTML content, just to echo it.
         flush();
         ob_start();
         $form->display();
@@ -138,9 +152,10 @@ abstract class base_ui_stage {
      * This must be overridden by every stage as it will be different for every stage
      *
      * @abstract
-     * @param backup_moodleform|null $form
+     * @param base_moodleform $form
      */
-    abstract public function process(base_moodleform $form=null);
+    abstract public function process(base_moodleform $form = null);
+
     /**
      * Creates an instance of the correct moodleform properly populated and all
      * dependencies instantiated
@@ -150,10 +165,18 @@ abstract class base_ui_stage {
      */
     abstract protected function initialise_stage_form();
 
+    /**
+     * Returns the base UI class
+     * @return base_ui
+     */
     final public function get_ui() {
         return $this->ui;
     }
 
+    /**
+     * Returns true if this stage is the first stage.
+     * @return bool
+     */
     public function is_first_stage() {
         return $this->stage == 1;
     }

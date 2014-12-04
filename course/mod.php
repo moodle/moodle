@@ -78,7 +78,7 @@ if (!empty($add)) {
     $returntomod = optional_param('return', 0, PARAM_BOOL);
     redirect("$CFG->wwwroot/course/modedit.php?update=$update&return=$returntomod&sr=$sectionreturn");
 
-} else if (!empty($duplicate)) {
+} else if (!empty($duplicate) and confirm_sesskey()) {
      $cm     = get_coursemodule_from_id('', $duplicate, 0, true, MUST_EXIST);
      $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 

@@ -127,7 +127,8 @@ class atto_texteditor extends texteditor {
                 'plugin_title_shortcut',
                 'textrecovered',
                 'autosavefailed',
-                'autosavesucceeded'
+                'autosavesucceeded',
+                'errortextrecovery'
             ), 'editor_atto');
         $PAGE->requires->strings_for_js(array(
                 'warning',

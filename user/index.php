@@ -410,11 +410,9 @@ list($esql, $params) = get_enrolled_sql($context, null, $currentgroup, true);
 $joins = array("FROM {user} u");
 $wheres = array();
 
-$extrasql = get_extra_user_fields_sql($context, 'u', '', array(
-        'id', 'username', 'firstname', 'lastname', 'email', 'city', 'country',
-        'picture', 'lang', 'timezone', 'maildisplay', 'imagealt', 'lastaccess'));
-
-$mainuserfields = user_picture::fields('u', array('username', 'email', 'city', 'country', 'lang', 'timezone', 'maildisplay'));
+$userfields = array('username', 'email', 'city', 'country', 'lang', 'timezone', 'maildisplay');
+$mainuserfields = user_picture::fields('u', $userfields);
+$extrasql = get_extra_user_fields_sql($context, 'u', '', $userfields);
 
 if ($isfrontpage) {
     $select = "SELECT $mainuserfields, u.lastaccess$extrasql";

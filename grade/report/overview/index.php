@@ -43,7 +43,7 @@ $systemcontext = context_system::instance();
 require_capability('gradereport/overview:view', $context);
 
 if (empty($userid)) {
-    require_capability('moodle/grade:viewall', $systemcontext);
+    require_capability('moodle/grade:viewall', $context);
 
 } else {
     if (!$DB->get_record('user', array('id'=>$userid, 'deleted'=>0)) or isguestuser($userid)) {
@@ -53,19 +53,19 @@ if (empty($userid)) {
 
 $access = false;
 if (has_capability('moodle/grade:viewall', $systemcontext)) {
-    //ok - can view all course grades
+    // Ok - can view all course grades.
     $access = true;
 
-} else if ($userid == $USER->id and has_capability('moodle/grade:viewall', $context)) {
-    //ok - can view any own grades
+} else if (has_capability('moodle/grade:viewall', $context)) {
+    // Ok - can view any grades in context.
     $access = true;
 
 } else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
-    //ok - can view own course grades
+    // Ok - can view own course grades.
     $access = true;
 
 } else if (has_capability('moodle/grade:viewall', context_user::instance($userid)) and $course->showgrades) {
-    // ok - can view grades of this user- parent most probably
+    // Ok - can view grades of this user- parent most probably.
     $access = true;
 }
 
@@ -86,8 +86,8 @@ $USER->grade_last_report[$course->id] = 'overview';
 //first make sure we have proper final grades - this must be done before constructing of the grade tree
 grade_regrade_final_grades($courseid);
 
-if (has_capability('moodle/grade:viewall', $systemcontext)) { //Admins will see all student reports
-    // please note this would be extremely slow if we wanted to implement this properly for all teachers
+if (has_capability('moodle/grade:viewall', $context)) {
+    // Please note this would be extremely slow if we wanted to implement this properly for all teachers.
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
     $currentgroup = groups_get_course_group($course, true);
 

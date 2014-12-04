@@ -146,7 +146,11 @@ class enrol_ldap_plugin extends enrol_plugin {
         global $DB;
 
         // Do not try to print anything to the output because this method is called during interactive login.
-        $trace = new error_log_progress_trace($this->errorlogtag);
+        if (PHPUNIT_TEST) {
+            $trace = new null_progress_trace();
+        } else {
+            $trace = new error_log_progress_trace($this->errorlogtag);
+        }
 
         if (!$this->ldap_connect($trace)) {
             $trace->finished();
@@ -720,6 +724,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             $usergroups = $this->ldap_find_user_groups($extmemberuid);
             if(count($usergroups) > 0) {
                 foreach ($usergroups as $group) {
+                    $group = ldap_filter_addslashes($group);
                     $ldap_search_pattern .= '('.$this->get_config('memberattribute_role'.$role->id).'='.$group.')';
                 }
             }

@@ -3,6 +3,14 @@
     font-style: italic;
 }
 
+.block_course_overview .categorypath{
+    text-align: right;
+}
+
+.dir-rtl .block_course_overview .categorypath{
+    text-align: left;
+}
+
 .block_course_overview .content {
     margin: 0 20px;
 }

@@ -72,29 +72,22 @@ if (!empty($appendqnumstring)) {
 }
 
 $PAGE->set_url('/question/addquestion.php', $hiddenparams);
+if ($cmid) {
+    $questionbankurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
+} else {
+    $questionbankurl = new moodle_url('/question/edit.php', array('courseid' => $courseid));
+}
+navigation_node::override_active_url($questionbankurl);
 
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
 $PAGE->set_heading($COURSE->fullname);
-if ($cm !== null) {
-    // Nasty hack, but we don't want this link if returnurl returns to view.php
-    if (stripos($returnurl, "/mod/{$cm->modname}/view.php")!== 0) {
-        $PAGE->navbar->add(get_string('editinga', 'moodle', get_string('modulename', $cm->modname)),$returnurl);
-    }
-    $PAGE->navbar->add($chooseqtype);
-    $PAGE->set_title($chooseqtype);
-    echo $OUTPUT->header();
-} else {
-    $PAGE->navbar->add(get_string('questionbank', 'question'),$returnurl);
-    $PAGE->navbar->add($chooseqtype);
-    $PAGE->set_title($chooseqtype);
-    echo $OUTPUT->header();
-}
+$PAGE->navbar->add($chooseqtype);
+$PAGE->set_title($chooseqtype);
 
 // Display a form to choose the question type.
+echo $OUTPUT->header();
 echo $OUTPUT->notification(get_string('youmustselectaqtype', 'question'));
 echo $OUTPUT->box_start('generalbox boxwidthnormal boxaligncenter', 'chooseqtypebox');
-print_choose_qtype_to_add_form($hiddenparams, null, false);
+echo print_choose_qtype_to_add_form($hiddenparams, null, false);
 echo $OUTPUT->box_end();
-
 echo $OUTPUT->footer();
-

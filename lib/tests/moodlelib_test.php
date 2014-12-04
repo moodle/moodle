@@ -2486,6 +2486,21 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Additional name fields with an alias and a title - string.
         $teststring = 'u.firstnamephonetic AS authorfirstnamephonetic,u.lastnamephonetic AS authorlastnamephonetic,u.middlename AS authormiddlename,u.alternatename AS authoralternatename,u.firstname AS authorfirstname,u.lastname AS authorlastname';
         $this->assertEquals($teststring, get_all_user_name_fields(true, 'u', null, 'author'));
+
+        // Test the order parameter of the function.
+        // Returning an array.
+        $testarray = array('firstname' => 'firstname',
+                'lastname' => 'lastname',
+                'firstnamephonetic' => 'firstnamephonetic',
+                'lastnamephonetic' => 'lastnamephonetic',
+                'middlename' => 'middlename',
+                'alternatename' => 'alternatename'
+        );
+        $this->assertEquals($testarray, get_all_user_name_fields(false, null, null, null, true));
+
+        // Returning a string.
+        $teststring = 'firstname,lastname,firstnamephonetic,lastnamephonetic,middlename,alternatename';
+        $this->assertEquals($teststring, get_all_user_name_fields(true, null, null, null, true));
     }
 
     public function test_order_in_string() {
@@ -2592,6 +2607,11 @@ class core_moodlelib_testcase extends advanced_testcase {
         $subject2 = 'subject 2';
         $messagetext2 = 'message text 2';
 
+        // Close the default email sink.
+        $sink = $this->redirectEmails();
+        $sink->close();
+
+        $CFG->noemailever = true;
         $this->assertNotEmpty($CFG->noemailever);
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
@@ -2644,9 +2664,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-
-        // Set config to allow email_to_user() to be called.
-        $CFG->noemailever = false;
 
         // Update user password.
         $sink = $this->redirectEvents();
@@ -2806,6 +2823,8 @@ class core_moodlelib_testcase extends advanced_testcase {
      * Tests the getremoteaddr() function.
      */
     public function test_getremoteaddr() {
+        $xforwardedfor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : null;
+
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '';
         $noip = getremoteaddr('1.1.1.1');
         $this->assertEquals('1.1.1.1', $noip);
@@ -2825,6 +2844,24 @@ class core_moodlelib_testcase extends advanced_testcase {
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '127.0.0.1,127.0.0.2, 127.0.0.3';
         $threeip = getremoteaddr();
         $this->assertEquals('127.0.0.1', $threeip);
+
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '127.0.0.1:65535,127.0.0.2';
+        $portip = getremoteaddr();
+        $this->assertEquals('127.0.0.1', $portip);
+
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '0:0:0:0:0:0:0:1,127.0.0.2';
+        $portip = getremoteaddr();
+        $this->assertEquals('0:0:0:0:0:0:0:1', $portip);
+
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '0::1,127.0.0.2';
+        $portip = getremoteaddr();
+        $this->assertEquals('0:0:0:0:0:0:0:1', $portip);
+
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '[0:0:0:0:0:0:0:1]:65535,127.0.0.2';
+        $portip = getremoteaddr();
+        $this->assertEquals('0:0:0:0:0:0:0:1', $portip);
+
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = $xforwardedfor;
 
     }
 }

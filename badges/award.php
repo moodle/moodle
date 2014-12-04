@@ -81,6 +81,14 @@ $output = $PAGE->get_renderer('core', 'badges');
 // Roles that can award this badge.
 $acceptedroles = array_keys($badge->criteria[BADGE_CRITERIA_TYPE_MANUAL]->params);
 
+if (empty($acceptedroles)) {
+    echo $OUTPUT->header();
+    $return = html_writer::link(new moodle_url('recipients.php', array('id' => $badge->id)), $strrecipients);
+    echo $OUTPUT->notification(get_string('notacceptedrole', 'badges', $return));
+    echo $OUTPUT->footer();
+    die();
+}
+
 if (count($acceptedroles) > 1) {
     // If there is more than one role that can award a badge, prompt user to make a selection.
     // If it is an admin, include all accepted roles, otherwise only the ones that current user has in this context.

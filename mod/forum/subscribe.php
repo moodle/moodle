@@ -73,7 +73,11 @@ if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
 } else {
     $groupmode = $course->groupmode;
 }
-if ($groupmode && !\mod_forum\subscriptions::is_subscribed($user->id, $forum, null, $cm) && !has_capability('moodle/site:accessallgroups', $context)) {
+
+$issubscribed = \mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $cm);
+
+// For a user to subscribe when a groupmode is set, they must have access to at least one group.
+if ($groupmode && !$issubscribed && !has_capability('moodle/site:accessallgroups', $context)) {
     if (!groups_get_all_groups($course->id, $USER->id)) {
         print_error('cannotsubscribe', 'forum');
     }
@@ -142,7 +146,7 @@ $info = new stdClass();
 $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 
-if (\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $cm)) {
+if ($issubscribed) {
     if (is_null($sesskey)) {    // we came here via link in email
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
@@ -162,7 +166,7 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $c
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
         if (\mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $discussion, $context)) {
-            $info->name = $discussion->name;
+            $info->discussion = $discussion->name;
             redirect($returnto, get_string("discussionnownotsubscribed", "forum", $info), 1);
         } else {
             print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
@@ -191,7 +195,7 @@ if (\mod_forum\subscriptions::is_subscribed($user->id, $forum, $discussionid, $c
         redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $discussionid));
-        $info->name = $discussion->name;
+        $info->discussion = $discussion->name;
         \mod_forum\subscriptions::subscribe_user_to_discussion($user->id, $discussion, $context);
         redirect($returnto, get_string("discussionnowsubscribed", "forum", $info), 1);
     }

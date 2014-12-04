@@ -24,38 +24,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->libdir . '/google/io/Google_IO.php');
+require_once($CFG->libdir . '/google/Google/IO/Curl.php');
+require_once($CFG->libdir . '/google/Google/IO/Exception.php');
 
 /**
  * Class moodle_google_curlio.
  *
  * The initial purpose of this class is to add support for our
- * class curl in Google_CurlIO.
+ * class curl in Google_IO_Curl. It mostly entirely overrides it.
  *
  * @package core_google
  * @copyright 2013 Frédéric Massart
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-class moodle_google_curlio extends Google_CurlIO {
+class moodle_google_curlio extends Google_IO_Curl {
 
     /** @var array associate array of constant value and their name. */
     private static $constants = null;
 
-    /**
-     * Private variables have to be redefined here.
-     */
-    private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
-    private static $HOP_BY_HOP = array(
-        'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
-        'te', 'trailers', 'transfer-encoding', 'upgrade');
-    private $curlParams = array(
-        'CURLOPT_RETURNTRANSFER' => true,
-        'CURLOPT_FOLLOWLOCATION' => 0,
-        'CURLOPT_FAILONERROR' => false,
-        'CURLOPT_SSL_VERIFYPEER' => true,
-        'CURLOPT_HEADER' => true,
-        'CURLOPT_VERBOSE' => false
-    );
+    /** @var array options. */
+    private $options = array();
 
     /**
      * Send the request via our curl object.
@@ -88,52 +76,48 @@ class moodle_google_curlio extends Google_CurlIO {
     }
 
     /**
-     * Send an API request to Google.
+     * Execute an API request.
      *
-     * This method overwrite the parent one so that the Google SDK will use our class
-     * curl to proceed with the requests. This allows us to have control over the
-     * proxy parameters and other stuffs.
+     * This is a copy/paste from the parent class that uses Moodle's implementation
+     * of curl. Portions have been removed or altered.
      *
-     * Note that the caching support of the Google SDK has been removed from this function.
-     *
-     * @param Google_HttpRequest $request the http request to be executed
-     * @return Google_HttpRequest http request with the response http code, response
+     * @param Google_Http_Request $request the http request to be executed
+     * @return Google_Http_Request http request with the response http code, response
      * headers and response body filled in
-     * @throws Google_IOException on curl or IO error
+     * @throws Google_IO_Exception on curl or IO error
      */
-    public function makeRequest(Google_HttpRequest $request) {
-
-        if (array_key_exists($request->getRequestMethod(), self::$ENTITY_HTTP_METHODS)) {
-            $request = $this->processEntityRequest($request);
-        }
-
+    public function executeRequest(Google_Http_Request $request) {
         $curl = new curl();
-        $curl->setopt($this->curlParams);
-        $curl->setopt(array('CURLOPT_URL' => $request->getUrl()));
+
+        if ($request->getPostBody()) {
+            $curl->setopt(array('CURLOPT_POSTFIELDS' => $request->getPostBody()));
+        }
 
         $requestHeaders = $request->getRequestHeaders();
         if ($requestHeaders && is_array($requestHeaders)) {
-            $parsed = array();
+            $curlHeaders = array();
             foreach ($requestHeaders as $k => $v) {
-                $parsed[] = "$k: $v";
+                $curlHeaders[] = "$k: $v";
             }
-            $curl->setHeader($parsed);
+            $curl->setopt(array('CURLOPT_HTTPHEADER' => $curlHeaders));
         }
 
-        $curl->setopt(array(
-            'CURLOPT_CUSTOMREQUEST' => $request->getRequestMethod(),
-            'CURLOPT_USERAGENT' => $request->getUserAgent()
-        ));
+        $curl->setopt(array('CURLOPT_URL' => $request->getUrl()));
 
+        $curl->setopt(array('CURLOPT_CUSTOMREQUEST' => $request->getRequestMethod()));
+        $curl->setopt(array('CURLOPT_USERAGENT' => $request->getUserAgent()));
+
+        $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => false));
+        $curl->setopt(array('CURLOPT_SSL_VERIFYPEER' => true));
+        $curl->setopt(array('CURLOPT_RETURNTRANSFER' => true));
+        $curl->setopt(array('CURLOPT_HEADER' => true));
+
+        if ($request->canGzip()) {
+            $curl->setopt(array('CURLOPT_ENCODING' => 'gzip,deflate'));
+        }
+
+        $curl->setopt($this->options);
         $respdata = $this->do_request($curl, $request);
-
-        // Retry if certificates are missing.
-        if ($curl->get_errno() == CURLE_SSL_CACERT) {
-            error_log('SSL certificate problem, verify that the CA cert is OK.' .
-                    ' Retrying with the CA cert bundle from google-api-php-client.');
-            $curl->setopt(array('CURLOPT_CAINFO' => dirname(__FILE__) . '/io/cacerts.pem'));
-            $respdata = $this->do_request($curl, $request);
-        }
 
         $infos = $curl->get_info();
         $respheadersize = $infos['header_size'];
@@ -141,40 +125,60 @@ class moodle_google_curlio extends Google_CurlIO {
         $curlerrornum = $curl->get_errno();
         $curlerror = $curl->error;
 
-        if ($curlerrornum != CURLE_OK) {
-          throw new Google_IOException("HTTP Error: ($resphttpcode) $curlerror");
+        if ($respdata != CURLE_OK) {
+            throw new Google_IO_Exception($curlerror);
         }
 
-        // Parse out the raw response into usable bits.
-        list($responseHeaders, $responseBody) = self::parseHttpResponse($respdata, $respheadersize);
-
-        // Fill in the apiHttpRequest with the response values.
-        $request->setResponseHttpCode($resphttpcode);
-        $request->setResponseHeaders($responseHeaders);
-        $request->setResponseBody($responseBody);
-
-        return $request;
+        list($responseHeaders, $responseBody) = $this->parseHttpResponse($respdata, $respheadersize);
+        return array($responseBody, $responseHeaders, $resphttpcode);
     }
 
     /**
-    * Set curl options.
-    *
-    * We overwrite this method to ensure that the data passed meets
-    * the requirement of our curl implementation and so that the keys
-    * are strings, and not curl constants.
-    *
-    * @param array $optCurlParams Multiple options used by a cURL session.
-    * @return void
-    */
-    public function setOptions($optCurlParams) {
-        $safeParams = array();
-        foreach ($optCurlParams as $name => $value) {
+     * Set curl options.
+     *
+     * We overwrite this method to ensure that the data passed meets
+     * the requirement of our curl implementation and so that the keys
+     * are strings, and not curl constants.
+     *
+     * @param array $optparams Multiple options used by a cURL session.
+     * @return void
+     */
+    public function setOptions($optparams) {
+        $safeparams = array();
+        foreach ($optparams as $name => $value) {
             if (!is_string($name)) {
                 $name = $this->get_option_name_from_constant($name);
             }
-            $safeParams[$name] = $value;
+            $safeparams[$name] = $value;
         }
-        parent::setOptions($safeParams);
+        $this->options = $options + $this->options;
+    }
+
+    /**
+     * Set the maximum request time in seconds.
+     *
+     * Overridden to use the right option key.
+     *
+     * @param $timeout in seconds
+     */
+    public function setTimeout($timeout) {
+        // Since this timeout is really for putting a bound on the time
+        // we'll set them both to the same. If you need to specify a longer
+        // CURLOPT_TIMEOUT, or a tigher CONNECTTIMEOUT, the best thing to
+        // do is use the setOptions method for the values individually.
+        $this->options['CURLOPT_CONNECTTIMEOUT'] = $timeout;
+        $this->options['CURLOPT_TIMEOUT'] = $timeout;
+    }
+
+    /**
+     * Get the maximum request time in seconds.
+     *
+     * Overridden to use the right option key.
+     *
+     * @return timeout in seconds.
+     */
+    public function getTimeout() {
+       return $this->options['CURLOPT_TIMEOUT'];
     }
 
     /**

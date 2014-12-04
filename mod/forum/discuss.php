@@ -100,10 +100,12 @@
         }
         // For each subscribed user in this forum and discussion, copy over per-discussion subscriptions if required.
         $discussiongroup = $discussion->groupid == -1 ? 0 : $discussion->groupid;
-        $potentialsubscribers = \mod_forum\subscriptions::get_potential_subscribers(
-            $modcontext,
+        $potentialsubscribers = \mod_forum\subscriptions::fetch_subscribed_users(
+            $forum,
             $discussiongroup,
-            'u.id'
+            $modcontext,
+            'u.id',
+            true
         );
 
         // Pre-seed the subscribed_discussion caches.
@@ -112,12 +114,13 @@
         // And also for the discussion being moved.
         \mod_forum\subscriptions::fill_subscription_cache($forum->id);
         $subscriptionchanges = array();
+        $subscriptiontime = time();
         foreach ($potentialsubscribers as $subuser) {
             $userid = $subuser->id;
             $targetsubscription = \mod_forum\subscriptions::is_subscribed($userid, $forumto, null, $cmto);
             if (\mod_forum\subscriptions::is_subscribed($userid, $forum, $discussion->id)) {
                 if (!$targetsubscription) {
-                    $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED;
+                    $subscriptionchanges[$userid] = $subscriptiontime;
                 }
             } else {
                 if ($targetsubscription) {
@@ -134,8 +137,11 @@
         $newdiscussion = clone $discussion;
         $newdiscussion->forum = $forumto->id;
         foreach ($subscriptionchanges as $userid => $preference) {
-            if ($preference === \mod_forum\subscriptions::FORUM_DISCUSSION_SUBSCRIBED) {
-                \mod_forum\subscriptions::subscribe_user_to_discussion($userid, $newdiscussion, $destinationctx);
+            if ($preference != \mod_forum\subscriptions::FORUM_DISCUSSION_UNSUBSCRIBED) {
+                // Users must have viewdiscussion to a discussion.
+                if (has_capability('mod/forum:viewdiscussion', $destinationctx, $userid)) {
+                    \mod_forum\subscriptions::subscribe_user_to_discussion($userid, $newdiscussion, $destinationctx);
+                }
             } else {
                 \mod_forum\subscriptions::unsubscribe_user_from_discussion($userid, $newdiscussion, $destinationctx);
             }
@@ -229,17 +235,21 @@
 
     echo $OUTPUT->header();
 
-    $headingvalue = format_string($forum->name);
-    if ((!isguestuser() && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
+    echo $OUTPUT->heading(format_string($forum->name), 2);
+    echo $OUTPUT->heading(format_string($discussion->name), 3, 'discussionname');
+
+    // is_guest should be used here as this also checks whether the user is a guest in the current course.
+    // Guests and visitors cannot subscribe - only enrolled users.
+    if ((!is_guest($modcontext, $USER) && isloggedin()) && has_capability('mod/forum:viewdiscussion', $modcontext)) {
         // Discussion subscription.
         if (\mod_forum\subscriptions::is_subscribable($forum)) {
-            $headingvalue .= '&nbsp;';
-            $headingvalue .= html_writer::tag('span', forum_get_discussion_subscription_icon($forum, $post->discussion), array(
-                'class' => 'discussionsubscription',
-            ));
+            echo html_writer::div(
+                forum_get_discussion_subscription_icon($forum, $post->discussion, null, true),
+                'discussionsubscription'
+            );
+            echo forum_get_discussion_subscription_icon_preloaders();
         }
     }
-    echo $OUTPUT->heading($headingvalue, 2);
 
 
 /// Check to see if groups are being used in this forum
@@ -260,7 +270,8 @@
 
     // Output the links to neighbour discussions.
     $neighbours = forum_get_discussion_neighbours($cm, $discussion);
-    echo $renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
+    $neighbourlinks = $renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
+    echo $neighbourlinks;
 
 /// Print the controls across the top
     echo '<div class="discussioncontrols clearfix">';
@@ -346,6 +357,8 @@
 
     $canrate = has_capability('mod/forum:rate', $modcontext);
     forum_print_discussion($course, $cm, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
+
+    echo $neighbourlinks;
 
     // Add the subscription toggle JS.
     $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');

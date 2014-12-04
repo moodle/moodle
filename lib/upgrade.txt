@@ -1,8 +1,21 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+
+* \core\event\course_viewed 'other' argument renamed from coursesectionid to coursesectionnumber as it contains the section number.
+* PHPUnit: PHPMailer Sink is now started for all tests and is setup within the phpunit wrapper for advanced tests.
+  Catching debugging messages when sending mail will no longer work. Use $sink = $this->redirectEmails(); and then check
+  the message in the sink instead.
+
 === 2.8 ===
 
+* Gradebook grade category option "aggregatesubcats" has been removed completely.
+  This means that the database column is removed, the admin settings are removed and
+  the properties from the grade_category object have been removed. If any courses were
+  found to be using this setting, a warning to check the grades will be shown in the
+  course grader report after upgrading the site. The same warning will be shown on
+  courses restored from backup that had this setting enabled (see MDL-47503).
 * lib/excelllib.class.php has been updated. The class MoodleExcelWorkbook will now only produce excel 2007 files.
 * renderers: We now remove the suffix _renderable when looking for a render method for a renderable.
   If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"
@@ -13,6 +26,19 @@ information provided here is intended especially for developers.
 * New function cm_info::create($cm) can be used when you need a cm_info
   object, but have a $cm which might only be a standard database record.
 * $CFG->enablegroupmembersonly no longer exists.
+* Scheduled tasks have gained support for syntax to introduce variability when a
+  task will run across installs. When a when hour or minute are defined as 'R'
+  they will be installed with a random hour/minute value.
+* Several classes grade_edit_tree_column_xxx were removed since grades setup page
+  has been significantly changed. These classes should not be used outside of
+  gradebook or developers can copy them into their plugins from 2.7 branch.
+* Google APIs Client Library (lib/google/) has been upgraded to 1.0.5-beta and
+  API has changed dramatically without backward compatibility. Any code accessing
+  it must be amended. It does not apply to lib/googleapi.php. See MDL-47297
+* Added an extra parameter to the function get_formatted_help_string() (default null) which is used to specify
+  additional string parameters.
+* User settings node and course node in navigation now support callbacks from admin tools.
+* grade_get_grades() optional parameteres $itemtype, $itemmodule, $iteminstance are now required.
 
 DEPRECATIONS:
 * completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
@@ -28,6 +54,12 @@ DEPRECATIONS:
   access the activity.
 * Constant FEATURE_GROUPMEMBERSONLY (used in module _supports functions) is
   deprecated.
+* cohort_get_visible_list() is deprecated. There is a better function cohort_get_available_cohorts()
+  that respects user capabilities to view cohorts.
+* enrol_cohort_get_cohorts() and enrol_cohort_search_cohorts() are deprecated since
+  functionality is removed. Please use cohort_get_available_cohorts()
+* enrol_cohort_enrol_all_users() is deprecated; enrol_manual is now responsible for this action
+* enrol_cohort_can_view_cohort() is deprecated; replace with cohort_can_view_cohort()
 
 === 2.6.4 / 2.7.1 ===
 

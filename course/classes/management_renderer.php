@@ -787,6 +787,31 @@ class core_course_management_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renderers bulk actions that can be performed on courses in search returns
+     *
+     * @return string
+     */
+    public function course_search_bulk_actions() {
+        $html  = html_writer::start_div('course-bulk-actions bulk-actions');
+        $html .= html_writer::div(get_string('coursebulkaction'), 'accesshide', array('tabindex' => '0'));
+        $options = coursecat::make_categories_list('moodle/category:manage');
+        $select = html_writer::select(
+            $options,
+            'movecoursesto',
+            '',
+            array('' => 'choosedots'),
+            array('aria-labelledby' => 'moveselectedcoursesto')
+        );
+        $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('move'));
+        $html .= $this->detail_pair(
+            html_writer::span(get_string('moveselectedcoursesto'), '', array('id' => 'moveselectedcoursesto')),
+            $select . html_writer::empty_tag('input', $submit)
+        );
+        $html .= html_writer::end_div();
+        return $html;
+    }
+
+    /**
      * Renderers detailed course information.
      *
      * @param course_in_list $course The course to display details for.
@@ -1085,6 +1110,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         $html .= html_writer::end_tag('ul');
         $html .= $this->search_pagination($totalcourses, $page, $perpage, true, $search);
+        $html .= $this->course_search_bulk_actions();
         $html .= html_writer::end_div();
         return $html;
     }
@@ -1173,15 +1199,26 @@ class core_course_management_renderer extends plugin_renderer_base {
             'data-selected' => ($selectedcourse == $course->id) ? '1' : '0',
             'data-visible' => $course->visible ? '1' : '0'
         );
-
-        $bulkcourseinput = array('type' => 'checkbox', 'name' => 'bc[]', 'value' => $course->id, 'class' => 'bulk-action-checkbox');
+        $bulkcourseinput = '';
+        if (coursecat::get($course->category)->can_move_courses_out_of()) {
+            $bulkcourseinput = array(
+                'type' => 'checkbox',
+                'name' => 'bc[]',
+                'value' => $course->id,
+                'class' => 'bulk-action-checkbox',
+                'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+                'data-action' => 'select'
+            );
+        }
         $viewcourseurl = new moodle_url($this->page->url, array('courseid' => $course->id));
         $categoryname = coursecat::get($course->category)->get_formatted_name();
 
         $html  = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
         $html .= html_writer::start_div('float-left');
-        $html .= html_writer::empty_tag('input', $bulkcourseinput).'&nbsp;';
+        if ($bulkcourseinput) {
+            $html .= html_writer::empty_tag('input', $bulkcourseinput).'&nbsp;';
+        }
         $html .= html_writer::end_div();
         $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
         $html .= html_writer::tag('span', $categoryname, array('class' => 'float-left categoryname'));

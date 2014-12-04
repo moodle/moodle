@@ -107,6 +107,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error("invalidcoursemodule");
     }
 
+    // Retrieve the contexts.
+    $modcontext    = context_module::instance($cm->id);
     $coursecontext = context_course::instance($course->id);
 
     if (! forum_user_can_post_discussion($forum, $groupid, -1, $cm)) {
@@ -122,7 +124,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error('nopostforum', 'forum');
     }
 
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $modcontext)) {
         print_error("activityiscurrentlyhidden");
     }
 
@@ -176,8 +178,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     // Ensure lang, theme, etc. is set up properly. MDL-6926
     $PAGE->set_cm($cm, $course, $forum);
 
-    $coursecontext = context_course::instance($course->id);
+    // Retrieve the contexts.
     $modcontext    = context_module::instance($cm->id);
+    $coursecontext = context_course::instance($course->id);
 
     if (! forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
         if (!isguestuser()) {
@@ -206,7 +209,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         }
     }
 
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $coursecontext)) {
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $modcontext)) {
         print_error("activityiscurrentlyhidden");
     }
 
@@ -613,9 +616,8 @@ $postid = empty($post->id) ? null : $post->id;
 $draftid_editor = file_get_submitted_draft_itemid('message');
 $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', $postid, mod_forum_post_form::editor_options($modcontext, $postid), $post->message);
 
-// Always suggest that the user be subscribed to a discussion that they're posting in unless they've already posted, in
-// which case use their existing preference.
-$discussionsubscribe = true;
+// Respect the user's discussion autosubscribe preference unless they have already posted - in which case, use that preference.
+$discussionsubscribe = $USER->autosubscribe;
 if (isset($discussion) && forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
     $discussionsubscribe = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, $cm);
 }
@@ -655,7 +657,14 @@ $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     array('discussion'=>$discussion->id):
                                     array()));
 
-if ($fromform = $mform_post->get_data()) {
+if ($mform_post->is_cancelled()) {
+    if (!isset($discussion->id) || $forum->type === 'qanda') {
+        // Q and A forums don't have a discussion page, so treat them like a new thread..
+        redirect(new moodle_url('/mod/forum/view.php', array('f' => $forum->id)));
+    } else {
+        redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
+    }
+} else if ($fromform = $mform_post->get_data()) {
 
     if (empty($SESSION->fromurl)) {
         $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";
@@ -770,7 +779,6 @@ if ($fromform = $mform_post->get_data()) {
         $addpost = $fromform;
         $addpost->forum=$forum->id;
         if ($fromform->id = forum_add_new_post($addpost, $mform_post, $message)) {
-
             $timemessage = 2;
             if (!empty($message)) { // if we're printing stuff about the file upload
                 $timemessage = 4;

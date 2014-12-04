@@ -104,9 +104,11 @@ $functions = array(
     'core_grades_get_grades' => array(
         'classname'     => 'core_grades_external',
         'methodname'    => 'get_grades',
-        'description'   => 'Returns grade item details and optionally student grades.',
+        'description'   => 'Returns student course total grade and grades for activities.
+                                This function does not return category or manual items.
+                                This function is suitable for managers or teachers not students.',
         'type'          => 'read',
-        'capabilities'  => 'moodle/grade:view, moodle/grade:viewall',
+        'capabilities'  => 'moodle/grade:view, moodle/grade:viewall, moodle/grade:viewhidden',
     ),
 
     'core_grades_update_grades' => array(
@@ -761,6 +763,15 @@ $functions = array(
         'capabilities'=> '',
     ),
 
+    'core_message_get_messages' => array(
+        'classname'     => 'core_message_external',
+        'methodname'    => 'get_messages',
+        'classpath'     => 'message/externallib.php',
+        'description'   => 'Retrieve a list of messages sent and received by a user (conversations, notifications or both)',
+        'type'          => 'read',
+        'capabilities'  => '',
+    ),
+
     // === notes related functions ===
 
     'moodle_notes_create_notes' => array(
@@ -953,12 +964,18 @@ $services = array(
             'mod_assign_reveal_identities',
             'message_airnotifier_is_system_configured',
             'message_airnotifier_are_notification_preferences_configured',
-            'core_grades_get_grades',
             'core_grades_update_grades',
             'mod_forum_get_forums_by_courses',
-            'mod_forum_get_forum_discussions',
+            'mod_forum_get_forum_discussions_paginated',
             'mod_forum_get_forum_discussion_posts',
-            'core_files_get_files'),
+            'core_files_get_files',
+            'core_message_get_messages',
+            'core_message_create_contacts',
+            'core_message_delete_contacts',
+            'core_message_block_contacts',
+            'core_message_unblock_contacts',
+            'core_message_get_contacts',
+            'core_message_search_contacts'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,

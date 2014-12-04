@@ -615,9 +615,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                     return AUTH_CONFIRM_FAIL;
                 }
                 $user->confirmed = 1;
-                if ($user->firstaccess == 0) {
-                    $user->firstaccess = time();
-                }
                 user_update_user($user, false);
                 return AUTH_CONFIRM_OK;
             }

@@ -1953,6 +1953,13 @@ function file_mimetype_in_typegroup($mimetype, $groups) {
  */
 function send_file_not_found() {
     global $CFG, $COURSE;
+
+    // Allow cross-origin requests only for Web Services.
+    // This allow to receive requests done by Web Workers or webapps in different domains.
+    if (WS_SERVER) {
+        header('Access-Control-Allow-Origin: *');
+    }
+
     send_header_404();
     print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
 }
@@ -2196,7 +2203,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
     }
 
     header('Content-Disposition: attachment; filename="'.$filename.'"');
-    if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+    if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
         header('Cache-Control: private, max-age=10, no-transform');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
         header('Pragma: ');
@@ -2281,18 +2288,19 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
     }
 
     if ($lifetime > 0) {
-        $private = '';
+        $cacheability = ' public,';
         if (isloggedin() and !isguestuser()) {
-            $private = ' private,';
+            // By default, under the conditions above, this file must be cache-able only by browsers.
+            $cacheability = ' private,';
         }
         $nobyteserving = false;
-        header('Cache-Control:'.$private.' max-age='.$lifetime.', no-transform');
+        header('Cache-Control:'.$cacheability.' max-age='.$lifetime.', no-transform');
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
     } else { // Do not cache files in proxies and browsers
         $nobyteserving = true;
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: private, max-age=10, no-transform');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
@@ -2313,7 +2321,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     } else {
         // Try to put the file through filters
-        if ($mimetype == 'text/html') {
+        if ($mimetype == 'text/html' || $mimetype == 'application/xhtml+xml') {
             $options = new stdClass();
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
@@ -2359,7 +2367,10 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
  *  (bool) dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
  *      if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *      you must detect this case when control is returned using connection_aborted. Please not that session is closed
- *      and should not be reopened.
+ *      and should not be reopened
+ *  (string|null) cacheability - force the cacheability setting of the HTTP response, "private" or "public",
+ *      when $lifetime is greater than 0. Cacheability defaults to "private" when logged in as other than guest; otherwise,
+ *      defaults to "public".
  *
  * @category files
  * @param stored_file $stored_file local file object
@@ -2456,16 +2467,22 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
     }
 
     if ($lifetime > 0) {
-        $private = '';
-        if (isloggedin() and !isguestuser()) {
-            $private = ' private,';
+        $cacheability = ' public,';
+        if (!empty($options['cacheability']) && ($options['cacheability'] === 'public')) {
+            // This file must be cache-able by both browsers and proxies.
+            $cacheability = ' public,';
+        } else if (!empty($options['cacheability']) && ($options['cacheability'] === 'private')) {
+            // This file must be cache-able only by browsers.
+            $cacheability = ' private,';
+        } else if (isloggedin() and !isguestuser()) {
+            $cacheability = ' private,';
         }
-        header('Cache-Control:'.$private.' max-age='.$lifetime.', no-transform');
+        header('Cache-Control:'.$cacheability.' max-age='.$lifetime.', no-transform');
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
     } else { // Do not cache files in proxies and browsers
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: private, max-age=10, no-transform');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
@@ -2476,12 +2493,18 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
         }
     }
 
+    // Allow cross-origin requests only for Web Services.
+    // This allow to receive requests done by Web Workers or webapps in different domains.
+    if (WS_SERVER) {
+        header('Access-Control-Allow-Origin: *');
+    }
+
     if (empty($filter)) {
         // send the contents
         readfile_accel($stored_file, $mimetype, !$dontdie);
 
     } else {     // Try to put the file through filters
-        if ($mimetype == 'text/html') {
+        if ($mimetype == 'text/html' || $mimetype == 'application/xhtml+xml') {
             $options = new stdClass();
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
@@ -2764,21 +2787,17 @@ function file_modify_html_header($text) {
     global $CFG;
 
     $stylesheetshtml = '';
-/*    foreach ($CFG->stylesheets as $stylesheet) {
+/*
+    foreach ($CFG->stylesheets as $stylesheet) {
         //TODO: MDL-21120
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-    }*/
-
-    $ufo = '';
-    if (filter_is_enabled('mediaplugin')) {
-        // this script is needed by most media filter plugins.
-        $attributes = array('type'=>'text/javascript', 'src'=>$CFG->httpswwwroot . '/lib/ufo.js');
-        $ufo = html_writer::tag('script', '', $attributes) . "\n";
     }
+*/
+    // TODO The code below is actually a waste of CPU. When MDL-29738 will be implemented it should be re-evaluated too.
 
     preg_match('/\<head\>|\<HEAD\>/', $text, $matches);
     if ($matches) {
-        $replacement = '<head>'.$ufo.$stylesheetshtml;
+        $replacement = '<head>'.$stylesheetshtml;
         $text = preg_replace('/\<head\>|\<HEAD\>/', $replacement, $text, 1);
         return $text;
     }
@@ -2787,7 +2806,7 @@ function file_modify_html_header($text) {
     preg_match('/\<html\>|\<HTML\>/', $text, $matches);
     if ($matches) {
         // replace <html> tag with <html><head>includes</head>
-        $replacement = '<html>'."\n".'<head>'.$ufo.$stylesheetshtml.'</head>';
+        $replacement = '<html>'."\n".'<head>'.$stylesheetshtml.'</head>';
         $text = preg_replace('/\<html\>|\<HTML\>/', $replacement, $text, 1);
         return $text;
     }
@@ -2795,13 +2814,13 @@ function file_modify_html_header($text) {
     // if not, look for <body> tag, and stick <head> before body
     preg_match('/\<body\>|\<BODY\>/', $text, $matches);
     if ($matches) {
-        $replacement = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".'<body>';
+        $replacement = '<head>'.$stylesheetshtml.'</head>'."\n".'<body>';
         $text = preg_replace('/\<body\>|\<BODY\>/', $replacement, $text, 1);
         return $text;
     }
 
     // if not, just stick a <head> tag at the beginning
-    $text = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".$text;
+    $text = '<head>'.$stylesheetshtml.'</head>'."\n".$text;
     return $text;
 }
 
@@ -4067,7 +4086,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             }
 
             \core\session\manager::write_close(); // Unlock session during file serving.
-            send_stored_file($file, 60*60, 0, $forcedownload, array('preview' => $preview));
+            send_stored_file($file, 0, 0, true, array('preview' => $preview));
 
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSE) {
 
@@ -4168,7 +4187,13 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 send_file($imagefile, basename($imagefile), 60*60*24*14);
             }
 
-            send_stored_file($file, 60*60*24*365, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
+            $options = array('preview' => $preview);
+            if (empty($CFG->forcelogin) && empty($CFG->forceloginforprofileimage)) {
+                // Profile images should be cache-able by both browsers and proxies according
+                // to $CFG->forcelogin and $CFG->forceloginforprofileimage.
+                $options['cacheability'] = 'public';
+            }
+            send_stored_file($file, 60*60*24*365, 0, false, $options); // enable long caching, there are many images on each page
 
         } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
             require_login();

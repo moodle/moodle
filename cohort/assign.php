@@ -62,7 +62,7 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 }
 $PAGE->navbar->add(get_string('assign', 'cohort'));
 
-$PAGE->set_title(get_string('cohort:assign', 'cohort'));
+$PAGE->set_title(get_string('assigncohorts', 'cohort'));
 $PAGE->set_heading($COURSE->fullname);
 
 echo $OUTPUT->header();

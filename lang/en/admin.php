@@ -178,6 +178,7 @@ Moodle community|https://moodle.org
 #####
 Moodle.com|http://moodle.com/
 </pre>';
+$string['configcustomusermenuitems'] = 'You can configure the contents of the user menu (with the exception of the log out link, which is automatically added). Each line is separated by | characters and consists of 1) a string in "langstringname, componentname" form or as plain text, 2) a URL, and 3) an icon either as a pix icon or as a URL.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions. Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M. Other session drivers can be configured directly in config.php, see config-dist.php for more information. This option disappears if you specify session driver in config.php file.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configdebugdisplay'] = 'Set to on, the error reporting will go to the HTML page. This is practical, but breaks XHTML, JS, cookies and HTTP headers in general. Set to off, it will send the output to your server logs, allowing better debugging. The PHP setting error_log controls which log this goes to.';
@@ -344,7 +345,7 @@ $string['configsupportpage'] = 'This web address will be published to users of t
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
 For example:  standard,orangewhite.';
-$string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. "Server time" here will make Moodle default to the server\'s operating system setting, but "Server time" in the user profile will make the user default to this timezone setting.  Cronjobs that depend on a time of day to run will use this timezone.';
+$string['configtimezone'] = 'This is the default timezone for displaying dates - each user can override this setting in their profile. "Server timezone" here will make Moodle default to the server setting in PHP, but "Server timezone" in the user profile will make the user default to this timezone setting. It is recommended that you update timezones then select a named timezone specific to your region.';
 $string['configuseblogassociations'] = 'Should users be able to organize their blog by associating entries with courses and course modules?';
 $string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers. WARNING: This requires an internet connection, or no AJAX will work on your site. This setting is not compatible with sites using https.';
 $string['configusesitenameforsitepages'] = 'If enabled the site\'s shortname will be used for the site pages node in the navigation rather than the string \'Site pages\'';
@@ -393,6 +394,7 @@ $string['currenttheme'] = 'Current theme';
 $string['customcheck'] = 'Other checks';
 $string['custommenu'] = 'Custom menu';
 $string['custommenuitems'] = 'Custom menu items';
+$string['customusermenuitems'] = 'User menu items';
 $string['datarootsecurityerror'] = '<p><strong>SECURITY WARNING!</strong></p><p>Your dataroot directory is in the wrong location and is exposed to the web. This means that all your private files are available to anyone in the world, and some of them could be used by a cracker to obtain unauthorised administrative access to your site!</p>
 <p>You <em>must</em> move dataroot directory ({$a}) to a new location that is not within your public web directory, and update the <code>$CFG->dataroot</code> setting in your config.php accordingly.</p>';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ({$a}) is not directly accessible via web.';
@@ -505,7 +507,7 @@ $string['errorsetting'] = 'Could not save setting:';
 $string['errorwithsettings'] = 'Some settings were not changed due to an error.';
 $string['everyonewhocan'] = 'Everyone who can \'{$a}\'';
 $string['exceptions'] = 'exceptions';
-$string['execpathnotallowed'] = 'Setting executable paths disabled in config.php';
+$string['execpathnotallowed'] = 'Setting executable and local paths disabled in config.php';
 $string['experimental'] = 'Experimental';
 $string['experimentalsettings'] = 'Experimental settings';
 $string['extendedusernamechars'] = 'Allow extended characters in usernames';
@@ -650,7 +652,7 @@ $string['loginhttps'] = 'Use HTTPS for logins';
 $string['loginpageautofocus'] = 'Autofocus login page form';
 $string['loginpageautofocus_help'] = 'Enabling this option improves usability of the login page, but automatically focusing fields may be considered an accessibility issue.';
 $string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
-$string['loginpasswordautocomplete_help'] = 'Having this off will let users save their account password in their browser. Switching this setting on will result in your site no longer following XHTML strict validation rules.';
+$string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
 $string['loglifetime'] = 'Keep logs for';
 $string['logstorenotrequired'] = 'Log store not required';
 $string['logstoressupported'] = 'Log stores that support this report';
@@ -771,6 +773,8 @@ $string['order1'] = 'First';
 $string['order2'] = 'Second';
 $string['order3'] = 'Third';
 $string['order4'] = 'Fourth';
+$string['passwordchangelogout'] = 'Log out after password change';
+$string['passwordchangelogout_desc'] = 'If enabled, when a password is changed, all browser sessions are terminated, apart from the one in which the new password is specified. (This setting does not affect password changes via bulk user upload.)';
 $string['passwordpolicy'] = 'Password policy';
 $string['passwordresettime'] = 'Maximum time to validate password reset request';
 $string['pathtoclam'] = 'clam AV path';
@@ -1149,4 +1153,4 @@ $string['cacherequesthelp'] = 'User specific cache that expires when the request
 $string['cachesession'] = 'Session cache';
 $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s session ends. Designed to alleviate session bloat/strain.';
 $string['cacheapplication'] = 'Application cache';
-$string['cacheapplicationhelp'] = ' Cached items are shared amoung all users and expire by a determined ttl.';
+$string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';

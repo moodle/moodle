@@ -55,3 +55,4 @@ $string['ratingtime'] = 'Restrict ratings to items with dates in this range:';
 $string['ratings'] = 'Ratings';
 $string['rolewarning'] = 'Roles with permission to rate';
 $string['rolewarning_help'] = 'To submit ratings users require the moodle/rating:rate capability and any module specific capabilities. Users assigned the following roles should be able to rate items. The list of roles may be amended via the permissions link in the administration block.';
+$string['scaleselectionrequired'] = 'When selecting a ratings aggregate type you must also select to use either a scale or set a maximum points.';

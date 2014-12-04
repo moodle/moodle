@@ -30,8 +30,8 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $courseid = required_param('course', PARAM_INT);
 $instanceid = optional_param('instanceid', 0, PARAM_INT);
 
-$errormsg = optional_param('lti_errormsg', '', PARAM_RAW);
-$msg = optional_param('lti_msg', '', PARAM_RAW);
+$errormsg = optional_param('lti_errormsg', '', PARAM_TEXT);
+$msg = optional_param('lti_msg', '', PARAM_TEXT);
 $unsigned = optional_param('unsigned', '0', PARAM_INT);
 
 $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
@@ -47,6 +47,7 @@ if (!empty($instanceid)) {
 
 
 require_login($course);
+require_sesskey();
 
 if (!empty($errormsg) || !empty($msg)) {
     $url = new moodle_url('/mod/lti/return.php', array('course' => $courseid));
@@ -56,7 +57,7 @@ if (!empty($errormsg) || !empty($msg)) {
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
 
-    //Avoid frame-in-frame action
+    // Avoid frame-in-frame action.
     if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED || $launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
         $PAGE->set_pagelayout('embedded');
     } else {
@@ -72,22 +73,26 @@ if (!empty($errormsg) || !empty($msg)) {
 if (!empty($errormsg)) {
     echo get_string('lti_launch_error', 'lti');
 
-    echo htmlspecialchars($errormsg);
+    p($errormsg);
 
-    $canaddtools = has_capability('mod/lti:addcoursetool', context_course::instance($courseid));
+    if ($unsigned == 1) {
 
-    if ($unsigned == 1 && $canaddtools) {
+        $contextcourse = context_course::instance($courseid);
         echo '<br /><br />';
-
         $links = new stdClass();
-        $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php', array('course' => $courseid, 'action' => 'add'));
-        $links->course_tool_editor = $coursetooleditor->out(false);
 
-        echo get_string('lti_launch_error_unsigned_help', 'lti', $links);
+        if (has_capability('mod/lti:addcoursetool', $contextcourse)) {
+            $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php',
+                array('course' => $courseid, 'action' => 'add', 'sesskey' => sesskey()));
+            $links->course_tool_editor = $coursetooleditor->out(false);
 
-        if (!empty($lti)) {
-            $adminrequesturl = new moodle_url('/mod/lti/request_tool.php', array('instanceid' => $lti->id));
+            echo get_string('lti_launch_error_unsigned_help', 'lti', $links);
+        }
+
+        if (!empty($lti) && has_capability('mod/lti:requesttooladd', $contextcourse)) {
+            $adminrequesturl = new moodle_url('/mod/lti/request_tool.php', array('instanceid' => $lti->id, 'sesskey' => sesskey()));
             $links->admin_request_url = $adminrequesturl->out(false);
+
             echo get_string('lti_launch_error_tool_request', 'lti', $links);
         }
     }
@@ -95,7 +100,7 @@ if (!empty($errormsg)) {
     echo $OUTPUT->footer();
 } else if (!empty($msg)) {
 
-    echo htmlspecialchars($msg);
+    p($msg);
 
     echo $OUTPUT->footer();
 
@@ -103,9 +108,9 @@ if (!empty($errormsg)) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     $url = $courseurl->out();
 
-    //Avoid frame-in-frame action
+    // Avoid frame-in-frame action.
     if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED || $launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
-        //Output a page containing some script to break out of frames and redirect them
+        // Output a page containing some script to break out of frames and redirect them.
 
         echo '<html><body>';
 
@@ -132,7 +137,7 @@ if (!empty($errormsg)) {
 
         echo '</body></html>';
     } else {
-        //If no error, take them back to the course
+        // If no error, take them back to the course.
         redirect($url);
     }
 }

@@ -723,8 +723,7 @@ $capabilities = array(
         )
     ),
 
-    // view members of a cohort, this can be used in course context too,
-    // this also controls the ability to actually use cohort
+    // View visible and hidden cohorts defined in the current context.
     'moodle/cohort:view' => array(
 
         'captype' => 'read',

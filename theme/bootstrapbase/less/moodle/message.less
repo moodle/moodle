@@ -67,20 +67,65 @@ table.message .searchresults td {
     clear: both;
     padding-bottom: 20px;
 }
-.message .messagearea .messagehistory .message_user_pictures {
-    margin-left: auto;
-    margin-right: auto;
-}
-.message .messagearea .messagehistory .message_user_pictures #user1 {
+.message .messagearea .messagehistory .user {
     vertical-align: top;
-    width: 200px;
+    width: 45%;
+    min-width: 100px;
+    float: left;
 }
-.message .messagearea .messagehistory .message_user_pictures #user2 {
-    vertical-align: top;
-    width: 200px;
+.message .messagearea .messagehistory .user > div {
+    text-align: center;
 }
-.message .messagearea .messagehistory .message_user_pictures .useractionlinks {
-    font-size: 0.9em;
+.message .messagearea .messagehistory .between {
+    float: left;
+    width: 16px;
+    margin: 0 1%;
+    padding-top: 40px;
+}
+@media screen and (min-width: 800px) {
+    .message .messagearea .messagehistory .between {
+        margin: 0 3%;
+    }
+    .message .messagearea .messagehistory .user {
+        width: 32%
+    }
+    .message .messagearea .messagehistory .user:first-child {
+        margin-left: 13%;
+    }
+    .message .messagearea .messagehistory .user:last-child {
+        margin-right: 13%;
+    }
+    .dir-rtl .message .messagearea .messagehistory .user:first-child {
+        margin-right: 13%;
+        margin-left: 0%
+    }
+    .dir-rtl .message .messagearea .messagehistory .user:last-child {
+        margin-left: 13%;
+        margin-right: 0%;
+    }
+}
+@media screen and (min-width: 1200px) {
+    .message .messagearea .messagehistory .user {
+        width: 25%
+    }
+    .message .messagearea .messagehistory .user:first-child {
+        margin-left: 20%;
+    }
+    .message .messagearea .messagehistory .user:last-child {
+        margin-right: 20%;
+    }
+    .dir-rtl .message .messagearea .messagehistory .user:first-child {
+        margin-left: 0;
+        margin-right: 20%;
+    }
+    .dir-rtl .message .messagearea .messagehistory .user:last-child {
+        margin-right: 0%;
+        margin-left: 20%;
+    }
+}
+.dir-rtl .message .messagearea .messagehistory .between,
+.dir-rtl .message .messagearea .messagehistory .user {
+    float: right;
 }
 .message .messagearea .messagehistory .heading {
     width: 100%;

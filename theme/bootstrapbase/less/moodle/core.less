@@ -590,6 +590,11 @@ table.mod_index {
 .comment-area textarea {
     width: 100%;
     overflow: auto;
+    &.fullwidth {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
 }
 .comment-area .fd {
     text-align: right;
@@ -1131,9 +1136,12 @@ body.tag .managelink {
             margin-bottom: 0;
         }
     }
-    .user-enroller-panel .uep-search-results .user .details {
-       width: 237px;
-    }
+  .user-enroller-panel .uep-search-results .user .details {
+    width: 237px;
+  }
+  .user-enroller-panel .uep-search-results .cohort .details {
+    width: 237px;
+  }
 }
 .dir-rtl {
     &#page-enrol-users {
@@ -2063,7 +2071,8 @@ img#persona_signin {
             padding-left: 4px;
             padding-right: 4px;
 
-            .iconsmall {
+            .iconsmall,
+            .smallicon {
                 margin: 4px 4px 4px 0px;
                 padding: 8px 4px 0px 2px;
                 vertical-align: text-bottom;
@@ -2140,8 +2149,10 @@ img#persona_signin {
         img {
             vertical-align: middle;
         }
-        .iconsmall {
+        .iconsmall,
+        .smallicon {
             margin: 4px 4px 4px -24px;
+            padding: 4px;
         }
         > li {
             display:block;
@@ -2168,6 +2179,10 @@ img#persona_signin {
         &.align-bl-tr {bottom: 100%;left:100%;}
         &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
     }
+    /** no wrap is set - prevent menu items from wrapping **/
+    &.nowrap-items .menu > li {
+        white-space: nowrap;
+    }
 }
 
 .block .moodle-actionmenu {
@@ -2180,9 +2195,13 @@ img#persona_signin {
             text-align: right;
             left: 0;
             right: auto;
-            .iconsmall {
-                margin-right:0;
-                margin-left:8px;
+            a {
+                padding: 2px 28px 2px 1em;
+            }
+            .iconsmall,
+            .smallicon {
+                margin-right: -24px;
+                margin-left: 4px;
             }
 
             /** bottom left of button **/

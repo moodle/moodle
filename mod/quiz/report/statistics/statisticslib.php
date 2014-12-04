@@ -46,7 +46,9 @@ function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = 
     if ($groupstudents) {
         ksort($groupstudents);
         list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents),
-                                                         SQL_PARAMS_NAMED, 'u');
+                SQL_PARAMS_NAMED, 'statsuser');
+        list($grpsql, $grpparams) = quiz_statistics_renumber_placeholders(
+                $grpsql, $grpparams, 'statsuser');
         $whereqa .= " AND quiza.userid $grpsql";
         $qaparams += $grpparams;
     }
@@ -61,6 +63,31 @@ function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = 
     }
 
     return array($fromqa, $whereqa, $qaparams);
+}
+
+/**
+ * Re-number all the params beginning with $paramprefix in a fragment of SQL.
+ *
+ * @param string $sql the SQL.
+ * @param array $params the params.
+ * @param string $paramprefix the parameter prefix.
+ * @return array with two elements, the modified SQL, and the modified params.
+ */
+function quiz_statistics_renumber_placeholders($sql, $params, $paramprefix) {
+    $basenumber = null;
+    $newparams = array();
+    $newsql = preg_replace_callback('~:' . preg_quote($paramprefix, '~') . '(\d+)\b~',
+            function($match) use ($paramprefix, $params, &$newparams, &$basenumber) {
+                if ($basenumber === null) {
+                    $basenumber = $match[1] - 1;
+                }
+                $oldname = $paramprefix . $match[1];
+                $newname = $paramprefix . ($match[1] - $basenumber);
+                $newparams[$newname] = $params[$oldname];
+                return ':' . $newname;
+            }, $sql);
+
+    return array($newsql, $newparams);
 }
 
 /**

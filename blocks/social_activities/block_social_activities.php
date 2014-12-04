@@ -130,7 +130,7 @@ class block_social_activities extends block_list {
                 } else {
                     $editbuttons = '';
                 }
-                if ($mod->visible || has_capability('moodle/course:viewhiddenactivities', $context)) {
+                if ($mod->visible || has_capability('moodle/course:viewhiddenactivities', $mod->context)) {
                     if ($ismoving) {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
@@ -169,5 +169,3 @@ class block_social_activities extends block_list {
         return $this->content;
     }
 }
-
-

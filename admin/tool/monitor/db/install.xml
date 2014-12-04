@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="tool/monitor/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/monitor"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_monitor_rules" COMMENT="Table to store rules">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Description of the rule"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Description format"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the rule"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of user who created the rule"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of course to which this rule belongs."/>
+        <FIELD NAME="plugin" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Frankenstlye name of the plguin"/>
+        <FIELD NAME="eventname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Fully qualified name of the event"/>
+        <FIELD NAME="template" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Message template"/>
+        <FIELD NAME="templateformat" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Template format"/>
+        <FIELD NAME="frequency" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Frequency"/>
+        <FIELD NAME="timewindow" TYPE="int" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="Time window in seconds"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp when this rule was last modified"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time stamp of when this rule was created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseanduser" UNIQUE="false" FIELDS="courseid, userid" COMMENT="Index on courseid and userid"/>
+        <INDEX NAME="eventname" UNIQUE="false" FIELDS="eventname" COMMENT="eventname"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_monitor_subscriptions" COMMENT="Table to store user subscriptions to various rules">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course id of the subscription"/>
+        <FIELD NAME="ruleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Rule id"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course module id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id of the subscriber"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when this subscription was created"/>
+        <FIELD NAME="lastnotificationsent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of the time when a notification was last sent for this subscription."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="rulekey" TYPE="foreign" FIELDS="ruleid" REFTABLE="tool_monitor_rules" REFFIELDS="id" COMMENT="Foreign key"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseanduser" UNIQUE="false" FIELDS="courseid, userid" COMMENT="Course and user"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_monitor_history" COMMENT="Table to store history of message notifications sent">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="sid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Subscription id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User to whom this notification was sent"/>
+        <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the message was sent."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="subscrptionid" TYPE="foreign" FIELDS="sid" REFTABLE="tool_monitor_subscriptions" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="sid_userid_timesent" UNIQUE="true" FIELDS="sid, userid, timesent"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_monitor_events" COMMENT="A table that keeps a log of events related to subscriptions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="eventname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Event name"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context id"/>
+        <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context level"/>
+        <FIELD NAME="contextinstanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context instance id"/>
+        <FIELD NAME="link" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Link to the event location"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="course id"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

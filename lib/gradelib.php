@@ -326,7 +326,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 }
 
 /**
- * Returns grading information for one or more activities, optionally with user grades
+ * Returns grading information for given activity, optionally with user grades
  * Manual, course or category items can not be queried.
  *
  * @category grade
@@ -337,7 +337,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
  * @param mixed  $userid_or_ids Either a single user ID, an array of user IDs or null. If user ID or IDs are not supplied returns information about grade_item
  * @return array Array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
-function grade_get_grades($courseid, $itemtype = null, $itemmodule = null, $iteminstance = null, $userid_or_ids=null) {
+function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
 
     $return = new stdClass();
@@ -353,17 +353,7 @@ function grade_get_grades($courseid, $itemtype = null, $itemmodule = null, $item
         }
     }
 
-    $params = array('courseid' => $courseid);
-    if (!empty($itemtype)) {
-        $params['itemtype'] = $itemtype;
-    }
-    if (!empty($itemmodule)) {
-        $params['itemmodule'] = $itemmodule;
-    }
-    if (!empty($iteminstance)) {
-        $params['iteminstance'] = $iteminstance;
-    }
-    if ($grade_items = grade_item::fetch_all($params)) {
+    if ($grade_items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
         foreach ($grade_items as $grade_item) {
             $decimalpoints = null;
 
@@ -1041,6 +1031,25 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         if (!$course_item->needsupdate) {
             // nothing to do :-)
             return true;
+        }
+    }
+
+    // Categories might have to run some processing before we fetch the grade items.
+    // This gives them a final opportunity to update and mark their children to be updated.
+    // We need to work on the children categories up to the parent ones, so that, for instance,
+    // if a category total is updated it will be reflected in the parent category.
+    $cats = grade_category::fetch_all(array('courseid' => $courseid));
+    $flatcattree = array();
+    foreach ($cats as $cat) {
+        if (!isset($flatcattree[$cat->depth])) {
+            $flatcattree[$cat->depth] = array();
+        }
+        $flatcattree[$cat->depth][] = $cat;
+    }
+    krsort($flatcattree);
+    foreach ($flatcattree as $depth => $cats) {
+        foreach ($cats as $cat) {
+            $cat->pre_regrade_final_grades();
         }
     }
 

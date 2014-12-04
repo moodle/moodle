@@ -18,6 +18,7 @@ Feature: Atto accessibility checker
     And I press "Save image"
     And I press "Accessibility checker"
     And I should see "Congratulations, no accessibility problems found!"
+    And I click on ".moodle-dialogue-focused .closebutton" "css_element"
     And I select the text in the "Description" Atto editor
     And I click on "Image" "button"
     And I set the field "Describe this image" to ""

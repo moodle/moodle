@@ -75,7 +75,8 @@ if ($show_rss = (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfe
 $currentsection = "";
 
 foreach ($glossarys as $glossary) {
-    if (!$glossary->visible && has_capability('moodle/course:viewhiddenactivities', $context)) {
+    if (!$glossary->visible && has_capability('moodle/course:viewhiddenactivities',
+            context_module::instance($glossary->coursemodule))) {
         // Show dimmed if the mod is hidden.
         $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
     } else if ($glossary->visible) {

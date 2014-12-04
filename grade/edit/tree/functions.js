@@ -69,6 +69,18 @@ function update_category_aggregation(e, args) {
     window.location = 'index.php?id='+args.courseid+'&category='+args.category+'&aggregationtype='+selectmenu.get('value')+'&sesskey='+args.sesskey;
 }
 
+/**
+ * The weight override checkboxes toggle the disabled status of their associated weight fields.
+ */
+YUI().use('node', 'delegate', function(Y) {
+    Y.on('domready', function() {
+        Y.delegate('click', function(e) {
+            var t = e.currentTarget,
+                itemid = t.get('id').split('_')[1];
+            Y.one('input[name=weight_' + itemid + ']').set('disabled', t.get('checked') ? false : true);
+        }, Y.config.doc.body, 'input.weightoverride');
+    });
+});
 
 /* TODO: finish and rewrite for YUI3...
 Y.YUI2.namespace('grade_edit_tree');

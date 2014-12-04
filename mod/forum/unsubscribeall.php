@@ -52,6 +52,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     foreach($forums as $forum) {
         \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, context_module::instance($forum->cm), true);
     }
+    $DB->delete_records('forum_discussion_subs', array('userid' => $USER->id));
     $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
 
     echo $OUTPUT->box(get_string('unsubscribealldone', 'forum'));
@@ -60,10 +61,18 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     die;
 
 } else {
-    $a = count(\mod_forum\subscriptions::get_unsubscribable_forums());
+    $count = new stdClass();
+    $count->forums = count(\mod_forum\subscriptions::get_unsubscribable_forums());
+    $count->discussions = $DB->count_records('forum_discussion_subs', array('userid' => $USER->id));
 
-    if ($a) {
-        $msg = get_string('unsubscribeallconfirm', 'forum', $a);
+    if ($count->forums || $count->discussions) {
+        if ($count->forums && $count->discussions) {
+            $msg = get_string('unsubscribeallconfirm', 'forum', $count);
+        } else if ($count->forums) {
+            $msg = get_string('unsubscribeallconfirmforums', 'forum', $count);
+        } else if ($count->discussions) {
+            $msg = get_string('unsubscribeallconfirmdiscussions', 'forum', $count);
+        }
         echo $OUTPUT->confirm($msg, new moodle_url('unsubscribeall.php', array('confirm'=>1)), $return);
         echo $OUTPUT->footer();
         die;

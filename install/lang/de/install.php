@@ -48,7 +48,7 @@ $string['environmenthead'] = 'Installationsvoraussetzungen werden geprüft ...';
 $string['environmentsub2'] = 'Jede Version hat Mindestvoraussetzungen für der PHP-Version und für verbindliche PHP-Extensions. Vor einer Installation oder einer Aktualisierung wird eine vollständige Prüfung durchgeführt. Bitte fragen Sie den Administrator des Servers, wenn Sie mit der Installation einer neuen Version oder mit der Aktivierung von PHP-Extensions nicht weiterkommen.';
 $string['errorsinenvironment'] = 'Fehler bei der Prüfung der Systemvoraussetzungen!';
 $string['installation'] = 'Installation';
-$string['langdownloaderror'] = 'Leider konnte das Sprachpaket \'{$a}\' nicht heruntergeladen werden. Die Installation wird in englischer Sprache fortgesetzt.';
+$string['langdownloaderror'] = 'Das Sprachpaket \'{$a}\' konnte nicht heruntergeladen werden. Die Installation wird in englischer Sprache fortgesetzt.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit Ihres Servers ist zur Zeit auf {$a} eingestellt. </p>
 <p>Wenn Sie Moodle mit vielen Aktivitäten oder vielen Nutzer/innen verwenden, wird dies vermutlich zu Problemen führen.</p>
 <p>Wir empfehlen die Einstellung wenn möglich zu erhöhen, z.B. auf 40M oder mehr. Dies können Sie auf verschiedene Arten machen:</p>

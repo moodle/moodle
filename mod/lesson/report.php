@@ -584,7 +584,8 @@ if ($action === 'delete') {
                 $table->data[] = $modified;
             }
             if (isset($page->answerdata->response)) {
-                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend.$fontstart2.format_text($page->answerdata->response,$page->answerdata->responseformat,$formattextdefoptions).$fontend2, " ");
+                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend
+                        .$fontstart2.$page->answerdata->response.$fontend2, " ");
             }
             $table->data[] = array($page->answerdata->score, " ");
         } else {

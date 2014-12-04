@@ -16,14 +16,13 @@ Feature: A teacher can delete questions in the question bank
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I add a "Essay" question filling the form with:
-      | Question name | Test question to be deleted |
-      | Question text | Write about whatever you want |
-    And I follow "Course 1"
 
   @javascript
   Scenario: Delete a question not used in a quiz
-    Given I follow "Question bank"
+    And I navigate to "Questions" node in "Course administration > Question bank"
+    And I add a "Essay" question filling the form with:
+      | Question name | Test question to be deleted   |
+      | Question text | Write about whatever you want |
     And I click on "Delete" "link" in the "Test question to be deleted" "table_row"
     When I press "Continue"
     Then I should not see "Test question to be deleted"
@@ -33,12 +32,10 @@ Feature: A teacher can delete questions in the question bank
     Given I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name | Test quiz |
-    And I follow "Test quiz"
-    And I follow "Edit quiz"
-    And I follow "Show"
-    And I click on "Add to quiz" "link" in the "Test question to be deleted" "table_row"
-    And I follow "Course 1"
-    And I follow "Question bank"
+    And I add a "True/False" question to the "Test quiz" quiz with:
+      | Question name | Test question to be deleted   |
+      | Question text | Write about whatever you want |
+    And I navigate to "Questions" node in "Course administration > Question bank"
     And I click on "Delete" "link" in the "Test question to be deleted" "table_row"
     When I press "Continue"
     Then I should not see "Test question to be deleted"

@@ -448,7 +448,8 @@ class flexible_table {
 
         if (($sortcol = optional_param($this->request[TABLE_VAR_SORT], '', PARAM_ALPHANUMEXT)) &&
                 $this->is_sortable($sortcol) && empty($this->sess->collapse[$sortcol]) &&
-                (isset($this->columns[$sortcol]) || in_array($sortcol, array('firstname', 'lastname')) && isset($this->columns['fullname']))) {
+                (isset($this->columns[$sortcol]) || in_array($sortcol, get_all_user_name_fields())
+                && isset($this->columns['fullname']))) {
 
             if (array_key_exists($sortcol, $this->sess->sortby)) {
                 // This key already exists somewhere. Change its sortorder and bring it to the top.
@@ -571,7 +572,7 @@ class flexible_table {
             if (isset($this->columns[$column])) {
                 continue; // This column is OK.
             }
-            if (in_array($column, array('firstname', 'lastname')) &&
+            if (in_array($column, get_all_user_name_fields()) &&
                     isset($this->columns['fullname'])) {
                 continue; // This column is OK.
             }
@@ -1186,7 +1187,7 @@ class flexible_table {
                 if ($nameformat == 'language') {
                     $nameformat = get_string('fullnamedisplay');
                 }
-                $requirednames = order_in_string(array('firstname', 'lastname'), $nameformat);
+                $requirednames = order_in_string(get_all_user_name_fields(), $nameformat);
 
                 if (!empty($requirednames)) {
                     if ($this->is_sortable($column)) {

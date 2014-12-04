@@ -1188,6 +1188,7 @@ class cm_info implements IteratorAggregate {
         unset($props['showavailability']);
         unset($props['availablefrom']);
         unset($props['availableuntil']);
+        unset($props['groupmembersonly']);
 
         foreach ($props as $key => $unused) {
             $ret[$key] = $this->__get($key);
@@ -1394,6 +1395,20 @@ class cm_info implements IteratorAggregate {
             $icon = $output->pix_url('icon', $this->modname);
         }
         return $icon;
+    }
+
+    /**
+     * @param string $textclasses additionnal classes for grouping label
+     * @return string An empty string or HTML grouping label span tag
+     */
+    public function get_grouping_label($textclasses = '') {
+        $groupinglabel = '';
+        if (!empty($this->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($this->course))) {
+            $groupings = groups_get_all_groupings($this->course);
+            $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$this->groupingid]->name).')',
+                array('class' => 'groupinglabel '.$textclasses));
+        }
+        return $groupinglabel;
     }
 
     /**

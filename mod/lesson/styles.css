@@ -78,3 +78,8 @@
 .path-mod-lesson.dir-rtl .standardtable,
 .path-mod-lesson.dir-rtl .mform .box.contents,
 .path-mod-lesson.dir-rtl .invisiblefieldset.fieldsetfix tr {text-align: right;}
+
+/* Countdown timer. */
+#lesson-timer {
+    text-align: center;
+}

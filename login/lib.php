@@ -239,6 +239,9 @@ function core_login_process_password_set($token) {
         if (!$userauth->user_update_password($user, $data->password)) {
             print_error('errorpasswordupdate', 'auth');
         }
+        if (!empty($CFG->passwordchangelogout)) {
+            \core\session\manager::kill_user_sessions($user->id, session_id());
+        }
         // Reset login lockout (if present) before a new password is set.
         login_unlock_account($user);
         // Clear any requirement to change passwords.
@@ -250,6 +253,8 @@ function core_login_process_password_set($token) {
             unset($SESSION->lang);
         }
         complete_user_login($user); // Triggers the login event.
+
+        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
         $urltogo = core_login_get_return_url();
         unset($SESSION->wantsurl);

@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file defines the version of lti
@@ -48,7 +48,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2014060201;    // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800;    // Requires this Moodle version
-$plugin->component = 'mod_lti';        // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2014111000;    // The current module version (Date: YYYYMMDDXX).
+$plugin->requires  = 2014110400;    // Requires this Moodle version.
+$plugin->component = 'mod_lti';     // Full name of the plugin (used for diagnostics).
 $plugin->cron      = 0;

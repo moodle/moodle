@@ -465,10 +465,13 @@ function assign_print_overview($courses, &$htmlarray) {
             if (isset($mysubmissions[$assignment->id])) {
                 $submission = $mysubmissions[$assignment->id];
             }
-            if (!$submission || !$submission->status || $submission->status == 'draft') {
-                $str .= $strnotsubmittedyet;
-            } else if ($submission->nosubmissions) {
+            if ($submission && $submission->nosubmissions) {
                 $str .= get_string('offline', 'assign');
+            } else if (!$submission ||
+                    !$submission->status ||
+                    $submission->status == 'draft' ||
+                    $submission->status == 'new') {
+                $str .= $strnotsubmittedyet;
             } else {
                 $str .= get_string('submissionstatus_' . $submission->status, 'assign');
             }
@@ -499,10 +502,11 @@ function assign_print_overview($courses, &$htmlarray) {
  */
 function assign_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG, $USER, $DB, $OUTPUT;
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     // Do not use log table if possible, it may be huge.
 
-    $dbparams = array($timestart, $course->id, 'assign');
+    $dbparams = array($timestart, $course->id, 'assign', ASSIGN_SUBMISSION_STATUS_SUBMITTED);
     $namefields = user_picture::fields('u', null, 'userid');
     if (!$submissions = $DB->get_records_sql("SELECT asb.id, asb.timemodified, cm.id AS cmid,
                                                      $namefields
@@ -514,7 +518,8 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
                                                WHERE asb.timemodified > ? AND
                                                      asb.latest = 1 AND
                                                      a.course = ? AND
-                                                     md.name = ?
+                                                     md.name = ? AND
+                                                     asb.status = ?
                                             ORDER BY asb.timemodified ASC", $dbparams)) {
          return false;
     }
@@ -616,6 +621,8 @@ function assign_get_recent_mod_activity(&$activities,
                                         $groupid=0) {
     global $CFG, $COURSE, $USER, $DB;
 
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
     if ($COURSE->id == $courseid) {
         $course = $COURSE;
     } else {
@@ -644,6 +651,7 @@ function assign_get_recent_mod_activity(&$activities,
 
     $params['cminstance'] = $cm->instance;
     $params['timestart'] = $timestart;
+    $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
     $userfields = user_picture::fields('u', null, 'userid');
 
@@ -654,6 +662,7 @@ function assign_get_recent_mod_activity(&$activities,
                                                 JOIN {user} u ON u.id = asb.userid ' .
                                           $groupjoin .
                                             '  WHERE asb.timemodified > :timestart AND
+                                                     asb.status = :submitted AND
                                                      a.id = :cminstance
                                                      ' . $userselect . ' ' . $groupselect .
                                             ' ORDER BY asb.timemodified ASC', $params)) {

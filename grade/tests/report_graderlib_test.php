@@ -65,6 +65,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $data = new stdClass();
         $data->id = $course->id;
         $data->report = 'grader';
+        $data->timepageload = time();
 
         $data->grade = array();
         $data->grade[$student->id] = array();
@@ -79,6 +80,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         // Grade above max. Should be pulled down to max.
         $toobig = 200.00;
         $data->grade[$student->id][$forum1->id] = $toobig;
+        $data->timepageload = time();
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 1);
 
@@ -88,6 +90,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         // Grade below min. Should be pulled up to min.
         $toosmall = -10.00;
         $data->grade[$student->id][$forum1->id] = $toosmall;
+        $data->timepageload = time();
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 1);
 
@@ -98,6 +101,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $CFG->unlimitedgrades = 1;
 
         $data->grade[$student->id][$forum1->id] = $toobig;
+        $data->timepageload = time();
         $warnings = $report->process_data($data);
         $this->assertEquals(count($warnings), 0);
 
@@ -121,17 +125,17 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $this->assertEquals($emptypreferences, $report->collapsed);
 
         // Validating preferences set/get for one course.
-        $report->process_action('c13', 'switch_minus');
+        $report->process_action('cg13', 'switch_minus');
         $report = $this->create_report($course1);
         $this->assertEquals(array(13), $report->collapsed['aggregatesonly']);
         $this->assertEmpty($report->collapsed['gradesonly']);
 
-        $report->process_action('c13', 'switch_plus');
+        $report->process_action('cg13', 'switch_plus');
         $report = $this->create_report($course1);
         $this->assertEmpty($report->collapsed['aggregatesonly']);
         $this->assertEquals(array(13), $report->collapsed['gradesonly']);
 
-        $report->process_action('c13', 'switch_whole');
+        $report->process_action('cg13', 'switch_whole');
         $report = $this->create_report($course1);
         $this->assertEquals($emptypreferences, $report->collapsed);
 
@@ -146,18 +150,18 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
 
         $report1 = $this->create_report($course1);
         foreach ($course1cats as $catid) {
-            $report1->process_action('c'.$catid, 'switch_minus');
+            $report1->process_action('cg'.$catid, 'switch_minus');
         }
         $report2 = $this->create_report($course2);
         foreach ($course2cats as $catid) {
-            $report2->process_action('c'.$catid, 'switch_minus');
-            $report2->process_action('c'.$catid, 'switch_plus');
+            $report2->process_action('cg'.$catid, 'switch_minus');
+            $report2->process_action('cg'.$catid, 'switch_plus');
         }
         $report3 = $this->create_report($course3);
         foreach ($course3cats as $catid) {
-            $report3->process_action('c'.$catid, 'switch_minus');
+            $report3->process_action('cg'.$catid, 'switch_minus');
             if (($i++)%2) {
-                $report3->process_action('c'.$catid, 'switch_plus');
+                $report3->process_action('cg'.$catid, 'switch_plus');
             }
         }
 
@@ -201,7 +205,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         set_user_preference('grade_report_grader_collapsed_categories'.$course1->id, json_encode($toobigvalue));
 
         $report1 = $this->create_report($course1);
-        $report1->process_action('c'.$lastvalue, 'switch_minus');
+        $report1->process_action('cg'.$lastvalue, 'switch_minus');
 
         $report1 = $this->create_report($course1);
         $this->assertEquals($expectedvalue, $report1->collapsed);
@@ -218,7 +222,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $toobigvalue['aggregatesonly'][] = $lastcatid;
 
         $report1 = $this->create_report($course1);
-        $report1->process_action('c'.$lastcatid, 'switch_minus');
+        $report1->process_action('cg'.$lastcatid, 'switch_minus');
 
         // One last value should be removed from both arrays.
         $report1 = $this->create_report($course1);

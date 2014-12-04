@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 $forumid        = required_param('forumid', PARAM_INT);             // The forum to subscribe or unsubscribe.
 $discussionid   = optional_param('discussionid', null, PARAM_INT);  // The discussionid to subscribe.
-$sesskey        = optional_param('sesskey', null, PARAM_RAW);
+$includetext    = optional_param('includetext', false, PARAM_BOOL);
 
 $forum          = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
 $course         = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
@@ -36,9 +36,17 @@ $discussion     = $DB->get_record('forum_discussions', array('id' => $discussion
 $cm             = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 $context        = context_module::instance($cm->id);
 
+require_sesskey();
 require_login($course, false, $cm);
+require_capability('mod/forum:viewdiscussion', $context);
 
 $return = new stdClass();
+
+if (is_guest($context, $USER)) {
+    // is_guest should be used here as this also checks whether the user is a guest in the current course.
+    // Guests and visitors cannot subscribe - only enrolled users.
+    throw new moodle_exception('noguestsubscribe', 'mod_forum');
+}
 
 if (!\mod_forum\subscriptions::is_subscribable($forum)) {
     // Nothing to do. We won't actually output any content here though.
@@ -55,6 +63,6 @@ if (\mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, 
 }
 
 // Now return the updated subscription icon.
-$return->icon = forum_get_discussion_subscription_icon($forum, $discussion->id);
+$return->icon = forum_get_discussion_subscription_icon($forum, $discussion->id, null, $includetext);
 echo json_encode($return);
 die;

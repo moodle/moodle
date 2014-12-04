@@ -72,6 +72,9 @@ M.availability_profile.form.getNode = function(json) {
     if (json.op !== undefined &&
             node.one('select[name=op] > option[value=' + json.op + ']')) {
         node.one('select[name=op]').set('value', json.op);
+        if (json.op === 'isempty' || json.op === 'isnotempty') {
+            node.one('input[name=value]').set('disabled', true);
+        }
     }
     if (json.v !== undefined) {
         node.one('input').set('value', json.v);

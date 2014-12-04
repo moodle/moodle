@@ -175,10 +175,8 @@ class assign_grading_table extends table_sql implements renderable {
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
             } else if ($filter == ASSIGN_FILTER_NOT_SUBMITTED) {
-                $where .= ' AND (s.timemodified IS NULL OR s.status = :draft OR s.status = :reopened) ';
-                $params['draft'] = ASSIGN_SUBMISSION_STATUS_DRAFT;
-                $params['reopened'] = ASSIGN_SUBMISSION_STATUS_REOPENED;
-
+                $where .= ' AND (s.timemodified IS NULL OR s.status != :submitted) ';
+                $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
                                  s.status = :submitted AND
@@ -265,11 +263,6 @@ class assign_grading_table extends table_sql implements renderable {
             // Record ID.
             $columns[] = 'recordid';
             $headers[] = get_string('recordid', 'assign');
-        }
-
-        if ($this->hasviewblind) {
-                $columns[] = 'recordid';
-                $headers[] = get_string('recordid', 'assign');
         }
 
         // Submission status.

@@ -10,8 +10,7 @@ Feature: A selected file can be cancelled
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    And I expand "My profile" node
-    And I follow "My private files"
+    And I navigate to "My private files" node in "My profile"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
     And I am on homepage

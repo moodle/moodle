@@ -302,16 +302,19 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      *      be set to false.
      */
     public function get_many($keys) {
+        $return = array();
         $result = $this->connection->getMulti($keys);
         if (!is_array($result)) {
             $result = array();
         }
         foreach ($keys as $key) {
             if (!array_key_exists($key, $result)) {
-                $result[$key] = false;
+                $return[$key] = false;
+            } else {
+                $return[$key] = $result[$key];
             }
         }
-        return $result;
+        return $return;
     }
 
     /**

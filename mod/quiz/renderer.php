@@ -1174,10 +1174,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $options = array('filter' => false, 'newlines' => false);
         $warning = format_text(get_string('connectionerror', 'quiz'), FORMAT_MARKDOWN, $options);
         $ok = format_text(get_string('connectionok', 'quiz'), FORMAT_MARKDOWN, $options);
-        return html_writer::tag('div', $warning, array('id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert')) .
-                html_writer::tag('div', $ok, array('id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert'));
+        return html_writer::tag('div', $warning,
+                    array('id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert')) .
+                    html_writer::tag('div', $ok, array('id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert'));
     }
 }
+
 
 class mod_quiz_links_to_other_attempts implements renderable {
     /**
@@ -1185,6 +1187,7 @@ class mod_quiz_links_to_other_attempts implements renderable {
      */
     public $links = array();
 }
+
 
 class mod_quiz_view_object {
     /** @var array $infomessages of messages with information to display about the quiz. */

@@ -49,24 +49,32 @@ function xmldb_block_calendar_month_upgrade($oldversion, $block) {
         // Add this block the default blocks on /my.
         $blockname = 'calendar_month';
 
-        $page = new moodle_page();
-        $page->set_context(context_system::instance());
+        // Do not try to add the block if we cannot find the default my_pages entry.
+        // Private => 1 refers to MY_PAGE_PRIVATE.
+        if ($systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => 1))) {
+            $page = new moodle_page();
+            $page->set_context(context_system::instance());
 
-        // Check to see if this block is already on the default /my page.
-        $criteria = array(
-            'blockname' => $blockname,
-            'parentcontextid' => $page->context->id,
-            'pagetypepattern' => 'my-index'
-        );
+            // Check to see if this block is already on the default /my page.
+            $criteria = array(
+                'blockname' => $blockname,
+                'parentcontextid' => $page->context->id,
+                'pagetypepattern' => 'my-index',
+                'subpagepattern' => $systempage->id,
+            );
 
-        if (!$DB->record_exists('block_instances', $criteria)) {
-            // Add the block to the default /my.
-            $page->blocks->add_region(BLOCK_POS_RIGHT);
-            $page->blocks->add_block($blockname, BLOCK_POS_RIGHT, 0, false, 'my-index');
+            if (!$DB->record_exists('block_instances', $criteria)) {
+                // Add the block to the default /my.
+                $page->blocks->add_region(BLOCK_POS_RIGHT);
+                $page->blocks->add_block($blockname, BLOCK_POS_RIGHT, 0, false, 'my-index', $systempage->id);
+            }
         }
 
         upgrade_block_savepoint(true, 2014062600, $blockname);
     }
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

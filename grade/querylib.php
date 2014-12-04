@@ -89,6 +89,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
             $grade->feedbackformat = $grade_grades[$userid]->feedbackformat;
             $grade->usermodified   = $grade_grades[$userid]->usermodified;
             $grade->dategraded     = $grade_grades[$userid]->get_dategraded();
+            $grade->datesubmitted  = $grade_grades[$userid]->get_datesubmitted();
 
             // create text representation of grade
             if ($grade_item->needsupdate) {

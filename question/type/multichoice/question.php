@@ -212,7 +212,8 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
         if (!isset($postdata['answer'])) {
             return array();
         } else {
-            return array('answer' => $this->answers[$this->order[$postdata['answer']]]->answer);
+            $answer = $this->answers[$this->order[$postdata['answer']]];
+            return array('answer' => clean_param($answer->answer, PARAM_NOTAGS));
         }
     }
 

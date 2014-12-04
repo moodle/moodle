@@ -176,6 +176,18 @@ class edit_item_form extends moodleform {
 /// parent category related settings
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
 
+        $mform->addElement('advcheckbox', 'weightoverride', get_string('adjustedweight', 'grades'));
+        $mform->addHelpButton('weightoverride', 'weightoverride', 'grades');
+        $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('weightoverride', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+
+        $mform->addElement('text', 'aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addHelpButton('aggregationcoef2', 'weight', 'grades');
+        $mform->setType('aggregationcoef2', PARAM_RAW);
+        $mform->disabledIf('aggregationcoef2', 'weightoverride');
+        $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('aggregationcoef2', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+
         $options = array();
         $coefstring = '';
         $categories = grade_category::fetch_all(array('courseid'=>$COURSE->id));
@@ -278,8 +290,9 @@ class edit_item_form extends moodleform {
                 $coefstring = $grade_item->get_coefstring();
 
                 if ($coefstring !== '') {
-                    if ($coefstring == 'aggregationcoefextrasum') {
+                    if ($coefstring == 'aggregationcoefextrasum' || $coefstring == 'aggregationcoefextraweightsum') {
                         // advcheckbox is not compatible with disabledIf!
+                        $coefstring = 'aggregationcoefextrasum';
                         $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
                     } else {
                         $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
@@ -291,8 +304,21 @@ class edit_item_form extends moodleform {
                     }
                     $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
                 }
-
+                $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_NONE);
+                $mform->disabledIf('aggregationcoef', 'gradetype', 'eq', GRADE_TYPE_TEXT);
                 $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parent_category->id);
+            }
+
+            // Remove fields used by natural weighting if the parent category is not using natural weighting.
+            // Or if the item is a scale and scales are not used in aggregation.
+            if ($parent_category->aggregation != GRADE_AGGREGATE_SUM
+                    || (empty($CFG->grade_includescalesinaggregation) && $grade_item->gradetype == GRADE_TYPE_SCALE)) {
+                if ($mform->elementExists('weightoverride')) {
+                    $mform->removeElement('weightoverride');
+                }
+                if ($mform->elementExists('aggregationcoef2')) {
+                    $mform->removeElement('aggregationcoef2');
+                }
             }
 
             if ($category = $grade_item->get_item_category()) {

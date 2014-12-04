@@ -76,6 +76,8 @@ class grade_export_txt extends grade_export {
                 $exporttitle[] = $this->format_column_name($grade_item, true);
             }
         }
+        // Last downloaded column header.
+        $exporttitle[] = get_string('timeexported', 'gradeexport_txt');
         $csvexport->add_data($exporttitle);
 
         // Print all the lines of data.
@@ -110,6 +112,8 @@ class grade_export_txt extends grade_export {
                     $exportdata[] = $this->format_feedback($userdata->feedbacks[$itemid]);
                 }
             }
+            // Time exported.
+            $exportdata[] = time();
             $csvexport->add_data($exportdata);
         }
         $gui->close();

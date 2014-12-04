@@ -36,9 +36,7 @@ $string['categorynotfound'] = 'Category <b>{$a}</b> not found or you don\'t have
 $string['cohort'] = 'Cohort';
 $string['cohorts'] = 'Cohorts';
 $string['cohortsin'] = '{$a}: available cohorts';
-$string['cohort:assign'] = 'Assign cohort members';
-$string['cohort:manage'] = 'Manage cohorts';
-$string['cohort:view'] = 'Use cohorts and view members';
+$string['assigncohorts'] = 'Assign cohort members';
 $string['component'] = 'Source';
 $string['contextnotfound'] = 'Context <b>{$a}</b> not found or you don\'t have permission to create a cohort there. The default context will be used.';
 $string['csvcontainserrors'] = 'Errors were found in CSV data. See details below.';
@@ -83,5 +81,8 @@ $string['uploadcohorts_help'] = 'Cohorts may be uploaded via text file. The form
 * Each record is a series of data separated by commas (or other delimiters)
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * Required fieldname is name
-* Optional fieldnames are idnumber, description, descriptionformat, context, category, category_id, category_idnumber, category_path
+* Optional fieldnames are idnumber, description, descriptionformat, visible, context, category, category_id, category_idnumber, category_path
 ';
+$string['visible'] = 'Visible';
+$string['visible_help'] = "Any cohort can be viewed by users who have 'moodle/cohort:view' capability in the cohort context.<br/>
+Visible cohorts can also be viewed by users in the underlying courses.";

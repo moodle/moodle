@@ -130,15 +130,11 @@ function message_print_contact_selector($countunreadtotal, $viewing, $user1, $us
         }
     }
 
-    // Only show the search button if we're viewing our own messages.
-    // Search isn't currently able to deal with user A wanting to search user B's messages.
-    if ($showactionlinks) {
+    // Only show the search button if we're viewing our own contacts.
+    if ($viewing == MESSAGE_VIEW_CONTACTS && $user2 == null) {
         echo html_writer::start_tag('form', array('action' => 'index.php','method' => 'GET'));
         echo html_writer::start_tag('fieldset');
         $managebuttonclass = 'visible';
-        if ($viewing == MESSAGE_VIEW_SEARCH) {
-            $managebuttonclass = 'hiddenelement';
-        }
         $strmanagecontacts = get_string('search','message');
         echo html_writer::empty_tag('input', array('type' => 'hidden','name' => 'viewing','value' => MESSAGE_VIEW_SEARCH));
         echo html_writer::empty_tag('input', array('type' => 'submit','value' => $strmanagecontacts,'class' => $managebuttonclass));
@@ -1984,20 +1980,19 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
 function message_print_message_history($user1, $user2 ,$search = '', $messagelimit = 0, $messagehistorylink = false, $viewingnewmessages = false, $showactionlinks = true) {
     global $CFG, $OUTPUT;
 
-    echo $OUTPUT->box_start('center');
-    echo html_writer::start_tag('table', array('cellpadding' => '10', 'class' => 'message_user_pictures'));
-    echo html_writer::start_tag('tr');
-
-    echo html_writer::start_tag('td', array('align' => 'center', 'id' => 'user1'));
+    echo $OUTPUT->box_start('center', 'message_user_pictures');
+    echo $OUTPUT->box_start('user');
+    echo $OUTPUT->box_start('generalbox', 'user1');
     echo $OUTPUT->user_picture($user1, array('size' => 100, 'courseid' => SITEID));
     echo html_writer::tag('div', fullname($user1), array('class' => 'heading'));
-    echo html_writer::end_tag('td');
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->box_end();
 
-    echo html_writer::start_tag('td', array('align' => 'center'));
-    echo html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/twoway'), 'alt' => ''));
-    echo html_writer::end_tag('td');
+    $imgattr = array('src' => $OUTPUT->pix_url('i/twoway'), 'alt' => '', 'width' => 16, 'height' => 16);
+    echo $OUTPUT->box(html_writer::empty_tag('img', $imgattr), 'between');
 
-    echo html_writer::start_tag('td', array('align' => 'center', 'id' => 'user2'));
+    echo $OUTPUT->box_start('user');
+    echo $OUTPUT->box_start('generalbox', 'user2');
     // Show user picture with link is real user else without link.
     if (core_user::is_real_user($user2->id)) {
         echo $OUTPUT->user_picture($user2, array('size' => 100, 'courseid' => SITEID));
@@ -2018,10 +2013,8 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
 
         echo html_writer::tag('div', $useractionlinks, array('class' => 'useractionlinks'));
     }
-
-    echo html_writer::end_tag('td');
-    echo html_writer::end_tag('tr');
-    echo html_writer::end_tag('table');
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->box_end();
     echo $OUTPUT->box_end();
 
     if (!empty($messagehistorylink)) {
@@ -2613,4 +2606,60 @@ function message_current_user_is_involved($user1, $user2) {
         return false;
     }
     return true;
+}
+
+/**
+ * Get messages sent or/and received by the specified users.
+ *
+ * @param  int      $useridto       the user id who received the message
+ * @param  int      $useridfrom     the user id who sent the message. -10 or -20 for no-reply or support user
+ * @param  int      $notifications  1 for retrieving notifications, 0 for messages, -1 for both
+ * @param  bool     $read           true for retrieving read messages, false for unread
+ * @param  string   $sort           the column name to order by including optionally direction
+ * @param  int      $limitfrom      limit from
+ * @param  int      $limitnum       limit num
+ * @return external_description
+ * @since  2.8
+ */
+function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $read = true,
+                                $sort = 'mr.timecreated DESC', $limitfrom = 0, $limitnum = 0) {
+    global $DB;
+
+    $messagetable = $read ? '{message_read}' : '{message}';
+    $params = array('deleted' => 0);
+
+    // Empty useridto means that we are going to retrieve messages send by the useridfrom to any user.
+    if (empty($useridto)) {
+        $userfields = get_all_user_name_fields(true, 'u', '', 'userto');
+        $joinsql = "JOIN {user} u ON u.id = mr.useridto";
+        $usersql = "mr.useridfrom = :useridfrom AND u.deleted = :deleted";
+        $params['useridfrom'] = $useridfrom;
+    } else {
+        $userfields = get_all_user_name_fields(true, 'u', '', 'userfrom');
+        // Left join because useridfrom may be -10 or -20 (no-reply and support users).
+        $joinsql = "LEFT JOIN {user} u ON u.id = mr.useridfrom";
+        $usersql = "mr.useridto = :useridto AND (u.deleted IS NULL OR u.deleted = :deleted)";
+        $params['useridto'] = $useridto;
+        if (!empty($useridfrom)) {
+            $usersql .= " AND mr.useridfrom = :useridfrom";
+            $params['useridfrom'] = $useridfrom;
+        }
+    }
+
+    // Now, if retrieve notifications, conversations or both.
+    $typesql = "";
+    if ($notifications !== -1) {
+        $typesql = "AND mr.notification = :notification";
+        $params['notification'] = ($notifications) ? 1 : 0;
+    }
+
+    $sql = "SELECT mr.*, $userfields
+              FROM $messagetable mr
+                   $joinsql
+             WHERE $usersql
+                   $typesql
+             ORDER BY $sort";
+
+    $messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    return $messages;
 }

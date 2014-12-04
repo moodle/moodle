@@ -23,9 +23,7 @@
  */
 
 $string['addgroup'] = 'Add to group';
-$string['ajaxmore'] = 'More...';
 $string['assignrole'] = 'Assign role';
-$string['cohortsearch'] = 'Search';
 $string['cohort:config'] = 'Configure cohort instances';
 $string['cohort:unenrol'] = 'Unenrol suspended users';
 $string['instanceexists'] = 'Cohort is already synchronised with selected role';
