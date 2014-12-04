@@ -1228,7 +1228,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
             // Always offer the unsubscribe from discussion link.
             $posttext .= "\n---------------------------------------------------------------------\n";
             $posttext .= get_string("unsubscribediscussion", "forum");
-            $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id&amp;d=$discussion->id\n";
+            $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id&d=$discussion->id\n";
         }
     }
 
