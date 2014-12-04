@@ -439,6 +439,7 @@ $string['doclang'] = 'Language for docs';
 $string['docroot'] = 'Moodle Docs document root';
 $string['doctonewwindow'] = 'Open in new window';
 $string['download'] = 'Download';
+$string['durationunits'] = 'duration units';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editlang'] = '<b>Edit</b>';
 $string['editorbackgroundcolor'] = 'Background colour';
