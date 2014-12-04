@@ -154,16 +154,24 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
             echo '<input type="submit" name="edit" value="'.get_string('update').'" /></p>';
             echo "\n</form>";
         } else if (!empty($send)) {
-            $good = 1;
+            $fails = array();
             foreach ($SESSION->emailto[$id] as $user) {
-                $good = $good && message_post_message($USER, $user, $messagebody, $format);
+                if (!message_post_message($USER, $user, $messagebody, $format)) {
+                    $user->fullname = fullname($user);
+                    $fails[] = get_string('messagedselecteduserfailed', 'moodle', $user);
+                };
             }
-            if (!empty($good)) {
+            if (empty($fails)) {
                 echo $OUTPUT->heading(get_string('messagedselectedusers'));
                 unset($SESSION->emailto[$id]);
                 unset($SESSION->emailselect[$id]);
             } else {
-                echo $OUTPUT->heading(get_string('messagedselectedusersfailed'));
+                echo $OUTPUT->heading(get_string('messagedselectedcountusersfailed', 'moodle', count($fails)));
+                echo '<ul>';
+                foreach ($fails as $f) {
+                        echo '<li>', $f, '</li>';
+                }
+                echo '</ul>';
             }
             echo '<p align="center"><a href="index.php?id='.$id.'">'.get_string('backtoparticipants').'</a></p>';
         }
