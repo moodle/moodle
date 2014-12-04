@@ -128,7 +128,7 @@ class qtype_ordering extends question_type {
         // create $options for this ordering question
         $options = (object)array(
             'question' => $question->id,
-            'logical' => $question->logical,
+            'logical'  => $question->logical,
             'studentsee' => $question->studentsee,
             'correctfeedback' => $question->correctfeedback,
             'incorrectfeedback' => $question->incorrectfeedback,

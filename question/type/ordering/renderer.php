@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * True-false question renderer class.
+ * ORDERING question renderer class.
+ * (originally based on the TRUE-FALSE renderer)
  *
  * @package    qtype
  * @subpackage ordering
@@ -28,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Generates the output for ORDERING questions
  *
- * @copyright  2009 The Open University
+ * @copyright  2013 Gordon Bateson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_renderer extends qtype_renderer {

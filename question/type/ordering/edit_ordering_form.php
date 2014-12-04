@@ -28,12 +28,16 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Multiple choice editing form definition.
+ * Ordering editing form definition
+ * (originally based on mutiple choice form)
  *
  * @copyright  2007 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_edit_form extends question_edit_form {
+
+    const NUM_ANS_START = 10;
+    const NUM_ANS_ADD   = 5;
 
     public function qtype() {
         return 'ordering';
@@ -45,9 +49,6 @@ class qtype_ordering_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     public function definition_inner($mform) {
-        $NUMANS_START = 10;
-        $NUMANS_ADD   = 5;
-
         $options = array(
             0 => get_string('ordering_exactorder',    'qtype_ordering'), // = all ?
             1 => get_string('ordering_relativeorder', 'qtype_ordering'), // = random subset
@@ -72,16 +73,16 @@ class qtype_ordering_edit_form extends question_edit_form {
         } else {
             $countanswers = count($this->question->options->answers);
         }
-        if ($NUMANS_START > ($countanswers + $NUMANS_ADD)) {
-            $repeatsatstart = $NUMANS_START;
+        if (self::NUM_ANS_START > ($countanswers + self::NUM_ANS_ADD)) {
+            $repeatsatstart = self::NUM_ANS_START;
         } else {
-            $repeatsatstart = ($countanswers + $NUMANS_ADD);
+            $repeatsatstart = ($countanswers + self::NUM_ANS_ADD);
         }
         $repeatedoptions = array();
         $repeatedoptions['fraction']['default'] = 0;
         $mform->setType('answer', PARAM_NOTAGS);
 
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', $NUMANS_ADD, get_string('ordering_addmoreanswers', 'qtype_ordering'));
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', self::NUM_ANS_ADD, get_string('ordering_addmoreanswers', 'qtype_ordering'));
 
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_ordering'));
 

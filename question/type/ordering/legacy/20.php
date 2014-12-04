@@ -207,13 +207,11 @@ class question_type extends default_questiontype {
         }
         require_once($definition_file);
         $classname = 'question_edit_'.$this->name().'_form';
-        if (!class_exists($classname)) {
-            // NEW LINES START
+        if (! class_exists($classname)) {
             $classname = 'qtype_'.$this->name().'_edit_form';
-            if (!class_exists($classname)) {
+            if (! class_exists($classname)) {
                 return null;
             }
-            // NEW LINES STOP
         }
         return new $classname($submiturl, $question, $category, $contexts, $formeditable);
     }
@@ -249,7 +247,7 @@ class question_type extends default_questiontype {
         echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
 
         $permissionstrs = array();
-        if (!empty($question->id)){
+        if (! empty($question->id)){
             if ($question->formoptions->canedit){
                 $permissionstrs[] = get_string('permissionedit', 'question');
             }
@@ -260,7 +258,7 @@ class question_type extends default_questiontype {
                 $permissionstrs[] = get_string('permissionsaveasnew', 'question');
             }
         }
-        if (!$question->formoptions->movecontext  && count($permissionstrs)){
+        if (! $question->formoptions->movecontext  && count($permissionstrs)){
             echo $OUTPUT->heading(get_string('permissionto', 'question'), 3);
             $html = '<ul>';
             foreach ($permissionstrs as $permissionstr){
@@ -297,7 +295,7 @@ class question_type extends default_questiontype {
     * to save question-type specific data.
     *
     * Whether we are saving a new question or updating an existing one can be
-    * determined by testing !empty($question->id). If it is not empty, we are updating.
+    * determined by testing ! empty($question->id). If it is not empty, we are updating.
     *
     * The question will be saved in category $form->category.
     *
@@ -321,23 +319,33 @@ class question_type extends default_questiontype {
 
         // First, save the basic question itself
         $question->name = trim($form->name);
-        $question->parent = isset($form->parent) ? $form->parent : 0;
+        $question->parent = (empty($form->parent) ? 0 : $form->parent);
         $question->length = $this->actual_number_of_questions($question);
-        $question->penalty = isset($form->penalty) ? $form->penalty : 0;
+        $question->penalty = (empty($form->penalty) ? 0 : $form->penalty);
 
         if (empty($form->questiontext['text'])) {
             $question->questiontext = '';
         } else {
             $question->questiontext = trim($form->questiontext['text']);;
         }
-        $question->questiontextformat = !empty($form->questiontext['format'])?$form->questiontext['format']:0;
+
+        if (empty($form->questiontext['format'])) {
+            $question->questiontextformat = 0;
+        } else {
+            $question->questiontextformat = $form->questiontext['format'];
+        }
 
         if (empty($form->generalfeedback['text'])) {
             $question->generalfeedback = '';
         } else {
             $question->generalfeedback = trim($form->generalfeedback['text']);
         }
-        $question->generalfeedbackformat = !empty($form->generalfeedback['format'])?$form->generalfeedback['format']:0;
+
+        if (empty($form->generalfeedback['format'])) {
+            $question->generalfeedbackformat = 0;
+        } else {
+            $question->generalfeedbackformat = $form->generalfeedback['format'];
+        }
 
         if (empty($question->name)) {
             $question->name = shorten_text(strip_tags($form->questiontext['text']), 15);
@@ -383,7 +391,6 @@ class question_type extends default_questiontype {
         $form->category = $question->category;
         $form->questiontext = $question->questiontext;
         $form->questiontextformat = $question->questiontextformat;
-        // current context
         $form->context = $context;
 
         $result = $this->save_question_options($form);
@@ -392,11 +399,11 @@ class question_type extends default_questiontype {
             print_error($result->error);
         }
 
-        if (!empty($result->notice)) {
+        if (! empty($result->notice)) {
             notice($result->notice, "question.php?id=$question->id");
         }
 
-        if (!empty($result->noticeyesno)) {
+        if (! empty($result->noticeyesno)) {
             throw new coding_exception('$result->noticeyesno no longer supported in save_question.');
         }
 
@@ -424,26 +431,21 @@ class question_type extends default_questiontype {
             $function = 'update_record';
             $questionidcolname = $this->questionid_column_name();
             $options = $DB->get_record($question_extension_table, array($questionidcolname => $question->id));
-            if (!$options) {
+            if (empty($options)) {
                 $function = 'insert_record';
-                $options = new stdClass;
-                $options->$questionidcolname = $question->id;
+                $options = (object)array($questionidcolname => $question->id);
             }
             foreach ($extra_question_fields as $field) {
-                if (!isset($question->$field)) {
-                    $result = new stdClass;
-                    $result->error = "No data for field $field when saving " .
-                            $this->name() . ' question id ' . $question->id;
-                    return $result;
+                if (! isset($question->$field)) {
+                    $error = 'No data for field '.$field.' when saving question: name='.$this->name().', id='.$question->id;
+                    return (object)array('error' => $error);
                 }
                 $options->$field = $question->$field;
             }
 
-            if (!$DB->{$function}($question_extension_table, $options)) {
-                $result = new stdClass;
-                $result->error = 'Could not save question options for ' .
-                        $this->name() . ' question id ' . $question->id;
-                return $result;
+            if (! $DB->$function($question_extension_table, $options)) {
+                $error = 'Could not save question options for question: name='.$this->name().', id='.$question->id;
+                return (object)array('error' => $error);
             }
         }
 

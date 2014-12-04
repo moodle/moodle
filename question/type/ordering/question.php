@@ -113,7 +113,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function is_complete_response(array $response) {
-        global $CFG, $DB;
+        global $CFG, $DB, $SESSION;
 
         $name = $this->get_response_fieldname();
         if (isset($response[$name])) {
@@ -192,7 +192,20 @@ class qtype_ordering_question extends question_graded_automatically {
             $grade = round($correct / $total, 5);
         }
 
-        $_SESSION['SESSION']->quiz_answer['q'.$this->id] = $grade;
+        // we use $SESSION instead of accessing $_SESSION directly
+        // $_SESSION['SESSION']->quiz_answer['q'.$this->id] = $grade;
+
+        if (! isset($SESSION)) {
+            $SESSION = array();
+        }
+        if (! isset($SESSION['SESSION'])) {
+            $SESSION['SESSION'] = new stdClass();
+        }
+        if (! isset($SESSION['SESSION']->quiz_answer)) {
+            $SESSION['SESSION']->quiz_answer = array();
+        }
+        $SESSION['SESSION']->quiz_answer['q'.$this->id] = $grade;
+
         return true;
     }
 
@@ -223,7 +236,8 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function grade_response(array $response) {
-        $fraction = $_SESSION['SESSION']->quiz_answer['q'.$this->id];
+        global $SESSION;
+        $fraction = $SESSION['SESSION']->quiz_answer['q'.$this->id];
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
