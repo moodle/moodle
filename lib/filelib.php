@@ -3153,14 +3153,6 @@ class curl {
      * @return resource The curl handle
      */
     private function apply_opt($curl, $options) {
-        // Some more security first.
-        if (defined('CURLOPT_PROTOCOLS')) {
-            $this->options['CURLOPT_PROTOCOLS'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS);
-        }
-        if (defined('CURLOPT_REDIR_PROTOCOLS')) {
-            $this->options['CURLOPT_REDIR_PROTOCOLS'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS);
-        }
-
         // Clean up
         $this->cleanopt();
         // set cookie
@@ -3222,12 +3214,14 @@ class curl {
             $this->options['CURLOPT_FOLLOWLOCATION'] = 0;
         }
 
+        // Limit the protocols to HTTP and HTTPS.
+        if (defined('CURLOPT_PROTOCOLS')) {
+            $this->options['CURLOPT_PROTOCOLS'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS);
+            $this->options['CURLOPT_REDIR_PROTOCOLS'] = (CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        }
+
         // Set options.
         foreach($this->options as $name => $val) {
-            if ($name === 'CURLOPT_PROTOCOLS' or $name === 'CURLOPT_REDIR_PROTOCOLS') {
-                // These can not be changed, sorry.
-                continue;
-            }
             if ($name === 'CURLOPT_FOLLOWLOCATION' and $this->emulateredirects) {
                 // The redirects are emulated elsewhere.
                 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
