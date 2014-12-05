@@ -889,6 +889,44 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
     }
 
+    /**
+     * Test delivery of grade notifications as controlled by marking workflow.
+     */
+    public function test_markingworkflow_cron() {
+        // First run cron so there are no messages waiting to be sent (from other tests).
+        cron_setup_user();
+        assign::cron();
+
+        // Now create an assignment with marking workflow enabled.
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('sendstudentnotifications' => 1, 'markingworkflow' => 1));
+
+        // Simulate adding a grade.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+
+        // This student will not receive notification.
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE;
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // This student will receive notification.
+        $data->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_RELEASED;
+        $assign->testable_apply_grade_to_user($data, $this->students[1]->id, 0);
+
+        // Now run cron and see that one message was sent.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+        cron_setup_user();
+        $this->expectOutputRegex('/Done processing 1 assignment submissions/');
+        assign::cron();
+
+        $messages = $sink->get_messages();
+        $this->assertEquals(1, count($messages));
+        $this->assertEquals($messages[0]->useridto, $this->students[1]->id);
+        $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
+    }
+
     public function test_is_graded() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();

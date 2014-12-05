@@ -1643,8 +1643,12 @@ class assign {
         $timenow   = time();
         $lastcron = $DB->get_field('modules', 'lastcron', array('name' => 'assign'));
 
-        // Collect all submissions from the past 24 hours that require mailing.
-        // Submissions are excluded if the assignment is hidden in the gradebook.
+        // Collect all submissions that require mailing.
+        // Submissions are included if all are true:
+        //   - The assignment is visible in the gradebook.
+        //   - No previous notification has been sent.
+        //   - If marking workflow is not enabled, the grade was updated in the past 24 hours, or
+        //     if marking workflow is enabled, the workflow state is at 'released'.
         $sql = "SELECT g.id as gradeid, a.course, a.name, a.blindmarking, a.revealidentities,
                        g.*, g.timemodified as lastmodified, cm.id as cmid
                  FROM {assign} a
@@ -1653,12 +1657,16 @@ class assign {
                  JOIN {course_modules} cm ON cm.course = a.course AND cm.instance = a.id
                  JOIN {modules} md ON md.id = cm.module AND md.name = 'assign'
                  JOIN {grade_items} gri ON gri.iteminstance = a.id AND gri.courseid = a.course AND gri.itemmodule = md.name
-                 WHERE g.timemodified >= :yesterday AND
-                       g.timemodified <= :today AND
+                 WHERE ((a.markingworkflow = 0 AND g.timemodified >= :yesterday AND g.timemodified <= :today) OR
+                        (a.markingworkflow = 1 AND uf.workflowstate = :wfreleased)) AND
                        uf.mailed = 0 AND gri.hidden = 0
               ORDER BY a.course, cm.id";
 
-        $params = array('yesterday' => $yesterday, 'today' => $timenow);
+        $params = array(
+            'yesterday' => $yesterday,
+            'today' => $timenow,
+            'wfreleased' => ASSIGN_MARKING_WORKFLOW_STATE_RELEASED,
+        );
         $submissions = $DB->get_records_sql($sql, $params);
 
         if (!empty($submissions)) {
@@ -6089,10 +6097,15 @@ class assign {
         // Get assignment visibility information for student.
         $modinfo = get_fast_modinfo($settings->course, $userid);
         $cm = $modinfo->get_cm($this->get_course_module()->id);
-        // Don't allow notification to be sent if student can't access assignment.
+
+        // Don't allow notification to be sent if the student can't access the assignment,
+        // or until in "Released" state if using marking workflow.
         if (!$cm->uservisible) {
             $mform->setDefault('sendstudentnotifications', 0);
             $mform->freeze('sendstudentnotifications');
+        } else if ($this->get_instance()->markingworkflow) {
+            $mform->setDefault('sendstudentnotifications', 0);
+            $mform->disabledIf('sendstudentnotifications', 'workflowstate', 'neq', ASSIGN_MARKING_WORKFLOW_STATE_RELEASED);
         } else {
             $mform->setDefault('sendstudentnotifications', $this->get_instance()->sendstudentnotifications);
         }
@@ -6367,6 +6380,16 @@ class assign {
                 $flags = $this->get_user_flags($userid, true);
 
                 $flags->workflowstate = $state;
+
+                // Clear the mailed flag if notification is requested, the student hasn't been
+                // notified previously, the student can access the assignment, and the state
+                // is "Released".
+                $modinfo = get_fast_modinfo($this->course, $userid);
+                $cm = $modinfo->get_cm($this->get_course_module()->id);
+                if ($formdata->sendstudentnotifications && $flags->mailed != 1 &&
+                        $cm->uservisible && $state == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                    $flags->mailed = 0;
+                }
 
                 $gradingdisabled = $this->grading_disabled($userid);
 
