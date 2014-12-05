@@ -504,6 +504,45 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('OK', $contents);
     }
 
+    public function test_curl_protocols() {
+
+        // HTTP and HTTPS requests were verified in previous requests. Now check
+        // that we can selectively disable some protocols.
+        $curl = new curl();
+
+        // Other protocols than HTTP(S) are disabled by default.
+        $testurl = 'file:///';
+        $curl->get($testurl);
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = 'ftp://nowhere';
+        $curl->get($testurl);
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = 'telnet://somewhere';
+        $curl->get($testurl);
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        // Protocols are also disabled during redirections.
+        $testurl = $this->getExternalTestFileUrl('/test_redir_proto.php');
+        $curl->get($testurl, array('proto' => 'file'));
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = $this->getExternalTestFileUrl('/test_redir_proto.php');
+        $curl->get($testurl, array('proto' => 'ftp'));
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = $this->getExternalTestFileUrl('/test_redir_proto.php');
+        $curl->get($testurl, array('proto' => 'telnet'));
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+    }
+
     /**
      * Testing prepare draft area
      *
