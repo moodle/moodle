@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Pasta de administração';
-$string['availablelangs'] = 'Pacotes de idiomas disponíveis';
+$string['availablelangs'] = 'Pacotes linguísticos disponíveis';
 $string['chooselanguagehead'] = 'Selecione um idioma';
 $string['chooselanguagesub'] = 'Selecione o idioma a utilizar durante a instalação. Poderá depois selecionar um outro idioma para o site e para os utilizadores.';
 $string['clialreadyconfigured'] = 'O ficheiro config.php já existe, use admin/cli/install_database.php para instalar o Moodle para este site.';
