@@ -38,7 +38,7 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
-require_capability('mod/lesson:manage', $context);
+require_capability('mod/lesson:viewreports', $context);
 
 $ufields = user_picture::fields('u'); // These fields are enough
 $params = array("lessonid" => $lesson->id);
