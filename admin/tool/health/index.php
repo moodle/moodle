@@ -747,7 +747,7 @@ class problem_000018 extends problem_base {
      * @uses $CFG
      * @return string HTML containing the suggested solution.
      */
-    function solution() {
+    public function solution() {
         global $CFG;
         list($missingparent, $loops) = $this->find_problems();
 

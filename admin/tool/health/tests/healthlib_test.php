@@ -41,113 +41,113 @@ class healthlib_testcase extends advanced_testcase {
      */
     public static function provider_loop_categories() {
         return array(
-           // One item loop including root.
-           0 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 1)
-                        ),
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 1)
-                        ),
+            // One item loop including root.
+            0 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 1)
                 ),
-           // One item loop not including root.
-           1 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 0),
-                            '2' => (object) array('id' => 2, 'parent' => 2)
-                        ),
-                        array(
-                            '2' => (object) array('id' => 2, 'parent' => 2)
-                        ),
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 1)
                 ),
-           // Two item loop including root.
-           2 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 1)
-                        ),
-                        array(
-                            '2' => (object) array('id' => 2, 'parent' => 1),
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                        )
+            ),
+            // One item loop not including root.
+            1 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 0),
+                    '2' => (object) array('id' => 2, 'parent' => 2)
                 ),
-           // Two item loop not including root.
-           3 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 0),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                            '3' => (object) array('id' => 3, 'parent' => 2),
-                        ),
-                        array(
-                            '3' => (object) array('id' => 3, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                        )
+                array(
+                    '2' => (object) array('id' => 2, 'parent' => 2)
                 ),
-           // Three item loop including root.
-           4 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                            '3' => (object) array('id' => 3, 'parent' => 1),
-                        ),
-                        array(
-                            '3' => (object) array('id' => 3, 'parent' => 1),
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                        )
+            ),
+            // Two item loop including root.
+            2 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 1)
                 ),
-           // Three item loop not including root.
-           5 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 0),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                            '3' => (object) array('id' => 3, 'parent' => 4),
-                            '4' => (object) array('id' => 4, 'parent' => 2)
-                        ),
-                        array(
-                            '4' => (object) array('id' => 4, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                            '3' => (object) array('id' => 3, 'parent' => 4),
-                        )
-                ),
-           // Multi-loop.
-           6 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 1),
-                            '3' => (object) array('id' => 3, 'parent' => 4),
-                            '4' => (object) array('id' => 4, 'parent' => 5),
-                            '5' => (object) array('id' => 5, 'parent' => 3),
-                            '6' => (object) array('id' => 6, 'parent' => 6),
-                            '7' => (object) array('id' => 7, 'parent' => 1),
-                            '8' => (object) array('id' => 8, 'parent' => 7),
-                        ),
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 1),
-                            '8' => (object) array('id' => 8, 'parent' => 7),
-                            '7' => (object) array('id' => 7, 'parent' => 1),
-                            '6' => (object) array('id' => 6, 'parent' => 6),
-                            '5' => (object) array('id' => 5, 'parent' => 3),
-                            '3' => (object) array('id' => 3, 'parent' => 4),
-                            '4' => (object) array('id' => 4, 'parent' => 5),
-                        )
-                ),
-           // Double-loop
-           7 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 1),
-                            '3' => (object) array('id' => 3, 'parent' => 2),
-                            '4' => (object) array('id' => 4, 'parent' => 2),
-                        ),
-                        array(
-                            '4' => (object) array('id' => 4, 'parent' => 2),
-                            '3' => (object) array('id' => 3, 'parent' => 2),
-                            '2' => (object) array('id' => 2, 'parent' => 1),
-                            '1' => (object) array('id' => 1, 'parent' => 2),
-                        )
+                array(
+                    '2' => (object) array('id' => 2, 'parent' => 1),
+                    '1' => (object) array('id' => 1, 'parent' => 2),
                 )
+            ),
+            // Two item loop not including root.
+            3 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 0),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                    '3' => (object) array('id' => 3, 'parent' => 2),
+                ),
+                array(
+                    '3' => (object) array('id' => 3, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                )
+            ),
+            // Three item loop including root.
+            4 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                    '3' => (object) array('id' => 3, 'parent' => 1),
+                ),
+                array(
+                    '3' => (object) array('id' => 3, 'parent' => 1),
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                )
+            ),
+            // Three item loop not including root.
+            5 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 0),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                    '3' => (object) array('id' => 3, 'parent' => 4),
+                    '4' => (object) array('id' => 4, 'parent' => 2)
+                ),
+                array(
+                    '4' => (object) array('id' => 4, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                    '3' => (object) array('id' => 3, 'parent' => 4),
+                )
+            ),
+            // Multi-loop.
+            6 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 1),
+                    '3' => (object) array('id' => 3, 'parent' => 4),
+                    '4' => (object) array('id' => 4, 'parent' => 5),
+                    '5' => (object) array('id' => 5, 'parent' => 3),
+                    '6' => (object) array('id' => 6, 'parent' => 6),
+                    '7' => (object) array('id' => 7, 'parent' => 1),
+                    '8' => (object) array('id' => 8, 'parent' => 7),
+                ),
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 1),
+                    '8' => (object) array('id' => 8, 'parent' => 7),
+                    '7' => (object) array('id' => 7, 'parent' => 1),
+                    '6' => (object) array('id' => 6, 'parent' => 6),
+                    '5' => (object) array('id' => 5, 'parent' => 3),
+                    '3' => (object) array('id' => 3, 'parent' => 4),
+                    '4' => (object) array('id' => 4, 'parent' => 5),
+                )
+            ),
+            // Double-loop
+            7 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 1),
+                    '3' => (object) array('id' => 3, 'parent' => 2),
+                    '4' => (object) array('id' => 4, 'parent' => 2),
+                ),
+                array(
+                    '4' => (object) array('id' => 4, 'parent' => 2),
+                    '3' => (object) array('id' => 3, 'parent' => 2),
+                    '2' => (object) array('id' => 2, 'parent' => 1),
+                    '1' => (object) array('id' => 1, 'parent' => 2),
+                )
+            )
         );
     }
 
@@ -157,18 +157,18 @@ class healthlib_testcase extends advanced_testcase {
     public static function provider_missing_parent_categories() {
         return array(
            // Test for two items, both with direct ancestor (parent) missing.
-           0 => array(
-                        array(
-                            '1' => (object) array('id' => 1, 'parent' => 0),
-                            '2' => (object) array('id' => 2, 'parent' => 3),
-                            '4' => (object) array('id' => 4, 'parent' => 5),
-                            '6' => (object) array('id' => 6, 'parent' => 2)
-                        ),
-                        array(
-                            '4' => (object) array('id' => 4, 'parent' => 5),
-                            '2' => (object) array('id' => 2, 'parent' => 3)
-                        ),
-                )
+            0 => array(
+                array(
+                    '1' => (object) array('id' => 1, 'parent' => 0),
+                    '2' => (object) array('id' => 2, 'parent' => 3),
+                    '4' => (object) array('id' => 4, 'parent' => 5),
+                    '6' => (object) array('id' => 6, 'parent' => 2)
+                ),
+                array(
+                    '4' => (object) array('id' => 4, 'parent' => 5),
+                    '2' => (object) array('id' => 2, 'parent' => 3)
+                ),
+            )
         );
     }
 
