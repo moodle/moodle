@@ -373,6 +373,7 @@ $string['courserequestintro'] = 'Use this form to request a course to be created
 $string['courserequestreason'] = 'Reasons for wanting this course';
 $string['courserequestsuccess'] = 'Your course request has been saved successfully. You will be sent an email to inform you whether your request was approved.';
 $string['courserequestsupport'] = 'Supporting information to help the administrator evaluate this request';
+$string['courserequestwarning'] = 'The user requesting this course will be automatically enrolled using the "{$a}" role';
 $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
 $string['coursesectionsummaries'] = 'Course section summaries';

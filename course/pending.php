@@ -96,6 +96,8 @@ if (empty($pending)) {
     echo $OUTPUT->heading(get_string('nopendingcourses'));
 } else {
     echo $OUTPUT->heading(get_string('coursespending'));
+    $role = $DB->get_record('role', array('id' => $CFG->creatornewroleid), '*', MUST_EXIST);
+    echo $OUTPUT->notification(get_string('courserequestwarning', 'core', role_get_name($role)), 'notifyproblem');
 
 /// Build a table of all the requests.
     $table = new html_table();
