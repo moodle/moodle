@@ -142,8 +142,12 @@ if ($currentuser) {
     }
 
     // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group.
-    if (groups_get_course_groupmode($course) == SEPARATEGROUPS and $course->groupmodeforce
-      and !has_capability('moodle/site:accessallgroups', $coursecontext) and !has_capability('moodle/site:accessallgroups', $coursecontext, $user->id)) {
+    // Except when we are a parent, in which case we would not be in any group.
+    if (groups_get_course_groupmode($course) == SEPARATEGROUPS
+            and $course->groupmodeforce
+            and !has_capability('moodle/site:accessallgroups', $coursecontext)
+            and !has_capability('moodle/site:accessallgroups', $coursecontext, $user->id)
+            and !$isparent) {
         if (!isloggedin() or isguestuser()) {
             // Do not use require_login() here because we might have already used require_login($course).
             redirect(get_login_url());
