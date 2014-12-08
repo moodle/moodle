@@ -345,7 +345,7 @@ class cache_factory {
             // We have just a single class for PHP unit tests. We don't care enough about its
             // performance to do otherwise and having a single method allows us to inject things into it
             // while testing.
-            $class = 'cache_config_phpunittest';
+            $class = 'cache_config_testing';
         }
 
         // Check if we need to create a config file with defaults.
