@@ -31,12 +31,16 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/cache/locallib.php');
 
 /**
- * Override the default cache configuration for our own maniacle purposes.
+ * Override the default cache configuration for our own maniacal purposes.
  *
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This class was originally named cache_config_phpunittest but was renamed in 2.9
+ * because it is used for both unit tests and acceptance tests.
+ *
+ * @since 2.9
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_config_phpunittest extends cache_config_writer {
+class cache_config_testing extends cache_config_writer {
 
     /**
      * Creates the default configuration and saves it.
@@ -285,6 +289,21 @@ class cache_config_phpunittest extends cache_config_writer {
         global $CFG;
         return $CFG->wwwroot.'phpunit';
     }
+}
+
+/**
+ * This is a deprecated class. It has been renamed to cache_config_testing.
+ *
+ * This was deprecated in Moodle 2.9 but will be removed at the next major release
+ * as it is only used during testing and its highly unlikely anyone has used this.
+ *
+ * @deprecated since 2.9
+ * @copyright  2014 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_config_phpunittest extends cache_config_testing {
+    // We can't do anything here to warn the user.
+    // The cache can be utilised before sessions have even been started.
 }
 
 /**

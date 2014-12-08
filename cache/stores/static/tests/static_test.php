@@ -50,7 +50,7 @@ class cachestore_static_test extends cachestore_tests {
      */
     public function test_maxsize() {
         $defid = 'phpunit/testmaxsize';
-        $config = cache_config_phpunittest::instance();
+        $config = cache_config_testing::instance();
         $config->phpunit_add_definition($defid, array(
             'mode' => cache_store::MODE_REQUEST,
             'component' => 'phpunit',
