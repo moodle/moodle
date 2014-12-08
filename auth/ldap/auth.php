@@ -742,7 +742,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     } while ($entry = ldap_next_entry($ldapconnection, $entry));
                 }
                 unset($ldap_result); // Free mem.
-            } while ($ldap_pagedresults && !empty($ldap_cookie));
+            } while ($ldap_pagedresults && $ldap_cookie !== null && $ldap_cookie != '');
         }
 
         // If LDAP paged results were used, the current connection must be completely
