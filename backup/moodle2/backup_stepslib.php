@@ -2392,31 +2392,15 @@ class backup_course_completion_structure_step extends backup_structure_step {
         $cc->add_child($coursecompletions);
         $cc->add_child($aggregatemethod);
 
-        /*
-         We need some extra data for the restore
-          - courseinstances shortname rather than an ID
-          - roleshortname in case restoring on a different site
-        /
-        $criteria->set_source_sql(
-            "
-                SELECT
-                    ccc.*,
-                    c.shortname AS courseinstanceshortname,
-                    r.shortname AS roleshortname
-                FROM
-                    {course_completion_criteria} ccc
-                LEFT JOIN
-                    {course} c
-                ON c.id = ccc.courseinstance
-                LEFT JOIN
-                    {role} r
-                ON r.id = ccc.role
-                WHERE
-                    ccc.course = ?
-            ",
-             array(backup::VAR_COURSEID)
-        );
-
+        // We need some extra data for the restore.
+        // - courseinstances shortname rather than an ID.
+        // - roleshortname in case restoring on a different site.
+        $sourcesql = "SELECT ccc.*, c.shortname AS courseinstanceshortname, r.shortname AS roleshortname
+                        FROM {course_completion_criteria} ccc
+                   LEFT JOIN {course} c ON c.id = ccc.courseinstance
+                   LEFT JOIN {role} r ON r.id = ccc.role
+                       WHERE ccc.course = ?";
+        $criteria->set_source_sql($sourcesql, array(backup::VAR_COURSEID));
 
         $aggregatemethod->set_source_table('course_completion_aggr_methd', array('course' => backup::VAR_COURSEID));
 
