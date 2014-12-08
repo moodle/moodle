@@ -48,6 +48,15 @@ $capabilities = array(
         )
     ),
 
+    'enrol/self:holdkey' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_PROHIBIT,
+        )
+    ),
+
     /* Voluntarily unenrol self from course - watch out for data loss. */
     'enrol/self:unenrolself' => array(
         'captype' => 'write',
