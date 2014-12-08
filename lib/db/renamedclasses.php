@@ -36,12 +36,4 @@ defined('MOODLE_INTERNAL') || die();
 // The old class name is the key, the new class name is the value.
 // The array must be called $renamedclasses.
 $renamedclasses = array(
-
-    // Deprecated in 2.6.
-    // TODO MDL-46124: Remove textlib. collatorlib, plugin_manager, and plugininfo base in 2.9.
-    'textlib' => 'core_text',
-    'collatorlib' => 'core_collator',
-    'plugin_manager' => 'core_plugin_manager',
-    'plugininfo_base' => 'core\plugininfo\base'
-
 );

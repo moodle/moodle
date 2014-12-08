@@ -368,28 +368,6 @@ class core_text_testcase extends advanced_testcase {
         $this->assertSame("Žluťoučký Koníček", core_text::strtotitle($str));
     }
 
-    public function test_deprecated_textlib() {
-        $this->assertSame(textlib::strtolower('HUH'), core_text::strtolower('HUH'));
-        $this->assertDebuggingCalled(null, null, 'This fails if any other test uses the deprecated textlib class.');
-    }
-
-    /**
-     * Tests the deprecated method of textlib that still require an instance.
-     */
-    public function test_deprecated_textlib_get_instance() {
-        $textlib = textlib_get_instance();
-        $this->assertDebuggingCalled();
-        $this->assertSame($textlib->substr('abc', 1, 1), 'b');
-        $this->assertSame($textlib->strlen('abc'), 3);
-        $this->assertSame($textlib->strtoupper('Abc'), 'ABC');
-        $this->assertSame($textlib->strtolower('Abc'), 'abc');
-        $this->assertSame($textlib->strpos('abc', 'a'), 0);
-        $this->assertSame($textlib->strpos('abc', 'd'), false);
-        $this->assertSame($textlib->strrpos('abcabc', 'a'), 3);
-        $this->assertSame($textlib->specialtoascii('ábc'), 'abc');
-        $this->assertSame($textlib->strtotitle('abc ABC'), 'Abc Abc');
-    }
-
     /**
      * Test strrchr.
      */
