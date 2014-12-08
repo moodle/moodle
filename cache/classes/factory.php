@@ -126,8 +126,8 @@ class cache_factory {
                 // situation. It will use disabled alternatives where available.
                 require_once($CFG->dirroot.'/cache/disabledlib.php');
                 self::$instance = new cache_factory_disabled();
-            } else if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
-                // We're using the regular factory.
+            } else if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST) || behat_is_test_site()) {
+                // We're using the test factory.
                 require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
                 self::$instance = new cache_phpunit_factory();
                 if (defined('CACHE_DISABLE_STORES') && CACHE_DISABLE_STORES !== false) {
@@ -335,10 +335,11 @@ class cache_factory {
 
         // The class to use.
         $class = 'cache_config';
-        $unittest = defined('PHPUNIT_TEST') && PHPUNIT_TEST;
+        // Are we running tests of some form?
+        $testing = (defined('PHPUNIT_TEST') && PHPUNIT_TEST) || behat_is_test_site();
 
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
-        if ($unittest) {
+        if ($testing) {
             require_once($CFG->dirroot.'/cache/locallib.php');
             require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
             // We have just a single class for PHP unit tests. We don't care enough about its
@@ -352,7 +353,7 @@ class cache_factory {
 
         if ($writer || $needtocreate) {
             require_once($CFG->dirroot.'/cache/locallib.php');
-            if (!$unittest) {
+            if (!$testing) {
                 $class .= '_writer';
             }
         }

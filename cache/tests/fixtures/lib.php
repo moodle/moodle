@@ -136,10 +136,10 @@ class cache_config_phpunittest extends cache_config_writer {
 
         if (!empty($CFG->altcacheconfigpath)) {
 
-            if  (defined('PHPUNIT_TEST') && PHPUNIT_TEST &&
-                (!defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') || !TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH)) {
-                // We're within a unit test, but TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH has not being defined or is
-                // false, we want to use the default.
+            // No need to check we are within a test here, this is the cache config class that gets used
+            // only when one of those is true.
+            if  (!defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') || !TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH) {
+                // TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH has not being defined or is false, we want to use the default.
                 return $configpath;
             }
 
