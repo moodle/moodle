@@ -116,7 +116,7 @@ if (empty($pending)) {
         $row[] = format_string($course->shortname);
         $row[] = format_string($course->fullname);
         $row[] = fullname($course->get_requester());
-        $row[] = $course->summary;
+        $row[] = format_text($course->summary, $course->summaryformat);
         $row[] = $category->get_formatted_name();
         $row[] = format_string($course->reason);
         $row[] = $OUTPUT->single_button(new moodle_url($baseurl, array('approve' => $course->id, 'sesskey' => sesskey())), get_string('approve'), 'get') .
