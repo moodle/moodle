@@ -9,6 +9,7 @@ information provided here is intended especially for developers.
   Catching debugging messages when sending mail will no longer work. Use $sink = $this->redirectEmails(); and then check
   the message in the sink instead.
 * The file pluginlib.php was deprecated since 2.6 and has now been removed, do not include or require it.
+* Deprecated JS global methods have been removed (show_item, destroy_item, hide_item, addonload, getElementsByTagName, findChildNodes).
 
 === 2.8 ===
 
