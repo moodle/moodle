@@ -193,6 +193,9 @@ class behat_hooks extends behat_base {
             behat_context_helper::set_session($session);
         }
 
+        // Reset mink session between the scenarios.
+        $session->reset();
+
         // Reset $SESSION.
         \core\session\manager::init_empty_session();
 
