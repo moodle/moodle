@@ -294,6 +294,12 @@ class behat_util extends testing_util {
      * Reset contents of all database tables to initial values, reset caches, etc.
      */
     public static function reset_all_data() {
+        // Reset database.
+        self::reset_database();
+
+        // Purge dataroot directory.
+        self::reset_dataroot();
+
         // Reset all static caches.
         accesslib_clear_all_caches(true);
         // Reset the nasty strings list used during the last test.
@@ -310,11 +316,5 @@ class behat_util extends testing_util {
 
         // Inform data generator.
         self::get_data_generator()->reset();
-
-        // Purge dataroot directory.
-        self::reset_dataroot();
-
-        // Reset database.
-        self::reset_database();
     }
 }
