@@ -84,14 +84,14 @@
     text-align: center;
 }
 
-.path-mod-lesson a:link.essayungraded{
+.path-mod-lesson .essayungraded {
     background-color: #efcfcf;
 }
 
-.path-mod-lesson a:link.essaygraded {
+.path-mod-lesson .essaygraded {
     background-color: #efefcf;
 }
 
-.path-mod-lesson a:link.essaysent {
+.path-mod-lesson .essaysent {
     background-color: #cfefcf;
 }
