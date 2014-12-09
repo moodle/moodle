@@ -1016,9 +1016,6 @@ class flexible_table {
 
     /**
      * This function is not part of the public api.
-     *
-     * Please do not use .r0/.r1 for css, as they will be removed in Moodle 2.9.
-     * @todo MDL-43902 , remove r0 and r1 from tr classes.
      */
     function print_row($row, $classname = '') {
         echo $this->get_row_html($row, $classname);
@@ -1034,8 +1031,7 @@ class flexible_table {
      */
     public function get_row_html($row, $classname = '') {
         static $suppress_lastrow = NULL;
-        $oddeven = $this->currentrow % 2;
-        $rowclasses = array('r' . $oddeven);
+        $rowclasses = array();
 
         if ($classname) {
             $rowclasses[] = $classname;

@@ -49,8 +49,8 @@ Feature: View an outline report
     And I log in as "teacher1"
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2" in the "//tr[contains(concat(' ', normalize-space(@class),' '),' r0 ')]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
-    And I should see "1" in the "//tr[contains(concat(' ', normalize-space(@class),' '),' r1 ')]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    Then I should see "2" in the "//tbody/tr[(position() mod 2)=1]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    And I should see "1" in the "//tbody/tr[(position() mod 2)=0]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
 
   @javascript
   Scenario: View the outline report when only the standard log reader is enabled
@@ -71,8 +71,8 @@ Feature: View an outline report
     And I log in as "admin"
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2" in the "//tr[contains(concat(' ', normalize-space(@class),' '),' r0 ')]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
-    And I should see "1" in the "//tr[contains(concat(' ', normalize-space(@class),' '),' r1 ')]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    Then I should see "2" in the "//tbody/tr[(position() mod 2)=1]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    And I should see "1" in the "//tbody/tr[(position() mod 2)=0]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
 
   @javascript
   Scenario: View the outline report when both the standard and legacy log readers are enabled
@@ -95,8 +95,8 @@ Feature: View an outline report
     And I log in as "teacher1"
     And I follow "Course 1"
     When I navigate to "Activity report" node in "Course administration > Reports"
-    Then I should see "2" in the "//tr[contains(concat(' ', normalize-space(@class),' '),' r0 ')]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
-    And I should see "1" in the "//tr[contains(concat(' ', normalize-space(@class),' '),' r1 ')]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    Then I should see "2" in the "//tbody/tr[(position() mod 2)=1]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
+    And I should see "1" in the "//tbody/tr[(position() mod 2)=0]/child::td[contains(concat(' ', normalize-space(@class),' '),' numviews ')]" "xpath_element"
 
   @javascript
   Scenario: View the outline report when no log reader is enabled
