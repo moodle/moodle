@@ -404,7 +404,8 @@ function assign_print_overview($courses, &$htmlarray) {
                                                   g.attemptnumber = s.attemptnumber
                                               WHERE
                                                   ( g.timemodified is NULL OR
-                                                  s.timemodified > g.timemodified ) AND
+                                                  s.timemodified > g.timemodified OR
+                                                  g.grade IS NULL ) AND
                                                   s.timemodified IS NOT NULL AND
                                                   s.status = ? AND
                                                   s.latest = 1 AND
