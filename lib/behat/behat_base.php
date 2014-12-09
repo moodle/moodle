@@ -102,6 +102,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
+        // Throw exception, so dev knows it is not supported.
+        if ($selector === 'named') {
+            $exception = 'Using the "named" selector is deprecated as of 3.1. '
+                .' Use the "named_partial" or use the "named_exact" selector instead.';
+            throw new ExpectationException($exception, $this->getSession());
+        }
+
         // Returns the first match.
         $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
@@ -122,11 +129,18 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function find_all($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
+        // Throw exception, so dev knows it is not supported.
+        if ($selector === 'named') {
+            $exception = 'Using the "named" selector is deprecated as of 3.1. '
+                .' Use the "named_partial" or use the "named_exact" selector instead.';
+            throw new ExpectationException($exception, $this->getSession());
+        }
+
         // Generic info.
         if (!$exception) {
 
             // With named selectors we can be more specific.
-            if ($selector == 'named') {
+            if (($selector == 'named_exact') || ($selector == 'named_partial')){
                 $exceptiontype = $locator[0];
                 $exceptionlocator = $locator[1];
 
@@ -236,7 +250,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // Redirecting execution to the find method with the specified selector.
         // It will detect if it's pointing to an unexisting named selector.
-        return $this->find('named',
+        return $this->find('named_partial',
             array(
                 $cleanname,
                 $this->getSession()->getSelectorsHandler()->xpathLiteral($arguments[0])

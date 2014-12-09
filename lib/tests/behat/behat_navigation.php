@@ -27,10 +27,10 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given;
+use Moodle\BehatExtension\Context\Step\Given;
+use Moodle\BehatExtension\Context\Step\When;
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\DriverException as DriverException;
-use Behat\Behat\Context\Step\When as When;
 
 /**
  * Steps definitions to navigate through the navigation tree nodes.
@@ -245,7 +245,8 @@ class behat_navigation extends behat_base {
             if ($parentnodes[0] === $siteadminstr) {
                 // We don't know if there if Site admin is already expanded so
                 // don't wait, it is non-JS and we already waited for the DOM.
-                if ($siteadminlink = $this->getSession()->getPage()->find('named', array('link', "'" . $siteadminstr . "'"))) {
+                $siteadminlink = $this->getSession()->getPage()->find('named_exact', array('link', "'" . $siteadminstr . "'"));
+                if ($siteadminlink) {
                     $siteadminlink->click();
                 }
             }

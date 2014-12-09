@@ -82,12 +82,25 @@ class behat_transformations extends behat_base {
      * Transformations applicable to TableNode arguments should also
      * be applied, adding them in a different method for Behat API restrictions.
      *
-     * @Transform /^table:(.*)/
+     * @Transform table:Surname,My Surname $NASTYSTRING2
+     * @param TableNode $tablenode
+     * @return TableNode The transformed table
+     */
+    public function prefixed_tablenode_transformations(TableNode $tablenode) {
+        return $this->tablenode_transformations($tablenode);
+    }
+
+    /**
+     * Transformations for TableNode arguments.
+     *
+     * Transformations applicable to TableNode arguments should also
+     * be applied, adding them in a different method for Behat API restrictions.
+     *
+     * @Transform table:Surname,$NASTYSTRING1
      * @param TableNode $tablenode
      * @return TableNode The transformed table
      */
     public function tablenode_transformations(TableNode $tablenode) {
-
         // Walk through all values including the optional headers.
         $rows = $tablenode->getRows();
         foreach ($rows as $rowkey => $row) {
@@ -101,7 +114,9 @@ class behat_transformations extends behat_base {
         }
 
         // Return the transformed TableNode.
-        $tablenode->setRows($rows);
+        unset($tablenode);
+        $tablenode = new TableNode($rows);
+
         return $tablenode;
     }
 

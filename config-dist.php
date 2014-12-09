@@ -683,8 +683,15 @@ $CFG->admin = 'admin';
 //           )
 //       ),
 //       'Mac-Firefox' => array(
+//           'suites' => array (
+//               'default' => array(
+//                   'filters' => array(
+//                      'tags' => '~@_file_upload'
+//                   ),
+//               ),
+//           ),
 //           'extensions' => array(
-//               'Behat\MinkExtension\Extension' => array(
+//               'Behat\MinkExtension' => array(
 //                   'selenium2' => array(
 //                       'browser' => 'firefox',
 //                       'capabilities' => array(
@@ -697,7 +704,7 @@ $CFG->admin = 'admin';
 //       ),
 //       'Mac-Safari' => array(
 //           'extensions' => array(
-//               'Behat\MinkExtension\Extension' => array(
+//               'Behat\MinkExtension' => array(
 //                   'selenium2' => array(
 //                       'browser' => 'safari',
 //                       'capabilities' => array(

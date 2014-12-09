@@ -397,35 +397,32 @@ class behat_config_manager {
             $CFG->behat_wwwroot = 'http://itwillnotbeused.com';
         }
 
-        $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
-
+        // Comments use black color, so failure path is not visible. Using color other then black/white is safer.
+        // https://github.com/Behat/Behat/pull/628.
         $config = array(
             'default' => array(
-                'paths' => array(
-                    'features' => $basedir . DIRECTORY_SEPARATOR . 'features',
-                    'bootstrap' => $basedir . DIRECTORY_SEPARATOR . 'features' . DIRECTORY_SEPARATOR . 'bootstrap',
+                'formatters' => array(
+                    'moodle_progress' => array(
+                        'output_styles' => array(
+                            'comment' => array('magenta'))
+                        )
                 ),
-                'context' => array(
-                    'class' => 'behat_init_context'
+                'suites' => array(
+                    'default' => array(
+                        'paths' => $features,
+                        'contexts' => array_keys($stepsdefinitions)
+                    )
                 ),
                 'extensions' => array(
-                    'Behat\MinkExtension\Extension' => array(
+                    'Behat\MinkExtension' => array(
                         'base_url' => $CFG->behat_wwwroot,
                         'goutte' => null,
                         'selenium2' => $selenium2wdhost
                     ),
-                    'Moodle\BehatExtension\Extension' => array(
-                        'formatters' => array(
-                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter',
-                            'moodle_list' => 'Moodle\BehatExtension\Formatter\MoodleListFormatter',
-                            'moodle_step_count' => 'Moodle\BehatExtension\Formatter\MoodleStepCountFormatter'
-                        ),
-                        'features' => $features,
+                    'Moodle\BehatExtension' => array(
+                        'moodledirroot' => $CFG->dirroot,
                         'steps_definitions' => $stepsdefinitions
                     )
-                ),
-                'formatter' => array(
-                    'name' => 'moodle_progress'
                 )
             )
         );

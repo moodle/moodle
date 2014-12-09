@@ -51,7 +51,7 @@ class behat_repository_upload extends behat_files {
      * @param string $filemanagerelement
      */
     public function i_upload_file_to_filemanager($filepath, $filemanagerelement) {
-        $this->upload_file_to_filemanager($filepath, $filemanagerelement, new TableNode(), false);
+        $this->upload_file_to_filemanager($filepath, $filemanagerelement, new TableNode(array()), false);
     }
 
     /**
@@ -63,7 +63,7 @@ class behat_repository_upload extends behat_files {
      * @param string $filemanagerelement
      */
     public function i_upload_and_overwrite_file_to_filemanager($filepath, $filemanagerelement) {
-        $this->upload_file_to_filemanager($filepath, $filemanagerelement, new TableNode(),
+        $this->upload_file_to_filemanager($filepath, $filemanagerelement, new TableNode(array()),
                 get_string('overwrite', 'repository'));
     }
 

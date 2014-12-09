@@ -27,8 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given,
-    Behat\Behat\Context\Step\Then,
+use Moodle\BehatExtension\Context\Step\Given,
+    Moodle\BehatExtension\Context\Step\Then,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**

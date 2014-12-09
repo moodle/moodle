@@ -28,8 +28,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given;
-use Behat\Behat\Context\Step\When as When;
+use Moodle\BehatExtension\Context\Step\Given as Given;
+use Moodle\BehatExtension\Context\Step\When as When;
 
 /**
  * Log in log out steps definitions.

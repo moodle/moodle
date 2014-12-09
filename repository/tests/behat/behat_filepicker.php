@@ -210,7 +210,7 @@ class behat_filepicker extends behat_files {
      * @param string $filemanagerelement
      */
     public function i_add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement) {
-        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(), false);
+        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(array()), false);
     }
 
     /**
@@ -223,7 +223,7 @@ class behat_filepicker extends behat_files {
      * @param string $filemanagerelement
      */
     public function i_add_and_overwrite_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement) {
-        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(),
+        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(array()),
                 get_string('overwrite', 'repository'));
     }
 

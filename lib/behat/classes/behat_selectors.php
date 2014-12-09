@@ -158,7 +158,7 @@ XPATH
         } else {
             // Named selectors uses arrays as locators including the type of named selector.
             $locator = array($selectortype, $session->getSelectorsHandler()->xpathLiteral($element));
-            $selector = 'named';
+            $selector = 'named_partial';
         }
 
         return array($selector, $locator);
@@ -173,7 +173,7 @@ XPATH
     public static function register_moodle_selectors(Behat\Mink\Session $session) {
 
         foreach (self::get_moodle_selectors() as $name => $xpath) {
-            $session->getSelectorsHandler()->getSelector('named')->registerNamedXpath($name, $xpath);
+            $session->getSelectorsHandler()->getSelector('named_partial')->registerNamedXpath($name, $xpath);
         }
     }
 

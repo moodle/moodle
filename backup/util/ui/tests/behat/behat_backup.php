@@ -219,7 +219,6 @@ class behat_backup extends behat_base {
             "/descendant::div[@class='restore-course-search']" .
             "/descendant::tr[contains(., $existingcourse)]" .
             "/descendant::input[@type='radio']");
-        $radionode->check();
         $radionode->click();
 
         // Pressing the continue button of the restore into an existing course section.
@@ -250,7 +249,6 @@ class behat_backup extends behat_base {
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' bcs-new-course ')]" .
             "/descendant::div[@class='restore-course-search']" .
             "/descendant::input[@type='radio']");
-        $radionode->check();
         $radionode->click();
 
         // Pressing the continue button of the restore into an existing course section.
@@ -280,7 +278,6 @@ class behat_backup extends behat_base {
         // Merge without deleting radio option.
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), 'bcs-current-course')]" .
             "/descendant::input[@type='radio'][@name='target'][@value='1']");
-        $radionode->check();
         $radionode->click();
 
         // Pressing the continue button of the restore merging section.
@@ -310,7 +307,6 @@ class behat_backup extends behat_base {
         // Delete contents radio option.
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), 'bcs-current-course')]" .
             "/descendant::input[@type='radio'][@name='target'][@value='0']");
-        $radionode->check();
         $radionode->click();
 
         // Pressing the continue button of the restore merging section.
@@ -419,8 +415,6 @@ class behat_backup extends behat_base {
             return;
         }
 
-        $pageoptions = clone $options;
-
         $rows = $options->getRows();
         $newrows = array();
         foreach ($rows as $k => $data) {
@@ -433,7 +427,8 @@ class behat_backup extends behat_base {
                 $newrows[] = $data;
             }
         }
-        $pageoptions->setRows($newrows);
+        $pageoptions = new TableNode($newrows);
+
         return $pageoptions;
     }
 
