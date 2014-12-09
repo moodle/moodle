@@ -2279,6 +2279,16 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Backup execution step hook to annotate custom fields.
+     *
+     * @param backup_enrolments_execution_step $step
+     * @param stdClass $enrol
+     */
+    public function backup_annotate_custom_fields(backup_enrolments_execution_step $step, stdClass $enrol) {
+        // Override as necessary to annotate custom fields in the enrol table.
+    }
+
+    /**
      * Automatic enrol sync executed during restore.
      * Useful for automatic sync by course->idnumber or course category.
      * @param stdClass $course course record
