@@ -225,13 +225,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>form</location>
-    <name>MoodleForms</name>
-    <license>GPL</license>
-    <version></version>
-    <licenseversion>2.0+</licenseversion>
-  </library>
-  <library>
     <location>html2text.php</location>
     <name>HTML2Text</name>
     <license>GPL</license>
