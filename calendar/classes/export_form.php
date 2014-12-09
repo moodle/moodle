@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
+/**
  * The mform for exporting calendar events
  *
  * @package core_calendar
@@ -22,16 +22,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 // Always include formslib.
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    // It must be included from a Moodle page.
-}
-
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**
- * The mform class for creating and editing a calendar
+ * The mform class for exporting a calendar
  *
  * @copyright 2014 Brian Barnes
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
