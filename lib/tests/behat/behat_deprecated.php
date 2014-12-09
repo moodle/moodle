@@ -521,13 +521,14 @@ class behat_deprecated extends behat_base {
      *
      * @throws Exception
      * @param string|array $alternatives Alternative/s to the requested step
+     * @param bool $throwexception If set to true we always throw exception, irrespective of behat_usedeprecated setting.
      * @return void
      */
-    protected function deprecated_message($alternatives) {
+    protected function deprecated_message($alternatives, $throwexception = false) {
         global $CFG;
 
         // We do nothing if it is enabled.
-        if (!empty($CFG->behat_usedeprecated)) {
+        if (!empty($CFG->behat_usedeprecated) && !$throwexception) {
             return;
         }
 
@@ -535,11 +536,23 @@ class behat_deprecated extends behat_base {
             $alternatives = array($alternatives);
         }
 
-        $message = 'Deprecated step, rather than using this step you can:';
+        // Show an appropriate message based on the throwexception flag.
+        if ($throwexception) {
+            $message = 'This step has been removed. Rather than using this step you can:';
+        } else {
+            $message = 'Deprecated step, rather than using this step you can:';
+        }
+
+        // Add all alternatives to the message.
         foreach ($alternatives as $alternative) {
             $message .= PHP_EOL . '- ' . $alternative;
         }
-        $message .= PHP_EOL . '- Set $CFG->behat_usedeprecated in config.php to allow the use of deprecated steps if you don\'t have any other option';
+
+        if (!$throwexception) {
+            $message .= PHP_EOL . '- Set $CFG->behat_usedeprecated in config.php to allow the use of deprecated steps
+                    if you don\'t have any other option';
+        }
+
         throw new Exception($message);
     }
 
