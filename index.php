@@ -131,6 +131,16 @@
             }
 
             $context = context_course::instance(SITEID);
+
+            // If the section name is set we show it.
+            if (!is_null($section->name)) {
+                echo $OUTPUT->heading(
+                    format_string($section->name, true, array('context' => $context)),
+                    2,
+                    'sectionname'
+                );
+            }
+
             $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php', $context->id, 'course', 'section', $section->id);
             $summaryformatoptions = new stdClass();
             $summaryformatoptions->noclean = true;
