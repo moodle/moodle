@@ -28,10 +28,6 @@
         $this->title = get_string('pluginname', 'block_rss_client');
     }
 
-    function preferred_width() {
-        return 210;
-    }
-
     function applicable_formats() {
         return array('all' => true, 'tag' => false);   // Needs work to make it work on tags MDL-11960
     }

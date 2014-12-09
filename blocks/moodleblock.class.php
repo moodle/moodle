@@ -326,11 +326,6 @@ class block_base {
             $correct = false;
         }
 
-        $width = $this->preferred_width();
-        if (!is_int($width) || $width <= 0) {
-            $errors[] = 'invalid_width';
-            $correct = false;
-        }
         return $correct;
     }
 
@@ -592,17 +587,6 @@ class block_base {
 
     static function get_extra_capabilities() {
         return array('moodle/block:view', 'moodle/block:edit');
-    }
-
-    // Methods deprecated in Moodle 2.0 ========================================
-
-    /**
-     * Default case: the block wants to be 180 pixels wide
-     * @deprecated since Moodle 2.0.
-     * @return int
-     */
-    function preferred_width() {
-        return 180;
     }
 
     /**

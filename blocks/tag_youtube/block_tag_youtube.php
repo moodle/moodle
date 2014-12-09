@@ -45,10 +45,6 @@ class block_tag_youtube extends block_base {
         return true;
     }
 
-    function preferred_width() {
-        return 140;
-    }
-
     function get_content() {
         global $CFG;
 

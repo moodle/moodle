@@ -43,10 +43,6 @@ class block_tag_flickr extends block_base {
         return true;
     }
 
-    function preferred_width() {
-        return 170;
-    }
-
     function get_content() {
         global $CFG, $USER;
 
