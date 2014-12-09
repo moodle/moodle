@@ -427,11 +427,6 @@ class grade_edit_tree {
             );
 
             $str .= $checkboxlbl . $checkbox . $hiddenlabel . $input;
-
-            if ($item->aggregationcoef > 0) {
-                $str .= ' ' . html_writer::tag('abbr', get_string('aggregationcoefextrasumabbr', 'grades'),
-                        array('title' => get_string('aggregationcoefextrasum', 'grades')));
-            }
         }
 
         return $str;
@@ -769,6 +764,11 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             }
         } else {
             $grademax = format_float($item->grademax, $item->get_decimals());
+        }
+
+        if ($item->aggregationcoef > 0 && $parent_cat->is_extracredit_used()) {
+            $grademax .= ' ' . html_writer::tag('abbr', get_string('aggregationcoefextrasumabbr', 'grades'),
+                array('title' => get_string('aggregationcoefextrasum', 'grades')));
         }
 
         $itemcell = parent::get_item_cell($item, $params);
