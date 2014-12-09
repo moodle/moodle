@@ -491,12 +491,17 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     }
 
     $completion = new completion_info($course);
-    if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
-        // Update completion settings.
-        $cm->completion                = $moduleinfo->completion;
-        $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
-        $cm->completionview            = $moduleinfo->completionview;
-        $cm->completionexpected        = $moduleinfo->completionexpected;
+    if ($completion->is_enabled()) {
+        // Completion settings that would affect users who have already completed
+        // the activity may be locked; if so, these should not be updated.
+        if (!empty($moduleinfo->completionunlocked)) {
+            $cm->completion = $moduleinfo->completion;
+            $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+            $cm->completionview = $moduleinfo->completionview;
+        }
+        // The expected date does not affect users who have completed the activity,
+        // so it is safe to update it regardless of the lock status.
+        $cm->completionexpected = $moduleinfo->completionexpected;
     }
     if (!empty($CFG->enableavailability)) {
         // This code is used both when submitting the form, which uses a long
