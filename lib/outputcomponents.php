@@ -2863,7 +2863,9 @@ class custom_menu extends custom_menu_item {
                         case 1:
                             try {
                                 $itemurl = new moodle_url($setting);
-                            } catch (Exception $e) {
+                            } catch (moodle_exception $exception) {
+                                // We're not actually worried about this, we don't want to mess up the display
+                                // just for a wrongly entered URL.
                                 $itemurl = null;
                             }
                             break;
