@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/modinfolib.php');
-require_once($CFG->libdir . '/conditionlib.php');
 
 /**
  * Unit tests for modinfolib.php

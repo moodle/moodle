@@ -1798,7 +1798,6 @@ class cm_info implements IteratorAggregate {
         $this->state = self::STATE_BUILDING_DYNAMIC;
 
         if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_module($this);
 
@@ -2698,7 +2697,6 @@ class section_info implements IteratorAggregate {
         $this->_available = true;
         $this->_availableinfo = '';
         if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,

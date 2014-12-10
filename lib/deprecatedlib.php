@@ -3944,22 +3944,13 @@ function ajaxenabled(array $browsers = null) {
 }
 
 /**
- * Determine whether a course module is visible within a course,
- * this is different from instance_is_visible() - faster and visibility for user
+ * Determine whether a course module is visible within a course.
  *
- * @global object
- * @global object
- * @uses DEBUG_DEVELOPER
- * @uses CONTEXT_MODULE
- * @param object $cm object
- * @param int $userid empty means current user
- * @return bool Success
- * @deprecated Since Moodle 2.7
+ * @deprecated Since Moodle 2.7 MDL-44070
  */
 function coursemodule_visible_for_user($cm, $userid=0) {
-    debugging('coursemodule_visible_for_user() deprecated since Moodle 2.7. ' .
-            'Replace with \core_availability\info_module::is_user_visible().');
-    return \core_availability\info_module::is_user_visible($cm, $userid, false);
+    throw new coding_exception('coursemodule_visible_for_user() can not be used any more,
+            please use \core_availability\info_module::is_user_visible()');
 }
 
 /**
