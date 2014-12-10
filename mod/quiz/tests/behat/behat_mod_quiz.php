@@ -56,6 +56,7 @@ class behat_mod_quiz extends behat_question_base {
      */
     public function quiz_contains_the_following_questions($quizname, TableNode $data) {
         global $DB;
+        require_once(__DIR__ . '/../../editlib.php');
 
         $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
 
