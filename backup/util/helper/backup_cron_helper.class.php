@@ -403,7 +403,7 @@ abstract class backup_cron_automated_helper {
                 $bc->log('No directory specified for automated backups',
                         backup::LOG_WARNING);
                 $outcome = self::BACKUP_STATUS_WARNING;
-            } else if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir) && $storage !== 0) {
+            } else if ($storage !== 0 && (!file_exists($dir) || !is_dir($dir) || !is_writable($dir))) {
                 // If we need to copy the backup file to an external dir and it is not writable, change status to error.
                 $bc->log('Specified backup directory is not writable - ',
                         backup::LOG_ERROR, $dir);
