@@ -696,4 +696,16 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
         }
         return $warnings;
     }
+
+    /**
+     * Returns true if this cache store instance is both suitable for testing, and ready for testing.
+     *
+     * Cache stores that support being used as the default store for unit and acceptance testing should
+     * override this function and return true if there requirements have been met.
+     *
+     * @return bool
+     */
+    public static function ready_to_be_used_for_testing() {
+        return defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS');
+    }
 }
