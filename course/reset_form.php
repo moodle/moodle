@@ -38,7 +38,9 @@ class course_reset_form extends moodleform {
         $mform->addElement('header', 'gradebookheader', get_string('gradebook', 'grades'));
 
         $mform->addElement('checkbox', 'reset_gradebook_items', get_string('removeallcourseitems', 'grades'));
+        $mform->addHelpButton('reset_gradebook_items', 'removeallcourseitems', 'grades');
         $mform->addElement('checkbox', 'reset_gradebook_grades', get_string('removeallcoursegrades', 'grades'));
+        $mform->addHelpButton('reset_gradebook_grades', 'removeallcoursegrades', 'grades');
         $mform->disabledIf('reset_gradebook_grades', 'reset_gradebook_items', 'checked');
 
 
