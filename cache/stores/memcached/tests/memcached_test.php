@@ -54,6 +54,10 @@ class cachestore_memcached_test extends cachestore_tests {
      * Tests the valid keys to ensure they work.
      */
     public function test_valid_keys() {
+        if (!cachestore_memcached::are_requirements_met() || !defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
+            $this->markTestSkipped('Could not test cachestore_memcached. Requirements are not met.');
+        }
+
         $this->resetAfterTest(true);
 
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
@@ -139,16 +143,16 @@ class cachestore_memcached_test extends cachestore_tests {
      * Tests the clustering feature.
      */
     public function test_clustered() {
-        $this->resetAfterTest(true);
-
-        if (!defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
-            $this->markTestSkipped();
+        if (!cachestore_memcached::are_requirements_met() || !defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
+            $this->markTestSkipped('Could not test cachestore_memcached. Requirements are not met.');
         }
+
+        $this->resetAfterTest(true);
 
         $testservers = explode("\n", trim(TEST_CACHESTORE_MEMCACHED_TESTSERVERS));
 
         if (count($testservers) < 2) {
-            $this->markTestSkipped();
+            $this->markTestSkipped('Could not test clustered memcached, there are not enough test servers defined.');
         }
 
         // Use the first server as our primary.
@@ -269,5 +273,71 @@ class cachestore_memcached_test extends cachestore_tests {
                 $this->assertFalse($checkinstance->get($key), "Retrieved purged key `$key` from server 2");
             }
         }
+    }
+
+    /**
+     * Tests that memcached cache store doesn't just flush everything and instead deletes only what belongs to it.
+     */
+    public function test_multi_use_compatibility() {
+        if (!cachestore_memcached::are_requirements_met() || !defined('TEST_CACHESTORE_MEMCACHED_TESTSERVERS')) {
+            $this->markTestSkipped('Could not test cachestore_memcached. Requirements are not met.');
+        }
+
+        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
+        $cachestore = cachestore_memcached::initialise_unit_test_instance($definition);
+        $connection = new Memcached(crc32(__METHOD__));
+        $connection->addServers($this->get_servers(TEST_CACHESTORE_MEMCACHED_TESTSERVERS));
+        $connection->setOptions(array(
+            Memcached::OPT_COMPRESSION => true,
+            Memcached::OPT_SERIALIZER => Memcached::SERIALIZER_PHP,
+            Memcached::OPT_PREFIX_KEY => 'phpunit_',
+            Memcached::OPT_BUFFER_WRITES => false
+        ));
+
+        // We must flush first to make sure nothing is there.
+        $connection->flush();
+
+        // Test the cachestore.
+        $this->assertFalse($cachestore->get('test'));
+        $this->assertTrue($cachestore->set('test', 'cachestore'));
+        $this->assertSame('cachestore', $cachestore->get('test'));
+
+        // Test the connection.
+        $this->assertFalse($connection->get('test'));
+        $this->assertEquals(Memcached::RES_NOTFOUND, $connection->getResultCode());
+        $this->assertTrue($connection->set('test', 'connection'));
+        $this->assertSame('connection', $connection->get('test'));
+
+        // Test both again and make sure the values are correct.
+        $this->assertSame('cachestore', $cachestore->get('test'));
+        $this->assertSame('connection', $connection->get('test'));
+
+        // Purge the cachestore and check the connection was not purged.
+        $this->assertTrue($cachestore->purge());
+        $this->assertFalse($cachestore->get('test'));
+        $this->assertSame('connection', $connection->get('test'));
+    }
+
+    /**
+     * Given a server string this returns an array of servers.
+     *
+     * @param string $serverstring
+     * @return array
+     */
+    public function get_servers($serverstring) {
+        $servers = array();
+        foreach (explode("\n", $serverstring) as $server) {
+            if (!is_array($server)) {
+                $server = explode(':', $server, 3);
+            }
+            if (!array_key_exists(1, $server)) {
+                $server[1] = 11211;
+                $server[2] = 100;
+            } else if (!array_key_exists(2, $server)) {
+                $server[2] = 100;
+            }
+            $servers[] = $server;
+        }
+        return $servers;
     }
 }
