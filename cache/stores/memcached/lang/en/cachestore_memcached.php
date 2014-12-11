@@ -46,6 +46,7 @@ $string['hash_fnv1_32'] = 'FNV1_32';
 $string['hash_fnv1a_32'] = 'FNV1A_32';
 $string['hash_hsieh'] = 'Hsieh';
 $string['hash_murmur'] = 'Murmur';
+$string['notice'] = 'Notice';
 $string['pluginname'] = 'Memcached';
 $string['prefix'] = 'Prefix key';
 $string['prefix_help'] = 'This can be used to create a "domain" for your item keys allowing you to create multiple memcached stores on a single memcached installation. It cannot be longer than 16 characters in order to ensure key length issues are not encountered.';
@@ -88,3 +89,5 @@ $string['useserialiser'] = 'Use serialiser';
 $string['useserialiser_help'] = 'Specifies the serializer to use for serializing non-scalar values.
 The valid serializers are Memcached::SERIALIZER_PHP or Memcached::SERIALIZER_IGBINARY.
 The latter is supported only when memcached is configured with --enable-memcached-igbinary option and the igbinary extension is loaded.';
+$string['upgrade200recommended'] = 'We recommend you upgrade your Memcached PHP extension to version 2.0.0 or greater.
+The version of the Memcached PHP extension you are currently using does not provide the functionality Moodle uses to ensure a sandboxed cache. Until you upgrade we recommend you do not configure any other applications to use the same Memcached servers as Moodle is configured to use.';

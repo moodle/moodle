@@ -6,6 +6,8 @@ Information provided here is intended especially for developers.
   This allows the cache loader to decide if it needs to handle dereferencing or whether the data
   coming directly to it has already had references resolved.
   - see supports_dereferencing_objects in store.php.
+* The Memcached cache store no longer flushes the memcache servers it is connected to providing your memcached php extension is version 2.0.0 or greater.
+  There is a notice to this effect when adding or editing a memcached cache store instance.
 
 === 2.9 ===
 * Cache data source aggregation functionality has been removed. This functionality was found to be broken and unused.

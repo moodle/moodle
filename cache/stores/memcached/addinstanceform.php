@@ -86,6 +86,13 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->addHelpButton('setservers', 'setservers', 'cachestore_memcached');
         $form->disabledIf('setservers', 'clustered');
         $form->setType('setservers', PARAM_RAW);
+
+        $version = phpversion('memcached');
+        if (!$version || !version_compare($version, cachestore_memcached::REQUIRED_VERSION, '>=')) {
+            $form->addElement('header', 'upgradenotice', get_string('notice', 'cachestore_memcached'));
+            $form->setExpanded('upgradenotice');
+            $form->addElement('html', nl2br(get_string('upgrade200recommended', 'cachestore_memcached')));
+        }
     }
 
     /**
