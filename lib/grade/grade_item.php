@@ -1615,6 +1615,9 @@ class grade_item extends grade_object {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
         } else {
+		/*call update function to update raw grade, to display the correct value in the grades section*/
+		$result = $grade->update($source);
+		/*******************************************************************************************/
             // no grade change
             return $result;
         }
