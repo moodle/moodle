@@ -50,6 +50,7 @@ $string['permcheckerror'] = 'Error while checking for write permission';
 $string['permcheckprogress'] = 'Checking for write permission ...';
 $string['permcheckresultno'] = 'Plugin type location <em>{$a->path}</em> is not writable';
 $string['permcheckresultyes'] = 'Plugin type location <em>{$a->path}</em> is writable';
+$string['permcheckrepeat'] = 'Check again';
 $string['pluginname'] = 'Plugin installer';
 $string['remoterequestalreadyinstalled'] = 'There is a request to install plugin {$a->name} ({$a->component}) version {$a->version} from the Moodle plugins directory on this site. However, this plugin is <strong>already installed</strong> on the site.';
 $string['remoterequestconfirm'] = 'There is a request to install plugin <strong>{$a->name}</strong> ({$a->component}) version {$a->version} from the Moodle plugins directory on this site. If you continue, the plugin ZIP package will be downloaded for validation. Nothing will be installed yet.';

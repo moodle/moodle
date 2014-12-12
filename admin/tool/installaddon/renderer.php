@@ -83,7 +83,8 @@ class tool_installaddon_renderer extends plugin_renderer_base {
         $this->page->requires->yui_module('moodle-tool_installaddon-permcheck', 'M.tool_installaddon.permcheck.init',
             array(array('permcheckurl' => $permcheckurl->out())));
         $this->page->requires->strings_for_js(
-            array('permcheckprogress', 'permcheckresultno', 'permcheckresultyes', 'permcheckerror'), 'tool_installaddon');
+            array('permcheckprogress', 'permcheckresultno', 'permcheckresultyes', 'permcheckerror', 'permcheckrepeat'),
+            'tool_installaddon');
 
         $out = $this->output->header();
         $out .= $this->index_page_heading();
