@@ -1297,17 +1297,8 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $file) {
-            $function = "local_{$plugin}_extends_navigation";
-            $oldfunction = "{$plugin}_extends_navigation";
-            if (function_exists($function)) {
-                // This is the preferred function name as there is less chance of conflicts
-                $function($this);
-            } else if (function_exists($oldfunction)) {
-                // We continue to support the old function name to ensure backwards compatibility
-                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. Support for the old callback will be dropped after the release of 2.4", DEBUG_DEVELOPER);
-                $oldfunction($this);
-            }
+        foreach (get_plugin_list_with_function('local', 'extends_navigation') as $function) {
+            $function($this);
         }
 
         // Remove any empty root nodes
