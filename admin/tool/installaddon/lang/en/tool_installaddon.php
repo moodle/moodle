@@ -27,7 +27,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['acknowledgement'] = 'Acknowledgement';
-$string['acknowledgementmust'] = 'You must acknowledge this';
 $string['acknowledgementtext'] = 'I understand that it is my responsibility to have full backups of this site prior to installing additional plugins. I accept and understand that plugins (especially but not only those originating in unofficial sources) may contain security holes, can make the site unavailable, or cause private data leaks or loss.';
 $string['featuredisabled'] = 'The plugin installer is disabled on this site.';
 $string['installaddon'] = 'Install plugin!';

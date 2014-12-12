@@ -67,10 +67,6 @@ class tool_installaddon_installfromzip_form extends moodleform {
         $mform->setType('rootdir', PARAM_PLUGIN);
         $mform->setAdvanced('rootdir');
 
-        $mform->addElement('checkbox', 'acknowledgement', get_string('acknowledgement', 'tool_installaddon'),
-            ' '.get_string('acknowledgementtext', 'tool_installaddon'));
-        $mform->addRule('acknowledgement', get_string('acknowledgementmust', 'tool_installaddon'), 'required', null, 'client');
-
         $this->add_action_buttons(false, get_string('installfromzipsubmit', 'tool_installaddon'));
     }
 

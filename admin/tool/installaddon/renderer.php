@@ -381,19 +381,26 @@ class tool_installaddon_renderer extends plugin_renderer_base {
      */
     protected function validation_page_continue() {
 
+        $output = '';
         $conturl = $this->validator->get_continue_url();
+
         if (is_null($conturl)) {
             $contbutton = '';
+
         } else {
             $contbutton = $this->output->single_button(
                 $conturl, get_string('installaddon', 'tool_installaddon'), 'post',
                 array('class' => 'singlebutton continuebutton'));
+            $output .= $this->output->heading(get_string('acknowledgement', 'tool_installaddon'), 3);
+            $output .= $this->output->container(get_string('acknowledgementtext', 'tool_installaddon'));
         }
 
         $cancelbutton = $this->output->single_button(
             new moodle_url('/admin/tool/installaddon/index.php'), get_string('cancel', 'core'), 'get',
             array('class' => 'singlebutton cancelbutton'));
 
-        return $this->output->container($cancelbutton.$contbutton, 'postvalidationbuttons');
+        $output .= $this->output->container($cancelbutton.$contbutton, 'postvalidationbuttons');
+
+        return $output;
     }
 }
