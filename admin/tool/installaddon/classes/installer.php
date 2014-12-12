@@ -459,6 +459,27 @@ class tool_installaddon_installer {
         clearstatcache();
     }
 
+    /**
+     * Detect the given plugin's component name
+     *
+     * Only plugins that declare valid $plugin->component value in the version.php
+     * are supported.
+     *
+     * @param string $zipfilepath full path to the saved ZIP file
+     * @param string $workdir full path to the directory we can use for extracting required bits from the archive
+     * @return string|bool declared component name or false if unable to detect
+     */
+    public function detect_plugin_component($zipfilepath, $workdir) {
+
+        $versionphp = $this->extract_versionphp_file($zipfilepath, $workdir);
+
+        if (empty($versionphp)) {
+            return false;
+        }
+
+        return $this->detect_plugin_component_from_versionphp(file_get_contents($workdir.'/'.$versionphp));
+    }
+
     //// End of external API ///////////////////////////////////////////////////
 
     /**
@@ -625,6 +646,86 @@ class tool_installaddon_installer {
         }
 
         return $data;
+    }
+
+    /**
+     * Extracts the version.php from the given plugin ZIP file into the target directory
+     *
+     * @param string $zipfilepath full path to the saved ZIP file
+     * @param string $targetdir full path to extract the file to
+     * @return string|bool path to the version.php within the $targetpath; false on error (e.g. not found)
+     */
+    protected function extract_versionphp_file($zipfilepath, $targetdir) {
+        global $CFG;
+        require_once($CFG->libdir.'/filelib.php');
+
+        $fp = get_file_packer('application/zip');
+        $files = $fp->list_files($zipfilepath);
+
+        if (empty($files)) {
+            return false;
+        }
+
+        $rootdirname = null;
+        $found = null;
+
+        foreach ($files as $file) {
+            // Valid plugin ZIP package has just one root directory with all
+            // files in it.
+            $pathnameitems = explode('/', $file->pathname);
+
+            if (empty($pathnameitems)) {
+                return false;
+            }
+
+            // Set the expected name of the root directory in the first
+            // iteration of the loop.
+            if ($rootdirname === null) {
+                $rootdirname = $pathnameitems[0];
+            }
+
+            // Require the same root directory for all files in the ZIP
+            // package.
+            if ($rootdirname !== $pathnameitems[0]) {
+                return false;
+            }
+
+            // If we reached the valid version.php file, remember it.
+            if ($pathnameitems[1] === 'version.php' and !$file->is_directory and $file->size > 0) {
+                $found = $file->pathname;
+            }
+        }
+
+        if (empty($found)) {
+            return false;
+        }
+
+        $extracted = $fp->extract_to_pathname($zipfilepath, $targetdir, array($found));
+
+        if (empty($extracted)) {
+            return false;
+        }
+
+        // The following syntax uses function array dereferencing, added in PHP 5.4.0.
+        return array_keys($extracted)[0];
+    }
+
+    /**
+     * Return the plugin component declared in its version.php file
+     *
+     * @param string $code the contents of the version.php file
+     * @return string|bool declared plugin component or false if unable to detect
+     */
+    protected function detect_plugin_component_from_versionphp($code) {
+
+        $result = preg_match_all('#^\s*\$plugin\->component\s*=\s*([\'"])(.+?_.+?)\1\s*;#m', $code, $matches);
+
+        // Return if and only if the single match was detected.
+        if ($result === 1 and !empty($matches[2][0])) {
+            return $matches[2][0];
+        }
+
+        return false;
     }
 }
 
