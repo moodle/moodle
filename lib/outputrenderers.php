@@ -624,7 +624,17 @@ class core_renderer extends renderer_base {
             $withlinks = empty($this->page->layout_options['nologinlinks']);
         }
 
-        $loginpage = ((string)$this->page->url === get_login_url());
+        // This is a real bit of a hack, but its a rariety that we need to do something like this.
+        // In fact the login pages should be only these two pages and as exposing this as an option for all pages
+        // could lead to abuse (or at least unneedingly complex code) the hack is the way to go.
+        $loginpage = in_array(
+            $this->page->url->out_as_local_url(false, array()),
+            array(
+                '/login/index.php',
+                '/login/forgot_password.php',
+            )
+        );
+
         $course = $this->page->course;
         if (\core\session\manager::is_loggedinas()) {
             $realuser = \core\session\manager::get_realuser();
