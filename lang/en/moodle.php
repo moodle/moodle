@@ -177,6 +177,7 @@ $string['backupdatenew'] = '&nbsp; {$a->TAG} is now {$a->weekday}, {$a->mday} {$
 $string['backupdateold'] = '{$a->TAG} was {$a->weekday}, {$a->mday} {$a->month} {$a->year}';
 $string['backupdaterecordtype'] = '<br />{$a->recordtype} - {$a->recordname}<br />';
 $string['backupdetails'] = 'Backup details';
+$string['backuperrorinvaliddestination'] = 'The backup destination folder does not exist or is not writable.';
 $string['backupexecuteathelp'] = 'Choose what time automated backups should run at.';
 $string['backupfailed'] = 'Some of your courses weren\'t saved!!';
 $string['backupfilename'] = 'backup';
@@ -194,7 +195,7 @@ $string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode ver
 $string['backupnotyetrun'] = 'Automated backup pending';
 $string['backuporiginalname'] = 'Backup name';
 $string['backuproleassignments'] = 'Backup role assignments for these roles';
-$string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br />(leave blank to save in its course default dir)';
+$string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files';
 $string['backupsitefileshelp'] = 'If enabled then site files used in courses will be included in automated backups';
 $string['backuptakealook'] = 'Please take a look at your backup logs in:
   {$a}';

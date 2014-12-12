@@ -221,7 +221,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         2 => new lang_string('storagecourseandexternal', 'backup')
     );
     $temp->add(new admin_setting_configselect('backup/backup_auto_storage', new lang_string('automatedstorage', 'backup'), new lang_string('automatedstoragehelp', 'backup'), 0, $storageoptions));
-    $temp->add(new admin_setting_configdirectory('backup/backup_auto_destination', new lang_string('saveto'), new lang_string('backupsavetohelp'), ''));
+    $temp->add(new admin_setting_special_backup_auto_destination());
     $keepoptoins = array(
         0 => new lang_string('all'), 1 => '1',
         2 => '2',
