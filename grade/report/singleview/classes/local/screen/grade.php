@@ -121,17 +121,9 @@ class grade extends tablelike implements selectable_items, filterable_items {
      * @param bool $selfitemisempty True if we have not selected a user.
      */
     public function init($selfitemisempty = false) {
-        $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
-        $this->items = array();
-        foreach ($roleids as $roleid) {
-            // Keeping the first user appearance.
-            $this->items = $this->items + get_role_users(
-                $roleid, $this->context, false, '',
-                'u.lastname, u.firstname', null, $this->groupid);
-        }
-
-        $this->totalitemcount = count_role_users($roleids, $this->context);
+        $this->items = $this->load_users();
+        $this->totalitemcount = count($this->items);
 
         if ($selfitemisempty) {
             return;
@@ -273,7 +265,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
             new moodle_url('/grade/report/singleview/index.php', array(
                 'perpage' => $this->perpage,
                 'id' => $this->courseid,
-                'groupid' => $this->groupid,
+                'group' => $this->groupid,
                 'itemid' => $this->itemid,
                 'item' => 'grade'
             ))

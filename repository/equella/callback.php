@@ -36,7 +36,11 @@ if (isset($info->url)) {
 }
 
 $filename = '';
-if (isset($info->name)) {
+// Use $info->filename if exists, $info->name is a display name,
+// it may not have extension
+if (isset($info->filename)) {
+    $filename  = s(clean_param($info->filename, PARAM_FILE));
+} else if (isset($info->name)) {
     $filename  = s(clean_param($info->name, PARAM_FILE));
 }
 

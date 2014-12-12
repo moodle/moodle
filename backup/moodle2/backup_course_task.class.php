@@ -80,6 +80,9 @@ class backup_course_task extends backup_task {
             $this->add_step(new backup_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
         }
 
+        // Annotate enrolment custom fields.
+        $this->add_step(new backup_enrolments_execution_step('annotate_enrol_custom_fields'));
+
         // Annotate all the groups and groupings belonging to the course
         $this->add_step(new backup_annotate_course_groups_and_groupings('annotate_course_groups'));
 

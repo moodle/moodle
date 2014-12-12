@@ -83,3 +83,15 @@
 #lesson-timer {
     text-align: center;
 }
+
+.path-mod-lesson .essayungraded {
+    background-color: #efcfcf;
+}
+
+.path-mod-lesson .essaygraded {
+    background-color: #efefcf;
+}
+
+.path-mod-lesson .essaysent {
+    background-color: #cfefcf;
+}

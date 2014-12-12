@@ -42,7 +42,11 @@ class enrol_meta_addinstance_form extends moodleform {
         $courses = array('' => get_string('choosedots'));
         $select = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $join = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
-        $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join ORDER BY c.sortorder ASC";
+
+        $plugin = enrol_get_plugin('meta');
+        $sortorder = 'c.' . $plugin->get_config('coursesort', 'sortorder') . ' ASC';
+
+        $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join ORDER BY " . $sortorder;
         $rs = $DB->get_recordset_sql($sql, array('contextlevel' => CONTEXT_COURSE));
         foreach ($rs as $c) {
             if ($c->id == SITEID or $c->id == $course->id or isset($existing[$c->id])) {

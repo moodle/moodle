@@ -32,13 +32,13 @@ YUI().use('yui2-autocomplete', 'yui2-datasource', 'yui2-animation', 'yui2-connec
 function ctags_checkinput(val) {
     var len = val.length;
     if (len < 2 || len > 50) {
-        alert(M.str.block_tags.jserror1);
+        alert(M.util.get_string('jserror1', 'block_tags'));
         return false;
     } else if (val.indexOf("<") > 0) {
-        alert(M.str.block_tags.jserror2);
+        alert(M.util.get_string('jserror2', 'block_tags'));
         return false;
     } else if (val.indexOf(">") > 0) {
-        alert(M.str.block_tags.jserror2);
+        alert(M.util.get_string('jserror2', 'block_tags'));
         return false;
     } else {
         return true;

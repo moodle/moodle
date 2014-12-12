@@ -90,7 +90,7 @@ Feature: Restore Moodle 2 course backups
       | id_startdate_month | January |
       | id_startdate_year | 2020 |
       | id_format | Weekly format |
-    And I press "Save changes"
+    And I press "Save and display"
     And I should see "1 January - 7 January"
     And I should see "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
@@ -98,7 +98,7 @@ Feature: Restore Moodle 2 course backups
     And the field "id_format" matches value "Weekly format"
     And I set the following fields to these values:
       | id_format | Social format |
-    And I press "Save changes"
+    And I press "Save and display"
     And I should see "An open forum for chatting about anything you want to"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets

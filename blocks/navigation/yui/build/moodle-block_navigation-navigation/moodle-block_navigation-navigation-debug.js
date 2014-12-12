@@ -750,8 +750,8 @@ BRANCH.prototype = {
             url = M.cfg.wwwroot+'/course/index.php?categoryid=' + branch.get('key');
         }
         branch.addChild({
-            name : M.str.moodle.viewallcourses,
-            title : M.str.moodle.viewallcourses,
+            name : M.util.get_string('viewallcourses', 'moodle'),
+            title : M.util.get_string('viewallcourses', 'moodle'),
             link : url,
             haschildren : false,
             icon : {'pix':"i/navigationitem",'component':'moodle'}

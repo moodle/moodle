@@ -1,8 +1,8 @@
 <?php
 
 // Implements logout for Shibboleth authenticated users according to:
-// - https://spaces.internet2.edu/display/SHIB2/NativeSPLogoutInitiator
-// - https://spaces.internet2.edu/display/SHIB2/NativeSPNotify
+// - https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLogoutInitiator
+// - https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPNotify
 
 require_once("../../config.php");
 
@@ -66,8 +66,8 @@ Because neither of these two variants seems to be the case, the WSDL file for
 the web service is returned.
 
 For more information see:
-- https://spaces.internet2.edu/display/SHIB2/NativeSPLogoutInitiator
-- https://spaces.internet2.edu/display/SHIB2/NativeSPNotify
+- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLogoutInitiator
+- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPNotify
 -->
 
     <types>

@@ -31,11 +31,10 @@ M.availability_group.form.initInner = function(groups) {
 
 M.availability_group.form.getNode = function(json) {
     // Create HTML structure.
-    var strings = M.str.availability_group;
-    var html = '<label>' + strings.title + ' <span class="availability-group">' +
+    var html = '<label>' + M.util.get_string('title', 'availability_group') + ' <span class="availability-group">' +
             '<select name="id">' +
-            '<option value="choose">' + M.str.moodle.choosedots + '</option>' +
-            '<option value="any">' + strings.anygroup + '</option>';
+            '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>' +
+            '<option value="any">' + M.util.get_string('anygroup', 'availability_group') + '</option>';
     for (var i = 0; i < this.groups.length; i++) {
         var group = this.groups[i];
         // String has already been escaped using format_string.

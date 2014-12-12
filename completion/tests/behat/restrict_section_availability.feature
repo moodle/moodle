@@ -30,7 +30,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I add a "Label" to section "1" and I fill the form with:
       | Label text | Test label |
       | Completion tracking | Students can manually mark the activity as completed |

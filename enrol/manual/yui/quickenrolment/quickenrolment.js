@@ -89,7 +89,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             var recovergrades = null;
             if (this.get(UEP.DISABLEGRADEHISTORY) != true) {
                 recovergrades = create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.RECOVERGRADES+'"></div>')
-                    .append(create('<label class="'+CSS.RECOVERGRADESTITLE+'" for="'+CSS.RECOVERGRADES+'">'+M.str.enrol.recovergrades+'</label>'))
+                    .append(create('<label class="'+CSS.RECOVERGRADESTITLE+'" for="'+CSS.RECOVERGRADES+'">'+M.util.get_string('recovergrades', 'enrol')+'</label>'))
                     .append(create('<input type="checkbox" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'"'+ this.get(UEP.RECOVERGRADESDEFAULT) +' />'))
             }
 
@@ -97,21 +97,21 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 .append(create('<div class="'+CSS.WRAP+'"></div>')
                     .append(create('<div class="'+CSS.HEADER+' header"></div>')
                         .append(create('<div class="'+CSS.CLOSE+'"></div>'))
-                        .append(create('<h2>'+M.str.enrol.enrolusers+'</h2>')))
+                        .append(create('<h2>'+M.util.get_string('enrolusers', 'enrol')+'</h2>')))
                     .append(create('<div class="'+CSS.CONTENT+'"></div>')
                         .append(create('<div class="'+CSS.SEARCHCONTROLS+'"></div>')
-                            .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.ROLE+'"><label for="id_enrol_manual_assignable_roles">'+M.str.role.assignroles+'</label></div>')
-                                    .append(create('<select id="id_enrol_manual_assignable_roles"><option value="">'+M.str.enrol.none+'</option></select>'))
+                            .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.ROLE+'"><label for="id_enrol_manual_assignable_roles">'+M.util.get_string('assignroles', 'role')+'</label></div>')
+                                    .append(create('<select id="id_enrol_manual_assignable_roles"><option value="">'+M.util.get_string('none', 'enrol')+'</option></select>'))
                             )
                             .append(create('<div class="'+CSS.ENTITYSELECTOR+'"></div>'))
                             .append(create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
-                                .append(create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
+                                .append(create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.util.get_string('enrolmentoptions', 'enrol')+'</div>'))
                                 .append(create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
                                     .append(recovergrades)
-                                    .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.STARTDATE+'">'+M.str.moodle.startingfrom+'</div>')
+                                    .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.STARTDATE+'">'+M.util.get_string('startingfrom', 'moodle')+'</div>')
                                         .append(create('<select></select>')))
-                                    .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.DURATION+'">'+M.str.enrol.enrolperiod+'</div>')
-                                        .append(create('<select><option value="0" selected="selected">'+M.str.enrol.unlimitedduration+'</option></select>')))
+                                    .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.DURATION+'">'+M.util.get_string('enrolperiod', 'enrol')+'</div>')
+                                        .append(create('<select><option value="0" selected="selected">'+M.util.get_string('unlimitedduration', 'enrol')+'</option></select>')))
                                 )
                             )
                         )
@@ -121,12 +121,12 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                                 .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
                             .setStyle('opacity', 0.5)))
                     .append(create('<div class="'+CSS.FOOTER+'"></div>')
-                        .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+M.str.enrol.usersearch+'</label></div>')
+                        .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+M.util.get_string('usersearch', 'enrol')+'</label></div>')
                             .append(create('<input type="text" id="enrolusersearch" value="" />'))
-                                .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+M.str.enrol.usersearch+'" />'))
+                                .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+M.util.get_string('usersearch', 'enrol')+'" />'))
                         )
                         .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
-                            .append(create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'))
+                            .append(create('<input type="button" value="'+M.util.get_string('finishenrollingusers', 'enrol')+'" />'))
                         )
                     )
                 )
@@ -152,9 +152,9 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             if (this.get(UEP.COHORTSAVAILABLE)) {
                 this.get(UEP.BASE).one('.'+CSS.ENTITYSELECTOR)
                     .append(create('<input type="radio" id="id_enrol_manual_entity_users" name="enrol_manual_entity" value="users" checked="checked"/>'))
-                    .append(create('<label for="id_enrol_manual_entity_users">'+ M.str.enrol_manual.browseusers+'</label>'))
+                    .append(create('<label for="id_enrol_manual_entity_users">'+ M.util.get_string('browseusers', 'enrol_manual')+'</label>'))
                     .append(create('<input type="radio" id="id_enrol_manual_entity_cohorts" name="enrol_manual_entity" value="cohorts"/>'))
-                    .append(create('<label for="id_enrol_manual_entity_cohorts">'+M.str.enrol_manual.browsecohorts+'</label>'));
+                    .append(create('<label for="id_enrol_manual_entity_cohorts">'+M.util.get_string('browsecohorts', 'enrol_manual')+'</label>'));
                 this.get(UEP.BASE).one('#id_enrol_manual_entity_cohorts').on('change', this.search, this);
                 this.get(UEP.BASE).one('#id_enrol_manual_entity_users').on('change', this.search, this);
             } else {
@@ -380,7 +380,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 new M.core.exception(e);
             }
             if (!result.success) {
-                this.setContent = M.str.enrol.errajaxsearch;
+                this.setContent = M.util.get_string('errajaxsearch', 'enrol');
             }
             var users;
             if (!args.append) {
@@ -401,17 +401,17 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                         .append(create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
                         .append(create('<div class="'+CSS.EXTRAFIELDS+'">'+user.extrafields+'</div>')))
                     .append(create('<div class="'+CSS.OPTIONS+'"></div>')
-                        .append(create('<input type="button" class="'+CSS.ENROL+'" value="'+M.str.enrol.enrol+'" />')))
+                        .append(create('<input type="button" class="'+CSS.ENROL+'" value="'+M.util.get_string('enrol', 'enrol')+'" />')))
                 );
             }
             this.set(UEP.USERCOUNT, count);
             if (!args.append) {
-                var usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
+                var usersstr = (result.response.totalusers == '1')?M.util.get_string('ajaxoneuserfound', 'enrol'):M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
                 var content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                     .append(create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
                     .append(users);
                 if (result.response.totalusers > (this.get(UEP.PAGE)+1)*this.get(UEP.PERPAGE)) {
-                    var fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol.ajaxnext25+'</a></div>');
+                    var fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.util.get_string('ajaxnext25', 'enrol')+'</a></div>');
                     fetchmore.on('click', this.search, this, true);
                     content.append(fetchmore)
                 }
@@ -433,7 +433,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 new M.core.exception(e);
             }
             if (!result.success) {
-                this.setContent = M.str.enrol.errajaxsearch;
+                this.setContent = M.util.get_string('errajaxsearch', 'enrol');
             }
             var cohorts;
             if (!args.append) {
@@ -456,13 +456,13 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             }
             this.set(UEP.COHORTCOUNT, count);
             if (!args.append) {
-                //var usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
+                //var usersstr = (result.response.totalusers == '1')?M.util.get_string('ajaxoneuserfound', 'enrol'):M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
                 var cohortsstr = 'Found '+result.response.totalcohorts+' cohorts'; // TODO
                 var content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                     .append(create('<div class="'+CSS.TOTALCOHORTS+'">'+cohortsstr+'</div>'))
                     .append(cohorts);
                 if (result.response.totalcohorts > (this.get(UEP.PAGE)+1)*this.get(UEP.PERPAGE)) {
-                    var fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol.ajaxnext25+'</a></div>');
+                    var fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.util.get_string('ajaxnext25', 'enrol')+'</a></div>');
                     fetchmore.on('click', this.search, this, true);
                     content.append(fetchmore)
                 }

@@ -31,7 +31,7 @@ Feature: Sections can be moved
     Given I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Course layout | Show one section per page |
-    And I press "Save changes"
+    And I press "Save and display"
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -44,7 +44,7 @@ Feature: Sections can be moved
     Given I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Course layout | Show one section per page |
-    And I press "Save changes"
+    And I press "Save and display"
     And I add a "Forum" to section "2" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |

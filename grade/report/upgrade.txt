@@ -1,6 +1,9 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
+=== 2.8.2 ===
+* gradereport_singleview::__construct doesn't need groupid parameter anymore, so it was renamed to $unused.
+
 === 2.6.5, 2.7.2 ===
 
 * The callback function grade_report_*_profilereport now takes one more parameter $viewasuser. This parameter

@@ -331,13 +331,13 @@ YUI.add('moodle-core_filepicker', function(Y) {
         /** initialize table view */
         var initialize_table_view = function() {
             var cols = [
-                {key: "displayname", label: M.str.moodle.name, allowHTML: true, formatter: formatTitle,
+                {key: "displayname", label: M.util.get_string('name', 'moodle'), allowHTML: true, formatter: formatTitle,
                     sortable: true, sortFn: sortFoldersFirst},
-                {key: "datemodified", label: M.str.moodle.lastmodified, allowHTML: true, formatter: formatValue,
+                {key: "datemodified", label: M.util.get_string('lastmodified', 'moodle'), allowHTML: true, formatter: formatValue,
                     sortable: true, sortFn: sortFoldersFirst},
-                {key: "size", label: M.str.repository.size, allowHTML: true, formatter: formatValue,
+                {key: "size", label: M.util.get_string('size', 'repository'), allowHTML: true, formatter: formatValue,
                     sortable: true, sortFn: sortFoldersFirst},
-                {key: "mimetype", label: M.str.repository.type, allowHTML: true,
+                {key: "mimetype", label: M.util.get_string('type', 'repository'), allowHTML: true,
                     sortable: true, sortFn: sortFoldersFirst}
             ];
             scope.tableview = new Y.DataTable({columns: cols, data: fileslist});
@@ -722,7 +722,7 @@ M.core_filepicker.init = function(Y, options) {
                 this.process_dlg = new M.core.dialogue({
                     draggable    : true,
                     bodyContent  : node,
-                    headerContent: M.str.repository.fileexistsdialogheader,
+                    headerContent: M.util.get_string('fileexistsdialogheader', 'repository'),
                     centered     : true,
                     modal        : true,
                     visible      : false,
@@ -732,9 +732,9 @@ M.core_filepicker.init = function(Y, options) {
                 node.one('.fp-dlg-butrename').on('click', handleRename, this);
                 node.one('.fp-dlg-butcancel').on('click', handleCancel, this);
                 if (this.options.env == 'editor') {
-                    node.one('.fp-dlg-text').setContent(M.str.repository.fileexistsdialog_editor);
+                    node.one('.fp-dlg-text').setContent(M.util.get_string('fileexistsdialog_editor', 'repository'));
                 } else {
-                    node.one('.fp-dlg-text').setContent(M.str.repository.fileexistsdialog_filemanager);
+                    node.one('.fp-dlg-text').setContent(M.util.get_string('fileexistsdialog_filemanager', 'repository'));
                 }
             }
             this.selectnode.removeClass('loading');
@@ -751,10 +751,10 @@ M.core_filepicker.init = function(Y, options) {
         },
         /** displays message in a popup */
         print_msg: function(msg, type) {
-            var header = M.str.moodle.error;
+            var header = M.util.get_string('error', 'moodle');
             if (type != 'error') {
                 type = 'info'; // one of only two types excepted
-                header = M.str.moodle.info;
+                header = M.util.get_string('info', 'moodle');
             }
             if (!this.msg_dlg) {
                 this.msg_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.message);
@@ -785,7 +785,7 @@ M.core_filepicker.init = function(Y, options) {
             /*if ((appenditems == null) && (!this.filelist || !this.filelist.length) && !this.active_repo.hasmorepages) {
              // TODO do it via classes and adjust for each view mode!
                 // If there are no items and no next page, just display status message and quit
-                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                this.display_error(M.util.get_string('nofilesavailable', 'repository'), 'nofilesavailable');
                 return;
             }*/
             if (this.viewmode == 2) {
@@ -920,7 +920,7 @@ M.core_filepicker.init = function(Y, options) {
             var list = (appenditems != null) ? appenditems : this.filelist;
             this.viewmode = 2;
             if (!this.filelist || this.filelist.length==0 && (!this.filepath || !this.filepath.length)) {
-                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                this.display_error(M.util.get_string('nofilesavailable', 'repository'), 'nofilesavailable');
                 return;
             }
 
@@ -964,7 +964,7 @@ M.core_filepicker.init = function(Y, options) {
             var list = (appenditems != null) ? appenditems : this.filelist;
             var element_template = Y.Node.create(M.core_filepicker.templates.iconfilename);
             if ((appenditems == null) && (!this.filelist || !this.filelist.length)) {
-                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                this.display_error(M.util.get_string('nofilesavailable', 'repository'), 'nofilesavailable');
                 return;
             }
             var options = {
@@ -998,7 +998,7 @@ M.core_filepicker.init = function(Y, options) {
             this.viewmode = 3;
             var list = (appenditems != null) ? appenditems : this.filelist;
             if (!appenditems && (!this.filelist || this.filelist.length==0) && !this.active_repo.hasmorepages) {
-                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                this.display_error(M.util.get_string('nofilesavailable', 'repository'), 'nofilesavailable');
                 return;
             }
             var element_template = Y.Node.create(M.core_filepicker.templates.listfilename);
@@ -1074,7 +1074,7 @@ M.core_filepicker.init = function(Y, options) {
             if (argstitle.length > titlelength) {
                 argstitle = argstitle.substring(0, titlelength) + '...';
             }
-            Y.one('#fp-file_label_'+this.options.client_id).setContent(Y.Escape.html(M.str.repository.select+' '+argstitle));
+            Y.one('#fp-file_label_'+this.options.client_id).setContent(Y.Escape.html(M.util.get_string('select', 'repository')+' '+argstitle));
             this.selectui.show();
             Y.one('#'+this.selectnode.get('id')).focus();
             var client_id = this.options.client_id;
@@ -1305,7 +1305,7 @@ M.core_filepicker.init = function(Y, options) {
                 extraClasses : ['filepicker'],
                 draggable    : true,
                 bodyContent  : this.fpnode,
-                headerContent: '<h3 id="'+ labelid +'">'+ M.str.repository.filepicker +'</h3>',
+                headerContent: '<h3 id="'+ labelid +'">'+ M.util.get_string('filepicker', 'repository') +'</h3>',
                 centered     : true,
                 modal        : true,
                 visible      : false,
@@ -1323,7 +1323,7 @@ M.core_filepicker.init = function(Y, options) {
 
             var fplabel = 'fp-file_label_'+ client_id;
             this.selectui = new M.core.dialogue({
-                headerContent: '<h3 id="' + fplabel +'">'+M.str.repository.select+'</h3>',
+                headerContent: '<h3 id="' + fplabel +'">'+M.util.get_string('select', 'repository')+'</h3>',
                 draggable    : true,
                 width        : '450px',
                 bodyContent  : this.selectnode,
@@ -1393,7 +1393,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             // display error if no repositories found
             if (sorted_repositories.length==0) {
-                this.display_error(M.str.repository.norepositoriesavailable, 'norepositoriesavailable')
+                this.display_error(M.util.get_string('norepositoriesavailable', 'repository'), 'norepositoriesavailable')
             }
             // display repository that was used last time
             this.mainui.show();
@@ -1698,7 +1698,7 @@ M.core_filepicker.init = function(Y, options) {
 
                 this.set_preference('recentlicense', license.get('value'));
                 if (!content.one('.fp-file input').get('value')) {
-                    scope.print_msg(M.str.repository.nofilesattached, 'error');
+                    scope.print_msg(M.util.get_string('nofilesattached', 'repository'), 'error');
                     return false;
                 }
                 this.hide_header();

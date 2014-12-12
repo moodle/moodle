@@ -23,22 +23,21 @@ M.availability_completion.form.initInner = function(cms) {
 
 M.availability_completion.form.getNode = function(json) {
     // Create HTML structure.
-    var strings = M.str.availability_completion;
-    var html = strings.title + ' <span class="availability-group"><label>' +
-            '<span class="accesshide">' + strings.label_cm + ' </span>' +
-            '<select name="cm" title="' + strings.label_cm + '">' +
-            '<option value="0">' + M.str.moodle.choosedots + '</option>';
+    var html = M.util.get_string('title', 'availability_completion') + ' <span class="availability-group"><label>' +
+            '<span class="accesshide">' + M.util.get_string('label_cm', 'availability_completion') + ' </span>' +
+            '<select name="cm" title="' + M.util.get_string('label_cm', 'availability_completion') + '">' +
+            '<option value="0">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     for (var i = 0; i < this.cms.length; i++) {
         var cm = this.cms[i];
         // String has already been escaped using format_string.
         html += '<option value="' + cm.id + '">' + cm.name + '</option>';
     }
-    html += '</select></label> <label><span class="accesshide">' + strings.label_completion +
-            ' </span><select name="e" title="' + strings.label_completion + '">' +
-            '<option value="1">' + strings.option_complete + '</option>' +
-            '<option value="0">' + strings.option_incomplete + '</option>' +
-            '<option value="2">' + strings.option_pass + '</option>' +
-            '<option value="3">' + strings.option_fail + '</option>' +
+    html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_completion', 'availability_completion') +
+            ' </span><select name="e" title="' + M.util.get_string('label_completion', 'availability_completion') + '">' +
+            '<option value="1">' + M.util.get_string('option_complete', 'availability_completion') + '</option>' +
+            '<option value="0">' + M.util.get_string('option_incomplete', 'availability_completion') + '</option>' +
+            '<option value="2">' + M.util.get_string('option_pass', 'availability_completion') + '</option>' +
+            '<option value="3">' + M.util.get_string('option_fail', 'availability_completion') + '</option>' +
             '</select></label></span>';
     var node = Y.Node.create('<span>' + html + '</span>');
 

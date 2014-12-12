@@ -25,7 +25,7 @@ Feature: Toggle activities groups mode from the course page
     And I set the following fields to these values:
       | Group mode | No groups |
       | Force group mode | No |
-    When I press "Save changes"
+    When I press "Save and display"
     Then "No groups (Click to change)" "link" should exist
     And "//a/child::img[contains(@src, 'groupn')]" "xpath_element" should exist
     And I click on "No groups (Click to change)" "link" in the "Test forum name" activity

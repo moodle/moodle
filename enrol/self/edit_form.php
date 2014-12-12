@@ -106,7 +106,7 @@ class enrol_self_edit_form extends moodleform {
         $mform->setType('customint3', PARAM_INT);
 
         $cohorts = array(0 => get_string('no'));
-        $allcohorts = cohort_get_available_cohorts($context);
+        $allcohorts = cohort_get_available_cohorts($context, 0, 0, 0);
         if ($instance->customint5 && !isset($allcohorts[$instance->customint5]) &&
                 ($c = $DB->get_record('cohort', array('id' => $instance->customint5), 'id, name, idnumber, contextid, visible', IGNORE_MISSING))) {
             // Current cohort was not found because current user can not see it. Still keep it.

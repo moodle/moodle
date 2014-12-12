@@ -105,4 +105,20 @@ class behat_completion extends behat_base {
         return $steps;
     }
 
+    /**
+     * Toggles completion tracking for course being in the course page.
+     *
+     * @When /^completion tracking is "(?P<completion_status_string>Enabled|Disabled)" in current course$/
+     * @param string $completionstatus The status, enabled or disabled.
+     */
+    public function completion_is_toggled_in_course($completionstatus) {
+
+        $toggle = strtolower($completionstatus) == 'enabled' ? get_string('yes') : get_string('no');
+
+        return array(
+            new Given('I follow "'.get_string('editsettings').'"'),
+            new Given('I set the field "'.get_string('enablecompletion', 'completion').'" to "'.$toggle.'"'),
+            new Given('I press "'.get_string('savechangesanddisplay').'"')
+        );
+    }
 }

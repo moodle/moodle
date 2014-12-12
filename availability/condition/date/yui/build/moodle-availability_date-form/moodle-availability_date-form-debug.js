@@ -29,12 +29,11 @@ M.availability_date.form.initInner = function(html, defaultTime) {
 };
 
 M.availability_date.form.getNode = function(json) {
-    var strings = M.str.availability_date;
-    var html = strings.direction_before + ' <span class="availability-group">' +
-            '<label><span class="accesshide">' + strings.direction_label + ' </span>' +
+    var html = M.util.get_string('direction_before', 'availability_date') + ' <span class="availability-group">' +
+            '<label><span class="accesshide">' + M.util.get_string('direction_label', 'availability_date') + ' </span>' +
             '<select name="direction">' +
-            '<option value="&gt;=">' + strings.direction_from + '</option>' +
-            '<option value="&lt;">' + strings.direction_until + '</option>' +
+            '<option value="&gt;=">' + M.util.get_string('direction_from', 'availability_date') + '</option>' +
+            '<option value="&lt;">' + M.util.get_string('direction_until', 'availability_date') + '</option>' +
             '</select></label></span> ' + this.html;
     var node = Y.Node.create('<span>' + html + '</span>');
 
@@ -58,7 +57,7 @@ M.availability_date.form.getNode = function(json) {
                 }
             },
             failure : function() {
-                window.alert(M.str.availability_date.ajaxerror);
+                window.alert(M.util.get_string('ajaxerror', 'availability_date'));
             }
         }});
     } else {
@@ -132,7 +131,7 @@ M.availability_date.form.updateTime = function(node) {
             M.core_availability.form.update();
         },
         failure : function() {
-            window.alert(M.str.availability_date.ajaxerror);
+            window.alert(M.util.get_string('ajaxerror', 'availability_date'));
         }
     }});
 };

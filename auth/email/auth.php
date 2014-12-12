@@ -89,12 +89,15 @@ class auth_plugin_email extends auth_plugin_base {
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');
 
+        $plainpassword = $user->password;
         $user->password = hash_internal_user_password($user->password);
         if (empty($user->calendartype)) {
             $user->calendartype = $CFG->calendartype;
         }
 
         $user->id = user_create_user($user, false, false);
+
+        user_add_password_history($user->id, $plainpassword);
 
         // Save any custom profile field information.
         profile_save_data($user);

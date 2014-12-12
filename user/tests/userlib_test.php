@@ -177,4 +177,174 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertEquals(10, $count);
         $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
     }
+
+    /**
+     * Test function user_add_password_history().
+     */
+    public function test_user_add_password_history() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $DB->delete_records('user_password_history', array());
+
+        set_config('passwordreuselimit', 0);
+
+        user_add_password_history($user1->id, 'pokus');
+        $this->assertEquals(0, $DB->count_records('user_password_history'));
+
+        // Test adding and discarding of old.
+
+        set_config('passwordreuselimit', 3);
+
+        user_add_password_history($user1->id, 'pokus');
+        $this->assertEquals(1, $DB->count_records('user_password_history'));
+        $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
+
+        user_add_password_history($user1->id, 'pokus2');
+        user_add_password_history($user1->id, 'pokus3');
+        user_add_password_history($user1->id, 'pokus4');
+        $this->assertEquals(3, $DB->count_records('user_password_history'));
+        $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user1->id)));
+
+        user_add_password_history($user2->id, 'pokus1');
+        $this->assertEquals(4, $DB->count_records('user_password_history'));
+        $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user1->id)));
+        $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user2->id)));
+
+        user_add_password_history($user2->id, 'pokus2');
+        user_add_password_history($user2->id, 'pokus3');
+        $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user2->id)));
+
+        $ids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
+        user_add_password_history($user2->id, 'pokus4');
+        $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user2->id)));
+        $newids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
+
+        $removed = array_shift($ids);
+        $added = array_pop($newids);
+        $this->assertSame($ids, $newids);
+        $this->assertGreaterThan($removed, $added);
+
+        // Test disabling prevents changes.
+
+        set_config('passwordreuselimit', 0);
+
+        $this->assertEquals(6, $DB->count_records('user_password_history'));
+
+        $ids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
+        user_add_password_history($user2->id, 'pokus5');
+        user_add_password_history($user3->id, 'pokus1');
+        $newids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
+        $this->assertSame($ids, $newids);
+        $this->assertEquals(6, $DB->count_records('user_password_history'));
+
+        set_config('passwordreuselimit', -1);
+
+        $ids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
+        user_add_password_history($user2->id, 'pokus6');
+        user_add_password_history($user3->id, 'pokus6');
+        $newids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
+        $this->assertSame($ids, $newids);
+        $this->assertEquals(6, $DB->count_records('user_password_history'));
+    }
+
+    /**
+     * Test function user_add_password_history().
+     */
+    public function test_user_is_previously_used_password() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $DB->delete_records('user_password_history', array());
+
+        set_config('passwordreuselimit', 0);
+
+        user_add_password_history($user1->id, 'pokus');
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus'));
+
+        set_config('passwordreuselimit', 3);
+
+        user_add_password_history($user2->id, 'pokus1');
+        user_add_password_history($user2->id, 'pokus2');
+
+        user_add_password_history($user1->id, 'pokus1');
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+
+        user_add_password_history($user1->id, 'pokus2');
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+
+        user_add_password_history($user1->id, 'pokus3');
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+
+        user_add_password_history($user1->id, 'pokus4');
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus4'));
+
+        set_config('passwordreuselimit', 2);
+
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus4'));
+
+        set_config('passwordreuselimit', 3);
+
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus4'));
+
+        set_config('passwordreuselimit', 0);
+
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+    }
+
+    /**
+     * Test that password history is deleted together with user.
+     */
+    public function test_delete_of_hashes_on_user_delete() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $DB->delete_records('user_password_history', array());
+
+        set_config('passwordreuselimit', 3);
+
+        user_add_password_history($user1->id, 'pokus');
+        user_add_password_history($user2->id, 'pokus1');
+        user_add_password_history($user2->id, 'pokus2');
+
+        $this->assertEquals(3, $DB->count_records('user_password_history'));
+        $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
+        $this->assertEquals(2, $DB->count_records('user_password_history', array('userid' => $user2->id)));
+
+        delete_user($user2);
+        $this->assertEquals(1, $DB->count_records('user_password_history'));
+        $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
+        $this->assertEquals(0, $DB->count_records('user_password_history', array('userid' => $user2->id)));
+    }
 }

@@ -215,13 +215,13 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                 count ++;
             }
             if (!count) {
-                var searchstr = (this.lastsearch != '') ? this.insert_search_into_str(M.str.moodle.nomatchingusers, this.lastsearch) : M.str.moodle.none;
+                var searchstr = (this.lastsearch != '') ? this.insert_search_into_str(M.util.get_string('nomatchingusers', 'moodle'), this.lastsearch) : M.util.get_string('none', 'moodle');
                 this.output_group(searchstr, {}, selectedusers, true)
             }
 
             // If there were previously selected users who do not match the search, show them too.
             if (this.get_option('preserveselected') && selectedusers) {
-                this.output_group(this.insert_search_into_str(M.str.moodle.previouslyselectedusers, this.lastsearch), selectedusers, true, false);
+                this.output_group(this.insert_search_into_str(M.util.get_string('previouslyselectedusers', 'moodle'), this.lastsearch), selectedusers, true, false);
             }
             this.handle_selection_change();
         },

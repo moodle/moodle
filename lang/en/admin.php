@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'admin', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   admin
+ * @package   core
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -342,6 +341,7 @@ $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in
 $string['configsupportemail'] = 'This email address will be published to users of this site as the one to email when they need general help (for example, when new users create their own accounts).  If this email is left blank then no such helpful email address is supplied.';
 $string['configsupportname'] = 'This is the name of a person or other entity offering general help via the support email or web address.';
 $string['configsupportpage'] = 'This web address will be published to users of this site as the one to go to when they need general help (for example, when new users create their own accounts).  If this address is left blank then no link will be supplied.';
+$string['configtempdatafoldercleanup'] = 'Remove temporary data files from the data folder that are older than the selected time.';
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
 For example:  standard,orangewhite.';
@@ -617,6 +617,8 @@ $string['legacyfilesinnewcourses_help'] = 'By default, legacy course files areas
 $string['licensesettings'] = 'Licence settings';
 $string['linkadmincategories'] = 'Link admin categories';
 $string['linkadmincategories_help'] = 'If enabled admin setting categories will be displayed as links in the navigation and will lead to the admin category pages.';
+$string['linkcoursesections'] = 'Always link course sections';
+$string['linkcoursesections_help'] = 'Always try to provide a link for course sections. Course sections are usually only shown as links if the course format displays a single section per page. If this setting is enabled a link will always be provided.';
 $string['loading'] = 'Loading';
 $string['localetext'] = 'Sitewide locale';
 $string['localstringcustomization'] = 'Local string customization';
@@ -777,6 +779,8 @@ $string['passwordchangelogout'] = 'Log out after password change';
 $string['passwordchangelogout_desc'] = 'If enabled, when a password is changed, all browser sessions are terminated, apart from the one in which the new password is specified. (This setting does not affect password changes via bulk user upload.)';
 $string['passwordpolicy'] = 'Password policy';
 $string['passwordresettime'] = 'Maximum time to validate password reset request';
+$string['passwordreuselimit'] = 'Password rotation limit';
+$string['passwordreuselimit_desc'] = 'Number of times a user must change their password before they are allowed to reuse a password. Hashes of previously used passwords are stored in local database table. This feature might not be compatible with some external authentication plugins.';
 $string['pathtoclam'] = 'clam AV path';
 $string['pathtodot'] = 'Path to dot';
 $string['pathtodot_help'] = 'Path to dot. Probably something like /usr/bin/dot. To be able to generate graphics from DOT files, you must have installed the dot executable and point to it here. Note that, for now, this only used by the profiling features (Development->Profiling) built into Moodle.';
@@ -1037,6 +1041,7 @@ $string['tasksessioncleanup'] = 'Cleanup old sessions';
 $string['taskstatscron'] = 'Background processing for statistics';
 $string['tasktagcron'] = 'Background processing for tags';
 $string['tasktempfilecleanup'] = 'Delete stale temp files';
+$string['tempdatafoldercleanup'] = 'Clean up temporary data files older than';
 $string['themedesignermode'] = 'Theme designer mode';
 $string['themelist'] = 'Theme list';
 $string['themenoselected'] = 'No theme selected';

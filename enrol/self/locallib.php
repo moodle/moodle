@@ -41,6 +41,7 @@ class enrol_self_enrol_form extends moodleform {
     }
 
     public function definition() {
+        global $USER, $OUTPUT, $CFG;
         $mform = $this->_form;
         $instance = $this->_customdata;
         $this->instance = $instance;
@@ -53,6 +54,26 @@ class enrol_self_enrol_form extends moodleform {
             // Change the id of self enrolment key input as there can be multiple self enrolment methods.
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'),
                     array('id' => 'enrolpassword_'.$instance->id));
+            $context = context_course::instance($this->instance->courseid);
+            $keyholders = get_users_by_capability($context, 'enrol/self:holdkey', user_picture::fields('u'));
+            $keyholdercount = 0;
+            foreach ($keyholders as $keyholder) {
+                $keyholdercount++;
+                if ($keyholdercount === 1) {
+                    $mform->addElement('static', 'keyholder', '', get_string('keyholder', 'enrol_self'));
+                }
+                $keyholdercontext = context_user::instance($keyholder->id);
+                if ($USER->id == $keyholder->id || has_capability('moodle/user:viewdetails', context_system::instance()) ||
+                        has_coursecontact_role($keyholder->id)) {
+                    $profilelink = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $keyholder->id . '&amp;course=' .
+                    $this->instance->courseid . '">' . fullname($keyholder) . '</a>';
+                } else {
+                    $profilelink = fullname($keyholder);
+                }
+                $profilepic = $OUTPUT->user_picture($keyholder, array('size' => 35, 'courseid' => $this->instance->courseid));
+                $mform->addElement('static', 'keyholder'.$keyholdercount, '', $profilepic . $profilelink);
+            }
+
         } else {
             $mform->addElement('static', 'nokey', '', get_string('nopassword', 'enrol_self'));
         }

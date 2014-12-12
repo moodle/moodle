@@ -40,7 +40,7 @@ Feature: Expand the courses nodes within the navigation block
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Allow guest access | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I set the following administration settings values:
       | Show all courses | 1 |
     And I log out
