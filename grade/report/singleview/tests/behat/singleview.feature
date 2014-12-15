@@ -66,6 +66,13 @@ Feature: We can use Single view
     And the following should exist in the "generaltable" table:
         | Test assignment one |
         | 10.00 |
+    And I set the following fields to these values:
+        | Test grade item | 45 |
+    And I press "Update"
+    Then I should see "Grades were set for 1 items"
+    And I press "Continue"
+    And the field "Grade for Test grade item" matches value "45.00"
+    And the field "Grade for Course total" matches value "55.00"
     And I click on "Show grades for Test assignment three" "link"
     And I click on "Override for james (Student) 1" "checkbox"
     And I set the following fields to these values:
