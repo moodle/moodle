@@ -517,6 +517,23 @@ $CFG->admin = 'admin';
 // on a shared file system that supports locking.
 //      $CFG->lock_file_root = $CFG->dataroot . '/lock';
 //
+// Moodle 2.9 allows administrators to customise the list of supported file types.
+// To add a new filetype or override the definition of an existing one, set the
+// customfiletypes variable like this:
+//
+// $CFG->customfiletypes = array(
+//     (object)array(
+//         'extension' => 'frog',
+//         'icon' => 'archive',
+//         'type' => 'application/frog',
+//         'customdescription' => 'Amphibian-related file archive'
+//     )
+// );
+//
+// The extension, icon, and type fields are required. The icon field can refer to
+// any icon inside the pix/f folder. You can also set the customdescription field
+// (shown above) and (for advanced use) the groups, string, and defaulticon fields.
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
