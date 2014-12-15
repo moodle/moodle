@@ -84,9 +84,12 @@ class user_filter_profilefield extends user_filter_type {
             return;
         }
         $objs = array();
-        $objs[] = $mform->createElement('select', $this->_name.'_fld', null, $profilefields);
-        $objs[] = $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
-        $objs[] = $mform->createElement('text', $this->_name, null);
+        $objs['field'] = $mform->createElement('select', $this->_name.'_fld', null, $profilefields);
+        $objs['op'] = $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
+        $objs['value'] = $mform->createElement('text', $this->_name, null);
+        $objs['field']->setLabel(get_string('profilefilterfield', 'filters'));
+        $objs['op']->setLabel(get_string('profilefilterlimiter', 'filters'));
+        $objs['value']->setLabel(get_string('valuefor', 'filters', $this->_label));
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->setType($this->_name, PARAM_RAW);
         if ($this->_advanced) {
