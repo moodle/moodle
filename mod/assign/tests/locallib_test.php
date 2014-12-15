@@ -1498,6 +1498,171 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
     }
 
+    /**
+     * Test reopen behavior when in "Reopen until pass" mode.
+     */
+    public function test_attempt_reopen_method_untilpass() {
+        global $PAGE;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS,
+                'maxattempts' => 3,
+                'submissiondrafts' => 1,
+                'assignsubmission_onlinetext_enabled' => 1));
+        $PAGE->set_url(new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id)));
+
+        // Set grade to pass to 80.
+        $gradeitem = $assign->get_grade_item();
+        $gradeitem->gradepass = '80.0';
+        $gradeitem->update();
+
+        // Student should be able to see an add submission button.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, get_string('addsubmission', 'assign')));
+
+        // Add a submission.
+        $now = time();
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // And now submit it for marking.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+
+        // Verify the student cannot make a new attempt.
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Mark the submission as non-passing.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // Check the student can see the grade.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, '50.0'));
+
+        // Check that the student now has a button for Add a new attempt.
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Check that the student now does not have a button for Submit.
+        $this->assertEquals(false, strpos($output, get_string('submitassignment', 'assign')));
+
+        // Check that the student now has a submission history.
+        $this->assertNotEquals(false, strpos($output, get_string('attempthistory', 'assign')));
+
+        // Add a second submission.
+        $now = time();
+        $submission = $assign->get_user_submission($this->students[0]->id, true, 1);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // And now submit it for marking.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+
+        // Mark the submission as passing.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '80.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 1);
+
+        // Check that the student does not have a button for Add a new attempt.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Re-mark the submission as not passing.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 1);
+
+        // Check that the student now has a button for Add a new attempt.
+        $this->setUser($this->students[0]);
+        $output = $assign->view_student_summary($this->students[0], true);
+        $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Add a submission as a second student.
+        $this->setUser($this->students[1]);
+        $now = time();
+        $submission = $assign->get_user_submission($this->students[1]->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // And now submit it for marking.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[1]->id, true, false);
+
+        // Mark the submission as passing.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '100.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[1]->id, 0);
+
+        // Check the student can see the grade.
+        $this->setUser($this->students[1]);
+        $output = $assign->view_student_summary($this->students[1], true);
+        $this->assertNotEquals(false, strpos($output, '100.0'));
+
+        // Check that the student does not have a button for Add a new attempt.
+        $output = $assign->view_student_summary($this->students[1], true);
+        $this->assertEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+
+        // Set grade to pass to 0, so that no attempts should reopen.
+        $gradeitem = $assign->get_grade_item();
+        $gradeitem->gradepass = '0';
+        $gradeitem->update();
+
+        // Add another submission.
+        $this->setUser($this->students[2]);
+        $now = time();
+        $submission = $assign->get_user_submission($this->students[2]->id, true);
+        $data = new stdClass();
+        $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
+                'text' => 'Submission text',
+                'format' => FORMAT_MOODLE);
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        // And now submit it for marking.
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[2]->id, true, false);
+
+        // Mark the submission as graded.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '0.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[2]->id, 0);
+
+        // Check the student can see the grade.
+        $this->setUser($this->students[2]);
+        $output = $assign->view_student_summary($this->students[2], true);
+        $this->assertNotEquals(false, strpos($output, '0.0'));
+
+        // Check that the student does not have a button for Add a new attempt.
+        $output = $assign->view_student_summary($this->students[2], true);
+        $this->assertEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
+    }
+
+
     public function test_markingworkflow() {
         global $PAGE;
 
