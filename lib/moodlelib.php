@@ -8630,7 +8630,8 @@ function getremoteaddr($default='0.0.0.0') {
             } else {
                 // Remove port from IPv4.
                 if (substr_count($address, ":") == 1) {
-                    $address = explode(":", $address)[0];
+                    $parts = explode(":", $address);
+                    $address = $parts[0];
                 }
             }
 
