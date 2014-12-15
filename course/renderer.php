@@ -1749,11 +1749,11 @@ class core_course_renderer extends plugin_renderer_base {
             $catdisplayoptions['viewmoreurl'] = new moodle_url($baseurl, array('browse' => 'categories', 'page' => 1));
         }
         $chelper->set_courses_display_options($coursedisplayoptions)->set_categories_display_options($catdisplayoptions);
-        // Display course category tree.
-        $output .= $this->coursecat_tree($chelper, $coursecat);
-
         // Add course search form.
         $output .= $this->course_search_form();
+
+        // Display course category tree.
+        $output .= $this->coursecat_tree($chelper, $coursecat);
 
         // Add action buttons
         $output .= $this->container_start('buttons');
