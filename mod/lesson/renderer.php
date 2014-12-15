@@ -560,14 +560,17 @@ class mod_lesson_renderer extends plugin_renderer_base {
     public function slideshow_start(lesson $lesson) {
         $attributes = array();
         $attributes['class'] = 'slideshow';
-        $attributes['style'] = 'background-color:'.$lesson->bgcolor.';height:'.$lesson->height.'px;width:'.$lesson->width.'px;';
+        $attributes['style'] = 'background-color:'.$lesson->properties()->bgcolor.';height:'.
+                $lesson->properties()->height.'px;width:'.$lesson->properties()->width.'px;';
         $output = html_writer::start_tag('div', $attributes);
+        return $output;
     }
     /**
      * Returns HTML to show the end of a slideshow
      */
     public function slideshow_end() {
         $output = html_writer::end_tag('div');
+        return $output;
     }
     /**
      * Returns a P tag containing contents
