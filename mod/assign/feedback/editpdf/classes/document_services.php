@@ -44,6 +44,8 @@ class document_services {
     const PAGE_IMAGE_FILEAREA = 'pages';
     /** File area for readonly page images */
     const PAGE_IMAGE_READONLY_FILEAREA = 'readonlypages';
+    /** File area for the stamps */
+    const STAMPS_FILEAREA = 'stamps';
     /** Filename for combined pdf */
     const COMBINED_PDF_FILENAME = 'combined.pdf';
 
@@ -363,6 +365,9 @@ class document_services {
         $record->filepath = '/';
         $fs = \get_file_storage();
 
+        // Remove the existing content of the filearea.
+        $fs->delete_area_files($record->contextid, $record->component, $record->filearea, $record->itemid);
+
         $files = array();
         for ($i = 0; $i < $pagecount; $i++) {
             $image = $pdf->get_image($i);
@@ -421,14 +426,13 @@ class document_services {
         $fs = \get_file_storage();
 
         // If we are after the readonly pages...
-        $copytoreadonly = false;
         if ($readonly) {
             $filearea = self::PAGE_IMAGE_READONLY_FILEAREA;
             if ($fs->is_area_empty($contextid, $component, $filearea, $itemid)) {
-                // We have a problem here, we were supposed to find the files...
-                // let's fallback on the other area, and copy the files to the readonly area.
-                $copytoreadonly = true;
-                $filearea = self::PAGE_IMAGE_FILEAREA;
+                // We have a problem here, we were supposed to find the files.
+                // Attempt to re-generate the pages from the combined images.
+                self::generate_page_images_for_attempt($assignment, $userid, $attemptnumber);
+                self::copy_pages_to_readonly_area($assignment, $grade);
             }
         }
 
@@ -460,10 +464,6 @@ class document_services {
                     $pages[$pagenumber] = $file;
                 }
                 ksort($pages);
-
-                if ($copytoreadonly) {
-                    self::copy_pages_to_readonly_area($assignment, $grade);
-                }
             }
         }
 

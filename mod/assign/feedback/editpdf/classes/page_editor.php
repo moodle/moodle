@@ -310,8 +310,9 @@ class page_editor {
     }
 
     /**
-     * This function copies annotations and comments from the source user
-     * to the current group member being processed when using applytoall.
+     * Copy annotations, comments, pages, and other required content from the source user to the current group member
+     * being procssed when using applytoall.
+     *
      * @param int|\assign $assignment
      * @param stdClass $grade
      * @param int $sourceuserid
@@ -327,6 +328,8 @@ class page_editor {
         $sourceusergrade = $assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
         $annotations = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
         $comments = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+        $contextid = $assignment->get_context()->id;
+        $sourceitemid = $sourceusergrade->id;
 
         // Add annotations and comments to current user to generate feedback file.
         foreach ($annotations as $annotation) {
@@ -338,24 +341,42 @@ class page_editor {
             $DB->insert_record('assignfeedback_editpdf_cmnt', $comment);
         }
 
-        // Delete the existing stamps and copy the source ones.
         $fs = get_file_storage();
-        $fs->delete_area_files($assignment->get_context()->id, 'assignfeedback_editpdf', 'stamps', $grade->id);
-        if ($files = $fs->get_area_files($assignment->get_context()->id,
-                                         'assignfeedback_editpdf',
-                                         'stamps',
-                                         $sourceusergrade->id,
-                                         "filename",
-                                         false)) {
+
+        // Copy the stamp files.
+        self::replace_files_from_to($fs, $contextid, $sourceitemid, $grade->id, document_services::STAMPS_FILEAREA, true);
+
+        // Copy the PAGE_IMAGE_FILEAREA files.
+        self::replace_files_from_to($fs, $contextid, $sourceitemid, $grade->id, document_services::PAGE_IMAGE_FILEAREA);
+
+        return true;
+    }
+
+    /**
+     * Replace the area files in the specified area with those in the source item id.
+     *
+     * @param \file_storage $fs The file storage class
+     * @param int $contextid The ID of the context for the assignment.
+     * @param int $sourceitemid The itemid to copy from - typically the source grade id.
+     * @param int $itemid The itemid to copy to - typically the target grade id.
+     * @param string $area The file storage area.
+     * @param bool $includesubdirs Whether to copy the content of sub-directories too.
+     */
+    public static function replace_files_from_to($fs, $contextid, $sourceitemid, $itemid, $area, $includesubdirs = false) {
+        $component = 'assignfeedback_editpdf';
+        // Remove the existing files within this area.
+        $fs->delete_area_files($contextid, $component, $area, $itemid);
+
+        // Copy the files from the source area.
+        if ($files = $fs->get_area_files($contextid, $component, $area, $sourceitemid,
+                                         "filename", $includesubdirs)) {
             foreach ($files as $file) {
                 $newrecord = new \stdClass();
-                $newrecord->contextid = $assignment->get_context()->id;
-                $newrecord->itemid = $grade->id;
+                $newrecord->contextid = $contextid;
+                $newrecord->itemid = $itemid;
                 $fs->create_file_from_storedfile($newrecord, $file);
             }
         }
-
-        return true;
     }
 
     /**
