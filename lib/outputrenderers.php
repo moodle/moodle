@@ -3067,28 +3067,44 @@ EOD;
             $navitemcount = count($opts->navitems);
             $idx = 0;
             foreach ($opts->navitems as $key => $value) {
-                $pix = null;
-                if (isset($value->pix) && !empty($value->pix)) {
-                    $pix = new pix_icon($value->pix, $value->title, null, array('class' => 'iconsmall'));
-                } else if (isset($value->imgsrc) && !empty($value->imgsrc)) {
-                    $value->title = html_writer::img(
-                        $value->imgsrc,
-                        $value->title,
-                        array('class' => 'iconsmall')
-                    ) . $value->title;
-                }
-                $al = new action_menu_link_secondary(
-                    $value->url,
-                    $pix,
-                    $value->title,
-                    array('class' => 'icon')
-                );
-                $am->add($al);
 
-                // Add dividers after the first item and before the
-                // last item.
-                if ($idx == 0 || $idx == $navitemcount - 2) {
-                    $am->add($divider);
+                switch ($value->itemtype) {
+                    case 'divider':
+                        // If the nav item is a divider, add one and skip link processing.
+                        $am->add($divider);
+                        $idx++;
+                        break;
+
+                    case 'invalid':
+                        // Silently skip invalid entries (should we post a notification?).
+                        break;
+
+                    case 'link':
+                        // Process this as a link item.
+                        $pix = null;
+                        if (isset($value->pix) && !empty($value->pix)) {
+                            $pix = new pix_icon($value->pix, $value->title, null, array('class' => 'iconsmall'));
+                        } else if (isset($value->imgsrc) && !empty($value->imgsrc)) {
+                            $value->title = html_writer::img(
+                                $value->imgsrc,
+                                $value->title,
+                                array('class' => 'iconsmall')
+                            ) . $value->title;
+                        }
+                        $al = new action_menu_link_secondary(
+                            $value->url,
+                            $pix,
+                            $value->title,
+                            array('class' => 'icon')
+                        );
+                        $am->add($al);
+
+                        // Add dividers after the first item and before the
+                        // last item.
+                        if ($idx == 0 || $idx == $navitemcount - 2) {
+                            $am->add($divider);
+                        }
+                        break;
                 }
 
                 $idx++;
