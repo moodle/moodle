@@ -60,8 +60,10 @@ class user_filter_cohort extends user_filter_type {
      */
     public function setupForm(&$mform) {
         $objs = array();
-        $objs[] = $mform->createElement('select', $this->_name.'_op', null, $this->getOperators());
-        $objs[] = $mform->createElement('text', $this->_name, null);
+        $objs['select'] = $mform->createElement('select', $this->_name.'_op', null, $this->getOperators());
+        $objs['text'] = $mform->createElement('text', $this->_name, null);
+        $objs['select']->setLabel(get_string('limiterfor', 'filters', $this->_label));
+        $objs['text']->setLabel(get_string('valuefor', 'filters', $this->_label));
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->setType($this->_name, PARAM_RAW);
         $mform->disabledIf($this->_name, $this->_name.'_op', 'eq', 5);
