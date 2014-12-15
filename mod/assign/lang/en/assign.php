@@ -353,6 +353,7 @@ $string['setmarkerallocationforlog'] = 'Set marking allocation : (id={$a->id}, f
 $string['settings'] = 'Assignment settings';
 $string['showrecentsubmissions'] = 'Show recent submissions';
 $string['status'] = 'Status';
+$string['studentnotificationworkflowstateerror'] = 'Marking workflow state must be \'Released\' to notify students.';
 $string['submissioncopiedtext'] = 'You have made a copy of your previous
 assignment submission for \'{$a->assignment}\'
 
