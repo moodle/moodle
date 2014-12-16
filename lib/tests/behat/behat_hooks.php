@@ -258,7 +258,7 @@ class behat_hooks extends behat_base {
         // We need the Mink session to do it and we do it only before the first scenario.
         if (self::is_first_scenario()) {
             behat_selectors::register_moodle_selectors($session);
-            behat_context_helper::set_main_context($event->getContext()->getMainContext());
+            behat_context_helper::set_session($scope->getEnvironment());
         }
 
         // Reset mink session between the scenarios.

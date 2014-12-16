@@ -384,4 +384,35 @@ class behat_navigation extends behat_base {
         }
         return $node;
     }
+
+    /**
+     * Step to open the navigation bar if it is needed.
+     *
+     * The top log in and log out links are hidden when middle or small
+     * size windows (or devices) are used. This step returns a step definition
+     * clicking to expand the navbar if it is hidden.
+     *
+     * @Given /^I expand navigation bar$/
+     */
+    public function get_expand_navbar_step() {
+
+        // Checking if we need to click the navbar button to show the navigation menu, it
+        // is hidden by default when using clean theme and a medium or small screen size.
+
+        // The DOM and the JS should be all ready and loaded. Running without spinning
+        // as this is a widely used step and we can not spend time here trying to see
+        // a DOM node that is not always there (at the moment clean is not even the
+        // default theme...).
+        $navbuttonjs = "return (
+            Y.one('.btn-navbar') &&
+            Y.one('.btn-navbar').getComputedStyle('display') !== 'none'
+        )";
+
+        // Adding an extra click we need to show the 'Log in' link.
+        if (!$this->getSession()->getDriver()->evaluateScript($navbuttonjs)) {
+            return false;
+        }
+
+        return new Given('I click on ".btn-navbar" "css_element"');
+    }
 }
