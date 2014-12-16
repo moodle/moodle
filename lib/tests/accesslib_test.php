@@ -2579,7 +2579,6 @@ class core_accesslib_testcase extends advanced_testcase {
 
         foreach ($DB->get_records('context') as $contextid => $record) {
             $context = context::instance_by_id($contextid);
-            $this->assertEquals($context, get_context_instance_by_id($contextid, IGNORE_MISSING));
             $this->assertEquals($context, get_context_instance($record->contextlevel, $record->instanceid));
             $this->assertEquals($context->get_parent_context_ids(), get_parent_contexts($context));
             if ($context->id == SYSCONTEXTID) {
@@ -2599,8 +2598,6 @@ class core_accesslib_testcase extends advanced_testcase {
         // Make sure a debugging is thrown.
         get_context_instance($record->contextlevel, $record->instanceid);
         $this->assertDebuggingCalled('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
-        get_context_instance_by_id($record->id);
-        $this->assertDebuggingCalled('get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead.', DEBUG_DEVELOPER);
         get_system_context();
         $this->assertDebuggingCalled('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
         get_parent_contexts($context);
