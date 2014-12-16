@@ -1639,15 +1639,17 @@ class global_navigation extends navigation_node {
         } else if (array_key_exists($categoryid, $this->addedcategories)) {
             // The category itself has been loaded already so we just need to ensure its subcategories
             // have been loaded
-	     $addedcategories = $this->addedcategories;
-	     unset($addedcategories[$categoryid]);
-	     list($sql, $params) = $DB->get_in_or_equal(array_keys($addedcategories), SQL_PARAMS_NAMED, 'parent', false);
-            if ($showbasecategories) {
-                // We need to include categories with parent = 0 as well
-                $sqlwhere .= " AND (cc.parent = :categoryid OR cc.parent = 0) AND cc.parent {$sql}";
-            } else {
-                // All we need is categories that match the parent
-                $sqlwhere .= " AND cc.parent = :categoryid AND cc.parent {$sql}";
+            $addedcategories = $this->addedcategories;
+            unset($addedcategories[$categoryid]);
+            if (count($addedcategories) > 0) {
+                list($sql, $params) = $DB->get_in_or_equal(array_keys($addedcategories), SQL_PARAMS_NAMED, 'parent', false);
+                if ($showbasecategories) {
+                    // We need to include categories with parent = 0 as well
+                    $sqlwhere .= " AND (cc.parent = :categoryid OR cc.parent = 0) AND cc.parent {$sql}";
+                } else {
+                    // All we need is categories that match the parent
+                    $sqlwhere .= " AND cc.parent = :categoryid AND cc.parent {$sql}";
+                }
             }
             $params['categoryid'] = $categoryid;
         } else {
