@@ -389,7 +389,8 @@ if (isloggedin() && has_capability('moodle/site:sendmessage', $usercontext)
     echo '</div>';
 }
 
-if ($currentuser || has_capability('moodle/user:viewdetails', $usercontext) || has_coursecontact_role($id)) {
+if (empty($CFG->forceloginforprofiles) || $currentuser || has_capability('moodle/user:viewdetails', $usercontext)
+        || has_coursecontact_role($id)) {
     echo '<div class="fullprofilelink">';
     echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
     echo '</div>';
