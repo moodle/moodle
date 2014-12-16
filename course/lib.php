@@ -998,9 +998,6 @@ function get_array_of_activities($courseid) {
 //  groupingid - grouping id
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
-    if(!empty($CFG->enableavailability)) {
-        require_once($CFG->libdir.'/conditionlib.php');
-    }
 
     $course = $DB->get_record('course', array('id'=>$courseid));
 

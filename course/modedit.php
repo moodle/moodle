@@ -28,7 +28,6 @@ require_once("lib.php");
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/completionlib.php');
-require_once($CFG->libdir.'/conditionlib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 
