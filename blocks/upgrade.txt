@@ -3,7 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.9 ===
 
-* The obsolete method preferred_width() was removed.
+* The obsolete method preferred_width() was removed (it was not doing anything)
 
 === 2.8 ===
 
