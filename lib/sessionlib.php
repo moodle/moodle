@@ -82,6 +82,7 @@ function confirm_sesskey($sesskey=NULL) {
  */
 function require_sesskey() {
     if (!confirm_sesskey()) {
+        header('HTTP/1.1 403 Forbidden');
         print_error('invalidsesskey');
     }
 }
