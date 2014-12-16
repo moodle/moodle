@@ -5800,20 +5800,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
 
     if (!validate_email($user->email)) {
         // We can not send emails to invalid addresses - it might create security issue or confuse the mailer.
-        $invalidemail = "User $user->id (".fullname($user).") email ($user->email) is invalid! Not sending.";
-        error_log($invalidemail);
-        if (CLI_SCRIPT) {
-            mtrace('Error: lib/moodlelib.php email_to_user(): '.$invalidemail);
-        }
+        debugging("email_to_user: User $user->id (".fullname($user).") email ($user->email) is invalid! Not sending.");
         return false;
     }
 
     if (over_bounce_threshold($user)) {
-        $bouncemsg = "User $user->id (".fullname($user).") is over bounce threshold! Not sending.";
-        error_log($bouncemsg);
-        if (CLI_SCRIPT) {
-            mtrace('Error: lib/moodlelib.php email_to_user(): '.$bouncemsg);
-        }
+        debugging("email_to_user: User $user->id (".fullname($user).") is over bounce threshold! Not sending.");
         return false;
     }
 
