@@ -1870,13 +1870,14 @@ class assign {
      * Mark in the database that this grade record should have an update notification sent by cron.
      *
      * @param stdClass $grade a grade record keyed on id
+     * @param bool $mailedoverride when true, flag notification to be sent again.
      * @return bool true for success
      */
-    public function notify_grade_modified($grade) {
+    public function notify_grade_modified($grade, $mailedoverride = false) {
         global $DB;
 
         $flags = $this->get_user_flags($grade->userid, true);
-        if ($flags->mailed != 1) {
+        if ($flags->mailed != 1 || $mailedoverride) {
             $flags->mailed = 0;
         }
 
@@ -6660,7 +6661,7 @@ class assign {
         // Note the default if not provided for this option is true (e.g. webservices).
         // This is for backwards compatibility.
         if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
-            $this->notify_grade_modified($grade);
+            $this->notify_grade_modified($grade, true);
         }
     }
 
