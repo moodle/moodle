@@ -134,6 +134,7 @@ class report_log_renderable implements renderable {
             $url = new moodle_url($url);
         }
         $this->selectedlogreader = $logreader;
+        $url->param('logreader', $logreader);
 
         // Use site course id, if course is empty.
         if (!empty($course) && is_int($course)) {
