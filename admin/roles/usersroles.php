@@ -132,7 +132,7 @@ if ($courseid == SITEID) {
     $PAGE->set_heading($course->fullname.': '.$fullname);
 }
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title, 3);
+echo $OUTPUT->heading($title);
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 
 // Display them.
