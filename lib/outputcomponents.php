@@ -1447,9 +1447,6 @@ class html_writer {
      * method. In most cases this is not an issue at all so we do not clone by default for performance
      * and memory consumption reasons.
      *
-     * Please do not use .r0/.r1 for css, as they will be removed in Moodle 2.9.
-     * @todo MDL-43902 , remove r0 and r1 from tr classes.
-     *
      * @param html_table $table data to be rendered
      * @return string HTML code
      */
@@ -1579,7 +1576,6 @@ class html_writer {
         }
 
         if (!empty($table->data)) {
-            $oddeven    = 1;
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
             $output .= html_writer::start_tag('tbody', array());
@@ -1601,12 +1597,10 @@ class html_writer {
                         $row = $newrow;
                     }
 
-                    $oddeven = $oddeven ? 0 : 1;
                     if (isset($table->rowclasses[$key])) {
                         $row->attributes['class'] .= ' ' . $table->rowclasses[$key];
                     }
 
-                    $row->attributes['class'] .= ' r' . $oddeven;
                     if ($key == $lastrowkey) {
                         $row->attributes['class'] .= ' lastrow';
                     }
@@ -2077,9 +2071,7 @@ class html_table {
 
     /**
      * @var array Array of classes to add to particular rows, space-separated string.
-     * Classes 'r0' or 'r1' are added automatically for every odd or even row,
-     * respectively. Class 'lastrow' is added automatically for the last row
-     * in the table.
+     * Class 'lastrow' is added automatically for the last row in the table.
      *
      * Example of usage:
      * $t->rowclasses[9] = 'tenth'

@@ -206,7 +206,7 @@ class core_html_writer_testcase extends basic_testcase {
 
         $expected = <<<EOF
 <table class="generaltable" id="Jeffrey" data-name="Colin">
-<tbody><tr class="r0 lastrow" id="Bob" data-name="Fred">
+<tbody><tr class="lastrow" id="Bob" data-name="Fred">
 <td class="cell c0 lastcol" id="Jeremy" data-name="John" style=""></td>
 </tr>
 </tbody>
