@@ -291,6 +291,11 @@ class manager {
         // First flag this message to prevent another running hitting this message while we look at the headers.
         $this->add_flag_to_message($messageid, self::MESSAGE_FLAGGED);
 
+        if ($this->is_bulk_message($message, $messageid)) {
+            mtrace("- The message has a bulk header set. This is likely an auto-generated reply - discarding.");
+            return;
+        }
+
         // Record the user that this script is currently being run as.  This is important when re-processing existing
         // messages, as cron_setup_user is called multiple times.
         $originaluser = $USER;
@@ -734,6 +739,43 @@ class manager {
         $flags = $messagedata->getFlags();
 
         return in_array($flag, $flags);
+    }
+
+    /**
+     * Attempt to determine whether this message is a bulk message (e.g. automated reply).
+     *
+     * @param \Horde_Imap_Client_Data_Fetch $message The message to process
+     * @param string|\Horde_Imap_Client_Ids $messageid The Hore message Uid
+     * @return boolean
+     */
+    private function is_bulk_message(
+            \Horde_Imap_Client_Data_Fetch $message,
+            $messageid) {
+        $query = new \Horde_Imap_Client_Fetch_Query();
+        $query->headerText(array('peek' => true));
+
+        $messagedata = $this->client->fetch($this->get_mailbox(), $query, array('ids' => $messageid))->first();
+
+        // Assume that this message is not bulk to begin with.
+        $isbulk = false;
+
+        // An auto-reply may itself include the Bulk Precedence.
+        $precedence = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('Precedence');
+        $isbulk = $isbulk || strtolower($precedence) == 'bulk';
+
+        // If the X-Autoreply header is set, and not 'no', then this is an automatic reply.
+        $autoreply = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('X-Autoreply');
+        $isbulk = $isbulk || ($autoreply && $autoreply != 'no');
+
+        // If the X-Autorespond header is set, and not 'no', then this is an automatic response.
+        $autorespond = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('X-Autorespond');
+        $isbulk = $isbulk || ($autorespond && $autorespond != 'no');
+
+        // If the Auto-Submitted header is set, and not 'no', then this is a non-human response.
+        $autosubmitted = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('Auto-Submitted');
+        $isbulk = $isbulk || ($autosubmitted && $autosubmitted != 'no');
+
+        return $isbulk;
     }
 
     /**
