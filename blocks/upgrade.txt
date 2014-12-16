@@ -1,6 +1,10 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+
+* The obsolete method preferred_width() was removed.
+
 === 2.8 ===
 
 * The instance_config_print() function was removed. It was deprecated in

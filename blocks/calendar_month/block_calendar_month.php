@@ -31,15 +31,6 @@ class block_calendar_month extends block_base {
     }
 
     /**
-     * Return preferred_width.
-     *
-     * @return int
-     */
-    public function preferred_width() {
-        return 210;
-    }
-
-    /**
      * Return the content of this block.
      *
      * @return stdClass the content
