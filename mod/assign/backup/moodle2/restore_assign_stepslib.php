@@ -134,7 +134,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
 
         if (!$this->includesubmission) {
             return;
-        } 
+        }
 
         $data = (object)$data;
         $oldid = $data->id;

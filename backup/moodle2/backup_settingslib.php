@@ -69,7 +69,8 @@ class backup_users_setting extends backup_generic_setting {}
  * root setting to control if backup will include group information
  * depends on @backup_users_setting
  */
-class backup_groups_setting extends backup_generic_setting {}
+class backup_groups_setting extends backup_generic_setting {
+}
 
 /**
  * root setting to control if backup will include activities or no.
