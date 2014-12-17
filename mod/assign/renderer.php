@@ -314,7 +314,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $cutoffdate = $summary->cutoffdate;
                 if ($cutoffdate) {
                     if ($cutoffdate > $time) {
-                        $late = get_string('latesubmissionsaccepted', 'assign');
+                        $late = get_string('latesubmissionsaccepted', 'assign', userdate($summary->cutoffdate));
                     } else {
                         $late = get_string('nomoresubmissionsaccepted', 'assign');
                     }

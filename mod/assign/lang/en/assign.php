@@ -237,7 +237,7 @@ $string['invalidfloatforgrade'] = 'The grade provided could not be understood: {
 $string['lastmodifiedsubmission'] = 'Last modified (submission)';
 $string['lastmodifiedgrade'] = 'Last modified (grade)';
 $string['latesubmissions'] = 'Late submissions';
-$string['latesubmissionsaccepted'] = 'Allowed until the cut-off date';
+$string['latesubmissionsaccepted'] = 'Allowed until {$a}';
 $string['locksubmissionforstudent'] = 'Prevent any more submissions for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['locksubmissions'] = 'Lock submissions';
 $string['manageassignfeedbackplugins'] = 'Manage assignment feedback plugins';
