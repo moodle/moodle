@@ -139,7 +139,8 @@ class core_useragent_testcase extends basic_testcase {
                 'Nexus' => 'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus'
             ),
             '537' => array(
-                'Samsung GT-9505' => 'Mozilla/5.0 (Linux; Android 4.3; it-it; SAMSUNG GT-I9505/I9505XXUEMJ7 Build/JSS15J) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.5 Chrome/28.0.1500.94 Mobile Safari/537.36'
+                'Samsung GT-9505' => 'Mozilla/5.0 (Linux; Android 4.3; it-it; SAMSUNG GT-I9505/I9505XXUEMJ7 Build/JSS15J) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.5 Chrome/28.0.1500.94 Mobile Safari/537.36',
+                'Nexus 5' => 'Mozilla/5.0 (Linux; Android 5.0; Nexus 5 Build/LPX13D) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36'
             )
         ),
         'Chrome' => array(
@@ -204,6 +205,26 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_safari_version());
         $this->assertFalse(core_useragent::is_chrome());
         $this->assertFalse(core_useragent::check_chrome_version());
+
+        core_useragent::instance(true, $this->user_agents['WebKit Android']['537']['Samsung GT-9505']);
+        $this->assertTrue(core_useragent::is_webkit());
+        $this->assertTrue(core_useragent::check_webkit_version());
+        $this->assertTrue(core_useragent::check_webkit_android_version('527'));
+        $this->assertTrue(core_useragent::is_chrome());
+        $this->assertTrue(core_useragent::check_chrome_version());
+        $this->assertFalse(core_useragent::check_webkit_android_version(590));
+        $this->assertFalse(core_useragent::is_safari());
+        $this->assertFalse(core_useragent::check_safari_version());
+
+        core_useragent::instance(true, $this->user_agents['WebKit Android']['537']['Nexus 5']);
+        $this->assertTrue(core_useragent::is_webkit());
+        $this->assertTrue(core_useragent::check_webkit_version());
+        $this->assertTrue(core_useragent::check_webkit_android_version('527'));
+        $this->assertTrue(core_useragent::is_chrome());
+        $this->assertTrue(core_useragent::check_chrome_version());
+        $this->assertFalse(core_useragent::check_webkit_android_version(590));
+        $this->assertFalse(core_useragent::is_safari());
+        $this->assertFalse(core_useragent::check_safari_version());
 
         core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
         $this->assertTrue(core_useragent::is_chrome());
