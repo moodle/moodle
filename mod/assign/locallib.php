@@ -6460,8 +6460,8 @@ class assign {
                 // is "Released".
                 $modinfo = get_fast_modinfo($this->course, $userid);
                 $cm = $modinfo->get_cm($this->get_course_module()->id);
-                if ($formdata->sendstudentnotifications && $flags->mailed != 1 &&
-                        $cm->uservisible && $state == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+                if ($formdata->sendstudentnotifications && $cm->uservisible &&
+                        $state == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
                     $flags->mailed = 0;
                 }
 
