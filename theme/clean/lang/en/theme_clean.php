@@ -59,7 +59,7 @@ $string['invertdesc'] = 'Swaps text and background for the navbar at the top of 
 $string['logo'] = 'Logo';
 $string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.<br>
 If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
-a.logo {height: 100px;} or whatever height in pixels the logo is.';
+div.logo {height: 100px;} or whatever height in pixels the logo is.';
 
 $string['pluginname'] = 'Clean';
 
