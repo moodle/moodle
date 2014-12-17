@@ -349,14 +349,13 @@ class blog_entry implements renderable {
 
     /**
      * Function to add all context associations to an entry.
-     * TODO : Remove $action in 2.9 (MDL-41330)
      *
-     * @param string $action - This does nothing, do not use it. This is present only for Backward compatibility.
+     * @param string $unused This does nothing, do not use it.
      */
-    public function add_associations($action = null) {
+    public function add_associations($unused = null) {
 
-        if (!empty($action)) {
-            debugging('blog_entry->add_associations() does not accept any argument', DEBUG_DEVELOPER);
+        if ($unused !== null) {
+            debugging('Illegal argument used in blog_entry->add_associations()', DEBUG_DEVELOPER);
         }
 
         $this->remove_associations();
@@ -372,16 +371,15 @@ class blog_entry implements renderable {
 
     /**
      * Add a single association for a blog entry
-     * TODO : Remove $action in 2.9 (MDL-41330)
      *
      * @param int $contextid - id of context to associate with the blog entry.
-     * @param string $action - This does nothing, do not use it. This is present only for Backward compatibility.
+     * @param string $unused This does nothing, do not use it.
      */
-    public function add_association($contextid, $action = null) {
+    public function add_association($contextid, $unused = null) {
         global $DB;
 
-        if (!empty($action)) {
-            debugging('blog_entry->add_association() accepts only one argument', DEBUG_DEVELOPER);
+        if ($unused !== null) {
+            debugging('Illegal argument used in blog_entry->add_association()', DEBUG_DEVELOPER);
         }
 
         $assocobject = new StdClass;
