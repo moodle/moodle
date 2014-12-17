@@ -5,7 +5,7 @@
     "browser":      true,
     "curly":        true,
     "debug":        false,
-    "eqeqeq":       true,
+    "eqeqeq":       false,
     "eqnull":       false,
     "es5":          false,
     "esnext":       false,
@@ -15,6 +15,7 @@
     "funcscope":    false,
     "globalstrict": false,
     "immed":        true,
+    "indent":       4,
     "iterator":     false,
     "lastsemic":    false,
     "latedef":      true,
@@ -22,7 +23,7 @@
     "laxcomma":     false,
     "loopfunc":     false,
     "maxerr":       500,
-    "maxlen":       180,
+    "maxlen":       132,
     "multistr":     false,
     "newcap":       true,
     "noarg":        true,
@@ -32,6 +33,9 @@
     "onevar":       false,
     "passfail":     false,
     "plusplus":     false,
+    "predef": [
+        "M"
+    ],
     "proto":        false,
     "regexdash":    false,
     "regexp":       false,
@@ -43,6 +47,7 @@
     "supernew":     false,
     "trailing":     true,
     "unused":       true,
+    "undef":        true,
     "white":        false,
     "yui":          true
 }
