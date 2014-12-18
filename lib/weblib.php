@@ -2510,6 +2510,16 @@ function redirect($url, $message='', $delay=-1) {
             break;
         }
 
+        if (core_useragent::is_msword()) {
+            // Clicking a URL from MS Word sends a request to the server without cookies. If that
+            // causes a redirect Word will open a browser pointing the new URL. If not, the URL that
+            // was clicked is opened. Because the request from Word is without cookies, it almost
+            // always results in a redirect to the login page, even if the user is logged in in their
+            // browser. This is not what we want, so prevent the redirect for requests from Word.
+            $debugdisableredirect = true;
+            break;
+        }
+
         if (empty($CFG->debugdisplay) or empty($CFG->debug)) {
             // No errors should be displayed.
             break;
