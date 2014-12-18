@@ -63,10 +63,34 @@ class core_cache_testcase extends advanced_testcase {
      * @return string
      */
     protected function get_expected_application_cache_store() {
+        global $CFG;
         $expected = 'cachestore_file';
+
+        // Verify if we are using any of the available ways to use a different application store within tests.
         if (defined('TEST_CACHE_USING_APPLICATION_STORE') && preg_match('#[a-zA-Z][a-zA-Z0-9_]*#', TEST_CACHE_USING_APPLICATION_STORE)) {
+            // 1st way. Using some of the testing servers.
             $expected = 'cachestore_'.(string)TEST_CACHE_USING_APPLICATION_STORE;
+
+        } else if (defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') && TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH && !empty($CFG->altcacheconfigpath)) {
+            // 2nd way. Using an alternative configuration.
+            $defaultstores = cache_helper::get_stores_suitable_for_mode_default();
+            $instance = cache_config::instance();
+            // Iterate over defined mode mappings until we get an application one not being the default.
+            foreach ($instance->get_mode_mappings() as $mapping) {
+                // If the store is not for application mode, ignore.
+                if ($mapping['mode'] !== cache_store::MODE_APPLICATION) {
+                    continue;
+                }
+                // If the store matches some default mapping store name, ignore.
+                if (array_key_exists($mapping['store'], $defaultstores) && !empty($defaultstores[$mapping['store']]['default'])) {
+                    continue;
+                }
+                // Arrived here, have found an application mode store not being the default mapped one (file),
+                // that's the one we are using in the configuration for sure.
+                $expected = 'cachestore_'.$mapping['store'];
+            }
         }
+
         return $expected;
     }
 
