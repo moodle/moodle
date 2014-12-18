@@ -5,22 +5,25 @@ Feature: Edit completion settings of an activity
   I need to edit the activity and use the unlock button if required
 
   Background:
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-    And I log out
-    And the following "courses" exist:
+    Given the following "courses" exist:
       | fullname | shortname | enablecompletion |
       | Course 1 | C1        | 1                |
-    And the following "activities" exist:
-      | activity | course | idnumber | name     | intro | content | completion | completionview |
-      | page     | C1     | x        | TestPage | x     | x       | 2          | 1              |
     And I log in as "admin"
+    And I set the following administration settings values:
+      | Enable completion tracking | 1 |
+    And I am on homepage
+    And I follow "Course 1"
+    And I turn editing mode on
+    And I add a "Page" to section "1" and I fill the form with:
+      | Name                | TestPage |
+      | Description         | x        |
+      | Page content        | x        |
+      | Completion tracking | 2        |
+      | Require view        | 1        |
     And I follow "Course 1"
 
   Scenario: Completion is not locked when the activity has not yet been viewed
-    Given I turn editing mode on
-    And I click on "Edit settings" "link" in the "TestPage" activity
+    Given I click on "Edit settings" "link" in the "TestPage" activity
     When I expand all fieldsets
     Then I should see "Completion tracking"
     And I should not see "Completion options locked"
