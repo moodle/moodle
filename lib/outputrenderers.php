@@ -624,17 +624,6 @@ class core_renderer extends renderer_base {
             $withlinks = empty($this->page->layout_options['nologinlinks']);
         }
 
-        // This is a real bit of a hack, but its a rariety that we need to do something like this.
-        // In fact the login pages should be only these two pages and as exposing this as an option for all pages
-        // could lead to abuse (or at least unneedingly complex code) the hack is the way to go.
-        $loginpage = in_array(
-            $this->page->url->out_as_local_url(false, array()),
-            array(
-                '/login/index.php',
-                '/login/forgot_password.php',
-            )
-        );
-
         $course = $this->page->course;
         if (\core\session\manager::is_loggedinas()) {
             $realuser = \core\session\manager::get_realuser();
@@ -650,6 +639,7 @@ class core_renderer extends renderer_base {
             $realuserinfo = '';
         }
 
+        $loginpage = $this->is_login_page();
         $loginurl = get_login_url();
 
         if (empty($course->id)) {
@@ -725,6 +715,25 @@ class core_renderer extends renderer_base {
         }
 
         return $loggedinas;
+    }
+
+    /**
+     * Check whether the current page is a login page.
+     *
+     * @since Moodle 2.9
+     * @return bool
+     */
+    protected function is_login_page() {
+        // This is a real bit of a hack, but its a rarety that we need to do something like this.
+        // In fact the login pages should be only these two pages and as exposing this as an option for all pages
+        // could lead to abuse (or at least unneedingly complex code) the hack is the way to go.
+        return in_array(
+            $this->page->url->out_as_local_url(false, array()),
+            array(
+                '/login/index.php',
+                '/login/forgot_password.php',
+            )
+        );
     }
 
     /**
@@ -2949,7 +2958,7 @@ EOD;
             return $returnstr;
         }
 
-        $loginpage = ((string)$this->page->url === get_login_url());
+        $loginpage = $this->is_login_page();
         $loginurl = get_login_url();
         // If not logged in, show the typical not-logged-in string.
         if (!isloggedin()) {
