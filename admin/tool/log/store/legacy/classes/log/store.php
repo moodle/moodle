@@ -143,8 +143,10 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
      * @param    string $info Additional description information
      * @param    int $cm The course_module->id if there is one
      * @param    int|\stdClass $user If log regards $user other than $USER
+     * @param    string $ip Override the IP, should only be used for restore.
+     * @param    int $time Override the log time, should only be used for restore.
      */
-    public function legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user) {
+    public function legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user, $ip = null, $time = null) {
         // Note that this function intentionally does not follow the normal Moodle DB access idioms.
         // This is for a good reason: it is the most frequently used DB update function,
         // so it has been optimised for speed.
@@ -172,9 +174,9 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
             }
         }
 
-        $remoteaddr = getremoteaddr();
+        $remoteaddr = (is_null($ip)) ? getremoteaddr() : $ip;
 
-        $timenow = time();
+        $timenow = (is_null($time)) ? time() : $time;
         if (!empty($url)) { // Could break doing html_entity_decode on an empty var.
             $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
         } else {
