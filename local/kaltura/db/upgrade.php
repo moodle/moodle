@@ -25,10 +25,12 @@
 function xmldb_local_kaltura_upgrade($oldversion) {
     global $CFG, $DB;
 
+    $savePointDone = false;
     require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
     $dbman = $DB->get_manager();
 
+    // plugin in any version below this is 3.x and requires migration
     if ($oldversion < 2014023000) {
         // Because the plug-in is being upgraded we need to set the migration flag to true.
         set_config('migration_yes', 1, KALTURA_PLUGIN_NAME);
@@ -58,10 +60,12 @@ function xmldb_local_kaltura_upgrade($oldversion) {
 
         // Kaltura savepoint reached.
         upgrade_plugin_savepoint(true, 2014102807, 'local', 'kaltura');
+        $savePointDone = true;
     }
 
-    if ($oldversion < 2014102807) {
+    if (!$savePointDone && $oldversion < 2014102807) {
         // Kaltura savepoint reached.
         upgrade_plugin_savepoint(true, 2014102807, 'local', 'kaltura');
     }
+    return true;
 }
