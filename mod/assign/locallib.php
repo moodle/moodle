@@ -5394,7 +5394,7 @@ class assign {
 
             // Allow teachers to skip sending notifications.
             if (optional_param('sendstudentnotifications', true, PARAM_BOOL)) {
-                $this->notify_grade_modified($grade);
+                $this->notify_grade_modified($grade, true);
             }
 
             // Save outcomes.
