@@ -164,6 +164,10 @@ if (!$formdata = $form->get_data()) {
                     } else if ($field->type == 'url') {
                         $values = explode(" ", $value, 2);
                         $content->content  = $values[0];
+                        if (!empty($content->content) && (strpos($content->content, '://') === false)
+                                && (strpos($content->content, '/') !== 0)) {
+                            $content->content = 'http://' . $content->content;
+                        }
                         // The url field doesn't always have two values (unforced autolinking).
                         if (count($values) > 1) {
                             $content->content1 = $values[1];
