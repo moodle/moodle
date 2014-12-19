@@ -239,7 +239,7 @@ class qtype_ordering_question extends question_graded_automatically {
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
-    public function check_file_access($qa, $ordering, $component, $filearea, $args, $forcedownload) {
-        // do nothing
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 }
