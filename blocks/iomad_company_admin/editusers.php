@@ -518,8 +518,8 @@ if (!$users) {
 
     // set up the table.
     $table = new html_table();
-    $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, "", "", "");
-    $table->align = array ("left", "left", "left", "left", "center", "center", "center");
+    $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, "", "", "", "");
+    $table->align = array ("left", "left", "left", "left", "center", "center", "center", "center");
     $table->width = "95%";
     foreach ($users as $user) {
         if ($user->username == 'guest') {
@@ -559,6 +559,15 @@ if (!$users) {
             $enrolmentbutton = "";
         }
 
+        if ((iomad::has_capability('block/iomad_company_admin:company_license_users', $systemcontext)
+             or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
+             and ($user->id == $USER->id or $user->id != $mainadmin->id)
+             and !is_mnet_remote_user($user)) {
+            $licensebutton = "<a href=\"company_users_licenses_form.php?userid=$user->id\">$strenrolment</a>";
+        } else {
+            $licensebutton = "";
+        }
+
         if ($user->lastaccess) {
             $strlastaccess = format_time(time() - $user->lastaccess);
         } else {
@@ -585,7 +594,8 @@ if (!$users) {
                             $editbutton,
                             $suspendbutton,
                             $deletebutton,
-                            $enrolmentbutton);
+                            $enrolmentbutton,
+                            $licensebutton);
     }
 }
 

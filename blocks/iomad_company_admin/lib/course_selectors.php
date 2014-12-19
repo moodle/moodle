@@ -608,7 +608,6 @@ class any_course_selector extends course_selector_base {
     }
 }
 
-
 class current_user_course_selector extends course_selector_base {
     /**
      * Company courses
@@ -798,6 +797,173 @@ class potential_user_course_selector extends course_selector_base {
             $groupname = get_string('potcoursesmatching', 'block_iomad_company_admin', $search);
         } else {
             $groupname = get_string('potcourses', 'block_iomad_company_admin');
+        }
+
+        return array($groupname => $availablecourses);
+    }
+}
+
+class current_user_license_course_selector extends course_selector_base {
+    /**
+     * Company courses
+     * @param <type> $search
+     * @return array
+     */
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->departmentid = $options['departmentid'];
+        $this->user = $options['user'];
+
+        if (isset($options['licenses'])) {
+            $this->licenses = true;
+        } else {
+            $this->licenses = false;
+        }
+        parent::__construct($name, $options);
+
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['companyid'] = $this->companyid;
+        $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
+        $options['departmentid'] = $this->departmentid;
+        $options['licenses'] = $this->licenses;
+        $options['user'] = $this->user;
+        return $options;
+    }
+
+    protected function process_license_allocations(&$licensecourses, $userid) {
+        global $DB;
+        foreach ($licensecourses as $id => $course) {
+            if ($DB->get_record('companylicense_users', array('userid' => $userid,
+                                                              'licensecourseid' => $course->id,
+                                                              'timecompleted' => null,
+                                                              'isusing' => 1))) {
+                $licensecourses[$id]->fullname = '*'.$course->fullname;
+            }
+        }
+    }
+
+    public function find_courses($search) {
+        global $CFG, $DB, $SITE;
+        require_once($CFG->dirroot.'/local/iomad/lib/company.php');
+
+        // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
+        list($wherecondition, $params) = $this->search_sql($search, 'c');
+        $params['companyid'] = $this->companyid;
+        $params['siteid'] = $SITE->id;
+        $params['timestamp'] = time();
+        $params['userid'] = $this->user->id;
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('c');
+        $countfields = 'SELECT COUNT(1)';
+
+        $distinctfields      = 'SELECT DISTINCT ' . $this->required_fields_sql('c');
+        $distinctcountfields = 'SELECT COUNT(DISTINCT c.id) ';
+        $sql = " FROM {course} c,
+                        {companylicense} cl,
+                        {companylicense_users} clu
+                        WHERE clu.licensecourseid = c.id
+                        AND clu.licenseid = cl.id
+                        AND $wherecondition
+                        AND clu.userid = :userid
+                        AND clu.timecompleted IS NULL";
+
+        $order = ' ORDER BY c.fullname ASC';
+        if (!$this->is_validating()) {
+            $availablememberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($availablememberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+                return $this->too_many_results($search, $availablememberscount);
+            }
+        }
+        $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availablecourses)) {
+            return array();
+        }
+
+        $this->process_license_allocations($availablecourses, $this->user->id);
+        
+        if ($search) {
+            $groupname = get_string('potlicensecoursesmatching', 'block_iomad_company_admin', $search);
+        } else {
+            $groupname = get_string('potlicensecourses', 'block_iomad_company_admin');
+        }
+
+        return array($groupname => $availablecourses);
+    }
+}
+
+class potential_user_license_course_selector extends course_selector_base {
+    /**
+     * Potential company manager courses
+     * @param <type> $search
+     * @return array
+     */
+    public function __construct($name, $options) {
+        $this->companyid  = $options['companyid'];
+        $this->user = $options['user'];
+ 
+        parent::__construct($name, $options);
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['companyid'] = $this->companyid;
+        $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
+        $options['user'] = $this->user;
+        return $options;
+    }
+
+    public function find_courses($search) {
+        global $CFG, $DB, $SITE;
+        require_once($CFG->dirroot.'/local/iomad/lib/company.php');
+
+        // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
+        list($wherecondition, $params) = $this->search_sql($search, 'c');
+        $params['companyid'] = $this->companyid;
+        $params['siteid'] = $SITE->id;
+        $params['timestamp'] = time();
+        $params['userid'] = $this->user->id;
+
+        $fields      = 'SELECT ' . $this->required_fields_sql('c');
+        $countfields = 'SELECT COUNT(1)';
+
+        $distinctfields      = 'SELECT DISTINCT ' . $this->required_fields_sql('c');
+        $distinctcountfields = 'SELECT COUNT(DISTINCT c.id) ';
+
+        $sql = " FROM {course} c,
+                        {companylicense} cl,
+                        {companylicense_courses} clc
+                        WHERE clc.courseid = c.id
+                        AND cl.id = clc.licenseid
+                        AND $wherecondition
+                        AND cl.companyid = :companyid
+                        AND cl.used < cl.allocation
+                        AND cl.expirydate >= :timestamp
+                        AND c.id NOT IN
+                        ( SELECT clu.licensecourseid FROM {companylicense_users} clu
+                          WHERE clu.userid = :userid
+                          AND clu.timecompleted IS NULL)";
+
+        $order = ' ORDER BY c.fullname ASC';
+        if (!$this->is_validating()) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > company_course_selector_base::MAX_COURSES_PER_PAGE) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+        $availablecourses = $DB->get_records_sql($distinctfields . $sql . $order, $params);
+
+        if (empty($availablecourses)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('potlicensecoursesmatching', 'block_iomad_company_admin', $search);
+        } else {
+            $groupname = get_string('potlicensecourses', 'block_iomad_company_admin');
         }
 
         return array($groupname => $availablecourses);

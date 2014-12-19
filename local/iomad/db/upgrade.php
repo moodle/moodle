@@ -990,5 +990,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2014120400) {
+
+        // Define field licensecourseid to be added to companylicense_users.
+        $table = new xmldb_table('companylicense_users');
+        $field = new xmldb_field('licensecourseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'userid');
+
+        // Conditionally launch add field licensecourseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2014120400, 'local', 'iomad');
+    }
+
     return $result;
 }

@@ -652,6 +652,7 @@ class potential_license_user_selector extends user_selector_base {
     protected $departmentid;
     protected $subdepartments;
     protected $parentdepartmentid;
+    protected $multiple;
 
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
@@ -659,6 +660,7 @@ class potential_license_user_selector extends user_selector_base {
         $this->departmentid = $options['departmentid'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
+        $this->multiple = $options['multiple'];
         parent::__construct($name, $options);
     }
 
@@ -678,10 +680,17 @@ class potential_license_user_selector extends user_selector_base {
         if (!isset( $this->licenseid) ) {
             return array();
         } else {
-            $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid." and id not in
-            (SELECT id from {companylicense_users}
-            WHERE licenseid = ".$this->licenseid."
-            AND timecompleted IS NOT NULL)";;
+            if (!$this->multiple) {
+                $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid." and id not in
+                            (SELECT id from {companylicense_users}
+                            WHERE licenseid = ".$this->licenseid."
+                            AND timecompleted IS NOT NULL)";;
+            } else {
+                $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid." and id not in
+                            (SELECT id from {companylicense_users}
+                            WHERE licenseid = ".$this->licenseid."
+                            AND timecompleted IS NOT NULL)";;
+            }
             if ($users = $DB->get_records_sql($usersql)) {
                 // Only return the keys (user ids).
                 return array_keys($users);
@@ -768,7 +777,7 @@ class potential_license_user_selector extends user_selector_base {
         $myusers = company::get_my_users($this->companyid);
 
         $licenseusers = $this->get_license_user_ids();
-        if (count($licenseusers) > 0) {
+        if (count($licenseusers) > 0 && !$this->multiple) {
             $licenseuserids = implode(',', $licenseusers);
             if ($licenseuserids != ',') {
                 $userfilter = " AND NOT u.id in ($licenseuserids) ";
@@ -844,6 +853,7 @@ class current_license_user_selector extends user_selector_base {
     protected $departmentid;
     protected $subdepartments;
     protected $parentdepartmentid;
+    protected $selectedcourses;
 
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
@@ -851,6 +861,7 @@ class current_license_user_selector extends user_selector_base {
         $this->departmentid = $options['departmentid'];
         $this->subdepartments = $options['subdepartments'];
         $this->parentdepartmentid = $options['parentdepartmentid'];
+        $this->selectedcourses = $options['selectedcourses'];
         parent::__construct($name, $options);
     }
 
@@ -861,6 +872,7 @@ class current_license_user_selector extends user_selector_base {
         $options['departmentid'] = $this->departmentid;
         $options['subdepartments'] = $this->subdepartments;
         $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['selectedcourses'] = $this->selectedcourses;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         return $options;
     }
@@ -907,8 +919,9 @@ class current_license_user_selector extends user_selector_base {
         global $DB, $USER;
 
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
-        list($wherecondition, $params) = $this->search_sql($search, '');
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
+        $params['licenseid'] = $this->licenseid;
 
         $licenseusers = $this->get_license_user_ids();
         $licenseuserids = "";
@@ -929,13 +942,15 @@ class current_license_user_selector extends user_selector_base {
             $userfilter = "";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('');
+        $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', c.fullname, clu.isusing ';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
-                 {user}
-                 WHERE $wherecondition AND suspended = 0 
-                     AND id in (".$userfilter.") ";
+                 {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id), {course} c
+                 WHERE $wherecondition AND u.suspended = 0
+                 AND clu.licensecourseid = c.id 
+                 AND clu.licenseid = :licenseid
+                 AND timecompleted IS NULL ";
 
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
@@ -958,14 +973,91 @@ class current_license_user_selector extends user_selector_base {
             return array();
         }
 
-        $this->process_license_allocations($availableusers);
-
+        foreach ($availableusers as $id => $rawuser) {
+            $availableusers[$id]->email .= ' (' . $rawuser->fullname . ')';
+            if (!empty($rawuser->isusing)) {
+                $availableusers[$id]->email = ' *' . $availableusers[$id]->email;
+            }
+        }
+//        $this->process_license_allocations($availableusers);
         if ($search) {
             $groupname = get_string('licenseusersmatching', 'block_iomad_company_admin', $search);
         } else {
             $groupname = get_string('licenseusers', 'block_iomad_company_admin');
         }
-
         return array($groupname => $availableusers);
+    }
+
+    /**
+     * Output one particular optgroup. Used by the preceding function output_options.
+     *
+     * @param string $groupname the label for this optgroup.
+     * @param array $users the users to put in this optgroup.
+     * @param boolean $select if true, select the users in this group.
+     * @return string HTML code.
+     */
+    protected function output_optgroup($groupname, $users, $select) {
+        if (!empty($users)) {
+            $output = '  <optgroup label="' . htmlspecialchars($groupname) . ' (' . count($users) . ')">' . "\n";
+            foreach ($users as $user) {
+                $attributes = '';
+                if (!empty($user->disabled)) {
+                    $attributes .= ' disabled="disabled"';
+                } else if ($select || isset($this->selected[$user->id])) {
+                    $attributes .= ' selected="selected"';
+                }
+                unset($this->selected[$user->id]);
+                $output .= '    <option' . $attributes . ' value="' . $user->licenseid . '">' .
+                        $this->output_user($user) . "</option>\n";
+                if (!empty($user->infobelow)) {
+                    // Poor man's indent  here is because CSS styles do not work in select options, except in Firefox.
+                    $output .= '    <option disabled="disabled" class="userselector-infobelow">' .
+                            '&nbsp;&nbsp;&nbsp;&nbsp;' . s($user->infobelow) . '</option>';
+                }
+            }
+        } else {
+            $output = '  <optgroup label="' . htmlspecialchars($groupname) . '">' . "\n";
+            $output .= '    <option disabled="disabled">&nbsp;</option>' . "\n";
+        }
+        $output .= "  </optgroup>\n";
+        return $output;
+    }
+
+    /**
+     * Get the list of users that were selected by doing optional_param then validating the result.
+     *
+     * @return array of user objects.
+     */
+    protected function load_selected_users() {
+        // See if we got anything.
+        if ($this->multiselect) {
+            $userids = optional_param_array($this->name, array(), PARAM_INT);
+        } else if ($userid = optional_param($this->name, 0, PARAM_INT)) {
+            $userids = array($userid);
+        }
+        // If there are no users there is nobody to load.
+        if (empty($userids)) {
+            return array();
+        }
+
+        // If we did, use the find_users method to validate the ids.
+        $groupedusers = $this->find_users('');
+
+        // Aggregate the resulting list back into a single one.
+        $users = array();
+        foreach ($groupedusers as $group) {
+            foreach ($group as $user) {
+                if (!isset($users[$user->id]) && empty($user->disabled) && in_array($user->licenseid, $userids)) {
+                    $users[$user->id] = $user;
+                }
+            }
+        }
+
+        // If we are only supposed to be selecting a single user, make sure we do.
+        if (!$this->multiselect && count($users) > 1) {
+            $users = array_slice($users, 0, 1);
+        }
+
+        return $users;
     }
 }

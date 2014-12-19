@@ -142,7 +142,11 @@ $capabilities = array(
     ),
 
     'block/iomad_company_admin:company_course_users' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
 
+    'block/iomad_company_admin:company_license_users' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK
     ),

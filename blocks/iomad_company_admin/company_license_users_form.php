@@ -30,8 +30,11 @@ class company_license_users_form extends moodleform {
     protected $subhierarchieslist = null;
     protected $parentlevel = null;
     protected $license = array();
+    protected $selectedcourses = array();
+    protected $courseselct = array();
+    protected $firstcourseid = 0;
 
-    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid) {
+    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
         $this->context = $context;
@@ -40,6 +43,20 @@ class company_license_users_form extends moodleform {
         $this->companydepartment = $this->parentlevel->id;
         $this->licenseid = $licenseid;
         $this->license = $DB->get_record('companylicense', array('id' => $licenseid));
+        $this->selectedcourses = $selectedcourses;
+
+        // Get the courses to send to if emails are configured.
+        $courses = company::get_courses_by_license($this->license->id);
+        $courseselect = array();
+        $first = true;
+        foreach ($courses as $courseid => $course) {
+            $courseselect[$course->id] = $course->fullname;
+            if ($first) {
+                $this->firstcourseid = $courseid;
+                $first = false;
+            }
+        }
+        $this->courseselect = $courseselect;
 
         if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', context_system::instance())) {
             $userhierarchylevel = $this->parentlevel->id;
@@ -64,12 +81,19 @@ class company_license_users_form extends moodleform {
 
     public function create_user_selectors() {
         if (!empty ($this->licenseid)) {
+            if (count($this->courseselect > 1)) {
+                $multiple = true;
+            } else {
+                $multiple = false;
+            }
             $options = array('context' => $this->context,
                              'companyid' => $this->selectedcompany,
                              'licenseid' => $this->licenseid,
                              'departmentid' => $this->departmentid,
                              'subdepartments' => $this->subhierarchieslist,
-                             'parentdepartmentid' => $this->parentlevel);
+                             'parentdepartmentid' => $this->parentlevel,
+                             'selectedcourses' => $this->selectedcourses,
+                             'multiple' => $multiple);
             if (empty($this->potentialusers)) {
                 $this->potentialusers = new potential_license_user_selector('potentialcourseusers', $options);
             }
@@ -108,6 +132,13 @@ class company_license_users_form extends moodleform {
         $company = new company($this->selectedcompany);
 
         if ($this->license->expirydate > time()) {
+            // Add in the courses selector.
+            $courseselector = $mform->addElement('select', 'courses', get_string('courses', 'block_iomad_company_admin'), $this->courseselect, array('id' => 'courseselector'));
+            if (count($this->courseselect) > 1 ) {
+                $courseselector->setMultiple(true);
+            }
+            $courseselector->setSelected($this->firstcourseid);
+
             $mform->addElement('header', 'header', get_string('license_users_for',
                                                               'block_iomad_company_admin',
                                                               $this->license->name));
@@ -133,16 +164,15 @@ class company_license_users_form extends moodleform {
                   </td>
                   <td id="buttonscell">
                       <div id="addcontrols">
-                          <input name="add" id="add" type="submit" value="&#x25C4;&nbsp;' .
+                          <input name="add" id="add" type="submit" value="&nbsp;' .
                           get_string('licenseallocate', 'block_iomad_company_admin') .
                           '" title="Enrol" /><br />
 
                       </div>
 
-                      <div id="removecontrols">
-                          <input name="remove" id="remove" type="submit" value="' .
+                      <div id="removecontrols"><input name="remove" id="remove" type="submit" value="' .
                           get_string('licenseremove', 'block_iomad_company_admin') .
-                          '&nbsp;&#x25BA;" title="Unenrol" />
+                          '&nbsp;" title="Unenrol" />
                       </div>
                   </td>
                   <td id="potentialcell">');
@@ -161,9 +191,12 @@ class company_license_users_form extends moodleform {
         global $DB, $CFG;
 
         $this->create_user_selectors();
-        // Get the courses to send to if emails are configured.
-        $courses = company::get_courses_by_license($this->license->id);
-
+        $courses = array();
+        if (!is_array($this->selectedcourses)) {
+            $courses[] = $this->selectedcourses;
+        } else {
+            $courses = $this->selectedcourses;
+        }
         // Process incoming allocations.
         if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $userstoassign = $this->potentialusers->get_selected_users();
@@ -171,26 +204,27 @@ class company_license_users_form extends moodleform {
             $count = $this->license->used;
             $licenserecord = (array) $this->license;
 
-            if (!empty($userstoassign)) {
-
+            if (!empty($userstoassign) && !empty($courses)) {
                 foreach ($userstoassign as $adduser) {
-                    if ($count >= $numberoflicenses) {
-                        // Set the used amount.
-                        $licenserecord['used'] = $count;
-                        $DB->update_record('companylicense', $licenserecord);
-                        redirect(new moodle_url("/blocks/iomad_company_admin/company_license_users_form.php",
-                                                 array('licenseid' => $this->licenseid, 'error' => 1)));
-                    }
-                    $allow = true;
-
-                    if ($allow) {
-                        $count++;
-                        $DB->insert_record('companylicense_users',
-                                            array('userid' => $adduser->id, 'licenseid' => $this->licenseid));
-                    }
-
-                    // Create an email event.
                     foreach ($courses as $course) {
+                        if ($count >= $numberoflicenses) {
+                            // Set the used amount.
+                            $licenserecord['used'] = $count;
+                            $DB->update_record('companylicense', $licenserecord);
+                            redirect(new moodle_url("/blocks/iomad_company_admin/company_license_users_form.php",
+                                                     array('licenseid' => $this->licenseid, 'error' => 1)));
+                        }
+                        $allow = true;
+                        if ($allow) {
+                            $recordarray = array('licensecourseid' => $course,
+                                                 'userid' => $adduser->id,
+                                                 'licenseid' => $this->licenseid);
+                            if (!$DB->get_record('companylicense_users', $recordarray)) {
+                                $DB->insert_record('companylicense_users', $recordarray);
+                                $count++;
+                            }
+                        }
+                        // Create an email event.
                         $license = new stdclass();
                         $license->length = $licenserecord['validlength'];
                         $license->valid = date('d M Y', $licenserecord['expirydate']);
@@ -201,8 +235,10 @@ class company_license_users_form extends moodleform {
                 }
 
                 // Set the used amount for the license.
-                $licenserecord['used'] = $count;
+                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $this->licenseid));
                 $DB->update_record('companylicense', $licenserecord);
+                $this->license->used = $licenserecord['used'];
+
 
                 $this->potentialusers->invalidate_selected_users();
                 $this->currentusers->invalidate_selected_users();
@@ -218,16 +254,15 @@ class company_license_users_form extends moodleform {
             if (!empty($userstounassign)) {
                 foreach ($userstounassign as $removeuser) {
                     if ($licensedata = $DB->get_record('companylicense_users',
-                                                        array('userid' => $removeuser->id, 'licenseid' => $this->licenseid))) {
+                                                        array('userid' => $removeuser->id,
+                                                              'id' => $removeuser->licenseid))) {
                         if (!$licensedata->isusing) {
                             $DB->delete_records('companylicense_users', array('id' => $licensedata->id));
                             $count--;
                         }
                     }
                     // Create an email event.
-                    foreach ($courses as $course) {
-                        EmailTemplate::send('license_removed', array('course' => $course, 'user' => $removeuser));
-                    }
+                    EmailTemplate::send('license_removed', array('course' => $licensedata->licensecourseid, 'user' => $removeuser));
                 }
 
                 // Update the number of allocated records..
@@ -235,8 +270,9 @@ class company_license_users_form extends moodleform {
                     // Cant have less than 0 licenses.
                     $count = 0;
                 }
-                $licenserecord['used'] = $count;
+                $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $this->licenseid));
                 $DB->update_record('companylicense', $licenserecord);
+                $this->license->used = $licenserecord['used'];
 
                 $this->potentialusers->invalidate_selected_users();
                 $this->currentusers->invalidate_selected_users();
@@ -252,6 +288,7 @@ $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $error = optional_param('error', 0, PARAM_INTEGER);
+$selectedcourses = optional_param_array('courses', array(), PARAM_INT);
 
 $context = context_system::instance();
 require_login();
@@ -314,7 +351,7 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
     }
 }
 
-$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel);
+$usersform = new company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $userhierarchylevel, $selectedcourses);
 
 $blockpage->display_header();
 
@@ -364,4 +401,12 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         echo $usersform->display();
     }
 }
+/*<script type="text/javascript">
+Y.on('change', submit_form, '#courseselector');
+ function submit_form() {
+var form = Y.one('#mform1'); // The id for the moodle form is automatically set.
+    form.submit();
+ }
+</script>
+*/
 echo $OUTPUT->footer();
