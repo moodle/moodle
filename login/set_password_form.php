@@ -43,7 +43,7 @@ class login_set_password_form extends moodleform {
      * Define the set password form.
      */
     public function definition() {
-        global $USER, $CFG;
+        global $CFG;
         // Prepare a string showing whether the site wants login password autocompletion to be available to user.
         if (empty($CFG->loginpasswordautocomplete)) {
             $autocomplete = 'autocomplete="on"';
@@ -94,7 +94,8 @@ class login_set_password_form extends moodleform {
      * @return array errors occuring during validation.
      */
     public function validation($data, $files) {
-        global $USER;
+        $user = $this->_customdata;
+
         $errors = parent::validation($data, $files);
 
         // Ignore submitted username.
@@ -111,9 +112,9 @@ class login_set_password_form extends moodleform {
             return $errors;
         }
 
-        if (user_is_previously_used_password($USER->id, $data['password'])) {
+        if (user_is_previously_used_password($user->id, $data['password'])) {
             $errors['password'] = get_string('errorpasswordreused', 'core_auth');
-            $errors['password2'] = get_string('passwordreused', 'core_auth');
+            $errors['password2'] = get_string('errorpasswordreused', 'core_auth');
         }
 
         return $errors;
