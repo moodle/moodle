@@ -72,6 +72,11 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             unset($data->showhighscores);
         }
 
+        // Supply item that maybe missing from previous versions.
+        if (!isset($data->completionendreached)) {
+            $data->completionendreached = 0;
+        }
+
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
         // immediately after inserting "activity" record, call this
@@ -175,7 +180,10 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->starttime = $this->apply_date_offset($data->starttime);
         $data->lessontime = $this->apply_date_offset($data->lessontime);
-
+        // Supply item that maybe missing from previous versions.
+        if (!isset($data->completed)) {
+            $data->completed = 0;
+        }
         $newitemid = $DB->insert_record('lesson_timer', $data);
     }
 

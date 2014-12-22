@@ -434,6 +434,12 @@ if ($pageid != LESSON_EOL) {
         $lesson->stop_timer();
         $gradeinfo = lesson_grade($lesson, $ntries);
 
+        // Update completion state.
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) && $lesson->completionendreached) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
+
         if ($gradeinfo->attempts) {
             if (!$lesson->custom) {
                 $lessoncontent .= $lessonoutput->paragraph(get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions), 'center');

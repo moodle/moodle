@@ -102,5 +102,27 @@ function xmldb_lesson_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014112300) {
+
+        // Define field completionendreached to be added to lesson.
+        $table = new xmldb_table('lesson');
+        $field = new xmldb_field('completionendreached', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'timemodified');
+
+        // Conditionally launch add field completionendreached.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field completed to be added to lesson_timer.
+        $table = new xmldb_table('lesson_timer');
+        $field = new xmldb_field('completed', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'lessontime');
+
+        // Conditionally launch add field completed.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2014112300, 'lesson');
+    }
     return true;
 }

@@ -1251,7 +1251,7 @@ class lesson extends lesson_base {
      *                        will continue from a previous attempt
      * @return stdClass The new timer
      */
-    public function update_timer($restart=false, $continue=false) {
+    public function update_timer($restart=false, $continue=false, $endreached =false) {
         global $USER, $DB;
         // clock code
         // get time information for this user
@@ -1272,6 +1272,7 @@ class lesson extends lesson_base {
         }
 
         $timer->lessontime = time();
+        $timer->completed = $endreached;
         $DB->update_record('lesson_timer', $timer);
         return $timer;
     }
@@ -1295,7 +1296,7 @@ class lesson extends lesson_base {
         ));
         $event->trigger();
 
-        return $this->update_timer(false, false);
+        return $this->update_timer(false, false, true);
     }
 
     /**

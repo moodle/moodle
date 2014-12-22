@@ -343,5 +343,28 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         return $errors;
     }
+
+    /**
+     * Display module-specific activity completion rules.
+     * Part of the API defined by moodleform_mod
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completion_rules() {
+        $mform = $this->_form;
+
+        $mform->addElement('checkbox', 'completionendreached', get_string('completionendreached', 'lesson'),
+                get_string('completionendreached_desc', 'lesson'));
+        return array('completionendreached');
+    }
+
+    /**
+     * Called during validation. Indicates whether a module-specific completion rule is selected.
+     *
+     * @param array $data Input data (not yet validated)
+     * @return bool True if one or more rules is enabled, false if none are.
+     */
+    public function completion_rule_enabled($data) {
+        return !empty($data['completionendreached']);
+    }
 }
 
