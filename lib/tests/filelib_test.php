@@ -824,4 +824,58 @@ EOF;
         // Test it does nothing to the 'plain' data.
         $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
     }
+
+    /**
+     * Tests the get_mimetype_description function.
+     */
+    public function test_get_mimetype_description() {
+        $this->resetAfterTest();
+
+        // Test example type (.doc).
+        $this->assertEquals(get_string('application/msword', 'mimetypes'),
+                get_mimetype_description(array('filename' => 'test.doc')));
+
+        // Test an unknown file type.
+        $this->assertEquals(get_string('document/unknown', 'mimetypes'),
+                get_mimetype_description(array('filename' => 'test.frog')));
+
+        // Test a custom filetype with no lang string specified.
+        core_filetypes::add_type('frog', 'application/x-frog', 'document');
+        $this->assertEquals('application/x-frog',
+                get_mimetype_description(array('filename' => 'test.frog')));
+
+        // Test custom description.
+        core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',
+                array(), '', 'Froggy file');
+        $this->assertEquals('Froggy file',
+                get_mimetype_description(array('filename' => 'test.frog')));
+
+        // Test custom description using multilang filter.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',
+                array(), '', '<span lang="en" class="multilang">Green amphibian</span>' .
+                '<span lang="fr" class="multilang">Amphibian vert</span>');
+        $this->assertEquals('Green amphibian',
+                get_mimetype_description(array('filename' => 'test.frog')));
+    }
+
+    /**
+     * Tests the get_mimetypes_array function.
+     */
+    public function test_get_mimetypes_array() {
+        $mimeinfo = get_mimetypes_array();
+
+        // Test example MIME type (doc).
+        $this->assertEquals('application/msword', $mimeinfo['doc']['type']);
+        $this->assertEquals('document', $mimeinfo['doc']['icon']);
+        $this->assertEquals(array('document'), $mimeinfo['doc']['groups']);
+        $this->assertFalse(isset($mimeinfo['doc']['string']));
+        $this->assertFalse(isset($mimeinfo['doc']['defaulticon']));
+        $this->assertFalse(isset($mimeinfo['doc']['customdescription']));
+
+        // Check the less common fields using other examples.
+        $this->assertEquals('image', $mimeinfo['png']['string']);
+        $this->assertEquals(true, $mimeinfo['txt']['defaulticon']);
+    }
 }
