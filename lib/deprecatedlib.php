@@ -60,12 +60,9 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
  *
  * @deprecated since 2.7 - use new file picker instead
  *
- * @param string $newfilepath
- * @param stdClass $course
- * @param bool $nourl
  */
 function clam_log_upload($newfilepath, $course=null, $nourl=false) {
-    debugging('clam_log_upload() is not supposed to be used any more, use new file picker instead', DEBUG_DEVELOPER);
+    throw new coding_exception('clam_log_upload() can not be used any more, please use file picker instead');
 }
 
 /**
@@ -73,12 +70,9 @@ function clam_log_upload($newfilepath, $course=null, $nourl=false) {
  *
  * @deprecated since 2.7 - use new file picker instead
  *
- * @param string $oldfilepath
- * @param string $newfilepath
- * @param int $userid The user
  */
 function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
-    debugging('clam_log_infected() is not supposed to be used any more, use new file picker instead', DEBUG_DEVELOPER);
+    throw new coding_exception('clam_log_infected() can not be used any more, please use file picker instead');
 }
 
 /**
@@ -86,12 +80,9 @@ function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
  *
  * @deprecated since 2.7 - use new file picker instead
  *
- * @param string $oldpath
- * @param string $newpath
- * @param boolean $update
  */
 function clam_change_log($oldpath, $newpath, $update=true) {
-    debugging('clam_change_log() is not supposed to be used any more, use new file picker instead', DEBUG_DEVELOPER);
+    throw new coding_exception('clam_change_log() can not be used any more, please use file picker instead');
 }
 
 /**
@@ -99,12 +90,9 @@ function clam_change_log($oldpath, $newpath, $update=true) {
  *
  * @deprecated since 2.7 - infected files are now deleted in file picker
  *
- * @param string $file
- * @return boolean
  */
 function clam_replace_infected_file($file) {
-    debugging('clam_change_log() is not supposed to be used any more', DEBUG_DEVELOPER);
-    return false;
+    throw new coding_exception('clam_replace_infected_file() can not be used any more, please use file picker instead');
 }
 
 /**
