@@ -277,8 +277,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Create the confirmation dialogue.
         var confirm = new M.core.confirm({
             question: confirmstring,
-            modal: true
+            modal: true,
+            visible: false
         });
+        confirm.show();
 
         // If it is confirmed.
         confirm.on('complete-yes', function() {
