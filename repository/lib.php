@@ -571,35 +571,6 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Magic method for non-existing (usually deprecated) class methods.
-     *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     * @throws coding_exception
-     */
-    public function __call($name, $arguments) {
-        if ($name === 'sync_individual_file') {
-            // Method repository::sync_individual_file() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::sync_individual_file() is deprecated.', DEBUG_DEVELOPER);
-            return true;
-        } else if ($name === 'get_file_by_reference') {
-            // Method repository::get_file_by_reference() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::get_file_by_reference() is deprecated.', DEBUG_DEVELOPER);
-            return null;
-        } else if ($name === 'get_reference_file_lifetime') {
-            // Method repository::get_file_by_reference() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::get_reference_file_lifetime() is deprecated.', DEBUG_DEVELOPER);
-            return 24 * 60 * 60;
-        } else {
-            throw new coding_exception('Tried to call unknown method '.get_class($this).'::'.$name);
-        }
-    }
-
-    /**
      * Get repository instance using repository id
      *
      * Note that this function does not check permission to access repository contents
@@ -2713,26 +2684,22 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Method deprecated, cache is handled by MUC now.
-     * @deprecated since 2.6
+     * Function repository::reset_caches() is deprecated, cache is handled by MUC now.
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      */
     public static function reset_caches() {
-        debugging('Function repository::reset_caches() is deprecated.', DEBUG_DEVELOPER);
+        throw new coding_exception('Function repository::reset_caches() can not be used any more, cache is handled by MUC now.');
     }
 
     /**
-     * Method deprecated
-     * @deprecated since 2.6
+     * Function repository::sync_external_file() is deprecated. Use repository::sync_reference instead
+     *
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see repository::sync_reference()
      */
     public static function sync_external_file($file, $resetsynchistory = false) {
-        debugging('Function repository::sync_external_file() is deprecated.',
-                DEBUG_DEVELOPER);
-        if ($resetsynchistory || !$file || !$file->get_repository_id() ||
-                !($repository = self::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID))) {
-            return false;
-        }
-        return $repository->sync_reference($file);
+        throw new coding_exception('Function repository::sync_external_file() can not be used any more. ' .
+            'Use repository::sync_reference instead.');
     }
 
     /**
@@ -2790,114 +2757,7 @@ abstract class repository implements cacheable_object {
             return true;
         }
 
-        // Backward compatibility (Moodle 2.3-2.5) implementation that calls
-        // methods repository::get_reference_file_lifetime(), repository::sync_individual_file()
-        // and repository::get_file_by_reference(). These methods are removed from the
-        // base repository class but may still be implemented by the child classes.
-
-        // THIS IS NOT A GOOD EXAMPLE of implementation. For good examples see the overwriting methods.
-
-        if (!method_exists($this, 'get_file_by_reference')) {
-            // Function get_file_by_reference() is not implemented. No synchronisation.
-            return false;
-        }
-
-        // Check if the previous sync result is still valid.
-        if (method_exists($this, 'get_reference_file_lifetime')) {
-            $lifetime = $this->get_reference_file_lifetime($file->get_reference());
-        } else {
-            // Default value that was hardcoded in Moodle 2.3 - 2.5.
-            $lifetime =  60 * 60 * 24;
-        }
-        if (($lastsynced = $file->get_referencelastsync()) && $lastsynced + $lifetime >= time()) {
-            return false;
-        }
-
-        $cache = cache::make('core', 'repositories');
-        if (($lastsyncresult = $cache->get('sync:'.$file->get_referencefileid())) !== false) {
-            if ($lastsyncresult === true) {
-                // We are in the process of synchronizing this reference.
-                // Avoid recursion when calling $file->get_filesize() and $file->get_contenthash().
-                return false;
-            } else {
-                // We have synchronised the same reference inside this request already.
-                // It looks like the object $file was created before the synchronisation and contains old data.
-                if (!empty($lastsyncresult['missing'])) {
-                    $file->set_missingsource();
-                } else {
-                    $cache->set('sync:'.$file->get_referencefileid(), true);
-                    if ($file->get_contenthash() != $lastsyncresult['contenthash'] ||
-                            $file->get_filesize() != $lastsyncresult['filesize']) {
-                        $file->set_synchronized($lastsyncresult['contenthash'], $lastsyncresult['filesize']);
-                    }
-                    $cache->set('sync:'.$file->get_referencefileid(), $lastsyncresult);
-                }
-                return true;
-            }
-        }
-
-        // Weird function sync_individual_file() that was present in API in 2.3 - 2.5, default value was true.
-        if (method_exists($this, 'sync_individual_file') && !$this->sync_individual_file($file)) {
-            return false;
-        }
-
-        // Set 'true' into the cache to indicate that file is in the process of synchronisation.
-        $cache->set('sync:'.$file->get_referencefileid(), true);
-
-        // Create object with the structure that repository::get_file_by_reference() expects.
-        $reference = new stdClass();
-        $reference->id = $file->get_referencefileid();
-        $reference->reference = $file->get_reference();
-        $reference->referencehash = sha1($file->get_reference());
-        $reference->lastsync = $file->get_referencelastsync();
-        $reference->lifetime = $lifetime;
-
-        $fileinfo = $this->get_file_by_reference($reference);
-
-        $contenthash = null;
-        $filesize = null;
-        $fs = get_file_storage();
-        if (!empty($fileinfo->filesize)) {
-            // filesize returned
-            if (!empty($fileinfo->contenthash) && $fs->content_exists($fileinfo->contenthash)) {
-                // contenthash is specified and valid
-                $contenthash = $fileinfo->contenthash;
-            } else if ($fileinfo->filesize == $file->get_filesize()) {
-                // we don't know the new contenthash but the filesize did not change,
-                // assume the contenthash did not change either
-                $contenthash = $file->get_contenthash();
-            } else {
-                // we can't save empty contenthash so generate contenthash from empty string
-                list($contenthash, $unused1, $unused2) = $fs->add_string_to_pool('');
-            }
-            $filesize = $fileinfo->filesize;
-        } else if (!empty($fileinfo->filepath)) {
-            // File path returned
-            list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($fileinfo->filepath);
-        } else if (!empty($fileinfo->handle) && is_resource($fileinfo->handle)) {
-            // File handle returned
-            $contents = '';
-            while (!feof($fileinfo->handle)) {
-                $contents .= fread($fileinfo->handle, 8192);
-            }
-            fclose($fileinfo->handle);
-            list($contenthash, $filesize, $newfile) = $fs->add_string_to_pool($contents);
-        } else if (isset($fileinfo->content)) {
-            // File content returned
-            list($contenthash, $filesize, $newfile) = $fs->add_string_to_pool($fileinfo->content);
-        }
-
-        if (!isset($contenthash) or !isset($filesize)) {
-            $file->set_missingsource(null);
-            $cache->set('sync:'.$file->get_referencefileid(), array('missing' => true));
-        } else {
-            // update files table
-            $file->set_synchronized($contenthash, $filesize);
-            $cache->set('sync:'.$file->get_referencefileid(),
-                    array('contenthash' => $contenthash, 'filesize' => $filesize));
-        }
-
-        return true;
+        return false;
     }
 
     /**
