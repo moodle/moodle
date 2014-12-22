@@ -188,7 +188,7 @@ class report_log_renderable implements renderable {
 
         // For site just return site errors option.
         $sitecontext = context_system::instance();
-        if (empty($this->course) && has_capability('report/log:view', $sitecontext)) {
+        if ($this->course->id == SITEID && has_capability('report/log:view', $sitecontext)) {
             $activities["site_errors"] = get_string("siteerrors");
             return $activities;
         }
