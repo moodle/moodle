@@ -958,7 +958,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             core_course_external::delete_modules(array('1337'));
             $this->fail('Exception expected due to missing course module.');
         } catch (dml_missing_record_exception $e) {
-            $this->assertEquals('invalidrecord', $e->errorcode);
+            $this->assertEquals('invalidcoursemodule', $e->errorcode);
         }
 
         // Create two modules.
