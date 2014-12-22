@@ -96,6 +96,28 @@ function clam_replace_infected_file($file) {
 }
 
 /**
+ * Deals with an infected file - either moves it to a quarantinedir
+ * (specified in CFG->quarantinedir) or deletes it.
+ *
+ * If moving it fails, it deletes it.
+ *
+ * @deprecated since 2.7
+ */
+function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
+    throw new coding_exception('clam_handle_infected_file() can not be used any more, please use file picker instead');
+}
+
+/**
+ * If $CFG->runclamonupload is set, we scan a given file. (called from {@link preprocess_files()})
+ *
+ * @deprecated since 2.7
+ */
+function clam_scan_moodle_file(&$file, $course) {
+    throw new coding_exception('clam_scan_moodle_file() can not be used any more, please use file picker instead');
+}
+
+
+/**
  * Checks whether the password compatibility library will work with the current
  * version of PHP. This cannot be done using PHP version numbers since the fix
  * has been backported to earlier versions in some distributions.

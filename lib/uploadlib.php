@@ -57,29 +57,6 @@ UPLOAD_PRINT_FORM_FRAGMENT DOESN'T REALLY BELONG IN THE CLASS BUT CERTAINLY IN T
 ***************************************************************************************/
 
 /**
- * Deals with an infected file - either moves it to a quarantinedir
- * (specified in CFG->quarantinedir) or deletes it.
- *
- * If moving it fails, it deletes it.
- *
- * @deprecated since 2.7 - to be removed together with the upload_manager above
- *
- */
-function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
-    throw new coding_exception('clam_handle_infected_file() can not be used any more, please use file picker instead');
-}
-
-/**
- * If $CFG->runclamonupload is set, we scan a given file. (called from {@link preprocess_files()})
- *
- * @deprecated since 2.7 - to be removed together with the upload_manager above
- *
- */
-function clam_scan_moodle_file(&$file, $course) {
-    throw new coding_exception('clam_scan_moodle_file() can not be used any more, please use file picker instead');
-}
-
-/**
  * Emails admins about a clam outcome
  *
  * @param string $notice The body of the email to be sent.
