@@ -345,7 +345,8 @@ class behat_general extends behat_base {
      *
      * @When /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" confirming the dialogue$/
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $link
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
      */
     public function i_click_on_confirming_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
@@ -357,7 +358,8 @@ class behat_general extends behat_base {
      *
      * @When /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" dismissing the dialogue$/
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $link
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
      */
     public function i_click_on_dismissing_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
