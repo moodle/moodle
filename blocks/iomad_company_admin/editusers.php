@@ -202,6 +202,7 @@ $strunsuspend = get_string('unsuspend', 'block_iomad_company_admin');
 $strunsuspendcheck = get_string('unsuspendcheck', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallusers');
 $strenrolment = get_string('userenrolments', 'block_iomad_company_admin');
+$struserlicense = get_string('userlicenses', 'block_iomad_company_admin');
 
 if (empty($CFG->loginhttps)) {
     $securewwwroot = $CFG->wwwroot;
@@ -563,7 +564,7 @@ if (!$users) {
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id)
              and !is_mnet_remote_user($user)) {
-            $licensebutton = "<a href=\"company_users_licenses_form.php?userid=$user->id\">$strenrolment</a>";
+            $licensebutton = "<a href=\"company_users_licenses_form.php?userid=$user->id\">$strenrolmentuserlicense</a>";
         } else {
             $licensebutton = "";
         }

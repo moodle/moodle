@@ -46,7 +46,11 @@ class company_license_users_form extends moodleform {
         $this->selectedcourses = $selectedcourses;
 
         // Get the courses to send to if emails are configured.
-        $courses = company::get_courses_by_license($this->license->id);
+        if (!empty($this->license)) {
+            $courses = company::get_courses_by_license($this->license->id);
+        } else {
+            $courses = array();
+        }
         $courseselect = array();
         $first = true;
         foreach ($courses as $courseid => $course) {

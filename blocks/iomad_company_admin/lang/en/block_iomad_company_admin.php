@@ -309,6 +309,7 @@ $string['usercreated'] = 'User created successfully';
 $string['user_create_title'] = 'Create Users';
 $string['userdefaults'] = 'User defaults';
 $string['userenrolments'] = 'Change course enrolments';
+$string['userlicenses'] = 'Change course licenses';
 $string['usermanagement'] = 'User management';
 $string['userprofiles'] = 'Optional profiles';
 $string['users_bulk'] = 'Bulk user actions';

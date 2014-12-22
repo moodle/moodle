@@ -1005,5 +1005,71 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014120400, 'local', 'iomad');
     }
 
+    if ($oldversion < 2014121900) {
+
+        // Deal with licenseses which have already been allocated.
+        $licenseusers = $DB->get_records('companylicense_users', array('licensecourseid' => 0));
+        foreach ($licenseusers as $licenseuser) {
+            if ($licenseuser->timecompleted != null) {
+                continue;
+            }
+            // Are they using the license?
+            if ($licenseuser->isusing == 1) {
+                // Get the course.
+                $enrolrecords = $DB->get_records_sql("SELECT e.courseid,ue.userid
+                                                    FROM {enrol} e JOIN {user_enrolments} ue
+                                                    ON e.id=ue.enrolid
+                                                    WHERE userid = :userid
+                                                    AND courseid IN
+                                                     (SELECT courseid FROM {companylicense_courses}
+                                                      WHERE licenseid = :licenseid)",
+                                                    array('userid' => $licenseuser->userid,
+                                                          'licenseid' => $licenseuser->licenseid));
+                // Do we have more than one record?
+                if (count($enrolrecords > 1 )) {
+                    foreach ($enrolrecords as $enrolrecord) {
+                        // Check if we already have a record for this course.
+                        if ($DB->get_record('companylicense_users', array('userid' => $licenseuser->userid,
+                                                                          'licenseid' => $licenseuser->licenseid,
+                                                                          'licensecourseid' => $enrolrecord->courseid))) {
+                            continue;
+                        } else {
+                            $licenseuser->licensecourseid = $enrolrecord->courseid;
+                            $DB->update_record('companylicense_users', $licenseuser);
+                        }
+                    }
+                } else {
+                    list($enrolcourseid, $enroluserid) = each($enrolrecords);
+                    $licenseuser->licensecourseid = $enrolcourseid;
+                    $DB->update_record('companylicense_users', $licenseuser);
+                }
+            } else {
+                // Get the courses.
+                $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseuser->licenseid));
+                if (count($licensecourses) == 1) {
+                    // Only one course so add it.
+echo "licensecourse = ";
+print_r($licensecourses);
+                    $licensecourse = array_pop($licensecourses);
+                    $licenseuser->licensecourseid = $licensecourse->id;
+                    $DB->update_record('companylicense_users', $licenseuser);
+                } else {
+                    //  Dont know which course to assign so we are going to remove the record as its not being used.
+                    $DB->delete_records('companylicense_users', array('id' => $licenseuser->id));
+                }
+            }
+        }
+        //  Update the used counts for each license.
+        $licenses = $DB->get_records('companylicense');
+        foreach ($licenses as $license) {
+            $licensecount = $DB->count_records('companylicense_users', array('licenseid' => $license->id));
+            $license->used = $licensecount;
+            $DB->update_record('companylicense', $license);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2014121900, 'local', 'iomad');
+    }
+
     return $result;
 }
