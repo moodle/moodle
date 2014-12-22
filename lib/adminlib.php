@@ -8431,7 +8431,7 @@ class admin_setting_configcolourpicker extends admin_setting {
             $content .= html_writer::empty_tag('input', array('type'=>'button','id'=>$this->get_id().'_preview', 'value'=>get_string('preview'), 'class'=>'admin_colourpicker_preview'));
         }
         $content .= html_writer::end_tag('div');
-        return format_admin_setting($this, $this->visiblename, $content, $this->description, false, '', $this->get_defaultsetting(), $query);
+        return format_admin_setting($this, $this->visiblename, $content, $this->description, true, '', $this->get_defaultsetting(), $query);
     }
 }
 
