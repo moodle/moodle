@@ -205,7 +205,7 @@ class dml_missing_record_exception extends dml_exception {
             case 'course':
                 $errcode = empty($sql) ? 'invalidcourseid' : 'invalidrecord';
                 break;
-            case 'course_module':
+            case 'course_modules':
                 $errcode = 'invalidcoursemodule';
                 break;
             case 'user':
