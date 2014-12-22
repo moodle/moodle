@@ -207,6 +207,14 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Dismisses the currently displayed alert dialog. This step does not work in all the browsers, consider it experimental.
+     * @Given /^I dismiss the currently displayed dialog$/
+     */
+    public function dismiss_currently_displayed_alert_dialog() {
+        $this->getSession()->getDriver()->getWebDriverSession()->dismiss_alert();
+    }
+
+    /**
      * Clicks link with specified id|title|alt|text.
      *
      * @When /^I follow "(?P<link_string>(?:[^"]|\\")*)"$/
@@ -342,6 +350,18 @@ class behat_general extends behat_base {
     public function i_click_on_confirming_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
         $this->accept_currently_displayed_alert_dialog();
+    }
+
+    /**
+     * Clicks the specified element and dismissing the expected dialogue.
+     *
+     * @When /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" dismissing the dialogue$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $link
+     */
+    public function i_click_on_dismissing_the_dialogue($element, $selectortype) {
+        $this->i_click_on($element, $selectortype);
+        $this->dismiss_currently_displayed_alert_dialog();
     }
 
     /**
