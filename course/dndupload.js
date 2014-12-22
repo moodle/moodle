@@ -635,13 +635,14 @@ M.course_dndupload = {
             bodyContent: content,
             width: '350px',
             modal: true,
-            visible: true,
+            visible: false,
             render: true,
             align: {
                 node: null,
                 points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
             }
         });
+        panel.show();
         // When the panel is hidden - destroy it and then check for other pending uploads
         panel.after("visibleChange", function(e) {
             if (!panel.get('visible')) {
