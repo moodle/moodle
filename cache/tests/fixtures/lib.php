@@ -61,14 +61,13 @@ class cache_config_phpunittest extends cache_config_writer {
         $appdefine = defined('TEST_CACHE_USING_APPLICATION_STORE') ? TEST_CACHE_USING_APPLICATION_STORE : false;
         if ($appdefine !== false && preg_match('/^[a-zA-Z][a-zA-Z0-9_]+$/', $appdefine)) {
             $expectedstore = $appdefine;
-            $expecteddefine = 'TEST_CACHESTORE_'.strtoupper($expectedstore).'_TESTSERVERS';
             $file = $CFG->dirroot.'/cache/stores/'.$appdefine.'/lib.php';
             $class = 'cachestore_'.$appdefine;
             if (file_exists($file)) {
                 require_once($file);
             }
-            if (defined($expecteddefine) && class_exists($class)) {
-                /** @var cache_store $class */
+            if (class_exists($class) && $class::ready_to_be_used_for_testing()) {
+                /* @var cache_store $class */
                 $writer->configstores['test_application'] = array(
                     'use_test_store' => true,
                     'name' => 'test_application',

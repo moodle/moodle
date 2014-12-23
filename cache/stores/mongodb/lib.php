@@ -85,7 +85,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * Determines if and what safe setting is to be used.
      * @var bool|int
      */
-    protected $usesafe = false;
+    protected $usesafe = true;
 
     /**
      * If set to true then multiple identifiers will be requested and used.
@@ -598,5 +598,17 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      */
     public function my_name() {
         return $this->name;
+    }
+
+    /**
+     * Returns true if this cache store instance is both suitable for testing, and ready for testing.
+     *
+     * Cache stores that support being used as the default store for unit and acceptance testing should
+     * override this function and return true if there requirements have been met.
+     *
+     * @return bool
+     */
+    public static function ready_to_be_used_for_testing() {
+        return defined('TEST_CACHESTORE_MONGODB_TESTSERVER');
     }
 }
