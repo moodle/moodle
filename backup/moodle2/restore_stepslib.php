@@ -2505,25 +2505,27 @@ class restore_course_completion_structure_step extends restore_structure_step {
 
         // Map the role from the criteria
         if (isset($data->role) && $data->role != '') {
-
-            // If same site use the same role id, otherwise try calculate it.
-            if (!$this->task->is_samesite()) {
-                // Newer backups should include roleshortname, which makes this much easier.
-                if (!empty($data->roleshortname)) {
-                    $roleinstanceid = $DB->get_field('role', 'id', array('shortname' => $data->roleshortname));
-                    if (!$roleinstanceid) {
-                        debugging('Could not match the role shortname in course_completion_criteria, so skipping');
-                        return;
-                    }
-                    $data->role = $roleinstanceid;
-                } else {
-                    $data->role = $this->get_mappingid('role', $data->role);
+            // Newer backups should include roleshortname, which makes this much easier.
+            if (!empty($data->roleshortname)) {
+                $roleinstanceid = $DB->get_field('role', 'id', array('shortname' => $data->roleshortname));
+                if (!$roleinstanceid) {
+                    $this->log(
+                        'Could not match the role shortname in course_completion_criteria, so skipping',
+                        backup::LOG_DEBUG
+                    );
+                    return;
                 }
+                $data->role = $roleinstanceid;
+            } else {
+                $data->role = $this->get_mappingid('role', $data->role);
             }
 
             // Check we have an id, otherwise it causes all sorts of bugs.
             if (!$data->role) {
-                debugging('Could not match role in course_completion_criteria, so skipping');
+                $this->log(
+                    'Could not match role in course_completion_criteria, so skipping',
+                    backup::LOG_DEBUG
+                );
                 return;
             }
         }
@@ -2533,7 +2535,10 @@ class restore_course_completion_structure_step extends restore_structure_step {
         if (!empty($data->moduleinstance) && !empty($data->module)) {
             $data->moduleinstance = $this->get_mappingid('course_module', $data->moduleinstance);
             if (empty($data->moduleinstance)) {
-                debugging('Could not match the module instance in course_completion_criteria, so skipping');
+                $this->log(
+                    'Could not match the module instance in course_completion_criteria, so skipping',
+                    backup::LOG_DEBUG
+                );
                 return;
             }
         } else {
@@ -2545,7 +2550,10 @@ class restore_course_completion_structure_step extends restore_structure_step {
         if (!empty($data->courseinstanceshortname)) {
             $courseinstanceid = $DB->get_field('course', 'id', array('shortname'=>$data->courseinstanceshortname));
             if (!$courseinstanceid) {
-                debugging('Could not match the course instance in course_completion_criteria, so skipping');
+                $this->log(
+                    'Could not match the course instance in course_completion_criteria, so skipping',
+                    backup::LOG_DEBUG
+                );
                 return;
             }
         } else {
