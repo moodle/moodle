@@ -32,6 +32,8 @@
 class core_useragent_testcase extends basic_testcase {
 
     public function user_agents_providers() {
+        // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
+        // This ensures that regression tests are applied to all known user agents.
         return array(
             // Windows 98; Internet Explorer 5.0.
             array(
@@ -48,8 +50,7 @@ class core_useragent_testcase extends basic_testcase {
                     ),
 
                     // IE 5.0 is a legacy browser.
-                    // TODO Why is this not legacy!?
-                    //'devicetype'                    => 'legacy',
+                    'devicetype'                    => 'legacy',
 
                     'supports_svg'                  => false,
                     'supports_json_contenttype'     => false,
@@ -71,8 +72,7 @@ class core_useragent_testcase extends basic_testcase {
                     ),
 
                     // IE 6.0 is a legacy browser.
-                    // TODO Why is this not legacy!?
-                    //'devicetype'                    => 'legacy',
+                    'devicetype'                    => 'legacy',
 
                     'supports_svg'                  => false,
                     'supports_json_contenttype'     => false,
@@ -160,7 +160,6 @@ class core_useragent_testcase extends basic_testcase {
                         '7.0'                       => true,
                         '8.0'                       => true,
                     ),
-                    'iecompatibility'               => false,
                     'versionclasses'                => array(
                         'ie',
                         'ie8',
