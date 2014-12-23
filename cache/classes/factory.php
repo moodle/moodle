@@ -126,7 +126,7 @@ class cache_factory {
                 // situation. It will use disabled alternatives where available.
                 require_once($CFG->dirroot.'/cache/disabledlib.php');
                 self::$instance = new cache_factory_disabled();
-            } else if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST) || behat_is_test_site()) {
+            } else if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST) || defined('BEHAT_SITE_RUNNING')) {
                 // We're using the test factory.
                 require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
                 self::$instance = new cache_phpunit_factory();
@@ -336,7 +336,7 @@ class cache_factory {
         // The class to use.
         $class = 'cache_config';
         // Are we running tests of some form?
-        $testing = (defined('PHPUNIT_TEST') && PHPUNIT_TEST) || behat_is_test_site();
+        $testing = (defined('PHPUNIT_TEST') && PHPUNIT_TEST) || defined('BEHAT_SITE_RUNNING');
 
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
         if ($testing) {
