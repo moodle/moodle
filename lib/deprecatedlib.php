@@ -1387,17 +1387,14 @@ function show_event($event) {
 
 /**
  * Original singleton helper function, please use static methods instead,
- * ex: core_text::convert()
+ * ex: core_text::convert().
  *
- * @deprecated since Moodle 2.2 use core_text::xxxx() instead
- * @see textlib
- * @return textlib instance
+ * @deprecated since Moodle 2.2 use core_text::xxxx() instead.
+ * @see core_text
  */
 function textlib_get_instance() {
-
-    debugging('textlib_get_instance() is deprecated. Please use static calling core_text::functioname() instead.', DEBUG_DEVELOPER);
-
-    return new textlib();
+    throw new coding_exception('textlib_get_instance() can not be used any more, please use '.
+        'core_text::functioname() instead.');
 }
 
 /**

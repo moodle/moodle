@@ -208,7 +208,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $plugininfos = core_plugin_manager::instance()->get_plugins();
         foreach ($plugininfos as $type => $infos) {
             foreach ($infos as $name => $info) {
-                /** @var plugininfo_base $info */
+                /** @var core\plugininfo\base $info */
                 if ($info->component === 'mod_assign') {
                     $this->assertSame(core_plugin_manager::PLUGIN_STATUS_UPGRADE, $info->get_status(), 'Invalid '.$info->component.' state');
                 } else if ($info->component === 'mod_forum') {

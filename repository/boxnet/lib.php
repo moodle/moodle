@@ -265,8 +265,8 @@ class repository_boxnet extends repository {
             }
         }
 
-        collatorlib::ksort($folders, core_collator::SORT_NATURAL);
-        collatorlib::ksort($files, core_collator::SORT_NATURAL);
+        core_collator::ksort($folders, core_collator::SORT_NATURAL);
+        core_collator::ksort($files, core_collator::SORT_NATURAL);
         $ret['list'] = array_merge($folders, $files);
         $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
 
