@@ -48,7 +48,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
     public function setUp() {
         parent::setUp();
         cache_factory::reset();
-        cache_config_phpunittest::create_default_configuration();
+        cache_config_testing::create_default_configuration();
     }
 
     /**
@@ -193,7 +193,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         set_debugging(DEBUG_ALL);
 
         // First with simplekeys
-        $instance = cache_config_phpunittest::instance(true);
+        $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/hashtest', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',

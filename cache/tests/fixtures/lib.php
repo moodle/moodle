@@ -31,12 +31,16 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/cache/locallib.php');
 
 /**
- * Override the default cache configuration for our own maniacle purposes.
+ * Override the default cache configuration for our own maniacal purposes.
  *
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This class was originally named cache_config_phpunittest but was renamed in 2.9
+ * because it is used for both unit tests and acceptance tests.
+ *
+ * @since 2.9
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_config_phpunittest extends cache_config_writer {
+class cache_config_testing extends cache_config_writer {
 
     /**
      * Creates the default configuration and saves it.
@@ -135,10 +139,10 @@ class cache_config_phpunittest extends cache_config_writer {
 
         if (!empty($CFG->altcacheconfigpath)) {
 
-            if  (defined('PHPUNIT_TEST') && PHPUNIT_TEST &&
-                (!defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') || !TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH)) {
-                // We're within a unit test, but TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH has not being defined or is
-                // false, we want to use the default.
+            // No need to check we are within a test here, this is the cache config class that gets used
+            // only when one of those is true.
+            if  (!defined('TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH') || !TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH) {
+                // TEST_CACHE_USING_ALT_CACHE_CONFIG_PATH has not being defined or is false, we want to use the default.
                 return $configpath;
             }
 
@@ -284,6 +288,21 @@ class cache_config_phpunittest extends cache_config_writer {
         global $CFG;
         return $CFG->wwwroot.'phpunit';
     }
+}
+
+/**
+ * This is a deprecated class. It has been renamed to cache_config_testing.
+ *
+ * This was deprecated in Moodle 2.9 but will be removed at the next major release
+ * as it is only used during testing and its highly unlikely anyone has used this.
+ *
+ * @deprecated since 2.9
+ * @copyright  2014 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_config_phpunittest extends cache_config_testing {
+    // We can't do anything here to warn the user.
+    // The cache can be utilised before sessions have even been started.
 }
 
 /**
