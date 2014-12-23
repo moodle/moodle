@@ -96,6 +96,7 @@ $mform->set_data($filters);
 
 if ($table->is_downloading()) {
     // Download file and exit.
+    \core\session\manager::write_close();
     echo $output->render($table);
     die();
 }

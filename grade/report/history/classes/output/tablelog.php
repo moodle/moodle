@@ -467,7 +467,11 @@ class tablelog extends \table_sql implements \renderable {
         list($sql, $params) = $this->get_sql_and_params();
         $total = $DB->count_records_sql($countsql, $countparams);
         $this->pagesize($pagesize, $total);
-        $histories = $DB->get_records_sql($sql, $params, $this->pagesize * $this->page, $this->pagesize);
+        if ($this->is_downloading()) {
+            $histories = $DB->get_records_sql($sql, $params);
+        } else {
+            $histories = $DB->get_records_sql($sql, $params, $this->pagesize * $this->page, $this->pagesize);
+        }
         foreach ($histories as $history) {
             $this->rawdata[] = $history;
         }
