@@ -52,6 +52,7 @@ class core_useragent_testcase extends basic_testcase {
                     //'devicetype'                    => 'legacy',
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -74,6 +75,7 @@ class core_useragent_testcase extends basic_testcase {
                     //'devicetype'                    => 'legacy',
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -97,6 +99,7 @@ class core_useragent_testcase extends basic_testcase {
                     'devicetype'                    => 'legacy',
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -118,6 +121,7 @@ class core_useragent_testcase extends basic_testcase {
                     ),
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -139,6 +143,7 @@ class core_useragent_testcase extends basic_testcase {
                     ),
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -208,6 +213,9 @@ class core_useragent_testcase extends basic_testcase {
 
                     // IE 9 in Compatiblity mode does not support SVG.
                     'supports_svg'                  => false,
+
+                    // IE in Compatiblity mode does not support JSON ContentType.
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -253,6 +261,9 @@ class core_useragent_testcase extends basic_testcase {
                         'ie',
                         'ie10',
                     ),
+
+                    // IE in Compatiblity mode does not support JSON ContentType.
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -300,6 +311,9 @@ class core_useragent_testcase extends basic_testcase {
                         'ie',
                         'ie11',
                     ),
+
+                    // IE in Compatiblity mode does not support JSON ContentType.
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -706,6 +720,7 @@ class core_useragent_testcase extends basic_testcase {
                     'is_msword'                     => true,
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -732,6 +747,7 @@ class core_useragent_testcase extends basic_testcase {
                     'is_msword'                     => false,
 
                     'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
                 ),
             ),
 
@@ -1167,6 +1183,15 @@ class core_useragent_testcase extends basic_testcase {
         } else {
             $this->assertFalse(core_useragent::supports_svg(),
                 "SVG Support was reported (and should not have been)");
+        }
+
+        // Supports JSON ContentType.
+        if (!isset($tests['supports_json_contenttype']) || $tests['supports_json_contenttype']) {
+            $this->assertTrue(core_useragent::supports_json_contenttype(),
+                "JSON ContentType Support was not reported (and should have been)");
+        } else {
+            $this->assertFalse(core_useragent::supports_json_contenttype(),
+                "JSON ContentType Support was reported (and should not have been)");
         }
     }
 
