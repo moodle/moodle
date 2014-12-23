@@ -249,7 +249,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
 
     // These are used for DB queries, so we want unixtime, so we need to use Gregorian dates.
     $display->tstart = make_timestamp($gy, $gm, $gd, $gh, $gmin, 0);
-    $display->tend = strtotime("+{$display->maxdays} days", $display->tstart) - 1;
+    $display->tend = $display->tstart + ($display->maxdays * DAYSECS) - 1;
 
     // Align the starting weekday to fall in our display range
     // This is simple, not foolproof.
