@@ -8,6 +8,7 @@ information provided here is intended especially for developers.
   Catching debugging messages when sending mail will no longer work. Use $sink = $this->redirectEmails(); and then check
   the message in the sink instead.
 * The file pluginlib.php was deprecated since 2.6 and has now been removed, do not include or require it.
+* \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
 
 === 2.8 ===
 
