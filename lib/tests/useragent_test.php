@@ -461,6 +461,7 @@ class core_useragent_testcase extends basic_testcase {
                         '20051116'                  => true,
                         '2006010100'                => true,
                         '3.6'                       => true,
+                        '20100101'                  => true,
                     ),
 
                     'versionclasses'                => array(
@@ -489,6 +490,7 @@ class core_useragent_testcase extends basic_testcase {
                         '20030516'                  => true,
                         '20051116'                  => true,
                         '2006010100'                => true,
+                        '20100101'                  => true,
                         '3.6'                       => true,
                         '4.0'                       => true,
                     ),
@@ -519,6 +521,7 @@ class core_useragent_testcase extends basic_testcase {
                         '20030516'                  => true,
                         '20051116'                  => true,
                         '2006010100'                => true,
+                        '20100101'                  => true,
                         '3.6'                       => true,
                         '4.0'                       => true,
                         '15.0'                      => true,
@@ -555,6 +558,44 @@ class core_useragent_testcase extends basic_testcase {
                         '4.0'                       => true,
                         '15.0'                      => true,
                         '18.0'                      => true,
+                        '20100101'                  => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                    ),
+                ),
+            ),
+
+            // Firefox 33; Mac OS X 10.10.
+            array(
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) Gecko/20100101 Firefox/33.0',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                        '10'                        => true,
+                        '15'                        => true,
+                        '18'                        => true,
+                        '19'                        => true,
+                        '33'                        => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                        '15.0'                      => true,
+                        '18.0'                      => true,
+                        '19.0'                      => true,
+                        '20100101'                  => true,
                     ),
 
                     'versionclasses'                => array(
@@ -595,6 +636,7 @@ class core_useragent_testcase extends basic_testcase {
                         '20030516'                  => true,
                         '20051116'                  => true,
                         '2006010100'                => true,
+                        '20100101'                  => true,
                         '3.6'                       => true,
                         '4.0'                       => true,
                     ),
@@ -624,6 +666,7 @@ class core_useragent_testcase extends basic_testcase {
                         '20030516'                  => true,
                         '20051116'                  => true,
                         '2006010100'                => true,
+                        '20100101'                  => true,
                         '3.6'                       => true,
                         '4.0'                       => true,
                     ),
@@ -778,6 +821,29 @@ class core_useragent_testcase extends basic_testcase {
                ),
             ),
 
+            // Safari; iPhone 6 Plus; iOS 8.1; Build 12B411.
+            array(
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 10_10 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12B411 Safari/600.1.4',
+                array(
+                    // Note: We do *not* identify mobile Safari as Safari.
+                    'is_safari_ios'                 => true,
+                    'check_safari_ios_version'      => array(
+                        '527'                       => true,
+                        '590'                       => true,
+                        '600'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'ios',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+               ),
+            ),
+
             // iOS Safari 533; iPad.
             array(
                 'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5',
@@ -918,6 +984,26 @@ class core_useragent_testcase extends basic_testcase {
                 ),
             ),
 
+            // Chrome 39; Mac OS X.
+            array(
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
+                array(
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                        '10'                        => true,
+                        '39'                        => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
+            ),
+
             // Opera 8.51; Windows XP.
             array(
                 'Opera/8.51 (Windows NT 5.1; U; en)',
@@ -942,6 +1028,27 @@ class core_useragent_testcase extends basic_testcase {
                     'is_opera'                      => true,
                     'check_opera_version'           => array(
                         '8.0'                       => true,
+                        '9.0'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'opera',
+                    ),
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+
+            // Opera 12.15 (Build 1748); Mac OS X.
+            array(
+                'Opera/9.80 (Macintosh; Intel Mac OS X 10.10.0; Edition MAS) Presto/2.12.388 Version/12.15',
+                array(
+                    'is_opera'                      => true,
+                    'check_opera_version'           => array(
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10.0'                      => true,
+                        '12.15'                     => true,
                     ),
 
                     'versionclasses'                => array(
@@ -959,6 +1066,7 @@ class core_useragent_testcase extends basic_testcase {
                     'is_opera'                      => true,
                     'check_opera_version'           => array(
                         '8.0'                       => true,
+                        '9.0'                       => true,
                     ),
 
                     'versionclasses'                => array(
@@ -1153,6 +1261,7 @@ class core_useragent_testcase extends basic_testcase {
             '7'         => false,
             '8'         => false,
             '10'        => false,
+            '39'        => false,
         );
 
         if (isset($tests['check_chrome_version'])) {
@@ -1226,6 +1335,7 @@ class core_useragent_testcase extends basic_testcase {
             // New versions should be added here.
             '527'       => false,
             '590'       => false,
+            '600'       => false,
         );
 
         if (isset($tests['check_safari_ios_version'])) {
@@ -1266,6 +1376,7 @@ class core_useragent_testcase extends basic_testcase {
             '20030516'      => false,
             '20051116'      => false,
             '2006010100'    => false,
+            '20100101'      => false,
             '15.0'          => false,
             '18.0'          => false,
             '19.0'          => false,
@@ -1309,6 +1420,7 @@ class core_useragent_testcase extends basic_testcase {
             '15'        => false,
             '18'        => false,
             '19'        => false,
+            '33'        => false,
         );
 
         if (isset($tests['check_firefox_version'])) {
@@ -1343,7 +1455,9 @@ class core_useragent_testcase extends basic_testcase {
         $versions = array(
             // New versions should be added here.
             '8.0'       => false,
+            '9.0'       => false,
             '10.0'      => false,
+            '12.15'     => false,
         );
 
         if (isset($tests['check_opera_version'])) {
