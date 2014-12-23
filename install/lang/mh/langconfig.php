@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'Ebon';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'kajin Aelōn̄ Kein';
