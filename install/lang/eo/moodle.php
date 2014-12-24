@@ -30,5 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'kajin Aelōn̄ Kein';
+$string['language'] = 'Lingvo';
+$string['next'] = 'Poste';
+$string['previous'] = 'Antaŭa';
+$string['reload'] = 'Reŝarĝi';
