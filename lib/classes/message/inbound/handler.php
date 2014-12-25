@@ -141,6 +141,18 @@ abstract class handler {
     }
 
     /**
+     * Whether the current handler allows changes to expiry of the generated email address.
+     *
+     * By default this will return true, but for some handlers it may be
+     * necessary to disallow such changes.
+     *
+     * @return boolean
+     */
+    public function can_change_defaultexpiration() {
+        return true;
+    }
+
+    /**
      * Whether this handler can be disabled (or enabled).
      *
      * By default this will return true, but for some handlers it may be
