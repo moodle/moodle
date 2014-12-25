@@ -4058,5 +4058,15 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111002.01) {
+
+        // Make sure the private files handler is not set to expire.
+        $DB->set_field('messageinbound_handlers', 'defaultexpiration', 0,
+                array('classname' => '\core\message\inbound\private_files_handler'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014111002.01);
+    }
+
     return true;
 }
