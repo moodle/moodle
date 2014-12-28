@@ -339,7 +339,14 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'completionendreached', get_string('completionendreached', 'lesson'),
                 get_string('completionendreached_desc', 'lesson'));
-        return array('completionendreached');
+
+        $group = array();
+        $group[] =& $mform->createElement('checkbox', 'completiontimespend', '', get_string('completiontimespend', 'lesson'));
+        $group[] =& $mform->createElement('duration', 'timetospend', array('optional' => true));
+        $mform->addGroup($group, 'completiontimespendgroup', get_string('completiontimespendgroup', 'lesson'), array(' '), false);
+        $mform->disabledIf('timetospend[number]', 'completiontimespend', 'notchecked');
+        $mform->disabledIf('timetospend[timeunit]', 'completiontimespend', 'notchecked');
+        return array('completionendreached', 'completiontimespendgroup');
     }
 
     /**
@@ -349,7 +356,8 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return !empty($data['completionendreached']);
+        return !empty($data['completionendreached']) ||
+                (!empty($data['completiontimespend']) && $data['timetospend'] != 0);
     }
 }
 
