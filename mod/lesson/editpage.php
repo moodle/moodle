@@ -43,6 +43,7 @@ $context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);
 
 $PAGE->set_url('/mod/lesson/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
+$PAGE->set_pagelayout('admin');
 
 if ($edit) {
     $editpage = lesson_page::load($pageid, $lesson);
