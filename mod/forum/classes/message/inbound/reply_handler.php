@@ -117,7 +117,7 @@ class reply_handler extends \core\message\inbound\handler {
         }
 
         // And check the availability.
-        if (!\core_availability\info_module::is_user_visible($cm, $USER, true)) {
+        if (!\core_availability\info_module::is_user_visible($cm)) {
             $data = new \stdClass();
             $data->forum = $forum;
             throw new \core\message\inbound\processing_failed_exception('messageinboundforumhidden', 'mod_forum', $data);
