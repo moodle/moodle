@@ -102,5 +102,18 @@ function xmldb_lesson_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111001) {
+
+        // Changing precision of field grade on table lesson to (10).
+        $table = new xmldb_table('lesson');
+        $field = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'conditions');
+
+        // Launch change of precision for field grade.
+        $dbman->change_field_precision($table, $field);
+
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2014111001, 'lesson');
+    }
+
     return true;
 }
