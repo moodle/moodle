@@ -253,6 +253,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .file-picker.fp-select.loading .fp-select-loading {display:block;}
 .file-picker.fp-select.loading form {display:none;}
 .fp-select .fp-dimensions.fp-unknown {display:none;}
+.fp-select .fp-size.fp-unknown {display:none;}
 
  /*
  * File Manager
