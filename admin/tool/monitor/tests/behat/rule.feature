@@ -97,7 +97,7 @@ Feature: tool_monitor_rule
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
-    When I click on "Duplicate rule" "link"
+    When I click on "Duplicate rule" "link" in the "New rule course level" "table_row"
     Then I should see "Rule successfully duplicated"
     And "#toolmonitorrules_r1" "css_element" should appear before "#toolmonitorrules_r2" "css_element"
     And I should see "New rule"
@@ -153,9 +153,10 @@ Feature: tool_monitor_rule
     And I should see "5 time(s) in 5 minute(s)"
 
   Scenario: Duplicate a rule on site level
-    Given I log in as "admin"
-    And I navigate to "Event monitoring rules" node in "Site administration > Reports"
-    When I click on "Duplicate rule" "link"
+    Given I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Event monitoring rules" node in "Course administration > Reports"
+    When I click on "Duplicate rule" "link" in the "New rule site level" "table_row"
     Then I should see "Rule successfully duplicated"
     And "#toolmonitorrules_r2" "css_element" should appear after "#toolmonitorrules_r1" "css_element"
     And I should see "I want a rule to monitor posts created on a forum"
