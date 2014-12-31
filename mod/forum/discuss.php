@@ -118,14 +118,17 @@
         foreach ($potentialsubscribers as $subuser) {
             $userid = $subuser->id;
             $targetsubscription = \mod_forum\subscriptions::is_subscribed($userid, $forumto, null, $cmto);
-            if (\mod_forum\subscriptions::is_subscribed($userid, $forum, $discussion->id)) {
-                if (!$targetsubscription) {
-                    $subscriptionchanges[$userid] = $subscriptiontime;
-                }
-            } else {
-                if ($targetsubscription) {
-                    $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_UNSUBSCRIBED;
-                }
+            $discussionsubscribed = \mod_forum\subscriptions::is_subscribed($userid, $forum, $discussion->id);
+            $forumsubscribed = \mod_forum\subscriptions::is_subscribed($userid, $forum);
+
+            if ($forumsubscribed && !$discussionsubscribed && $targetsubscription) {
+                // The user has opted out of this discussion and the move would cause them to receive notifications again.
+                // Ensure they are unsubscribed from the discussion still.
+                $subscriptionchanges[$userid] = \mod_forum\subscriptions::FORUM_DISCUSSION_UNSUBSCRIBED;
+            } else if (!$forumsubscribed && $discussionsubscribed && !$targetsubscription) {
+                // The user has opted into this discussion and would otherwise not receive the subscription after the move.
+                // Ensure they are subscribed to the discussion still.
+                $subscriptionchanges[$userid] = $subscriptiontime;
             }
         }
 
