@@ -698,6 +698,7 @@ function lesson_reset_userdata($data) {
         $DB->delete_records_select('lesson_high_scores', "lessonid IN ($lessonssql)", $params);
         $DB->delete_records_select('lesson_grades', "lessonid IN ($lessonssql)", $params);
         $DB->delete_records_select('lesson_attempts', "lessonid IN ($lessonssql)", $params);
+        $DB->delete_records_select('lesson_branch', "lessonid IN ($lessonssql)", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
