@@ -818,11 +818,12 @@ class core_useragent {
         $useragent = self::get_user_agent_string();
         if (!preg_match('/(\bWord\b|ms-office|MSOffice|Microsoft Office)/i', $useragent)) {
             return false;
-        }
-        if (strpos($useragent, 'Outlook') !== false) {
+        } else if (strpos($useragent, 'Outlook') !== false) {
+            return false;
+        } else if (strpos($useragent, 'Meridio') !== false) {
             return false;
         }
-        // It's Office and not Outlook - so it's probably Word, but we can't really be sure in most cases.
+        // It's Office, not Outlook and not Meridio - so it's probably Word, but we can't really be sure in most cases.
         return true;
     }
 
