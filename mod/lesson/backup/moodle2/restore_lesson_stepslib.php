@@ -48,6 +48,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $paths[] = new restore_path_element('lesson_branch', '/activity/lesson/pages/page/branches/branch');
             $paths[] = new restore_path_element('lesson_highscore', '/activity/lesson/highscores/highscore');
             $paths[] = new restore_path_element('lesson_timer', '/activity/lesson/timers/timer');
+            $paths[] = new restore_path_element('lesson_override', '/activity/lesson/overrides/override');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -202,6 +203,39 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $data->completed = 0;
         }
         $newitemid = $DB->insert_record('lesson_timer', $data);
+    }
+
+    /**
+     * Process a lesson override restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_lesson_override($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Based on userinfo, we'll restore user overides or no.
+        $userinfo = $this->get_setting_value('userinfo');
+
+        // Skip user overrides if we are not restoring userinfo.
+        if (!$userinfo && !is_null($data->userid)) {
+            return;
+        }
+
+        $data->lessonid = $this->get_new_parentid('lesson');
+
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->groupid = $this->get_mappingid('group', $data->groupid);
+
+        $data->available = $this->apply_date_offset($data->available);
+        $data->deadline = $this->apply_date_offset($data->deadline);
+
+        $newitemid = $DB->insert_record('lesson_overrides', $data);
+
+        // Add mapping, restore of logs needs it.
+        $this->set_mapping('lesson_override', $oldid, $newitemid);
     }
 
     protected function after_execute() {

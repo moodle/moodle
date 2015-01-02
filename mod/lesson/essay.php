@@ -62,6 +62,8 @@ if ($attemptid > 0) {
     $attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid));
     $answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid));
     $user = $DB->get_record('user', array('id' => $attempt->userid));
+    // Apply overrides.
+    $lesson->update_effective_access($user->id);
     $scoreoptions = array();
     if ($lesson->custom) {
         $i = $answer->score;

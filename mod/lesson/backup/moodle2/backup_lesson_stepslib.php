@@ -145,6 +145,11 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             'userid', 'starttime', 'lessontime', 'completed'
         ));
 
+        $overrides = new backup_nested_element('overrides');
+        $override = new backup_nested_element('override', array('id'), array(
+            'groupid', 'userid', 'available', 'deadline', 'timelimit',
+            'review', 'maxattempts', 'retake', 'password'));
+
         // Now that we have all of the elements created we've got to put them
         // together correctly.
         $lesson->add_child($pages);
@@ -161,6 +166,8 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $highscores->add_child($highscore);
         $lesson->add_child($timers);
         $timers->add_child($timer);
+        $lesson->add_child($overrides);
+        $overrides->add_child($override);
 
         // Set the source table for the elements that aren't reliant on the user
         // at this point (lesson, lesson_pages, lesson_answers)
@@ -171,6 +178,9 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // We use SQL here as answers must be ordered by id so that the restore gets them in the right order
         $answer->set_source_table('lesson_answers', array('pageid' => backup::VAR_PARENTID), 'id ASC');
 
+        // Lesson overrides to backup are different depending of user info.
+        $overrideparams = array('lessonid' => backup::VAR_PARENTID);
+
         // Check if we are also backing up user information
         if ($this->get_setting_value('userinfo')) {
             // Set the source table for elements that are reliant on the user
@@ -180,7 +190,9 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             $grade->set_source_table('lesson_grades', array('lessonid'=>backup::VAR_PARENTID));
             $highscore->set_source_table('lesson_high_scores', array('lessonid' => backup::VAR_PARENTID));
             $timer->set_source_table('lesson_timer', array('lessonid' => backup::VAR_PARENTID));
+            $overrideparams['userid'] = backup_helper::is_sqlparam(null); //  Without userinfo, skip user overrides.
         }
+        $override->set_source_table('lesson_overrides', $overrideparams);
 
         // Annotate the user id's where required.
         $attempt->annotate_ids('user', 'userid');
@@ -188,6 +200,8 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $grade->annotate_ids('user', 'userid');
         $highscore->annotate_ids('user', 'userid');
         $timer->annotate_ids('user', 'userid');
+        $override->annotate_ids('user', 'userid');
+        $override->annotate_ids('group', 'groupid');
 
         // Annotate the file areas in user by the lesson module.
         $lesson->annotate_files('mod_lesson', 'intro', null);

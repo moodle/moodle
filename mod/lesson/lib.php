@@ -95,6 +95,166 @@ function lesson_update_instance($data, $mform) {
     return true;
 }
 
+/**
+ * This function updates the events associated to the lesson.
+ * If $override is non-zero, then it updates only the events
+ * associated with the specified override.
+ *
+ * @uses LESSON_MAX_EVENT_LENGTH
+ * @param object $lesson the lesson object.
+ * @param object $override (optional) limit to a specific override
+ */
+function lesson_update_events($lesson, $override = null) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/calendar/lib.php');
+
+    // Load the old events relating to this lesson.
+    $conds = array('modulename' => 'lesson',
+                   'instance' => $lesson->id);
+    if (!empty($override)) {
+        // Only load events for this override.
+        if (isset($override->userid)) {
+            $conds['userid'] = $override->userid;
+        } else {
+            $conds['groupid'] = $override->groupid;
+        }
+    }
+    $oldevents = $DB->get_records('event', $conds);
+
+    // Now make a todo list of all that needs to be updated.
+    if (empty($override)) {
+        // We are updating the primary settings for the lesson, so we
+        // need to add all the overrides.
+        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $lesson->id));
+        // As well as the original lesson (empty override).
+        $overrides[] = new stdClass();
+    } else {
+        // Just do the one override.
+        $overrides = array($override);
+    }
+
+    foreach ($overrides as $current) {
+        $groupid   = isset($current->groupid) ? $current->groupid : 0;
+        $userid    = isset($current->userid) ? $current->userid : 0;
+        $available  = isset($current->available) ? $current->available : $lesson->available;
+        $deadline = isset($current->deadline) ? $current->deadline : $lesson->deadline;
+
+        // Only add open/close events for an override if they differ from the lesson default.
+        $addopen  = empty($current->id) || !empty($current->available);
+        $addclose = empty($current->id) || !empty($current->deadline);
+
+        if (!empty($lesson->coursemodule)) {
+            $cmid = $lesson->coursemodule;
+        } else {
+            $cmid = get_coursemodule_from_instance('lesson', $lesson->id, $lesson->course)->id;
+        }
+
+        $event = new stdClass();
+        $event->description = format_module_intro('lesson', $lesson, $cmid);
+        // Events module won't show user events when the courseid is nonzero.
+        $event->courseid    = ($userid) ? 0 : $lesson->course;
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'lesson';
+        $event->instance    = $lesson->id;
+        $event->timestart   = $available;
+        $event->timeduration = max($deadline - $available, 0);
+        $event->visible     = instance_is_visible('lesson', $lesson);
+        $event->eventtype   = 'open';
+
+        // Determine the event name.
+        if ($groupid) {
+            $params = new stdClass();
+            $params->lesson = $lesson->name;
+            $params->group = groups_get_group_name($groupid);
+            if ($params->group === false) {
+                // Group doesn't exist, just skip it.
+                continue;
+            }
+            $eventname = get_string('overridegroupeventname', 'lesson', $params);
+        } else if ($userid) {
+            $params = new stdClass();
+            $params->lesson = $lesson->name;
+            $eventname = get_string('overrideusereventname', 'lesson', $params);
+        } else {
+            $eventname = $lesson->name;
+        }
+        if ($addopen or $addclose) {
+            if ($deadline and $available and $event->timeduration <= LESSON_MAX_EVENT_LENGTH) {
+                // Single event for the whole lesson.
+                if ($oldevent = array_shift($oldevents)) {
+                    $event->id = $oldevent->id;
+                } else {
+                    unset($event->id);
+                }
+                $event->name = $eventname;
+                // The method calendar_event::create will reuse a db record if the id field is set.
+                calendar_event::create($event);
+            } else {
+                // Separate start and end events.
+                $event->timeduration  = 0;
+                if ($available && $addopen) {
+                    if ($oldevent = array_shift($oldevents)) {
+                        $event->id = $oldevent->id;
+                    } else {
+                        unset($event->id);
+                    }
+                    $event->name = $eventname.' ('.get_string('lessonopens', 'lesson').')';
+                    // The method calendar_event::create will reuse a db record if the id field is set.
+                    calendar_event::create($event);
+                }
+                if ($deadline && $addclose) {
+                    if ($oldevent = array_shift($oldevents)) {
+                        $event->id = $oldevent->id;
+                    } else {
+                        unset($event->id);
+                    }
+                    $event->name      = $eventname.' ('.get_string('lessoncloses', 'lesson').')';
+                    $event->timestart = $deadline;
+                    $event->eventtype = 'close';
+                    calendar_event::create($event);
+                }
+            }
+        }
+    }
+
+    // Delete any leftover events.
+    foreach ($oldevents as $badevent) {
+        $badevent = calendar_event::load($badevent);
+        $badevent->delete();
+    }
+}
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every lesson event in the site is checked, else
+ * only lesson events belonging to the course specified are checked.
+ * This function is used, in its new format, by restore_refresh_events()
+ *
+ * @param int $courseid
+ * @return bool
+ */
+function lesson_refresh_events($courseid = 0) {
+    global $DB;
+
+    if ($courseid == 0) {
+        if (!$lessons = $DB->get_records('lessons')) {
+            return true;
+        }
+    } else {
+        if (!$lessons = $DB->get_records('lesson', array('course' => $courseid))) {
+            return true;
+        }
+    }
+
+    foreach ($lessons as $lesson) {
+        lesson_update_events($lesson);
+    }
+
+    return true;
+}
 
 /**
  * Given an ID of an instance of this module,
@@ -572,50 +732,8 @@ function lesson_process_pre_save(&$lesson) {
  * @return void
  **/
 function lesson_process_post_save(&$lesson) {
-    global $DB, $CFG;
-    require_once($CFG->dirroot.'/calendar/lib.php');
-    require_once($CFG->dirroot . '/mod/lesson/locallib.php');
-
-    if ($events = $DB->get_records('event', array('modulename'=>'lesson', 'instance'=>$lesson->id))) {
-        foreach($events as $event) {
-            $event = calendar_event::load($event->id);
-            $event->delete();
-        }
-    }
-
-    $event = new stdClass;
-    $event->description = $lesson->name;
-    $event->courseid    = $lesson->course;
-    $event->groupid     = 0;
-    $event->userid      = 0;
-    $event->modulename  = 'lesson';
-    $event->instance    = $lesson->id;
-    $event->eventtype   = 'open';
-    $event->timestart   = $lesson->available;
-
-    $event->visible     = instance_is_visible('lesson', $lesson);
-
-    $event->timeduration = ($lesson->deadline - $lesson->available);
-
-    if ($lesson->deadline and $lesson->available and $event->timeduration <= LESSON_MAX_EVENT_LENGTH) {
-        // Single event for the whole lesson.
-        $event->name = $lesson->name;
-        calendar_event::create(clone($event));
-    } else {
-        // Separate start and end events.
-        $event->timeduration  = 0;
-        if ($lesson->available) {
-            $event->name = $lesson->name.' ('.get_string('lessonopens', 'lesson').')';
-            calendar_event::create(clone($event));
-        }
-
-        if ($lesson->deadline) {
-            $event->name      = $lesson->name.' ('.get_string('lessoncloses', 'lesson').')';
-            $event->timestart = $lesson->deadline;
-            $event->eventtype = 'close';
-            calendar_event::create(clone($event));
-        }
-    }
+    // Update the events relating to this lesson.
+    lesson_update_events($lesson);
 }
 
 
@@ -628,6 +746,10 @@ function lesson_process_post_save(&$lesson) {
 function lesson_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'lessonheader', get_string('modulenameplural', 'lesson'));
     $mform->addElement('advcheckbox', 'reset_lesson', get_string('deleteallattempts','lesson'));
+    $mform->addElement('advcheckbox', 'reset_lesson_user_overrides',
+            get_string('removealluseroverrides', 'lesson'));
+    $mform->addElement('advcheckbox', 'reset_lesson_group_overrides',
+            get_string('removeallgroupoverrides', 'lesson'));
 }
 
 /**
@@ -636,7 +758,9 @@ function lesson_reset_course_form_definition(&$mform) {
  * @return array
  */
 function lesson_reset_course_form_defaults($course) {
-    return array('reset_lesson'=>1);
+    return array('reset_lesson' => 1,
+            'reset_lesson_group_overrides' => 1,
+            'reset_lesson_user_overrides' => 1);
 }
 
 /**
@@ -710,8 +834,35 @@ function lesson_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallattempts', 'lesson'), 'error'=>false);
     }
 
+    // Remove user overrides.
+    if (!empty($data->reset_lesson_user_overrides)) {
+        $DB->delete_records_select('lesson_overrides',
+                'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+        'component' => $componentstr,
+        'item' => get_string('useroverridesdeleted', 'lesson'),
+        'error' => false);
+    }
+    // Remove group overrides.
+    if (!empty($data->reset_lesson_group_overrides)) {
+        $DB->delete_records_select('lesson_overrides',
+        'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+        'component' => $componentstr,
+        'item' => get_string('groupoverridesdeleted', 'lesson'),
+        'error' => false);
+    }
     /// updating dates - shift may be negative too
     if ($data->timeshift) {
+        $DB->execute("UPDATE {lesson_overrides}
+                         SET available = available + ?
+                       WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
+                         AND available <> 0", array($data->timeshift, $data->courseid));
+        $DB->execute("UPDATE {lesson_overrides}
+                         SET deadline = deadline + ?
+                       WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
+                         AND deadline <> 0", array($data->timeshift, $data->courseid));
+
         shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
     }
@@ -819,6 +970,30 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
  */
 function lesson_extend_settings_navigation($settings, $lessonnode) {
     global $PAGE, $DB;
+
+    // We want to add these new nodes after the Edit settings node, and before the
+    // Locally assigned roles node. Of course, both of those are controlled by capabilities.
+    $keys = $lessonnode->get_children_key_list();
+    $beforekey = null;
+    $i = array_search('modedit', $keys);
+    if ($i === false and array_key_exists(0, $keys)) {
+        $beforekey = $keys[0];
+    } else if (array_key_exists($i + 1, $keys)) {
+        $beforekey = $keys[$i + 1];
+    }
+
+    if (has_capability('mod/lesson:manageoverrides', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $PAGE->cm->id));
+        $node = navigation_node::create(get_string('groupoverrides', 'lesson'),
+                new moodle_url($url, array('mode' => 'group')),
+                navigation_node::TYPE_SETTING, null, 'mod_lesson_groupoverrides');
+        $lessonnode->add_node($node, $beforekey);
+
+        $node = navigation_node::create(get_string('useroverrides', 'lesson'),
+                new moodle_url($url, array('mode' => 'user')),
+                navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
+        $lessonnode->add_node($node, $beforekey);
+    }
 
     if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
