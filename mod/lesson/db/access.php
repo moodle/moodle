@@ -54,7 +54,7 @@ $capabilities = array(
 
     // Grade essay questions.
     'mod/lesson:grade' => array(
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
