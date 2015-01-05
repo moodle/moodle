@@ -476,11 +476,21 @@ function assign_print_overview($courses, &$htmlarray) {
             } else {
                 $str .= get_string('submissionstatus_' . $submission->status, 'assign');
             }
-            if (!$submission || !$submission->grade || $submission->grade < 0) {
-                $str .= ', ' . get_string('notgraded', 'assign');
+
+            if ($assignment->markingworkflow) {
+                $workflowstate = $DB->get_field('assign_user_flags', 'workflowstate', array('assignment' =>
+                    $assignment->id, 'userid' => $USER->id));
+                if ($workflowstate) {
+                    $gradingstatus = 'markingworkflowstate' . $workflowstate;
+                } else {
+                    $gradingstatus = 'markingworkflowstate' . ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED;
+                }
+            } else if (!empty($submission->grade) && $submission->grade !== null && $submission->grade >= 0) {
+                $gradingstatus = ASSIGN_GRADING_STATUS_GRADED;
             } else {
-                $str .= ', ' . get_string('graded', 'assign');
+                $gradingstatus = ASSIGN_GRADING_STATUS_NOT_GRADED;
             }
+            $str .= ', ' . get_string($gradingstatus, 'assign');
             $str .= '</div>';
         }
         $str .= '</div>';
