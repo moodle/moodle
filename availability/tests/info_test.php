@@ -407,11 +407,14 @@ class info_testcase extends \advanced_testcase {
         $u1 = $generator->create_user();
         $u2 = $generator->create_user();
         $u3 = $generator->create_user();
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'), MUST_EXIST);
         $allusers = array($u1->id => $u1, $u2->id => $u2, $u3->id => $u3);
-        $generator->enrol_user($u1->id, $course->id);
-        $generator->enrol_user($u2->id, $course->id);
-        $generator->enrol_user($u3->id, $course->id);
+        $generator->enrol_user($u1->id, $course->id, $studentroleid);
+        $generator->enrol_user($u2->id, $course->id, $studentroleid);
+        $generator->enrol_user($u3->id, $course->id, $studentroleid);
 
+        // Page 2 allows access to users 2 and 3, while section 2 allows access
+        // to users 1 and 2.
         $pagegen = $generator->get_plugin_generator('mod_page');
         $page = $pagegen->create_instance(array('course' => $course));
         $page2 = $pagegen->create_instance(array('course' => $course,
@@ -478,6 +481,28 @@ class info_testcase extends \advanced_testcase {
         // module restrictions.
         $info = new info_module($modinfo->get_cm($page2->cmid));
         $expected = array($u2->id);
+        $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
+        list ($sql, $params) = $info->get_user_list_sql(true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
+
+        // If the students have viewhiddenactivities, they get past the module
+        // restriction.
+        role_change_permission($studentroleid, context_module::instance($page2->cmid),
+                'moodle/course:viewhiddenactivities', CAP_ALLOW);
+        $expected = array($u1->id, $u2->id);
+        $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
+        list ($sql, $params) = $info->get_user_list_sql(true);
+        $result = $DB->get_fieldset_sql($sql, $params);
+        sort($result);
+        $this->assertEquals($expected, $result);
+
+        // If they have viewhiddensections, they also get past the section
+        // restriction.
+        role_change_permission($studentroleid, context_course::instance($course->id),
+                'moodle/course:viewhiddensections', CAP_ALLOW);
+        $expected = array($u1->id, $u2->id, $u3->id);
         $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
         list ($sql, $params) = $info->get_user_list_sql(true);
         $result = $DB->get_fieldset_sql($sql, $params);
