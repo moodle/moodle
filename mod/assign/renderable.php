@@ -384,6 +384,9 @@ class assign_submission_status implements renderable {
     public $attemptreopenmethod = 'none';
     /** @var int maxattempts */
     public $maxattempts = -1;
+    /** @var string gradingstatus */
+    public $gradingstatus = '';
+
 
     /**
      * Constructor
@@ -415,6 +418,7 @@ class assign_submission_status implements renderable {
      * @param string $gradingcontrollerpreview
      * @param string $attemptreopenmethod - The method of reopening student attempts.
      * @param int $maxattempts - How many attempts can a student make?
+     * @param string $gradingstatus - The submission status (ie. Graded, Not Released etc).
      */
     public function __construct($allowsubmissionsfromdate,
                                 $alwaysshowdescription,
@@ -442,7 +446,8 @@ class assign_submission_status implements renderable {
                                 $blindmarking,
                                 $gradingcontrollerpreview,
                                 $attemptreopenmethod,
-                                $maxattempts) {
+                                $maxattempts,
+                                $gradingstatus) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -470,6 +475,7 @@ class assign_submission_status implements renderable {
         $this->gradingcontrollerpreview = $gradingcontrollerpreview;
         $this->attemptreopenmethod = $attemptreopenmethod;
         $this->maxattempts = $maxattempts;
+        $this->gradingstatus = $gradingstatus;
     }
 }
 

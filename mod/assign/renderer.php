@@ -552,12 +552,18 @@ class mod_assign_renderer extends plugin_renderer_base {
         $row = new html_table_row();
         $cell1 = new html_table_cell(get_string('gradingstatus', 'assign'));
 
-        if ($status->graded) {
-            $cell2 = new html_table_cell(get_string('graded', 'assign'));
-            $cell2->attributes = array('class'=>'submissiongraded');
+        if ($status->gradingstatus == ASSIGN_GRADING_STATUS_GRADED ||
+            $status->gradingstatus == ASSIGN_GRADING_STATUS_NOT_GRADED) {
+            $cell2 = new html_table_cell(get_string($status->gradingstatus, 'assign'));
         } else {
-            $cell2 = new html_table_cell(get_string('notgraded', 'assign'));
-            $cell2->attributes = array('class'=>'submissionnotgraded');
+            $gradingstatus = 'markingworkflowstate' . $status->gradingstatus;
+            $cell2 = new html_table_cell(get_string($gradingstatus, 'assign'));
+        }
+        if ($status->gradingstatus == ASSIGN_GRADING_STATUS_GRADED ||
+            $status->gradingstatus == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+            $cell2->attributes = array('class' => 'submissiongraded');
+        } else {
+            $cell2->attributes = array('class' => 'submissionnotgraded');
         }
         $row->cells = array($cell1, $cell2);
         $t->data[] = $row;
