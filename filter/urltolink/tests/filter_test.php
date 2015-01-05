@@ -32,6 +32,10 @@ require_once($CFG->dirroot . '/filter/urltolink/filter.php'); // Include the cod
 class filter_urltolink_testcase extends basic_testcase {
 
     function get_convert_urls_into_links_test_cases() {
+        // Create a 4095 and 4096 long URLs.
+        $superlong4095 = str_pad('http://www.superlong4095.com?this=something', 4095, 'a');
+        $superlong4096 = str_pad('http://www.superlong4096.com?this=something', 4096, 'a');
+
         $texts = array (
             //just a url
             'http://moodle.org - URL' => '<a href="http://moodle.org" class="_blanktarget">http://moodle.org</a> - URL',
@@ -130,6 +134,7 @@ class filter_urltolink_testcase extends basic_testcase {
             '<td background="http://moodle.org">&nbsp;</td>' => '<td background="http://moodle.org">&nbsp;</td>',
             '<td background="www.moodle.org">&nbsp;</td>' => '<td background="www.moodle.org">&nbsp;</td>',
             '<form name="input" action="http://moodle.org/submit.asp" method="get">'=>'<form name="input" action="http://moodle.org/submit.asp" method="get">',
+            '<input type="submit" value="Go to http://moodle.org">' => '<input type="submit" value="Go to http://moodle.org">',
             '<td background="https://www.moodle.org">&nbsp;</td>' => '<td background="https://www.moodle.org">&nbsp;</td>',
             // CSS URLs.
             '<table style="background-image: url(\'http://moodle.org/pic.jpg\');">' => '<table style="background-image: url(\'http://moodle.org/pic.jpg\');">',
@@ -148,6 +153,12 @@ class filter_urltolink_testcase extends basic_testcase {
             //Encoded URLs in the query
             'URL: http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">http://127.0.0.1/path/to?param=value_with%28parenthesis%29&param2=1</a>',
             'URL: www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1' => 'URL: <a href="http://www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1" class="_blanktarget">www.localhost.com/path/to?param=value_with%28parenthesis%29&param2=1</a>',
+            // Test URL less than 4096 characters in size is converted to link.
+            'URL: ' . $superlong4095 => 'URL: <a href="' . $superlong4095 . '" class="_blanktarget">' . $superlong4095 . '</a>',
+            // Test URL equal to or greater than 4096 characters in size is not converted to link.
+            'URL: ' . $superlong4096 => 'URL: ' . $superlong4096,
+            // Testing URL within a span tag.
+            'URL: <span style="kasd"> my link to http://google.com </span>' => 'URL: <span style="kasd"> my link to <a href="http://google.com" class="_blanktarget">http://google.com</a> </span>',
             //URLs in Javascript. Commented out as part of MDL-21183
             //'var url="http://moodle.org";'=>'var url="http://moodle.org";',
             //'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
