@@ -608,11 +608,33 @@ abstract class info {
         }
         $tree = $this->get_availability_tree();
         $checker = new capability_checker($this->get_context());
+
+        // Filter using availability tree.
         $this->modinfo = get_fast_modinfo($this->get_course());
-        $result = $tree->filter_user_list($users, false, $this, $checker);
+        $filtered = $tree->filter_user_list($users, false, $this, $checker);
         $this->modinfo = null;
+
+        // Include users in the result if they're either in the filtered list,
+        // or they have viewhidden. This logic preserves ordering of the
+        // passed users array.
+        $result = array();
+        $canviewhidden = $checker->get_users_by_capability($this->get_view_hidden_capability());
+        foreach ($users as $userid => $data) {
+            if (array_key_exists($userid, $filtered) || array_key_exists($userid, $canviewhidden)) {
+                $result[$userid] = $users[$userid];
+            }
+        }
+
         return $result;
     }
+
+    /**
+     * Gets the capability used to view hidden activities/sections (as
+     * appropriate).
+     *
+     * @return string Name of capability used to view hidden items of this type
+     */
+    protected abstract function get_view_hidden_capability();
 
     /**
      * Formats the $cm->availableinfo string for display. This includes
