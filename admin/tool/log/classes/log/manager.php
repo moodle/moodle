@@ -213,11 +213,14 @@ class manager implements \core\log\manager {
      * @param string $info Additional description information
      * @param int $cm The course_module->id if there is one
      * @param int|\stdClass $user If log regards $user other than $USER
+     * @param string $ip Override the IP, should only be used for restore.
+     * @param int $time Override the log time, should only be used for restore.
      */
-    public function legacy_add_to_log($courseid, $module, $action, $url = '', $info = '', $cm = 0, $user = 0) {
+    public function legacy_add_to_log($courseid, $module, $action, $url = '', $info = '',
+                                      $cm = 0, $user = 0, $ip = null, $time = null) {
         $this->init();
         if (isset($this->stores['logstore_legacy'])) {
-            $this->stores['logstore_legacy']->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);
+            $this->stores['logstore_legacy']->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user, $ip, $time);
         }
     }
 }
