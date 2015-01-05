@@ -48,8 +48,6 @@ $PAGE->set_url('/user/profile.php', array('id' => $userid));
 if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
-        $SESSION->wantsurl = $PAGE->url->out(false);
-
         $PAGE->set_context(context_system::instance());
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),

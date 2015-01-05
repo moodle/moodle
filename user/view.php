@@ -52,23 +52,28 @@ $systemcontext = context_system::instance();
 $coursecontext = context_course::instance($course->id);
 $usercontext   = context_user::instance($user->id, IGNORE_MISSING);
 
-// Require login first.
+// Check we are not trying to view guest's profile.
 if (isguestuser($user)) {
     // Can not view profile of guest - thre is nothing to see there.
     print_error('invaliduserid');
 }
+
+$PAGE->set_context($coursecontext);
 
 if (!empty($CFG->forceloginforprofiles)) {
     require_login(); // We can not log in to course due to the parent hack below.
 
     // Guests do not have permissions to view anyone's profile if forceloginforprofiles is set.
     if (isguestuser()) {
-        $SESSION->wantsurl = $PAGE->url->out(false);
-        redirect(get_login_url());
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
+                              get_login_url(),
+                              $CFG->wwwroot);
+        echo $OUTPUT->footer();
+        die;
     }
 }
 
-$PAGE->set_context($coursecontext);
 $PAGE->set_course($course);
 $PAGE->set_pagetype('course-view-' . $course->format);  // To get the blocks exactly like the course.
 $PAGE->add_body_class('path-user');                     // So we can style it independently.
