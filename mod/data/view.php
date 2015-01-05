@@ -379,7 +379,9 @@
                 echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
             }
         } else {   // Print a confirmation page
-            $allnamefields = get_all_user_name_fields(true, 'u');
+            $allnamefields = user_picture::fields('u');
+            // Remove the id from the string. This already exists in the sql statement.
+            $allnamefields = str_replace('u.id,', '', $allnamefields);
             $dbparams = array($delete);
             if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
                                                        FROM {data_records} dr
@@ -415,14 +417,20 @@
             $validrecords = array();
             $recordids = array();
             foreach ($multidelete as $value) {
-                if ($deleterecord = $DB->get_record('data_records', array('id'=>$value))) {   // Need to check this is valid
-                    if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                $allnamefields = user_picture::fields('u');
+                // Remove the id from the string. This already exists in the sql statement.
+                $allnamefields = str_replace('u.id,', '', $allnamefields);
+                $dbparams = array('id' => $value);
+                if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
+                                                           FROM {data_records} dr
+                                                           JOIN {user} u ON dr.userid = u.id
+                                                          WHERE dr.id = ?", $dbparams)) { // Need to check this is valid.
+                    if ($deleterecord->dataid == $data->id) {  // Must be from this database.
                         $validrecords[] = $deleterecord;
                         $recordids[] = $deleterecord->id;
                     }
                 }
             }
-
             $serialiseddata = json_encode($recordids);
             $submitactions = array('d' => $data->id, 'sesskey' => sesskey(), 'confirm' => '1', 'serialdelete' => $serialiseddata);
             $action = new moodle_url('/mod/data/view.php', $submitactions);
@@ -542,7 +550,9 @@ if ($showactivity) {
         $advparams       = array();
         // This is used for the initial reduction of advanced search results with required entries.
         $entrysql        = '';
-        $namefields = get_all_user_name_fields(true, 'u');
+        $namefields = user_picture::fields('u');
+        // Remove the id from the string. This already exists in the sql statement.
+        $namefields = str_replace('u.id,', '', $namefields);
 
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
