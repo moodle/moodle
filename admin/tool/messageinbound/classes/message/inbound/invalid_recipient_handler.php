@@ -44,7 +44,7 @@ class invalid_recipient_handler extends \core\message\inbound\handler {
     /**
      * Do not allow changes to the address validation setting.
      */
-    public function allow_validateaddress_change() {
+    public function can_change_validateaddress() {
         return false;
     }
 
