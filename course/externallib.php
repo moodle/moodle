@@ -1028,7 +1028,7 @@ class core_course_external extends external_api {
 
         // Check if we need to unzip the file because the backup temp dir does not contains backup files.
         if (!file_exists($backupbasepath . "/moodle_backup.xml")) {
-            $file->extract_to_pathname(get_file_packer(), $backupbasepath);
+            $file->extract_to_pathname(get_file_packer('application/vnd.moodle.backup'), $backupbasepath);
         }
 
         // Create new course.
