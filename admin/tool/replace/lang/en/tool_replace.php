@@ -26,7 +26,7 @@
 $string['cannotfit'] = 'The replacement is longer than original and shortening is not allow, cannot continue.';
 $string['disclaimer'] = 'I understand the risks of this operation';
 $string['doit'] = 'Yes, do it!';
-$string['excludedtables'] = 'Several tables are not updated as part of the text replacement. This include configuration, log, events, and session tables.';
+$string['excludedtables'] = 'Several tables are not updated as part of the text replacement. These include configuration, log, events, and session tables.';
 $string['pageheader'] = 'Search and replace text throughout the whole database';
 $string['notifyfinished'] = '...finished';
 $string['notifyrebuilding'] = 'Rebuilding course cache...';
