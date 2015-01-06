@@ -150,7 +150,8 @@ class data_field_url extends data_field_base {
                 break;
         }
 
-        if (!empty($content->content) && (strpos($content->content, '://') === false) && (strpos($content->content, '/', 0) === false)) {
+        if (!empty($content->content) && (strpos($content->content, '://') === false)
+                && (strpos($content->content, '/') !== 0)) {
             $content->content = 'http://' . $content->content;
         }
 
