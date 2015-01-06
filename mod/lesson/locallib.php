@@ -1518,6 +1518,9 @@ class lesson extends lesson_base {
                                 $found = true;
                             } else if ($page->qtype == LESSON_PAGE_ENDOFCLUSTER) {
                                 $exitjump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $page->id, "lessonid" => $this->properties->id));
+                                if ($exitjump == LESSON_NEXTPAGE) {
+                                    $exitjump = $lessonpages[$page->id]->nextpageid;
+                                }
                                 break;
                             }
                         }
