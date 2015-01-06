@@ -22,7 +22,6 @@ Feature: Practice mode in a lesson activity
         # Setup a basic lesson, we'll adjust it in the scenarios later.
         And I add a "Lesson" to section "1" and I fill the form with:
             | Name | Test lesson name |
-            | Description | Lesson description |
         And I follow "Test lesson name"
         And I follow "Add a question page"
         And I set the field "Select a question type" to "True/false"
@@ -40,7 +39,6 @@ Feature: Practice mode in a lesson activity
         And I navigate to "Edit settings" node in "Lesson administration"
         And I set the following fields to these values:
             | Name | Non-practice lesson |
-            | Description | This lesson will affect your course grade |
             | Practice lesson | No |
         And I press "Save and display"
         And I log out
@@ -60,7 +58,6 @@ Feature: Practice mode in a lesson activity
         And I navigate to "Edit settings" node in "Lesson administration"
         And I set the following fields to these values:
             | Name | Practice lesson |
-            | Description | This lesson will NOT affect your course grade |
             | Practice lesson | Yes |
         And I press "Save and display"
         And I log out
@@ -80,7 +77,6 @@ Feature: Practice mode in a lesson activity
         And I navigate to "Edit settings" node in "Lesson administration"
         And I set the following fields to these values:
             | Name | Practice lesson with scale |
-            | Description | This lesson will NOT affect your course grade |
             | Practice lesson | Yes |
             | Type | Scale |
         And I press "Save and display"
