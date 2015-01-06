@@ -3062,16 +3062,18 @@ class assign {
             if ($grade->grade !== null && $grade->grade >= 0) {
                 $data->grade = format_float($grade->grade, 2);
             }
-            if (!empty($flags->workflowstate)) {
-                $data->workflowstate = $flags->workflowstate;
-            }
-            if (!empty($flags->allocatedmarker)) {
-                $data->allocatedmarker = $flags->allocatedmarker;
-            }
         } else {
             $data = new stdClass();
             $data->grade = '';
         }
+
+        if (!empty($flags->workflowstate)) {
+            $data->workflowstate = $flags->workflowstate;
+        }
+        if (!empty($flags->allocatedmarker)) {
+            $data->allocatedmarker = $flags->allocatedmarker;
+        }
+
         // Warning if required.
         $allsubmissions = $this->get_all_submissions($userid);
 
