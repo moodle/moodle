@@ -799,8 +799,11 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
     $lessonnode->add(get_string('preview', 'lesson'), $url);
 
     if ($canedit) {
-        $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
-        $lessonnode->add(get_string('edit', 'lesson'), $url);
+        $editnode = $lessonnode->add(get_string('edit', 'lesson'));
+        $url = new moodle_url('/mod/lesson/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'collapsed'));
+        $editnode->add(get_string('collapsed', 'lesson'), $url);
+        $url = new moodle_url('/mod/lesson/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'full'));
+        $editnode->add(get_string('full', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:manage', $PAGE->cm->context)) {
