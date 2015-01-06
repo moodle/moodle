@@ -186,7 +186,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
-        $fp = get_file_packer();
+        $fp = get_file_packer('application/vnd.moodle.backup');
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
