@@ -818,8 +818,12 @@ class grade_grade extends grade_object {
             return null;
         }
 
-        // Return null if gradepass == grademin or gradepass is null
-        if (is_null($this->grade_item->gradepass) || $this->grade_item->gradepass == $this->grade_item->grademin) {
+        // Return null if gradepass == grademin, gradepass is null, or grade item is a scale and gradepass is 0.
+        if (is_null($this->grade_item->gradepass)) {
+            return null;
+        } else if ($this->grade_item->gradepass == $this->grade_item->grademin) {
+            return null;
+        } else if ($this->grade_item->gradetype == GRADE_TYPE_SCALE && !grade_floats_different($this->grade_item->gradepass, 0.0)) {
             return null;
         }
 
