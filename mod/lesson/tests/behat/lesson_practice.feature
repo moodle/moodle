@@ -74,24 +74,23 @@ Feature: Practice mode in a lesson activity
         And I navigate to "Grades" node in "Course administration"
         And I should not see "Practice lesson"
 
-    # TODO: uncomment this when MDL-48631 is resolved.
-    #@javascript
-    #Scenario: Practice lesson with scale doesn't record grades in the gradebook
-    #    Given I follow "Test lesson name"
-    #    And I navigate to "Edit settings" node in "Lesson administration"
-    #    And I set the following fields to these values:
-    #        | Name | Practice lesson with scale |
-    #        | Description | This lesson will NOT affect your course grade |
-    #        | Practice lesson | Yes |
-    #        | Type | Scale |
-    #    And I press "Save and display"
-    #    And I log out
-    #    When I log in as "student1"
-    #    And I follow "Course 1"
-    #    And I follow "Practice lesson with scale"
-    #    And I set the following fields to these values:
-    #        | True | 1 |
-    #    And I press "Submit"
-    #    Then I should not see "View grades"
-    #    And I navigate to "Grades" node in "Course administration"
-    #    And I should not see "Practice lesson with scale"
+    @javascript
+    Scenario: Practice lesson with scale doesn't record grades in the gradebook
+        Given I follow "Test lesson name"
+        And I navigate to "Edit settings" node in "Lesson administration"
+        And I set the following fields to these values:
+            | Name | Practice lesson with scale |
+            | Description | This lesson will NOT affect your course grade |
+            | Practice lesson | Yes |
+            | Type | Scale |
+        And I press "Save and display"
+        And I log out
+        When I log in as "student1"
+        And I follow "Course 1"
+        And I follow "Practice lesson with scale"
+        And I set the following fields to these values:
+            | True | 1 |
+        And I press "Submit"
+        Then I should not see "View grades"
+        And I navigate to "Grades" node in "Course administration"
+        And I should not see "Practice lesson with scale"
