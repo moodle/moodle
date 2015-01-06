@@ -2230,6 +2230,8 @@ class global_navigation extends navigation_node {
             }
         }
 
+        // Add the messages link.
+        // It is context based so can appear in "My profile" and in course participants information.
         if (!empty($CFG->messaging)) {
             $messageargs = array('user1' => $USER->id);
             if ($USER->id != $user->id) {
@@ -2242,13 +2244,15 @@ class global_navigation extends navigation_node {
             $usernode->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
         }
 
-        if ($iscurrentuser && has_capability('moodle/user:manageownfiles', context_user::instance($USER->id))) {
+        // Add the "My private files" link.
+        // This link doesn't have a unique display for course context so only display it under "My profile".
+        if ($issitecourse && $iscurrentuser && has_capability('moodle/user:manageownfiles', $usercontext)) {
             $url = new moodle_url('/user/files.php');
             $usernode->add(get_string('myfiles'), $url, self::TYPE_SETTING);
         }
 
         if (!empty($CFG->enablebadges) && $iscurrentuser &&
-                has_capability('moodle/badges:manageownbadges', context_user::instance($USER->id))) {
+                has_capability('moodle/badges:manageownbadges', $usercontext)) {
             $url = new moodle_url('/badges/mybadges.php');
             $usernode->add(get_string('mybadges', 'badges'), $url, self::TYPE_SETTING);
         }
