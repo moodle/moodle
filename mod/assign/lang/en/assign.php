@@ -237,7 +237,7 @@ $string['invalidfloatforgrade'] = 'The grade provided could not be understood: {
 $string['lastmodifiedsubmission'] = 'Last modified (submission)';
 $string['lastmodifiedgrade'] = 'Last modified (grade)';
 $string['latesubmissions'] = 'Late submissions';
-$string['latesubmissionsaccepted'] = 'Only student(s) having been granted extension can still submit the assignment';
+$string['latesubmissionsaccepted'] = 'Allowed until the cut-off date';
 $string['locksubmissionforstudent'] = 'Prevent any more submissions for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['locksubmissions'] = 'Lock submissions';
 $string['manageassignfeedbackplugins'] = 'Manage assignment feedback plugins';
@@ -284,7 +284,7 @@ $string['noattempt'] = 'No attempt';
 $string['nofiles'] = 'No files. ';
 $string['nograde'] = 'No grade. ';
 $string['nolatesubmissions'] = 'No late submissions accepted. ';
-$string['nomoresubmissionsaccepted'] = 'No more submissions accepted';
+$string['nomoresubmissionsaccepted'] = 'Only allowed for participants who have been granted an extension';
 $string['noonlinesubmissions'] = 'This assignment does not require you to submit anything online';
 $string['nosavebutnext'] = 'Next';
 $string['nosubmission'] = 'Nothing has been submitted for this assignment';
