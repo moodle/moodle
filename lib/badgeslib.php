@@ -843,9 +843,10 @@ function badges_get_badges($type, $courseid = 0, $sort = '', $dir = '', $page = 
  */
 function badges_get_user_badges($userid, $courseid = 0, $page = 0, $perpage = 0, $search = '', $onlypublic = false) {
     global $DB;
-    $badges = array();
 
-    $params[] = $userid;
+    $params = array(
+        'userid' => $userid
+    );
     $sql = 'SELECT
                 bi.uniquehash,
                 bi.dateissued,
@@ -860,18 +861,19 @@ function badges_get_user_badges($userid, $courseid = 0, $page = 0, $perpage = 0,
                 {user} u
             WHERE b.id = bi.badgeid
                 AND u.id = bi.userid
-                AND bi.userid = ?';
+                AND bi.userid = :userid';
 
     if (!empty($search)) {
-        $sql .= ' AND (' . $DB->sql_like('b.name', '?', false) . ') ';
-        $params[] = "%$search%";
+        $sql .= ' AND (' . $DB->sql_like('b.name', ':search', false) . ') ';
+        $params['search'] = '%'.$DB->sql_like_escape($search).'%';
     }
     if ($onlypublic) {
         $sql .= ' AND (bi.visible = 1) ';
     }
 
     if ($courseid != 0) {
-        $sql .= ' AND (b.courseid = ' . $courseid . ') ';
+        $sql .= ' AND (b.courseid = :courseid) ';
+        $params['courseid'] = $courseid;
     }
     $sql .= ' ORDER BY bi.dateissued DESC';
     $badges = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
