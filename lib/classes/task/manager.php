@@ -99,6 +99,9 @@ class manager {
                 $classname = '\\' . $classname;
             }
 
+            // For tasks, the first run should also follow the schedule.
+            $task->set_next_run_time($task->get_next_scheduled_time());
+
             // If there is an existing task with a custom schedule, do not override it.
             $currenttask = self::get_scheduled_task($classname);
             if ($currenttask && $currenttask->is_customised()) {
