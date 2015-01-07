@@ -300,6 +300,8 @@ require_login();
 iomad::require_capability('block/iomad_company_admin:user_create', $context);
 
 $PAGE->set_context($context);
+$PAGE->requires->jquery();
+
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -332,9 +334,6 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
         redirect($dashboardurl);
     }
 } else if ($data = $mform->get_data()) {
-echo "POST = <pre>";
-print_r($_POST);
-echo "</pre></br>";
     $data->userid = $USER->id;
     if ($companyid > 0) {
         $data->companyid = $companyid;
@@ -460,7 +459,7 @@ Y.on('change', submit_form, '#licenseidselector');
      var nValue = Y.one('#licenseidselector').get('value');
     $.ajax({
         type: "GET",
-        url: "js/company_user_create_form.ajax.php?licenseid="+nValue,
+        url: "<?php echo $CFG->wwwroot; ?>/blocks/iomad_company_admin/js/company_user_create_form.ajax.php?licenseid="+nValue,
         datatype: "HTML",
         success: function(response){
             $("#licensecourseselector").html(response);
