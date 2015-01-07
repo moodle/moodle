@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.8.2 ===
+
+* \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
+
 === 2.8 ===
 
 * Gradebook grade category option "aggregatesubcats" has been removed completely.
