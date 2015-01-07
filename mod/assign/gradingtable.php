@@ -266,13 +266,8 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         // Submission status.
-        if ($assignment->is_any_submission_plugin_enabled()) {
-            $columns[] = 'status';
-            $headers[] = get_string('status', 'assign');
-        } else if ($this->assignment->get_instance()->markingworkflow) {
-            $columns[] = 'workflowstatus';
-            $headers[] = get_string('status', 'assign');
-        }
+        $columns[] = 'status';
+        $headers[] = get_string('status', 'assign');
 
         // Team submission columns.
         if ($assignment->get_instance()->teamsubmission) {
@@ -927,24 +922,27 @@ class assign_grading_table extends table_sql implements renderable {
                 $o .= $this->output->container($lockedstr, 'lockedsubmission');
             }
 
-            // Add status of "grading", use markflow if enabled.
-            if ($instance->markingworkflow) {
-                $o .= $this->col_workflowstatus($row);
-            } else if ($row->grade !== null && $row->grade >= 0) {
-                $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
-            } else if (!$timesubmitted) {
-                $now = time();
-                if ($due && ($now > $due)) {
-                    $overduestr = get_string('overdue', 'assign', format_time($now - $due));
-                    $o .= $this->output->container($overduestr, 'overduesubmission');
+            // Add status of "grading" if markflow is not enabled.
+            if (!$instance->markingworkflow) {
+                if ($row->grade !== null && $row->grade >= 0) {
+                    $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
+                } else if (!$timesubmitted) {
+                    $now = time();
+                    if ($due && ($now > $due)) {
+                        $overduestr = get_string('overdue', 'assign', format_time($now - $due));
+                        $o .= $this->output->container($overduestr, 'overduesubmission');
+                    }
                 }
             }
+        }
 
-            if ($row->extensionduedate) {
-                $userdate = userdate($row->extensionduedate);
-                $extensionstr = get_string('userextensiondate', 'assign', $userdate);
-                $o .= $this->output->container($extensionstr, 'extensiondate');
-            }
+        if ($instance->markingworkflow) {
+            $o .= $this->col_workflowstatus($row);
+        }
+        if ($row->extensionduedate) {
+            $userdate = userdate($row->extensionduedate);
+            $extensionstr = get_string('userextensiondate', 'assign', $userdate);
+            $o .= $this->output->container($extensionstr, 'extensiondate');
         }
 
         if ($this->is_downloading()) {
@@ -1037,22 +1035,6 @@ class assign_grading_table extends table_sql implements renderable {
                 }
             }
 
-            if (($this->assignment->get_instance()->duedate ||
-                   $this->assignment->get_instance()->cutoffdate) &&
-                   $this->hasgrantextension) {
-                $urlparams = array('id' => $this->assignment->get_course_module()->id,
-                                   'userid'=>$row->id,
-                                   'action'=>'grantextension',
-                                   'sesskey'=>sesskey(),
-                                   'page'=>$this->currpage);
-                $url = new moodle_url('/mod/assign/view.php', $urlparams);
-                $description = get_string('grantextension', 'assign');
-                $actions['grantextension'] = new action_menu_link_secondary(
-                    $url,
-                    $noimage,
-                    $description
-                );
-            }
             if ($submissionsopen &&
                     $USER->id != $row->id &&
                     $caneditsubmission) {
@@ -1069,6 +1051,22 @@ class assign_grading_table extends table_sql implements renderable {
                     $description
                 );
             }
+        }
+        if (($this->assignment->get_instance()->duedate ||
+                $this->assignment->get_instance()->cutoffdate) &&
+                $this->hasgrantextension) {
+             $urlparams = array('id' => $this->assignment->get_course_module()->id,
+                                'userid' => $row->id,
+                                'action' => 'grantextension',
+                                'sesskey' => sesskey(),
+                                'page' => $this->currpage);
+             $url = new moodle_url('/mod/assign/view.php', $urlparams);
+             $description = get_string('grantextension', 'assign');
+             $actions['grantextension'] = new action_menu_link_secondary(
+                 $url,
+                 $noimage,
+                 $description
+             );
         }
         if ($row->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED &&
                 $this->assignment->get_instance()->submissiondrafts) {
