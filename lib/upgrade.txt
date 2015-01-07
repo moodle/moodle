@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.7.4 ===
+
+* \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
+
 === 2.6.4 / 2.7.1 ===
 * setnew_password_and_mail() and update_internal_user_password() will trigger
   \core\event\user_password_updated. Previously they used to generate
