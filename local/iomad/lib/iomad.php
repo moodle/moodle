@@ -193,10 +193,8 @@ class iomad {
         // Get the list of courses the user has a valid license for but not already enroled in.
         if ($licensecourses = $DB->get_records_sql("SELECT * FROM {course} c
                                                     WHERE c.id IN (
-                                                     SELECT clc.courseid
-                                                     FROM {companylicense_courses} clc
-                                                     RIGHT JOIN {companylicense_users} clu
-                                                     ON (clc.licenseid = clu.licenseid)
+                                                     SELECT clu.licensecourseid
+                                                     FROM {companylicense_users} clu
                                                      WHERE clu.userid = :userid
                                                      AND clu.isusing = 0
                                                     )", array('userid' => $USER->id))) {

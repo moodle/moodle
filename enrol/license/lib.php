@@ -203,10 +203,11 @@ class enrol_license_plugin extends enrol_plugin {
 
         // Get the license information.
         $sql = "SELECT * from {companylicense} cl, {companylicense_users} clu
-                WHERE clu.userid = ".$USER->id ."
+                WHERE clu.userid = :userid
                 AND clu.licenseid = cl.id
-                AND clu.isusing = 0";
-        if (!$license = $DB->get_record_sql($sql)) {
+                AND clu.isusing = 0
+                AND clu.licensecourseid = :courseid";
+        if (!$license = $DB->get_record_sql($sql, array('userid' => $USER->id, 'courseid' => $instance->courseid))) {
             return $OUTPUT->notification(get_string('nolicenseinformationfound', 'enrol_license'));
         }
 
