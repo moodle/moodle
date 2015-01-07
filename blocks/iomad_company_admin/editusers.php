@@ -564,7 +564,7 @@ if (!$users) {
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id)
              and !is_mnet_remote_user($user)) {
-            $licensebutton = "<a href=\"company_users_licenses_form.php?userid=$user->id\">$strenrolmentuserlicense</a>";
+            $licensebutton = "<a href=\"company_users_licenses_form.php?userid=$user->id\">$struserlicense</a>";
         } else {
             $licensebutton = "";
         }
