@@ -78,7 +78,8 @@ function local_kaltura_retrieve_repository_settings() {
         $rootcategoryid = get_config(KALTURA_REPO_NAME, 'rootcategory_id');
 
         if (empty($rootcategoryid)) {
-            notice(get_string('migration_root_category_not_set', 'local_kaltura'));
+            //notice(get_string('migration_root_category_not_set', 'local_kaltura'));
+            set_config('migration_source_category', -1, KALTURA_PLUGIN_NAME);
         }
 
         set_config('migration_source_category', $rootcategoryid, KALTURA_PLUGIN_NAME);
@@ -89,7 +90,8 @@ function local_kaltura_retrieve_repository_settings() {
         $metadataprofileid = get_config(KALTURA_REPO_NAME, 'metadata_profile_id');
 
         if (empty($metadataprofileid)) {
-            notice(get_string('migration_profile_id_not_set', 'local_kaltura'));
+            //notice(get_string('migration_profile_id_not_set', 'local_kaltura'));
+            set_config('migration_metadata_profile_id', -1, KALTURA_PLUGIN_NAME);
         }
 
         set_config('migration_metadata_profile_id', $metadataprofileid, KALTURA_PLUGIN_NAME);
@@ -131,6 +133,12 @@ function local_kaltura_get_categories() {
  * @return array An array whose index is the Kaltura entry id and value is an array of Kaltura category ids.
  */
 function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $index = 1, $numofentries = 100) {
+    $rootcategoryid = get_config(KALTURA_PLUGIN_NAME, 'migration_source_category');
+    if($rootcategoryid === -1)
+    {
+        // skip this part of the migration - repository was never configured in previous version
+        return true;
+    }
     // The timestamp used to retrieve Kaltura entries that were created by or before the date.
     static $createdby = 0;
     // Which page is currently being processed.
@@ -223,6 +231,12 @@ function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $in
  * @return array An array whose index is the Kaltura entry id and value is an array of Kaltura category ids.
  */
 function local_kaltura_move_metadata_entries_to_kaf_category_tree($targetparentcatid, $index = 1, $numofentries = 100) {
+    $metadataprofileid = get_config(KALTURA_PLUGIN_NAME, 'migration_metadata_profile_id');
+    if($metadataprofileid === -1)
+    {
+        // skip this part of the migration - repository was never configured in previous version
+        return true;
+    }
     // The timestamp used to retrieve Kaltura entries that were created by or before the date.
     static $createdby = 0;
     // Which page is currently being processed.
@@ -351,8 +365,13 @@ function local_kaltura_assign_entries_to_new_categories($client, $entries, $pare
                     $categoryentry = new KalturaCategoryEntry();
                     $categoryentry->categoryId = $cachedcategories[$oldcategoryid];
                     $categoryentry->entryId = $entryid;
-                    $result = $client->categoryEntry->add($categoryentry);
-
+                    try{
+                        $result = $client->categoryEntry->add($categoryentry);
+                    } catch (Exception $ex) {
+                        local_kaltura_log_data("Kalturamigration", 
+                                'local_kaltura_assign_entries_to_new_categories - failed adding entry to category '.$ex->getCode(), 
+                                array($categoryentry->entryId, $categoryentry->categoryId), false);
+                    }
                     local_kaltura_migration_progress::increment_entriesmigrated();
                 }
             } else {
@@ -464,7 +483,13 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
                     $categoryentry = new KalturaCategoryEntry();
                     $categoryentry->categoryId = $cachedcategories[$oldcategoryid];
                     $categoryentry->entryId = $entryid;
-                    $client->categoryEntry->add($categoryentry);
+                    try{
+                        $client->categoryEntry->add($categoryentry);
+                    } catch (Exception $ex) {
+                        local_kaltura_log_data("Kalturamigration", 
+                                'local_kaltura_assign_entries_to_new_categories - failed adding entry to category '.$ex->getCode(), 
+                                array($categoryentry->entryId, $categoryentry->categoryId), false);
+                    }
 
                     local_kaltura_migration_progress::increment_entriesmigrated();
                 }
@@ -486,7 +511,14 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
                     $categoryentry = new KalturaCategoryEntry();
                     $categoryentry->categoryId = $result->objects[0]->id;
                     $categoryentry->entryId = $entryid;
-                    $categoryresult = $client->categoryEntry->add($categoryentry);
+                    try{
+                        $categoryresult = $client->categoryEntry->add($categoryentry);
+                    } catch (Exception $ex) {
+                        local_kaltura_log_data("Kalturamigration", 
+                                'local_kaltura_assign_entries_to_new_categories - failed adding entry to category '.$ex->getCode(), 
+                                array($categoryentry->entryId, $categoryentry->categoryId), false);
+                        $categoryresult = null;
+                    }
 
                     // If the result is a KalturaCategoryEntry then cache the category id.
                     if ($categoryresult instanceof KalturaCategoryEntry) {
@@ -585,7 +617,18 @@ function local_kaltura_get_sharedrepo_id($client, $channelsid, $rootcatid) {
         $category->parentId = $channelsid;
         $category->name = 'Shared Repository';
         $category->moderation = KalturaNullableBoolean::TRUE_VALUE;
-        $result = $client->category->add($category);
+        try {
+            $result = $client->category->add($category);
+        } catch (Exception $ex) {
+            if($ex->getCode() == 'DUPLICATE_CATEGORY')
+            {
+                // nothing to do - category exists is a good thing
+            }
+            else {
+                throw $ex;
+            }
+        }
+        
 
         if ($result instanceof KalturaCategory) {
             $siterepocat->id = $result->id;
@@ -785,8 +828,15 @@ function local_kaltura_update_activities() {
                 $record->width = $record->width + KALTURA_MIGRATION_WIDTH_PADDING;
                 $record->height = $record->height + KALTURA_MIGRATION_HEIGHT_PADDING;
 
-                // Retrieve the Kaltura base entry object.
-                $kalentry = $client->baseEntry->get($record->entry_id);
+                try {
+                    // Retrieve the Kaltura base entry object.
+                    $kalentry = $client->baseEntry->get($record->entry_id);
+                }
+                catch(Exception $ex) {
+                    // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
+                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration
+                    $kalentry = new stdClass();
+                }
                 $newobject = local_kaltura_convert_kaltura_base_entry_object($kalentry);
                 // Searlize and base 64 encode the metadata.
                 $metadata = local_kaltura_encode_object_for_storage($newobject);
@@ -818,8 +868,15 @@ function local_kaltura_update_activities() {
                 $record->width = $width + KALTURA_MIGRATION_WIDTH_PADDING;
                 $record->height = $height + KALTURA_MIGRATION_HEIGHT_PADDING;
 
-                // Retrieve the Kaltura base entry object.
-                $kalentry = $client->baseEntry->get($record->entry_id);
+                try {
+                    // Retrieve the Kaltura base entry object.
+                    $kalentry = $client->baseEntry->get($record->entry_id);
+                }
+                catch(Exception $ex) {
+                    // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
+                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration
+                    $kalentry = new stdClass();
+                }
                 $newobject = local_kaltura_convert_kaltura_base_entry_object($kalentry);
                 // Searlize and base 64 encode the metadata.
                 $metadata = local_kaltura_encode_object_for_storage($newobject);
@@ -841,7 +898,15 @@ function local_kaltura_update_video_presentation_entry($client, $entrylist) {
         $vidpres = new KalturaBaseEntry();
         $vidpres->name = $activityname;
         $vidpres->adminTags = 'presentation';
-        $client->baseEntry->update($entryid, $vidpres);
+        try
+        {
+            $client->baseEntry->update($entryid, $vidpres);
+        }
+        catch(Exception $ex){
+            local_kaltura_log_data("Kalturamigration", 
+                'local_kaltura_update_video_presentation_entry - failed updating data with tag '.$ex->getCode(), 
+                array($entryid), false);
+        }
     }
 }
 
