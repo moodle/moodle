@@ -100,6 +100,15 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $insertpoint = strrpos($longurl, 'http://');
         $longurl = substr_replace($longurl, 'http://pushover4096chars', $insertpoint, 0);
 
+        $originalurl = '<p>Some text.</p><pre style="color: rgb(0, 0, 0); line-height: normal;">' .
+            '<a href="https://www.youtube.com/watch?v=uUhWl9Lm3OM">Valid link</a></pre><pre style="color: rgb(0, 0, 0); line-height: normal;">';
+        $paddedurl = str_pad($originalurl, 6000, 'z');
+        $validpaddedurl = '<p>Some text.</p><pre style="color: rgb(0, 0, 0); line-height: normal;"><span class="mediaplugin mediaplugin_youtube">
+<iframe title="Valid link" width="400" height="300"
+  src="https://www.youtube.com/embed/uUhWl9Lm3OM?rel=0&wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
+</span></pre><pre style="color: rgb(0, 0, 0); line-height: normal;">';
+        $validpaddedurl = str_pad($validpaddedurl, 6000 + (strlen($validpaddedurl) - strlen($originalurl)), 'z');
+
         $invalidtexts = array(
             '<a class="_blanktarget">href="http://moodle.org/testfile/test.mp3"</a>',
             '<a>test test</a>',
@@ -132,5 +141,9 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $filter = $filterplugin->filter($precededlongurl);
         $this->assertEquals(1, substr_count($filter, 'M.util.add_audio_player'));
         $this->assertContains($longurl, $filter);
+
+        // Testing for cases where: to be filtered content has 6+ text afterwards.
+        $filter = $filterplugin->filter($paddedurl);
+        $this->assertEquals($validpaddedurl, $filter, $msg);
     }
 }
