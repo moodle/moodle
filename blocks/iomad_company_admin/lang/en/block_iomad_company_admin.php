@@ -158,6 +158,7 @@ $string['iomad_company_admin:editallusers'] = 'Edit users in every company';
 $string['iomad_company_admin:edit_departments'] = 'Edit own company departments';
 $string['iomad_company_admin:edit_licenses'] = 'Edit company licenses';
 $string['iomad_company_admin:editusers'] = 'Edit users in own company';
+$string['iomad_company_admin:company_license_users'] = 'Modify user license allocations';
 $string['iomad_company_admin:managecourses'] = 'Designate course as licensed or shared';
 $string['iomad_company_admin:restrict_capabilities'] = 'Restrict IOMAD role capabilties for company';
 $string['iomad_company_admin:suspendcompanies'] = 'Suspend a company';
