@@ -69,6 +69,7 @@ $context = context::instance_by_id($contextid);
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('standard');
 
 /// Security: make sure we're allowed to do this operation
 if ($context->contextlevel == CONTEXT_COURSE) {
