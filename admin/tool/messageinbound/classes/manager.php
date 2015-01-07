@@ -411,7 +411,7 @@ class manager {
                 mtrace("-- Returning to the original user.");
                 cron_setup_user($originaluser);
                 return;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // An unknown error occurred. The user is not informed, but the administrator is.
                 mtrace("-- Message processing failed. An unexpected exception was thrown. Details follow.");
                 mtrace($e->getMessage());
@@ -493,9 +493,8 @@ class manager {
     /**
      * Process a message again to add body and attachment data.
      *
-     * @param Horde_Imap_Client_Data_Envelope $envelope The Envelope of the message
-     * @param Horde_Imap_Client_Data_Fetch $basemessagedata The structure and part of the message body
-     * @param string|Horde_Imap_Client_Ids $messageid The Hore message Uid
+     * @param \Horde_Imap_Client_Data_Fetch $basemessagedata The structure and part of the message body
+     * @param string|\Horde_Imap_Client_Ids $messageid The Hore message Uid
      * @return \stdClass The current value of the messagedata
      */
     private function process_message_data_body(
@@ -647,7 +646,7 @@ class manager {
             // Perform a virus scan now.
             try {
                 \repository::antivir_scan_file($filepath, $attachment->filename, true);
-            } catch (moodle_exception $e) {
+            } catch (\moodle_exception $e) {
                 mtrace("--> A virus was found in the attachment '{$attachment->filename}'.");
                 $this->inform_attachment_virus();
                 return;
@@ -795,7 +794,7 @@ class manager {
             $error->message     = $e->getMessage();
             throw new \core\message\inbound\processing_failed_exception('messageprocessingfailed', 'tool_messageinbound', $error);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             mtrace("-> The Inbound Message handler threw an exception. Unable to process this message. User informed.");
             mtrace("--> " . $e->getMessage());
             // An unknown error occurred. Still inform the user but, this time do not include the specific
